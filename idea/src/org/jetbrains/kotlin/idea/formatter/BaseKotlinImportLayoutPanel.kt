@@ -26,7 +26,7 @@ import javax.swing.JTable
 import javax.swing.ListSelectionModel
 import javax.swing.table.AbstractTableModel
 
-open class BaseKotlinImportLayoutPanel(title: String): JPanel(BorderLayout()) {
+open class BaseKotlinImportLayoutPanel(title: String) : JPanel(BorderLayout()) {
     val packageTable = KotlinPackageEntryTable()
     val layoutTable = createTableForPackageEntries(packageTable)
 
@@ -41,7 +41,7 @@ open class BaseKotlinImportLayoutPanel(title: String): JPanel(BorderLayout()) {
     protected fun addPackage() {
         var row = layoutTable.selectedRow + 1
         if (row < 0) {
-            row = packageTable.getEntryCount()
+            row = packageTable.entryCount
         }
         val entry = KotlinPackageEntry("", true)
         packageTable.insertEntryAt(entry, row)
@@ -53,9 +53,7 @@ open class BaseKotlinImportLayoutPanel(title: String): JPanel(BorderLayout()) {
         if (row < 0) return
 
         val entry = packageTable.getEntryAt(row)
-        if (entry == KotlinPackageEntry.ALL_OTHER_IMPORTS_ENTRY || entry == KotlinPackageEntry.ALL_OTHER_IMPORTS_ENTRY) {
-            return
-        }
+        if (entry.isSpecial) return
 
         TableUtil.stopEditing(layoutTable)
         packageTable.removeEntryAt(row)
@@ -63,7 +61,7 @@ open class BaseKotlinImportLayoutPanel(title: String): JPanel(BorderLayout()) {
         val model = layoutTable.model as AbstractTableModel
         model.fireTableRowsDeleted(row, row)
 
-        if (row >= packageTable.getEntryCount()) {
+        if (row >= packageTable.entryCount) {
             row--
         }
 
@@ -89,7 +87,7 @@ open class BaseKotlinImportLayoutPanel(title: String): JPanel(BorderLayout()) {
 
     protected fun movePackageDown() {
         val row = layoutTable.selectedRow
-        if (row >= packageTable.getEntryCount() - 1) return
+        if (row >= packageTable.entryCount - 1) return
 
         TableUtil.stopEditing(layoutTable)
         val entry = packageTable.getEntryAt(row)
@@ -109,7 +107,8 @@ open class BaseKotlinImportLayoutPanel(title: String): JPanel(BorderLayout()) {
         TableUtil.editCellAt(layoutTable, row, 0)
         val editorComp = layoutTable.editorComponent
         if (editorComp != null) {
-            IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown { IdeFocusManager.getGlobalInstance().requestFocus(editorComp, true) }
+            IdeFocusManager.getGlobalInstance()
+                .doWhenFocusSettlesDown { IdeFocusManager.getGlobalInstance().requestFocus(editorComp, true) }
         }
     }
 
@@ -156,7 +155,7 @@ open class BaseKotlinImportLayoutPanel(title: String): JPanel(BorderLayout()) {
     }
 
     private fun fixColumnWidthToHeader(columnIndex: Int) {
-        with (layoutTable) {
+        with(layoutTable) {
             val column = columnModel.getColumn(columnIndex)
             val width = 15 + tableHeader.getFontMetrics(tableHeader.font).stringWidth(getColumnName(columnIndex))
 
@@ -166,14 +165,14 @@ open class BaseKotlinImportLayoutPanel(title: String): JPanel(BorderLayout()) {
     }
 }
 
-class KotlinStarImportLayoutPanel: BaseKotlinImportLayoutPanel(ApplicationBundle.message("title.packages.to.use.import.with")) {
+class KotlinStarImportLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBundle.message("title.packages.to.use.import.with")) {
     init {
         val importLayoutPanel = ToolbarDecorator.createDecorator(layoutTable)
             .setAddAction { addPackage() }
             .setRemoveAction { removePackage() }
             .setButtonComparator(
-                "Add",
-                "Remove"
+                ApplicationBundle.message("button.add.package"),
+                ApplicationBundle.message("button.remove"),
             ).setPreferredSize(Dimension(-1, 100))
             .createPanel()
 
@@ -182,7 +181,7 @@ class KotlinStarImportLayoutPanel: BaseKotlinImportLayoutPanel(ApplicationBundle
     }
 }
 
-class KotlinImportOrderLayoutPanel: BaseKotlinImportLayoutPanel(ApplicationBundle.message("title.import.layout")) {
+class KotlinImportOrderLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBundle.message("title.import.layout")) {
     private val cbImportAliasesSeparately = JBCheckBox("Import aliases separately")
 
     init {
@@ -190,7 +189,7 @@ class KotlinImportOrderLayoutPanel: BaseKotlinImportLayoutPanel(ApplicationBundl
 
         val importLayoutPanel = ToolbarDecorator.createDecorator(layoutTable)
             .addExtraAction(
-                object: DumbAwareActionButton(ApplicationBundle.message("button.add.package"), IconUtil.getAddPackageIcon()) {
+                object : DumbAwareActionButton(ApplicationBundle.message("button.add.package"), IconUtil.getAddPackageIcon()) {
                     override fun actionPerformed(event: AnActionEvent) {
                         addPackage()
                     }
@@ -205,14 +204,14 @@ class KotlinImportOrderLayoutPanel: BaseKotlinImportLayoutPanel(ApplicationBundl
             .setMoveDownAction { movePackageDown() }
             .setRemoveActionUpdater {
                 val selectedRow = layoutTable.selectedRow
-                val entry = if (selectedRow in 0 until packageTable.getEntryCount()) packageTable.getEntryAt(selectedRow) else null
+                val entry = if (selectedRow in 0 until packageTable.entryCount) packageTable.getEntryAt(selectedRow) else null
 
-                entry != null && entry != KotlinPackageEntry.ALL_OTHER_IMPORTS_ENTRY && entry != KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY
+                entry?.isSpecial == false
             }.setButtonComparator(
                 ApplicationBundle.message("button.add.package"),
-                "Remove",
-                "Up",
-                "Down"
+                ApplicationBundle.message("button.remove"),
+                ApplicationBundle.message("button.move.up"),
+                ApplicationBundle.message("button.move.down")
             ).setPreferredSize(Dimension(-1, 100))
             .createPanel()
 
@@ -221,15 +220,15 @@ class KotlinImportOrderLayoutPanel: BaseKotlinImportLayoutPanel(ApplicationBundl
 
         cbImportAliasesSeparately.addItemListener { _ ->
             if (areImportAliasesEnabled()) {
-                if (packageTable.getEntries().none { it == KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY }) {
+                if (KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY !in packageTable.getEntries()) {
                     packageTable.addEntry(KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY)
-                    val row = packageTable.getEntryCount() - 1
+                    val row = packageTable.entryCount - 1
                     val model = layoutTable.model as AbstractTableModel
                     model.fireTableRowsInserted(row, row)
                     layoutTable.setRowSelectionInterval(row, row)
                 }
             } else {
-                val entryIndex = packageTable.getEntries().indexOfFirst { it == KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY }
+                val entryIndex = packageTable.getEntries().indexOf(KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY)
 
                 if (entryIndex != -1) {
                     val currentIndex = layoutTable.selectedRow
@@ -248,7 +247,7 @@ class KotlinImportOrderLayoutPanel: BaseKotlinImportLayoutPanel(ApplicationBundl
     }
 
     fun recomputeAliasesCheckbox() {
-        cbImportAliasesSeparately.isSelected = packageTable.getEntries().any { it == KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY }
+        cbImportAliasesSeparately.isSelected = KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY in packageTable.getEntries()
     }
 
     private fun areImportAliasesEnabled(): Boolean {
@@ -258,6 +257,8 @@ class KotlinImportOrderLayoutPanel: BaseKotlinImportLayoutPanel(ApplicationBundl
 
 fun createTableForPackageEntries(packageTable: KotlinPackageEntryTable): JBTable {
     val names = arrayOf(ApplicationBundle.message("listbox.import.package"), ApplicationBundle.message("listbox.import.with.subpackages"))
+    val packageNameColumnIndex = 0
+    val withSubpackagesColumnIndex = 1
 
     val dataModel = object : AbstractTableModel() {
         override fun getColumnCount(): Int {
@@ -265,7 +266,7 @@ fun createTableForPackageEntries(packageTable: KotlinPackageEntryTable): JBTable
         }
 
         override fun getRowCount(): Int {
-            return packageTable.getEntryCount()
+            return packageTable.entryCount
         }
 
         override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
@@ -273,8 +274,8 @@ fun createTableForPackageEntries(packageTable: KotlinPackageEntryTable): JBTable
             if (!isCellEditable(rowIndex, columnIndex)) return null
 
             return when (columnIndex) {
-                0 -> entry.packageName
-                1 -> entry.withSubpackages
+                packageNameColumnIndex -> entry.packageName
+                withSubpackagesColumnIndex -> entry.withSubpackages
                 else -> throw IllegalArgumentException(columnIndex.toString())
             }
         }
@@ -290,8 +291,8 @@ fun createTableForPackageEntries(packageTable: KotlinPackageEntryTable): JBTable
 
         override fun getColumnClass(columnIndex: Int): Class<*> {
             return when (columnIndex) {
-                0 -> String::class.java
-                1 -> Boolean::class.javaObjectType
+                packageNameColumnIndex -> String::class.java
+                withSubpackagesColumnIndex -> Boolean::class.javaObjectType
                 else -> throw IllegalArgumentException(columnIndex.toString())
             }
         }
@@ -300,8 +301,8 @@ fun createTableForPackageEntries(packageTable: KotlinPackageEntryTable): JBTable
             val entry = packageTable.getEntryAt(rowIndex)
 
             val newEntry = when (columnIndex) {
-                0 -> KotlinPackageEntry((value as String).trim(), entry.withSubpackages)
-                1 -> KotlinPackageEntry(entry.packageName, value.toString().toBoolean())
+                packageNameColumnIndex -> KotlinPackageEntry((value as String).trim(), entry.withSubpackages)
+                withSubpackagesColumnIndex -> KotlinPackageEntry(entry.packageName, value.toString().toBoolean())
                 else -> throw IllegalArgumentException(columnIndex.toString())
             }
 
