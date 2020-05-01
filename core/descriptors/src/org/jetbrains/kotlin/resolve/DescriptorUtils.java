@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -631,7 +629,9 @@ public class DescriptorUtils {
                : descriptor;
     }
 
-    public static boolean isMethodOfAny(@NotNull FunctionDescriptor descriptor) {
+    public static boolean isMethodOfAny(@NotNull CallableMemberDescriptor descriptor) {
+        if (!(descriptor instanceof FunctionDescriptor)) return false;
+
         String name = descriptor.getName().asString();
         List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
         if (parameters.isEmpty()) {
