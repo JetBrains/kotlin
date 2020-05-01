@@ -17,7 +17,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.KeyedExtensionCollector;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.FileAttribute;
 import com.intellij.psi.tree.IFileElementType;
@@ -136,13 +135,12 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
       @Nullable
       public SerializedStubTree computeValue(@NotNull final FileContent inputData, @NotNull StubBuilderType type) {
         try {
-          if (Registry.is("use.prebuilt.indices")) {
-            SerializedStubTree prebuiltTree = findPrebuiltSerializedStubTree(inputData);
-            if (prebuiltTree != null && PrebuiltIndexProvider.DEBUG_PREBUILT_INDICES) {
-              assertRebuiltTreeMatchesActualTree(inputData, type, prebuiltTree);
-              return prebuiltTree;
-            }
+          SerializedStubTree prebuiltTree = findPrebuiltSerializedStubTree(inputData);
+          if (prebuiltTree != null && PrebuiltIndexProvider.DEBUG_PREBUILT_INDICES) {
+            assertRebuiltTreeMatchesActualTree(inputData, type, prebuiltTree);
+            return prebuiltTree;
           }
+
           SerializedStubTree builtTree = buildSerializedStubTree(inputData, type);
           if (builtTree != null && DebugAssertions.DEBUG) {
             assertRebuiltTreeMatchesActualTree(inputData, type, builtTree);
@@ -162,7 +160,7 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
 
   @Nullable
   public SerializedStubTree findPrebuiltSerializedStubTree(@NotNull FileContent fileContent) {
-    if (!Registry.is("use.prebuilt.indices")) {
+    if (!PrebuiltIndexProvider.USE_PREBUILT_INDEX) {
       return null;
     }
     PrebuiltStubsProvider prebuiltStubsProvider = PrebuiltStubsKt.getPrebuiltStubsProvider().forFileType(fileContent.getFileType());
