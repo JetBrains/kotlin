@@ -70,7 +70,7 @@ public class CompilerManagerImpl extends CompilerManager {
   private final List<CompileTask> myBeforeTasks = new ArrayList<>();
   private final List<CompileTask> myAfterTasks = new ArrayList<>();
   private final Set<FileType> myCompilableTypes = new HashSet<>();
-  private volatile Set<FileType> myCachedCompilableTypes = new HashSet<>();
+  private volatile Set<FileType> myCachedCompilableTypes;
   private final CompilationStatusListener myEventPublisher;
   private final Semaphore myCompilationSemaphore = new Semaphore(1, true);
   private final Set<ModuleType<?>> myValidationDisabledModuleTypes = new HashSet<>();
