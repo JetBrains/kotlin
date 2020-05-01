@@ -146,11 +146,11 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         }
 
         private fun isModified(list: KotlinPackageEntryTable, table: KotlinPackageEntryTable): Boolean {
-            if (list.getEntryCount() != table.getEntryCount()) {
+            if (list.entryCount != table.entryCount) {
                 return true
             }
 
-            for (i in 0 until list.getEntryCount()) {
+            for (i in 0 until list.entryCount) {
                 val entry1 = list.getEntryAt(i)
                 val entry2 = table.getEntryAt(i)
                 if (entry1 != entry2) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.core.formatter
 
+import com.intellij.openapi.application.ApplicationBundle
 import org.jetbrains.kotlin.resolve.ImportPath
 
 class KotlinPackageEntry(
@@ -15,14 +16,15 @@ class KotlinPackageEntry(
 
     companion object {
         @JvmField
-        val ALL_OTHER_IMPORTS_ENTRY = KotlinPackageEntry("<all other imports>", withSubpackages = true)
+        val ALL_OTHER_IMPORTS_ENTRY =
+            KotlinPackageEntry(ApplicationBundle.message("listbox.import.all.other.imports"), withSubpackages = true)
 
         @JvmField
         val ALL_OTHER_ALIAS_IMPORTS_ENTRY = KotlinPackageEntry("<all other alias imports>", withSubpackages = true)
     }
 
     fun matchesPackageName(otherPackageName: String): Boolean {
-        if (this == ALL_OTHER_IMPORTS_ENTRY || this == ALL_OTHER_ALIAS_IMPORTS_ENTRY) return true
+        if (isSpecial) return true
 
         if (otherPackageName.startsWith(packageName)) {
             if (otherPackageName.length == packageName.length) return true
@@ -47,10 +49,7 @@ class KotlinPackageEntry(
         return entry.packageName.count { it == '.' } < packageName.count { it == '.' }
     }
 
-    val isSpecial: Boolean
-        get() {
-            return (this == ALL_OTHER_IMPORTS_ENTRY || this == ALL_OTHER_ALIAS_IMPORTS_ENTRY)
-        }
+    val isSpecial: Boolean get() = this == ALL_OTHER_IMPORTS_ENTRY || this == ALL_OTHER_ALIAS_IMPORTS_ENTRY
 
     override fun toString(): String {
         return packageName

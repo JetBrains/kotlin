@@ -9,24 +9,15 @@ import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.JDOMExternalizable
 import org.jdom.Element
 
-class KotlinPackageEntryTable: JDOMExternalizable, Cloneable {
+class KotlinPackageEntryTable : JDOMExternalizable, Cloneable {
     private val entries = mutableListOf<KotlinPackageEntry>()
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is KotlinPackageEntryTable) return false
-        if (other.entries.size != entries.size) return false
-
-        return entries.zip(other.entries).any { (entry, otherEntry) -> entry != otherEntry }
-    }
+    val entryCount: Int get() = entries.size
 
     public override fun clone(): KotlinPackageEntryTable {
         val clone = KotlinPackageEntryTable()
         clone.copyFrom(this)
         return clone
-    }
-
-    override fun hashCode(): Int {
-        return entries.firstOrNull()?.hashCode() ?: 0
     }
 
     fun copyFrom(packageTable: KotlinPackageEntryTable) {
@@ -50,24 +41,12 @@ class KotlinPackageEntryTable: JDOMExternalizable, Cloneable {
         return entries[index]
     }
 
-    fun getEntryCount(): Int {
-        return entries.size
-    }
-
     fun setEntryAt(entry: KotlinPackageEntry, index: Int) {
         entries[index] = entry
     }
 
     operator fun contains(packageName: String): Boolean {
-        for (entry in entries) {
-            if (packageName.startsWith(entry.packageName)) {
-                if (packageName.length == entry.packageName.length) return true
-                if (entry.withSubpackages) {
-                    if (packageName[entry.packageName.length] == '.') return true
-                }
-            }
-        }
-        return false
+        return entries.any { !it.isSpecial && it.matchesPackageName(packageName) }
     }
 
     fun removeEmptyPackages() {
@@ -102,7 +81,7 @@ class KotlinPackageEntryTable: JDOMExternalizable, Cloneable {
         for (entry in entries) {
             val element = Element("package")
             parentNode.addContent(element)
-            val name = if (entry == KotlinPackageEntry.ALL_OTHER_IMPORTS_ENTRY || entry == KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY) "" else entry.packageName
+            val name = if (entry.isSpecial) "" else entry.packageName
             val alias = (entry == KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY)
 
             element.setAttribute("name", name)
