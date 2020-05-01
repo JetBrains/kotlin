@@ -1,6 +1,6 @@
 FILE: superNotAvailable.kt
     public final fun R|kotlin/String|.f(): R|kotlin/Unit| {
-        super<<ERROR TYPE REF: No super type>>.<Unresolved name: compareTo>#(String())
+        super<<ERROR TYPE REF: No super type>>@f#.<Unresolved name: compareTo>#(String())
         super<<ERROR TYPE REF: No super type>>.<Unresolved name: compareTo>#(String())
     }
     public final fun foo(): R|kotlin/Unit| {

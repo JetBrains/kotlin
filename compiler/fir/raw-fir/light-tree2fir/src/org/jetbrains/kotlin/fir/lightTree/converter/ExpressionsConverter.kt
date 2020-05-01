@@ -1143,6 +1143,7 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitSuperExpression
      */
     private fun convertSuperExpression(superExpression: LighterASTNode): FirQualifiedAccessExpression {
+        val label: String? = superExpression.getLabelName()
         var superTypeRef: FirTypeRef = implicitType
         superExpression.forEachChildren {
             when (it.tokenType) {
@@ -1153,6 +1154,7 @@ class ExpressionsConverter(
         return buildQualifiedAccessExpression {
             source = superExpression.toFirSourceElement()
             calleeReference = buildExplicitSuperReference {
+                labelName = label
                 this.superTypeRef = superTypeRef
             }
         }

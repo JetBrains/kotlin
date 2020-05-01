@@ -962,6 +962,9 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         print("super<")
         superReference.superTypeRef.accept(this)
         print(">")
+        superReference.labelName?.let {
+            print("@$it#")
+        }
     }
 
     override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {

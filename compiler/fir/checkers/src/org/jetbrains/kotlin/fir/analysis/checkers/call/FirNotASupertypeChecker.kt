@@ -20,13 +20,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirNotASupertypeChecker : FirQualifiedAccessChecker() {
     override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val surrounding = context.findClosestClass() ?: return
+        val superReference = functionCall.calleeReference.safeAs<FirSuperReference>()
 
-        val targetClass = functionCall.calleeReference.safeAs<FirSuperReference>()
+        val targetClass = superReference
             ?.superTypeRef
             ?.toRegularClass(context.session)
             ?: return
 
+        val surrounding = context.findClosestClass(superReference.labelName) ?: return
         if (!targetClass.isSupertypeOf(surrounding)) {
             reporter.report(functionCall.source)
         }
@@ -37,13 +38,14 @@ object FirNotASupertypeChecker : FirQualifiedAccessChecker() {
      * item like FirRegularClass or FirAnonymousObject
      * or null if no such item could be found.
      */
-    private fun CheckerContext.findClosestClass(): FirClass<*>? {
+    private fun CheckerContext.findClosestClass(label: String?): FirClass<*>? {
         for (it in containingDeclarations.reversed()) {
-            if (
-                it is FirRegularClass ||
-                it is FirAnonymousObject
-            ) {
-                return it as FirClass<*>
+            if (it is FirRegularClass || it is FirAnonymousObject) {
+                val firClass = it as FirClass<*>
+                val className = firClass.symbol.classId.shortClassName
+                if (label == null || (!className.isSpecial && className.identifier == label)) {
+                    return firClass
+                }
             }
         }
 
