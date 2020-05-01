@@ -215,12 +215,7 @@ class ProjectSettingsTracker(
           if (!hasChanges(newSettingsFilesCRC)) {
             status.markReverted(currentTime())
           }
-          if (applyChangesOperation.isOperationCompleted()) {
-            projectTracker.scheduleChangeProcessing()
-          }
-          else {
-            projectTracker.scheduleProjectNotificationUpdate()
-          }
+          projectTracker.scheduleChangeProcessing()
         }
       }
     }

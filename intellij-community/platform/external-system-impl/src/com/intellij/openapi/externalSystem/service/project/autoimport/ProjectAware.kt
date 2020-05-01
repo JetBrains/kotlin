@@ -44,7 +44,8 @@ class ProjectAware(
   }
 
   override fun refreshProject() {
-    ExternalSystemUtil.refreshProject(projectPath, ImportSpecBuilder(project, systemId).build())
+    val importSpec = ImportSpecBuilder(project, systemId).dontReportRefreshErrors()
+    ExternalSystemUtil.refreshProject(projectPath, importSpec)
   }
 
   private inner class TaskNotificationListener(

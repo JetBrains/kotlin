@@ -43,7 +43,8 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   private val debugThrowable = Throwable("Initialized with project=(${project.isDisposed}, ${Disposer.isDisposed(project)}, $project)")
 
   private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
-  private val AUTO_REPARSE_DELAY get() = DaemonCodeAnalyzerSettings.getInstance().autoReparseDelay
+  private val AUTO_REPARSE_DELAY = DaemonCodeAnalyzerSettings.getInstance().autoReparseDelay
+  private val AUTO_RELOAD_DELAY = 2000
 
   private val settings get() = ProjectTrackerSettings.getInstance(project)
   private val projectStates = ConcurrentHashMap<State.Id, State.Project>()
@@ -53,6 +54,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   private val projectChangeOperation = AnonymousParallelOperationTrace(debugName = "Project change operation")
   private val projectRefreshOperation = CompoundParallelOperationTrace<String>(debugName = "Project refresh operation")
   private val dispatcher = MergingUpdateQueue("AutoImportProjectTracker.dispatcher", AUTO_REPARSE_DELAY, false, null, project)
+  private val delayDispatcher = MergingUpdateQueue("AutoImportProjectTracker.delayDispatcher", AUTO_RELOAD_DELAY, false, null, project)
   private val backgroundExecutor = AppExecutorUtil.createBoundedApplicationPoolExecutor("AutoImportProjectTracker.backgroundExecutor", 1)
 
   override var isAutoReloadExternalChanges by PropertyView(
@@ -91,7 +93,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   override fun scheduleProjectRefresh() {
     LOG.debug("Schedule project refresh")
     dispatcher.queue(PriorityEatUpdate(0) {
-      refreshProject(doImportDeactivatedProjects = true)
+      refreshProject(smart = false)
     })
   }
 
@@ -109,30 +111,35 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     })
   }
 
+  private fun delay(action: () -> Unit) {
+    delayDispatcher.queue(Update.create(this, action))
+  }
+
   private fun processChanges() {
     when (settings.autoReloadType) {
       AutoReloadType.ALL -> when (getModificationType()) {
-        INTERNAL -> refreshProject(doImportDeactivatedProjects = false)
-        EXTERNAL -> refreshProject(doImportDeactivatedProjects = false)
+        INTERNAL -> delay { refreshProject(smart = true) }
+        EXTERNAL -> delay { refreshProject(smart = true) }
         null -> updateProjectNotification()
       }
       AutoReloadType.SELECTIVE -> when (getModificationType()) {
         INTERNAL -> updateProjectNotification()
-        EXTERNAL -> refreshProject(doImportDeactivatedProjects = false)
+        EXTERNAL -> delay { refreshProject(smart = true) }
         null -> updateProjectNotification()
       }
       AutoReloadType.NONE -> updateProjectNotification()
     }
   }
 
-  private fun refreshProject(doImportDeactivatedProjects: Boolean) {
+  private fun refreshProject(smart: Boolean) {
     LOG.debug("Incremental project refresh")
     if (isDisabled.get() || Registry.`is`("external.system.auto.import.disabled")) return
     if (!projectChangeOperation.isOperationCompleted()) return
+    if (smart && !projectRefreshOperation.isOperationCompleted()) return
     var isSkippedProjectRefresh = true
     for (projectData in projectDataMap.values) {
       val projectId = projectData.projectAware.projectId.readableName
-      val isAllowAutoReload = doImportDeactivatedProjects || projectData.isActivated
+      val isAllowAutoReload = !smart || projectData.isActivated
       if (isAllowAutoReload && !projectData.isUpToDate()) {
         isSkippedProjectRefresh = false
         LOG.debug("$projectId: Project refresh")
@@ -264,8 +271,12 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     LOG.debug("Project tracker initialization")
     val connections = ApplicationManager.getApplication().messageBus.connect(project)
     connections.subscribe(BatchFileChangeListener.TOPIC, createProjectChangesListener())
+    dispatcher.setRestartTimerOnAdd(true)
     dispatcher.isPassThrough = !isAsyncChangesProcessing
     dispatcher.activate()
+    delayDispatcher.setRestartTimerOnAdd(true)
+    delayDispatcher.isPassThrough = !isAsyncChangesProcessing
+    delayDispatcher.activate()
   }
 
   @TestOnly
@@ -296,6 +307,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     projectChangeOperation.afterOperation { LOG.debug("Project change finished") }
     settings.autoReloadTypeProperty.afterChange { scheduleChangeProcessing() }
     asyncChangesProcessingProperty.afterChange { dispatcher.isPassThrough = !it }
+    asyncChangesProcessingProperty.afterChange { delayDispatcher.isPassThrough = !it }
   }
 
   private fun ProjectData.getState() = State.Project(status.isDirty(), settingsTracker.getState())
