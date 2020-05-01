@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.isSuperReferenceExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
@@ -353,7 +354,12 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             }
         }
         is FirSuperReference -> {
-            newCallee.superTypeRef as? FirResolvedTypeRef ?: buildErrorTypeRef {
+            val labelName = newCallee.labelName
+            val implicitReceiver = implicitReceiverStack[labelName] as? ImplicitDispatchReceiverValue
+            val resolvedTypeRef =
+                if (implicitReceiver != null) implicitReceiver.boundSymbol.phasedFir.superTypeRefs.singleOrNull() as? FirResolvedTypeRef
+                else newCallee.superTypeRef as? FirResolvedTypeRef
+            resolvedTypeRef ?: buildErrorTypeRef {
                 source = newCallee.source
                 diagnostic = ConeUnresolvedNameError(Name.identifier("super"))
             }
@@ -375,7 +381,6 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<
             }
         }
         is FirClassifierSymbol<*> -> {
-            val fir = (symbol as? AbstractFirBasedSymbol<*>)?.phasedFir
             // TODO: unhack
             buildResolvedTypeRef {
                 source = null

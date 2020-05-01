@@ -166,8 +166,12 @@ internal class CallAndReferenceGenerator(
         )
         return typeRef.convertWithOffsets { startOffset, endOffset ->
             if (qualifiedAccess.calleeReference is FirSuperReference) {
+                val superReference = qualifiedAccess.calleeReference as FirSuperReference
                 if (typeRef !is FirComposedSuperTypeRef) {
-                    val dispatchReceiver = conversionScope.lastDispatchReceiverParameter()
+                    val label = superReference.labelName
+                    val dispatchReceiver =
+                        if (label != null) conversionScope.dispatchReceiverParameter(label)
+                        else conversionScope.lastDispatchReceiverParameter()
                     if (dispatchReceiver != null) {
                         return@convertWithOffsets IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
                     }

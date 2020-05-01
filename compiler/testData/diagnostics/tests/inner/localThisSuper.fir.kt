@@ -13,10 +13,10 @@ class Outer : Trait {
             
             inner class Inner {
                 val t = this@Local
-                val s = super@Local.<!UNRESOLVED_REFERENCE!>bar<!>()
+                val s = super@Local.bar()
                 
                 val tt = this@Outer
-                val ss = super@Outer.<!UNRESOLVED_REFERENCE!>bar<!>()
+                val ss = super@Outer.bar()
             }
         }
     }

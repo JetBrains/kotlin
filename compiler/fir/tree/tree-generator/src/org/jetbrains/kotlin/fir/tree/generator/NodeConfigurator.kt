@@ -520,6 +520,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         superReference.configure {
+            +stringField("labelName", nullable = true)
             +field("superTypeRef", typeRef, withReplace = true)
         }
 

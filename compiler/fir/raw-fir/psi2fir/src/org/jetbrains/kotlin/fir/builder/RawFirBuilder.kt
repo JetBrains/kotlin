@@ -1704,6 +1704,7 @@ class RawFirBuilder(
                 this.source = source
                 calleeReference = buildExplicitSuperReference {
                     this.source
+                    labelName = expression.getLabelName()
                     superTypeRef = superType.toFirOrImplicitType()
                 }
             }
