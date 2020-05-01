@@ -36,7 +36,7 @@ class ScriptClassRootsStorage(val project: Project) : PersistentStateComponent<S
     fun save(roots: ScriptClassRootsCache.Builder) {
         classpath = roots.classes
         sources = roots.sources
-        sdks = roots.sdks.keys.toSet()
+        sdks = roots.sdks.values.mapNotNullTo(mutableSetOf()) { it?.name }
     }
 
     fun load(builder: ScriptClassRootsCache.Builder) {

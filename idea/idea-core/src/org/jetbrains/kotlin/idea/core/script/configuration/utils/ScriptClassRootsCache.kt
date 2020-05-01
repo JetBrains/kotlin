@@ -31,7 +31,7 @@ class ScriptClassRootsCache(
     val scripts: Map<String, LightScriptInfo>,
     val classes: Set<String>,
     val sources: Set<String>,
-    val sdks: Map<String, Sdk?>,
+    val sdks: Map<String?, Sdk?>,
     private val nonModulesSdks: Collection<Sdk>,
     val customDefinitionsUsed: Boolean
 ) {
@@ -53,10 +53,10 @@ class ScriptClassRootsCache(
     )
 
     class Builder(val project: Project) {
-        private val defaultSdk = getScriptDefaultSdk()
-
         val scripts = mutableMapOf<String, LightScriptInfo>()
-        val sdks = mutableMapOf<String, Sdk?>()
+
+        private val defaultSdk = getScriptDefaultSdk()
+        val sdks = mutableMapOf<String?, Sdk?>(null to defaultSdk)
 
         val classes = mutableSetOf<String>()
         val sources = mutableSetOf<String>()
@@ -210,7 +210,7 @@ class ScriptClassRootsCache(
 
     fun hasInvalidSdk(project: Project): Boolean {
         val builder = Builder(project)
-        if (sdks.any { (home, sdk) -> builder.addSdk(File(home)) != sdk }) return true
+        if (sdks.any { (home, sdk) -> builder.addSdk(home?.let(::File)) != sdk }) return true
         if (builder.collectNonIndexedSdks() != nonModulesSdks) return true
         return false
     }
