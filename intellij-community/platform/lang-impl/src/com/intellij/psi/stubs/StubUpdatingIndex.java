@@ -137,10 +137,15 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
         try {
           SerializedStubTree prebuiltTree = findPrebuiltSerializedStubTree(inputData);
           if (prebuiltTree != null && PrebuiltIndexProvider.DEBUG_PREBUILT_INDICES) {
+            prebuiltTree = prebuiltTree.reSerialize(mySerializationManager, myStubIndexesExternalizer);
             assertRebuiltTreeMatchesActualTree(inputData, type, prebuiltTree);
             return prebuiltTree;
           }
+        } catch (Exception e) {
+          LOG.error("Error while indexing: " + inputData.getFileName() + " using prebuilt stub index", e);
+        }
 
+        try {
           SerializedStubTree builtTree = buildSerializedStubTree(inputData, type);
           if (builtTree != null && DebugAssertions.DEBUG) {
             assertRebuiltTreeMatchesActualTree(inputData, type, builtTree);
@@ -159,7 +164,7 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
   }
 
   @Nullable
-  public SerializedStubTree findPrebuiltSerializedStubTree(@NotNull FileContent fileContent) {
+  static SerializedStubTree findPrebuiltSerializedStubTree(@NotNull FileContent fileContent) {
     if (!PrebuiltIndexProvider.USE_PREBUILT_INDEX) {
       return null;
     }
@@ -167,7 +172,7 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
     if (prebuiltStubsProvider == null) {
       return null;
     }
-    return prebuiltStubsProvider.findStub(fileContent, mySerializationManager, myStubIndexesExternalizer);
+    return prebuiltStubsProvider.findStub(fileContent);
   }
 
   @Nullable

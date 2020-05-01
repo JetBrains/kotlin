@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
-import com.intellij.index.PrebuiltIndexProvider;
 import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -253,16 +252,9 @@ final class StubTreeLoaderImpl extends StubTreeLoader {
 
   @Override
   protected boolean isPrebuilt(@NotNull VirtualFile virtualFile) {
-    if (!PrebuiltIndexProvider.USE_PREBUILT_INDEX) {
-      return false;
-    }
-    StubUpdatingIndex stubUpdatingIndex = FileBasedIndexExtension.EXTENSION_POINT_NAME.findExtension(StubUpdatingIndex.class);
-    if (stubUpdatingIndex == null) {
-      return false;
-    }
     try {
       FileContent fileContent = FileContentImpl.createByFile(virtualFile);
-      SerializedStubTree prebuiltStub = stubUpdatingIndex.findPrebuiltSerializedStubTree(fileContent);
+      SerializedStubTree prebuiltStub = StubUpdatingIndex.findPrebuiltSerializedStubTree(fileContent);
       return prebuiltStub != null;
     }
     catch (Exception ignored) {
