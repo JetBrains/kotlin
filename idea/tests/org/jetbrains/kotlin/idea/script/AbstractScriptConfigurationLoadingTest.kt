@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.*
+import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.FileContentsDependentConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.testingBackgroundExecutor
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurationTest() {
-    lateinit var scriptConfigurationManager: ScriptConfigurationManager
+    lateinit var scriptConfigurationManager: CompositeScriptConfigurationManager
 
     companion object {
         private var occurredLoadings = 0
@@ -41,7 +42,7 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
         testScriptConfigurationNotification = true
         ApplicationManager.getApplication().isScriptChangesNotifierDisabled = false
 
-        scriptConfigurationManager = ServiceManager.getService(project, ScriptConfigurationManager::class.java)
+        scriptConfigurationManager = ServiceManager.getService(project, ScriptConfigurationManager::class.java) as CompositeScriptConfigurationManager
     }
 
     override fun tearDown() {
@@ -103,7 +104,7 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
     protected fun makeChanges(contents: String, file: KtFile = myFile as KtFile) {
         changeContents(contents)
 
-        scriptConfigurationManager.updater.ensureUpToDatedConfigurationSuggested(file)
+        scriptConfigurationManager.default.ensureUpToDatedConfigurationSuggested(file)
     }
 
     protected fun changeContents(contents: String, file: PsiFile = myFile) {

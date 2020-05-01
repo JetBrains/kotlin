@@ -92,12 +92,12 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
     private val VirtualFile.localPath
         get() = path
 
-    fun getScriptInfo(file: VirtualFile): GradleBuildRoot.Imported.ScriptInfo? =
-        manager.getLightScriptInfo(file.localPath) as? GradleBuildRoot.Imported.ScriptInfo
+    fun getScriptInfo(file: VirtualFile): GradleScriptInfo? =
+        manager.getLightScriptInfo(file.localPath) as? GradleScriptInfo
 
     class ScriptUnderRoot(
         val root: GradleBuildRoot?,
-        val script: GradleBuildRoot.Imported.ScriptInfo? = null
+        val script: GradleScriptInfo? = null
     )
 
     fun findScriptBuildRoot(gradleKtsFile: VirtualFile): ScriptUnderRoot? {
@@ -113,7 +113,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
             gradleKtsFile.name == "init.gradle.kts"
         ) {
             // build|settings|init.gradle.kts scripts should be located near gradle project root only
-            val gradleBuild = roots.byProjectDir[gradleKtsFile.parent.localPath]
+            val gradleBuild = roots.getBuildByProjectDir(gradleKtsFile.parent.localPath)
             if (gradleBuild != null) return ScriptUnderRoot(gradleBuild)
         }
 
@@ -145,9 +145,9 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         if (old is GradleBuildRoot.Legacy) return
 
         val templateClasspath = GradleScriptDefinitionsContributor.getDefinitionsTemplateClasspath(project)
-        val data = GradleImportedBuildRootData(build.projectRoots, templateClasspath, build.models)
+        val data = GradleBuildRootData(build.projectRoots, templateClasspath, build.models)
         val newSupport = tryCreateImportedRoot(build.workingDir) { data } ?: return
-        KotlinDslScriptModels.write(newSupport.dir, data)
+        GradleBuildRootDataSerializer.write(newSupport.dir, data)
         roots[build.workingDir] = newSupport
         manager.updater.ensureUpdateScheduled()
     }
@@ -170,7 +170,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
                     val buildRoot = VfsUtil.findFile(Paths.get(it), false)
                     if (buildRoot != null) {
                         if (roots.remove(buildRoot.localPath) != null) {
-                            KotlinDslScriptModels.remove(buildRoot)
+                            GradleBuildRootDataSerializer.remove(buildRoot)
                         }
                     }
                 }
@@ -233,9 +233,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         } else {
             val newRoot = loadLinkedRoot(settings)
             roots[newRoot.pathPrefix] = newRoot
-            if (newRoot is GradleBuildRoot.Imported) {
-                updater.ensureUpdateScheduled()
-            }
+            updater.ensureUpdateScheduled()
             return newRoot
         }
     }
@@ -245,7 +243,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
 
     private fun tryLoadFromFsCache(settings: GradleProjectSettings) =
         tryCreateImportedRoot(settings.externalProjectPath) {
-            KotlinDslScriptModels.read(it)
+            GradleBuildRootDataSerializer.read(it)
         }
 
     private fun createOtherLinkedRoot(settings: GradleProjectSettings): GradleBuildRoot.Linked {
@@ -258,25 +256,15 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
 
     private fun tryCreateImportedRoot(
         externalProjectPath: String,
-        dataProvider: (buildRoot: VirtualFile) -> GradleImportedBuildRootData?
+        dataProvider: (buildRoot: VirtualFile) -> GradleBuildRootData?
     ): GradleBuildRoot.Imported? {
-        val gradleExeSettings =
-            ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
-                project,
-                externalProjectPath,
-                GradleConstants.SYSTEM_ID
-            )
-
         val buildRoot = VfsUtil.findFile(Paths.get(externalProjectPath), true) ?: return null
         val data = dataProvider(buildRoot) ?: return null
+        val javaHome = ExternalSystemApiUtil
+            .getExecutionSettings<GradleExecutionSettings>(project, externalProjectPath, GradleConstants.SYSTEM_ID)
+            .javaHome?.let { File(it) }
 
-        val newSupport = GradleBuildRoot.Imported(
-            project,
-            buildRoot,
-            GradleKtsContext(gradleExeSettings.javaHome?.let { File(it) }),
-            data
-        )
-
+        val newSupport = GradleBuildRoot.Imported(project, buildRoot, javaHome, data)
         val oldSupport = roots.getBuildRoot(externalProjectPath)
         if (oldSupport != null) {
             hideNotificationForProjectImport(project)

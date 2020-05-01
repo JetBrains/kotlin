@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.plugins.gradle.settings.GradleLocalSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -94,14 +93,5 @@ fun useScriptConfigurationFromImportOnly(): Boolean {
     return Registry.`is`("kotlin.gradle.scripts.useIdeaProjectImport", false)
 }
 
-fun getGradleVersion(project: Project, settings: GradleProjectSettings): String {
-    val localVersion = GradleLocalSettings.getInstance(project).getGradleVersion(settings.externalProjectPath)
-    if (localVersion != null) return localVersion
-
-    return settings.resolveGradleVersion().version
-}
-
-fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings> {
-    val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings
-    return gradleSettings.getLinkedProjectsSettings()
-}
+fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings> =
+    (ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings).linkedProjectsSettings
