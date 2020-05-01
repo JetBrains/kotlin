@@ -9,6 +9,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 
 class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
     init {
@@ -17,7 +18,7 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
     }
 
     override fun isApplicable(vFile: VirtualFile): Boolean {
-        return GradleScriptingSupportProvider.getInstance(project).isApplicable(vFile)
+        return GradleBuildRootsManager.getInstance(project).isApplicable(vFile)
     }
 
     override fun editorActivated(vFile: VirtualFile) {
@@ -26,6 +27,6 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
 
     override fun documentChanged(vFile: VirtualFile) {
 
-        GradleScriptingSupportProvider.getInstance(project).getScriptInfo(vFile)?.model?.inputs
+        GradleBuildRootsManager.getInstance(project).getScriptInfo(vFile)?.model?.inputs
     }
 }

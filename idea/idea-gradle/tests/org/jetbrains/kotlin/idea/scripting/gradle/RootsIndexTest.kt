@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootIndex
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -12,7 +13,7 @@ import kotlin.test.assertFails
 class RootsIndexTest {
     @Test
     fun findRoot() {
-        val roots = RootsIndex<Int>()
+        val roots = GradleBuildRootIndex<Int>()
         roots["a/b/c"] = 1
         assertFails { roots["a/b/c/d"] = 2 }
         roots["a/c"] = 3

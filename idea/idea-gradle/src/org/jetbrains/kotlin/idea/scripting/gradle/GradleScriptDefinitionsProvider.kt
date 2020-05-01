@@ -11,6 +11,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.util.EnvironmentUtil
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
@@ -40,6 +41,12 @@ import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class GradleScriptDefinitionsContributor(private val project: Project) : ScriptDefinitionSourceAsContributor {
+    companion object {
+        val definitions get() =
+            ScriptDefinitionContributor.EP_NAME.getExtensions(project)
+                .filterIsInstance<GradleScriptDefinitionsContributor>()
+                .single().definitions.toList()
+    }
 
     override val id: String = "Gradle Kotlin DSL"
     private val failedToLoad = AtomicBoolean(false)

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.scripting.gradle
+package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -11,7 +11,11 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleImportedBuildRootData
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleKtsContext
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
+import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
@@ -23,20 +27,23 @@ import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 
 sealed class GradleBuildRoot {
-    abstract val pathPrefix: String
-
     /**
      * Add Gradle Project
      * for other scripts too
      *
-     * definitely not precompiled scripts (it is detected as in sources roots)
+     * precompiled script
      * may be also included scripts not returned by gradle: todo proper notification
      */
-    class Unlinked(override val pathPrefix: String) : GradleBuildRoot()
+    class Unlinked() : GradleBuildRoot()
 
     abstract class Linked : GradleBuildRoot() {
         @Volatile
         var importing = false
+
+        abstract val pathPrefix: String
+
+        open val projectRoots: Collection<String> get() = listOf()
+        open val importedScripts: Collection<String> get() = listOf()
     }
 
     /**
@@ -70,13 +77,17 @@ sealed class GradleBuildRoot {
     ) : Linked() {
         override val pathPrefix: String = dir.path
 
+        override val projectRoots: Collection<String>
+            get() = data.projectRoots
+
+        override val importedScripts: Collection<String>
+            get() = data.models.map { it.file }
+
         fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
             val javaHome = context.javaHome
             javaHome?.let { builder.addSdk(it) }
 
-            val definitions = ScriptDefinitionContributor.EP_NAME.getExtensions(project)
-                .filterIsInstance<GradleScriptDefinitionsContributor>()
-                .single().definitions.toList()
+            val definitions = GradleScriptDefinitionsContributor.definitions
 
             builder.classes.addAll(data.templateClasspath)
             data.models.forEach { script ->
@@ -86,7 +97,12 @@ sealed class GradleBuildRoot {
                     definitions.firstOrNull { it.isScript(src) }
                 } else null
 
-                builder.scripts[script.file] = ScriptInfo(this, def, script)
+                builder.scripts[script.file] =
+                    ScriptInfo(
+                        this,
+                        def,
+                        script
+                    )
 
                 builder.classes.addAll(script.classPath)
                 builder.sources.addAll(script.sourcePath)

@@ -15,7 +15,7 @@ import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher
-import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupportProvider
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
@@ -102,6 +102,7 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
     }
 
 class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSystemTaskId) {
+    val projectRoots = mutableSetOf<String>()
     val models = mutableListOf<KotlinDslScriptModel>()
 }
 
@@ -116,7 +117,7 @@ fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {
         build.models.map { FileUtil.toSystemIndependentName(File(it.file).parent) }.toSet()
     )
 
-    GradleScriptingSupportProvider.getInstance(project).update(build)
+    GradleBuildRootsManager.getInstance(project).update(build)
 
     project.service<GradleScriptInputsWatcher>().clearState()
 }

@@ -9,5 +9,6 @@ import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 
 data class GradleImportedBuildRootData(
     val templateClasspath: List<String>,
+    val projectRoots: Collection<String>,
     val models: List<KotlinDslScriptModel>
 )

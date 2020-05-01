@@ -17,6 +17,8 @@ import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
@@ -28,7 +30,7 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
         if (!isGradleKotlinScript(file)) return null
         if (file.fileType != KotlinFileType.INSTANCE) return null
 
-        return when (GradleScriptingSupportProvider.getInstance(project).findScriptBuildRoot(file)) {
+        return when (GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file)) {
             is GradleBuildRoot.Unlinked -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("text.the.associated.gradle.project.isn.t.imported"))
 
