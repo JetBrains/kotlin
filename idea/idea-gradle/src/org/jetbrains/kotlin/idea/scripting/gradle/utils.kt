@@ -19,12 +19,9 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.plugins.gradle.settings.GradleLocalSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
-import org.slf4j.LoggerFactory
-import kotlin.collections.HashMap
 
 private val sections = arrayListOf("buildscript", "plugins", "initscript", "pluginManagement")
 
@@ -96,57 +93,5 @@ fun useScriptConfigurationFromImportOnly(): Boolean {
     return Registry.`is`("kotlin.gradle.scripts.useIdeaProjectImport", false)
 }
 
-fun getGradleVersion(project: Project, settings: GradleProjectSettings): String {
-    val localVersion = GradleLocalSettings.getInstance(project).getGradleVersion(settings.externalProjectPath)
-    if (localVersion != null) return localVersion
-
-    return settings.resolveGradleVersion().version
-}
-
-fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings> {
-    val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings
-    return gradleSettings.getLinkedProjectsSettings()
-}
-
-class RootsIndex {
-    private val log = LoggerFactory.getLogger(RootsIndex::class.java)
-
-    private val buildRoots = HashMap<String, GradleBuildRoot>()
-    private val scripts = HashMap<String, GradleBuildRoot>()
-    val values: Collection<GradleBuildRoot>
-        get() = buildRoots.values
-
-    @Synchronized
-    fun rebuildProjectRoots() {
-//        values.forEach {
-//            it.
-//        }
-    }
-
-    @Synchronized
-    fun getBuildRoot(dir: String) = buildRoots[dir]
-
-    @Synchronized
-    fun findNearestRoot(path: String): GradleBuildRoot? {
-        var max: Pair<String, GradleBuildRoot>? = null
-        buildRoots.entries.forEach {
-            if (path.startsWith(it.key) && (max == null || it.key.length > max!!.first.length)) {
-                max = it.key to it.value
-            }
-        }
-        return max?.second
-    }
-
-    @Synchronized
-    operator fun set(prefix: String, value: GradleBuildRoot) {
-        val old = buildRoots.put(prefix, value)
-        rebuildProjectRoots()
-        log.info("{}: {} -> {}", prefix, old, value)
-    }
-
-    @Synchronized
-    fun remove(prefix: String) = buildRoots.remove(prefix)?.also {
-        rebuildProjectRoots()
-        log.info("{}: removed", prefix)
-    }
-}
+fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings> =
+    (ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings).linkedProjectsSettings

@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootData
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.readKotlinDslScriptModels
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.writeKotlinDslScriptModels
 import org.junit.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -13,11 +16,12 @@ import java.io.DataInputStream
 import java.io.DataOutputStream
 import kotlin.test.assertEquals
 
-class KotlinDslScriptModelsTest {
+class GradleBuildRootDataSerializerTest {
     @Test
     fun write() {
-        val data = GradleImportedBuildRootData(
+        val data = GradleBuildRootData(
             listOf("a", "b", "c"),
+            listOf("a"),
             listOf(
                 KotlinDslScriptModel(
                     "a",

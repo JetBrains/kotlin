@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.scripting.gradle
+package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.FileAttribute
@@ -11,15 +11,16 @@ import org.jetbrains.kotlin.idea.core.util.readNullable
 import org.jetbrains.kotlin.idea.core.util.readString
 import org.jetbrains.kotlin.idea.core.util.writeNullable
 import org.jetbrains.kotlin.idea.core.util.writeString
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleKotlinScriptConfigurationInputs
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
 
-internal object KotlinDslScriptModels {
-    private val attribute = FileAttribute("kotlin-dsl-script-models", 3, false)
+internal object GradleBuildRootDataSerializer {
+    private val attribute = FileAttribute("kotlin-dsl-script-models", 4, false)
 
-    fun read(buildRoot: VirtualFile): GradleImportedBuildRootData? {
+    fun read(buildRoot: VirtualFile): GradleBuildRootData? {
         return attribute.readAttribute(buildRoot)?.use {
             it.readNullable {
                 readKotlinDslScriptModels(it)
@@ -27,7 +28,7 @@ internal object KotlinDslScriptModels {
         }
     }
 
-    fun write(buildRoot: VirtualFile, data: GradleImportedBuildRootData?) {
+    fun write(buildRoot: VirtualFile, data: GradleBuildRootData?) {
         attribute.writeAttribute(buildRoot).use {
             it.writeNullable(data) {
                 writeKotlinDslScriptModels(this, it)
@@ -40,8 +41,9 @@ internal object KotlinDslScriptModels {
     }
 }
 
-internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleImportedBuildRootData) {
+internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleBuildRootData) {
     val strings = StringsPool.writer(output)
+    strings.addStrings(data.projectRoots)
     strings.addStrings(data.templateClasspath)
     data.models.forEach {
         strings.addString(it.file)
@@ -50,6 +52,7 @@ internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleImported
         strings.addStrings(it.imports)
     }
     strings.writeHeader()
+    strings.writeStringIds(data.projectRoots)
     strings.writeStringIds(data.templateClasspath)
     output.writeList(data.models) {
         strings.writeStringId(it.file)
@@ -61,9 +64,10 @@ internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleImported
     }
 }
 
-internal fun readKotlinDslScriptModels(input: DataInputStream): GradleImportedBuildRootData {
+internal fun readKotlinDslScriptModels(input: DataInputStream): GradleBuildRootData {
     val strings = StringsPool.reader(input)
 
+    val projectRoots = strings.readStrings()
     val templateClasspath = strings.readStrings()
 
     val models = input.readList {
@@ -77,7 +81,7 @@ internal fun readKotlinDslScriptModels(input: DataInputStream): GradleImportedBu
         )
     }
 
-    return GradleImportedBuildRootData(templateClasspath, models)
+    return GradleBuildRootData(projectRoots, templateClasspath, models)
 }
 
 private object StringsPool {
