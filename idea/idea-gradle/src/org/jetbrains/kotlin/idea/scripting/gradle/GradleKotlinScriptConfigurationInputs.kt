@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
@@ -25,10 +26,14 @@ data class GradleKotlinScriptConfigurationInputs(
     val inputsTS: Long
 ) : CachedConfigurationInputs {
     override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean {
-        val actualStamp = getGradleScriptInputsStamp(project, file, ktFile) ?: return false
+        try {
+            val actualStamp = getGradleScriptInputsStamp(project, file, ktFile) ?: return false
 
-        if (actualStamp.sections != this.sections) return false
+            if (actualStamp.sections != this.sections) return false
 
-        return project.service<GradleScriptInputsWatcher>().areRelatedFilesUpToDate(file, inputsTS)
+            return project.service<GradleScriptInputsWatcher>().areRelatedFilesUpToDate(file, inputsTS)
+        } catch (cancel: ProcessCanceledException) {
+            return false
+        }
     }
 }
