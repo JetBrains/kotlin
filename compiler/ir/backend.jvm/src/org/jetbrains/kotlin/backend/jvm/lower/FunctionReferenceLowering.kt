@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.ir.isSuspend
-import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -150,10 +147,11 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val adaptedReferenceOriginalTarget: IrFunction? = adapteeCall?.symbol?.owner
         private val isAdaptedReference = adaptedReferenceOriginalTarget != null
 
+        private val isKotlinFunInterface =
+            samSuperType != null && samSuperType.getClass()?.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+
         private val needToGenerateSamEqualsHashCodeMethods =
-            samSuperType != null &&
-                    samSuperType.getClass()?.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB &&
-                    (isAdaptedReference || !isLambda)
+            isKotlinFunInterface && (isAdaptedReference || !isLambda)
 
         private val superType =
             samSuperType ?: when {
@@ -228,6 +226,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
                 if (needToGenerateSamEqualsHashCodeMethods) {
                     generateSamEqualsHashCodeMethods(boundReceiverVar)
+                }
+                if (isKotlinFunInterface) {
+                    functionReferenceClass.addFakeOverridesViaIncorrectHeuristic()
                 }
 
                 +functionReferenceClass
