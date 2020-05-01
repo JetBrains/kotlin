@@ -49,13 +49,9 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
       VALUE_PARAMETER name:yy index:1 type:kotlin.Int
       BLOCK_BODY
         BLOCK type=<root>.Base origin=ARGUMENTS_REORDERING_FOR_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-            GET_VAR 'yy: kotlin.Int declared in <root>.Test1.<init>' type=kotlin.Int origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
-            GET_VAR 'xx: kotlin.Int declared in <root>.Test1.<init>' type=kotlin.Int origin=null
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.Base'
-            x: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.Test1.<init>' type=kotlin.Int origin=null
-            y: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.Test1.<init>' type=kotlin.Int origin=null
+            x: GET_VAR 'xx: kotlin.Int declared in <root>.Test1.<init>' type=kotlin.Int origin=null
+            y: GET_VAR 'yy: kotlin.Int declared in <root>.Test1.<init>' type=kotlin.Int origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.Base]'
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
@@ -89,13 +85,9 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
       VALUE_PARAMETER name:yy index:1 type:kotlin.Int
       BLOCK_BODY
         BLOCK type=<root>.Base origin=ARGUMENTS_REORDERING_FOR_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
-            GET_VAR 'yy: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
-            GET_VAR 'xx: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.Base'
-            x: GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.Test2.<init>' type=kotlin.Int origin=null
-            y: GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.Test2.<init>' type=kotlin.Int origin=null
+            x: GET_VAR 'xx: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
+            y: GET_VAR 'yy: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.Base]'
     CONSTRUCTOR visibility:public <> (xxx:kotlin.Int, yyy:kotlin.Int, a:kotlin.Any) returnType:<root>.Test2
       VALUE_PARAMETER name:xxx index:0 type:kotlin.Int
@@ -103,13 +95,9 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
       VALUE_PARAMETER name:a index:2 type:kotlin.Any
       BLOCK_BODY
         BLOCK type=<root>.Test2 origin=ARGUMENTS_REORDERING_FOR_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
-            GET_VAR 'yyy: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
-            GET_VAR 'xxx: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (xx: kotlin.Int, yy: kotlin.Int) declared in <root>.Test2'
-            xx: GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.Test2.<init>' type=kotlin.Int origin=null
-            yy: GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.Test2.<init>' type=kotlin.Int origin=null
+            xx: GET_VAR 'xxx: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
+            yy: GET_VAR 'yyy: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=null
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
