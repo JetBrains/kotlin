@@ -468,7 +468,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.superTypes += coroutineBaseClass.defaultType
             }
 
-            coroutineClass.addFakeOverrides(implementedMembers)
+            coroutineClass.addFakeOverridesViaIncorrectHeuristic(implementedMembers)
 
             // TODO: to meet PIR lower model constructor modification shouldn't be performed here
             initializeStateMachine(listOf(coroutineConstructor), coroutineClassThis)

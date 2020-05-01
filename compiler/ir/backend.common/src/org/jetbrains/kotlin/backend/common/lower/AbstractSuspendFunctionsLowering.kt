@@ -367,7 +367,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             }
 
             coroutineClass.superTypes += superTypes
-            coroutineClass.addFakeOverrides()
+            coroutineClass.addFakeOverridesViaIncorrectHeuristic()
 
             initializeStateMachine(coroutineConstructors, coroutineClassThis)
 
