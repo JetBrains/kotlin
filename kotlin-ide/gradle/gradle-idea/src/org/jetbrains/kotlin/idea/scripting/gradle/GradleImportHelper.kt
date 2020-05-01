@@ -21,19 +21,17 @@ import com.intellij.testFramework.LightVirtualFileBase
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelResolver
-import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
-import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension
 import org.jetbrains.plugins.gradle.util.GradleConstants
-import java.util.function.Predicate
 
 fun runPartialGradleImport(project: Project) {
-    getGradleProjectSettings(project).forEach {
+    getGradleProjectSettings(project).forEach { gradleProjectSettings ->
         ExternalSystemUtil.refreshProject(
-            it.externalProjectPath,
+            gradleProjectSettings.externalProjectPath,
             ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
                 .projectResolverPolicy(
-                    GradlePartialResolverPolicy(Predicate<GradleProjectResolverExtension?> { it is KotlinDslScriptModelResolver })
+                    GradlePartialResolverPolicy { it is KotlinDslScriptModelResolver }
                 )
         )
     }
@@ -81,6 +79,6 @@ class LoadConfigurationAction : AnAction(
         if (virtualFile is LightVirtualFileBase) return false
         if (virtualFile == null || !virtualFile.isValid) return false
 
-        return GradleScriptingSupportProvider.getInstance(project).isConfigurationOutOfDate(virtualFile)
+        return GradleBuildRootsManager.getInstance(project).isConfigurationOutOfDate(virtualFile)
     }
 }
