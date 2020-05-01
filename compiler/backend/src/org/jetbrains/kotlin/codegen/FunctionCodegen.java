@@ -70,7 +70,6 @@ import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.generateBridgeForMainFunctionIfNecessary;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
@@ -1062,18 +1061,6 @@ public class FunctionCodegen {
                 overridden -> !(overridden.getContainingDeclaration() instanceof JavaClassDescriptor) &&
                               isClass(overridden.getContainingDeclaration())
         );
-    }
-
-    public static boolean isMethodOfAny(@NotNull FunctionDescriptor descriptor) {
-        String name = descriptor.getName().asString();
-        List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
-        if (parameters.isEmpty()) {
-            return name.equals("hashCode") || name.equals("toString");
-        }
-        else if (parameters.size() == 1 && name.equals("equals")) {
-            return isNullableAny(parameters.get(0).getType());
-        }
-        return false;
     }
 
     @NotNull

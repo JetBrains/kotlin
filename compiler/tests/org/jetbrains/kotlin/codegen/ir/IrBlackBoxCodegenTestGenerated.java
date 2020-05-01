@@ -11244,6 +11244,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/funInterface/multimodule.kt");
         }
 
+        @TestMetadata("nonAbstractMethod.kt")
+        public void testNonAbstractMethod() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/nonAbstractMethod.kt");
+        }
+
         @TestMetadata("nullableSam.kt")
         public void testNullableSam() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/nullableSam.kt");
@@ -15419,6 +15424,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/defaultArgsViaAnonymousObject.kt");
                 }
 
+                @TestMetadata("funInterface.kt")
+                public void testFunInterface() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/funInterface.kt");
+                }
+
                 @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
                 public void testInheritedFunctionWithDefaultParameters() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/inheritedFunctionWithDefaultParameters.kt");
@@ -15674,6 +15684,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 @TestMetadata("defaultArgsViaAnonymousObject.kt")
                 public void testDefaultArgsViaAnonymousObject() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/defaultArgsViaAnonymousObject.kt");
+                }
+
+                @TestMetadata("funInterface.kt")
+                public void testFunInterface() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/funInterface.kt");
                 }
 
                 @TestMetadata("inheritedFunctionWithDefaultParameters.kt")

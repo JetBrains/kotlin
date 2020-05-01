@@ -12411,11 +12411,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FunInterface extends AbstractLightAnalysisModeTest {
-        @TestMetadata("funInterfaceInheritance.kt")
-        public void ignoreFunInterfaceInheritance() throws Exception {
-            runTest("compiler/testData/codegen/box/funInterface/funInterfaceInheritance.kt");
-        }
-
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -12444,6 +12439,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/funInterface/funConversionInVararg.kt");
         }
 
+        @TestMetadata("funInterfaceInheritance.kt")
+        public void testFunInterfaceInheritance() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/funInterfaceInheritance.kt");
+        }
+
         @TestMetadata("funInterfaceWithReceiver.kt")
         public void testFunInterfaceWithReceiver() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/funInterfaceWithReceiver.kt");
@@ -12462,6 +12462,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("multimodule.kt")
         public void testMultimodule() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/multimodule.kt");
+        }
+
+        @TestMetadata("nonAbstractMethod.kt")
+        public void testNonAbstractMethod() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/nonAbstractMethod.kt");
         }
 
         @TestMetadata("nullableSam.kt")
@@ -16639,6 +16644,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/defaultArgsViaAnonymousObject.kt");
                 }
 
+                @TestMetadata("funInterface.kt")
+                public void testFunInterface() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/funInterface.kt");
+                }
+
                 @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
                 public void testInheritedFunctionWithDefaultParameters() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/inheritedFunctionWithDefaultParameters.kt");
@@ -16894,6 +16904,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("defaultArgsViaAnonymousObject.kt")
                 public void testDefaultArgsViaAnonymousObject() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/defaultArgsViaAnonymousObject.kt");
+                }
+
+                @TestMetadata("funInterface.kt")
+                public void testFunInterface() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/funInterface.kt");
                 }
 
                 @TestMetadata("inheritedFunctionWithDefaultParameters.kt")

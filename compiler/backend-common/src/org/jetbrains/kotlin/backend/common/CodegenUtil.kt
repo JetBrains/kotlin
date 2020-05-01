@@ -93,20 +93,18 @@ object CodegenUtil {
     private fun mapMembers(
         inherited: CallableMemberDescriptor,
         traitMember: CallableMemberDescriptor
-    ): LinkedHashMap<FunctionDescriptor, FunctionDescriptor> {
-        val result = linkedMapOf<FunctionDescriptor, FunctionDescriptor>()
-        if (traitMember is SimpleFunctionDescriptor) {
-            result[traitMember] = inherited as FunctionDescriptor
-        } else if (traitMember is PropertyDescriptor) {
+    ): Map<FunctionDescriptor, FunctionDescriptor> = when (traitMember) {
+        is SimpleFunctionDescriptor -> mapOf(traitMember to inherited as FunctionDescriptor)
+        is PropertyDescriptor -> linkedMapOf<FunctionDescriptor, FunctionDescriptor>().also { result ->
             for (traitAccessor in traitMember.accessors) {
                 for (inheritedAccessor in (inherited as PropertyDescriptor).accessors) {
-                    if (inheritedAccessor::class.java == traitAccessor::class.java) { // same accessor kind
-                        result.put(traitAccessor, inheritedAccessor)
+                    if ((inheritedAccessor is PropertyGetterDescriptor) == (traitAccessor is PropertyGetterDescriptor)) {
+                        result[traitAccessor] = inheritedAccessor
                     }
                 }
             }
         }
-        return result
+        else -> error("Unexpected member: $inherited")
     }
 
     @JvmStatic

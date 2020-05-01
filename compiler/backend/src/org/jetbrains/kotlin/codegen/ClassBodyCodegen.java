@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
@@ -219,21 +220,32 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     protected void generateDelegatesToDefaultImpl() {
         if (isJvmInterface(descriptor)) return;
 
+        boolean isErasedInlineClass = InlineClassesUtilsKt.isInlineClass(descriptor) && kind == OwnerKind.ERASED_INLINE_CLASS;
+        JvmKotlinType receiverType = new JvmKotlinType(typeMapper.mapType(descriptor), descriptor.getDefaultType());
+
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
-            FunctionDescriptor interfaceFun = entry.getKey();
-            //skip java 8 default methods
-            if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) &&
-                !JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefault(
-                        DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(interfaceFun), state.getJvmDefaultMode()
-                )
-            ) {
-                generateDelegationToDefaultImpl(interfaceFun, entry.getValue());
-            }
+            generateDelegationToDefaultImpl(entry.getKey(), entry.getValue(), receiverType, functionCodegen, state, isErasedInlineClass);
         }
     }
 
-    private void generateDelegationToDefaultImpl(@NotNull FunctionDescriptor interfaceFun, @NotNull FunctionDescriptor inheritedFun) {
+    public static void generateDelegationToDefaultImpl(
+            @NotNull FunctionDescriptor interfaceFun,
+            @NotNull FunctionDescriptor inheritedFun,
+            @NotNull JvmKotlinType receiverType,
+            @NotNull FunctionCodegen functionCodegen,
+            @NotNull GenerationState state,
+            boolean isErasedInlineClass
+    ) {
+        // Skip Java 8 default methods
+        if (CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) ||
+            JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefault(
+                    DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(interfaceFun), state.getJvmDefaultMode()
+            )
+        ) {
+            return;
+        }
 
+        KotlinTypeMapper typeMapper = state.getTypeMapper();
         functionCodegen.generateMethod(
                 new JvmDeclarationOrigin(
                         CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, descriptorToDeclaration(interfaceFun), interfaceFun, null
@@ -248,7 +260,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
                         DeclarationDescriptor declarationInheritedFun = inheritedFun.getContainingDeclaration();
                         PsiElement classForInheritedFun = descriptorToDeclaration(declarationInheritedFun);
                         if (classForInheritedFun instanceof KtDeclaration) {
-                            codegen.markLineNumber((KtElement) classForInheritedFun, false);
+                            codegen.markLineNumber(classForInheritedFun, false);
                         }
 
                         ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
@@ -282,18 +294,15 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
                         InstructionAdapter iv = codegen.v;
                         Type[] myArgTypes = signature.getAsmMethod().getArgumentTypes();
                         Type[] toArgTypes = defaultImplsMethod.getArgumentTypes();
-                        boolean isErasedInlineClass =
-                                InlineClassesUtilsKt.isInlineClass(descriptor) && kind == OwnerKind.ERASED_INLINE_CLASS;
 
                         int myArgI = 0;
                         int argVar = 0;
 
-                        Type receiverType = typeMapper.mapType(descriptor);
                         KotlinType interfaceKotlinType = ((ClassDescriptor) inheritedFun.getContainingDeclaration()).getDefaultType();
-                        StackValue.local(argVar, receiverType, descriptor.getDefaultType())
+                        StackValue.local(argVar, receiverType.getType(), receiverType.getKotlinType())
                                 .put(OBJECT_TYPE, interfaceKotlinType, iv);
                         if (isErasedInlineClass) myArgI++;
-                        argVar += receiverType.getSize();
+                        argVar += receiverType.getType().getSize();
 
                         int toArgI = 1;
 
