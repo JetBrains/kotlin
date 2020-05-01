@@ -109,6 +109,7 @@ enum class KaptFlag(val description: String) {
     INFO_AS_WARNINGS("Info as warnings"),
     USE_LIGHT_ANALYSIS("Use light analysis"),
     CORRECT_ERROR_TYPES("Correct error types"),
+    DUMP_DEFAULT_PARAMETER_VALUES("Dump default parameter values"),
     MAP_DIAGNOSTIC_LOCATIONS("Map diagnostic locations"),
     STRICT("Strict mode"),
     INCLUDE_COMPILE_CLASSPATH("Detect annotation processors in compile classpath"),

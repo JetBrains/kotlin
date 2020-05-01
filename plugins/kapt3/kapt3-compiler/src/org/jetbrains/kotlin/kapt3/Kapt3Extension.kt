@@ -132,6 +132,9 @@ abstract class AbstractKapt3Extension(
     override val analyzePartially: Boolean
         get() = !annotationProcessingComplete
 
+    override val analyzeDefaultParameterValues: Boolean
+        get() = options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
+
     override fun doAnalysis(
         project: Project,
         module: ModuleDescriptor,

@@ -104,9 +104,34 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *listOfNotNull(writeJavaFiles(files)).toTypedArray())
         addAnnotationProcessingRuntimeLibrary(myEnvironment)
 
-        // Use light analysis mode in tests
         val project = myEnvironment.project
-        val analysisExtension = PartialAnalysisHandlerExtension()
+
+        val javacOptions = wholeFile.getOptionValues("JAVAC_OPTION")
+            .map { opt ->
+                val (key, value) = opt.split('=').map { it.trim() }.also { assert(it.size == 2) }
+                key to value
+            }.toMap()
+
+        val options = KaptOptions.Builder().apply {
+            projectBaseDir = project.basePath?.let { File(it) }
+            compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath)
+
+            sourcesOutputDir = KotlinTestUtils.tmpDir("kaptRunner")
+            classesOutputDir = sourcesOutputDir
+            stubsOutputDir = sourcesOutputDir
+            incrementalDataOutputDir = sourcesOutputDir
+
+            this.javacOptions.putAll(javacOptions)
+            flags.addAll(kaptFlags)
+
+            detectMemoryLeaks = DetectMemoryLeaksMode.NONE
+        }.build()
+
+        val analysisExtension = object : PartialAnalysisHandlerExtension() {
+            override val analyzeDefaultParameterValues: Boolean
+                get() = options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
+        }
+
         AnalysisHandlerExtension.registerExtension(project, analysisExtension)
         StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor(analysisExtension))
 
@@ -118,30 +143,9 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
 
         val logger = MessageCollectorBackedKaptLogger(isVerbose = true, isInfoAsWarnings = false, messageCollector = messageCollector)
 
-        val javacOptions = wholeFile.getOptionValues("JAVAC_OPTION")
-            .map { opt ->
-                val (key, value) = opt.split('=').map { it.trim() }.also { assert(it.size == 2) }
-                key to value
-            }.toMap()
-
         var kaptContext: KaptContext? = null
 
         try {
-            val options = KaptOptions.Builder().apply {
-                projectBaseDir = generationState.project.basePath?.let(::File)
-                compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath)
-
-                sourcesOutputDir = KotlinTestUtils.tmpDir("kaptRunner")
-                classesOutputDir = sourcesOutputDir
-                stubsOutputDir = sourcesOutputDir
-                incrementalDataOutputDir = sourcesOutputDir
-
-                this.javacOptions.putAll(javacOptions)
-                flags.addAll(kaptFlags)
-
-                detectMemoryLeaks = DetectMemoryLeaksMode.NONE
-            }.build()
-
             kaptContext = KaptContextForStubGeneration(
                 options, true, logger,
                 generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
