@@ -179,8 +179,16 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
     }
 
     private val loadingContext = object : ScriptConfigurationLoadingContext {
+        /**
+         * Used from [ScriptOutsiderFileConfigurationLoader] only.
+         */
         override fun getCachedConfiguration(file: VirtualFile): ScriptConfigurationSnapshot? =
-            getAppliedConfiguration(file)
+            getAppliedConfiguration(file) ?: getFromGlobalCache(file)
+
+        private fun getFromGlobalCache(file: VirtualFile): ScriptConfigurationSnapshot? {
+            val info = manager.getLightScriptInfo(file.path) ?: return null
+            return ScriptConfigurationSnapshot(CachedConfigurationInputs.UpToDate, listOf(), info.buildConfiguration())
+        }
 
         override fun suggestNewConfiguration(file: VirtualFile, newResult: ScriptConfigurationSnapshot) {
             suggestOrSaveConfiguration(file, newResult, false)

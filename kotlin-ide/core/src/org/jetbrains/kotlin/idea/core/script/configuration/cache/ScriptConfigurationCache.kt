@@ -63,6 +63,10 @@ interface CachedConfigurationInputs: Serializable {
         override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean = false
     }
 
+    object UpToDate: CachedConfigurationInputs {
+        override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean = true
+    }
+
     data class PsiModificationStamp(
         val fileModificationStamp: Long,
         val psiModificationStamp: Long
