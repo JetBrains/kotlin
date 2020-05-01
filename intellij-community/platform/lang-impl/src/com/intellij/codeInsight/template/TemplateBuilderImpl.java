@@ -74,6 +74,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     ));
   }
 
+  @Override
   public void replaceElement(PsiElement element, String varName, Expression expression, boolean alwaysStopAt) {
     replaceElement(element, varName, expression, alwaysStopAt, false);
   }
@@ -98,6 +99,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     myElements.add(key);
   }
 
+  @Override
   public void replaceElement (PsiElement element, String varName, String dependantVariableName, boolean alwaysStopAt) {
     final RangeMarker key = wrapElement(element);
     myAlwaysStopAtMap.put(key, alwaysStopAt ? Boolean.TRUE : Boolean.FALSE);
