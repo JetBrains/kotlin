@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.core.script.configuration
 
 import com.intellij.ProjectTopics
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootEvent
@@ -112,15 +113,14 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
      * Loads script configuration if classpath roots don't contain [file] yet
      */
     private fun getActualClasspathRoots(file: VirtualFile): ScriptClassRootsCache {
-        val classpathRoots = classpathRoots
-        if (classpathRoots.contains(file)) {
-            return classpathRoots
-        }
-
         try {
-            default.getOrLoadConfiguration(file, null)
-        } catch (e: Throwable) {
-            logger<ScriptConfigurationManager>().error("Cannot get configuration synchronously", e)
+            // we should run default loader if this [file] is not cached in [classpathRoots]
+            // and it is not supported by any of [plugins]
+            // getOrLoadConfiguration will do this
+            // (despite that it's result becomes unused, it still may populate [classpathRoots])
+            getOrLoadConfiguration(file, null)
+        } catch (cancelled: ProcessCanceledException) {
+            // read actions may be cancelled if we are called by impatient reader
         }
 
         return this.classpathRoots
