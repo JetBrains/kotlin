@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
@@ -80,8 +78,6 @@ sealed class GradleBuildRoot {
                 .filterIsInstance<GradleScriptDefinitionsContributor>()
                 .single().definitions.toList()
 
-            val root = ScriptInfoRoot(this)
-
             builder.classes.addAll(data.templateClasspath)
             data.models.forEach { script ->
                 val vFile = LocalFileSystem.getInstance().findFileByPath(script.file)
@@ -90,26 +86,18 @@ sealed class GradleBuildRoot {
                     definitions.firstOrNull { it.isScript(src) }
                 } else null
 
-                builder.scripts[script.file] = ScriptInfo(root, def, script)
+                builder.scripts[script.file] = ScriptInfo(this, def, script)
 
                 builder.classes.addAll(script.classPath)
                 builder.sources.addAll(script.sourcePath)
             }
         }
 
-        /**
-         * Common info between scripts (to save bits inside ScriptInfo)
-         */
-        data class ScriptInfoRoot(
-            val buildRoot: Imported
-        )
-
         class ScriptInfo(
-            val root: ScriptInfoRoot,
+            val buildRoot: Imported,
             scriptDefinition: ScriptDefinition?,
             val model: KotlinDslScriptModel
         ) : ScriptClassRootsCache.LightScriptInfo(scriptDefinition) {
-            val buildRoot get() = root.buildRoot
 
             override fun buildConfiguration(): ScriptCompilationConfigurationWrapper? {
                 val javaHome = buildRoot.context.javaHome
@@ -138,7 +126,7 @@ sealed class GradleBuildRoot {
 
                 other as ScriptInfo
 
-                if (root != other.root) return false
+                if (buildRoot.pathPrefix != other.buildRoot.pathPrefix) return false
                 if (model != other.model) return false
                 if (definition != other.definition) return false
 
@@ -146,7 +134,7 @@ sealed class GradleBuildRoot {
             }
 
             override fun hashCode(): Int {
-                var result = root.hashCode()
+                var result = buildRoot.pathPrefix.hashCode()
                 result = 31 * result + model.hashCode()
                 result = 31 * result + definition.hashCode()
                 return result
