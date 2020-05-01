@@ -223,7 +223,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                             file.removeScriptDependenciesNotificationPanel(project)
                         }
                         saveReports(file, newResult.reports)
-                        setAppliedConfiguration(file, newResult)
+                        setAppliedConfiguration(file, newResult, syncUpdate = true)
                     } else {
                         debug(file) {
                             "configuration changed, notification is shown: old = $oldConfiguration, new = $newConfiguration"
@@ -377,15 +377,21 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
 
     protected open fun setAppliedConfiguration(
         file: VirtualFile,
-        newConfigurationSnapshot: ScriptConfigurationSnapshot?
+        newConfigurationSnapshot: ScriptConfigurationSnapshot?,
+        syncUpdate: Boolean = false
     ) {
         manager.updater.checkInTransaction()
         val newConfiguration = newConfigurationSnapshot?.configuration
         debug(file) { "configuration changed = $newConfiguration" }
 
         if (newConfiguration != null) {
-            manager.updater.invalidate(file)
             cache.setApplied(file, newConfigurationSnapshot)
+
+            if (syncUpdate) {
+                manager.updater.updateSynchronously()
+            } else {
+                manager.updater.invalidate(file)
+            }
         }
     }
 
