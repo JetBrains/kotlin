@@ -249,10 +249,11 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
 
     @get:Input
     @get:Optional
-    internal val konanTargetsForManifest: String? by project.provider {
+    internal val konanTargetsForManifest: String by project.provider {
         (compilation as? KotlinSharedNativeCompilation)
             ?.konanTargets
             ?.joinToString(separator = " ") { it.visibleName }
+            .orEmpty()
     }
 
     @get:Internal
@@ -301,7 +302,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
             val manifestFile: File = manifestFile.get()
             manifestFile.ensureParentDirsCreated()
             val properties = java.util.Properties()
-            properties[KLIB_PROPERTY_NATIVE_TARGETS] = konanTargetsForManifest!!
+            properties[KLIB_PROPERTY_NATIVE_TARGETS] = konanTargetsForManifest
             properties.saveToFile(org.jetbrains.kotlin.konan.file.File(manifestFile.toPath()))
         }
 
