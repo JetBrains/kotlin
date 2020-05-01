@@ -8,137 +8,81 @@ package org.jetbrains.kotlin.idea.scripting.gradle.roots
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsBuilder
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor
-import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
-import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import java.io.File
 
 /**
- * [GradleBuildRoot] is a linked gradle build (don't confuse with gradle project and included build).
- * Each [GradleBuildRoot] may have it's own Gradle version, Java home and other settings.
- *
- * Typically, IntelliJ project have no more than one [GradleBuildRoot].
- *
- * See [GradleBuildRootsManager] for more details.
+ * See [GradleBuildRootsManager]
  */
 sealed class GradleBuildRoot {
     /**
-     * The script not related to any Gradle build that is linked to IntelliJ Project,
-     * or we cannot known what is it
+     * Add Gradle Project
+     * for other scripts too
+     *
+     * precompiled script
+     * may be also included scripts not returned by gradle: todo proper notification
      */
-    @Suppress("CanSealedSubClassBeObject")
-    class Unlinked : GradleBuildRoot()
+    class Unlinked() : GradleBuildRoot()
 
-    /**
-     * Linked project, that may be itself: [Legacy], [New] or [Imported].
-     */
     abstract class Linked : GradleBuildRoot() {
         @Volatile
         var importing = false
 
-        abstract val manager: GradleBuildRootsManager
-
         abstract val pathPrefix: String
 
-        abstract val projectRoots: Collection<String>
-
-        val dir: VirtualFile?
-            get() = LocalFileSystem.getInstance().findFileByPath(pathPrefix)
-
-        private lateinit var lastModifiedFiles: LastModifiedFiles
-
-        fun loadLastModifiedFiles() {
-            lastModifiedFiles = dir?.let { LastModifiedFiles.read(it) } ?: LastModifiedFiles()
-        }
-
-        fun saveLastModifiedFiles() {
-            LastModifiedFiles.write(dir ?: return, lastModifiedFiles)
-        }
-
-        fun areRelatedFilesChangedBefore(file: VirtualFile, lastModified: Long): Boolean =
-            lastModifiedFiles.lastModifiedTimeStampExcept(file.path) < lastModified
-
-        fun fileChanged(filePath: String, ts: Long) {
-            lastModifiedFiles.fileChanged(ts, filePath)
-            manager.scheduleLastModifiedFilesSave()
-        }
-    }
-
-    abstract class WithoutScriptModels(settings: GradleProjectSettings) : Linked() {
-        final override val pathPrefix = settings.externalProjectPath!!
-        final override val projectRoots = settings.modules.takeIf { it.isNotEmpty() } ?: listOf(pathPrefix)
-
-        init {
-            loadLastModifiedFiles()
-        }
+        open val projectRoots: Collection<String> get() = listOf()
     }
 
     /**
-     * Gradle build with old Gradle version (<6.0)
+     * Notification: please update to Gradle 6.0
+     * default loader, cases:
+     * - not loaded: Notification: Load configration to get code insights
+     * - loaded, not up-to-date: Notifaction: Reload configuraiton
+     * - loaded, up-to-date: Nothing
      */
-    class Legacy(
-        override val manager: GradleBuildRootsManager,
-        settings: GradleProjectSettings
-    ) : WithoutScriptModels(settings) {
-        init {
-            loadLastModifiedFiles()
-        }
-    }
+    class Legacy(override val pathPrefix: String) : Linked()
 
     /**
-     * Linked but not yet imported Gradle build.
+     * not imported:
+     *  Notification: Import Gradle project to get code insights
+     * during import:
+     * - disable action on importing. todo: don't miss failed import
+     * - pause analyzing, todo: change status text to: importing gradle project
      */
-    class New(
-        override val manager: GradleBuildRootsManager,
-        settings: GradleProjectSettings
-    ) : WithoutScriptModels(settings) {
-        init {
-            loadLastModifiedFiles()
-        }
-    }
+    class New(override val pathPrefix: String) : Linked()
 
-    /**
-     * Imported Gradle build.
-     * Each imported build have info about all of it's Kotlin Build Scripts.
-     */
+    // precompiled scripts not detected by gradle
+
     class Imported(
-        override val manager: GradleBuildRootsManager,
-        override val pathPrefix: String,
+        val project: Project,
+        val dir: VirtualFile,
         val javaHome: File?,
         val data: GradleBuildRootData
     ) : Linked() {
-        val project: Project
-            get() = manager.project
+        override val pathPrefix: String = dir.path
 
         override val projectRoots: Collection<String>
             get() = data.projectRoots
 
-        init {
-            loadLastModifiedFiles()
-        }
-
-        fun collectConfigurations(builder: ScriptClassRootsBuilder) {
+        fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
             if (javaHome != null) {
-                builder.sdks.addSdk(javaHome)
+                builder.addSdk(javaHome)
             }
 
             val definitions = GradleScriptDefinitionsContributor.getDefinitions(project)
 
-            builder.addTemplateClassesRoots(data.templateClasspath)
-
+            builder.classes.addAll(data.templateClasspath)
             data.models.forEach { script ->
                 val definition = selectScriptDefinition(script, definitions)
 
-                builder.addCustom(
-                    script.file,
-                    script.classPath,
-                    script.sourcePath,
-                    GradleScriptInfo(this, definition, script)
-                )
+                builder.scripts[script.file] = GradleScriptInfo(this, definition, script)
+
+                builder.classes.addAll(script.classPath)
+                builder.sources.addAll(script.sourcePath)
             }
         }
 

@@ -11,9 +11,9 @@ class GradleBuildRootIndex {
     private val log = logger<GradleBuildRootIndex>()
 
     private val byWorkingDir = HashMap<String, GradleBuildRoot.Linked>()
-    private val byProjectDir = HashMap<String, GradleBuildRoot.Linked>()
+    val byProjectDir = HashMap<String, GradleBuildRoot.Linked>()
 
-    val list: Collection<GradleBuildRoot.Linked>
+    val values: Collection<GradleBuildRoot>
         get() = byWorkingDir.values
 
     @Synchronized
@@ -27,7 +27,7 @@ class GradleBuildRootIndex {
     }
 
     @Synchronized
-    fun getBuildByRootDir(dir: String) = byWorkingDir[dir]
+    fun getBuildRoot(dir: String) = byWorkingDir[dir]
 
     @Synchronized
     fun findNearestRoot(path: String): GradleBuildRoot.Linked? {
@@ -44,12 +44,10 @@ class GradleBuildRootIndex {
     fun getBuildByProjectDir(projectDir: String) = byProjectDir[projectDir]
 
     @Synchronized
-    fun add(value: GradleBuildRoot.Linked): GradleBuildRoot.Linked? {
-        val prefix = value.pathPrefix
+    operator fun set(prefix: String, value: GradleBuildRoot.Linked) {
         val old = byWorkingDir.put(prefix, value)
         rebuildProjectRoots()
         log.info("$prefix: $old -> $value")
-        return old
     }
 
     @Synchronized

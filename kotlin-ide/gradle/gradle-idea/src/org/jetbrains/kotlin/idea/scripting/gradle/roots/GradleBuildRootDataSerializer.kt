@@ -12,19 +12,18 @@ import org.jetbrains.kotlin.idea.core.util.readString
 import org.jetbrains.kotlin.idea.core.util.writeNullable
 import org.jetbrains.kotlin.idea.core.util.writeString
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleKotlinScriptConfigurationInputs
-import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
 
 internal object GradleBuildRootDataSerializer {
-    private val attribute = FileAttribute("kotlin-dsl-script-models", 5, false)
+    private val attribute = FileAttribute("kotlin-dsl-script-models", 4, false)
 
     fun read(buildRoot: VirtualFile): GradleBuildRootData? {
         return attribute.readAttribute(buildRoot)?.use {
             it.readNullable {
-                readKotlinDslScriptModels(it, buildRoot.path)
+                readKotlinDslScriptModels(it)
             }
         }
     }
@@ -39,7 +38,6 @@ internal object GradleBuildRootDataSerializer {
 
     fun remove(buildRoot: VirtualFile) {
         write(buildRoot, null)
-        LastModifiedFiles.remove(buildRoot)
     }
 }
 
@@ -59,14 +57,14 @@ internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleBuildRoo
     output.writeList(data.models) {
         strings.writeStringId(it.file)
         output.writeString(it.inputs.sections)
-        output.writeLong(it.inputs.lastModifiedTs)
+        output.writeLong(it.inputs.inputsTS)
         strings.writeStringIds(it.classPath)
         strings.writeStringIds(it.sourcePath)
         strings.writeStringIds(it.imports)
     }
 }
 
-internal fun readKotlinDslScriptModels(input: DataInputStream, buildRoot: String): GradleBuildRootData {
+internal fun readKotlinDslScriptModels(input: DataInputStream): GradleBuildRootData {
     val strings = StringsPool.reader(input)
 
     val projectRoots = strings.readStrings()
@@ -75,7 +73,7 @@ internal fun readKotlinDslScriptModels(input: DataInputStream, buildRoot: String
     val models = input.readList {
         KotlinDslScriptModel(
             strings.readString(),
-            GradleKotlinScriptConfigurationInputs(input.readString(), input.readLong(), buildRoot),
+            GradleKotlinScriptConfigurationInputs(input.readString(), input.readLong()),
             strings.readStrings(),
             strings.readStrings(),
             strings.readStrings(),

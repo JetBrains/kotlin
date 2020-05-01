@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
 import com.intellij.openapi.vfs.VfsUtil
-import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsCache
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper

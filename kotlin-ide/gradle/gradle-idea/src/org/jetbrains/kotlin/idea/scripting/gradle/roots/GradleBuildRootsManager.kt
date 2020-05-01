@@ -5,40 +5,27 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
-import com.intellij.ui.EditorNotifications
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
-import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsBuilder
-import org.jetbrains.kotlin.idea.core.util.EDT
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.scripting.gradle.*
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslGradleBuildSync
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.settings.*
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.nio.file.Paths
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * [GradleBuildRoot] is a linked gradle build (don't confuse with gradle project and included build).
- * Each [GradleBuildRoot] may have it's own Gradle version, Java home and other settings.
- *
- * Typically, IntelliJ project have no more than one [GradleBuildRoot].
+ * Each [GradleBuildRoot] may have it's own Gradle version, java home and other settings.
  *
  * This manager allows to find related Gradle build by the Gradle Kotlin script file path.
  * Each imported build have info about all of it's Kotlin Build Scripts.
@@ -56,17 +43,21 @@ import java.util.concurrent.atomic.AtomicBoolean
  *   - [GradleBuildRoot.New] - not yet imported
  *   - [GradleBuildRoot.Imported] - imported
  */
-class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
-    private val manager: CompositeScriptConfigurationManager
+class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider() {
+    val manager: CompositeScriptConfigurationManager
         get() = ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager
 
     private val updater
         get() = manager.updater
 
-    private val roots = GradleBuildRootIndex()
+    val roots = GradleBuildRootIndex()
 
     ////////////
     /// ScriptingSupport.Provider implementation:
+
+    override fun updateScriptDefinitions() {
+        // nothing related to script definition and project roots are cached
+    }
 
     override fun isApplicable(file: VirtualFile): Boolean {
         val scriptUnderRoot = findScriptBuildRoot(file) ?: return false
@@ -88,8 +79,8 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
         return !script.model.inputs.isUpToDate(project, file)
     }
 
-    override fun collectConfigurations(builder: ScriptClassRootsBuilder) {
-        roots.list.forEach { root ->
+    override fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
+        roots.values.forEach { root ->
             if (root is GradleBuildRoot.Imported) {
                 root.collectConfigurations(builder)
             }
@@ -102,163 +93,97 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
         get() = path
 
     fun getScriptInfo(file: VirtualFile): GradleScriptInfo? =
-        getScriptInfo(file.localPath)
-
-    fun getScriptInfo(localPath: String): GradleScriptInfo? =
-        manager.getLightScriptInfo(localPath) as? GradleScriptInfo
+        manager.getLightScriptInfo(file.localPath) as? GradleScriptInfo
 
     class ScriptUnderRoot(
         val root: GradleBuildRoot?,
         val script: GradleScriptInfo? = null
     )
 
-    fun findScriptBuildRoot(gradleKtsFile: VirtualFile): ScriptUnderRoot? =
-        findScriptBuildRoot(gradleKtsFile.path)
+    fun findScriptBuildRoot(gradleKtsFile: VirtualFile): ScriptUnderRoot? {
+        if (!isGradleKotlinScript(gradleKtsFile)) return null
 
-    /**
-     * Fast method that can return false positive
-     */
-    fun maybeAffectedGradleProjectFile(filePath: String): Boolean =
-        filePath.endsWith("/gradle.properties") ||
-                filePath.endsWith("/gradle.local") ||
-                filePath.endsWith("/gradle-wrapper.properties") ||
-                filePath.endsWith("/build.gradle.kts") ||
-                filePath.endsWith("/settings.gradle.kts") ||
-                filePath.endsWith("/init.gradle.kts")
-
-    fun isAffectedGradleProjectFile(filePath: String): Boolean =
-        findAffectedFileRoot(filePath) != null
-
-    fun fileChanged(filePath: String, ts: Long = System.currentTimeMillis()) {
-        findAffectedFileRoot(filePath)?.fileChanged(filePath, ts)
-    }
-
-    private fun findAffectedFileRoot(filePath: String): GradleBuildRoot.Linked? {
-        if (filePath.endsWith("/gradle.properties") ||
-            filePath.endsWith("/gradle.local")
-        ) {
-            return roots.getBuildByProjectDir(filePath.substringBeforeLast("/"))
-        } else if (filePath.endsWith("/gradle-wrapper.properties")) {
-            val gradleWrapperDirIndex = filePath.lastIndexOfOrNull('/') ?: return null
-            val gradleDirIndex = filePath.lastIndexOfOrNull('/', gradleWrapperDirIndex - 1) ?: return null
-            val buildDirIndex = filePath.lastIndexOfOrNull('/', gradleDirIndex - 1) ?: return null
-            return roots.getBuildByRootDir(filePath.substring(0, buildDirIndex))
-        }
-
-        return findScriptBuildRoot(filePath, searchNearestLegacy = false)?.root as? GradleBuildRoot.Linked
-    }
-
-    private fun findScriptBuildRoot(filePath: String, searchNearestLegacy: Boolean = true): ScriptUnderRoot? {
-        if (!filePath.endsWith(".gradle.kts")) return null
-
-        val scriptInfo = getScriptInfo(filePath)
+        val filePath = gradleKtsFile.path
+        val scriptInfo = getScriptInfo(gradleKtsFile)
         val imported = scriptInfo?.buildRoot
         if (imported != null) return ScriptUnderRoot(imported, scriptInfo)
 
-        if (filePath.endsWith("/build.gradle.kts") ||
-            filePath.endsWith("/settings.gradle.kts") ||
-            filePath.endsWith("/init.gradle.kts")
+        if (gradleKtsFile.name == "build.gradle.kts" ||
+            gradleKtsFile.name == "settings.gradle.kts" ||
+            gradleKtsFile.name == "init.gradle.kts"
         ) {
             // build|settings|init.gradle.kts scripts should be located near gradle project root only
-            val gradleBuild = roots.getBuildByProjectDir(filePath.substringBeforeLast("/"))
+            val gradleBuild = roots.getBuildByProjectDir(gradleKtsFile.parent.localPath)
             if (gradleBuild != null) return ScriptUnderRoot(gradleBuild)
         }
 
         // other scripts: "included", "precompiled" scripts, scripts in unlinked projects,
         // or just random files with ".gradle.kts" ending
 
-        // todo(gradle6): remove, it is required only for projects with old gradle
-        if (searchNearestLegacy) {
-            val found = roots.findNearestRoot(filePath)
-            if (found is GradleBuildRoot.Legacy) return ScriptUnderRoot(found)
-        }
+        // try find nearest linked legacy gradle project settings first
+        val found = roots.findNearestRoot(filePath)
+        if (found is GradleBuildRoot.Legacy) return ScriptUnderRoot(found)
 
         return ScriptUnderRoot(GradleBuildRoot.Unlinked())
     }
 
-    fun getBuildRoot(gradleWorkingDir: String) =
-        roots.getBuildByRootDir(gradleWorkingDir)
 
     fun markImportingInProgress(workingDir: String, inProgress: Boolean = true) {
         actualizeBuildRoot(workingDir)?.importing = inProgress
-        updateNotifications(workingDir)
-        hideNotificationForProjectImport(project)
     }
 
     fun update(build: KotlinDslGradleBuildSync) {
         // fast path for linked gradle builds without .gradle.kts support
         if (build.models.isEmpty()) {
-            val root = roots.getBuildByRootDir(build.workingDir) ?: return
+            val root = roots.getBuildRoot(build.workingDir) ?: return
             if (root is GradleBuildRoot.Imported && root.data.models.isEmpty()) return
         }
 
-        val root = actualizeBuildRoot(build.workingDir) ?: return
-        root.importing = false
+        val old = actualizeBuildRoot(build.workingDir) ?: return
+        old.importing = false
 
-        if (root is GradleBuildRoot.Legacy) return
+        if (old is GradleBuildRoot.Legacy) return
 
         val templateClasspath = GradleScriptDefinitionsContributor.getDefinitionsTemplateClasspath(project)
-        val newData = GradleBuildRootData(build.projectRoots, templateClasspath, build.models)
-        val mergedData = if (build.failed && root is GradleBuildRoot.Imported) merge(root.data, newData) else newData
-
-        val newSupport = tryCreateImportedRoot(build.workingDir) { mergedData } ?: return
-        GradleBuildRootDataSerializer.write(newSupport.dir ?: return, mergedData)
-
-        add(newSupport)
-
-        hideNotificationForProjectImport(project)
-    }
-
-    private fun merge(old: GradleBuildRootData, new: GradleBuildRootData): GradleBuildRootData {
-        val roots = old.projectRoots.toMutableSet()
-        roots.addAll(new.projectRoots)
-
-        val models = old.models.associateByTo(mutableMapOf()) { it.file }
-        new.models.associateByTo(models) { it.file }
-
-        return GradleBuildRootData(roots, new.templateClasspath, models.values)
-    }
-
-    private val lastModifiedFilesSaveScheduled = AtomicBoolean()
-
-    fun scheduleLastModifiedFilesSave() {
-        if (lastModifiedFilesSaveScheduled.compareAndSet(false, true)) {
-            BackgroundTaskUtil.executeOnPooledThread(project) {
-                if (lastModifiedFilesSaveScheduled.compareAndSet(true, false)) {
-                    roots.list.forEach {
-                        it.saveLastModifiedFiles()
-                    }
-                }
-            }
-        }
+        val data = GradleBuildRootData(build.projectRoots, templateClasspath, build.models)
+        val newSupport = tryCreateImportedRoot(build.workingDir) { data } ?: return
+        GradleBuildRootDataSerializer.write(newSupport.dir, data)
+        roots[build.workingDir] = newSupport
+        manager.updater.ensureUpdateScheduled()
     }
 
     init {
         getGradleProjectSettings(project).forEach {
-            // don't call this.add, as we are inside scripting manager initialization
-            roots.add(loadLinkedRoot(it))
+            roots[it.externalProjectPath] = loadLinkedRoot(it)
         }
 
         // subscribe to linked gradle project modification
         val listener = object : GradleSettingsListenerAdapter() {
             override fun onProjectsLinked(settings: MutableCollection<GradleProjectSettings>) {
                 settings.forEach {
-                    add(loadLinkedRoot(it))
+                    loadLinkedRoot(it)
                 }
             }
 
             override fun onProjectsUnlinked(linkedProjectPaths: MutableSet<String>) {
                 linkedProjectPaths.forEach {
-                    remove(it)
+                    val buildRoot = VfsUtil.findFile(Paths.get(it), false)
+                    if (buildRoot != null) {
+                        if (roots.remove(buildRoot.localPath) != null) {
+                            GradleBuildRootDataSerializer.remove(buildRoot)
+                        }
+                    }
                 }
             }
 
             override fun onGradleHomeChange(oldPath: String?, newPath: String?, linkedProjectPath: String) {
-                reloadBuildRoot(linkedProjectPath)
+                updateBuildRoot(linkedProjectPath)
+                manager.updater.ensureUpdateScheduled()
             }
 
             override fun onGradleDistributionTypeChange(currentValue: DistributionType?, linkedProjectPath: String) {
-                reloadBuildRoot(linkedProjectPath)
+                updateBuildRoot(linkedProjectPath)
+                manager.updater.ensureUpdateScheduled()
             }
         }
 
@@ -277,11 +202,11 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
      */
     private fun actualizeBuildRoot(workingDir: String): GradleBuildRoot.Linked? {
         val actualSettings = getGradleProjectSettings(workingDir)
-        val buildRoot = roots.getBuildByRootDir(workingDir)
+        val buildRoot = roots.getBuildRoot(workingDir)
 
         return when {
             buildRoot != null -> when {
-                !buildRoot.checkActual(actualSettings) -> reloadBuildRoot(workingDir)
+                !buildRoot.checkActual(actualSettings) -> updateBuildRoot(workingDir)
                 else -> buildRoot
             }
             actualSettings != null -> loadLinkedRoot(actualSettings)
@@ -297,14 +222,18 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
         return knownAsSupported == shouldBeSupported
     }
 
-    private fun reloadBuildRoot(rootPath: String): GradleBuildRoot.Linked? {
+    private fun updateBuildRoot(rootPath: String): GradleBuildRoot.Linked? {
         val settings = getGradleProjectSettings(rootPath)
         if (settings == null) {
-            remove(rootPath)
+            val removed = roots.remove(rootPath)
+            if (removed is GradleBuildRoot.Imported) {
+                updater.ensureUpdateScheduled()
+            }
             return null
         } else {
             val newRoot = loadLinkedRoot(settings)
-            add(newRoot)
+            roots[newRoot.pathPrefix] = newRoot
+            updater.ensureUpdateScheduled()
             return newRoot
         }
     }
@@ -320,8 +249,8 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
     private fun createOtherLinkedRoot(settings: GradleProjectSettings): GradleBuildRoot.Linked {
         val supported = kotlinDslScriptsModelImportSupported(settings.resolveGradleVersion().version)
         return when {
-            supported -> GradleBuildRoot.New(this, settings)
-            else -> GradleBuildRoot.Legacy(this, settings)
+            supported -> GradleBuildRoot.New(settings.externalProjectPath)
+            else -> GradleBuildRoot.Legacy(settings.externalProjectPath)
         }
     }
 
@@ -335,59 +264,13 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
             .getExecutionSettings<GradleExecutionSettings>(project, externalProjectPath, GradleConstants.SYSTEM_ID)
             .javaHome?.let { File(it) }
 
-        return GradleBuildRoot.Imported(this, externalProjectPath, javaHome, data)
-    }
-
-    private fun add(newRoot: GradleBuildRoot.Linked) {
-        val old = roots.add(newRoot)
-
-        if (old is GradleBuildRoot.Imported && newRoot !is GradleBuildRoot.Imported) {
-            removeData(old.pathPrefix)
+        val newSupport = GradleBuildRoot.Imported(project, buildRoot, javaHome, data)
+        val oldSupport = roots.getBuildRoot(externalProjectPath)
+        if (oldSupport != null) {
+            hideNotificationForProjectImport(project)
         }
 
-        if (old is GradleBuildRoot.Imported || newRoot is GradleBuildRoot.Imported) {
-            updater.invalidateAndCommit()
-        }
-
-        updateNotifications(newRoot.pathPrefix)
-    }
-
-    private fun remove(rootPath: String) {
-        val removed = roots.remove(rootPath)
-        if (removed is GradleBuildRoot.Imported) {
-            removeData(rootPath)
-            updater.invalidateAndCommit()
-        }
-
-        updateNotifications(rootPath)
-    }
-
-    private fun removeData(rootPath: String) {
-        val buildRoot = LocalFileSystem.getInstance().findFileByPath(rootPath)
-        if (buildRoot != null) {
-            GradleBuildRootDataSerializer.remove(buildRoot)
-            LastModifiedFiles.remove(buildRoot)
-        }
-    }
-
-    private fun updateNotifications(dir1: String) {
-        if (!project.isOpen) return
-
-        val openedScripts = FileEditorManager.getInstance(project).openFiles.filter {
-            it.path.startsWith(dir1) && isGradleKotlinScript(it)
-        }
-
-        if (openedScripts.isEmpty()) return
-
-        GlobalScope.launch(EDT(project)) {
-            if (project.isDisposed) return@launch
-
-            openedScripts.forEach {
-                val ktFile = PsiManager.getInstance(project).findFile(it)
-                if (ktFile != null) DaemonCodeAnalyzer.getInstance(project).restart(ktFile)
-                EditorNotifications.getInstance(project).updateAllNotifications()
-            }
-        }
+        return newSupport
     }
 
     companion object {

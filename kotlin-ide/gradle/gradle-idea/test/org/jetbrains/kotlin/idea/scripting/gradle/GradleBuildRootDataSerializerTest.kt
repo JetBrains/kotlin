@@ -25,7 +25,7 @@ class GradleBuildRootDataSerializerTest {
             listOf(
                 KotlinDslScriptModel(
                     "a",
-                    GradleKotlinScriptConfigurationInputs("b", 1, "a"),
+                    GradleKotlinScriptConfigurationInputs("b", 1),
                     listOf("c", "a", "b"),
                     listOf("b", "c", "a"),
                     listOf("i", "c", "b"),
@@ -33,7 +33,7 @@ class GradleBuildRootDataSerializerTest {
                 ),
                 KotlinDslScriptModel(
                     "a",
-                    GradleKotlinScriptConfigurationInputs("b", 1, "a"),
+                    GradleKotlinScriptConfigurationInputs("b", 1),
                     listOf("c", "a", "b"),
                     listOf("b", "c", "a"),
                     listOf("i", "c", "b"),
@@ -45,7 +45,7 @@ class GradleBuildRootDataSerializerTest {
         val buffer = ByteArrayOutputStream()
         writeKotlinDslScriptModels(DataOutputStream(buffer), data)
 
-        val restored = readKotlinDslScriptModels(DataInputStream(ByteArrayInputStream(buffer.toByteArray())), "a")
+        val restored = readKotlinDslScriptModels(DataInputStream(ByteArrayInputStream(buffer.toByteArray())))
 
         assertEquals(data.toString(), restored.toString())
     }

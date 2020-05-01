@@ -43,7 +43,7 @@ class GradleScriptOutOfProjectTest : AbstractScriptConfigurationLoadingTest() {
     fun testManualLoadingForUpToDate() {
         assertConfigurationShouldBeLoadedManually()
 
-        scriptConfigurationManager.forceReloadConfiguration(myFile.virtualFile, loaderForOutOfProjectScripts)
+        scriptConfigurationManager.default.forceReloadConfiguration(myFile as KtFile, loaderForOutOfProjectScripts)
 
         assertConfigurationWasLoaded()
     }
@@ -56,7 +56,7 @@ class GradleScriptOutOfProjectTest : AbstractScriptConfigurationLoadingTest() {
         assertNoBackgroundTasks()
         assertNoLoading()
 
-        scriptConfigurationManager.forceReloadConfiguration(myFile.virtualFile, loaderForOutOfProjectScripts)
+        scriptConfigurationManager.default.forceReloadConfiguration(myFile as KtFile, loaderForOutOfProjectScripts)
 
         assertConfigurationWasLoaded()
     }
@@ -64,7 +64,7 @@ class GradleScriptOutOfProjectTest : AbstractScriptConfigurationLoadingTest() {
     fun testFileAttributesForManualLoading() {
         assertConfigurationShouldBeLoadedManually()
 
-        scriptConfigurationManager.forceReloadConfiguration(myFile.virtualFile, loaderForOutOfProjectScripts)
+        scriptConfigurationManager.default.forceReloadConfiguration(myFile as KtFile, loaderForOutOfProjectScripts)
 
         assertConfigurationWasLoaded()
 
@@ -76,12 +76,12 @@ class GradleScriptOutOfProjectTest : AbstractScriptConfigurationLoadingTest() {
     fun testNoNotificationAfterForReload() {
         assertConfigurationShouldBeLoadedManually()
 
-        scriptConfigurationManager.forceReloadConfiguration(myFile.virtualFile, loaderForOutOfProjectScripts)
+        scriptConfigurationManager.default.forceReloadConfiguration(myFile as KtFile, loaderForOutOfProjectScripts)
         assertConfigurationWasLoaded()
 
         makeChangesInsideSections()
 
-        scriptConfigurationManager.forceReloadConfiguration(myFile.virtualFile, loaderForOutOfProjectScripts)
+        scriptConfigurationManager.default.forceReloadConfiguration(myFile as KtFile, loaderForOutOfProjectScripts)
         assertConfigurationWasLoaded()
 
     }
