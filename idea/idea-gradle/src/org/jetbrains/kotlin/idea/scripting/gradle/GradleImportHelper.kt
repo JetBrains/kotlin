@@ -38,7 +38,6 @@ private const val kotlinDslNotificationGroupId = "Gradle Kotlin DSL Scripts"
 private var Project.notificationPanel: ScriptConfigurationChangedNotification?
         by UserDataProperty<Project, ScriptConfigurationChangedNotification>(Key.create("load.script.configuration.panel"))
 
-
 fun showNotificationForProjectImport(project: Project) {
     val existingPanel = project.notificationPanel
     if (existingPanel != null) {
