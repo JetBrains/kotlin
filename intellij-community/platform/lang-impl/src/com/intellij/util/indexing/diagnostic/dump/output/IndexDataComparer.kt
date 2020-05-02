@@ -27,9 +27,6 @@ object IndexDataComparer {
       return areValuesTheSame(extension, expectedValue, actualValue)
     }
 
-    if (expectedData.keys != actualData.keys) {
-      return false
-    }
     for ((expectedKey, expectedValue) in expectedData) {
       val actualValue = actualData[expectedKey] ?: return false
       if (!areValuesTheSame(extension, expectedValue, actualValue)) {
