@@ -507,7 +507,7 @@ class JvmSymbols(
         javaLangClass.functionByName("desiredAssertionStatus")
     }
 
-    val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol =
+    override val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol =
         buildFun {
             name = Name.special("<unsafe-coerce>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB

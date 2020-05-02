@@ -1,17 +1,17 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_RUNTIME
-fun testUByteUntilUByte(a: UByte, b: UByte): UInt {
-    var sum = 0u
+fun testUByteUntilUByte(a: UByte, b: UByte): Int {
+    var sum = 0
     for (i in a until b) {
-        sum = sum * 10u + i
+        sum += i.toInt()
     }
     return sum
 }
 
-fun testUShortUntilUShort(a: UShort, b: UShort): UInt {
-    var sum = 0u
+fun testUShortUntilUShort(a: UShort, b: UShort): Int {
+    var sum = 0
     for (i in a until b) {
-        sum = sum * 10u + i
+        sum += i.toInt()
     }
     return sum
 }
@@ -32,3 +32,5 @@ fun testUShortUntilUShort(a: UShort, b: UShort): UInt {
 // 2 IFGT
 // 2 IFLE
 // 4 IF
+// 0 INVOKESTATIC kotlin/UInt.constructor-impl
+// 0 INVOKE\w+ kotlin/UInt.(un)?box-impl

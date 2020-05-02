@@ -36,3 +36,5 @@ fun box(): String {
 // 0 NEW java/lang/IllegalArgumentException
 // 0 ATHROW
 // 0 IF
+// 0 INVOKESTATIC kotlin/UInt.constructor-impl
+// 0 INVOKE\w+ kotlin/UInt.(un)?box-impl

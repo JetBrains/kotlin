@@ -18,6 +18,8 @@ fun f(a: ULong): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
+// 0 INVOKESTATIC kotlin/ULong.constructor-impl
+// 0 INVOKE\w+ kotlin/ULong.(un)?box-impl
 
 // JVM_TEMPLATES
 // 1 INVOKESTATIC kotlin/UnsignedKt.ulongCompare

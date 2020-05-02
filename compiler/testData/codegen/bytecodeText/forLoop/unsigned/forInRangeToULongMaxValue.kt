@@ -17,3 +17,5 @@ fun f(a: ULong): Int {
 // 0 getStep
 // 1 INVOKESTATIC kotlin/UnsignedKt.ulongCompare
 // 2 IF
+// 0 INVOKESTATIC kotlin/ULong.constructor-impl
+// 0 INVOKE\w+ kotlin/ULong.(un)?box-impl

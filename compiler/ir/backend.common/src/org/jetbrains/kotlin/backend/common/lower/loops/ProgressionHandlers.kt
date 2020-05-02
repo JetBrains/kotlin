@@ -17,12 +17,10 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.asSimpleType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.absoluteValue
 
@@ -148,29 +146,14 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
             val untilArgExpression = if (untilArgVar == null) untilArgCasted else irGet(untilArgVar)
             val last = untilArgExpression.decrement()
 
+            // Type of MIN_VALUE constant is signed even for unsigned progressions since the bounds are signed.
             val (minValueAsLong, minValueIrConst) =
                 when (data) {
                     ProgressionType.INT_PROGRESSION -> Pair(Int.MIN_VALUE.toLong(), irInt(Int.MIN_VALUE))
                     ProgressionType.CHAR_PROGRESSION -> Pair(Char.MIN_VALUE.toLong(), irChar(Char.MIN_VALUE))
                     ProgressionType.LONG_PROGRESSION -> Pair(Long.MIN_VALUE, irLong(Long.MIN_VALUE))
-                    ProgressionType.UINT_PROGRESSION -> Pair(
-                        UInt.MIN_VALUE.toLong(),
-                        IrConstImpl.int(
-                            startOffset,
-                            endOffset,
-                            symbols.uInt!!.defaultType,
-                            UInt.MIN_VALUE.toInt()
-                        )
-                    )
-                    ProgressionType.ULONG_PROGRESSION -> Pair(
-                        ULong.MIN_VALUE.toLong(),
-                        IrConstImpl.long(
-                            startOffset,
-                            endOffset,
-                            symbols.uLong!!.defaultType,
-                            ULong.MIN_VALUE.toLong()
-                        )
-                    )
+                    ProgressionType.UINT_PROGRESSION -> Pair(UInt.MIN_VALUE.toLong(), irInt(UInt.MIN_VALUE.toInt()))
+                    ProgressionType.ULONG_PROGRESSION -> Pair(ULong.MIN_VALUE.toLong(), irLong(ULong.MIN_VALUE.toLong()))
                 }
             val additionalNotEmptyCondition = untilArg.constLongValue.let {
                 when {
@@ -496,22 +479,43 @@ internal class StepHandler(
         //   - getProgressionLastElement(ULong, ULong, Long): ULong   // Used by ULongProgression (uses Long step)
         //
         // We make sure to retrieve the correct symbol and use the correct argument types.
-        val returnTypeClassifier = if (progressionType.isUnsigned) {
-            progressionType.elementClassifier(symbols)
-        } else {
-            progressionType.stepClassifier(context.irBuiltIns)
-        }
-        val getProgressionLastElementFun = symbols.getProgressionLastElementByReturnType[returnTypeClassifier]
-            ?: throw IllegalArgumentException("No `getProgressionLastElement` for return type ${returnTypeClassifier.defaultType}")
-        return irCall(getProgressionLastElementFun).apply {
-            if (progressionType.isUnsigned) {
-                putValueArgument(0, progressionType.castElementIfNecessary(first.deepCopyWithSymbols(), this@StepHandler.context))
-                putValueArgument(1, progressionType.castElementIfNecessary(last.deepCopyWithSymbols(), this@StepHandler.context))
+        return with(progressionType) {
+            val returnTypeClassifier = if (progressionType.isUnsigned) {
+                progressionType.elementClassifier(symbols)
             } else {
-                putValueArgument(0, progressionType.castStepIfNecessary(first.deepCopyWithSymbols(), this@StepHandler.context))
-                putValueArgument(1, progressionType.castStepIfNecessary(last.deepCopyWithSymbols(), this@StepHandler.context))
+                progressionType.stepClassifier(context.irBuiltIns)
             }
-            putValueArgument(2, progressionType.castStepIfNecessary(step.deepCopyWithSymbols(), this@StepHandler.context))
+            val getProgressionLastElementFun = symbols.getProgressionLastElementByReturnType[returnTypeClassifier]
+                ?: throw IllegalArgumentException("No `getProgressionLastElement` for return type ${returnTypeClassifier.defaultType}")
+            val call = irCall(getProgressionLastElementFun).apply {
+                if (isUnsigned) {
+                    putValueArgument(
+                        0,
+                        coerceToUnsigned(
+                            castElementIfNecessary(first.deepCopyWithSymbols(), this@StepHandler.context),
+                            symbols
+                        )
+                    )
+                    putValueArgument(
+                        1,
+                        coerceToUnsigned(
+                            castElementIfNecessary(last.deepCopyWithSymbols(), this@StepHandler.context),
+                            symbols
+                        )
+                    )
+                } else {
+                    putValueArgument(0, castStepIfNecessary(first.deepCopyWithSymbols(), this@StepHandler.context))
+                    putValueArgument(1, castStepIfNecessary(last.deepCopyWithSymbols(), this@StepHandler.context))
+                }
+                putValueArgument(2, castStepIfNecessary(step.deepCopyWithSymbols(), this@StepHandler.context))
+            }
+
+            if (isUnsigned) {
+                // Bounds are signed for unsigned progressions.
+                coerceToSigned(call, symbols)
+            } else {
+                call
+            }
         }
     }
 }
