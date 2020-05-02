@@ -12,6 +12,7 @@ import com.intellij.refactoring.ui.StringTableCellEditor;
 import com.intellij.ui.*;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -41,7 +42,7 @@ public abstract class ParameterTableModelBase<P extends ParameterInfo, TableItem
     addRow(createRowItem(null));
   }
 
-  public void setParameterInfos(List<? extends P> parameterInfos) {
+  public void setParameterInfos(@NotNull List<? extends P> parameterInfos) {
     List<TableItem> items = new ArrayList<>(parameterInfos.size());
     for (P parameterInfo : parameterInfos) {
       items.add(createRowItem(parameterInfo));

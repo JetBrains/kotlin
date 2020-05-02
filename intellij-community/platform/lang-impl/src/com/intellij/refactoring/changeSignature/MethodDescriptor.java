@@ -16,6 +16,7 @@
 package com.intellij.refactoring.changeSignature;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -25,12 +26,15 @@ public interface MethodDescriptor<P extends ParameterInfo, V> {
 
   String getName();
 
+  @NotNull
   List<P> getParameters();
 
   int getParametersCount();
 
+  @NotNull
   V getVisibility();
 
+  @NotNull
   PsiElement getMethod();
 
   boolean canChangeVisibility();
@@ -39,5 +43,6 @@ public interface MethodDescriptor<P extends ParameterInfo, V> {
 
   boolean canChangeName();
 
+  @NotNull
   ReadWriteOption canChangeReturnType();
 }

@@ -74,7 +74,7 @@ public class CopyPasteDelegator implements CopyPasteSupport {
     return myEditable;
   }
 
-  private class MyEditable implements CutProvider, CopyProvider, PasteProvider {
+  class MyEditable implements CutProvider, CopyProvider, PasteProvider {
     @Override
     public void performCopy(@NotNull DataContext dataContext) {
       PsiElement[] elements = getValidSelectedElements();
@@ -129,7 +129,7 @@ public class CopyPasteDelegator implements CopyPasteSupport {
       }
     }
 
-    private boolean performDefaultPaste(final DataContext dataContext) {
+    boolean performDefaultPaste(@NotNull DataContext dataContext) {
       final boolean[] isCopied = new boolean[1];
       final PsiElement[] elements = PsiCopyPasteManager.getInstance().getElements(isCopied);
       if (elements == null) return false;

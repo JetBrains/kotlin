@@ -16,8 +16,9 @@
 
 package com.intellij.refactoring.listeners.impl;
 
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author dsl
@@ -27,7 +28,8 @@ public interface RefactoringTransaction {
    * Returns listener for element (element must belong to set of affected elements).
    * Refactorings should call appropriate methods of a listener, giving a modified (or new) element.
    */
-  RefactoringElementListener getElementListener(PsiElement element);
+  @NotNull
+  RefactoringElementListener getElementListener(@NotNull PsiElement element);
 
   /**
    *

@@ -32,7 +32,6 @@ import com.intellij.ui.table.TableView;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
-import com.intellij.util.IJSwingUtilities;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.table.JBListTable;
@@ -137,7 +136,7 @@ public abstract class ChangeSignatureDialogBase<ParamInfo extends ParameterInfo,
     });
   }
 
-  public void setParameterInfos(List<? extends ParamInfo> parameterInfos) {
+  public void setParameterInfos(@NotNull List<? extends ParamInfo> parameterInfos) {
     myParametersTableModel.setParameterInfos(parameterInfos);
     updateSignature();
   }

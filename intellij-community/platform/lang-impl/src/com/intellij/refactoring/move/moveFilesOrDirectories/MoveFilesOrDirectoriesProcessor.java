@@ -29,6 +29,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
   private static final Logger LOG = Logger.getInstance(MoveFilesOrDirectoriesProcessor.class);
 
   protected final PsiElement[] myElementsToMove;
-  protected final boolean mySearchForReferences;
+  private final boolean mySearchForReferences;
   protected final boolean mySearchInComments;
   protected final boolean mySearchInNonJavaFiles;
   private final PsiDirectory myNewParent;
@@ -47,9 +48,9 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
   private NonCodeUsageInfo[] myNonCodeUsages;
   private final Map<PsiFile, List<UsageInfo>> myFoundUsages = new HashMap<>();
 
-  public MoveFilesOrDirectoriesProcessor(Project project,
-                                         PsiElement[] elements,
-                                         PsiDirectory newParent,
+  public MoveFilesOrDirectoriesProcessor(@NotNull Project project,
+                                         PsiElement @NotNull [] elements,
+                                         @NotNull PsiDirectory newParent,
                                          boolean searchInComments,
                                          boolean searchInNonJavaFiles,
                                          MoveCallback moveCallback,
@@ -57,9 +58,9 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
     this(project, elements, newParent, true, searchInComments, searchInNonJavaFiles, moveCallback, prepareSuccessfulCallback);
   }
 
-  public MoveFilesOrDirectoriesProcessor(Project project,
-                                         PsiElement[] elements,
-                                         PsiDirectory newParent,
+  public MoveFilesOrDirectoriesProcessor(@NotNull Project project,
+                                         PsiElement @NotNull [] elements,
+                                         @NotNull PsiDirectory newParent,
                                          boolean searchForReferences,
                                          boolean searchInComments,
                                          boolean searchInNonJavaFiles,
@@ -82,7 +83,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
 
   @Override
   protected UsageInfo @NotNull [] findUsages() {
-    ArrayList<UsageInfo> result = new ArrayList<>();
+    List<UsageInfo> result = new ArrayList<>();
     for (int i = 0; i < myElementsToMove.length; i++) {
       PsiElement element = myElementsToMove[i];
       if (mySearchForReferences) {
@@ -96,13 +97,13 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
     return result.toArray(UsageInfo.EMPTY_ARRAY);
   }
 
-  private void findElementUsages(ArrayList<? super UsageInfo> result, PsiElement element) {
+  private void findElementUsages(@NotNull List<? super UsageInfo> result, @NotNull PsiElement element) {
     if (!mySearchForReferences) {
       return;
     }
     if (element instanceof PsiFile) {
       final List<UsageInfo> usages = MoveFileHandler.forElement((PsiFile)element)
-        .findUsages(((PsiFile)element), myNewParent, mySearchInComments, mySearchInNonJavaFiles);
+        .findUsages((PsiFile)element, myNewParent, mySearchInComments, mySearchInNonJavaFiles);
       if (usages != null) {
         result.addAll(usages);
         myFoundUsages.put((PsiFile)element, usages);
@@ -151,10 +152,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
         }
       }
 
-     RefactoringElementListener[] listeners =
-       Arrays.stream(myElementsToMove)
-         .map(item -> getTransaction().getElementListener(item))
-         .toArray(RefactoringElementListener[]::new);
+      List<RefactoringElementListener> listeners = ContainerUtil.map(myElementsToMove, item -> getTransaction().getElementListener(item));
 
       for (int i = 0; i < myElementsToMove.length; i++) {
         PsiElement element = myElementsToMove[i];
@@ -180,7 +178,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
           }
         }
 
-        listeners[i].elementMoved(element);
+        listeners.get(i).elementMoved(element);
       }
       // sort by offset descending to process correctly several usages in one PsiElement [IDEADEV-33013]
       CommonRefactoringUtil.sortDepthFirstRightLeftOrder(usages);
@@ -243,7 +241,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
     return data;
   }
 
-  private static void encodeDirectoryFiles(PsiElement psiElement, Map<PsiFile, FileASTNode> movedFiles) {
+  private static void encodeDirectoryFiles(@NotNull PsiElement psiElement, @NotNull Map<PsiFile, FileASTNode> movedFiles) {
     if (psiElement instanceof PsiFile) {
       movedFiles.put((PsiFile)psiElement, ((PsiFile)psiElement).getNode());
       FileReferenceContextUtil.encodeFileReferences(psiElement);
@@ -255,7 +253,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
     }
   }
 
-  private static void processDirectoryFiles(Map<PsiFile, FileASTNode> movedFiles, Map<PsiElement, PsiElement> oldToNewMap, PsiElement psiElement) {
+  private static void processDirectoryFiles(@NotNull Map<PsiFile, FileASTNode> movedFiles, @NotNull Map<PsiElement, PsiElement> oldToNewMap, @NotNull PsiElement psiElement) {
     if (psiElement instanceof PsiFile) {
       final PsiFile movedFile = (PsiFile)psiElement;
       movedFiles.put(movedFile, movedFile.getNode());
@@ -268,7 +266,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
     }
   }
 
-  protected void retargetUsages(UsageInfo[] usages, Map<PsiElement, PsiElement> oldToNewMap) {
+  protected void retargetUsages(UsageInfo @NotNull [] usages, @NotNull Map<PsiElement, PsiElement> oldToNewMap) {
     final List<NonCodeUsageInfo> nonCodeUsages = new ArrayList<>();
     for (UsageInfo usageInfo : usages) {
       if (usageInfo instanceof MyUsageInfo) {

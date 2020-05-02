@@ -23,6 +23,7 @@ import com.intellij.refactoring.changeSignature.ParameterInfo;
 import com.intellij.refactoring.ui.RefactoringDialog;
 import com.intellij.refactoring.util.AbstractParameterTablePanel;
 import com.intellij.refactoring.util.AbstractVariableData;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -33,6 +34,7 @@ public abstract class AbstractIntroduceParameterObjectDialog<M extends PsiNamedE
                                                              P extends ParameterInfo,
                                                              C extends IntroduceParameterObjectClassDescriptor<M, P>,
                                                              V extends AbstractVariableData> extends RefactoringDialog {
+  @NotNull
   protected M mySourceMethod;
   private JPanel myWholePanel;
   private JTextField mySourceMethodTextField;
@@ -52,7 +54,7 @@ public abstract class AbstractIntroduceParameterObjectDialog<M extends PsiNamedE
     return true;
   }
 
-  public AbstractIntroduceParameterObjectDialog(M method) {
+  public AbstractIntroduceParameterObjectDialog(@NotNull M method) {
     super(method.getProject(), true);
     mySourceMethod = method;
     setTitle(RefactoringBundle.message("refactoring.introduce.parameter.object.title"));

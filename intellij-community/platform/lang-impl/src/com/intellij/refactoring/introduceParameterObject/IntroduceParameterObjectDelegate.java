@@ -72,7 +72,7 @@ public abstract class IntroduceParameterObjectDelegate<M extends PsiNamedElement
   /**
    * @return {@link com.intellij.refactoring.changeSignature.MethodDescriptor#getParameters()}
    */
-  public abstract List<P> getAllMethodParameters(M sourceMethod);
+  public abstract List<P> getAllMethodParameters(@NotNull M sourceMethod);
 
   /**
    * Resulted parameter info should implement {@link ParameterInfo#getActualValue(PsiElement, Object)} so the call site would be updated with actual values.
@@ -100,7 +100,7 @@ public abstract class IntroduceParameterObjectDelegate<M extends PsiNamedElement
    * Pass new parameter infos to the change info constructor which corresponds to the language of this delegate
    */
   public abstract ChangeInfo createChangeSignatureInfo(M method,
-                                                       List<P> newParameterInfos,
+                                                       List<? extends P> newParameterInfos,
                                                        boolean delegate);
 
   /**
