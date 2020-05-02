@@ -17,11 +17,14 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.AsyncFileListener;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -35,12 +38,14 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.concurrency.NonUrgentExecutor;
+import com.intellij.util.containers.ConcurrentFactoryMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author gregsh
@@ -79,14 +84,36 @@ public class ScratchTreeStructureProvider implements TreeStructureProvider, Dumb
         }
       };
     }, disposable);
+    ConcurrentMap<RootType, Disposable> disposables = ConcurrentFactoryMap.createMap(o -> Disposer.newDisposable(o.getDisplayName()));
+    for (RootType rootType : RootType.getAllRootTypes()) {
+      registerRootTypeUpdater(project, rootType, onUpdate, disposable, disposables);
+    }
+    RootType.ROOT_EP.addExtensionPointListener(new ExtensionPointListener<RootType>() {
+      @Override
+      public void extensionAdded(@NotNull RootType rootType, @NotNull PluginDescriptor pluginDescriptor) {
+        registerRootTypeUpdater(project, rootType, onUpdate, disposable, disposables);
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull RootType rootType, @NotNull PluginDescriptor pluginDescriptor) {
+        Disposable rootDisposable = disposables.remove(rootType);
+        if (rootDisposable != null) Disposer.dispose(rootDisposable);
+      }
+    }, project);
+    RootType.ROOT_EP.addChangeListener(onUpdate, project);
+  }
+
+  private static void registerRootTypeUpdater(@NotNull Project project,
+                                              @NotNull RootType rootType,
+                                              @NotNull Runnable onUpdate,
+                                              @NotNull Disposable parentDisposable,
+                                              @NotNull Map<RootType, Disposable> disposables) {
+    if (rootType.isHidden()) return;
+    Disposable rootDisposable = disposables.get(rootType);
+    Disposer.register(parentDisposable, rootDisposable);
     ReadAction
-      .nonBlocking(() -> {
-        for (RootType rootType : RootType.getAllRootTypes()) {
-          if (rootType.isHidden()) continue;
-          rootType.registerTreeUpdater(project, disposable, onUpdate);
-        }
-      })
-      .expireWith(disposable)
+      .nonBlocking(() -> rootType.registerTreeUpdater(project, parentDisposable, onUpdate))
+      .expireWith(parentDisposable)
       .submit(NonUrgentExecutor.getInstance());
   }
 
