@@ -128,6 +128,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
     val busConnection = ApplicationManager.getApplication().messageBus.connect(this)
     busConnection.subscribe(FrameStateListener.TOPIC, object : FrameStateListener {
       override fun onFrameDeactivated() {
+        externalChangesModificationTracker.incModificationCount()
         if (!settings.isSaveOnFrameDeactivation || !canSyncOrSave()) {
           return
         }
@@ -254,6 +255,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
   }
 
   override fun scheduleRefresh() {
+    externalChangesModificationTracker.incModificationCount()
     refreshDelayAlarm.cancelAndRequest()
   }
 
