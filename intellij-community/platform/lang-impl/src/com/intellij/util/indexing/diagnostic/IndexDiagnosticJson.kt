@@ -8,37 +8,70 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-data class JsonPerThreadTime(
-  val perThreadTimes: List<TimeNano>,
-  val totalCpuTime: TimeNano
+private fun TimeNano.toMillis(): TimeMillis = this / 1_000_000
+
+data class JsonPerThreadTimeStats(
+  val minTime: TimeMillis,
+  val maxTime: TimeMillis,
+  val meanTime: TimeMillis,
+  val medianTime: TimeMillis
 )
 
-fun PerThreadTime.toJsonPerThreadTime(): JsonPerThreadTime =
-  JsonPerThreadTime(
-    threadIdToTime.values.sortedDescending(),
-    threadIdToTime.values.sum()
+fun PerThreadTime.toJsonPerThreadTime(): JsonPerThreadTimeStats {
+  val timeBuckets = threadIdToTimeBucket.values
+  if (timeBuckets.isEmpty()) {
+    return JsonPerThreadTimeStats(-1, -1, -1, -1)
+  }
+
+  val median = getMedianOfArray(timeBuckets.flatMap { it.maxNTimes })
+  val min = timeBuckets.map { it.minTime }.min()!!
+  val max = timeBuckets.map { it.maxTime }.max()!!
+  val mean = getMeanOfArray(timeBuckets.map { it.meanTime })
+
+  return JsonPerThreadTimeStats(
+    min.toMillis(),
+    max.toMillis(),
+    mean.toLong().toMillis(),
+    median.toLong().toMillis()
   )
+}
+
+private fun <N: Number> getMeanOfArray(elements: Collection<N>): Double {
+  require(elements.isNotEmpty())
+  return elements.map { it.toDouble() }.sum() / elements.size
+}
+
+private fun <N: Number> getMedianOfArray(elements: Collection<N>): Double {
+  require(elements.isNotEmpty())
+  val sorted = elements.map { it.toDouble() }.sorted()
+  return if (sorted.size % 2 == 0) {
+    (sorted[sorted.size / 2] + sorted[sorted.size / 2 - 1]) / 2.0
+  }
+  else {
+    sorted[sorted.size / 2]
+  }
+}
 
 data class JsonFileProviderIndexStatistics(
-  val indexableFilesProviderDebugName: String,
+  val providerName: String,
   // <total time> = <content loading time> + <indexing time> + <time spent on waiting for other indexing tasks to complete>
-  val totalTime: TimeNano,
-  val indexingTime: JsonPerThreadTime,
-  val contentLoadingTime: JsonPerThreadTime,
+  val totalTime: TimeMillis,
+  val indexingTimePerFile: JsonPerThreadTimeStats,
+  val contentLoadingTimePerFile: JsonPerThreadTimeStats,
   val numberOfFilesPerFileType: List<FilesNumberPerFileType>,
   val timesPerFileType: List<TimePerFileType>,
   val timesPerIndexer: List<TimePerIndexer>
 ) {
 
-  data class TimePerIndexer(val indexId: String, val time: JsonPerThreadTime)
-  data class TimePerFileType(val fileType: String, val time: JsonPerThreadTime)
+  data class TimePerIndexer(val indexId: String, val time: JsonPerThreadTimeStats)
+  data class TimePerFileType(val fileType: String, val time: JsonPerThreadTimeStats)
   data class FilesNumberPerFileType(val fileType: String, val filesNumber: Int)
 }
 
 fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics =
   JsonFileProviderIndexStatistics(
     providerDebugName,
-    totalTime,
+    totalTime.toMillis(),
     indexingStatistics.indexingTime.toJsonPerThreadTime(),
     indexingStatistics.contentLoadingTime.toJsonPerThreadTime(),
     indexingStatistics.numberOfFilesPerFileType
@@ -47,50 +80,58 @@ fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics
     ,
     indexingStatistics.timesPerFileType
       .map { JsonFileProviderIndexStatistics.TimePerFileType(it.key, it.value.toJsonPerThreadTime()) }
-      .sortedByDescending { it.time.totalCpuTime }
+      .sortedByDescending { it.time.meanTime }
     ,
     indexingStatistics.timesPerIndexer
       .map { JsonFileProviderIndexStatistics.TimePerIndexer(it.key, it.value.toJsonPerThreadTime()) }
-      .sortedByDescending { it.time.totalCpuTime }
+      .sortedByDescending { it.time.meanTime }
   )
+
+typealias PresentableTime = String
+
+private fun TimeMillis.toPresentableTime(): PresentableTime =
+  DateFormatUtil.getIso8601Format().format(this)
 
 @Suppress("unused", "used for JSON")
 data class JsonProjectIndexingHistoryTimes(
-  val startIndexing: TimeMillis,
-  val endIndexing: TimeMillis,
+  val startIndexing: PresentableTime,
+  val endIndexing: PresentableTime,
+  val indexingTime: TimeMillis,
 
-  val startPushProperties: TimeMillis,
-  val endPushProperties: TimeMillis,
+  val startPushProperties: PresentableTime,
+  val endPushProperties: PresentableTime,
+  val pushPropertiesTime: TimeMillis,
 
-  val startIndexExtensions: TimeMillis,
-  val endIndexExtensions: TimeMillis,
+  val startIndexExtensions: PresentableTime,
+  val endIndexExtensions: PresentableTime,
+  val indexExtensionsTime: TimeMillis,
 
-  val startScanFiles: TimeMillis,
-  val endScanFiles: TimeMillis
-) {
-  val presentableStartIndexingTime: String get() = DateFormatUtil.formatTimeWithSeconds(startIndexing)
-  val indexingTime: TimeMillis get() = endIndexing - startIndexing
-  val pushPropertiesTime: TimeMillis get() = endPushProperties - startPushProperties
-  val indexExtensionsTime: TimeMillis get() = endIndexExtensions - startIndexExtensions
-  val scanFilesTime: TimeMillis get() = endScanFiles - startScanFiles
-}
+  val startScanFiles: PresentableTime,
+  val endScanFiles: PresentableTime,
+  val scanFilesTime: TimeMillis
+)
 
-fun ProjectIndexingHistory.IndexingTimes.convertToJson(): JsonProjectIndexingHistoryTimes =
-  JsonProjectIndexingHistoryTimes(
-    startIndexing,
-    endIndexing,
-    startPushProperties,
-    endPushProperties,
-    startIndexExtensions,
-    endIndexExtensions,
-    startScanFiles,
-    endScanFiles
+fun ProjectIndexingHistory.IndexingTimes.convertToJson(): JsonProjectIndexingHistoryTimes {
+  return JsonProjectIndexingHistoryTimes(
+    startIndexing.toPresentableTime(),
+    endIndexing.toPresentableTime(),
+    endIndexing - startIndexing,
+    startPushProperties.toPresentableTime(),
+    endPushProperties.toPresentableTime(),
+    endPushProperties - startPushProperties,
+    startIndexExtensions.toPresentableTime(),
+    endIndexExtensions.toPresentableTime(),
+    endIndexExtensions - startIndexExtensions,
+    startScanFiles.toPresentableTime(),
+    endScanFiles.toPresentableTime(),
+    endScanFiles - startScanFiles
   )
+}
 
 data class JsonProjectIndexingHistory(
   val projectName: String,
   val indexingTimes: JsonProjectIndexingHistoryTimes,
-  val providerStatistics: List<JsonFileProviderIndexStatistics>
+  val fileProviderStatistics: List<JsonFileProviderIndexStatistics>
 )
 
 fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory {
@@ -99,7 +140,7 @@ fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory {
     times.convertToJson(),
     providerStatistics
       .map { it.convertToJson() }
-      .sortedByDescending { it.indexingTime.totalCpuTime }
+      .sortedByDescending { it.indexingTimePerFile.meanTime }
   )
 }
 
