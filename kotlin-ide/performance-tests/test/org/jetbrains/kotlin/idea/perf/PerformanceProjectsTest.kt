@@ -77,11 +77,21 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
             stats.use {
                 perfOpenKotlinProject(it)
 
-                perfHighlightFile("idea/idea-analysis/src/org/jetbrains/kotlin/idea/util/PsiPrecedences.kt", stats = it)
+                val filesToHighlight = arrayOf(
+                    "idea/idea-analysis/src/org/jetbrains/kotlin/idea/util/PsiPrecedences.kt",
+                    "compiler/psi/src/org/jetbrains/kotlin/psi/KtElement.kt",
+                    "compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt",
+                    "core/builtins/native/kotlin/Primitives.kt",
 
-                perfHighlightFile("compiler/psi/src/org/jetbrains/kotlin/psi/KtElement.kt", stats = it)
+                    "compiler/frontend/src/org/jetbrains/kotlin/cfg/ControlFlowProcessor.kt",
+                    "compiler/frontend/src/org/jetbrains/kotlin/cfg/ControlFlowInformationProvider.kt",
 
-                perfHighlightFile("compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt", stats = it)
+                    "compiler/backend/src/org/jetbrains/kotlin/codegen/state/KotlinTypeMapper.kt",
+                    "compiler/backend/src/org/jetbrains/kotlin/codegen/inline/MethodInliner.kt"
+                )
+
+                filesToHighlight.forEach { file -> perfHighlightFile(file, stats = it) }
+                filesToHighlight.forEach { file -> perfHighlightFileEmptyProfile(file, stats = it) }
 
                 perfTypeAndHighlight(
                     it,
@@ -282,7 +292,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     setUp(perfKtsFileAnalysisSetUp(project, fileName))
                     test(perfKtsFileAnalysisTest())
                     tearDown(perfKtsFileAnalysisTearDown(extraTimingsNs, project))
-                    profileEnabled(true)
+                    profilerEnabled(true)
                 }
 
                 extraStats.printWarmUpTimings(
