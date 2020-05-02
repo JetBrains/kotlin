@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static com.intellij.psi.search.scope.packageSet.CustomScopesProviderEx.getAllScope;
 
@@ -65,29 +64,34 @@ public final class NamedScopeFilter implements VirtualFileFilter {
   }
 
   static boolean isVisible(@NotNull NamedScope scope) {
-    return !(scope instanceof NonProjectFilesScope || scope instanceof ScratchesNamedScope || scope == getAllScope());
+    return !(scope instanceof NonProjectFilesScope || scope == getAllScope());
   }
 
   @NotNull
   static List<NamedScopeFilter> list(NamedScopesHolder... holders) {
-    return list(NamedScopeFilter::isVisible, holders);
-  }
-
-  @NotNull
-  static List<NamedScopeFilter> list(@NotNull Predicate<? super NamedScope> visible, NamedScopesHolder @NotNull ... holders) {
     List<NamedScopeFilter> list = new ArrayList<>();
+    NamedScope scratchesScope = null;
     for (NamedScopesHolder holder : holders) {
       for (NamedScope scope : holder.getScopes()) {
         String name = scope.getName();
         if (null == scope.getValue()) {
           LOG.debug("ignore scope without package set: ", name, "; holder: ", holder);
         }
-        else if (!visible.test(scope)) {
+        else if (scope instanceof ScratchesNamedScope) {
+          // the scopes here are not sorted as in scopes combobox, so we need to
+          // add scratches scope last to fix Project/Production/Tests scopes order
+          scratchesScope = scope;
+        }
+        else if (!isVisible(scope)) {
           LOG.debug("ignore hidden scope: ", name, "; holder: ", holder);
         }
         else {
           list.add(new NamedScopeFilter(holder, scope));
         }
+      }
+      if (scratchesScope != null) {
+        list.add(new NamedScopeFilter(holder, scratchesScope));
+        scratchesScope = null;
       }
     }
     return list;

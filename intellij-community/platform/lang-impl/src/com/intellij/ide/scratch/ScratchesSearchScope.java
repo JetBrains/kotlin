@@ -8,6 +8,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * @author gregsh
  */
@@ -34,7 +36,7 @@ public class ScratchesSearchScope extends GlobalSearchScope {
 
   @Override
   public boolean contains(@NotNull VirtualFile file) {
-    return ScratchUtil.isScratch(file);
+    return ScratchesNamedScope.contains(Objects.requireNonNull(getProject()), file);
   }
 
   @Override

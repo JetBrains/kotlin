@@ -11,7 +11,6 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.ProjectViewSettings;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.*;
-import com.intellij.ide.scratch.ScratchProjectViewPane;
 import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -288,7 +287,7 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
            index.getContentRootForFile(file, false) != null ||
            index.isInLibrary(file) ||
            Comparing.equal(file.getParent(), project.getBaseDir()) ||
-           ScratchProjectViewPane.isScratchesMergedIntoProjectTab() && ScratchUtil.isScratch(file);
+           ScratchUtil.isScratch(file);
   }
 
   @Override

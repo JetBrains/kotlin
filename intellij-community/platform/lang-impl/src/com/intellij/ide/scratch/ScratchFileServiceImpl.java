@@ -4,6 +4,9 @@ package com.intellij.ide.scratch;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.FileIconProvider;
 import com.intellij.ide.navigationToolbar.AbstractNavBarModelExtension;
+import com.intellij.ide.projectView.PresentationData;
+import com.intellij.ide.projectView.ProjectViewNode;
+import com.intellij.ide.projectView.ProjectViewNodeDecorator;
 import com.intellij.lang.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -30,6 +33,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.packageDependencies.ui.PackageDependenciesNode;
 import com.intellij.psi.LanguageSubstitutor;
 import com.intellij.psi.LanguageSubstitutors;
 import com.intellij.psi.PsiElement;
@@ -38,6 +42,8 @@ import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.UseScopeEnlarger;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
 import com.intellij.util.ObjectUtils;
@@ -203,7 +209,46 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
     }
   }
 
-  public static class FilePresentation implements FileIconProvider, EditorTabTitleProvider, DumbAware {
+  public static class FilePresentation implements FileIconProvider, EditorTabTitleProvider, ProjectViewNodeDecorator, DumbAware {
+    @Override
+    public void decorate(ProjectViewNode<?> node, PresentationData data) {
+      Object value = node.getValue();
+      RootType rootType;
+      VirtualFile virtualFile = null;
+      if (value instanceof RootType) {
+        rootType = (RootType)value;
+      }
+      else {
+        virtualFile = node.getVirtualFile();
+        if (virtualFile == null || !virtualFile.isValid()) return;
+        rootType = ScratchFileService.getInstance().getRootType(virtualFile);
+        if (rootType == null) return;
+      }
+      ScratchFileService scratchFileService = ScratchFileService.getInstance();
+      VirtualFile rootFile = LocalFileSystem.getInstance().findFileByPath(scratchFileService.getRootPath(rootType));
+      String text;
+      Icon icon = null;
+      if (virtualFile == null || virtualFile.isDirectory() && virtualFile.equals(rootFile)) {
+        text = rootType.getDisplayName();
+      }
+      else {
+        Project project = Objects.requireNonNull(node.getProject());
+        text = rootType.substituteName(project, virtualFile);
+        icon = rootType.substituteIcon(project, virtualFile);
+      }
+      if (text != null) {
+        data.clearText();
+        data.addText(text, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+        data.setPresentableText(text);
+      }
+      if (icon != null) {
+        data.setIcon(icon);
+      }
+    }
+
+    @Override
+    public void decorate(PackageDependenciesNode node, ColoredTreeCellRenderer cellRenderer) {
+    }
 
     @Nullable
     @Override
