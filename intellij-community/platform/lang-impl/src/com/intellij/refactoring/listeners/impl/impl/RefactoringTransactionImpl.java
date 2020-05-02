@@ -73,7 +73,7 @@ public class RefactoringTransactionImpl implements RefactoringTransaction {
 
 
   @Override
-  public RefactoringElementListener getElementListener(PsiElement oldElement) {
+  public @NotNull RefactoringElementListener getElementListener(@NotNull PsiElement oldElement) {
     RefactoringElementListener listener =
       myOldElementToTransactionListenerMap.get(oldElement);
     if(listener == null) {
@@ -93,7 +93,7 @@ public class RefactoringTransactionImpl implements RefactoringTransaction {
     @Override
     public void elementMoved(@NotNull final PsiElement newElement) {
       if (!newElement.isValid()) return;
-      SmartPsiElementPointer<PsiElement> pointer = SmartPointerManager.getInstance(myProject).createSmartPsiElementPointer(newElement);
+      SmartPsiElementPointer<PsiElement> pointer = SmartPointerManager.getInstance(newElement.getProject()).createSmartPsiElementPointer(newElement);
       myRunnables.add(() -> {
         PsiElement element = pointer.getElement();
         if (element == null) {
