@@ -12,6 +12,7 @@ import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.DirectoryInfo;
 import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
+import com.intellij.openapi.vfs.NonPhysicalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,6 +79,7 @@ public class ProjectScopeBuilderImpl extends ProjectScopeBuilder {
     return new ProjectAndLibrariesScope(myProject) {
       @Override
       public boolean contains(@NotNull VirtualFile file) {
+        if (file.getFileSystem() instanceof NonPhysicalFileSystem) return true;
         DirectoryInfo info = ((ProjectFileIndexImpl)myProjectFileIndex).getInfoForFileOrDirectory(file);
         return info.isInProject(file) &&
                (info.getModule() != null || info.hasLibraryClassRoot() || info.isInLibrarySource(file));
