@@ -8,6 +8,7 @@ import com.intellij.find.replaceInProject.ReplaceInProjectManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.IdeEventQueue;
+import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
@@ -70,6 +71,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.*;
 import net.miginfocom.swing.MigLayout;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -731,17 +733,10 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       if (myUsagePreviewPanel.getCannotPreviewMessage(selection) == null && file != null) {
         myUsagePreviewTitle.append(PathUtil.getFileName(file), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         VirtualFile virtualFile = VfsUtil.findFileByIoFile(new File(file), true);
-        if (virtualFile != null) {
-          VirtualFile location = virtualFile.getParent();
-          if (location != null) {
-            String locationPath = VfsUtilCore.isAncestor(myProject.getBaseDir(), location, true)
-                                  ? VfsUtilCore.getRelativeLocation(location, myProject.getBaseDir())
-                                  : FileUtil.getLocationRelativeToUserHome(location.getPath());
-            if (locationPath != null) {
-              myUsagePreviewTitle.append(spaceAndThinSpace() + StringUtil.trimMiddle(locationPath, 120),
-                                         new SimpleTextAttributes(STYLE_PLAIN, UIUtil.getContextHelpForeground()));
-            }
-          }
+        String locationPath = virtualFile == null ? null : getPresentablePath(myProject, virtualFile.getParent(), 120);
+        if (locationPath != null) {
+          myUsagePreviewTitle.append(spaceAndThinSpace() + locationPath,
+                                     new SimpleTextAttributes(STYLE_PLAIN, UIUtil.getContextHelpForeground()));
         }
       }
     };
@@ -857,6 +852,17 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     ContainerUtil.addAll(focusOrder, focusableComponents(bottomPanel));
     setFocusCycleRoot(true);
     setFocusTraversalPolicy(new ListFocusTraversalPolicy(focusOrder));
+  }
+
+  @Contract("_,!null,_->!null")
+  private static String getPresentablePath(@NotNull Project project, @Nullable VirtualFile virtualFile, int maxChars) {
+    if (virtualFile == null) return null;
+    String path = ScratchUtil.isScratch(virtualFile)
+               ? ScratchUtil.getRelativePath(project, virtualFile)
+               : VfsUtilCore.isAncestor(project.getBaseDir(), virtualFile, true)
+                 ? VfsUtilCore.getRelativeLocation(virtualFile, project.getBaseDir())
+                 : FileUtil.getLocationRelativeToUserHome(virtualFile.getPath());
+    return path == null ? null : maxChars < 0 ? path : StringUtil.trimMiddle(path, maxChars);
   }
 
   private DefaultTableModel createTableModel() {
@@ -1766,7 +1772,11 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
       @NotNull
       private String getFilePath(@NotNull UsageInfo2UsageAdapter ua) {
-        return UniqueVFilePathBuilder.getInstance().getUniqueVirtualFilePath(ua.getUsageInfo().getProject(), ua.getFile(), myScope);
+        VirtualFile file = ua.getFile();
+        if (ScratchUtil.isScratch(file)) {
+          return StringUtil.notNullize(getPresentablePath(ua.getUsageInfo().getProject(), ua.getFile(), 60));
+        }
+        return UniqueVFilePathBuilder.getInstance().getUniqueVirtualFilePath(ua.getUsageInfo().getProject(), file, myScope);
       }
 
       @Nullable
