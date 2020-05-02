@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.utils
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -16,11 +18,14 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElementFinder
+import com.intellij.psi.PsiManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptDependenciesClassFinder
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupportHelper
 import org.jetbrains.kotlin.idea.core.script.debug
+import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
@@ -122,7 +127,7 @@ class ScriptClassRootsUpdater(
                 ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
                 if (updates.updatedScripts.isNotEmpty()) {
-                    ScriptingSupportHelper.updateHighlighting(project) {
+                    updateHighlighting(project) {
                         it.path in updates.updatedScripts
                     }
                 }
@@ -152,6 +157,25 @@ class ScriptClassRootsUpdater(
             TransactionGuard.submitTransaction(project, doNotifyRootsChanged)
         } else {
             TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
+        }
+    }
+
+    fun updateHighlighting(project: Project, filter: (VirtualFile) -> Boolean) {
+        if (!project.isOpen) return
+
+        val openFiles = FileEditorManager.getInstance(project).openFiles
+        val openedScripts = openFiles.filter { filter(it) }
+
+        if (openedScripts.isEmpty()) return
+
+        GlobalScope.launch(EDT(project)) {
+            if (project.isDisposed) return@launch
+
+            openedScripts.forEach {
+                PsiManager.getInstance(project).findFile(it)?.let { psiFile ->
+                    DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
+                }
+            }
         }
     }
 }
