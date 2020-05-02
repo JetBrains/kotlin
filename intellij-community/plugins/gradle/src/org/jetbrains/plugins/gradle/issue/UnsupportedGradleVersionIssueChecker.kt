@@ -76,7 +76,7 @@ class UnsupportedGradleVersionIssueChecker : GradleIssueChecker {
       val wrapperSettingsOpenQuickFix = GradleWrapperSettingsOpenQuickFix(issueData.projectPath, "distributionUrl")
       val reimportQuickFix = ReimportQuickFix(issueData.projectPath, GradleConstants.SYSTEM_ID)
       issueDescription.append(" - <a href=\"${wrapperSettingsOpenQuickFix.id}\">Open Gradle wrapper settings</a>, " +
-                              "upgrade version to ${gradleMinimumVersionRequired.version} or newer and <a href=\"${reimportQuickFix.id}\">reimport the project</a>\n")
+                              "upgrade version to ${gradleMinimumVersionRequired.version} or newer and <a href=\"${reimportQuickFix.id}\">reload the project</a>\n")
       quickFixes.add(wrapperSettingsOpenQuickFix)
       quickFixes.add(reimportQuickFix)
     }

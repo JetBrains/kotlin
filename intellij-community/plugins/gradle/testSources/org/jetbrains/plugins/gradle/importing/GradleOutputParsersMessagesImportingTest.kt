@@ -164,7 +164,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                                } +
                                "\n" +
                                "Possible solution:\n" +
-                               " - Disable offline mode and reimport the project\n" +
+                               " - Disable offline mode and reload the project\n" +
                                "\n")
 
     // check unresolved dependency for offline mode when merged project used
@@ -178,7 +178,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                                "Could not resolve junit:junit:99.99.\n" +
                                "\n" +
                                "Possible solution:\n" +
-                               " - Disable offline mode and reimport the project\n" +
+                               " - Disable offline mode and reload the project\n" +
                                "\n")
 
     currentExternalProjectSettings.isResolveModulePerSourceSet = true
