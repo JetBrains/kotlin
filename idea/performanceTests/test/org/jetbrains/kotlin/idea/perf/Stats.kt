@@ -125,7 +125,7 @@ class Stats(
         setUp: (TestData<SV, TV>) -> Unit = { },
         test: (TestData<SV, TV>) -> Unit,
         tearDown: (TestData<SV, TV>) -> Unit = { },
-        profileEnabled: Boolean = false,
+        profilerEnabled: Boolean = false,
         checkStability: Boolean = true
     ) {
 
@@ -135,7 +135,7 @@ class Stats(
             setUp = setUp,
             test = test,
             tearDown = tearDown,
-            profileEnabled = profileEnabled
+            profilerEnabled = profilerEnabled
         )
         val mainPhaseData = PhaseData(
             iterations = iterations,
@@ -143,7 +143,7 @@ class Stats(
             setUp = setUp,
             test = test,
             tearDown = tearDown,
-            profileEnabled = profileEnabled
+            profilerEnabled = profilerEnabled
         )
         val block = {
             warmUpPhase(warmPhaseData)
@@ -307,7 +307,7 @@ class Stats(
         phaseName: String,
         attempt: Int
     ): PhaseProfiler {
-        val profilerHandler = if (phaseData.profileEnabled) ProfilerHandler.getInstance() else DummyProfilerHandler
+        val profilerHandler = if (phaseData.profilerEnabled) ProfilerHandler.getInstance() else DummyProfilerHandler
 
         return if (profilerHandler != DummyProfilerHandler) {
             val profilerPath = pathToResource("profile/${plainname()}")
@@ -429,7 +429,7 @@ data class PhaseData<SV, TV>(
     val setUp: (TestData<SV, TV>) -> Unit,
     val test: (TestData<SV, TV>) -> Unit,
     val tearDown: (TestData<SV, TV>) -> Unit,
-    val profileEnabled: Boolean = false
+    val profilerEnabled: Boolean = false
 )
 
 data class TestData<SV, TV>(var setUpValue: SV?, var value: TV?) {
