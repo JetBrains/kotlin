@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.core.script.configuration
 
 import com.intellij.ProjectTopics
+import com.intellij.codeInsight.daemon.OutsidersPsiFileSupport
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
@@ -46,7 +47,10 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
         if (scriptConfiguration != null) return scriptConfiguration
 
         // check that this script should be loaded later in special way (e.g. gradle project import)
-        if (plugins.any { it.isApplicable(virtualFile) }) return null
+        // (and not for syntactic diff files)
+        if (!OutsidersPsiFileSupport.isOutsiderFile(virtualFile)) {
+            if (plugins.any { it.isApplicable(virtualFile) }) return null
+        }
 
         return default.getOrLoadConfiguration(virtualFile, preloadedKtFile)
     }
