@@ -8973,6 +8973,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/importMember"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("AlreadyImportedSameNameClass.kt")
+        public void testAlreadyImportedSameNameClass() throws Exception {
+            runTest("idea/testData/intentions/importMember/AlreadyImportedSameNameClass.kt");
+        }
+
+        @TestMetadata("AlreadyImportedSameNameClass2.kt")
+        public void testAlreadyImportedSameNameClass2() throws Exception {
+            runTest("idea/testData/intentions/importMember/AlreadyImportedSameNameClass2.kt");
+        }
+
         @TestMetadata("ClassCallChain.kt")
         public void testClassCallChain() throws Exception {
             runTest("idea/testData/intentions/importMember/ClassCallChain.kt");

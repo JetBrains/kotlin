@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -33,7 +33,14 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
 
         if (element.isInImportDirective()) return false
 
-        val fqName = targetFqName(qualifiedExpression) ?: return false
+        val target = target(qualifiedExpression) ?: return false
+        val fqName = target.importableFqName ?: return false
+
+        val file = element.containingKtFile
+        val project = file.project
+        val dummyFile = KtPsiFactory(project).createAnalyzableFile("Dummy.kt", file.text, file)
+        val helper = ImportInsertHelper.getInstance(project)
+        if (helper.importDescriptor(dummyFile, target) == ImportDescriptorResult.FAIL) return false
 
         setTextGetter(KotlinBundle.lazyMessage("add.import.for.0", fqName.asString()))
         return true
@@ -57,18 +64,18 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
 
         val qualifiedExpressions = file.collectDescendantsOfType<KtDotQualifiedExpression> { qualifiedExpression ->
             val selector = qualifiedExpression.getQualifiedElementSelector() as? KtNameReferenceExpression
-            selector?.getReferencedNameAsName() == fqName.shortName() && targetFqName(qualifiedExpression) == fqName
+            selector?.getReferencedNameAsName() == fqName.shortName() && target(qualifiedExpression)?.importableFqName == fqName
         }
         val userTypes = file.collectDescendantsOfType<KtUserType> { userType ->
             val selector = userType.getQualifiedElementSelector() as? KtNameReferenceExpression
-            selector?.getReferencedNameAsName() == fqName.shortName() && targetFqName(userType) == fqName
+            selector?.getReferencedNameAsName() == fqName.shortName() && target(userType)?.importableFqName == fqName
         }
 
         //TODO: not deep
         ShortenReferences.DEFAULT.process(qualifiedExpressions + userTypes)
     }
 
-    private fun targetFqName(qualifiedElement: KtElement): FqName? {
+    private fun target(qualifiedElement: KtElement): DeclarationDescriptor? {
         val nameExpression = qualifiedElement.getQualifiedElementSelector() as? KtNameReferenceExpression ?: return null
         val receiver = nameExpression.getReceiverExpression() ?: return null
         val bindingContext = qualifiedElement.analyze(BodyResolveMode.PARTIAL)
@@ -77,6 +84,6 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
         val targets = nameExpression.mainReference.resolveToDescriptors(bindingContext)
         if (targets.isEmpty()) return null
         if (!targets.all { it.canBeAddedToImport() }) return null
-        return targets.map { it.importableFqName }.singleOrNull()
+        return targets.singleOrNull()
     }
 }
