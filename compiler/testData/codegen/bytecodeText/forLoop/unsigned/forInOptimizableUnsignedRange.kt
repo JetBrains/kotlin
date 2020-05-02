@@ -56,3 +56,5 @@ fun testULongDownTo(a: ULong, b: ULong): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
+// 0 INVOKESTATIC kotlin/U(Int|Long).constructor-impl
+// 0 INVOKE\w+ kotlin/U(Int|Long).(un)?box-impl

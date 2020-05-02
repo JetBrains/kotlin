@@ -51,3 +51,5 @@ fun box(): String {
 // 1 IFGE
 // 6 IF
 // 0 INEG
+// 0 INVOKESTATIC kotlin/UInt.constructor-impl
+// 0 INVOKE\w+ kotlin/UInt.(un)?box-impl

@@ -68,7 +68,6 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     val inductionVariable: IrVariable
 
     protected val stepVariable: IrVariable?
-    protected val stepVariableForIncrement: IrVariable?
     val stepExpression: IrExpression
         // Always copy `stepExpression` is it may be used multiple times.
         get() = field.deepCopyWithSymbols()
@@ -78,7 +77,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
         // Always copy `lastExpression` is it may be used in multiple conditions.
         get() = field.deepCopyWithSymbols()
 
-    private val symbols = context.ir.symbols
+    protected val symbols = context.ir.symbols
     private val elementType: IrType
 
     init {
@@ -124,24 +123,6 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 )
             stepVariable = tmpStepVar
             stepExpression = tmpStepExpression
-
-            stepVariableForIncrement = when (headerInfo.progressionType) {
-                ProgressionType.UINT_PROGRESSION -> {
-                    val castFun = context.ir.symbols.toUIntByExtensionReceiver.getValue(stepType.toKotlinType())
-                    scope.createTmpVariable(
-                        irCall(castFun).apply { extensionReceiver = stepExpression },
-                        nameHint = "stepForIncrement"
-                    )
-                }
-                ProgressionType.ULONG_PROGRESSION -> {
-                    val castFun = context.ir.symbols.toULongByExtensionReceiver.getValue(stepType.toKotlinType())
-                    scope.createTmpVariable(
-                        irCall(castFun).apply { extensionReceiver = stepExpression },
-                        nameHint = "stepForIncrement"
-                    )
-                }
-                else -> null
-            }
         }
     }
 
@@ -155,10 +136,9 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     /** Statement used to increment the induction variable. */
     protected fun incrementInductionVariable(builder: DeclarationIrBuilder): IrStatement = with(builder) {
         // inductionVariable = inductionVariable + step
-        val stepExpressionToUse = stepVariableForIncrement?.let { irGet(stepVariableForIncrement) } ?: stepExpression
-        // NOTE: We cannot use `stepExpression.type` below because it may be of type `Nothing`. This happens in the case of an illegal step
-        // where the "step" is actually a `throw IllegalArgumentException(...)`.
-        val stepType = stepVariableForIncrement?.type ?: headerInfo.progressionType.stepType(context.irBuiltIns)
+        // NOTE: We cannot use `stepExpression.type` to match the value parameter type because it may be of type `Nothing`.
+        // This happens in the case of an illegal step where the "step" is actually a `throw IllegalArgumentException(...)`.
+        val stepType = headerInfo.progressionType.stepType(context.irBuiltIns)
         val plusFun = elementType.getClass()!!.functions.single {
             it.name == OperatorNameConventions.PLUS &&
                     it.valueParameters.size == 1 &&
@@ -168,7 +148,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             inductionVariable.symbol, irCallOp(
                 plusFun.symbol, plusFun.returnType,
                 irGet(inductionVariable),
-                stepExpressionToUse
+                stepExpression
             )
         )
     }
@@ -177,7 +157,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
         with(builder) {
             val builtIns = context.irBuiltIns
             val progressionType = headerInfo.progressionType
-            val progressionElementType = progressionType.elementType(symbols)
+            val progressionCompareType = progressionType.compareType(symbols)
 
             // `compareTo` must be used for UInt/ULong; they don't have intrinsic comparison operators.
             val intCompFun = if (isLastInclusive) {
@@ -185,17 +165,17 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             } else {
                 builtIns.lessFunByOperandType.getValue(builtIns.intClass)
             }
-            val elementCompareToFun = progressionElementType.getClass()!!.functions.single {
+            val elementCompareToFun = progressionCompareType.getClass()!!.functions.single {
                 it.name == OperatorNameConventions.COMPARE_TO &&
                         it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null &&
-                        it.valueParameters.size == 1 && it.valueParameters[0].type == progressionElementType
+                        it.valueParameters.size == 1 && it.valueParameters[0].type == progressionCompareType
             }
 
             val elementCompFun =
                 if (isLastInclusive) {
-                    builtIns.lessOrEqualFunByOperandType[progressionElementType.classifierOrFail]
+                    builtIns.lessOrEqualFunByOperandType[progressionCompareType.classifierOrFail]
                 } else {
-                    builtIns.lessFunByOperandType[progressionElementType.classifierOrFail]
+                    builtIns.lessFunByOperandType[progressionCompareType.classifierOrFail]
                 }
 
             fun conditionForDecreasing(): IrExpression =
@@ -203,8 +183,8 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 if (progressionType.isUnsigned) {
                     irCall(intCompFun).apply {
                         putValueArgument(0, irCall(elementCompareToFun).apply {
-                            dispatchReceiver = lastExpression
-                            putValueArgument(0, irGet(inductionVariable))
+                            dispatchReceiver = progressionType.coerceToUnsigned(lastExpression, symbols)
+                            putValueArgument(0, progressionType.coerceToUnsigned(irGet(inductionVariable), symbols))
                         })
                         putValueArgument(1, irInt(0))
                     }
@@ -220,8 +200,8 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 if (progressionType.isUnsigned) {
                     irCall(intCompFun).apply {
                         putValueArgument(0, irCall(elementCompareToFun).apply {
-                            dispatchReceiver = irGet(inductionVariable)
-                            putValueArgument(0, lastExpression)
+                            dispatchReceiver = progressionType.coerceToUnsigned(irGet(inductionVariable), symbols)
+                            putValueArgument(0, progressionType.coerceToUnsigned(lastExpression, symbols))
                         })
                         putValueArgument(1, irInt(0))
                     }
@@ -284,7 +264,7 @@ internal class ProgressionLoopHeader(
             else
                 listOfNotNull(inductionVariable, lastVariableIfCanCacheLast)
             ) +
-            listOfNotNull(stepVariable, stepVariableForIncrement)
+            listOfNotNull(stepVariable)
 
     private var loopVariable: IrVariable? = null
 
@@ -303,7 +283,7 @@ internal class ProgressionLoopHeader(
                     isMutable = true
                 )
             } else {
-                loopVariable?.initializer = irGet(inductionVariable)
+                loopVariable?.initializer = headerInfo.progressionType.coerceToUnsigned(irGet(inductionVariable), symbols)
                 loopVariable
             }
 
@@ -328,7 +308,7 @@ internal class ProgressionLoopHeader(
                 //   }
                 IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
                     label = oldLoop.label
-                    condition = irNotEquals(irGet(loopVariable!!), lastExpression)
+                    condition = irNotEquals(headerInfo.progressionType.coerceToSigned(irGet(loopVariable!!), symbols), lastExpression)
                     body = newBody
                 }
             } else {
@@ -382,7 +362,7 @@ internal class IndexedGetLoopHeader(
 ) : NumericForLoopHeader<IndexedGetHeaderInfo>(headerInfo, builder, context, isLastInclusive = false) {
 
     override val loopInitStatements =
-        listOfNotNull(headerInfo.objectVariable, inductionVariable, lastVariableIfCanCacheLast, stepVariable, stepVariableForIncrement)
+        listOfNotNull(headerInfo.objectVariable, inductionVariable, lastVariableIfCanCacheLast, stepVariable)
 
     override fun initializeIteration(
         loopVariable: IrVariable?,

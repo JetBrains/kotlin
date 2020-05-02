@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -32,11 +33,15 @@ internal enum class ProgressionType(
     INT_PROGRESSION(Name.identifier("toInt"), Name.identifier("toInt")),
     LONG_PROGRESSION(Name.identifier("toLong"), Name.identifier("toLong"), isLong = true),
     CHAR_PROGRESSION(Name.identifier("toChar"), Name.identifier("toInt")),
-    UINT_PROGRESSION(Name.identifier("toUInt"), Name.identifier("toInt"), isUnsigned = true),
-    ULONG_PROGRESSION(Name.identifier("toULong"), Name.identifier("toLong"), isLong = true, isUnsigned = true);
+    UINT_PROGRESSION(Name.identifier("toInt"), Name.identifier("toInt"), isUnsigned = true),
+    ULONG_PROGRESSION(Name.identifier("toLong"), Name.identifier("toLong"), isLong = true, isUnsigned = true);
 
     /** Returns the [IrType] of the `first`/`last` properties and elements in the progression. */
-    fun elementType(symbols: Symbols<CommonBackendContext>): IrType = elementClassifier(symbols).defaultType
+    fun elementType(symbols: Symbols<CommonBackendContext>): IrType = when (this) {
+        INT_PROGRESSION, UINT_PROGRESSION -> symbols.int
+        LONG_PROGRESSION, ULONG_PROGRESSION -> symbols.long
+        CHAR_PROGRESSION -> symbols.char
+    }.defaultType
 
     /** Returns the [IrClassSymbol] of the `first`/`last` properties and elements in the progression. */
     fun elementClassifier(symbols: Symbols<CommonBackendContext>): IrClassSymbol = when (this) {
@@ -59,6 +64,15 @@ internal enum class ProgressionType(
         LONG_PROGRESSION, ULONG_PROGRESSION -> builtIns.longClass
     }
 
+    /** Returns the [IrType] used in loop conditions (`buildLoopCondition()`) and when calling `getProgressionLastElement()`. */
+    fun compareType(symbols: Symbols<CommonBackendContext>): IrType = when (this) {
+        INT_PROGRESSION -> symbols.int
+        LONG_PROGRESSION -> symbols.long
+        CHAR_PROGRESSION -> symbols.char
+        UINT_PROGRESSION -> symbols.uInt!!
+        ULONG_PROGRESSION -> symbols.uLong!!
+    }.defaultType
+
     fun castElementIfNecessary(element: IrExpression, context: CommonBackendContext) =
         element.castIfNecessary(elementType(context.ir.symbols), elementCastFunctionName)
 
@@ -77,6 +91,69 @@ internal enum class ProgressionType(
             IrCallImpl(startOffset, endOffset, castFun.returnType, castFun.symbol)
                 .apply { dispatchReceiver = this@castIfNecessary }
         }
+
+    fun coerceToUnsigned(value: IrExpression, symbols: Symbols<CommonBackendContext>): IrExpression {
+        if (!isUnsigned || value.type.isUnsigned()) return value
+
+        val unsafeCoerceIntrinsic = symbols.unsafeCoerceIntrinsic
+        return if (unsafeCoerceIntrinsic != null) {
+            val from = when (this) {
+                UINT_PROGRESSION -> symbols.int.defaultType
+                ULONG_PROGRESSION -> symbols.long.defaultType
+                else -> error("Unexpected progression type")
+            }
+            val to = when (this) {
+                UINT_PROGRESSION -> symbols.uInt!!.defaultType
+                ULONG_PROGRESSION -> symbols.uLong!!.defaultType
+                else -> error("Unexpected progression type")
+            }
+            IrCallImpl(value.startOffset, value.endOffset, to, unsafeCoerceIntrinsic).apply {
+                putTypeArgument(0, from)
+                putTypeArgument(1, to)
+                putValueArgument(0, value)
+            }
+        } else {
+            val conversionFunctionMap = when (this) {
+                UINT_PROGRESSION -> symbols.toUIntByExtensionReceiver
+                ULONG_PROGRESSION -> symbols.toULongByExtensionReceiver
+                else -> error("Unexpected progression type")
+            }
+            val from = when (this) {
+                UINT_PROGRESSION -> symbols.int.defaultType
+                ULONG_PROGRESSION -> symbols.long.defaultType
+                else -> error("Unexpected progression type")
+            }.toKotlinType()
+            val castFun = conversionFunctionMap.getValue(from)
+            IrCallImpl(value.startOffset, value.endOffset, castFun.owner.returnType, castFun).apply {
+                extensionReceiver = value
+            }
+        }
+    }
+
+    fun coerceToSigned(value: IrExpression, symbols: Symbols<CommonBackendContext>): IrExpression {
+        if (!isUnsigned || !value.type.isUnsigned()) return value
+
+        val unsafeCoerceIntrinsic = symbols.unsafeCoerceIntrinsic
+        return if (unsafeCoerceIntrinsic != null) {
+            val from = when (this) {
+                UINT_PROGRESSION -> symbols.uInt!!.defaultType
+                ULONG_PROGRESSION -> symbols.uLong!!.defaultType
+                else -> error("Unexpected progression type")
+            }
+            val to = when (this) {
+                UINT_PROGRESSION -> symbols.int.defaultType
+                ULONG_PROGRESSION -> symbols.long.defaultType
+                else -> error("Unexpected progression type")
+            }
+            IrCallImpl(value.startOffset, value.endOffset, to, unsafeCoerceIntrinsic).apply {
+                putTypeArgument(0, from)
+                putTypeArgument(1, to)
+                putValueArgument(0, value)
+            }
+        } else {
+            castElementIfNecessary(value, symbols.context)
+        }
+    }
 
     companion object {
         fun fromIrType(irType: IrType, symbols: Symbols<CommonBackendContext>): ProgressionType? = when {
