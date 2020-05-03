@@ -191,10 +191,8 @@ public final class ScopeViewPane extends AbstractProjectViewPane {
       myTree.getEmptyText()
         .setText(IdeBundle.message("scope.view.empty.text"))
         .appendSecondaryText(IdeBundle.message("scope.view.empty.link"), LINK_PLAIN_ATTRIBUTES, event -> {
-          for (NamedScopeFilter filter : getFilters()) {
-            selectScopeView(filter.toString());
-            return;
-          }
+          ProjectView view = myProject.isDisposed() ? null : ProjectView.getInstance(myProject);
+          if (view != null) view.changeView(ProjectViewPane.ID);
         });
     }
     if (myScrollPane == null) {
