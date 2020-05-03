@@ -10,13 +10,10 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.*;
-import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ui.configuration.*;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver.UnknownSdkLookup;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.util.Consumer;
 import com.intellij.util.TripleFunction;
@@ -206,7 +203,8 @@ public class UnknownSdkTracker {
                 onSdkNameReady,
                 sdk -> {
                   if (sdk != null) {
-                    registerNewSdkInJdkTable(sdk.getName(), sdk, fix.extraJars());
+                    fix.configure(sdk);
+                    registerNewSdkInJdkTable(sdk.getName(), sdk);
                   }
                   onCompleted.consume(sdk);
                 });
@@ -220,7 +218,7 @@ public class UnknownSdkTracker {
       .withProject(myProject)
       .withSdkTypeFilter(type -> sdkType == null || Objects.equals(type, sdkType))
       .onSdkSelected(sdk -> {
-        registerNewSdkInJdkTable(sdkName, sdk, Collections.emptyList());
+        registerNewSdkInJdkTable(sdkName, sdk);
         updateUnknownSdks();
       })
       .buildEditorNotificationPanelHandler();
@@ -262,8 +260,8 @@ public class UnknownSdkTracker {
         catch (Exception error) {
           LOG.warn("Failed to setupPaths for " + sdk + ". " + error.getMessage(), error);
         }
-
-        registerNewSdkInJdkTable(actualSdkName, sdk, fix.getExtraJars());
+        fix.configure(sdk);
+        registerNewSdkInJdkTable(actualSdkName, sdk);
         LOG.info("Automatically set Sdk " + info + " to " + fix.getExistingSdkHome());
         onCompleted.consume(sdk);
       } catch (Exception error) {
@@ -301,7 +299,7 @@ public class UnknownSdkTracker {
     return result;
   }
 
-  private static void registerNewSdkInJdkTable(@Nullable String sdkName, @NotNull Sdk sdk, @NotNull List<String> extraJars) {
+  private static void registerNewSdkInJdkTable(@Nullable String sdkName, @NotNull Sdk sdk) {
     WriteAction.run(() -> {
       ProjectJdkTable table = ProjectJdkTable.getInstance();
       if (sdkName != null) {
@@ -310,30 +308,12 @@ public class UnknownSdkTracker {
           LOG.warn("SDK with name " + sdkName + " already exists: clash=" + clash + ", new=" + sdk);
           return;
         }
-
         SdkModificator mod = sdk.getSdkModificator();
         mod.setName(sdkName);
-        for(String path: extraJars) {
-          VirtualFile extraJar = resolveExtraJar(sdk, path);
-          if (extraJar != null) {
-            mod.addRoot(extraJar, OrderRootType.CLASSES);
-          } else {
-            LOG.warn("Cant resolve path in include to jar" + path + " for SDK with name " + sdkName);
-          }
-        }
         mod.commitChanges();
       }
 
       table.addJdk(sdk);
     });
-  }
-
-  @Nullable
-  private static VirtualFile resolveExtraJar(@NotNull Sdk sdk, @NotNull String path) {
-    VirtualFile homeDirectory = sdk.getHomeDirectory();
-    if (homeDirectory == null) return null;
-    VirtualFile file = homeDirectory.findFileByRelativePath(path);
-    if (file == null) return null;
-    return JarFileSystem.getInstance().getJarRootForLocalFile(file);
   }
 }

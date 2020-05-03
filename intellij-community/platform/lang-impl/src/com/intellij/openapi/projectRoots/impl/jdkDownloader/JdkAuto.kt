@@ -11,18 +11,18 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectBundle
-import com.intellij.openapi.projectRoots.JdkUtil
-import com.intellij.openapi.projectRoots.ProjectJdkTable
-import com.intellij.openapi.projectRoots.SdkType
-import com.intellij.openapi.projectRoots.SdkTypeId
+import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType.notSimpleJavaSdkTypeIfAlternativeExistsAndNotDependentSdkType
 import com.intellij.openapi.projectRoots.impl.MockSdk
 import com.intellij.openapi.projectRoots.impl.UnknownSdkTracker
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ui.configuration.*
 import com.intellij.openapi.roots.ui.configuration.SdkDetector.DetectedSdkListener
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver.UnknownSdkLookup
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.vfs.JarFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.lang.JavaVersion
 import com.intellij.util.text.nullize
 import com.intellij.util.xmlb.annotations.XCollection
@@ -53,6 +53,29 @@ private class JdkAutoHintService(private val project: Project) : SimplePersisten
   companion object {
     @JvmStatic
     fun getInstance(project: Project) : JdkAutoHintService = project.service()
+  }
+}
+
+private class JarSdkConfigurator(val extraJars: List<String>) : UnknownSdkFixConfigurator {
+  override fun configure(sdk: Sdk) {
+    val sdkModificator = sdk.sdkModificator
+    for (path in extraJars) {
+      val extraJar = resolveExtraJar(sdk, path)
+      if (extraJar != null) {
+        sdkModificator.addRoot(extraJar, OrderRootType.CLASSES)
+        LOG.info("Jar '$path' has been added to sdk '${sdk.name}'")
+      }
+      else {
+        LOG.warn("Cant resolve path '$path' for jdk home '${sdk.homeDirectory}'")
+      }
+    }
+    sdkModificator.commitChanges()
+  }
+
+  private fun resolveExtraJar(sdk: Sdk, path: String): VirtualFile? {
+    val homeDirectory = sdk.homeDirectory ?: return null
+    val file = homeDirectory.findFileByRelativePath(path) ?: return null
+    return JarFileSystem.getInstance().getJarRootForLocalFile(file)
   }
 }
 
@@ -123,11 +146,10 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
           sdkType.getVersionString(hint.path)
         }.getOrNull() ?: return null
 
-        return object : UnknownSdkLocalSdkFix {
+        return object : UnknownSdkLocalSdkFix, UnknownSdkFixConfigurator by JarSdkConfigurator(hint.includeJars) {
           override fun getExistingSdkHome(): String = path
           override fun getVersionString(): String = version
           override fun getSuggestedSdkName() = sdkType.suggestSdkName(null, hint.path)
-          override fun getExtraJars() = hint.includeJars
           override fun toString() = "resolved to hint $version, $path"
         }
       }
@@ -150,10 +172,11 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
                               }.maxBy { it.second }
                               ?.first ?: return null
 
-        return object: UnknownSdkDownloadableSdkFix {
+        val jarConfigurator = JarSdkConfigurator(resolveHint(sdk)?.includeJars ?: mutableListOf())
+
+        return object: UnknownSdkDownloadableSdkFix, UnknownSdkFixConfigurator by jarConfigurator {
           override fun getVersionString() = jdkToDownload.versionString
           override fun getPresentableVersionString() = jdkToDownload.presentableVersionString
-          override fun extraJars() = resolveHint(sdk)?.includeJars ?: mutableListOf()
 
           override fun getDownloadDescription() = jdkToDownload.fullPresentationText
 
@@ -234,6 +257,8 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
     override fun getVersionString() = JdkVersionDetector.formatVersionString(version)
     override fun getPresentableVersionString() = version.toFeatureMinorUpdateString()
     override fun getSuggestedSdkName() : String = suggestedName
-    override fun getExtraJars() = includeJars
+    override fun configure(sdk: Sdk) {
+      JarSdkConfigurator(includeJars).configure(sdk)
+    }
   }
 }
