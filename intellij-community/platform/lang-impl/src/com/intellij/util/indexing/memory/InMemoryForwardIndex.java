@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class InMemoryForwardIndex implements ForwardIndex {
+public final class InMemoryForwardIndex implements ForwardIndex {
   private final TIntObjectHashMap<byte[]> myMap = new TIntObjectHashMap<>();
 
   @Override

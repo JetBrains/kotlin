@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class InMemoryIndexStorage<K, V> implements VfsAwareIndexStorage<K, V> {
+public final class InMemoryIndexStorage<K, V> implements VfsAwareIndexStorage<K, V> {
 
   private final Map<K, ValueContainerImpl<V>> myMap = new THashMap<>();
 

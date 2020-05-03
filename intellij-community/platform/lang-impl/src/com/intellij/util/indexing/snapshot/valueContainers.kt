@@ -9,7 +9,7 @@ class OneRecordValueContainer<V>(private val inputId: Int, private val value: V?
   override fun size() = 1
 }
 
-internal object EmptyValueContainer: ValueContainer<Nothing>() {
+object EmptyValueContainer: ValueContainer<Nothing>() {
   override fun getValueIterator(): ValueIterator<Nothing> = EmptyValueIterator
 
   override fun size() = 0
