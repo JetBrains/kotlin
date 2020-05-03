@@ -18,8 +18,6 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
@@ -27,8 +25,7 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.*
-import org.gradle.plugins.signing.SigningExtension
-import org.gradle.plugins.signing.SigningPlugin
+import plugins.KotlinBuildPublishingPlugin
 
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
@@ -206,8 +203,7 @@ fun Project.standardPublicJars() {
 }
 
 fun Project.publish(moduleMetadata: Boolean = false, configure: MavenPublication.() -> Unit = { }) {
-    apply<MavenPublishPlugin>()
-    apply<SigningPlugin>()
+    apply<KotlinBuildPublishingPlugin>()
 
     if (!moduleMetadata) {
         tasks.withType<GenerateModuleMetadata> {
@@ -215,106 +211,10 @@ fun Project.publish(moduleMetadata: Boolean = false, configure: MavenPublication
         }
     }
 
-    val javaComponent = components.findByName("java") as AdhocComponentWithVariants?
-    if (javaComponent != null) {
-        val runtimeElements by configurations
-        val apiElements by configurations
-
-        val publishedRuntime = configurations.maybeCreate("publishedRuntime").apply {
-            attributes {
-                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-            }
-            extendsFrom(runtimeElements)
-        }
-
-        val publishedCompile = configurations.maybeCreate("publishedCompile").apply {
-            attributes {
-                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_API))
-            }
-            extendsFrom(apiElements)
-        }
-
-        javaComponent.withVariantsFromConfiguration(apiElements) { skip() }
-
-        javaComponent.addVariantsFromConfiguration(publishedCompile) { mapToMavenScope("compile") }
-        javaComponent.addVariantsFromConfiguration(publishedRuntime) { mapToMavenScope("runtime") }
-    }
-
-    configure<PublishingExtension> {
-        publications {
-            create<MavenPublication>("Main") {
-                if (javaComponent != null) {
-                    from(javaComponent)
-                }
-
-                pom {
-                    packaging = "jar"
-                    description.set(project.description)
-                    url.set("https://kotlinlang.org/")
-                    licenses {
-                        license {
-                            name.set("The Apache License, Version 2.0")
-                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                        }
-                    }
-                    scm {
-                        url.set("https://github.com/JetBrains/kotlin")
-                        connection.set("scm:git:https://github.com/JetBrains/kotlin.git")
-                        developerConnection.set("scm:git:https://github.com/JetBrains/kotlin.git")
-                    }
-                    developers {
-                        developer {
-                            name.set("Kotlin Team")
-                            organization.set("JetBrains")
-                            organizationUrl.set("https://www.jetbrains.com")
-                        }
-                    }
-                }
-
-                configure()
-            }
-        }
-
-        repositories {
-            maven {
-                name = "Maven"
-                url = file("${project.rootDir}/build/repo").toURI()
-            }
-        }
-    }
-
-    configure<SigningExtension> {
-        setRequired(provider {
-            project.findProperty("signingRequired")?.toString()?.toBoolean()
-                ?: project.property("isSonatypeRelease") as Boolean
-        })
-
-        sign(extensions.getByType<PublishingExtension>().publications["Main"])
-    }
-
-    tasks.register("install") {
-        dependsOn(tasks.named("publishToMavenLocal"))
-    }
-
-    tasks.named<PublishToMavenRepository>("publishMainPublicationToMavenRepository") {
-        dependsOn(project.rootProject.tasks.named("preparePublication"))
-        doFirst {
-            val preparePublication = project.rootProject.tasks.named("preparePublication").get()
-            val username: String? by preparePublication.extra
-            val password: String? by preparePublication.extra
-            val repoUrl: String by preparePublication.extra
-
-            repository.apply {
-                url = uri(repoUrl)
-                if (url.scheme != "file" && username != null && password != null) {
-                    credentials {
-                        this.username = username
-                        this.password = password
-                    }
-                }
-            }
-        }
-    }
+    val publication = extensions.findByType<PublishingExtension>()
+        ?.publications
+        ?.findByName(KotlinBuildPublishingPlugin.PUBLICATION_NAME) as MavenPublication
+    publication.configure()
 }
 
 fun Project.publishWithLegacyMavenPlugin(body: Upload.() -> Unit = {}): Upload {
