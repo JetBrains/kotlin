@@ -805,12 +805,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
         resetChildren();
         childrenStamp = currentStamp;
       }
-      try {
-        return super.getChildren();
-      }
-      catch (IndexNotReadyException ignore) {
-        return Collections.emptyList();
-      }
+      return super.getChildren();
     }
 
     @Override
