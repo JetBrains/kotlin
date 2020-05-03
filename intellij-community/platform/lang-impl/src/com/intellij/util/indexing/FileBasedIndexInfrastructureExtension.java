@@ -28,6 +28,12 @@ public interface FileBasedIndexInfrastructureExtension {
      * Processes up to date file while "scanning files to index" in progress.
      */
     void processUpToDateFile(@NotNull VirtualFile file, int inputId, @NotNull ID<?, ?> indexId);
+
+    /**
+     * Whether the given file has index provided by this extension.
+     */
+    @ApiStatus.Experimental
+    boolean hasIndexForFile(@NotNull VirtualFile file, int inputId, @NotNull ID<?, ?> indexId);
   }
 
   @Nullable

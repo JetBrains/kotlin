@@ -6,12 +6,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.impl.FilePropertyPusher
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ConcurrentBitSet
-import com.intellij.util.indexing.FileBasedIndex
-import com.intellij.util.indexing.FileBasedIndexImpl
-import com.intellij.util.indexing.IndexingBundle
-import com.intellij.util.indexing.SubstitutedFileType
+import com.intellij.util.indexing.*
 import com.intellij.util.indexing.diagnostic.dump.paths.IndexedFilePath
 import com.intellij.util.indexing.diagnostic.dump.paths.PortableFilePaths
+import kotlin.streams.asSequence
 
 object IndexContentDiagnosticDumper {
 
@@ -26,12 +24,25 @@ object IndexContentDiagnosticDumper {
     val indexedFilePaths = arrayListOf<IndexedFilePath>()
     val providerNameToOriginalFileIds = hashMapOf<String, MutableSet<Int>>()
     val filesFromUnsupportedFileSystem = arrayListOf<IndexedFilePath>()
+    val fileBasedIndexExtensionIds = FileBasedIndexExtension.EXTENSION_POINT_NAME.extensionList.map { it.name }
+    val infrastructureExtensions = FileBasedIndexInfrastructureExtension.EP_NAME.extensions().asSequence()
+      .mapNotNull { it.createFileIndexingStatusProcessor(project) }
+      .toList()
+
+    val providedIndexIdToIndexedFiles = hashMapOf<String, MutableSet<Int>>()
 
     for ((index, provider) in providers.withIndex()) {
       indicator.text2 = provider.debugName
       val providerFileIds = hashSetOf<Int>()
       providerNameToOriginalFileIds[provider.debugName] = providerFileIds
       provider.iterateFiles(project, { fileOrDir ->
+        val fileId = FileBasedIndex.getFileId(fileOrDir)
+        for (indexId in fileBasedIndexExtensionIds) {
+          if (infrastructureExtensions.any { it.hasIndexForFile(fileOrDir, fileId, indexId) }) {
+            providedIndexIdToIndexedFiles.getOrPut(indexId.name) { hashSetOf() } += fileId
+          }
+        }
+
         val indexedFilePath = createIndexedFilePath(fileOrDir, project)
         if (PortableFilePaths.isSupportedFileSystem(fileOrDir)) {
           indexedFilePaths += indexedFilePath
@@ -48,9 +59,17 @@ object IndexContentDiagnosticDumper {
     }
     return IndexContentDiagnostic(
       indexedFilePaths,
+      providedIndexIdToIndexedFiles,
       filesFromUnsupportedFileSystem,
       providerNameToOriginalFileIds
     )
+  }
+
+  fun doesFileHaveProvidedIndex(file: VirtualFile, indexId: ID<*, *>, project: Project): Boolean {
+    val fileId = FileBasedIndex.getFileId(file)
+    return FileBasedIndexInfrastructureExtension.EP_NAME.extensions().asSequence()
+      .mapNotNull { it.createFileIndexingStatusProcessor(project) }
+      .any { it.hasIndexForFile(file, fileId, indexId) }
   }
 
   fun createIndexedFilePath(fileOrDir: VirtualFile, project: Project): IndexedFilePath {
