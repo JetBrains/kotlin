@@ -56,10 +56,11 @@ object IndexContentDiagnosticDumper {
     val fileId = FileBasedIndex.getFileId(fileOrDir)
     val fileUrl = fileOrDir.url
     val fileType = fileOrDir.fileType.name
+    val fileSize = if (fileOrDir.isDirectory) 0 else fileOrDir.length
     val portableFilePath = PortableFilePaths.getPortableFilePath(fileOrDir, project)
     val resolvedFile = PortableFilePaths.findFileByPath(portableFilePath, project)
     val allPusherValues = dumpFilePropertyPusherValues(fileOrDir, project).mapValues { it.value?.toString() ?: "<null-value>" }
-    val indexedFilePath = IndexedFilePath(fileId, fileType, fileUrl, portableFilePath, allPusherValues)
+    val indexedFilePath = IndexedFilePath(fileId, fileType, fileSize, fileUrl, portableFilePath, allPusherValues)
     check(fileUrl == resolvedFile?.url) {
       buildString {
         appendln("File cannot be resolved")
