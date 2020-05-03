@@ -107,4 +107,28 @@ class DefaultKotlinDependencyHandler(
 
     override fun npm(org: String?, packageName: String, version: String) =
         npm("${if (org != null) "@$org/" else ""}$packageName", version)
+
+    override fun devNpm(name: String, version: String): NpmDependency =
+        NpmDependency(
+            project = project,
+            name = name,
+            version = version,
+            scope = NpmDependency.Scope.DEV
+        )
+
+    override fun devNpm(name: String, directory: File): NpmDependency {
+        check(directory.isDirectory) {
+            "Dependency on local path should point on directory but $directory found"
+        }
+        return devNpm(
+            name = name,
+            version = fileVersion(directory)
+        )
+    }
+
+    override fun devNpm(directory: File): NpmDependency =
+        devNpm(
+            name = moduleName(directory),
+            directory = directory
+        )
 }
