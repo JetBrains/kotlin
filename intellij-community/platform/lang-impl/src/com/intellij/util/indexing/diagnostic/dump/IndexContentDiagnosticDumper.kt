@@ -9,6 +9,7 @@ import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileBasedIndexImpl
 import com.intellij.util.indexing.IndexingBundle
+import com.intellij.util.indexing.SubstitutedFileType
 import com.intellij.util.indexing.diagnostic.dump.paths.IndexedFilePath
 import com.intellij.util.indexing.diagnostic.dump.paths.PortableFilePaths
 
@@ -55,12 +56,27 @@ object IndexContentDiagnosticDumper {
   fun createIndexedFilePath(fileOrDir: VirtualFile, project: Project): IndexedFilePath {
     val fileId = FileBasedIndex.getFileId(fileOrDir)
     val fileUrl = fileOrDir.url
-    val fileType = fileOrDir.fileType.name
-    val fileSize = if (fileOrDir.isDirectory) 0 else fileOrDir.length
+    val fileType = if (fileOrDir.isDirectory) null else fileOrDir.fileType.name
+    val substitutedFileType = if (fileOrDir.isDirectory) {
+      null
+    }
+    else {
+      SubstitutedFileType.substituteFileType(fileOrDir, fileOrDir.fileType, project).name
+        .takeIf { it != fileType }
+    }
+    val fileSize = if (fileOrDir.isDirectory) null else fileOrDir.length
     val portableFilePath = PortableFilePaths.getPortableFilePath(fileOrDir, project)
     val resolvedFile = PortableFilePaths.findFileByPath(portableFilePath, project)
     val allPusherValues = dumpFilePropertyPusherValues(fileOrDir, project).mapValues { it.value?.toString() ?: "<null-value>" }
-    val indexedFilePath = IndexedFilePath(fileId, fileType, fileSize, fileUrl, portableFilePath, allPusherValues)
+    val indexedFilePath = IndexedFilePath(
+      fileId,
+      fileType,
+      substitutedFileType,
+      fileSize,
+      fileUrl,
+      portableFilePath,
+      allPusherValues
+    )
     check(fileUrl == resolvedFile?.url) {
       buildString {
         appendln("File cannot be resolved")
