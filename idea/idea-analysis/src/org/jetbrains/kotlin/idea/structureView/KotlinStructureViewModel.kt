@@ -15,6 +15,7 @@ import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 
 class KotlinStructureViewModel(ktFile: KtFile, editor: Editor?) :
     StructureViewModelBase(ktFile, editor, KotlinStructureViewElement(ktFile, false)),
@@ -46,7 +47,7 @@ class KotlinStructureViewModel(ktFile: KtFile, editor: Editor?) :
 
     companion object {
         private val NODE_PROVIDERS = listOf(KotlinInheritedMembersNodeProvider())
-        private val FILTERS = arrayOf<Filter>(PublicElementsFilter)
+        private val FILTERS = arrayOf(PropertiesFilter, PublicElementsFilter)
     }
 }
 
@@ -64,4 +65,22 @@ object PublicElementsFilter : Filter {
     override fun isReverted() = true
 
     const val ID = "KOTLIN_SHOW_NON_PUBLIC"
+}
+
+object PropertiesFilter : Filter {
+    override fun isVisible(treeNode: TreeElement): Boolean {
+        val element = (treeNode as? KotlinStructureViewElement)?.element
+        val isProperty = element is KtProperty && element.isMember || element is KtParameter && element.isPropertyParameter()
+        return !isProperty
+    }
+
+    override fun getPresentation(): ActionPresentation {
+        return ActionPresentationData(KotlinIdeaAnalysisBundle.message("show.properties"), null, PlatformIcons.PROPERTY_ICON)
+    }
+
+    override fun getName() = ID
+
+    override fun isReverted() = true
+
+    const val ID = "KOTLIN_SHOW_PROPERTIES"
 }
