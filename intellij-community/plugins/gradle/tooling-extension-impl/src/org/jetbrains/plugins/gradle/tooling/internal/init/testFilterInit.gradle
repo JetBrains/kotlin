@@ -43,7 +43,8 @@ gradle.taskGraph.whenReady { taskGraph ->
     if (task instanceof Test || (abstractTestTaskClass != null && abstractTestTaskClass.isAssignableFrom(task.class))) {
       try {
         task.outputs.upToDateWhen { false }
-        if(ijTestIncludes != ['*'] && ijTestFilteringSupported) {
+        String[] strings = ['*']
+        if(ijTestIncludes != strings && ijTestFilteringSupported) {
           def filter = task.getFilter()
           filter.setIncludePatterns(new String[0])
           ijTestIncludes.each(){ filter.includeTestsMatching "${it}" }
