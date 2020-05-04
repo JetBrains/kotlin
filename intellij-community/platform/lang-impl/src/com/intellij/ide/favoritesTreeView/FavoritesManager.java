@@ -60,6 +60,10 @@ public final class FavoritesManager implements PersistentStateComponent<Element>
 
   public FavoritesManager(@NotNull Project project) {
     myProject = project;
+    EP_NAME.getPoint(myProject).addChangeListener(() -> {
+      myProviders = null;
+      rootsChanged();
+    }, myProject);
   }
 
   @NotNull
@@ -191,6 +195,7 @@ public final class FavoritesManager implements PersistentStateComponent<Element>
     return !nodes.isEmpty() && addRoots(name, nodes);
   }
 
+  @Nullable
   public synchronized Comparator<FavoriteTreeNodeDescriptor> getCustomComparator(@NotNull final String name) {
     return getProviders().get(name);
   }

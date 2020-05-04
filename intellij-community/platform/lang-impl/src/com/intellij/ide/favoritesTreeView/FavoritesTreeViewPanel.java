@@ -216,22 +216,25 @@ public final class FavoritesTreeViewPanel extends JPanel implements DataProvider
     favoriteManager.addFavoritesListener(new FavoritesListener() {
       @Override
       public void rootsChanged() {
-        myBuilder.updateFromRoot();
-        myTree.repaint();
+        doUpdate();
       }
 
       @Override
       public void listAdded(@NotNull String listName) {
-        myBuilder.updateFromRoot();
-        myTree.repaint();
+        doUpdate();
       }
 
       @Override
       public void listRemoved(@NotNull String listName) {
-        myBuilder.updateFromRoot();
-        myTree.repaint();
+        doUpdate();
       }
     }, project);
+    FavoriteNodeProvider.EP_NAME.getPoint(myProject).addChangeListener(this::doUpdate, myProject);
+  }
+
+  private void doUpdate() {
+    myBuilder.updateFromRoot();
+    myTree.repaint();
   }
 
   public void selectElement(final Object selector, final VirtualFile file, final boolean requestFocus) {
