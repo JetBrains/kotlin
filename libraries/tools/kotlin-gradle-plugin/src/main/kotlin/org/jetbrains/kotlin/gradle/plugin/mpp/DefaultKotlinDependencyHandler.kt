@@ -131,4 +131,28 @@ class DefaultKotlinDependencyHandler(
             name = moduleName(directory),
             directory = directory
         )
+
+    override fun peerNpm(name: String, version: String): NpmDependency =
+        NpmDependency(
+            project = project,
+            name = name,
+            version = version,
+            scope = NpmDependency.Scope.PEER
+        )
+
+    override fun peerNpm(name: String, directory: File): NpmDependency {
+        check(directory.isDirectory) {
+            "Dependency on local path should point on directory but $directory found"
+        }
+        return peerNpm(
+            name = name,
+            version = fileVersion(directory)
+        )
+    }
+
+    override fun peerNpm(directory: File): NpmDependency =
+        peerNpm(
+            name = moduleName(directory),
+            directory = directory
+        )
 }

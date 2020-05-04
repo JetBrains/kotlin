@@ -92,30 +92,29 @@ private abstract class AbstractNpmDependencyExtension(
     }
 }
 
+private const val NAME_DEPENDENCIES = "npm"
+private const val NAME_DEV_DEPENDENCIES = "devNpm"
+private const val NAME_PEER_DEPENDENCIES = "peerNpm"
+
 fun Project.addNpmDependencyExtension() {
     val dependencies = this.dependencies as ExtensionAware
 
-    val npmDependencyExtension: NpmDependencyExtension = object : AbstractNpmDependencyExtension(
-        dependencies, this, NpmDependency.Scope.NORMAL
-    ) {}
+    listOf(NpmDependency.Scope.NORMAL, NpmDependency.Scope.DEV, NpmDependency.Scope.PEER).forEach { scope ->
+        val name = when (scope) {
+            NpmDependency.Scope.DEV -> NAME_DEV_DEPENDENCIES
+            NpmDependency.Scope.PEER -> NAME_PEER_DEPENDENCIES
+            else -> NAME_DEPENDENCIES
+        }
 
-    val devNpmDependencyExtension: NpmDependencyExtension = object : AbstractNpmDependencyExtension(
-        dependencies, this, NpmDependency.Scope.DEV
-    ) {}
+        val dependencyExtension: NpmDependencyExtension = object : AbstractNpmDependencyExtension(dependencies, this, scope) {}
 
-    dependencies
-        .extensions
-        .add(
-            TypeOf.typeOf<NpmDependencyExtension>(NpmDependencyExtension::class.java),
-            "npm",
-            npmDependencyExtension
-        )
+        dependencies
+            .extensions
+            .add(
+                TypeOf.typeOf<NpmDependencyExtension>(NpmDependencyExtension::class.java),
+                name,
+                dependencyExtension
+            )
 
-    dependencies
-        .extensions
-        .add(
-            TypeOf.typeOf<NpmDependencyExtension>(NpmDependencyExtension::class.java),
-            "devNpm",
-            devNpmDependencyExtension
-        )
+    }
 }
