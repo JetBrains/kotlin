@@ -49,6 +49,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.caches.CachedFileContent;
 import com.intellij.util.indexing.diagnostic.FileIndexingStatistics;
+import com.intellij.util.indexing.impl.MapReduceIndex;
 import com.intellij.util.indexing.memory.InMemoryIndexStorage;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.indexing.snapshot.SnapshotInputMappings;
@@ -806,8 +807,12 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     if (e instanceof ProcessCanceledException) return null;
     if (e instanceof IndexOutOfBoundsException) return e; // something wrong with direct byte buffer
     Throwable cause = e.getCause();
-    if (cause instanceof StorageException || cause instanceof IOException ||
-        cause instanceof IllegalArgumentException) return cause;
+    if (cause instanceof StorageException
+        || cause instanceof IOException
+        || cause instanceof IllegalArgumentException
+    ) {
+      return cause;
+    }
     return null;
   }
 
@@ -1279,18 +1284,26 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     assert index != null;
 
     markFileIndexed(file);
-    boolean updateCalculated = false;
     try {
-      // important: no hard referencing currentFC to avoid OOME, the methods introduced for this purpose!
-      // important: update is called out of try since possible indexer extension is HANDLED as single file fail / restart indexing policy
-      final Computable<Boolean> update = () -> index.update(inputId, currentFC);
-      updateCalculated = true;
-
-      runIndexUpdate(indexId, update, currentFC, inputId);
+      if (myStorageBufferingHandler.runUpdate(false, () -> index.update(inputId, currentFC))) {
+        ConcurrencyUtil.withLock(myReadLock, () -> {
+          if (currentFC != null) {
+            index.setIndexedStateForFile(inputId, currentFC);
+          }
+          else {
+            index.resetIndexedStateForFile(inputId);
+          }
+        });
+      }
+    }
+    catch (MapReduceIndex.MapInputException e) {
+      // If exception has happened on input mapping (DataIndexer.map),
+      // it is handled as indexer exception and does not lead to index rebuild.
+      throw e;
     }
     catch (RuntimeException exception) {
       Throwable causeToRebuildIndex = getCauseToRebuildIndex(exception);
-      if (causeToRebuildIndex != null && (updateCalculated || causeToRebuildIndex instanceof IOException)) {
+      if (causeToRebuildIndex != null) {
         requestRebuild(indexId, exception);
         return false;
       }
@@ -1350,23 +1363,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       if (includeFilesFromOtherProjects) {
         myLastOtherProjectInclusionStamp = System.currentTimeMillis();
       }
-    }
-  }
-
-  private void runIndexUpdate(@NotNull ID<?, ?> indexId,
-                              @NotNull Computable<Boolean> update,
-                              @Nullable IndexedFile file,
-                              int inputId) {
-    if (myStorageBufferingHandler.runUpdate(false, update)) {
-      ConcurrencyUtil.withLock(myReadLock, () -> {
-        UpdatableIndex<?, ?, FileContent> index = getIndex(indexId);
-        if (file != null) {
-          index.setIndexedStateForFile(inputId, file);
-        }
-        else {
-          index.resetIndexedStateForFile(inputId);
-        }
-      });
     }
   }
 
