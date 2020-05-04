@@ -136,9 +136,11 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
       public SerializedStubTree computeValue(@NotNull final FileContent inputData, @NotNull StubBuilderType type) {
         try {
           SerializedStubTree prebuiltTree = findPrebuiltSerializedStubTree(inputData);
-          if (prebuiltTree != null && PrebuiltIndexProvider.DEBUG_PREBUILT_INDICES) {
+          if (prebuiltTree != null) {
             prebuiltTree = prebuiltTree.reSerialize(mySerializationManager, myStubIndexesExternalizer);
-            assertRebuiltTreeMatchesActualTree(inputData, type, prebuiltTree);
+            if (PrebuiltIndexProvider.DEBUG_PREBUILT_INDICES) {
+              assertRebuiltTreeMatchesActualTree(inputData, type, prebuiltTree);
+            }
             return prebuiltTree;
           }
         } catch (Exception e) {
