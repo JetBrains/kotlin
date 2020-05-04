@@ -4,7 +4,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
+import com.intellij.ui.SearchTextField
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.nj2k.postProcessing.type
@@ -369,6 +371,35 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && (elseBranch == null || myMatchingVisitor.match(elseBranch, other.`else`))
     }
 
+    override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {
+        val other = getTreeElement<KtWhenConditionInRange>() ?: return
+        myMatchingVisitor.result = condition.isNegated == other.isNegated
+                && myMatchingVisitor.match(condition.rangeExpression, other.rangeExpression)
+    }
+
+    override fun visitWhenConditionIsPattern(condition: KtWhenConditionIsPattern) {
+        val other = getTreeElement<KtWhenConditionIsPattern>() ?: return
+        myMatchingVisitor.result = condition.isNegated == other.isNegated
+                && myMatchingVisitor.match(condition.typeReference, other.typeReference)
+    }
+
+    override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
+        val other = getTreeElement<KtWhenConditionWithExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(condition.expression, other.expression)
+    }
+
+    override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
+        val other = getTreeElement<KtWhenEntry>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(jetWhenEntry.conditions, other.conditions)
+                && myMatchingVisitor.match(jetWhenEntry.expression, other.expression)
+    }
+
+    override fun visitWhenExpression(expression: KtWhenExpression) {
+        val other = getTreeElement<KtWhenExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.subjectExpression, other.subjectExpression)
+                && myMatchingVisitor.matchInAnyOrder(expression.entries, other.entries)
+    }
+
     override fun visitProperty(property: KtProperty) {
         val other = getTreeElement<KtProperty>() ?: return
         val patternTypeReference = property.typeReference
@@ -394,6 +425,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
         ))
     }
+
+
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
         val other = getTreeElement<KtStringTemplateExpression>() ?: return
