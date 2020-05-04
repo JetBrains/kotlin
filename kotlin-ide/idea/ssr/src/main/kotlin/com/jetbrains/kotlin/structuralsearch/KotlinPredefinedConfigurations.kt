@@ -31,6 +31,11 @@ object KotlinPredefinedConfigurations {
             "\$Expr\$?.'_Property",
             EXPRESSION_TYPE
         ),
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.assert.not.null"),
+            "'_Expr!!",
+            EXPRESSION_TYPE
+        ),
 
         // Operators
         searchTemplate(
