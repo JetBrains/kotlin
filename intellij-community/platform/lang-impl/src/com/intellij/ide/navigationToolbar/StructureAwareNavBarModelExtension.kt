@@ -45,10 +45,12 @@ abstract class StructureAwareNavBarModelExtension : AbstractNavBarModelExtension
   override fun processChildren(`object`: Any,
                                rootElement: Any?,
                                processor: Processor<Any>): Boolean {
-    (`object` as? PsiElement)?.let { psiElement ->
-      if (psiElement.language == language) {
-        buildStructureViewModel(psiElement.containingFile)?.let { model ->
-          return processStructureViewChildren(model.root, `object`, processor)
+    if (UISettings.instance.showMembersInNavigationBar) {
+      (`object` as? PsiElement)?.let { psiElement ->
+        if (psiElement.language == language) {
+          buildStructureViewModel(psiElement.containingFile)?.let { model ->
+            return processStructureViewChildren(model.root, `object`, processor)
+          }
         }
       }
     }
