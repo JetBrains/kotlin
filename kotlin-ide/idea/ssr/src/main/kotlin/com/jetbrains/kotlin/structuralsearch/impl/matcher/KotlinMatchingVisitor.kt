@@ -5,11 +5,9 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -127,13 +125,19 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(typeReference.firstChild.lastChild, other.firstChild.lastChild)
     }
 
+    override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
+        val other = getTreeElement<KtQualifiedExpression>() ?: return
+        myMatchingVisitor.result = expression.operationSign == other.operationSign
+                && myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
+                && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
+    }
+
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
         val other = myMatchingVisitor.element
 
         // Regular matching
         if (other is KtDotQualifiedExpression) {
-            myMatchingVisitor.result = myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
-                    && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
+            visitQualifiedExpression(expression)
             return
         }
 
@@ -432,4 +436,5 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(expression.leftHandSide, other.leftHandSide)
                 && myMatchingVisitor.match(expression.typeReference, other.typeReference)
     }
+
 }
