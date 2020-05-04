@@ -9,6 +9,5 @@ public interface UnknownSdkFixConfigurator {
    * Configures created SDK before it will be added to SdkTable.
    * @param sdk SDK which was created by this fix.
    */
-  default void configure(@NotNull Sdk sdk) {
-  }
+  void configure(@NotNull Sdk sdk);
 }

@@ -2,6 +2,7 @@
 package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.intellij.idea.TestFor
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkLocalSdkFix
 import com.intellij.testFramework.LightPlatformTestCase
 import org.junit.Assert
@@ -153,6 +154,7 @@ class JdkRequirementTest : LightPlatformTestCase() {
     override fun getExistingSdkHome() = "mock-home"
     override fun getVersionString() = versionString
     override fun getSuggestedSdkName() = versionString
+    override fun configure(sdk: Sdk) {}
   }
 
   private val Corretto = JdkProduct("Amazon", "Corretto", null)

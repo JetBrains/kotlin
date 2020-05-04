@@ -3,6 +3,7 @@ package com.intellij.openapi.externalSystem.service.execution
 
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.ui.configuration.SdkTestCase.*
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk
@@ -45,12 +46,14 @@ object TestUnknownSdkResolver : UnknownSdkResolver {
     override fun getVersionString() = sdk.versionString
     override fun getSuggestedSdkName() = sdk.name
     override fun getExistingSdkHome() = sdk.homePath
+    override fun configure(sdk: Sdk) {}
   }
 
   private class TestUnknownSdkDownloadableSdkFix : UnknownSdkDownloadableSdkFix {
     private val sdkInfo = TestSdkGenerator.reserveNextSdk()
     override fun getVersionString() = sdkInfo.versionString
     override fun getDownloadDescription() = sdkInfo.name
+    override fun configure(sdk: Sdk) {}
     override fun createTask(indicator: ProgressIndicator) =
       object : SdkDownloadTask {
         override fun getPlannedVersion() = sdkInfo.versionString
