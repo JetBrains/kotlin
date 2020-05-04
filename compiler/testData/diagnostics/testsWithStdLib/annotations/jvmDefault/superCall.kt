@@ -1,7 +1,7 @@
 // !JVM_TARGET: 1.8
 // FILE: 1.kt
 interface A {
-    <!JVM_DEFAULT_IN_DECLARATION!>@<!DEPRECATION!>JvmDefault<!>
+    <!JVM_DEFAULT_IN_DECLARATION!>@JvmDefault
     fun test()<!> {
     }
 }
@@ -12,7 +12,7 @@ interface <!JVM_DEFAULT_THROUGH_INHERITANCE!>B<!> : A {
 }
 
 interface C : B {
-    <!JVM_DEFAULT_IN_DECLARATION!>@<!DEPRECATION!>JvmDefault<!>
+    <!JVM_DEFAULT_IN_DECLARATION!>@JvmDefault
     override fun test()<!> {
         super.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
     }

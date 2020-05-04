@@ -2,7 +2,7 @@
 // !JVM_DEFAULT_MODE: enable
 
 interface A {
-    @<!DEPRECATION!>JvmDefault<!>
+    @JvmDefault
     val test: String
         get() = "OK"
 }

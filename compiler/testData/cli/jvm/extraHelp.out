@@ -57,7 +57,6 @@ where advanced options include:
                                                               Note that if interface delegation is used, all interface methods are delegated.
                                                               The only exception are methods annotated with the deprecated @JvmDefault annotation.
                              -Xjvm-default=disable            Do not generate JVM default methods and prohibit @JvmDefault annotation usage.
-                              The following modes are DEPRECATED:
                              -Xjvm-default=enable             Allow usages of @JvmDefault; only generate the default method
                                                               for annotated method in the interface
                                                               (annotating an existing method can break binary compatibility)

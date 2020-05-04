@@ -3,27 +3,27 @@
 
 interface B {
 
-    @<!DEPRECATION!>JvmDefault<!>
+    @JvmDefault
     fun test() {}
 
-    @<!DEPRECATION!>JvmDefault<!>
+    @JvmDefault
     abstract fun test2(s: String = "")
 
-    @<!DEPRECATION!>JvmDefault<!>
+    @JvmDefault
     abstract fun test3()
 
 
-    @<!DEPRECATION!>JvmDefault<!>
+    @JvmDefault
     abstract val prop: String
 
-    @<!DEPRECATION!>JvmDefault<!>
+    @JvmDefault
     abstract val prop2: String
 
-    @<!DEPRECATION!>JvmDefault<!>
+    @JvmDefault
     val prop3: String
         get() = ""
 
-    @<!DEPRECATION!>JvmDefault<!>
+    @JvmDefault
     var prop4: String
         get() = ""
         set(<!UNUSED_PARAMETER!>value<!>) {}

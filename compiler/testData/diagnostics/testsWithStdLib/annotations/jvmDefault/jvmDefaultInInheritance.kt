@@ -1,7 +1,7 @@
 // !JVM_TARGET: 1.8
 
 interface A {
-    <!JVM_DEFAULT_IN_DECLARATION!>@<!DEPRECATION!>JvmDefault<!>
+    <!JVM_DEFAULT_IN_DECLARATION!>@JvmDefault
     fun test()<!> {
     }
 }
@@ -28,7 +28,7 @@ class Bar2 : Foo(), A
 class Bar3 : Foo(), B
 
 open class BarWithJvmDefault : B {
-    <!JVM_DEFAULT_NOT_IN_INTERFACE!>@<!DEPRECATION!>JvmDefault<!><!>
+    <!JVM_DEFAULT_NOT_IN_INTERFACE!>@JvmDefault<!>
     override fun test() {
     }
 }

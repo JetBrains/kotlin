@@ -27,16 +27,8 @@ import kotlin.internal.RequireKotlinVersionKind
  * Generation of default methods is only possible with JVM target bytecode version 1.8 (`-jvm-target 1.8`) or higher.
  *
  * @[JvmDefault] methods are excluded from interface delegation.
- *
- * #
- * This annotation is **deprecated** in favor of new compiler arguments `-Xjvm-default=all-compatibility` and `-Xjvm-default=all`.
- * The new arguments allow all interface methods with bodies to be generated as JVM default methods on JVM target 1.8+.
- * Please refer to the [official documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#default-methods-in-interfaces)
- * for more information.
- *
  */
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.40", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
-@Deprecated("Switch to new -Xjvm-default options: `all` or `all-compatibility`")
 annotation class JvmDefault
