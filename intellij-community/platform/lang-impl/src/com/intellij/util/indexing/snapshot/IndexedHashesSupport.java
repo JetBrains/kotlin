@@ -1,9 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.snapshot;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.ShutDownTracker;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.persistent.FlushingDaemon;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl;
 import com.intellij.util.ArrayUtilRt;
@@ -15,7 +13,6 @@ import com.intellij.util.io.DigestUtil;
 import com.intellij.util.io.IOUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +22,6 @@ import java.security.MessageDigest;
 
 @ApiStatus.Internal
 public class IndexedHashesSupport {
-
-  private static final Logger LOG = Logger.getInstance(IndexedHashesSupport.class);
 
   private static final MessageDigest TEXT_CONTENT_HASH_DIGEST = DigestUtil.sha1();
 
@@ -63,61 +58,25 @@ public class IndexedHashesSupport {
     return ourTextContentHashes.enumerate(digest);
   }
 
-  public static void initIndexedHash(@NotNull FileContentImpl content) {
-    byte[] fileContentHash = calculateIndexedHashForFileContent(content);
-    content.setHashes(fileContentHash);
-  }
-
   public static byte @NotNull [] getOrInitIndexedHash(@NotNull FileContentImpl content) {
     byte[] hash = content.getHash();
     if (hash == null) {
-      initIndexedHash(content);
-      hash = content.getHash();
-      LOG.assertTrue(hash != null);
+      hash = calculateIndexedHashForFileContent(content);
+      content.setHashes(hash);
     }
     return hash;
-  }
-
-  /**
-   * Calculates hash for this virtual file. Does not load full file content into memory.
-   *
-   * Result is the same as if invoking:
-   * 1) fc = FileContentImpl(virtualFile)
-   * 2) getOrInitIndexedHash(fc, fromDocument = false)
-   */
-  @ApiStatus.Experimental
-  @ApiStatus.Internal
-  public static byte @NotNull [] calculateHashForPhysicalVirtualFileNotCached(@NotNull VirtualFile virtualFile) {
-    boolean binary = virtualFile.getFileType().isBinary();
-
-    byte[] contentHash = PersistentFSImpl.getContentHashIfStored(virtualFile);
-    if (contentHash == null) {
-      contentHash = DigestUtil.calculateContentHash(TEXT_CONTENT_HASH_DIGEST, virtualFile);
-    }
-
-    return mergeIndexedHash(contentHash, binary ? null : virtualFile.getCharset());
   }
 
   private static byte @NotNull [] calculateIndexedHashForFileContent(@NotNull FileContentImpl content) {
     byte[] contentHash = PersistentFSImpl.getContentHashIfStored(content.getFile());
     if (contentHash == null) {
-      contentHash = calculateContentHash(content);
+      contentHash = DigestUtil.calculateContentHash(TEXT_CONTENT_HASH_DIGEST, ((FileContent)content).getContent());
       // todo store content hash in FS
     }
 
     boolean isBinary = content.getFileTypeWithoutSubstitution().isBinary();
-    return mergeIndexedHash(contentHash, isBinary ? null : content.getCharset());
-  }
-
-  private static byte[] calculateContentHash(@NotNull FileContent content) {
-    return DigestUtil.calculateContentHash(TEXT_CONTENT_HASH_DIGEST, content.getContent());
-  }
-
-  private static byte @NotNull [] mergeIndexedHash(byte @NotNull [] binaryContentHash,
-                                                   @Nullable Charset charsetOrNullForBinary) {
-    byte[] charsetBytes = charsetOrNullForBinary != null
-                          ? charsetOrNullForBinary.name().getBytes(StandardCharsets.UTF_8)
-                          : ArrayUtilRt.EMPTY_BYTE_ARRAY;
-    return DigestUtil.calculateMergedHash(TEXT_CONTENT_HASH_DIGEST, new byte[][]{binaryContentHash, charsetBytes});
+    Charset charset = isBinary ? null : content.getCharset();
+    byte[] charsetBytes = charset != null ? charset.name().getBytes(StandardCharsets.UTF_8) : ArrayUtilRt.EMPTY_BYTE_ARRAY;
+    return DigestUtil.calculateMergedHash(TEXT_CONTENT_HASH_DIGEST, new byte[][]{contentHash, charsetBytes});
   }
 }

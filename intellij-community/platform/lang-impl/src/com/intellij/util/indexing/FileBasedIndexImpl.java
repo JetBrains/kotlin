@@ -1186,7 +1186,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       initFileContent(fc, project == null ? ProjectUtil.guessProjectForFile(file) : project, psiFile);
 
       if (FileBasedIndex.ourSnapshotMappingsEnabled) {
-        IndexedHashesSupport.initIndexedHash(fc);
+        IndexedHashesSupport.getOrInitIndexedHash(fc);
       }
       ProgressManager.checkCanceled();
 
