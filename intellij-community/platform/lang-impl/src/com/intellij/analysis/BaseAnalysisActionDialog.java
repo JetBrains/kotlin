@@ -3,7 +3,8 @@
  */
 package com.intellij.analysis;
 
-import com.intellij.analysis.dialog.*;
+import com.intellij.analysis.dialog.ModelScopeItem;
+import com.intellij.analysis.dialog.ModelScopeItemPresenter;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.find.FindSettings;
 import com.intellij.openapi.Disposable;
@@ -14,6 +15,7 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.util.RadioUpDownListener;
@@ -48,7 +50,7 @@ public class BaseAnalysisActionDialog extends DialogWrapper {
    * @deprecated Use {@link BaseAnalysisActionDialog#BaseAnalysisActionDialog(String, String, Project, List, AnalysisUIOptions, boolean, boolean)} instead.
    */
   @Deprecated
-  public BaseAnalysisActionDialog(@NotNull String title,
+  public BaseAnalysisActionDialog(@NlsContexts.DialogTitle @NotNull String title,
                                    @NotNull String analysisNoon,
                                    @NotNull Project project,
                                    @NotNull final AnalysisScope scope,
@@ -70,7 +72,7 @@ public class BaseAnalysisActionDialog extends DialogWrapper {
       presenter -> presenter.tryCreate(project, scope, module, context));
   }
 
-  public BaseAnalysisActionDialog(@NotNull String title,
+  public BaseAnalysisActionDialog(@NlsContexts.DialogTitle @NotNull String title,
                                 @NotNull String analysisNoon,
                                 @NotNull Project project,
                                 @NotNull List<? extends ModelScopeItem> items,
@@ -79,7 +81,7 @@ public class BaseAnalysisActionDialog extends DialogWrapper {
     this(title, analysisNoon, project, items, options, rememberScope, ModuleUtil.hasTestSourceRoots(project));
   }
 
-  public BaseAnalysisActionDialog(@NotNull String title,
+  public BaseAnalysisActionDialog(@NlsContexts.DialogTitle @NotNull String title,
                                   @NotNull String analysisNoon,
                                   @NotNull Project project,
                                   @NotNull List<? extends ModelScopeItem> items,
