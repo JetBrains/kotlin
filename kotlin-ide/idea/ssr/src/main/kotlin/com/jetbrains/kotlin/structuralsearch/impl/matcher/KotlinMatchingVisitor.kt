@@ -146,7 +146,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && handler.minOccurs == 0
                 && other.parent !is KtDotQualifiedExpression
                 && other.parent !is KtReferenceExpression
-                && myMatchingVisitor.match(expression.receiverExpression, other)
+                && myMatchingVisitor.match(expression.selectorExpression, other)
     }
 
     override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
