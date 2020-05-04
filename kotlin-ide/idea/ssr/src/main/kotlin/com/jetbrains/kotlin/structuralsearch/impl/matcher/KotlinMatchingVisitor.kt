@@ -421,6 +421,24 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.matchInAnyOrder(expression.entries, other.entries)
     }
 
+    override fun visitFinallySection(finallySection: KtFinallySection) {
+        val other = getTreeElement<KtFinallySection>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(finallySection.finalExpression, other.finalExpression)
+    }
+
+    override fun visitCatchSection(catchClause: KtCatchClause) {
+        val other = getTreeElement<KtCatchClause>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(catchClause.parameterList, other.parameterList)
+                && myMatchingVisitor.match(catchClause.catchBody, other.catchBody)
+    }
+
+    override fun visitTryExpression(expression: KtTryExpression) {
+        val other = getTreeElement<KtTryExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.tryBlock, other.tryBlock)
+                && myMatchingVisitor.matchInAnyOrder(expression.catchClauses, other.catchClauses)
+                && myMatchingVisitor.match(expression.finallyBlock, other.finallyBlock)
+    }
+
     override fun visitTypeAlias(typeAlias: KtTypeAlias) {
         val other = getTreeElement<KtTypeAlias>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(typeAlias.nameIdentifier, other.nameIdentifier)
