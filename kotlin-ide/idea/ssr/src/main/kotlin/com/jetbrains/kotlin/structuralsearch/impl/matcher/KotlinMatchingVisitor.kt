@@ -402,6 +402,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.matchInAnyOrder(expression.entries, other.entries)
     }
 
+    override fun visitTypeAlias(typeAlias: KtTypeAlias) {
+        val other = getTreeElement<KtTypeAlias>() ?: return
+        myMatchingVisitor.result = matchTextOrVariable(typeAlias.nameIdentifier, other.nameIdentifier)
+                && myMatchingVisitor.match(typeAlias.getTypeReference(), other.getTypeReference())
+    }
+
     override fun visitProperty(property: KtProperty) {
         val other = getTreeElement<KtProperty>() ?: return
         val patternTypeReference = property.typeReference
