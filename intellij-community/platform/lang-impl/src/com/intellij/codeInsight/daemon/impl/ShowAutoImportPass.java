@@ -75,22 +75,21 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
 
     int caretOffset = myEditor.getCaretModel().getOffset();
     importUnambiguousImports(caretOffset);
-    List<HighlightInfo> visibleHighlights = getVisibleHighlights(myStartOffset, myEndOffset, myProject, myEditor, hasDirtyTextRange);
+    if (isImportHintEnabled()) {
+      List<HighlightInfo> visibleHighlights = getVisibleHighlights(myStartOffset, myEndOffset, myProject, myEditor, hasDirtyTextRange);
 
-    for (int i = visibleHighlights.size() - 1; i >= 0; i--) {
-      HighlightInfo info = visibleHighlights.get(i);
-      if (info.startOffset <= caretOffset && showAddImportHint(info)) return;
-    }
+      for (int i = visibleHighlights.size() - 1; i >= 0; i--) {
+        HighlightInfo info = visibleHighlights.get(i);
+        if (info.startOffset <= caretOffset && showAddImportHint(info)) return;
+      }
 
-    for (HighlightInfo visibleHighlight : visibleHighlights) {
-      if (visibleHighlight.startOffset > caretOffset && showAddImportHint(visibleHighlight)) return;
+      for (HighlightInfo visibleHighlight : visibleHighlights) {
+        if (visibleHighlight.startOffset > caretOffset && showAddImportHint(visibleHighlight)) return;
+      }
     }
   }
 
   private void importUnambiguousImports(final int caretOffset) {
-    if (!DaemonCodeAnalyzerSettings.getInstance().isImportHintEnabled()) return;
-    if (!DaemonCodeAnalyzer.getInstance(myProject).isImportHintsEnabled(myFile)) return;
-
     Document document = myEditor.getDocument();
     final List<HighlightInfo> infos = new ArrayList<>();
     DaemonCodeAnalyzerEx.processHighlights(document, myProject, null, 0, document.getTextLength(), info -> {
@@ -131,8 +130,6 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
   }
 
   private boolean showAddImportHint(@NotNull HighlightInfo info) {
-    if (!DaemonCodeAnalyzerSettings.getInstance().isImportHintEnabled()) return false;
-    if (!DaemonCodeAnalyzer.getInstance(myProject).isImportHintsEnabled(myFile)) return false;
     PsiElement element = myFile.findElementAt(info.startOffset);
     if (element == null || !element.isValid()) return false;
 
@@ -142,6 +139,11 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
       }
     }
     return false;
+  }
+
+  private boolean isImportHintEnabled() {
+    return DaemonCodeAnalyzerSettings.getInstance().isImportHintEnabled() &&
+           DaemonCodeAnalyzer.getInstance(myProject).isImportHintsEnabled(myFile);
   }
 
   @NotNull
