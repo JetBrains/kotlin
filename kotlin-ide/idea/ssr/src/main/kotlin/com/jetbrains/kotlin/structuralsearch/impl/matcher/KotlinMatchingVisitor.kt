@@ -373,6 +373,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && (elseBranch == null || myMatchingVisitor.match(elseBranch, other.`else`))
     }
 
+    override fun visitForExpression(expression: KtForExpression) {
+        val other = getTreeElement<KtForExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(other.loopParameter, other.loopParameter)
+                && myMatchingVisitor.match(other.loopRange, other.loopRange)
+    }
+
     override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {
         val other = getTreeElement<KtWhenConditionInRange>() ?: return
         myMatchingVisitor.result = condition.isNegated == other.isNegated
@@ -472,5 +478,4 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(expression.leftHandSide, other.leftHandSide)
                 && myMatchingVisitor.match(expression.typeReference, other.typeReference)
     }
-
 }
