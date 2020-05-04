@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.android.parcel.ir
 
 import org.jetbrains.kotlin.android.parcel.ANDROID_PARCELABLE_CLASS_FQNAME
 import org.jetbrains.kotlin.android.parcel.PARCELER_FQNAME
+import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelableExtensionBase
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
@@ -18,13 +19,17 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -36,9 +41,26 @@ class ParcelableIrTransformer(private val context: CommonBackendContext, private
     private val deferredOperations = mutableListOf<() -> Unit>()
     private fun defer(block: () -> Unit) = deferredOperations.add(block)
 
+    private val symbolMap = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+
     fun transform(moduleFragment: IrModuleFragment) {
         moduleFragment.accept(this, null)
         deferredOperations.forEach { it() }
+
+        // Remap broken stubs, which psi2ir generates for the synthetic descriptors coming from the ParcelizeResolveExtension.
+        moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitCall(expression: IrCall): IrExpression {
+                val remappedSymbol = symbolMap[expression.symbol]
+                    ?: return super.visitCall(expression)
+                return IrCallImpl(
+                    expression.startOffset, expression.endOffset, expression.type, remappedSymbol,
+                    expression.typeArgumentsCount, expression.valueArgumentsCount, expression.origin,
+                    expression.superQualifierSymbol
+                ).apply {
+                    copyTypeAndValueArgumentsFrom(expression)
+                }
+            }
+        })
     }
 
     override fun visitElement(element: IrElement) = element.acceptChildren(this, null)
@@ -56,7 +78,7 @@ class ParcelableIrTransformer(private val context: CommonBackendContext, private
         }
 
         if (declaration.descriptor.hasSyntheticDescribeContents()) {
-            declaration.addOverride(
+            val describeContents = declaration.addOverride(
                 ANDROID_PARCELABLE_CLASS_FQNAME,
                 "describeContents",
                 context.irBuiltIns.intType,
@@ -66,11 +88,22 @@ class ParcelableIrTransformer(private val context: CommonBackendContext, private
                 body = context.createIrBuilder(symbol).run {
                     irExprBody(irInt(flags))
                 }
+
+                (this as IrFunctionImpl).metadata = MetadataSource.Function(
+                    declaration.descriptor.findFunction(ParcelableSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS)!!
+                )
+            }
+
+            declaration.functions.find {
+                it.descriptor.safeAs<ParcelableSyntheticComponent>()?.componentKind == ParcelableSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS
+            }?.let { stub ->
+                symbolMap[stub.symbol] = describeContents.symbol
+                declaration.declarations.remove(stub)
             }
         }
 
         if (declaration.descriptor.hasSyntheticWriteToParcel()) {
-            declaration.addOverride(
+            val writeToParcel = declaration.addOverride(
                 ANDROID_PARCELABLE_CLASS_FQNAME,
                 "writeToParcel",
                 context.irBuiltIns.unitType,
@@ -110,6 +143,17 @@ class ParcelableIrTransformer(private val context: CommonBackendContext, private
                         }
                     }
                 }
+
+                (this as IrFunctionImpl).metadata = MetadataSource.Function(
+                    declaration.descriptor.findFunction(ParcelableSyntheticComponent.ComponentKind.WRITE_TO_PARCEL)!!
+                )
+            }
+
+            declaration.functions.find {
+                it.descriptor.safeAs<ParcelableSyntheticComponent>()?.componentKind == ParcelableSyntheticComponent.ComponentKind.WRITE_TO_PARCEL
+            }?.let { stub ->
+                symbolMap[stub.symbol] = writeToParcel.symbol
+                declaration.declarations.remove(stub)
             }
         }
 
