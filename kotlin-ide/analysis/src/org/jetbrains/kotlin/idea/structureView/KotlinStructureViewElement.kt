@@ -44,9 +44,9 @@ class KotlinStructureViewElement(
                 KotlinStructureElementPresentation(isInherited, element, countDescriptor())
             }
 
-    var isPublic
+    var visibility
             by AssignableLazyProperty {
-                isPublic(countDescriptor())
+                Visibility(countDescriptor())
             }
         private set
 
@@ -54,7 +54,7 @@ class KotlinStructureViewElement(
         if (element !is KtElement) {
             // Avoid storing descriptor in fields
             kotlinPresentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
-            isPublic = isPublic(descriptor)
+            visibility = Visibility(descriptor)
         }
     }
 
@@ -103,9 +103,6 @@ class KotlinStructureViewElement(
         return result
     }
 
-    private fun isPublic(descriptor: DeclarationDescriptor?) =
-        (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
-
     private fun countDescriptor(): DeclarationDescriptor? {
         val element = element
         return when {
@@ -119,6 +116,22 @@ class KotlinStructureViewElement(
                 } else null
             }
         }
+    }
+
+    class Visibility(descriptor: DeclarationDescriptor?) {
+        private val visibility = (descriptor as? DeclarationDescriptorWithVisibility)?.visibility
+
+        val isPublic: Boolean
+            get() = visibility == Visibilities.PUBLIC
+
+        val accessLevel: Int?
+            get() = when {
+                visibility == Visibilities.PUBLIC -> 1
+                visibility == Visibilities.INTERNAL -> 2
+                visibility == Visibilities.PROTECTED -> 3
+                visibility?.let { Visibilities.isPrivate(it) } == true -> 4
+                else -> null
+            }
     }
 }
 

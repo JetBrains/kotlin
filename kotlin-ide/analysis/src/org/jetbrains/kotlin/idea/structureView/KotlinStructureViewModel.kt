@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.structureView
 import com.intellij.ide.structureView.StructureViewModel
 import com.intellij.ide.structureView.StructureViewModelBase
 import com.intellij.ide.structureView.StructureViewTreeElement
+import com.intellij.ide.structureView.impl.java.VisibilitySorter
 import com.intellij.ide.util.treeView.smartTree.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
@@ -22,7 +23,7 @@ class KotlinStructureViewModel(ktFile: KtFile, editor: Editor?) :
     StructureViewModel.ElementInfoProvider {
 
     init {
-        withSorters(Sorter.ALPHA_SORTER)
+        withSorters(KotlinVisibilitySorter, Sorter.ALPHA_SORTER)
     }
 
     override fun isSuitable(element: PsiElement?): Boolean = element is KtDeclaration &&
@@ -51,9 +52,19 @@ class KotlinStructureViewModel(ktFile: KtFile, editor: Editor?) :
     }
 }
 
+object KotlinVisibilitySorter : VisibilitySorter() {
+    override fun getComparator() = Comparator<Any> { a1, a2 -> a1.accessLevel() - a2.accessLevel() }
+
+    private fun Any.accessLevel() = (this as? KotlinStructureViewElement)?.visibility?.accessLevel ?: Int.MAX_VALUE
+
+    override fun getName() = ID
+
+    const val ID = "KOTLIN_VISIBILITY_SORTER"
+}
+
 object PublicElementsFilter : Filter {
     override fun isVisible(treeNode: TreeElement): Boolean {
-        return (treeNode as? KotlinStructureViewElement)?.isPublic ?: true
+        return (treeNode as? KotlinStructureViewElement)?.visibility?.isPublic ?: true
     }
 
     override fun getPresentation(): ActionPresentation {
