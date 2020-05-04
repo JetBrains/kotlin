@@ -1,5 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.facet.impl;
 
 import com.intellij.ProjectTopics;
@@ -18,25 +17,22 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFacetListenersRegistry {
+final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFacetListenersRegistry {
   private final Map<FacetTypeId<?>, EventDispatcher<ProjectWideFacetListener>> myDispatchers = new HashMap<>();
   private final Map<FacetTypeId<?>, Map<Facet<?>, Boolean>> myFacetsByType = new HashMap<>();
-  private final Map<Module, MessageBusConnection> myModule2Connection = new HashMap<>();
-  private final FacetManagerAdapter myFacetListener;
   private final EventDispatcher<ProjectWideFacetListener> myAllFacetsListener = EventDispatcher.create(ProjectWideFacetListener.class);
 
-  public ProjectWideFacetListenersRegistryImpl(@NotNull Project project) {
-    myFacetListener = new MyFacetManagerAdapter();
-    project.getMessageBus().connect().subscribe(ProjectTopics.MODULES, new ModuleListener() {
+  ProjectWideFacetListenersRegistryImpl(@NotNull Project project) {
+    MessageBusConnection connection = project.getMessageBus().connect();
+    connection.subscribe(ProjectTopics.MODULES, new ModuleListener() {
       @Override
       public void moduleAdded(@NotNull Project project, @NotNull Module module) {
         onModuleAdded(module);
       }
 
       @Override
-      public void beforeModuleRemoved(@NotNull final Project project, @NotNull final Module module) {
-        Facet<?>[] allFacets = FacetManager.getInstance(module).getAllFacets();
-        for (Facet<?> facet : allFacets) {
+      public void beforeModuleRemoved(@NotNull Project project, @NotNull Module module) {
+        for (Facet<?> facet : FacetManager.getInstance(module).getAllFacets()) {
           onFacetRemoved(facet, true);
         }
       }
@@ -47,33 +43,43 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
       }
     });
 
+    connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
+      @Override
+      public void facetAdded(@NotNull Facet facet) {
+        onFacetAdded(facet);
+      }
+
+      @Override
+      public void beforeFacetRemoved(@NotNull Facet facet) {
+        onFacetRemoved(facet, true);
+      }
+
+      @Override
+      public void facetRemoved(@NotNull Facet facet) {
+        onFacetRemoved(facet, false);
+      }
+
+      @Override
+      public void facetConfigurationChanged(@NotNull Facet facet) {
+        onFacetChanged(facet);
+      }
+    });
+
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       onModuleAdded(module);
     }
   }
 
-  private void onModuleRemoved(final Module module) {
-    final MessageBusConnection connection = myModule2Connection.remove(module);
-    if (connection != null) {
-      connection.disconnect();
-    }
-
-    final FacetManager facetManager = FacetManager.getInstance(module);
-    final Facet<?>[] facets = facetManager.getAllFacets();
-    for (Facet<?> facet : facets) {
+  private void onModuleRemoved(@NotNull Module module) {
+    for (Facet<?> facet : FacetManager.getInstance(module).getAllFacets()) {
       onFacetRemoved(facet, false);
     }
   }
 
-  private void onModuleAdded(final Module module) {
-    final FacetManager facetManager = FacetManager.getInstance(module);
-    final Facet<?>[] facets = facetManager.getAllFacets();
-    for (Facet<?> facet : facets) {
+  private void onModuleAdded(@NotNull Module module) {
+    for (Facet<?> facet : FacetManager.getInstance(module).getAllFacets()) {
       onFacetAdded(facet);
     }
-    final MessageBusConnection connection = module.getMessageBus().connect();
-    myModule2Connection.put(module, connection);
-    connection.subscribe(FacetManager.FACETS_TOPIC, myFacetListener);
   }
 
   private void onFacetRemoved(@NotNull Facet<?> facet, final boolean before) {
@@ -90,7 +96,7 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
     else {
       lastFacet = true;
     }
-    final EventDispatcher<ProjectWideFacetListener> dispatcher = myDispatchers.get(typeId);
+    EventDispatcher<ProjectWideFacetListener> dispatcher = myDispatchers.get(typeId);
     if (dispatcher != null) {
       if (before) {
         //noinspection unchecked
@@ -199,29 +205,5 @@ public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFace
   @Override
   public void registerListener(@NotNull final ProjectWideFacetListener<Facet> listener, @NotNull final Disposable parentDisposable) {
     myAllFacetsListener.addListener(listener, parentDisposable);
-  }
-
-  private class MyFacetManagerAdapter extends FacetManagerAdapter {
-
-    @Override
-    public void facetAdded(@NotNull Facet facet) {
-      onFacetAdded(facet);
-    }
-
-    @Override
-    public void beforeFacetRemoved(@NotNull final Facet facet) {
-      onFacetRemoved(facet, true);
-    }
-
-    @Override
-    public void facetRemoved(@NotNull Facet facet) {
-      onFacetRemoved(facet, false);
-    }
-
-    @Override
-    public void facetConfigurationChanged(@NotNull final Facet facet) {
-      onFacetChanged(facet);
-    }
-
   }
 }

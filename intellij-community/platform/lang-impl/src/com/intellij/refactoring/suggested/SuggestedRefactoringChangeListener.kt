@@ -1,5 +1,4 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.refactoring.suggested
 
 import com.intellij.codeInsight.template.TemplateManager
@@ -9,6 +8,7 @@ import com.intellij.openapi.command.CommandListener
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.ProjectDisposeAwareDocumentListener
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
@@ -21,9 +21,9 @@ import com.intellij.psi.util.hasErrorElementInRange
 
 class SuggestedRefactoringChangeListener(
   private val project: Project,
-  private val watcher: SuggestedRefactoringSignatureWatcher
-) : Disposable
-{
+  private val watcher: SuggestedRefactoringSignatureWatcher,
+  parentDisposable: Disposable
+) {
   private val psiDocumentManager = PsiDocumentManager.getInstance(project)
   private val newIdentifierWatcher = NewIdentifierWatcher(5)
 
@@ -37,18 +37,15 @@ class SuggestedRefactoringChangeListener(
 
   private var isFirstChangeInsideCommand = false
 
-  fun attach() {
-    EditorFactory.getInstance().eventMulticaster.addDocumentListener(MyDocumentListener(), this)
-    PsiManager.getInstance(project).addPsiTreeChangeListener(MyPsiTreeChangeListener(), this)
+  init {
+    EditorFactory.getInstance().eventMulticaster.addDocumentListener(ProjectDisposeAwareDocumentListener.create(project, MyDocumentListener()), parentDisposable)
+    PsiManager.getInstance(project).addPsiTreeChangeListener(MyPsiTreeChangeListener(), parentDisposable)
 
-    project.messageBus.connect(this).subscribe(CommandListener.TOPIC, object : CommandListener {
+    project.messageBus.connect(parentDisposable).subscribe(CommandListener.TOPIC, object : CommandListener {
       override fun commandStarted(event: CommandEvent) {
         isFirstChangeInsideCommand = true
       }
     })
-  }
-
-  override fun dispose() {
   }
 
   fun reset(withNewIdentifiers: Boolean = false) {
@@ -195,7 +192,9 @@ class SuggestedRefactoringChangeListener(
     override fun beforeDocumentChange(event: DocumentEvent) {
       val document = event.document
       val psiFile = psiDocumentManager.getCachedPsiFile(document) ?: return
-      if (!psiFile.isPhysical || psiFile is PsiCodeFragment) return
+      if (!psiFile.isPhysical || psiFile is PsiCodeFragment) {
+        return
+      }
 
       val firstChangeInsideCommand = isFirstChangeInsideCommand
       isFirstChangeInsideCommand = false
@@ -313,7 +312,9 @@ class SuggestedRefactoringChangeListener(
     }
 
     private fun processBeforeEvent(event: PsiTreeChangeEvent) {
-      if (!isFirstChangeInsideCommand) return
+      if (project.isDisposed || !isFirstChangeInsideCommand) {
+        return
+      }
 
       val psiFile = event.file ?: return
       val document = psiDocumentManager.getCachedDocument(psiFile)

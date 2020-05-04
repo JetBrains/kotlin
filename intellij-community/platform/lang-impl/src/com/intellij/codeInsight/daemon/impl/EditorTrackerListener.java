@@ -9,6 +9,7 @@ import java.util.EventListener;
 import java.util.List;
 
 public interface EditorTrackerListener extends EventListener{
+  @Topic.ProjectLevel
   Topic<EditorTrackerListener> TOPIC = new Topic<>(EditorTrackerListener.class, Topic.BroadcastDirection.NONE);
 
   void activeEditorsChanged(@NotNull List<Editor> activeEditors);

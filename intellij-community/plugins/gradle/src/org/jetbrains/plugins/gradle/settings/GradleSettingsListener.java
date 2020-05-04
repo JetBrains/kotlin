@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.settings;
 
 import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListener;
@@ -9,12 +10,11 @@ import org.jetbrains.annotations.Nullable;
  * Defines callback for the gradle config structure change.
  * <p/>
  * Implementations of this interface are not obliged to be thread-safe.
- * 
+ *
  * @author Denis Zhdanov
  */
 public interface GradleSettingsListener extends ExternalSystemSettingsListener<GradleProjectSettings> {
-
-  Topic<GradleSettingsListener> TOPIC = Topic.create("Gradle-specific settings", GradleSettingsListener.class);
+  Topic<GradleSettingsListener> TOPIC = new Topic<>(GradleSettingsListener.class, Topic.BroadcastDirection.NONE);
 
   /**
    * Is expected to be invoked when gradle home path is changed.
@@ -45,13 +45,13 @@ public interface GradleSettingsListener extends ExternalSystemSettingsListener<G
    *
    * @param oldPath  old path (if any)
    * @param newPath  new path (if any)
-   * @see GradleSettings#getServiceDirectoryPath() 
+   * @see GradleSettings#getServiceDirectoryPath()
    */
   void onServiceDirectoryPathChange(@Nullable String oldPath, @Nullable String newPath);
 
   /**
    * Is expected to be called when gradle JVM options are changed by end-user.
-   * 
+   *
    * @param oldOptions  old options (if any)
    * @param newOptions  new option (if any)
    */

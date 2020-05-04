@@ -30,7 +30,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SdkDownloadTracker implements Disposable {
+public class SdkDownloadTracker {
   private static final Logger LOG = Logger.getInstance(SdkDownloadTracker.class);
 
   @NotNull
@@ -41,19 +41,13 @@ public class SdkDownloadTracker implements Disposable {
   private final List<PendingDownload> myPendingTasks = new CopyOnWriteArrayList<>();
 
   public SdkDownloadTracker() {
-    ApplicationManager.getApplication().getMessageBus()
-      .connect(this)
-      .subscribe(ProjectJdkTable.JDK_TABLE_TOPIC,
-                 new ProjectJdkTable.Adapter() {
-                   @Override
-                   public void jdkRemoved(@NotNull Sdk jdk) {
-                     onSdkRemoved(jdk);
-                   }
-                 });
-  }
-
-  @Override
-  public void dispose() {
+    ApplicationManager.getApplication().getMessageBus().simpleConnect()
+      .subscribe(ProjectJdkTable.JDK_TABLE_TOPIC, new ProjectJdkTable.Listener() {
+        @Override
+        public void jdkRemoved(@NotNull Sdk jdk) {
+          onSdkRemoved(jdk);
+        }
+      });
   }
 
   public void onSdkRemoved(@NotNull Sdk sdk) {

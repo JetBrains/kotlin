@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.editorActions;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -58,7 +58,7 @@ public class PasteHandler extends EditorActionHandler implements EditorTextInser
   }
 
   @Override
-  public void execute(final Editor editor, final DataContext dataContext, @Nullable final Producer<Transferable> producer) {
+  public void execute(Editor editor, DataContext dataContext, @Nullable Producer<Transferable> producer) {
     final Transferable transferable = EditorModificationUtil.getContentsToPasteToEditor(producer);
     if (transferable == null) return;
 
@@ -69,8 +69,9 @@ public class PasteHandler extends EditorActionHandler implements EditorTextInser
       return;
     }
 
-    DataContext context =
-      dataId -> PasteAction.TRANSFERABLE_PROVIDER.is(dataId) ? (Producer<Transferable>)() -> transferable : dataContext.getData(dataId);
+    DataContext context = dataId -> {
+      return PasteAction.TRANSFERABLE_PROVIDER.is(dataId) ? (Producer<Transferable>)() -> transferable : dataContext.getData(dataId);
+    };
 
     final Project project = editor.getProject();
     if (project == null || editor.isColumnMode() || editor.getCaretModel().getCaretCount() > 1) {
@@ -175,12 +176,12 @@ public class PasteHandler extends EditorActionHandler implements EditorTextInser
     }
 
     final String _text = text;
-    ApplicationManager.getApplication().runWriteAction(
-      () -> {
-        EditorModificationUtil.insertStringAtCaret(editor, _text, false, true);
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      EditorModificationUtil.insertStringAtCaret(editor, _text, false, true);
+      if (!project.isDisposed()) {
         ((UndoManagerImpl)UndoManager.getInstance(project)).addDocumentAsAffected(editor.getDocument());
       }
-    );
+    });
 
     int length = text.length();
     int offset = caretModel.getOffset() - length;

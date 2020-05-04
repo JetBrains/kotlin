@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.script;
 
-import com.intellij.ide.ApplicationInitializedListener;
 import com.intellij.ide.extensionResources.ExtensionsRootType;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationManager;
@@ -9,30 +8,33 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.concurrency.NonUrgentExecutor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
-import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-final class IdeStartupScripts implements ApplicationInitializedListener {
+final class IdeStartupScripts implements ProjectManagerListener {
   private static final Logger LOG = Logger.getInstance(IdeStartupScripts.class);
 
   private static final String SCRIPT_DIR = "startup";
+
+  private final AtomicBoolean isActive = new AtomicBoolean(true);
 
   IdeStartupScripts() {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
@@ -41,26 +43,22 @@ final class IdeStartupScripts implements ApplicationInitializedListener {
   }
 
   @Override
-  public void componentsInitialized() {
-    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
-    connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
-      Future<List<Pair<File, IdeScriptEngine>>> future;
-      @Override
-      public void projectOpened(@NotNull Project project) {
-        if (future == null) {
-          future = ApplicationManager.getApplication().executeOnPooledThread(() -> prepareScriptsAndEngines());
-        }
+  public void projectOpened(@NotNull Project project) {
+    if (!isActive.compareAndSet(true, false)) {
+      return;
+    }
 
-        StartupManager.getInstance(project).runAfterOpened(() -> {
-          connection.disconnect();
-          ApplicationManager.getApplication().executeOnPooledThread(() -> runAllScriptsImpl(project, future));
-        });
+    CompletableFuture<List<Pair<File, IdeScriptEngine>>> future = CompletableFuture.supplyAsync(IdeStartupScripts::prepareScriptsAndEngines, NonUrgentExecutor.getInstance());
+    WeakReference<Project> projectRef = new WeakReference<>(project);
+    StartupManager.getInstance(project).runAfterOpened(() -> future.thenAcceptAsync(it -> {
+      Project project1 = projectRef.get();
+      if (project1 != null) {
+        runAllScriptsImpl(project1, it);
       }
-    });
+    }, NonUrgentExecutor.getInstance()));
   }
 
-  @NotNull
-  private static List<Pair<File, IdeScriptEngine>> prepareScriptsAndEngines() {
+  private static @NotNull List<Pair<File, IdeScriptEngine>> prepareScriptsAndEngines() {
     List<File> scripts = getScripts();
     LOG.info(scripts.size() + " startup script(s) found");
     if (scripts.isEmpty()) return Collections.emptyList();
@@ -91,8 +89,7 @@ final class IdeStartupScripts implements ApplicationInitializedListener {
     }
   }
 
-  @NotNull
-  private static List<File> getScripts() {
+  private static @NotNull List<File> getScripts() {
     File directory = getScriptsRootDirectory();
     List<File> scripts = JBIterable.of(directory == null ? null : directory.listFiles())
       .filter(ExtensionsRootType.regularFileFilter())
@@ -106,8 +103,7 @@ final class IdeStartupScripts implements ApplicationInitializedListener {
     return scripts;
   }
 
-  @Nullable
-  private static File getScriptsRootDirectory() {
+  private static @Nullable File getScriptsRootDirectory() {
     try {
       return ExtensionsRootType.getInstance().findResourceDirectory(PluginManagerCore.CORE_ID, SCRIPT_DIR, false);
     }
@@ -116,9 +112,9 @@ final class IdeStartupScripts implements ApplicationInitializedListener {
     return null;
   }
 
-  private static void runAllScriptsImpl(@NotNull Project project, @NotNull Future<? extends List<Pair<File, IdeScriptEngine>>> future) {
+  private static void runAllScriptsImpl(@NotNull Project project, @NotNull List<Pair<File, IdeScriptEngine>> result) {
     try {
-      for (Pair<File, IdeScriptEngine> pair : future.get()) {
+      for (Pair<File, IdeScriptEngine> pair : result) {
         try {
           if (pair.second == null) {
             LOG.warn(pair.first.getPath() + " not supported (no script engine)");
@@ -134,9 +130,6 @@ final class IdeStartupScripts implements ApplicationInitializedListener {
     }
     catch (ProcessCanceledException e) {
       LOG.warn("... cancelled");
-    }
-    catch (InterruptedException e) {
-      LOG.warn("... interrupted");
     }
     catch (Exception e) {
       LOG.error(e);

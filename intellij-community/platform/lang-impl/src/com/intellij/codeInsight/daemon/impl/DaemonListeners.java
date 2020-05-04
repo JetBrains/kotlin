@@ -60,7 +60,6 @@ import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.openapi.util.registry.Registry;
@@ -134,58 +133,64 @@ public final class DaemonListeners implements Disposable {
     eventMulticaster.addDocumentListener(new DocumentListener() {
       // clearing highlighters before changing document because change can damage editor highlighters drastically, so we'll clear more than necessary
       @Override
-      public void beforeDocumentChange(@NotNull final DocumentEvent e) {
+      public void beforeDocumentChange(@NotNull DocumentEvent e) {
         Document document = e.getDocument();
         VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
         Project project = virtualFile == null ? null : ProjectUtil.guessProjectForFile(virtualFile);
         //no need to stop daemon if something happened in the console or in non-physical document
-        if (worthBothering(document, project) && ApplicationManager.getApplication().isDispatchThread()) {
+        if (!myProject.isDisposed() && ApplicationManager.getApplication().isDispatchThread() && worthBothering(document, project)) {
           stopDaemon(true, "Document change");
           UpdateHighlightersUtil.updateHighlightersByTyping(myProject, e);
         }
       }
     }, this);
 
-    eventMulticaster.addCaretListener(new CaretListener() {
-      @Override
-      public void caretPositionChanged(@NotNull CaretEvent e) {
-        final Editor editor = e.getEditor();
-        if (EditorActivityManager.getInstance().isVisible(editor) &&
-            worthBothering(editor.getDocument(), editor.getProject())) {
-
-          if (!ApplicationManager.getApplication().isUnitTestMode()) {
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      eventMulticaster.addCaretListener(new CaretListener() {
+        @Override
+        public void caretPositionChanged(@NotNull CaretEvent e) {
+          Editor editor = e.getEditor();
+          if (EditorActivityManager.getInstance().isVisible(editor) &&
+              worthBothering(editor.getDocument(), editor.getProject())) {
             ApplicationManager.getApplication().invokeLater(() -> {
-              if (EditorActivityManager.getInstance().isVisible(editor) && !myProject.isDisposed()) {
+              if (!myProject.isDisposed() && EditorActivityManager.getInstance().isVisible(editor)) {
                 IntentionsUI.getInstance(myProject).invalidate();
               }
-            }, ModalityState.current());
+            }, ModalityState.current(), myProject.getDisposed());
           }
         }
-      }
-    }, this);
+      }, this);
+    }
 
-    connection.subscribe(EditorTrackerListener.TOPIC, activeEditors -> {
-      if (myActiveEditors.equals(activeEditors)) {
-        return;
-      }
+    connection.subscribe(EditorTrackerListener.TOPIC, new EditorTrackerListener() {
+      @Override
+      public void activeEditorsChanged(@NotNull List<Editor> activeEditors) {
+        if (myActiveEditors.equals(activeEditors)) {
+          return;
+        }
 
-      myActiveEditors = activeEditors;
-      // do not stop daemon if idea loses/gains focus
-      stopDaemon(true, "Active editor change");
-      if (ApplicationManager.getApplication().isDispatchThread() && LaterInvocator.isInModalContext()) {
-        // editor appear in modal context, re-enable the daemon
-        myDaemonCodeAnalyzer.setUpdateByTimerEnabled(true);
-      }
+        myActiveEditors = activeEditors;
+        // do not stop daemon if idea loses/gains focus
+        DaemonListeners.this.stopDaemon(true, "Active editor change");
+        if (ApplicationManager.getApplication().isDispatchThread() && LaterInvocator.isInModalContext()) {
+          // editor appear in modal context, re-enable the daemon
+          myDaemonCodeAnalyzer.setUpdateByTimerEnabled(true);
+        }
 
-      ErrorStripeUpdateManager errorStripeUpdateManager = ErrorStripeUpdateManager.getInstance(myProject);
-      for (Editor editor : activeEditors) {
-        errorStripeUpdateManager.repaintErrorStripePanel(editor);
+        ErrorStripeUpdateManager errorStripeUpdateManager = ErrorStripeUpdateManager.getInstance(myProject);
+        for (Editor editor : activeEditors) {
+          errorStripeUpdateManager.repaintErrorStripePanel(editor);
+        }
       }
     });
 
     editorFactory.addEditorFactoryListener(new EditorFactoryListener() {
       @Override
       public void editorCreated(@NotNull EditorFactoryEvent event) {
+        if (myProject.isDisposed()) {
+          return;
+        }
+
         Editor editor = event.getEditor();
         Document document = editor.getDocument();
         Project editorProject = editor.getProject();
@@ -214,9 +219,7 @@ public final class DaemonListeners implements Disposable {
       }
     }, this);
 
-    PsiChangeHandler changeHandler = new PsiChangeHandler(myProject, connection);
-    Disposer.register(this, changeHandler);
-    PsiManager.getInstance(myProject).addPsiTreeChangeListener(changeHandler, changeHandler);
+    PsiManager.getInstance(myProject).addPsiTreeChangeListener(new PsiChangeHandler(myProject, connection, this), this);
 
     connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
@@ -373,9 +376,13 @@ public final class DaemonListeners implements Disposable {
     name.addChangeListener(() -> stopDaemonAndRestartAllFiles(message), this);
   }
 
-  private boolean worthBothering(final Document document, Project project) {
-    if (document == null) return true;
-    if (project != null && project != myProject) return false;
+  private boolean worthBothering(@Nullable Document document, Project project) {
+    if (document == null) {
+      return true;
+    }
+    if (project != null && project != myProject) {
+      return false;
+    }
     // cached is essential here since we do not want to create PSI file in alien project
     PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getCachedPsiFile(document);
     return psiFile != null && psiFile.isPhysical() && psiFile.getOriginalFile() == psiFile;
@@ -436,14 +443,17 @@ public final class DaemonListeners implements Disposable {
     }
   }
 
-  private static class Holder {
+  private static final class Holder {
     private static final String myCutActionName = ActionManager.getInstance().getAction(IdeActions.ACTION_EDITOR_CUT).getTemplatePresentation().getText();
   }
-  private class MyCommandListener implements CommandListener {
+
+  private final class MyCommandListener implements CommandListener {
     @Override
     public void commandStarted(@NotNull CommandEvent event) {
       Document affectedDocument = extractDocumentFromCommand(event);
-      if (!worthBothering(affectedDocument, event.getProject())) return;
+      if (!worthBothering(affectedDocument, event.getProject())) {
+        return;
+      }
 
       cutOperationJustHappened = Comparing.strEqual(Holder.myCutActionName, event.getCommandName());
       if (!myDaemonCodeAnalyzer.isRunning()) return;
@@ -453,8 +463,7 @@ public final class DaemonListeners implements Disposable {
       stopDaemon(false, "Command start");
     }
 
-    @Nullable
-    private Document extractDocumentFromCommand(@NotNull CommandEvent event) {
+    private @Nullable Document extractDocumentFromCommand(@NotNull CommandEvent event) {
       Document affectedDocument = event.getDocument();
       if (affectedDocument != null) return affectedDocument;
       Object id = event.getCommandGroupId();
@@ -471,7 +480,9 @@ public final class DaemonListeners implements Disposable {
     @Override
     public void commandFinished(@NotNull CommandEvent event) {
       Document affectedDocument = extractDocumentFromCommand(event);
-      if (!worthBothering(affectedDocument, event.getProject())) return;
+      if (!worthBothering(affectedDocument, event.getProject())) {
+        return;
+      }
 
       if (myEscPressed) {
         myEscPressed = false;
@@ -488,7 +499,7 @@ public final class DaemonListeners implements Disposable {
     }
   }
 
-  private class MyTodoListener implements PropertyChangeListener {
+  private final class MyTodoListener implements PropertyChangeListener {
     @Override
     public void propertyChange(@NotNull PropertyChangeEvent evt) {
       if (TodoConfiguration.PROP_TODO_PATTERNS.equals(evt.getPropertyName())) {

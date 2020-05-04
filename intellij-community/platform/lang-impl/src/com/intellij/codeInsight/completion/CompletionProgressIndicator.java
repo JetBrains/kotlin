@@ -57,7 +57,7 @@ import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.DumbModeAccessType;
 import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.messages.SimpleMessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
 import org.jetbrains.annotations.*;
@@ -803,13 +803,17 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   }
 
   private LightweightHint showErrorHint(Project project, Editor editor, String text) {
-    final LightweightHint[] result = {null};
-    final EditorHintListener listener = (project1, hint, flags) -> result[0] = hint;
-    final MessageBusConnection connection = project.getMessageBus().connect();
-    connection.subscribe(EditorHintListener.TOPIC, listener);
-    assert text != null;
-    myEmptyCompletionNotifier.showIncompleteHint(editor, text, DumbService.isDumb(project));
-    connection.disconnect();
+    LightweightHint[] result = {null};
+    EditorHintListener listener = (project1, hint, flags) -> result[0] = hint;
+    SimpleMessageBusConnection connection = project.getMessageBus().simpleConnect();
+    try {
+      connection.subscribe(EditorHintListener.TOPIC, listener);
+      assert text != null;
+      myEmptyCompletionNotifier.showIncompleteHint(editor, text, DumbService.isDumb(project));
+    }
+    finally {
+      connection.disconnect();
+    }
     return result[0];
   }
 

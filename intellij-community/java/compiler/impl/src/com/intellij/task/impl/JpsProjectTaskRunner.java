@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.task.impl;
 
 import com.intellij.compiler.impl.CompileDriver;
@@ -25,7 +25,7 @@ import com.intellij.task.*;
 import com.intellij.ui.GuiUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.messages.SimpleMessageBusConnection;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,9 +51,9 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
                   @Nullable ProjectTaskNotification callback,
                   @NotNull Collection<? extends ProjectTask> tasks) {
     context.putUserData(JPS_BUILD_DATA_KEY, new MyJpsBuildData());
-    MessageBusConnection fileGeneratedTopicConnection;
+    SimpleMessageBusConnection fileGeneratedTopicConnection;
     if (context.isCollectionOfGeneratedFilesEnabled()) {
-      fileGeneratedTopicConnection = project.getMessageBus().connect();
+      fileGeneratedTopicConnection = project.getMessageBus().simpleConnect();
       fileGeneratedTopicConnection.subscribe(CompilerTopics.COMPILATION_STATUS, new CompilationStatusListener() {
         @Override
         public void fileGenerated(@NotNull String outputRoot, @NotNull String relativePath) {

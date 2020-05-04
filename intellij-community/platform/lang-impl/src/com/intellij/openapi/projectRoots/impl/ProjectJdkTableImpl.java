@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl;
 
 import com.intellij.ide.highlighter.ArchiveFileType;
@@ -24,7 +24,6 @@ import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.SmartHashSet;
-import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -46,11 +45,9 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
   private static final String ELEMENT_JDK = "jdk";
 
   private final Map<String, ProjectJdkImpl> myCachedProjectJdks = new HashMap<>();
-  private final MessageBus myMessageBus;
 
   // constructor is public because it is accessed from Upsource
   public ProjectJdkTableImpl() {
-    myMessageBus = ApplicationManager.getApplication().getMessageBus();
     // support external changes to jdk libraries (Endorsed Standards Override)
     final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
     connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
@@ -252,13 +249,13 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
   public void addJdk(@NotNull Sdk jdk) {
     ApplicationManager.getApplication().assertWriteAccessAllowed();
     mySdks.add(jdk);
-    myMessageBus.syncPublisher(JDK_TABLE_TOPIC).jdkAdded(jdk);
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(JDK_TABLE_TOPIC).jdkAdded(jdk);
   }
 
   @Override
   public void removeJdk(@NotNull Sdk jdk) {
     ApplicationManager.getApplication().assertWriteAccessAllowed();
-    myMessageBus.syncPublisher(JDK_TABLE_TOPIC).jdkRemoved(jdk);
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(JDK_TABLE_TOPIC).jdkRemoved(jdk);
     mySdks.remove(jdk);
     if (jdk instanceof Disposable) {
       Disposer.dispose((Disposable)jdk);
@@ -274,7 +271,7 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
 
     if (!previousName.equals(newName)) {
       // fire changes because after renaming JDK its name may match the associated jdk name of modules/project
-      myMessageBus.syncPublisher(JDK_TABLE_TOPIC).jdkNameChanged(originalJdk, previousName);
+      ApplicationManager.getApplication().getMessageBus().syncPublisher(JDK_TABLE_TOPIC).jdkNameChanged(originalJdk, previousName);
     }
   }
 
