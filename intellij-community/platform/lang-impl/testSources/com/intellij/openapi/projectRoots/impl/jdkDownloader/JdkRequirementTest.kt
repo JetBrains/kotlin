@@ -154,7 +154,7 @@ class JdkRequirementTest : LightPlatformTestCase() {
     override fun getExistingSdkHome() = "mock-home"
     override fun getVersionString() = versionString
     override fun getSuggestedSdkName() = versionString
-    override fun configure(sdk: Sdk) {}
+    override fun configureSdk(sdk: Sdk) {}
   }
 
   private val Corretto = JdkProduct("Amazon", "Corretto", null)

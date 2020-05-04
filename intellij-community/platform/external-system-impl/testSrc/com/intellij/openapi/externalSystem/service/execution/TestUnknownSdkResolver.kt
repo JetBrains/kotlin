@@ -46,14 +46,14 @@ object TestUnknownSdkResolver : UnknownSdkResolver {
     override fun getVersionString() = sdk.versionString
     override fun getSuggestedSdkName() = sdk.name
     override fun getExistingSdkHome() = sdk.homePath
-    override fun configure(sdk: Sdk) {}
+    override fun configureSdk(sdk: Sdk) {}
   }
 
   private class TestUnknownSdkDownloadableSdkFix : UnknownSdkDownloadableSdkFix {
     private val sdkInfo = TestSdkGenerator.reserveNextSdk()
     override fun getVersionString() = sdkInfo.versionString
     override fun getDownloadDescription() = sdkInfo.name
-    override fun configure(sdk: Sdk) {}
+    override fun configureSdk(sdk: Sdk) {}
     override fun createTask(indicator: ProgressIndicator) =
       object : SdkDownloadTask {
         override fun getPlannedVersion() = sdkInfo.versionString

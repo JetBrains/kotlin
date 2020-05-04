@@ -203,7 +203,7 @@ public class UnknownSdkTracker {
                 onSdkNameReady,
                 sdk -> {
                   if (sdk != null) {
-                    fix.configure(sdk);
+                    fix.configureSdk(sdk);
                     registerNewSdkInJdkTable(sdk.getName(), sdk);
                   }
                   onCompleted.consume(sdk);
@@ -260,7 +260,7 @@ public class UnknownSdkTracker {
         catch (Exception error) {
           LOG.warn("Failed to setupPaths for " + sdk + ". " + error.getMessage(), error);
         }
-        fix.configure(sdk);
+        fix.configureSdk(sdk);
         registerNewSdkInJdkTable(actualSdkName, sdk);
         LOG.info("Automatically set Sdk " + info + " to " + fix.getExistingSdkHome());
         onCompleted.consume(sdk);

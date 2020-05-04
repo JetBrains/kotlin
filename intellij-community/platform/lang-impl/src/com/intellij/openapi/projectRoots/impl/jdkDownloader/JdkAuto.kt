@@ -57,7 +57,7 @@ private class JdkAutoHintService(private val project: Project) : SimplePersisten
 }
 
 private class JarSdkConfigurator(val extraJars: List<String>) : UnknownSdkFixConfigurator {
-  override fun configure(sdk: Sdk) {
+  override fun configureSdk(sdk: Sdk) {
     val sdkModificator = sdk.sdkModificator
     for (path in extraJars) {
       val extraJar = resolveExtraJar(sdk, path)
@@ -172,7 +172,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
                               }.maxBy { it.second }
                               ?.first ?: return null
 
-        val jarConfigurator = JarSdkConfigurator(resolveHint(sdk)?.includeJars ?: mutableListOf())
+        val jarConfigurator = JarSdkConfigurator(resolveHint(sdk)?.includeJars ?: listOf())
 
         return object: UnknownSdkDownloadableSdkFix, UnknownSdkFixConfigurator by jarConfigurator {
           override fun getVersionString() = jdkToDownload.versionString
@@ -218,11 +218,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
         val localSdkFix = tryUsingExistingSdk(req, sdk.sdkType, indicator).pickBestMatch()
                           ?: lazyLocalJdks.filter { req.matches(it) }.pickBestMatch()
 
-        if (localSdkFix != null) {
-          localSdkFix.includeJars = resolveHint(sdk)?.includeJars ?: mutableListOf()
-        }
-
-        return localSdkFix
+        return localSdkFix?.copy(includeJars = resolveHint(sdk)?.includeJars ?: listOf())
       }
 
       private fun tryUsingExistingSdk(req: JdkRequirement, sdkType: SdkType, indicator: ProgressIndicator): List<JavaLocalSdkFix> {
@@ -248,17 +244,16 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
     }
   }
 
-  private class JavaLocalSdkFix(val homeDir: String,
-                                val version: JavaVersion,
-                                val suggestedName: String) : UnknownSdkLocalSdkFix {
-    var includeJars = emptyList<String>()
+  private data class JavaLocalSdkFix(
+    val homeDir: String,
+    val version: JavaVersion,
+    val suggestedName: String,
+    val includeJars: List<String> = emptyList()
+  ) : UnknownSdkLocalSdkFix, UnknownSdkFixConfigurator by JarSdkConfigurator(includeJars) {
 
     override fun getExistingSdkHome() = homeDir
     override fun getVersionString() = JdkVersionDetector.formatVersionString(version)
     override fun getPresentableVersionString() = version.toFeatureMinorUpdateString()
     override fun getSuggestedSdkName() : String = suggestedName
-    override fun configure(sdk: Sdk) {
-      JarSdkConfigurator(includeJars).configure(sdk)
-    }
   }
 }

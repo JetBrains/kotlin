@@ -7,7 +7,9 @@ import org.jetbrains.annotations.NotNull;
 public interface UnknownSdkFixConfigurator {
   /**
    * Configures created SDK before it will be added to SdkTable.
+   * Method will be called inside EDT thread.
+   * Write Lock should be acquired explicitly if it is necessary for implementation.
    * @param sdk SDK which was created by this fix.
    */
-  void configure(@NotNull Sdk sdk);
+  void configureSdk(@NotNull Sdk sdk);
 }
