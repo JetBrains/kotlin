@@ -386,6 +386,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(expression.body, other.body)
     }
 
+    override fun visitDoWhileExpression(expression: KtDoWhileExpression) {
+        val other = getTreeElement<KtDoWhileExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
+                && myMatchingVisitor.match(expression.body, other.body)
+    }
+
     override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {
         val other = getTreeElement<KtWhenConditionInRange>() ?: return
         myMatchingVisitor.result = condition.isNegated == other.isNegated

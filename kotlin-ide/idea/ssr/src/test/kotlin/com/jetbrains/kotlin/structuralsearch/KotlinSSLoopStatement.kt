@@ -22,4 +22,14 @@ class KotlinSSLoopStatement : KotlinSSTest() {
             """
         )
     }
+
+    fun testDoWhileLoop() {
+        doTest(
+            """
+            do {
+                println(0)
+            } while(true)
+            """
+        )
+    }
 }
