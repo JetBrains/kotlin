@@ -39,12 +39,15 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 interface LocalNameProvider {
@@ -117,18 +120,21 @@ class LocalDeclarationsLowering(
         LocalDeclarationsTransformer(irElement, container, classesToLower).lowerLocalDeclarations()
     }
 
-    private class ScopeWithCounter(scope: Scope, irElement: IrElement) : ScopeWithIr(scope, irElement) {
+    internal class ScopeWithCounter(scope: Scope, irElement: IrElement) : ScopeWithIr(scope, irElement) {
         // Continuous numbering across all declarations in the container.
         var counter: Int = 0
+        val usedLocalFunctionNames: MutableSet<Name> = hashSetOf()
     }
 
-    private val scopeMap: MutableMap<IrSymbolOwner, ScopeWithCounter> = mutableMapOf()
+    internal class LocalScopeWithCounterMap {
+        val scopeMap: MutableMap<IrSymbolOwner, ScopeWithCounter> = hashMapOf()
+    }
+
     // Need to keep LocalFunctionContext.index
     private val IrSymbolOwner.scopeWithCounter: ScopeWithCounter
-        get() = scopeMap.getOrPut(this) {
+        get() = context.ir.localScopeWithCounterMap.scopeMap.getOrPut(this) {
             ScopeWithCounter(Scope(symbol), this)
         }
-
 
     private abstract class LocalContext {
         val capturedTypeParameterToTypeParameter: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
@@ -229,7 +235,6 @@ class LocalDeclarationsLowering(
         val localFunctions: MutableMap<IrFunction, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<IrClass, LocalClassContext> = LinkedHashMap()
         val localClassConstructors: MutableMap<IrConstructor, LocalClassConstructorContext> = LinkedHashMap()
-        val usedLocalFunctionNames: MutableSet<Name> = mutableSetOf()
 
         val transformedDeclarations = mutableMapOf<IrSymbolOwner, IrDeclaration>()
 
@@ -832,19 +837,17 @@ class LocalDeclarationsLowering(
         }
 
         private fun collectLocalDeclarations() {
-            val enclosingFileScope = container.file.scopeWithCounter
-
-            val enclosingClassScope = run {
+            val enclosingFile = container.file
+            val enclosingClass = run {
                 var currentParent = container as? IrClass ?: container.parent
                 while (currentParent is IrDeclaration && currentParent !is IrClass) {
                     currentParent = currentParent.parent
                 }
 
                 currentParent as? IrClass
-            }?.scopeWithCounter
+            }
 
             irElement.acceptVoid(object : IrElementVisitorVoidWithContext() {
-
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
@@ -866,18 +869,16 @@ class LocalDeclarationsLowering(
                     super.visitSimpleFunction(declaration)
 
                     if (declaration.visibility == Visibilities.LOCAL) {
-                        val scopeWithIr =
-                            (currentClass ?: enclosingClassScope ?: enclosingFileScope /*file is required for K/N cause file declarations are not split by classes*/
-                            ?: error("No scope for ${declaration.dump()}"))
+                        val enclosingScope =
+                            // File is required for K/N because file declarations are not split by classes.
+                            currentClass ?: enclosingClass?.scopeWithCounter ?: enclosingFile.scopeWithCounter
+                        val index =
+                            if (enclosingScope is ScopeWithCounter &&
+                                (declaration.name.isSpecial || declaration.name in enclosingScope.usedLocalFunctionNames)
+                            ) enclosingScope.counter++ else -1
                         localFunctions[declaration] =
-                            LocalFunctionContext(
-                                declaration,
-                                if (declaration.name.isSpecial || declaration.name in usedLocalFunctionNames)
-                                    (scopeWithIr as ScopeWithCounter).counter++
-                                else -1,
-                                scopeWithIr.irElement as IrDeclarationContainer
-                            )
-                        usedLocalFunctionNames.add(declaration.name)
+                            LocalFunctionContext(declaration, index, enclosingScope.irElement as IrDeclarationContainer)
+                        (enclosingScope as? ScopeWithCounter)?.usedLocalFunctionNames?.add(declaration.name)
                     }
                 }
 

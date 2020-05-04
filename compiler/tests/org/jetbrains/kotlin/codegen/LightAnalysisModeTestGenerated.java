@@ -2095,6 +2095,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noAdaptedReferencesIfNoOptimizedReferencesEnabled.kt");
             }
 
+            @TestMetadata("noNameClashForReferencesToSameFunction.kt")
+            public void testNoNameClashForReferencesToSameFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noNameClashForReferencesToSameFunction.kt");
+            }
+
             @TestMetadata("noReflectionForAdaptedCallableReferences.kt")
             public void testNoReflectionForAdaptedCallableReferences() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noReflectionForAdaptedCallableReferences.kt");
@@ -12960,6 +12965,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("nameClash.kt")
             public void testNameClash() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/localFunctions/nameClash.kt");
+            }
+
+            @TestMetadata("nameClashAcrossDifferentContainers.kt")
+            public void testNameClashAcrossDifferentContainers() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/localFunctions/nameClashAcrossDifferentContainers.kt");
             }
 
             @TestMetadata("overloadedLocalFunWithoutClosure.kt")

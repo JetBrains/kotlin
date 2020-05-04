@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
@@ -33,6 +34,8 @@ abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: Ir
     abstract val symbols: Symbols<T>
 
     val defaultParameterDeclarationsCache = mutableMapOf<IrFunction, IrFunction>()
+
+    internal val localScopeWithCounterMap = LocalDeclarationsLowering.LocalScopeWithCounterMap()
 
     // If irType is an inline class type, return the underlying type according to the
     // unfolding rules of the current backend. Otherwise, returns null.
