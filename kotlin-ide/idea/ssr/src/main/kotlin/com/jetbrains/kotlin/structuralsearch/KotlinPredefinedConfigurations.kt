@@ -17,7 +17,8 @@ object KotlinPredefinedConfigurations {
         searchTemplate(KSSRBundle.message("predefined.configuration.string.literals"), "\"'_String\"", EXPRESSION_TYPE),
         searchTemplate(KSSRBundle.message("predefined.configuration.array.access"), "'_Array['_Index]", EXPRESSION_TYPE),
         searchTemplate(KSSRBundle.message("predefined.configuration.casts"), "'_Expr as '_Type", EXPRESSION_TYPE),
-        searchTemplate(KSSRBundle.message("predefined.configuration.instance"), "'_Expr is '_Type", EXPRESSION_TYPE)
+        searchTemplate(KSSRBundle.message("predefined.configuration.instance"), "'_Expr is '_Type", EXPRESSION_TYPE),
+        searchTemplate(KSSRBundle.message("predefined.configuration.elvis"), "'_Expr ?: '_Fallback", EXPRESSION_TYPE)
     )
 
 }
