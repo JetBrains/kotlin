@@ -260,6 +260,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
     }
 
+    override fun visitTypeArgumentList(typeArgumentList: KtTypeArgumentList) {
+        val other = getTreeElement<KtTypeArgumentList>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(typeArgumentList.arguments, other.arguments)
+    }
+
+    override fun visitValueArgumentList(list: KtValueArgumentList) {
+        val other = getTreeElement<KtValueArgumentList>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(list.arguments, other.arguments)
+    }
+
     override fun visitTypeParameter(parameter: KtTypeParameter) {
         val other = getTreeElement<KtTypeParameter>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(parameter.lastChild, other.lastChild) // match generic
@@ -445,6 +455,21 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(typeAlias.getTypeReference(), other.getTypeReference())
     }
 
+    override fun visitConstructorCalleeExpression(constructorCalleeExpression: KtConstructorCalleeExpression) {
+        val other = getTreeElement<KtConstructorCalleeExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(constructorCalleeExpression.typeReference, other.typeReference)
+                && myMatchingVisitor.match(
+            constructorCalleeExpression.constructorReferenceExpression, other.constructorReferenceExpression
+        )
+    }
+
+    override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry) {
+        val other = getTreeElement<KtAnnotationEntry>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(annotationEntry.calleeExpression, other.calleeExpression)
+                && myMatchingVisitor.match(annotationEntry.valueArgumentList, other.valueArgumentList)
+                && myMatchingVisitor.match(annotationEntry.typeArgumentList, other.typeArgumentList)
+    }
+
     override fun visitProperty(property: KtProperty) {
         val other = getTreeElement<KtProperty>() ?: return
         val patternTypeReference = property.typeReference
@@ -470,7 +495,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
         ))
     }
-
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
         val other = getTreeElement<KtStringTemplateExpression>() ?: return

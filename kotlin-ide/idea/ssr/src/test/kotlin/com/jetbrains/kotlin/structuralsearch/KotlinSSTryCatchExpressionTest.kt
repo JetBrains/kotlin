@@ -1,6 +1,6 @@
 package com.jetbrains.kotlin.structuralsearch
 
-class KotlinSSTryCatchExpression : KotlinSSTest() {
+class KotlinSSTryCatchExpressionTest : KotlinSSTest() {
     override fun getBasePath() = "tryCatchExpression"
 
     fun testTryCatch() {
