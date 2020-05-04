@@ -9,8 +9,10 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.*
 import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.IndexableFilesFilter
+import org.jetbrains.annotations.ApiStatus
 
-internal object IndexableFilesIterationMethods {
+@ApiStatus.Internal
+object IndexableFilesIterationMethods {
 
   private val followSymlinks
     get() = Registry.`is`("indexer.follows.symlinks")
