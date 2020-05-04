@@ -5,8 +5,9 @@ apply plugin: 'kotlin-platform-jvm'
 archivesBaseName = 'kotlin-stdlib'
 
 configureJvm6Project(project)
-// TODO: Migrate to maven-publish publishing
-configureLegacyPublishing(project)
+configurePublishing(project)
+configureJavadocJar()
+configureSourcesJar()
 
 configurations {
     distSources
@@ -85,10 +86,9 @@ task distSourcesJar(type: Jar) {
     }
 }
 
-task modularJar(type: Jar) {
+configureModularJar {
     dependsOn(jar)
     manifestAttributes(manifest, project, 'Main', true)
-    classifier = 'modular'
 
     from zipTree(jar.outputs.files.singleFile)
 }
@@ -99,8 +99,6 @@ artifacts {
     distSources distSourcesJar
     archives modularJar
 }
-
-configureJavadocJar()
 
 DexMethodCountKt.dexMethodCount(project) { task ->
     task.from(jar)
