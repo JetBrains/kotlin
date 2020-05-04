@@ -169,7 +169,7 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
     private boolean isOfflineMode = false;
 
     @Override
-    @XCollection(elementTypes = {GradleProjectSettings.class})
+    @XCollection(elementTypes = GradleProjectSettings.class)
     public Set<GradleProjectSettings> getLinkedExternalProjectsSettings() {
       return myProjectSettings;
     }

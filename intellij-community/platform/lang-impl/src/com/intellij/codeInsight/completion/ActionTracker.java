@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.completion;
 
 import com.intellij.injected.editor.EditorWindow;
@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * @author peter
  */
-class ActionTracker {
+final class ActionTracker {
   private final @NotNull MessageBusConnection myConnection;
   private @NotNull List<Integer> myCaretOffsets;
   private long myStartDocStamp;
@@ -33,7 +33,7 @@ class ActionTracker {
   private final Project myProject;
   private final boolean myIsDumb;
 
-  ActionTracker(Editor editor, Disposable parentDisposable) {
+  ActionTracker(@NotNull Editor editor, @NotNull Disposable parentDisposable) {
     myEditor = editor;
     myProject = Objects.requireNonNull(editor.getProject());
     myIsDumb = DumbService.getInstance(myProject).isDumb();

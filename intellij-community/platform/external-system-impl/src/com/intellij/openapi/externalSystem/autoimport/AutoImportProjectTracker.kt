@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
@@ -36,9 +36,10 @@ import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.streams.asStream
 
+private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
+
 @State(name = "ExternalSystemProjectTracker", storages = [Storage(CACHE_FILE)])
 class AutoImportProjectTracker(private val project: Project) : ExternalSystemProjectTracker, PersistentStateComponent<AutoImportProjectTracker.State> {
-
   @Suppress("unused")
   private val debugThrowable = Throwable("Initialized with project=(${project.isDisposed}, ${Disposer.isDisposed(project)}, $project)")
 
@@ -269,8 +270,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
 
   override fun initializeComponent() {
     LOG.debug("Project tracker initialization")
-    val connections = ApplicationManager.getApplication().messageBus.connect(project)
-    connections.subscribe(BatchFileChangeListener.TOPIC, createProjectChangesListener())
+    ApplicationManager.getApplication().messageBus.connect(project).subscribe(BatchFileChangeListener.TOPIC, createProjectChangesListener())
     dispatcher.setRestartTimerOnAdd(true)
     dispatcher.isPassThrough = !isAsyncChangesProcessing
     dispatcher.activate()

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.backwardRefs;
 
 import com.intellij.ProjectTopics;
@@ -71,7 +71,7 @@ public class DirtyScopeHolder extends UserDataHolderBase implements AsyncFileLis
     myPsiDocManager = psiDocumentManager;
 
     if (CompilerReferenceService.isEnabled()) {
-      final MessageBusConnection connect = service.getProject().getMessageBus().connect();
+      MessageBusConnection connect = service.getProject().getMessageBus().connect();
       connect.subscribe(ExcludedEntriesListener.TOPIC, new ExcludedEntriesListener() {
         @Override
         public void onEntryAdded(@NotNull ExcludeEntryDescription description) {

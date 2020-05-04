@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.lookup.impl;
 
@@ -25,7 +25,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.ui.LightweightHint;
 import com.intellij.util.Alarm;
 import com.intellij.util.BitUtil;
-import com.intellij.util.messages.MessageBus;
+import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -41,10 +41,11 @@ public class LookupManagerImpl extends LookupManager {
 
   public static final Key<Boolean> SUPPRESS_AUTOPOPUP_JAVADOC = Key.create("LookupManagerImpl.suppressAutopopupJavadoc");
 
-  public LookupManagerImpl(Project project, MessageBus bus) {
+  public LookupManagerImpl(@NotNull Project project) {
     myProject = project;
 
-    bus.connect().subscribe(EditorHintListener.TOPIC, new EditorHintListener() {
+    MessageBusConnection connection = project.getMessageBus().connect();
+    connection.subscribe(EditorHintListener.TOPIC, new EditorHintListener() {
       @Override
       public void hintShown(final Project project, @NotNull final LightweightHint hint, final int flags) {
         if (project == myProject) {
@@ -71,7 +72,7 @@ public class LookupManagerImpl extends LookupManager {
       }
     });
 
-    bus.connect().subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
+    connection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
       @Override
       public void enteredDumbMode() {
         hideActiveLookup();
