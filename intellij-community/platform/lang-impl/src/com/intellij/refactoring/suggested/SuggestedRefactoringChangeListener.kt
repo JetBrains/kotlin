@@ -87,14 +87,29 @@ class SuggestedRefactoringChangeListener(
     if (editingState != null) return
 
     // it doesn't make sense start track signature changes not in active editor
-    val editors = EditorFactory.getInstance().getEditors(document, project)
-    if (editors.isEmpty()) return
+    val editors = EditorFactory.getInstance().editors(document, project)
 
     // suppress if live template is active - otherwise refactoring appears for create from usage and other features
-    if (editors.any { TemplateManager.getInstance(project).getActiveTemplate(it) != null }) return
+    var templateManager: TemplateManager? = null
+    if (editors.anyMatch {
+        if (templateManager == null) {
+          templateManager = TemplateManager.getInstance(project)
+        }
+        templateManager!!.getActiveTemplate(it) != null
+      }) {
+      return
+    }
+
+    if (templateManager == null) {
+      // if null, it means that filter was not applied, so, stream is empty
+      return
+    }
 
     // undo of some action can't be a start of signature editing
-    if (UndoManager.getInstance(project).isUndoInProgress) return
+
+    if (UndoManager.getInstance(project).isUndoInProgress) {
+      return
+    }
 
     fun declarationByOffsetInSignature(offset: Int): PsiElement? {
       val declaration = refactoringSupport.declarationByOffset(psiFile, offset) ?: return null

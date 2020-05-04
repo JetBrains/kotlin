@@ -84,10 +84,7 @@ class SuggestedRefactoringAvailabilityIndicator(private val project: Project) {
 
     data = newData
 
-    val editors = EditorFactory.getInstance().getEditors(document, project)
-    for (editor in editors) {
-      attachToEditor(editor)
-    }
+    EditorFactory.getInstance().editors(document, project).forEach(::attachToEditor)
   }
 
   fun clear() {

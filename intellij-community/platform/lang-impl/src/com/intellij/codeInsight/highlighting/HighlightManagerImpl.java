@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.highlighting;
 
 import com.intellij.injected.editor.EditorWindow;
@@ -48,10 +48,12 @@ public final class HighlightManagerImpl extends HighlightManager {
       @Override
       public void documentChanged(@NotNull DocumentEvent event) {
         Document document = event.getDocument();
-        Editor[] editors = EditorFactory.getInstance().getEditors(document);
-        for (Editor editor : editors) {
+        for (Iterator<Editor> iterator = EditorFactory.getInstance().editors(document).iterator(); iterator.hasNext(); ) {
+          Editor editor = iterator.next();
           Map<RangeHighlighter, HighlightFlags> map = getHighlightInfoMap(editor, false);
-          if (map == null) return;
+          if (map == null) {
+            return;
+          }
 
           ArrayList<RangeHighlighter> highlightersToRemove = new ArrayList<>();
           for (RangeHighlighter highlighter : map.keySet()) {

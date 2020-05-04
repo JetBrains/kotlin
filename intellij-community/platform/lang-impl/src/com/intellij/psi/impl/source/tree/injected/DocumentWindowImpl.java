@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.psi.impl.source.tree.injected;
 
@@ -19,8 +19,8 @@ import com.intellij.openapi.editor.ex.RangeMarkerEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiFile;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.util.ObjectUtils;
@@ -86,7 +86,7 @@ class DocumentWindowImpl extends UserDataHolderBase implements Disposable, Docum
     return null;
   }
 
-  private static class CachedText {
+  private static final class CachedText {
     private final String text;
     private final long modificationStamp;
 
@@ -244,7 +244,7 @@ class DocumentWindowImpl extends UserDataHolderBase implements Disposable, Docum
       }
     }
     lineNumber = getLineCount() - 1;
-    return lineNumber < 0 ? 0 : lineNumber;
+    return Math.max(lineNumber, 0);
   }
 
   @Override
@@ -582,7 +582,7 @@ class DocumentWindowImpl extends UserDataHolderBase implements Disposable, Docum
 
   @Override
   public boolean removeRangeMarker(@NotNull RangeMarkerEx rangeMarker) {
-    return myDelegate.removeRangeMarker(((RangeMarkerWindow)rangeMarker).getDelegate()); 
+    return myDelegate.removeRangeMarker(((RangeMarkerWindow)rangeMarker).getDelegate());
   }
 
   @Override
@@ -630,8 +630,7 @@ class DocumentWindowImpl extends UserDataHolderBase implements Disposable, Docum
     if (offsetInLeftFragment == offsetInRightFragment) return offsetInLeftFragment;
 
     // heuristics: return offset closest to the caret
-    Editor[] editors = EditorFactory.getInstance().getEditors(getDelegate());
-    Editor editor  = editors.length == 0 ? null : editors[0];
+    Editor editor =  EditorFactory.getInstance().editors(getDelegate()).findFirst().orElse(null);
     if (editor != null) {
       if (editor instanceof EditorWindow) editor = ((EditorWindow)editor).getDelegate();
       int caret = editor.getCaretModel().getOffset();

@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-public class CodeFoldingManagerImpl extends CodeFoldingManager implements Disposable {
+public final class CodeFoldingManagerImpl extends CodeFoldingManager implements Disposable {
   private final Project myProject;
 
   private final Collection<Document> myDocumentsWithFoldingInfo = new WeakList<>();
@@ -160,16 +160,14 @@ public class CodeFoldingManagerImpl extends CodeFoldingManager implements Dispos
     DaemonCodeAnalyzer.getInstance(myProject).restart();
   }
 
-  private void initFolding(@NotNull final Editor editor) {
+  private void initFolding(@NotNull Editor editor) {
     final Document document = editor.getDocument();
     editor.getFoldingModel().runBatchFoldingOperation(() -> {
       DocumentFoldingInfo documentFoldingInfo = getDocumentFoldingInfo(document);
-      Editor[] editors = EditorFactory.getInstance().getEditors(document, myProject);
-      for (Editor otherEditor : editors) {
-        if (otherEditor == editor || !isFoldingsInitializedInEditor(otherEditor)) continue;
-        documentFoldingInfo.loadFromEditor(otherEditor);
-        break;
-      }
+      EditorFactory.getInstance().editors(document, myProject)
+        .filter(otherEditor -> otherEditor != editor && isFoldingsInitializedInEditor(otherEditor))
+        .findFirst()
+        .ifPresent(documentFoldingInfo::loadFromEditor);
       documentFoldingInfo.setToEditor(editor);
       documentFoldingInfo.clear();
 

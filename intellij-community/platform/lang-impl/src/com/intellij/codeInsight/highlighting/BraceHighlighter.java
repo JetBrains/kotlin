@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.highlighting;
 
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class BraceHighlighter implements StartupActivity.DumbAware {
+public final class BraceHighlighter implements StartupActivity.DumbAware {
   private final Alarm myAlarm = new Alarm();
 
   @Override
@@ -77,10 +77,7 @@ public class BraceHighlighter implements StartupActivity.DumbAware {
       @Override
       public void documentChanged(@NotNull DocumentEvent e) {
         myAlarm.cancelAllRequests();
-        Editor[] editors = EditorFactory.getInstance().getEditors(e.getDocument(), project);
-        for (Editor editor : editors) {
-          updateBraces(editor, myAlarm);
-        }
+        EditorFactory.getInstance().editors(e.getDocument(), project).forEach(editor -> updateBraces(editor, myAlarm));
       }
     };
     eventMulticaster.addDocumentListener(documentListener, activityDisposable);
@@ -112,8 +109,10 @@ public class BraceHighlighter implements StartupActivity.DumbAware {
     updateBraces(editor, myAlarm);
   }
 
-  static void updateBraces(@NotNull final Editor editor, @NotNull final Alarm alarm) {
-    if (editor.getDocument().isInBulkUpdate()) return;
+  private static void updateBraces(@NotNull Editor editor, @NotNull Alarm alarm) {
+    if (editor.getDocument().isInBulkUpdate()) {
+      return;
+    }
 
     BraceHighlightingHandler.lookForInjectedAndMatchBracesInOtherThread(editor, alarm, handler -> {
       handler.updateBraces();
@@ -121,7 +120,7 @@ public class BraceHighlighter implements StartupActivity.DumbAware {
     });
   }
 
-  private void clearBraces(@NotNull final Editor editor) {
+  private void clearBraces(@NotNull Editor editor) {
     BraceHighlightingHandler.lookForInjectedAndMatchBracesInOtherThread(editor, myAlarm, handler -> {
       handler.clearBraceHighlighters();
       return false;
