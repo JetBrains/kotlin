@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
-import org.jetbrains.kotlin.codegen.inline.coroutines.*
+import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
+import org.jetbrains.kotlin.codegen.inline.coroutines.isSuspendLambdaCapturedByOuterObjectOrLambda
+import org.jetbrains.kotlin.codegen.inline.coroutines.markNoinlineLambdaIfSuspend
+import org.jetbrains.kotlin.codegen.inline.coroutines.surroundInvokesWithSuspendMarkersIfNeeded
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.common.*
+import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.common.asSequence
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -766,14 +772,6 @@ class MethodInliner(
         }
     }
 
-    private fun isSuspendCall(invoke: AbstractInsnNode?): Boolean {
-        if (invoke !is MethodInsnNode) return false
-        // We can't have suspending constructors.
-        assert(invoke.opcode != Opcodes.INVOKESPECIAL)
-        if (Type.getReturnType(invoke.desc) != OBJECT_TYPE) return false
-        return Type.getArgumentTypes(invoke.desc).let { it.isNotEmpty() && it.last() == languageVersionSettings.continuationAsmType() }
-    }
-
     private fun preprocessNodeBeforeInline(node: MethodNode, returnLabelOwner: ReturnLabelOwner) {
         try {
             FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
@@ -786,7 +784,7 @@ class MethodInliner(
             ApiVersionCallsPreprocessingMethodTransformer(targetApiVersion).transform("fake", node)
         }
 
-        val frames = analyzeMethodNodeBeforeInline(node)
+        val frames = analyzeMethodNodeWithBasicInterpreter(node)
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
 
@@ -937,7 +935,7 @@ class MethodInliner(
         private class LocalReturn(
             private val returnInsn: AbstractInsnNode,
             private val insertBeforeInsn: AbstractInsnNode,
-            private val frame: Frame<SourceValue>
+            private val frame: Frame<BasicValue>
         ) {
 
             fun transform(insnList: InsnList, returnVariableIndex: Int) {
@@ -955,7 +953,7 @@ class MethodInliner(
                 }
 
                 while (stackSize > 0) {
-                    val stackElementSize = frame.getStack(stackSize - 1).getSize()
+                    val stackElementSize = frame.getStack(stackSize - 1).size
                     val popOpcode = if (stackElementSize == 1) Opcodes.POP else Opcodes.POP2
                     insnList.insertBefore(insertBeforeInsn, InsnNode(popOpcode))
                     stackSize--
@@ -976,7 +974,7 @@ class MethodInliner(
         internal fun addLocalReturnToTransform(
             returnInsn: AbstractInsnNode,
             insertBeforeInsn: AbstractInsnNode,
-            sourceValueFrame: Frame<SourceValue>
+            sourceValueFrame: Frame<BasicValue>
         ) {
             assert(isReturnOpcode(returnInsn.opcode)) { "return instruction expected" }
             assert(returnOpcode < 0 || returnOpcode == returnInsn.opcode) { "Return op should be " + Printer.OPCODES[returnOpcode] + ", got " + Printer.OPCODES[returnInsn.opcode] }
@@ -1024,6 +1022,28 @@ class MethodInliner(
             return fieldRemapper.findField(fin) ?: throw IllegalStateException(
                 "Couldn't find captured field ${node.owner}.${node.name} in ${fieldRemapper.originalLambdaInternalName}"
             )
+        }
+
+        private fun analyzeMethodNodeWithBasicInterpreter(node: MethodNode): Array<Frame<BasicValue>?> {
+            val analyzer = object : Analyzer<BasicValue>(BasicInterpreter()) {
+                override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> {
+
+                    return object : Frame<BasicValue>(nLocals, nStack) {
+                        @Throws(AnalyzerException::class)
+                        override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<BasicValue>) {
+                            // This can be a void non-local return from a non-void method; Frame#execute would throw and do nothing else.
+                            if (insn.opcode == Opcodes.RETURN) return
+                            super.execute(insn, interpreter)
+                        }
+                    }
+                }
+            }
+
+            try {
+                return analyzer.analyze("fake", node)
+            } catch (e: AnalyzerException) {
+                throw RuntimeException(e)
+            }
         }
 
         private fun analyzeMethodNodeBeforeInline(node: MethodNode): Array<Frame<SourceValue>?> {
