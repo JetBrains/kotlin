@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isByte
+import org.jetbrains.kotlin.fir.isInt
+import org.jetbrains.kotlin.fir.isShort
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
@@ -149,6 +152,9 @@ internal class OperatorExpressionGenerator(
         val operandClassId = operandType.lookupTag.classId
         val targetClassId = targetType.lookupTag.classId
         if (operandClassId == targetClassId) return this
+
+        if ((targetType.isInt() && !targetType.isNullable) && (operandType.isShort() || operandType.isByte())) return this
+
         val conversionFunction =
             typeConverter.classIdToSymbolMap[operandClassId]?.getSimpleFunction("to${targetType.lookupTag.classId.shortClassName.asString()}")
                 ?: throw AssertionError("No conversion function for $operandType ~> $targetType")
