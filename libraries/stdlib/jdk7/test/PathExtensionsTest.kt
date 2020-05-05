@@ -275,22 +275,57 @@ class PathExtensionsTest {
     }
 
     @Test
+    fun testBufferedReader() {
+        val file = Files.createTempFile(null, null)
+        val lines = listOf("line1", "line2")
+        Files.write(file, lines)
+
+        assertEquals(file.bufferedReader().use { it.readLines() }, lines)
+        assertEquals(file.bufferedReader(StandardOpenOption.READ).use { it.readLines() }, lines)
+        assertEquals(file.bufferedReader(1024, StandardOpenOption.READ).use { it.readLines() }, lines)
+        assertEquals(file.bufferedReader(Charsets.UTF_8, StandardOpenOption.READ).use { it.readLines() }, lines)
+        assertEquals(file.bufferedReader(Charsets.UTF_8, 1024, StandardOpenOption.READ).use { it.readLines() }, lines)
+    }
+
+    @Test
+    fun testBufferedWriter() {
+        val file = Files.createTempFile(null, null)
+
+        file.bufferedWriter().use { it.write("line1\n") }
+        file.bufferedWriter(StandardOpenOption.APPEND).use { it.write("line2\n") }
+        file.bufferedWriter(Charsets.UTF_8, StandardOpenOption.APPEND).use { it.write("line3\n") }
+        file.bufferedWriter(1024, StandardOpenOption.APPEND).use { it.write("line4\n") }
+        file.bufferedWriter(Charsets.UTF_8, 1024, StandardOpenOption.APPEND).use { it.write("line5\n") }
+
+        assertEquals(Files.readAllLines(file), listOf("line1", "line2", "line3", "line4", "line5"))
+    }
+
+    @Test
     fun testPrintWriter() {
         val file = Files.createTempFile(null, null)
+
         val writer = file.printWriter()
         val str1 = "Hello, world!"
         val str2 = "Everything is wonderful!"
         writer.println(str1)
         writer.println(str2)
         writer.close()
+
         val writer2 = file.printWriter(StandardOpenOption.APPEND)
         val str3 = "Hello again!"
         writer2.println(str3)
         writer2.close()
+
+        val writer3 = file.printWriter(Charsets.UTF_8, StandardOpenOption.APPEND)
+        val str4 = "Hello one last time!"
+        writer3.println(str4)
+        writer3.close()
+
         val reader = file.bufferedReader()
         assertEquals(str1, reader.readLine())
         assertEquals(str2, reader.readLine())
         assertEquals(str3, reader.readLine())
+        assertEquals(str4, reader.readLine())
     }
 
     @Test

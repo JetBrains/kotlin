@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "RedundantVisibilityModifier", "RedundantUnitReturnType")
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "RedundantVisibilityModifier", "RedundantUnitReturnType", "SameParameterValue")
 @file:JvmMultifileClass
 @file:JvmName("PathsKt")
 @file:kotlin.jvm.JvmPackageName("kotlin.io.jdk7")
@@ -43,7 +43,17 @@ public inline fun Path.reader(charset: Charset = Charsets.UTF_8): InputStreamRea
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public inline fun Path.reader(vararg options: OpenOption, charset: Charset = Charsets.UTF_8): InputStreamReader {
+public inline fun Path.reader(vararg options: OpenOption): InputStreamReader {
+    return inputStream(*options).reader()
+}
+
+/**
+ * Returns a new [InputStreamReader] for reading the content of this file.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Path.reader(charset: Charset, vararg options: OpenOption): InputStreamReader {
     return inputStream(*options).reader(charset)
 }
 
@@ -64,18 +74,52 @@ public inline fun Path.bufferedReader(charset: Charset = Charsets.UTF_8, bufferS
  * Returns a new [BufferedReader] for reading the content of this file.
  *
  * @param options options to determine how the file is opened
- * @param charset character set to use.
- * @param bufferSize necessary size of the buffer.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public inline fun Path.bufferedReader(
-    vararg options: OpenOption,
-    charset: Charset = Charsets.UTF_8,
-    bufferSize: Int = DEFAULT_BUFFER_SIZE
-): BufferedReader {
-    return reader(*options, charset = charset).buffered(bufferSize)
+public inline fun Path.bufferedReader(vararg options: OpenOption): BufferedReader {
+    return reader(*options).buffered()
+}
+
+/**
+ * Returns a new [BufferedReader] for reading the content of this file.
+ *
+ * @param bufferSize necessary size of the buffer.
+ * @param options options to determine how the file is opened
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Path.bufferedReader(bufferSize: Int, vararg options: OpenOption): BufferedReader {
+    return reader(*options).buffered(bufferSize)
+}
+
+/**
+ * Returns a new [BufferedReader] for reading the content of this file.
+ *
+ * @param charset character set to use.
+ * @param options options to determine how the file is opened
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Path.bufferedReader(charset: Charset, vararg options: OpenOption): BufferedReader {
+    return reader(charset, *options).buffered()
+}
+
+/**
+ * Returns a new [BufferedReader] for reading the content of this file.
+ *
+ * @param charset character set to use.
+ * @param bufferSize necessary size of the buffer.
+ * @param options options to determine how the file is opened
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Path.bufferedReader(charset: Charset, bufferSize: Int, vararg options: OpenOption): BufferedReader {
+    return reader(charset, *options).buffered(bufferSize)
 }
 
 /**
@@ -94,10 +138,19 @@ public inline fun Path.writer(charset: Charset = Charsets.UTF_8): OutputStreamWr
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public inline fun Path.writer(vararg options: OpenOption, charset: Charset = Charsets.UTF_8): OutputStreamWriter {
-    return outputStream(*options).writer(charset)
+public inline fun Path.writer(vararg options: OpenOption): OutputStreamWriter {
+    return outputStream(*options).writer()
 }
 
+/**
+ * Returns a new [OutputStreamWriter] for writing the content of this file.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Path.writer(charset: Charset, vararg options: OpenOption): OutputStreamWriter {
+    return outputStream(*options).writer(charset)
+}
 
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
@@ -115,19 +168,53 @@ public inline fun Path.bufferedWriter(charset: Charset = Charsets.UTF_8, bufferS
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
  *
- * @param options options to determine how the file is opened
- * @param charset character set to use.
- * @param bufferSize necessary size of the buffer.
+ * @param options options to determine how the file is opened.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public inline fun Path.bufferedWriter(
-    vararg options: OpenOption,
-    charset: Charset = Charsets.UTF_8,
-    bufferSize: Int = DEFAULT_BUFFER_SIZE
-): BufferedWriter {
-    return writer(*options, charset = charset).buffered(bufferSize)
+public inline fun Path.bufferedWriter(vararg options: OpenOption): BufferedWriter {
+    return writer(*options).buffered()
+}
+
+/**
+ * Returns a new [BufferedWriter] for writing the content of this file.
+ *
+ * @param charset character set to use.
+ * @param options options to determine how the file is opened.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Path.bufferedWriter(charset: Charset, vararg options: OpenOption): BufferedWriter {
+    return writer(charset, *options).buffered()
+}
+
+/**
+ * Returns a new [BufferedWriter] for writing the content of this file.
+ *
+ * @param bufferSize necessary size of the buffer.
+ * @param options options to determine how the file is opened.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Path.bufferedWriter(bufferSize: Int, vararg options: OpenOption): BufferedWriter {
+    return writer(*options).buffered(bufferSize)
+}
+
+/**
+ * Returns a new [BufferedWriter] for writing the content of this file.
+ *
+ * @param charset character set to use.
+ * @param bufferSize necessary size of the buffer.
+ * @param options options to determine how the file is opened.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Path.bufferedWriter(charset: Charset, bufferSize: Int, vararg options: OpenOption): BufferedWriter {
+    return writer(charset, *options).buffered(bufferSize)
 }
 
 /**
@@ -146,8 +233,18 @@ public inline fun Path.printWriter(charset: Charset = Charsets.UTF_8): PrintWrit
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public inline fun Path.printWriter(vararg options: OpenOption, charset: Charset = Charsets.UTF_8): PrintWriter {
-    return PrintWriter(bufferedWriter(*options, charset = charset))
+public inline fun Path.printWriter(vararg options: OpenOption): PrintWriter {
+    return PrintWriter(bufferedWriter(*options))
+}
+
+/**
+ * Returns a new [PrintWriter] for writing the content of this file.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Path.printWriter(charset: Charset, vararg options: OpenOption): PrintWriter {
+    return PrintWriter(bufferedWriter(charset, *options))
 }
 
 /**
@@ -211,13 +308,28 @@ public fun Path.readText(charset: Charset = Charsets.UTF_8): String = readBytes(
  * with [options].
  *
  * @param text text to write into file.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public fun Path.writeText(text: String, vararg options: OpenOption): Unit {
+    writeBytes(text.toByteArray(), *options)
+}
+
+/**
+ * Sets the content of this file as [text] encoded using UTF-8 or specified [charset].
+ *
+ * By default, the file will be overwritten if it already exists, but you can control this behavior
+ * with [options].
+ *
+ * @param text text to write into file.
  * @param charset character set to use.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
-public fun Path.writeText(text: String, vararg options: OpenOption, charset: Charset = Charsets.UTF_8): Unit {
+public fun Path.writeText(text: String, charset: Charset, vararg options: OpenOption): Unit {
     writeBytes(text.toByteArray(charset), *options)
 }
+
 
 /**
  * Sets the content of this file as [text] encoded using UTF-8 or specified [charset].
@@ -242,7 +354,7 @@ public fun Path.writeText(text: String, charset: Charset = Charsets.UTF_8): Unit
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public fun Path.appendText(text: String, charset: Charset = Charsets.UTF_8): Unit {
-    writeText(text, StandardOpenOption.APPEND, charset = charset)
+    writeText(text, charset, StandardOpenOption.APPEND)
 }
 
 /**
@@ -298,7 +410,7 @@ public fun Path.forEachBlock(blockSize: Int, action: (buffer: ByteArray, bytesRe
 @ExperimentalStdlibApi
 public fun Path.forEachLine(vararg options: OpenOption, charset: Charset = Charsets.UTF_8, action: (line: String) -> Unit): Unit {
     // Note: close is called at forEachLine
-    bufferedReader(*options, charset = charset).forEachLine(action)
+    bufferedReader(charset, *options).forEachLine(action)
 }
 
 /**
