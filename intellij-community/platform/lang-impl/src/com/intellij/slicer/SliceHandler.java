@@ -3,34 +3,26 @@
  */
 package com.intellij.slicer;
 
-import com.intellij.analysis.AnalysisScope;
-import com.intellij.analysis.AnalysisUIOptions;
-import com.intellij.analysis.BaseAnalysisActionDialog;
-import com.intellij.analysis.dialog.ModelScopeItem;
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.lang.LangBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 /**
  * @author cdr
  */
-public class SliceHandler implements CodeInsightActionHandler {
+public abstract class SliceHandler implements CodeInsightActionHandler {
   private static final Logger LOG = Logger.getInstance(SliceHandler.class);
-  private final boolean myDataFlowToThis;
+  final boolean myDataFlowToThis;
 
-  public SliceHandler(boolean dataFlowToThis) {
+  SliceHandler(boolean dataFlowToThis) {
     myDataFlowToThis = dataFlowToThis;
   }
 
@@ -66,34 +58,17 @@ public class SliceHandler implements CodeInsightActionHandler {
     PsiElement atCaret = file.findElementAt(offset);
 
     SliceLanguageSupportProvider provider = LanguageSlicing.getProvider(file);
-    if(provider == null || atCaret == null) {
+    if (provider == null || atCaret == null) {
       return null;
     }
     return provider.getExpressionAtCaret(atCaret, myDataFlowToThis);
   }
 
-  public SliceAnalysisParams askForParams(PsiElement element, boolean dataFlowToThis, SliceManager.StoredSettingsBean storedSettingsBean, String dialogTitle) {
-    AnalysisScope analysisScope = new AnalysisScope(element.getContainingFile());
-    Module module = ModuleUtilCore.findModuleForPsiElement(element);
+  public abstract SliceAnalysisParams askForParams(PsiElement element,
+                                                   SliceManager.StoredSettingsBean storedSettingsBean,
+                                                   String dialogTitle);
 
-    Project myProject = element.getProject();
-    AnalysisUIOptions analysisUIOptions = new AnalysisUIOptions();
-    analysisUIOptions.loadState(storedSettingsBean.analysisUIOptions);
-
-    List<ModelScopeItem> items = BaseAnalysisActionDialog.standardItems(myProject, analysisScope,
-                                                                        module, element);
-    BaseAnalysisActionDialog dialog =
-      new BaseAnalysisActionDialog(dialogTitle, "Analyze scope", myProject, items, analysisUIOptions, true);
-    if (!dialog.showAndGet()) {
-      return null;
-    }
-
-    AnalysisScope scope = dialog.getScope(analysisScope);
-    storedSettingsBean.analysisUIOptions.loadState(analysisUIOptions);
-
-    SliceAnalysisParams params = new SliceAnalysisParams();
-    params.scope = scope;
-    params.dataFlowToThis = dataFlowToThis;
-    return params;
+  public static SliceHandler create(boolean dataFlowToThis) {
+    return dataFlowToThis ? new SliceBackwardHandler() : new SliceForwardHandler();
   }
 }

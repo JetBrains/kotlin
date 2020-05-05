@@ -30,7 +30,7 @@ public class SliceBackwardAction extends CodeInsightAction {
   @NotNull
   @Override
   protected SliceHandler getHandler() {
-    return new SliceHandler(true);
+    return SliceHandler.create(true);
   }
 
   @Override

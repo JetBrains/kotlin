@@ -30,13 +30,15 @@ import java.util.List;
 /**
  * @author cdr
  */
-public class SliceForwardHandler extends SliceHandler {
-  public SliceForwardHandler() {
+class SliceForwardHandler extends SliceHandler {
+  SliceForwardHandler() {
     super(false);
   }
 
   @Override
-  public SliceAnalysisParams askForParams(PsiElement element, boolean dataFlowToThis, SliceManager.StoredSettingsBean storedSettingsBean, String dialogTitle) {
+  public SliceAnalysisParams askForParams(PsiElement element,
+                                          SliceManager.StoredSettingsBean storedSettingsBean,
+                                          String dialogTitle) {
     AnalysisScope analysisScope = new AnalysisScope(element.getContainingFile());
     Module module = ModuleUtilCore.findModuleForPsiElement(element);
 
@@ -66,7 +68,7 @@ public class SliceForwardHandler extends SliceHandler {
 
     SliceAnalysisParams params = new SliceAnalysisParams();
     params.scope = scope;
-    params.dataFlowToThis = dataFlowToThis;
+    params.dataFlowToThis = myDataFlowToThis;
     params.showInstanceDereferences = form.isToShowDerefs();
     return params;
   }

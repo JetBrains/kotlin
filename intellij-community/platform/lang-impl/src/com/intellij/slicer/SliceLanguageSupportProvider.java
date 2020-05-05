@@ -16,6 +16,7 @@
 package com.intellij.slicer;
 
 import com.intellij.ide.util.treeView.AbstractTreeStructure;
+import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,25 @@ public interface SliceLanguageSupportProvider {
 
   @NotNull
   PsiElement getElementForDescription(@NotNull PsiElement element);
+
+  /**
+   * @param expression expression (previously returned from {@link #getExpressionAtCaret(PsiElement, boolean)}.
+   * @return true if value filters are supported
+   */
+  default boolean supportValueFilters(@NotNull PsiElement expression) {
+    return false;
+  }
+
+  /**
+   * @param expression expression (previously returned from {@link #getExpressionAtCaret(PsiElement, boolean)}.
+   * @param filter user-entered filter string
+   * @return parsed {@link SliceValueFilter}
+   * @throws SliceFilterParseException if string cannot be parsed or filtering is not supported
+   */
+  default @NotNull SliceValueFilter parseFilter(@NotNull PsiElement expression, @NotNull String filter)
+    throws SliceFilterParseException {
+    throw new SliceFilterParseException(LangBundle.message("slice.filter.not.supported"));
+  }
 
   @NotNull
   SliceUsageCellRendererBase getRenderer();

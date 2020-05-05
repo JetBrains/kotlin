@@ -16,11 +16,22 @@
 package com.intellij.slicer;
 
 import com.intellij.analysis.AnalysisScope;
+import org.jetbrains.annotations.Nullable;
 
 public class SliceAnalysisParams {
-  public boolean dataFlowToThis = true; // to/from this
-  public boolean showInstanceDereferences = true; // show method calls or field access on the variable being analysed
+  /**
+   * Direction of flow: true = backward; false = forward
+   */
+  public boolean dataFlowToThis = true;
+  /**
+   * show method calls or field access on the variable being analysed
+   */
+  public boolean showInstanceDereferences = true;
   public AnalysisScope scope;
+  /**
+   * If present filters the occurrences
+   */
+  public @Nullable SliceValueFilter valueFilter;
 
   public SliceAnalysisParams() {
   }

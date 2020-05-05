@@ -31,7 +31,7 @@ public class SliceForwardAction extends CodeInsightAction {
   @NotNull
   @Override
   protected CodeInsightActionHandler getHandler() {
-    return new SliceForwardHandler();
+    return SliceHandler.create(false);
   }
 
   @Override
