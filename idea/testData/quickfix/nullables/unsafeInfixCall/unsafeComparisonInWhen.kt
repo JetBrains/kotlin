@@ -3,6 +3,7 @@
 // ACTION: Flip '<='
 // ACTION: Enable a trailing comma by default in the formatter
 // ACTION: Replace overloaded operator with function call
+// ACTION: Expand boolean expression to 'if else'
 // ERROR: Operator call corresponds to a dot-qualified call 'w?.x.compareTo(42)' which is not allowed on a nullable receiver 'w?.x'.
 
 class Wrapper(val x: Int)

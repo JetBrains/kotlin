@@ -1,0 +1,9 @@
+fun test(b: Boolean): Boolean {
+    return if (foo(b)) {
+        true
+    } else {
+        false
+    }
+}
+
+fun foo(b: Boolean) = true
