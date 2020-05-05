@@ -1,8 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.reporting.isUnitTestMode
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.stats.personalization.UserFactorDescriptions
 import com.intellij.stats.personalization.UserFactorStorage
 import com.intellij.stats.personalization.UserFactorsManager
@@ -12,7 +12,7 @@ import com.intellij.stats.storage.factors.MutableLookupStorage
 
 class CompletionFactorsInitializer : LookupTracker() {
   override fun lookupCreated(lookup: LookupImpl, storage: MutableLookupStorage) {
-    if (isUnitTestMode() && !CompletionTrackerInitializer.isEnabledInTests) return
+    if (ApplicationManager.getApplication().isUnitTestMode && !CompletionTrackerInitializer.isEnabledInTests) return
 
     processUserFactors(lookup)
     processSessionFactors(lookup, storage)

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.impl.LookupImpl
@@ -7,7 +7,6 @@ import com.intellij.internal.statistic.utils.StatisticsUploadAssistant
 import com.intellij.internal.statistic.utils.getPluginInfo
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.reporting.isUnitTestMode
 import com.intellij.stats.CompletionStatsPolicy
 import com.intellij.stats.experiment.WebServiceStatus
 import com.intellij.stats.storage.factors.MutableLookupStorage
@@ -16,7 +15,7 @@ import kotlin.random.Random
 class CompletionLoggerInitializer(private val actionListener: LookupActionsListener) : LookupTracker() {
   companion object {
     fun shouldInitialize(): Boolean =
-      (ApplicationManager.getApplication().isEAP && StatisticsUploadAssistant.isSendAllowed()) || isUnitTestMode()
+      (ApplicationManager.getApplication().isEAP && StatisticsUploadAssistant.isSendAllowed()) || ApplicationManager.getApplication().isUnitTestMode
 
     private val LOGGED_SESSIONS_RATIO: Map<String, Double> = mapOf(
       "python" to 0.5,
@@ -37,7 +36,7 @@ class CompletionLoggerInitializer(private val actionListener: LookupActionsListe
 
   override fun lookupCreated(lookup: LookupImpl,
                              storage: MutableLookupStorage) {
-    if (isUnitTestMode() && !CompletionTrackerInitializer.isEnabledInTests) return
+    if (ApplicationManager.getApplication().isUnitTestMode && !CompletionTrackerInitializer.isEnabledInTests) return
 
     val experimentHelper = WebServiceStatus.getInstance()
     if (sessionShouldBeLogged(experimentHelper, storage.language)) {

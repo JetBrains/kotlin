@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.storage.factors
 
 import com.intellij.codeInsight.completion.ml.ContextFeatures
@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolderBase
-import com.intellij.reporting.isUnitTestMode
 import com.intellij.stats.PerformanceTracker
 import com.intellij.stats.completion.idString
 import com.intellij.stats.personalization.UserFactorStorage
@@ -86,7 +85,7 @@ class MutableLookupStorage(
     performanceTracker.reorderedByML()
   }
 
-  override fun shouldComputeFeatures(): Boolean = model != null || _loggingEnabled || (isUnitTestMode() && alwaysComputeFeaturesInTests)
+  override fun shouldComputeFeatures(): Boolean = model != null || _loggingEnabled || (ApplicationManager.getApplication().isUnitTestMode && alwaysComputeFeaturesInTests)
 
   fun isContextFactorsInitialized(): Boolean = contextFeaturesStorage != null
 
