@@ -268,7 +268,7 @@ fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDesc
 fun IrBuilderWithScope.irCall(callee: IrFunction): IrFunctionAccessExpression =
     irCall(callee.symbol)
 
-fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin, superQualifierSymbol: IrClassSymbol? = null): IrCall =
+fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin? = null, superQualifierSymbol: IrClassSymbol? = null): IrCall =
     IrCallImpl(
         startOffset, endOffset, callee.returnType,
         callee.symbol as IrSimpleFunctionSymbol,
