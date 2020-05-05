@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.diagnostic.dump.paths
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -51,4 +52,51 @@ object PortableFilePathsPersistence {
 
   fun deserializeFromString(string: String): PortableFilePath =
     jacksonMapper.readValue<PortableFilePath>(string)
+}
+
+class PortableFilesDumpCollector(private val project: Project) {
+  private val myBrokenFiles = mutableSetOf<PortableFilePath>()
+  private val myExistingFiles = mutableSetOf<PortableFilePath>()
+
+  fun addFiles(files: Iterable<VirtualFile>) = apply {
+    files.forEach { addFile(it) }
+  }
+
+  fun addFile(file: VirtualFile) = apply {
+    val portable = PortableFilePaths.getPortableFilePath(file, project)
+
+    val targetSet = when {
+      file.exists() && file.isValid -> myExistingFiles
+      else -> myBrokenFiles
+    }
+
+    targetSet += portable
+  }
+
+  private data class SerializableData(
+    val broken: List<String>,
+    val files: List<String>
+  )
+
+  private fun snapshot(files: Collection<PortableFilePath>): List<String> {
+    return files
+      .map { it.presentablePath }
+      .toSortedSet()
+      .toList()
+  }
+
+  private fun snapshot()  = SerializableData(
+    broken = snapshot(myBrokenFiles),
+    files = snapshot(myExistingFiles)
+  )
+
+  fun serializeToText() : String {
+    /// we need to keep this format unchanged, it is used in integration tests to compare actual and expected rootd
+    val NL = "\n"
+    val snapshot = snapshot()
+    return buildString {
+      snapshot.broken.forEach { append("BROKEN: ").append(it).append(NL) }
+      snapshot.files.forEach { append(it).append(NL) }
+    }
+  }
 }

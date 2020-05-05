@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.diagnostic.dump.paths
 
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -58,7 +59,7 @@ sealed class PortableFilePath {
   @JsonTypeName("absolute")
   data class AbsolutePath(val absoluteUrl: String) : PortableFilePath() {
     override val presentablePath
-      get() = absoluteUrl
+      get() = "<absolute>/$absoluteUrl"
   }
 
   @JsonTypeName("relative")
