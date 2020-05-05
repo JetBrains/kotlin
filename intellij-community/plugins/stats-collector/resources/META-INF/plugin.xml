@@ -24,10 +24,6 @@
     <extensionPoint name="policy" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
       <with attribute="implementationClass" implements="com.intellij.stats.CompletionStatsPolicy"/>
     </extensionPoint>
-
-    <extensionPoint name="lookup.usageInfo" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
-      <with attribute="implementationClass" implements="com.intellij.stats.completion.fus.LookupUsageDescriptor"/>
-    </extensionPoint>
   </extensionPoints>
 
   <resource-bundle>messages.StatsCollectorBundle</resource-bundle>
@@ -111,6 +107,8 @@
     <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ml.common.ContextSimilarityFeatures"/>
     <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ml.common.RecentPlacesFeatures"/>
     <completion.ml.elementFeatures language="" implementationClass="com.intellij.codeInsight.completion.ml.VcsFeatureProvider"/>
+
+    <lookup.usageDetails implementation="com.intellij.completion.ml.MLRankingLookupUsageDescriptor"/>
   </extensions>
 
   <projectListeners>

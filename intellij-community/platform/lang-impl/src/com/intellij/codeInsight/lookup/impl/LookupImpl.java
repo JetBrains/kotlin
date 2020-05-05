@@ -157,6 +157,8 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     updateListHeight(model);
 
     addListeners();
+
+    LookupUsageTracker.trackLookup(this);
   }
 
   private CollectionListModel<LookupElement> getListModel() {

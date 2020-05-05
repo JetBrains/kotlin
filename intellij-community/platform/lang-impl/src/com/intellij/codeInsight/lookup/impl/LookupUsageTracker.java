@@ -1,0 +1,163 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.codeInsight.lookup.impl;
+
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupEvent;
+import com.intellij.codeInsight.lookup.LookupListener;
+import com.intellij.ide.ui.UISettings;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
+import com.intellij.lang.Language;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiUtilCore;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+class LookupUsageTracker {
+  private static final String GROUP_ID = "completion";
+  private static final String EVENT_ID = "finished";
+
+  private LookupUsageTracker() {
+  }
+
+  static void trackLookup(@NotNull LookupImpl lookup) {
+    lookup.addLookupListener(new MyLookupTracker(lookup));
+  }
+
+  private static class MyLookupTracker implements LookupListener {
+    private final LookupImpl myLookup;
+    private final long myCreatedTimestamp;
+    private final boolean myIsDumbStart;
+    private final Language myLanguage;
+    private final MyTypingTracker myTypingTracker;
+
+    private long myShownTimestamp = -1L;
+    private int mySelectionChangedCount = 0;
+
+
+    MyLookupTracker(@NotNull LookupImpl lookup) {
+      myLookup = lookup;
+      myCreatedTimestamp = System.currentTimeMillis();
+      myIsDumbStart = DumbService.isDumb(lookup.getProject());
+      myLanguage = getLanguageAtCaret(lookup);
+      myTypingTracker = new MyTypingTracker();
+      lookup.addPrefixChangeListener(myTypingTracker, lookup);
+    }
+
+    @Override
+    public void currentItemChanged(@NotNull LookupEvent event) {
+      mySelectionChangedCount += 1;
+    }
+
+    private boolean isSelectedByTyping(@NotNull LookupElement item) {
+      if (myLookup.itemPattern(item).equals(item.getLookupString())) {
+        return true;
+      }
+      return false;
+    }
+
+    @Override
+    public void itemSelected(@NotNull LookupEvent event) {
+      LookupElement item = event.getItem();
+      if (item == null) {
+        triggerLookupUsed(FinishType.CANCELED_BY_TYPING, null);
+      }
+      else {
+        if (isSelectedByTyping(item)) {
+          triggerLookupUsed(FinishType.TYPED, item);
+        }
+        else {
+          triggerLookupUsed(FinishType.EXPLICIT, item);
+        }
+      }
+    }
+
+    @Override
+    public void lookupCanceled(@NotNull LookupEvent event) {
+      LookupElement item = myLookup.getCurrentItem();
+      if (item != null && isSelectedByTyping(item)) {
+        triggerLookupUsed(FinishType.TYPED, item);
+      }
+      else {
+        triggerLookupUsed(event.isCanceledExplicitly() ? FinishType.CANCELED_EXPLICITLY : FinishType.CANCELED_BY_TYPING, null);
+      }
+    }
+
+    @Override
+    public void lookupShown(@NotNull LookupEvent event) {
+      myShownTimestamp = System.currentTimeMillis();
+    }
+
+    private void triggerLookupUsed(@NotNull FinishType finishType, @Nullable LookupElement currentItem) {
+      FeatureUsageData data = new FeatureUsageData();
+      addCommonUsageInfo(data, finishType, currentItem);
+
+      LookupUsageDescriptor.EP_NAME.forEachExtensionSafe(usageDescriptor -> {
+        if (PluginInfoDetectorKt.getPluginInfo(usageDescriptor.getClass()).isSafeToReport()) {
+          usageDescriptor.customizeUsageData(myLookup, data);
+        }
+      });
+
+      FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, EVENT_ID, data);
+    }
+
+    private void addCommonUsageInfo(@NotNull FeatureUsageData data,
+                                    @NotNull FinishType finishType,
+                                    @Nullable LookupElement currentItem) {
+      // Basic info
+      data.addLanguage(myLanguage);
+      data.addData("alphabetically", UISettings.getInstance().getSortLookupElementsLexicographically());
+
+      // Quality
+      data.addData("finish_type", finishType.toString());
+      data.addData("duration", System.currentTimeMillis() - myCreatedTimestamp);
+      data.addData("selected_index", myLookup.getSelectedIndex());
+      data.addData("selection_changed", mySelectionChangedCount);
+      data.addData("typing", myTypingTracker.typing);
+      data.addData("backspaces", myTypingTracker.backspaces);
+
+      // Details
+      if (currentItem != null) {
+        data.addData("token_length", currentItem.getLookupString().length());
+        data.addData("query_length", myLookup.itemPattern(currentItem).length());
+      }
+
+      // Performance
+      data.addData("time_to_show", myShownTimestamp == -1L ? -1 : myShownTimestamp - myCreatedTimestamp);
+
+      // Indexing
+      data.addData("dumb_start", myIsDumbStart);
+      data.addData("dumb_finish", DumbService.isDumb(myLookup.getProject()));
+    }
+
+    @Nullable
+    private static Language getLanguageAtCaret(@NotNull LookupImpl lookup) {
+      PsiFile psiFile = lookup.getPsiFile();
+      if (psiFile != null) {
+        return PsiUtilCore.getLanguageAtOffset(psiFile, lookup.getEditor().getCaretModel().getOffset());
+      }
+      return null;
+    }
+
+    private static class MyTypingTracker implements PrefixChangeListener {
+      int backspaces = 0;
+      int typing = 0;
+
+      @Override
+      public void beforeTruncate() {
+        backspaces += 1;
+      }
+
+      @Override
+      public void beforeAppend(char c) {
+        typing += 1;
+      }
+    }
+  }
+
+  private enum FinishType {
+    TYPED, EXPLICIT, CANCELED_EXPLICITLY, CANCELED_BY_TYPING
+  }
+}

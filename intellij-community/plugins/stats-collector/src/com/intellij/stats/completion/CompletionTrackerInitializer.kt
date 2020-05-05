@@ -31,7 +31,6 @@ class CompletionTrackerInitializer : ApplicationInitializedListener {
     busConnection.subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
       override fun projectOpened(project: Project) {
         val lookupManager = LookupManager.getInstance(project)
-        lookupManager.addPropertyChangeListener(CompletionQualityTracker(), project)
         lookupManager.addPropertyChangeListener(CompletionFactorsInitializer(), project)
         project.messageBus.connect().subscribe(FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, NGramFileListener(project))
       }
