@@ -38,6 +38,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.reference.SoftReference;
 import com.intellij.ui.ColorUtil;
+import com.intellij.ui.IconWithToolTip;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.RetrievableIcon;
 import com.intellij.util.IconUtil;
@@ -484,7 +485,7 @@ public final class Bookmark implements Navigatable, Comparable<Bookmark> {
     }
   }
 
-  private static class MyCheckedIcon extends JBCachingScalableIcon<MyCheckedIcon> implements RetrievableIcon {
+  private static class MyCheckedIcon extends JBCachingScalableIcon<MyCheckedIcon> implements RetrievableIcon, IconWithToolTip {
     @NotNull
     @Override
     public Icon retrieveIcon() {
@@ -514,6 +515,11 @@ public final class Bookmark implements Navigatable, Comparable<Bookmark> {
     @Override
     public MyCheckedIcon copy() {
       return new MyCheckedIcon();
+    }
+
+    @Override
+    public String getToolTip(boolean composite) {
+      return IdeBundle.message("tooltip.bookmarked");
     }
   }
 
