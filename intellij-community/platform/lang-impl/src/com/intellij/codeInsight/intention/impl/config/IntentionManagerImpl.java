@@ -84,8 +84,8 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
 
   @Override
   @NotNull
-  public List<IntentionAction> getStandardIntentionOptions(@NotNull final HighlightDisplayKey displayKey,
-                                                           @NotNull final PsiElement context) {
+  public List<IntentionAction> getStandardIntentionOptions(@NotNull HighlightDisplayKey displayKey,
+                                                           @NotNull PsiElement context) {
     checkForDuplicates();
     List<IntentionAction> options = new ArrayList<>(9);
     options.add(new EditInspectionToolsSettingsAction(displayKey));
@@ -152,7 +152,7 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
 
   @Override
   @NotNull
-  public LocalQuickFix convertToFix(@NotNull final IntentionAction action) {
+  public LocalQuickFix convertToFix(@NotNull IntentionAction action) {
     if (action instanceof LocalQuickFix) {
       return (LocalQuickFix)action;
     }
@@ -170,8 +170,8 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
       }
 
       @Override
-      public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-        final PsiFile psiFile = descriptor.getPsiElement().getContainingFile();
+      public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+        PsiFile psiFile = descriptor.getPsiElement().getContainingFile();
         try {
           action.invoke(project, new LazyEditor(psiFile), psiFile);
         }

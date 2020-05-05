@@ -745,23 +745,23 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
     Task task = modal ? new Task.Modal(getProject(), title, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        cleanup(scope, profile, postRunnable, commandName, shouldApplyFix, indicator);
+        cleanup(scope, profile, postRunnable, commandName, indicator, shouldApplyFix);
       }
     } : new Task.Backgroundable(getProject(), title, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        cleanup(scope, profile, postRunnable, commandName, shouldApplyFix, indicator);
+        cleanup(scope, profile, postRunnable, commandName, indicator, shouldApplyFix);
       }
     };
     ProgressManager.getInstance().run(task);
   }
 
-  private void cleanup(final @NotNull AnalysisScope scope,
+  private void cleanup(@NotNull AnalysisScope scope,
                        @NotNull InspectionProfile profile,
-                       final @Nullable Runnable postRunnable,
-                       final @Nullable String commandName,
-                       @NotNull Predicate<? super ProblemDescriptor> shouldApplyFix,
-                       @NotNull ProgressIndicator progressIndicator) {
+                       @Nullable Runnable postRunnable,
+                       @Nullable String commandName,
+                       @NotNull ProgressIndicator progressIndicator,
+                       @NotNull Predicate<? super ProblemDescriptor> shouldApplyFix) {
     setCurrentScope(scope);
     final int fileCount = scope.getFileCount();
     progressIndicator.setIndeterminate(false);
@@ -774,7 +774,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
     else {
       range = null;
     }
-    final Iterable<Tools> inspectionTools = ContainerUtil.filter(profile.getAllEnabledInspectionTools(getProject()), tools -> {
+    Iterable<Tools> inspectionTools = ContainerUtil.filter(profile.getAllEnabledInspectionTools(getProject()), tools -> {
       assert tools != null;
       return tools.getTool().isCleanupTool();
     });
@@ -804,9 +804,9 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
 
           if (!lTools.isEmpty()) {
             try {
-              final LocalInspectionsPass pass = new LocalInspectionsPass(file, file.getViewProvider().getDocument(), range != null ? range.getStartOffset() : 0,
-                                                                         range != null ? range.getEndOffset() : file.getTextLength(), LocalInspectionsPass.EMPTY_PRIORITY_RANGE, true,
-                                                                         HighlightInfoProcessor.getEmpty(), true);
+              LocalInspectionsPass pass = new LocalInspectionsPass(file, file.getViewProvider().getDocument(), range != null ? range.getStartOffset() : 0,
+                                                                   range != null ? range.getEndOffset() : file.getTextLength(), LocalInspectionsPass.EMPTY_PRIORITY_RANGE, true,
+                                                                   HighlightInfoProcessor.getEmpty(), true);
               Runnable runnable = () -> pass.doInspectInBatch(GlobalInspectionContextImpl.this, InspectionManager.getInstance(getProject()), lTools);
               ApplicationManager.getApplication().runReadAction(runnable);
 

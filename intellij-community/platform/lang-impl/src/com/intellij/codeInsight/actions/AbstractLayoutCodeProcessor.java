@@ -320,7 +320,7 @@ public abstract class AbstractLayoutCodeProcessor {
     }
   }
 
-  private static boolean canBeFormatted(PsiFile file) {
+  private static boolean canBeFormatted(@NotNull PsiFile file) {
     if (!file.isValid()) return false;
     if (LanguageFormatting.INSTANCE.forContext(file) == null) {
       return false;
@@ -337,7 +337,7 @@ public abstract class AbstractLayoutCodeProcessor {
     new ReformatFilesTask(new EmptyProgressIndicator()).performFileProcessing(myFile);
   }
 
-  private List<AbstractLayoutCodeProcessor> getAllProcessors() {
+  private @NotNull List<AbstractLayoutCodeProcessor> getAllProcessors() {
     AbstractLayoutCodeProcessor current = this;
     List<AbstractLayoutCodeProcessor> all = new ArrayList<>();
     while (current != null) {
@@ -451,7 +451,7 @@ public abstract class AbstractLayoutCodeProcessor {
       myStopFormatting = true;
     }
 
-    public boolean process() {
+    private boolean process() {
       myCountingIterator.processAll(file -> {
         updateIndicatorText(ApplicationBundle.message("bulk.reformat.prepare.progress.text"), "");
         countingIteration();
