@@ -10,12 +10,13 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.util.isOneLiner
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
+@Suppress("UnstableApiUsage")
 fun provideLambdaReturnValueHints(expression: KtExpression): List<InlayInfo> {
     if (expression is KtWhenExpression || expression is KtBlockExpression) {
         return emptyList()
@@ -46,7 +47,9 @@ fun provideLambdaReturnValueHints(expression: KtExpression): List<InlayInfo> {
     val bindingContext = expression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
     if (expression.isUsedAsResultOfLambda(bindingContext)) {
         val lambdaName = getNameOfFunctionThatTakesLambda(expression) ?: "lambda"
-        return listOf(InlayInfo("$TYPE_INFO_PREFIX^$lambdaName", expression.startOffset))
+        return listOf(
+            InlayInfo("$TYPE_INFO_PREFIX^$lambdaName", expression.endOffset)
+        )
     }
     return emptyList()
 }
