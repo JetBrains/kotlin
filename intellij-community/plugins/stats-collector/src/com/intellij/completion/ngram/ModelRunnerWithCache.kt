@@ -34,7 +34,7 @@ internal class ModelRunnerWithCache(model: Model = JMModel()) : ModelRunner(mode
   }
 
   companion object {
-    private const val CACHE_SIZE = 5
+    private const val CACHE_SIZE = 9
     private const val TEXT_RANGE_LIMIT = 16 * 1024 // 32 KB of chars
   }
 }
