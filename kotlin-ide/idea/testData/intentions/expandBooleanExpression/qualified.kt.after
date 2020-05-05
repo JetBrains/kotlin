@@ -1,0 +1,11 @@
+fun test(b: Boolean) {
+    val b = if (Foo().bar()) {
+        true
+    } else {
+        false
+    }
+}
+
+class Foo {
+    fun bar() = true
+}

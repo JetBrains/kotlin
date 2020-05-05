@@ -3,6 +3,7 @@
 // ACTION: Add non-null asserted (!!) call
 // ACTION: Flip '>'
 // ACTION: Replace overloaded operator with function call
+// ACTION: Expand boolean expression to 'if else'
 
 class SafeType {
     operator fun compareTo(other : SafeType) = 0
