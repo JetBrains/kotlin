@@ -7,6 +7,7 @@ import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.KotlinType
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
     /**
@@ -164,7 +165,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
         val other = getTreeElement<KtLambdaExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(lambdaExpression.valueParameters, other.valueParameters)
-            && myMatchingVisitor.match(lambdaExpression.bodyExpression, other.bodyExpression)
+                && myMatchingVisitor.match(lambdaExpression.bodyExpression, other.bodyExpression)
     }
 
     override fun visitTypeProjection(typeProjection: KtTypeProjection) {
@@ -449,24 +450,19 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(annotationEntry.typeArgumentList, other.typeArgumentList)
     }
 
+    private fun matchTypes(typeReference: KtTypeReference?, kotlinType: KotlinType?): Boolean = when {
+        kotlinType == null -> typeReference == null
+        typeReference == null -> true
+        // Short typeReference name
+        myMatchingVisitor.matchText(typeReference.text, kotlinType.toString()) -> true
+        // FQ typeReference name
+        myMatchingVisitor.matchText(typeReference.text, kotlinType.fqName.toString()) -> true
+        else -> false
+    }
+
     override fun visitProperty(property: KtProperty) {
         val other = getTreeElement<KtProperty>() ?: return
-        val patternTypeReference = property.typeReference
-        val codeType = other.type()
-
-        val typeMatched = when {
-            // type() function returns [KotlinType?]
-            codeType == null -> patternTypeReference == null
-            // Type will be matched with the delegateExpressionOrInitializer matching
-            patternTypeReference == null -> true
-            // Short typeReference name
-            myMatchingVisitor.matchText(patternTypeReference.text, codeType.toString()) -> true
-            // FQ typeReference name
-            myMatchingVisitor.matchText(patternTypeReference.text, codeType.fqName.toString()) -> true
-            else -> false
-        }
-
-        myMatchingVisitor.result = typeMatched
+        myMatchingVisitor.result = matchTypes(property.typeReference, other.type())
                 && myMatchingVisitor.match(property.modifierList, other.modifierList)
                 && property.isVar == other.isVar
                 && matchTextOrVariable(property.nameIdentifier, other.nameIdentifier)
@@ -511,6 +507,20 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = expression.isNegated == other.isNegated
                 && myMatchingVisitor.match(expression.leftHandSide, other.leftHandSide)
                 && myMatchingVisitor.match(expression.typeReference, other.typeReference)
+    }
+
+    override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
+        val other = getTreeElement<KtDestructuringDeclaration>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(destructuringDeclaration.entries, other.entries)
+                && myMatchingVisitor.match(destructuringDeclaration.initializer, other.initializer)
+    }
+
+    override fun visitDestructuringDeclarationEntry(multiDeclarationEntry: KtDestructuringDeclarationEntry) {
+        val other = getTreeElement<KtDestructuringDeclarationEntry>() ?: return
+        myMatchingVisitor.result = matchTypes(multiDeclarationEntry.typeReference, other.type())
+                && myMatchingVisitor.match(multiDeclarationEntry.modifierList, other.modifierList)
+                && multiDeclarationEntry.isVar == other.isVar
+                && matchTextOrVariable(multiDeclarationEntry.nameIdentifier, other.nameIdentifier)
     }
 
 }
