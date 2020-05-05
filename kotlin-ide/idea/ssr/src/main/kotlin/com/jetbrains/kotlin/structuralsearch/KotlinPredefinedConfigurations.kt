@@ -36,6 +36,11 @@ object KotlinPredefinedConfigurations {
             "'_Expr!!",
             EXPRESSION_TYPE
         ),
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.lambda"),
+            "{ '_Parameter* -> '_Expr* }",
+            EXPRESSION_TYPE
+        ),
 
         // Operators
         searchTemplate(

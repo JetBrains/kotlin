@@ -155,8 +155,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
         val other = getTreeElement<KtLambdaExpression>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(lambdaExpression.functionLiteral, other.functionLiteral)
-                && myMatchingVisitor.match(lambdaExpression.bodyExpression, other.bodyExpression)
+        myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(lambdaExpression.valueParameters, other.valueParameters)
+            && myMatchingVisitor.match(lambdaExpression.bodyExpression, other.bodyExpression)
     }
 
     override fun visitArgument(argument: KtValueArgument) {
@@ -533,4 +533,5 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(expression.leftHandSide, other.leftHandSide)
                 && myMatchingVisitor.match(expression.typeReference, other.typeReference)
     }
+
 }
