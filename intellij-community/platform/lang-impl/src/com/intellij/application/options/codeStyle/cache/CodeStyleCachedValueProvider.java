@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
@@ -209,6 +210,16 @@ class CodeStyleCachedValueProvider implements CachedValueProvider<CodeStyleSetti
       throw new OutdatedFileReferenceException();
     }
     return file;
+  }
+
+  //
+  // Check provider equivalence by file ref. Other fields make no sense since AsyncComputation is a stateful object
+  // whose state (active=true->false) changes over time due to long computation.
+  //
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof CodeStyleCachedValueProvider &&
+           Objects.equals(this.myFileRef.get(), ((CodeStyleCachedValueProvider)obj).myFileRef.get());
   }
 
   static class OutdatedFileReferenceException extends RuntimeException {
