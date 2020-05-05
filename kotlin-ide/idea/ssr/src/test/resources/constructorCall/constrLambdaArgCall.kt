@@ -1,5 +1,11 @@
 class A(val b: () -> Unit)
 
-fun c(): A {
-    return <warning descr="SSR">A { println() }</warning>
+fun c() {
+    println(<warning descr="SSR">A { println() }</warning>)
+    println(
+        A {
+            println()
+            println()
+        }
+    )
 }

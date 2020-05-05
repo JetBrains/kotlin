@@ -184,72 +184,65 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(argument.getArgumentExpression(), other.getArgumentExpression())
     }
 
-    override fun visitValueArgumentList(list: KtValueArgumentList) {
-        val other = getTreeElement<KtValueArgumentList>() ?: return
-        val queryArgs = list.arguments
-        val codeArgs = other.arguments
+    private fun matchValueArgumentList(queryArgs: List<KtValueArgument>?, codeArgs: List<KtValueArgument>?): Boolean {
+        if(queryArgs == null || codeArgs == null) return queryArgs == codeArgs
         var queryIndex = 0
         var codeIndex = 0
         while (queryIndex < queryArgs.size) {
             val queryArg = queryArgs[queryIndex]
-            val codeArg = codeArgs.getOrElse(codeIndex) {
-                myMatchingVisitor.result = false
-                return
+            val codeArg = codeArgs.getOrElse(codeIndex) { return false }
+            val handler = myMatchingVisitor.matchContext.pattern.getHandler(queryArg)
+            if(handler is SubstitutionHandler && handler.minOccurs != handler.maxOccurs) {
+                for(i in handler.minOccurs..handler.maxOccurs) {
+                    if(!myMatchingVisitor.match(queryArg, codeArgs[codeIndex++])) return false
+                    if (codeIndex == codeArgs.size) return true
+                }
             }
 
             // varargs declared in call matching with one-to-one argument passing
             if (queryArg.isSpread && !codeArg.isSpread) {
                 val spreadArgExpr = queryArg.getArgumentExpression()
                 if (spreadArgExpr is KtCallExpression) {
-                    myMatchingVisitor.result = true
                     spreadArgExpr.valueArguments.forEach { spreadedArg ->
-                        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(spreadedArg, codeArgs[codeIndex++])))
-                            return
+                        if (!myMatchingVisitor.match(spreadedArg, codeArgs[codeIndex++])) return false
                     }
                     queryIndex++
                     continue
                 } else { // can't match array that is not created in the call itself
                     myMatchingVisitor.result = false
-                    return
+                    return myMatchingVisitor.result
                 }
             }
             if (!queryArg.isSpread && codeArg.isSpread) {
                 val spreadArgExpr = codeArg.getArgumentExpression()
                 if (spreadArgExpr is KtCallExpression) {
-                    myMatchingVisitor.result = true
-                    (spreadArgExpr).valueArguments.forEach { spreadedArg ->
-                        if (!myMatchingVisitor.setResult(myMatchingVisitor.match(queryArgs[queryIndex++], spreadedArg))) return
+                    spreadArgExpr.valueArguments.forEach { spreadedArg ->
+                        if (!myMatchingVisitor.match(queryArgs[queryIndex++], spreadedArg)) return false
                     }
                     codeIndex++
                     continue
-                } else { // can't match array that is not created in the call itself
-                    myMatchingVisitor.result = false
-                    return
-                }
+                } else return false// can't match array that is not created in the call itself
             }
             // normal argument matching
-            if (!myMatchingVisitor.setResult(myMatchingVisitor.match(queryArg, codeArg))) {
-                if (myMatchingVisitor.setResult(queryArg.isNamed())) { // start comparing for out of order arguments
-                    val sortQueryArgs = queryArgs.subList(queryIndex, list.arguments.lastIndex + 1)
-                        .sortedBy { it.getArgumentName()?.asName }
+            if (!myMatchingVisitor.match(queryArg, codeArg)) {
+                return if (queryArg.isNamed()) { // start comparing for out of order arguments
+                    val sortQueryArgs = queryArgs.subList(queryIndex, queryArgs.lastIndex + 1)
                     val sortCodeArgs = codeArgs.subList(codeIndex, codeArgs.lastIndex + 1)
-                        .sortedBy { it.getArgumentName()?.asName }
-                    myMatchingVisitor.result = myMatchingVisitor.matchSequentially(sortQueryArgs, sortCodeArgs)
-                    return
-                } else {
-                    return // result = false
-                }
+                    myMatchingVisitor.matchInAnyOrder(sortQueryArgs, sortCodeArgs)
+                } else false
             }
             queryIndex++
             codeIndex++
         }
+        if (codeIndex != codeArgs.size) return false
+        return true
     }
 
     override fun visitCallExpression(expression: KtCallExpression) {
         val other = getTreeElement<KtCallExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(expression.typeArgumentList, other.typeArgumentList)
-                && myMatchingVisitor.match(expression.valueArgumentList, other.valueArgumentList)
+                && matchValueArgumentList(expression.valueArguments, other.valueArguments)
     }
 
     override fun visitTypeParameter(parameter: KtTypeParameter) {
@@ -282,7 +275,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElement<KtConstructorDelegationCall>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(call.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(call.typeArgumentList, other.typeArgumentList)
-                && myMatchingVisitor.match(call.valueArgumentList, other.valueArgumentList)
+                && matchValueArgumentList(call.valueArgumentList?.arguments, other.valueArgumentList?.arguments)
     }
 
     override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
@@ -446,8 +439,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry) {
         val other = getTreeElement<KtAnnotationEntry>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(annotationEntry.calleeExpression, other.calleeExpression)
-                && myMatchingVisitor.match(annotationEntry.valueArgumentList, other.valueArgumentList)
                 && myMatchingVisitor.match(annotationEntry.typeArgumentList, other.typeArgumentList)
+                && matchValueArgumentList(annotationEntry.valueArgumentList?.arguments, other.valueArgumentList?.arguments)
     }
 
     private fun matchTypes(typeReference: KtTypeReference?, kotlinType: KotlinType?): Boolean = when {

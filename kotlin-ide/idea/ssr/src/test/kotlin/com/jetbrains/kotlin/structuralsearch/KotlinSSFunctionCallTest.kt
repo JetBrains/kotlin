@@ -5,9 +5,11 @@ class KotlinSSFunctionCallTest : KotlinSSTest() {
 
     fun testFunArgCall() { doTest("a(true, 0)") }
 
-    fun testFunCall() { doTest("a()") }
+    fun testFunArgCallVarRef() { doTest("'_('_)") }
 
-    fun testFunDefaultArgCall() { doTest("a(true, 1)") }
+    fun testFunArgCallCountFilter() { doTest("listOf('_+)") }
+
+    fun testFunCall() { doTest("a()") }
 
     fun testFunExtensionCall() { doTest("0.a()") }
 
@@ -22,8 +24,6 @@ class KotlinSSFunctionCallTest : KotlinSSTest() {
     fun testFunNamedArgsCall() { doTest("a(b = true, c = 0)") }
 
     fun testFunSpreadVarargCall() { doTest("a(1, 2, 3)") }
-
-    fun testFunSubsetArgCall() { doTest("a(true)") }
 
     fun testFunTypeArgCall() { doTest("a<Int, String>(0, \"a\")") }
 

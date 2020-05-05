@@ -7,8 +7,6 @@ class KotlinSSConstructorCallTest : KotlinSSTest() {
 
     fun testConstrCall() { doTest("A()") }
 
-    fun testConstrDefaultArgCall() {  doTest("A(true, 1)") }
-
     fun testConstrLambdaArgCall() { doTest("A { println() }") }
 
     fun testConstrMixedArgsCall() { doTest("A(c = 0, b = true)") }
@@ -20,8 +18,6 @@ class KotlinSSConstructorCallTest : KotlinSSTest() {
     fun testConstrNamedArgsCall() { doTest("A(b = true, c = 0)") }
 
     fun testConstrSpreadVarargCall() { doTest("A(1, 2, 3)") }
-
-    fun testConstrSubsetArgCall() { doTest("A(true)")  }
 
     fun testConstrTypeArgCall() { doTest("A<Int, String>(0, \"a\")") }
 
