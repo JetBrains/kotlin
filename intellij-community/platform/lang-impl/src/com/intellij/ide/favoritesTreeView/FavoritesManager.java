@@ -119,7 +119,7 @@ public final class FavoritesManager implements PersistentStateComponent<Element>
         @Override
         public boolean canClose(String inputString) {
           inputString = inputString.trim();
-          if (myName2FavoritesRoots.keySet().contains(inputString) || getProviders().keySet().contains(inputString)) {
+          if (myName2FavoritesRoots.containsKey(inputString) || getProviders().containsKey(inputString)) {
             Messages.showErrorDialog(project, IdeBundle.message("error.favorites.list.already.exists", inputString.trim()),
                                      IdeBundle.message("title.unable.to.add.favorites.list"));
             return false;

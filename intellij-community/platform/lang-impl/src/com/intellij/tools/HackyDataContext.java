@@ -45,7 +45,7 @@ public class HackyDataContext implements DataContext {
 
   @Override
   public Object getData(@NotNull @NonNls String dataId) {
-    if (values.keySet().contains(dataId)) {
+    if (values.containsKey(dataId)) {
       return values.get(dataId);
     }
     //noinspection UseOfSystemOutOrSystemErr

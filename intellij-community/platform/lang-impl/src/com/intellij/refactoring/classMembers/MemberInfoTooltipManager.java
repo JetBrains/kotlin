@@ -17,6 +17,7 @@
 package com.intellij.refactoring.classMembers;
 
 import com.intellij.psi.PsiElement;
+
 import java.util.HashMap;
 
 /**
@@ -39,7 +40,7 @@ public class MemberInfoTooltipManager<T extends PsiElement, M extends MemberInfo
   }
 
   public String getTooltip(M member) {
-    if(myTooltips.keySet().contains(member)) {
+    if(myTooltips.containsKey(member)) {
       return myTooltips.get(member);
     }
     String tooltip = myProvider.getTooltip(member);
