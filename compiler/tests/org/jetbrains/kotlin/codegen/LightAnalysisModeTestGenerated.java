@@ -10061,6 +10061,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/defaultArguments/convention/incWithDefaultInGetter.kt");
             }
 
+            @TestMetadata("incWithDefaults.kt")
+            public void testIncWithDefaults() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/convention/incWithDefaults.kt");
+            }
+
+            @TestMetadata("kt16520.kt")
+            public void testKt16520() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/convention/kt16520.kt");
+            }
+
             @TestMetadata("kt9140.kt")
             public void testKt9140() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/convention/kt9140.kt");
@@ -10069,6 +10079,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("plusAssignWithDefaultInGetter.kt")
             public void testPlusAssignWithDefaultInGetter() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/convention/plusAssignWithDefaultInGetter.kt");
+            }
+
+            @TestMetadata("plusAssignWithDefaults.kt")
+            public void testPlusAssignWithDefaults() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/convention/plusAssignWithDefaults.kt");
             }
         }
 
