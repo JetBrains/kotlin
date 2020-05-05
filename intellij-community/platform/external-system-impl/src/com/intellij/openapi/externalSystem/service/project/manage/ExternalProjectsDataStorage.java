@@ -50,6 +50,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import static com.intellij.openapi.externalSystem.model.ProjectKeys.MODULE;
 import static com.intellij.openapi.externalSystem.model.ProjectKeys.PROJECT;
@@ -88,7 +89,21 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
 
         @Override
         public void pluginUnloaded(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
-          load();
+          Set<ProjectSystemId> existingEPs =
+            ExternalSystemManager.EP_NAME.getExtensionList().stream()
+              .map(ExternalSystemManager::getSystemId)
+              .collect(Collectors.toSet());
+
+          Iterator<Map.Entry<Pair<ProjectSystemId, File>, InternalExternalProjectInfo>> iter =
+            myExternalRootProjects.entrySet().iterator();
+          
+          while(iter.hasNext()) {
+            Map.Entry<Pair<ProjectSystemId, File>, InternalExternalProjectInfo> entry = iter.next();
+            if (!existingEPs.contains(entry.getKey().first)) {
+              iter.remove();
+              markDirty(entry.getValue().getExternalProjectPath());
+            }
+          }
         }
       });
   }
