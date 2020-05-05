@@ -3,16 +3,17 @@ package com.intellij.slicer;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 
 public interface SliceValueFilter {
   /**
    * @param element to test
    * @return true if this element passes the filter
    */
-  boolean allowed(PsiElement element);
+  boolean allowed(@NotNull PsiElement element);
   
   /**
    * @return String representation
    */
-  @Nls String toString();
+  @NotNull @Nls String toString();
 }
