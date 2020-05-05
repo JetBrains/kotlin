@@ -255,7 +255,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
             ?: return super.visitFunctionAccess(expression)
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
-            .irCall(replacement).apply {
+            .irCall(replacement, expression.origin, expression.safeAs<IrCall>()?.superQualifierSymbol).apply {
                 buildReplacement(function, expression, replacement)
             }
     }
