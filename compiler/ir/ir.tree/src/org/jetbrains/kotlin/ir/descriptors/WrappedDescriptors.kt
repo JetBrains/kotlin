@@ -252,7 +252,7 @@ open class WrappedTypeParameterDescriptor(
 
     override fun getUpperBounds() = owner.superTypes.map { it.toKotlinType() }
 
-    private val _typeConstryuctor: TypeConstructor by lazy {
+    private val _typeConstructor: TypeConstructor by lazy {
         object : AbstractTypeConstructor(LockBasedStorageManager.NO_LOCKS) {
             override fun computeSupertypes() = upperBounds
 
@@ -270,7 +270,7 @@ open class WrappedTypeParameterDescriptor(
         }
     }
 
-    override fun getTypeConstructor() = _typeConstryuctor
+    override fun getTypeConstructor() = _typeConstructor
 
     override fun getOriginal() = this
 
@@ -443,110 +443,7 @@ open class WrappedSimpleFunctionDescriptor(
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 
     override fun newCopyBuilder(): FunctionDescriptor.CopyBuilder<out SimpleFunctionDescriptor> {
-        // Use the original descriptor's copy builder if available.
-        // make sure that the original descriptor is not `this`. Otherwise, newCopyBuilder ends up with stack overflow.
-        if (originalDescriptor != this && originalDescriptor is SimpleFunctionDescriptor) {
-            return (originalDescriptor as SimpleFunctionDescriptor).newCopyBuilder();
-        }
-        // Otherwise, return a fake copy builder that will eventually return the same wrapped descriptor.
-        // TODO: it is unclear whether IR lowering really needs a deep copy (and a fake copy is okay by chance).
-        return object : FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-            override fun setOwner(owner: DeclarationDescriptor): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setModality(modality: Modality): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setVisibility(visibility: Visibility): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setKind(kind: CallableMemberDescriptor.Kind): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setCopyOverrides(copyOverrides: Boolean): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setName(name: Name): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setValueParameters(parameters: MutableList<ValueParameterDescriptor>):
-                    FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setTypeParameters(
-                parameters: MutableList<TypeParameterDescriptor>
-            ): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setReturnType(type: KotlinType): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setExtensionReceiverParameter(
-                extensionReceiverParameter: ReceiverParameterDescriptor?
-            ): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setDispatchReceiverParameter(
-                dispatchReceiverParameter: ReceiverParameterDescriptor?
-            ): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setOriginal(original: CallableMemberDescriptor?): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setSignatureChange(): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setPreserveSourceElement(): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setDropOriginalInContainingParts(): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setHiddenToOvercomeSignatureClash(): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setHiddenForResolutionEverywhereBesideSupercalls(): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setAdditionalAnnotations(
-                additionalAnnotations: Annotations
-            ): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun setSubstitution(substitution: TypeSubstitution): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun <V : Any?> putUserData(
-                userDataKey: CallableDescriptor.UserDataKey<V>,
-                value: V
-            ): FunctionDescriptor.CopyBuilder<SimpleFunctionDescriptor> {
-                return this
-            }
-
-            override fun build(): SimpleFunctionDescriptor? {
-                return this@WrappedSimpleFunctionDescriptor
-            }
-        }
+        TODO("not implemented")
     }
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D) =
@@ -707,7 +604,9 @@ open class WrappedClassDescriptor(
 
     override fun getDeclaredTypeParameters() = owner.typeParameters.map { it.descriptor }
 
-    override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
+    override fun getSealedSubclasses(): Collection<ClassDescriptor> {
+        TODO("not implemented")
+    }
 
     override fun getOriginal() = this
 
