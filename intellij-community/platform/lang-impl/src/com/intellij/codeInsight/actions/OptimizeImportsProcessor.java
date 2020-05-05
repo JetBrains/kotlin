@@ -88,7 +88,7 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
       try {
         for (Runnable runnable1 : runnables) {
           runnable1.run();
-          retrieveAndStoreNotificationInfo(runnable1);
+          myOptimizerNotifications.add(getNotificationInfo(runnable1));
         }
         putNotificationInfoIntoCollector();
       }
@@ -100,17 +100,16 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
     return new FutureTask<>(runnable, true);
   }
 
-  private void retrieveAndStoreNotificationInfo(@NotNull Runnable runnable) {
+  @NotNull
+  private static NotificationInfo getNotificationInfo(@NotNull Runnable runnable) {
     if (runnable instanceof ImportOptimizer.CollectingInfoRunnable) {
       String optimizerMessage = ((ImportOptimizer.CollectingInfoRunnable)runnable).getUserNotificationInfo();
-      myOptimizerNotifications.add(optimizerMessage != null ? new NotificationInfo(optimizerMessage) : NOTHING_CHANGED_NOTIFICATION);
+      return optimizerMessage == null ? NOTHING_CHANGED_NOTIFICATION : new NotificationInfo(optimizerMessage);
     }
-    else if (runnable == EmptyRunnable.getInstance()) {
-      myOptimizerNotifications.add(NOTHING_CHANGED_NOTIFICATION);
+    if (runnable == EmptyRunnable.getInstance()) {
+      return NOTHING_CHANGED_NOTIFICATION;
     }
-    else {
-      myOptimizerNotifications.add(SOMETHING_CHANGED_WITHOUT_MESSAGE_NOTIFICATION);
-    }
+    return SOMETHING_CHANGED_WITHOUT_MESSAGE_NOTIFICATION;
   }
 
   private void putNotificationInfoIntoCollector() {
