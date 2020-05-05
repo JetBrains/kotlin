@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.isSuspendLambdaCapturedByOuterObjectOrLambda
 import org.jetbrains.kotlin.codegen.inline.coroutines.markNoinlineLambdaIfSuspend
 import org.jetbrains.kotlin.codegen.inline.coroutines.surroundInvokesWithSuspendMarkersIfNeeded
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph
@@ -501,9 +500,9 @@ class MethodInliner(
 
         replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode)
 
-        val sources = analyzeMethodNodeBeforeInline(processingNode)
-
         val toDelete = SmartSet.create<AbstractInsnNode>()
+
+        val sources = analyzeMethodWithFunctionalArgumentInterpreter(this, processingNode, toDelete)
         val instructions = processingNode.instructions
 
         var awaitClassReification = false
@@ -530,9 +529,7 @@ class MethodInliner(
                         val firstParameterIndex = frame.stackSize - paramCount
                         if (isInvokeOnLambda(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
                             val sourceValue = frame.getStack(firstParameterIndex)
-                            val functionalArgument =
-                                getFunctionalArgumentIfExistsAndMarkInstructions(sourceValue, true, instructions, sources, toDelete)
-                            invokeCalls.add(InvokeCall(functionalArgument, currentFinallyDeep))
+                            invokeCalls.add(InvokeCall(sourceValue.functionalArgument, currentFinallyDeep))
                         } else if (isSamWrapperConstructorCall(owner, name)) {
                             recordTransformation(SamWrapperTransformationInfo(owner, inliningContext, isAlreadyRegenerated(owner)))
                         } else if (isAnonymousConstructorCall(owner, name)) {
@@ -542,11 +539,9 @@ class MethodInliner(
                             var capturesAnonymousObjectThatMustBeRegenerated = false
                             for (i in 0 until paramCount) {
                                 val sourceValue = frame.getStack(firstParameterIndex + i)
-                                val functionalArgument = getFunctionalArgumentIfExistsAndMarkInstructions(
-                                    sourceValue, false, instructions, sources, toDelete
-                                )
+                                val functionalArgument = sourceValue.functionalArgument
                                 if (functionalArgument != null) {
-                                    functionalArgumentMapping.put(offset, functionalArgument)
+                                    functionalArgumentMapping[offset] = functionalArgument
                                 } else if (i < argTypes.size && isAnonymousClassThatMustBeRegenerated(argTypes[i])) {
                                     capturesAnonymousObjectThatMustBeRegenerated = true
                                 }
@@ -556,7 +551,11 @@ class MethodInliner(
 
                             recordTransformation(
                                 buildConstructorInvocation(
-                                    owner, cur.desc, functionalArgumentMapping, awaitClassReification, capturesAnonymousObjectThatMustBeRegenerated
+                                    owner,
+                                    cur.desc,
+                                    functionalArgumentMapping,
+                                    awaitClassReification,
+                                    capturesAnonymousObjectThatMustBeRegenerated
                                 )
                             )
                             awaitClassReification = false
@@ -604,14 +603,8 @@ class MethodInliner(
                         }
                     }
 
-                    cur.opcode == Opcodes.POP -> getFunctionalArgumentIfExistsAndMarkInstructions(
-                        frame.top()!!,
-                        true,
-                        instructions,
-                        sources,
-                        toDelete
-                    )?.let {
-                        if (it is LambdaInfo) {
+                    cur.opcode == Opcodes.POP -> {
+                        if (frame.top().functionalArgument is LambdaInfo) {
                             toDelete.add(cur)
                         }
                     }
@@ -630,8 +623,7 @@ class MethodInliner(
                             nodeRemapper.originalLambdaInternalName == fieldInsn.owner
                         ) {
                             val stackTransformations = mutableSetOf<AbstractInsnNode>()
-                            val lambdaInfo =
-                                getFunctionalArgumentIfExistsAndMarkInstructions(frame.peek(1)!!, false, instructions, sources, stackTransformations)
+                            val lambdaInfo = frame.peek(1)?.functionalArgument
                             if (lambdaInfo is LambdaInfo && stackTransformations.all { it is VarInsnNode }) {
                                 assert(lambdaInfo.lambdaClassType.internalName == nodeRemapper.originalLambdaInternalName) {
                                     "Wrong bytecode template for contract template: ${lambdaInfo.lambdaClassType.internalName} != ${nodeRemapper.originalLambdaInternalName}"
@@ -1076,9 +1068,7 @@ class MethodInliner(
         private fun removeClosureAssertions(node: MethodNode) {
             val toDelete = arrayListOf<AbstractInsnNode>()
             InsnSequence(node.instructions).filterIsInstance<MethodInsnNode>().forEach { methodInsnNode ->
-                if (methodInsnNode.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
-                    (methodInsnNode.name == "checkParameterIsNotNull" || methodInsnNode.name == "checkNotNullParameter")
-                ) {
+                if (isParameterNullabilityCheck(methodInsnNode)) {
                     val prev = methodInsnNode.previous
                     assert(Opcodes.LDC == prev?.opcode) { "'${methodInsnNode.name}' should go after LDC but $prev" }
                     val prevPev = methodInsnNode.previous.previous
