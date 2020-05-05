@@ -6,7 +6,6 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.FacetModel;
 import com.intellij.facet.FacetTypeId;
 import com.intellij.openapi.util.MultiValuesMap;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +13,7 @@ import java.util.*;
 
 public abstract class FacetModelBase implements FacetModel {
   private volatile Map<FacetTypeId<?>, Collection<Facet<?>>> myType2Facets;
-  private volatile Map<Pair<Facet<?>, FacetTypeId<?>>, Collection<Facet<?>>> myChildFacets;
+  private volatile Map<FacetAndType, Collection<Facet<?>>> myChildFacets;
   private volatile Facet<?>[] mySortedFacets;
 
   @Override
@@ -47,23 +46,24 @@ public abstract class FacetModelBase implements FacetModel {
   @NotNull
   public <F extends Facet<?>> Collection<F> getFacetsByType(@NotNull Facet<?> underlyingFacet, FacetTypeId<F> typeId) {
     if (myChildFacets == null) {
-      MultiValuesMap<Pair<Facet<?>, FacetTypeId<?>>, Facet<?>> children = new MultiValuesMap<>();
+      MultiValuesMap<FacetAndType, Facet<?>> children = new MultiValuesMap<>();
       for (Facet<?> facet : getAllFacets()) {
         final Facet<?> underlying = facet.getUnderlyingFacet();
         if (underlying != null) {
-          children.put(new Pair<>(underlying,  facet.getTypeId()), facet);
+          children.put(new FacetAndType(underlying,  facet.getTypeId()), facet);
         }
       }
 
-      Map<Pair<Facet<?>, FacetTypeId<?>>, Collection<Facet<?>>> childFacets = new HashMap<>();
-      for (Pair<Facet<?>, FacetTypeId<?>> pair : children.keySet()) {
+      Map<FacetAndType, Collection<Facet<?>>> childFacets = new HashMap<>();
+      for (FacetAndType pair : children.keySet()) {
         final Collection<Facet<?>> facets = children.get(pair);
+        assert facets != null;
         childFacets.put(pair, Collections.unmodifiableCollection(facets));
       }
       myChildFacets = childFacets;
     }
     //noinspection unchecked
-    final Collection<F> facets = (Collection<F>)myChildFacets.get(new Pair<>(underlyingFacet, typeId));
+    final Collection<F> facets = (Collection<F>)myChildFacets.get(new FacetAndType(underlyingFacet, typeId));
     return facets != null ? facets : Collections.emptyList();
   }
 
@@ -123,5 +123,15 @@ public abstract class FacetModelBase implements FacetModel {
     myChildFacets = null;
     myType2Facets = null;
     mySortedFacets = null;
+  }
+  
+  private static class FacetAndType {
+    final Facet<?> myFacet;
+    final FacetTypeId<?> myTypeId;
+
+    private FacetAndType(Facet<?> facet, FacetTypeId<?> id) {
+      myFacet = facet;
+      myTypeId = id;
+    }
   }
 }
