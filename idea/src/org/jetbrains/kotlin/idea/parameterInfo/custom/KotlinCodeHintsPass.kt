@@ -16,7 +16,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.parameterInfo.HintType
+import org.jetbrains.kotlin.idea.codeInsight.hints.HintType
 import org.jetbrains.kotlin.idea.parameterInfo.TYPE_INFO_PREFIX
 import org.jetbrains.kotlin.idea.parameterInfo.provideLambdaReturnValueHints
 import org.jetbrains.kotlin.psi.KtExpression

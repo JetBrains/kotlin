@@ -13,7 +13,7 @@ import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.parameterInfo.HintType
+import org.jetbrains.kotlin.idea.codeInsight.hints.HintType
 import org.jetbrains.kotlin.idea.util.refreshAllOpenEditors
 
 class DisableReturnLambdaHintOptionAction : IntentionAction, LowPriorityAction {

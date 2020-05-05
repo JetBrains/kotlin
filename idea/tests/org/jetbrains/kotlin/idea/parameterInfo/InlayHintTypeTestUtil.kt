@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import org.jetbrains.kotlin.idea.codeInsight.hints.HintType
 import org.junit.Assert
 
 internal fun JavaCodeInsightTestFixture.checkHintType(text: String, hintType: HintType) {
