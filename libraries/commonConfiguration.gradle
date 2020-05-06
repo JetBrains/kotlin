@@ -122,6 +122,10 @@ ext.configurePublishing = { Project project, configure = { } ->
     }
 }
 
+ext.configurePluginMarkers = { Project project, withEmptyJars = true ->
+    PluginMarkersKt.publishPluginMarkers(project, withEmptyJars)
+}
+
 ext.configureLegacyPublishing = { Project project ->
     project.configure(project) {
         apply plugin: 'maven'

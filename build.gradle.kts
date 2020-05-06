@@ -28,7 +28,6 @@ buildscript {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
-        classpath("com.gradle.publish:plugin-publish-plugin:0.11.0")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
     }
@@ -325,14 +324,10 @@ val coreLibProjects = listOfNotNull(
 
 val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin",
-    ":kotlin-gradle-plugin:plugin-marker",
     ":kotlin-gradle-plugin-api",
-//        ":kotlin-gradle-plugin-integration-tests",  // TODO: build fails
     ":kotlin-allopen",
-    ":kotlin-allopen:plugin-marker",
     ":kotlin-annotation-processing-gradle",
     ":kotlin-noarg",
-    ":kotlin-noarg:plugin-marker",
     ":kotlin-sam-with-receiver"
 )
 
