@@ -22,7 +22,17 @@ typealias ReplCompletionResult = Sequence<SourceCodeCompletionVariant>
 /**
  * Type for [ReplCodeAnalyzer.analyze] return value
  */
-typealias ReplAnalyzerResult = Sequence<ScriptDiagnostic>
+data class ReplAnalyzerResult(
+    /**
+     * Script compile-time errors and warning with their locations
+     */
+    val diagnostics: Sequence<ScriptDiagnostic> = emptySequence(),
+
+    /**
+     * String representing snippet return value, or null, if script returns nothing
+     */
+    val renderedResultType: String? = null,
+)
 
 /**
  * REPL Compiler interface which is used for compiling snippets

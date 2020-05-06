@@ -67,7 +67,7 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
             }
         }
 
-    private fun List<ScriptDiagnostic>.toAnalyzeResult() = (filter {
+    private fun List<ScriptDiagnostic>.toAnalyzeResultSequence() = (filter {
         when (it.severity) {
             ScriptDiagnostic.Severity.FATAL,
             ScriptDiagnostic.Severity.ERROR,
@@ -83,24 +83,19 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
         configuration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<ReplAnalyzerResult> {
         return withMessageCollector(snippet) { messageCollector ->
-            val initialConfiguration = configuration.refineBeforeParsing(snippet).valueOr {
-                return it
+            val analyzeResult = analyzeWithCursor(
+                messageCollector, snippet, configuration
+            )
+
+            with(analyzeResult.valueOr { return it }) {
+                val resultRenderedType = resultProperty?.let {
+                    DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it.type)
+                }
+                return ReplAnalyzerResult(
+                    messageCollector.diagnostics.toAnalyzeResultSequence(),
+                    resultRenderedType,
+                ).asSuccess()
             }
-
-            val compilationState = state.getCompilationState(initialConfiguration)
-
-            val (_, errorHolder, snippetKtFile) = prepareForAnalyze(
-                snippet,
-                messageCollector,
-                compilationState,
-                checkSyntaxErrors = true
-            ).valueOr { return@withMessageCollector messageCollector.diagnostics.toAnalyzeResult().asSuccess() }
-
-            val analysisResult =
-                compilationState.analyzerEngine.statelessAnalyzeWithImportedScripts(snippetKtFile, emptyList(), scriptPriority.get() + 1)
-            AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
-
-            messageCollector.diagnostics.toAnalyzeResult().asSuccess()
         }
     }
 
