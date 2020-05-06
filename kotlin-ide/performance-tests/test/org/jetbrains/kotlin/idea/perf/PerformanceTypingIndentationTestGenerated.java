@@ -233,6 +233,11 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/KT20783.kt");
     }
 
+    @TestMetadata("LargeFile.kt")
+    public void testLargeFile() throws Exception {
+        runTest("idea/testData/indentationOnNewline/LargeFile.kt");
+    }
+
     @TestMetadata("ModifierListInUnfinishedDeclaration.kt")
     public void testModifierListInUnfinishedDeclaration() throws Exception {
         runTest("idea/testData/indentationOnNewline/ModifierListInUnfinishedDeclaration.kt");

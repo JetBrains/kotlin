@@ -233,6 +233,11 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("testData/indentationOnNewline/KT20783.after.kt");
         }
 
+        @TestMetadata("LargeFile.after.kt")
+        public void testLargeFile() throws Exception {
+            runTest("testData/indentationOnNewline/LargeFile.after.kt");
+        }
+
         @TestMetadata("ModifierListInUnfinishedDeclaration.after.kt")
         public void testModifierListInUnfinishedDeclaration() throws Exception {
             runTest("testData/indentationOnNewline/ModifierListInUnfinishedDeclaration.after.kt");
