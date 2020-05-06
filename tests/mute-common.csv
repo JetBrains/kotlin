@@ -52,7 +52,6 @@ org.jetbrains.kotlin.psi.injection.StringInterpolationInjectionTest.testInterpol
 org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_8170, KT-36459,,
 org.jetbrains.kotlin.shortenRefs.ShortenRefsTestGenerated.testExtensionForObject2, Always red,,
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567,,
-org.jetbrains.kotlinx.serialization.SerializationIrBytecodeListingTestGenerated.testBasic, wait until new serialization runtime version will be publicly available,,
 org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithAPT.testClassWithTypeParameter, KT-36448,,
 org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithoutAPT.testClassWithTypeParameter, KT-36448,,
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAllFilesPresentInAsyncStackTrace, redesign test AsyncStackTraces,,

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
@@ -53,20 +54,24 @@ object JvmBackendFacade {
             mangler
         )
 
+        val pluginContext by lazy {
+            psi2irContext.run {
+                val symbols = BuiltinSymbolsBase(irBuiltIns, moduleDescriptor.builtIns, symbolTable.lazyWrapper)
+                IrPluginContext(
+                    moduleDescriptor, bindingContext, languageVersionSettings, symbolTable, typeTranslator, irBuiltIns, irLinker, symbols
+                )
+            }
+        }
+
         for (extension in pluginExtensions) {
             psi2ir.addPostprocessingStep { module ->
-                extension.generate(
-                    module,
-                    IrPluginContext(
-                        psi2irContext.moduleDescriptor,
-                        psi2irContext.bindingContext,
-                        psi2irContext.languageVersionSettings,
-                        psi2irContext.symbolTable,
-                        psi2irContext.typeTranslator,
-                        psi2irContext.irBuiltIns,
-                        linker = irLinker
-                    )
-                )
+                val old = stubGenerator.unboundSymbolGeneration
+                try {
+                    stubGenerator.unboundSymbolGeneration = true
+                    extension.generate(module, pluginContext)
+                } finally {
+                    stubGenerator.unboundSymbolGeneration = old
+                }
             }
         }
 
