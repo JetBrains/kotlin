@@ -47,10 +47,6 @@ interface LazyIrProvider : IrProvider {
     override fun getDeclaration(symbol: IrSymbol): IrLazyDeclarationBase?
 }
 
-interface IrExtensionGenerator {
-    fun declare(symbol: IrSymbol): IrDeclaration? = null
-}
-
 interface IrDeserializer : IrProvider {
     fun init(moduleFragment: IrModuleFragment?) {}
 }
