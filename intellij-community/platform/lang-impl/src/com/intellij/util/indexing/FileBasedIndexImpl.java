@@ -804,7 +804,14 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       // avoid rebuilding index in tests since we do it synchronously in requestRebuild and we can have readAction at hand
       return null;
     }
-    if (e instanceof ProcessCanceledException) return null;
+    if (e instanceof ProcessCanceledException) {
+      return null;
+    }
+    if (e instanceof MapReduceIndex.MapInputException) {
+      // If exception has happened on input mapping (DataIndexer.map),
+      // it is handled as the indexer exception and must not lead to index rebuild.
+      return null;
+    }
     if (e instanceof IndexOutOfBoundsException) return e; // something wrong with direct byte buffer
     Throwable cause = e.getCause();
     if (cause instanceof StorageException
@@ -974,7 +981,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
           markFileIndexed(vFile);
           try {
-            getIndex(requestedIndexId).update(inputId, newFc);
+            getIndex(requestedIndexId).mapInputAndPrepareUpdate(inputId, newFc).compute();
           }
           finally {
             unmarkBeingIndexed();
@@ -982,7 +989,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           }
         }
         else { // effectively wipe the data from the indices
-          getIndex(requestedIndexId).update(inputId, null);
+          getIndex(requestedIndexId).mapInputAndPrepareUpdate(inputId, null).compute();
         }
       }
 
@@ -1285,7 +1292,9 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
     markFileIndexed(file);
     try {
-      if (myStorageBufferingHandler.runUpdate(false, () -> index.update(inputId, currentFC))) {
+      // Propagate MapReduceIndex.MapInputException and ProcessCancelledException happening on input mapping.
+      Computable<Boolean> storageUpdate = index.mapInputAndPrepareUpdate(inputId, currentFC);
+      if (myStorageBufferingHandler.runUpdate(false, storageUpdate)) {
         ConcurrencyUtil.withLock(myReadLock, () -> {
           if (currentFC != null) {
             index.setIndexedStateForFile(inputId, currentFC);
@@ -1295,11 +1304,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           }
         });
       }
-    }
-    catch (MapReduceIndex.MapInputException e) {
-      // If exception has happened on input mapping (DataIndexer.map),
-      // it is handled as indexer exception and does not lead to index rebuild.
-      throw e;
     }
     catch (RuntimeException exception) {
       Throwable causeToRebuildIndex = getCauseToRebuildIndex(exception);
