@@ -584,53 +584,56 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
                               int fileId,
                               @NotNull Set<K> oldKeys,
                               @NotNull Set<K> newKeys) {
-    try {
-      if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
-        LOG.info("stub index '" + stubIndexKey + "' update: " + fileId +
-                 " old = " + Arrays.toString(oldKeys.toArray()) +
-                 " new  = " + Arrays.toString(newKeys.toArray()) +
-                 " updated_id = " + System.identityHashCode(newKeys));
-      }
-      final UpdatableIndex<K, Void, FileContent> index = getIndex(stubIndexKey);
-      if (index == null) return;
-      index.updateWithMap(new AbstractUpdateData<K, Void>(fileId) {
-        @Override
-        protected boolean iterateKeys(@NotNull KeyValueUpdateProcessor<? super K, ? super Void> addProcessor,
-                                      @NotNull KeyValueUpdateProcessor<? super K, ? super Void> updateProcessor,
-                                      @NotNull RemovedKeyProcessor<? super K> removeProcessor) throws StorageException {
-
-          if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
-            LOG.info("iterating keys updated_id = " + System.identityHashCode(newKeys));
-          }
-
-          boolean modified = false;
-
-          for (K oldKey : oldKeys) {
-            if (!newKeys.contains(oldKey)) {
-              removeProcessor.process(oldKey, fileId);
-              if (!modified) modified = true;
-            }
-          }
-
-          for (K oldKey : newKeys) {
-            if (!oldKeys.contains(oldKey)) {
-              addProcessor.process(oldKey, null, fileId);
-              if (!modified) modified = true;
-            }
-          }
-
-          if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
-            LOG.info("keys iteration finished updated_id = " + System.identityHashCode(newKeys) + "; modified = " + modified);
-          }
-
-          return modified;
+    ProgressManager.getInstance().executeNonCancelableSection(() -> {
+      try {
+        if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
+          LOG.info("stub index '" + stubIndexKey + "' update: " + fileId +
+                   " old = " + Arrays.toString(oldKeys.toArray()) +
+                   " new  = " + Arrays.toString(newKeys.toArray()) +
+                   " updated_id = " + System.identityHashCode(newKeys));
         }
-      });
-    }
-    catch (StorageException e) {
-      LOG.info(e);
-      requestRebuild();
-    }
+        final UpdatableIndex<K, Void, FileContent> index = getIndex(stubIndexKey);
+        if (index == null) return;
+        index.updateWithMap(new AbstractUpdateData<K, Void>(fileId) {
+          @Override
+          protected boolean iterateKeys(@NotNull KeyValueUpdateProcessor<? super K, ? super Void> addProcessor,
+                                        @NotNull KeyValueUpdateProcessor<? super K, ? super Void> updateProcessor,
+                                        @NotNull RemovedKeyProcessor<? super K> removeProcessor) throws StorageException {
+
+            if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
+              LOG.info("iterating keys updated_id = " + System.identityHashCode(newKeys));
+            }
+
+            boolean modified = false;
+
+            for (K oldKey : oldKeys) {
+              if (!newKeys.contains(oldKey)) {
+                removeProcessor.process(oldKey, fileId);
+                if (!modified) modified = true;
+              }
+            }
+
+            for (K oldKey : newKeys) {
+              if (!oldKeys.contains(oldKey)) {
+                addProcessor.process(oldKey, null, fileId);
+                if (!modified) modified = true;
+              }
+            }
+
+            if (FileBasedIndexImpl.DO_TRACE_STUB_INDEX_UPDATE) {
+              LOG.info("keys iteration finished updated_id = " + System.identityHashCode(newKeys) + "; modified = " + modified);
+            }
+
+            return modified;
+          }
+        });
+      }
+      catch (StorageException e) {
+        LOG.info(e);
+        requestRebuild();
+      }
+    });
+
   }
 
   private class StubIndexInitialization extends IndexInfrastructure.DataInitialization<AsyncState> {
