@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle.roots
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
@@ -30,6 +31,7 @@ import org.jetbrains.plugins.gradle.settings.*
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.nio.file.Paths
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * [GradleBuildRoot] is a linked gradle build (don't confuse with gradle project and included build).
@@ -103,39 +105,51 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         get() = path
 
     fun getScriptInfo(file: VirtualFile): GradleScriptInfo? =
-        manager.getLightScriptInfo(file.localPath) as? GradleScriptInfo
+        getScriptInfo(file.localPath)
+
+    fun getScriptInfo(localPath: String): GradleScriptInfo? =
+        manager.getLightScriptInfo(localPath) as? GradleScriptInfo
 
     class ScriptUnderRoot(
         val root: GradleBuildRoot?,
         val script: GradleScriptInfo? = null
     )
 
-    fun findScriptBuildRoot(gradleKtsFile: VirtualFile): ScriptUnderRoot? {
-        if (!isGradleKotlinScript(gradleKtsFile)) return null
+    fun findScriptBuildRoot(gradleKtsFile: VirtualFile): ScriptUnderRoot? =
+        findScriptBuildRoot(gradleKtsFile.path)
 
-        val filePath = gradleKtsFile.path
-        val scriptInfo = getScriptInfo(gradleKtsFile)
+    fun findScriptBuildRoot(filePath: String, searchNearestLegacy: Boolean = true): ScriptUnderRoot? {
+        if (!filePath.endsWith(".gradle.kts")) return null
+
+        val scriptInfo = getScriptInfo(filePath)
         val imported = scriptInfo?.buildRoot
         if (imported != null) return ScriptUnderRoot(imported, scriptInfo)
 
-        if (gradleKtsFile.name == "build.gradle.kts" ||
-            gradleKtsFile.name == "settings.gradle.kts" ||
-            gradleKtsFile.name == "init.gradle.kts"
+        if (filePath.endsWith("/build.gradle.kts") ||
+            filePath.endsWith("/settings.gradle.kts") ||
+            filePath.endsWith("/init.gradle.kts")
         ) {
             // build|settings|init.gradle.kts scripts should be located near gradle project root only
-            val gradleBuild = roots.getBuildByProjectDir(gradleKtsFile.parent.localPath)
+            val gradleBuild = roots.getBuildByProjectDir(filePath.substringBeforeLast("/"))
             if (gradleBuild != null) return ScriptUnderRoot(gradleBuild)
         }
 
         // other scripts: "included", "precompiled" scripts, scripts in unlinked projects,
         // or just random files with ".gradle.kts" ending
 
-        // try find nearest linked legacy gradle project settings first
-        val found = roots.findNearestRoot(filePath)
-        if (found is GradleBuildRoot.Legacy) return ScriptUnderRoot(found)
+        if (searchNearestLegacy) {
+            val found = roots.findNearestRoot(filePath)
+            if (found is GradleBuildRoot.Legacy) return ScriptUnderRoot(found)
+        }
 
         return ScriptUnderRoot(GradleBuildRoot.Unlinked())
     }
+
+    fun isUnderProjectDir(localPath: String) =
+        roots.getBuildByProjectDir(localPath) != null
+
+    fun getBuildRoot(gradleWorkingDir: String) =
+        roots.getBuildRoot(gradleWorkingDir)
 
     fun markImportingInProgress(workingDir: String, inProgress: Boolean = true) {
         actualizeBuildRoot(workingDir)?.importing = inProgress
@@ -175,6 +189,19 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         new.models.associateByTo(models) { it.file }
 
         return GradleBuildRootData(roots, new.templateClasspath, models.values)
+    }
+
+    private val lastModifiedFilesSaveScheduled = AtomicBoolean()
+
+    fun scheduleLastModifiedFilesSave() {
+        if (lastModifiedFilesSaveScheduled.compareAndSet(false, true)) {
+            BackgroundTaskUtil.executeOnPooledThread(project) {
+                lastModifiedFilesSaveScheduled.set(false)
+                roots.list.forEach {
+                    it.saveLastModifiedFiles()
+                }
+            }
+        }
     }
 
     init {
@@ -269,8 +296,8 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
     private fun createOtherLinkedRoot(settings: GradleProjectSettings): GradleBuildRoot.Linked {
         val supported = kotlinDslScriptsModelImportSupported(settings.resolveGradleVersion().version)
         return when {
-            supported -> GradleBuildRoot.New(settings.externalProjectPath)
-            else -> GradleBuildRoot.Legacy(settings.externalProjectPath)
+            supported -> GradleBuildRoot.New(this, settings)
+            else -> GradleBuildRoot.Legacy(this, settings)
         }
     }
 
@@ -284,7 +311,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
             .getExecutionSettings<GradleExecutionSettings>(project, externalProjectPath, GradleConstants.SYSTEM_ID)
             .javaHome?.let { File(it) }
 
-        return GradleBuildRoot.Imported(project, buildRoot, javaHome, data)
+        return GradleBuildRoot.Imported(this, buildRoot, javaHome, data)
     }
 
     private fun add(newRoot: GradleBuildRoot.Linked) {

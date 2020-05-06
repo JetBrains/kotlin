@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.core.util.readString
 import org.jetbrains.kotlin.idea.core.util.writeNullable
 import org.jetbrains.kotlin.idea.core.util.writeString
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleKotlinScriptConfigurationInputs
+import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import java.io.DataInput
 import java.io.DataInputStream
@@ -23,7 +24,7 @@ internal object GradleBuildRootDataSerializer {
     fun read(buildRoot: VirtualFile): GradleBuildRootData? {
         return attribute.readAttribute(buildRoot)?.use {
             it.readNullable {
-                readKotlinDslScriptModels(it)
+                readKotlinDslScriptModels(it, buildRoot.path)
             }
         }
     }
@@ -38,6 +39,7 @@ internal object GradleBuildRootDataSerializer {
 
     fun remove(buildRoot: VirtualFile) {
         write(buildRoot, null)
+        LastModifiedFiles.remove(buildRoot)
     }
 }
 
@@ -57,14 +59,14 @@ internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleBuildRoo
     output.writeList(data.models) {
         strings.writeStringId(it.file)
         output.writeString(it.inputs.sections)
-        output.writeLong(it.inputs.inputsTS)
+        output.writeLong(it.inputs.lastModifiedTs)
         strings.writeStringIds(it.classPath)
         strings.writeStringIds(it.sourcePath)
         strings.writeStringIds(it.imports)
     }
 }
 
-internal fun readKotlinDslScriptModels(input: DataInputStream): GradleBuildRootData {
+internal fun readKotlinDslScriptModels(input: DataInputStream, buildRoot: String): GradleBuildRootData {
     val strings = StringsPool.reader(input)
 
     val projectRoots = strings.readStrings()
@@ -73,7 +75,7 @@ internal fun readKotlinDslScriptModels(input: DataInputStream): GradleBuildRootD
     val models = input.readList {
         KotlinDslScriptModel(
             strings.readString(),
-            GradleKotlinScriptConfigurationInputs(input.readString(), input.readLong()),
+            GradleKotlinScriptConfigurationInputs(input.readString(), input.readLong(), buildRoot),
             strings.readStrings(),
             strings.readStrings(),
             strings.readStrings(),

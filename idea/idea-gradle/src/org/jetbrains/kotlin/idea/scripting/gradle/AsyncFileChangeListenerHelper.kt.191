@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.concurrency.SequentialTaskExecutor
 
-fun addVfsListener(watcher: GradleScriptInputsWatcher) {
+fun addVfsListener(watcher: GradleScriptListener) {
     watcher.project.messageBus.connect().subscribe(
         VirtualFileManager.VFS_CHANGES,
         object : BulkFileListener {
