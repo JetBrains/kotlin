@@ -224,4 +224,28 @@ class KlibBasedMppIT : BaseGradleIT() {
             assertSuccessful()
         }
     }
+
+    @Test
+    fun testAvoidSkippingSharedNativeSourceSetKt38746() = with(Project("hierarchical-all-native")) {
+        val targetNames = listOf(
+            // Try different alphabetical ordering of the targets to ensure that the behavior doesn't depend on it, as with 'first target'
+            listOf("a1", "a2", "a3"),
+            listOf("a3", "a1", "a2"),
+            listOf("a2", "a3", "a1"),
+        )
+        val targetParamNames = listOf("mingwTargetName", "linuxTargetName", "macosTargetName", "currentHostTargetName")
+        for (names in targetNames) {
+            val currentHostTargetName = when {
+                HostManager.hostIsMingw -> names[0]
+                HostManager.hostIsLinux -> names[1]
+                HostManager.hostIsMac -> names[2]
+                else -> error("unexpected host")
+            }
+            val params = targetParamNames.zip(names + currentHostTargetName) { k, v -> "-P$k=$v" }
+            build(":clean", ":compileCurrentHostAndLinuxKotlinMetadata", *params.toTypedArray()) {
+                assertSuccessful()
+                assertTasksExecuted(":compileCurrentHostAndLinuxKotlinMetadata", ":compileAllNativeKotlinMetadata")
+            }
+        }
+    }
 }

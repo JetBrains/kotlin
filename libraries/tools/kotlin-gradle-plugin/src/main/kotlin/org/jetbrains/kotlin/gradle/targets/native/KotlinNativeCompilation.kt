@@ -102,7 +102,8 @@ class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, v
         target,
         // TODO: this will end up as '-target' argument passed to K2Native, which is wrong.
         // Rewrite this when we'll compile native-shared source-sets against commonized platform libs
-        konanTargets.first(),
+        // We find any konan target that is enabled on the current host in order to pass the checks that avoid compiling the code otherwise.
+        konanTargets.find { it.enabledOnCurrentHost } ?: konanTargets.first(),
         name
     ),
     KotlinMetadataCompilation<KotlinCommonOptions> {
