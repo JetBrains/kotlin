@@ -223,7 +223,7 @@ public fun Path.copyRecursively(
 
                     fun fileLength(p: Path): Long {
                         return try {
-                            if (p.isFile()) FileChannel.open(p).use { it.size() } else 0L
+                            Files.size(p)
                         } catch (e: IOException) {
                             0L
                         }
