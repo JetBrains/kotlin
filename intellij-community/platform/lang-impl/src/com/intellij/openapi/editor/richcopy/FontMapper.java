@@ -16,10 +16,13 @@
 package com.intellij.openapi.editor.richcopy;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.colors.FontPreferences;
+import com.intellij.openapi.editor.impl.FontInfo;
 import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.awt.font.FontRenderContext;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Locale;
@@ -34,6 +37,7 @@ public class FontMapper {
 
   private static final String[] logicalFontsToMap = {Font.DIALOG, Font.DIALOG_INPUT, Font.MONOSPACED, Font.SERIF, Font.SANS_SERIF};
   private static final Map<String, String> logicalToPhysicalMapping = new HashMap<>();
+  private static final Map<String, Boolean> monospacedMapping = new HashMap<>();
 
   static {
     try {
@@ -68,5 +72,16 @@ public class FontMapper {
   String getPhysicalFontName(@NotNull String logicalFontName) {
     String mapped = logicalToPhysicalMapping.get(logicalFontName);
     return mapped == null ? logicalFontName : mapped;
+  }
+
+  public static boolean isMonospaced(@NotNull String fontName) {
+    Boolean result = monospacedMapping.get(fontName);
+    if (result == null) {
+      FontMetrics metrics = FontInfo.getFontMetrics(new Font(fontName, Font.PLAIN, FontPreferences.DEFAULT_FONT_SIZE),
+                                                    new FontRenderContext(null, false, false));
+      result = metrics.charWidth('l') == metrics.charWidth('W');
+      monospacedMapping.put(fontName, result);
+    }
+    return result;
   }
 }

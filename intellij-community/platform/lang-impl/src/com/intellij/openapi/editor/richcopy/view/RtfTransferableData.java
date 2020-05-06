@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.editor.richcopy.view;
 
+import com.intellij.openapi.editor.richcopy.FontMapper;
 import com.intellij.openapi.editor.richcopy.model.ColorRegistry;
 import com.intellij.openapi.editor.richcopy.model.FontNameRegistry;
 import com.intellij.openapi.editor.richcopy.model.MarkupHandler;
@@ -46,7 +47,11 @@ public class RtfTransferableData extends AbstractSyntaxAwareInputStreamTransfera
     FontNameRegistry fontNameRegistry = mySyntaxInfo.getFontNameRegistry();
     for (int id : fontNameRegistry.getAllIds()) {
       String fontName = fontNameRegistry.dataById(id);
-      holder.append(String.format("{\\f%d %s;}", id, fontName));
+      holder.append("{\\f").append(id);
+      if (FontMapper.isMonospaced(fontName)) {
+        holder.append("\\fmodern");
+      }
+      holder.append(' ').append(fontName).append(";}");
     }
     holder.append("}\n");
 

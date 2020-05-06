@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.editor.richcopy.view;
 
+import com.intellij.openapi.editor.richcopy.FontMapper;
 import com.intellij.openapi.editor.richcopy.model.ColorRegistry;
 import com.intellij.openapi.editor.richcopy.model.FontNameRegistry;
 import com.intellij.openapi.editor.richcopy.model.MarkupHandler;
@@ -93,7 +94,12 @@ public class HtmlSyntaxInfoReader extends AbstractSyntaxAwareReader implements M
   }
 
   protected void appendFontFamilyRule(@NotNull StringBuilder styleBuffer, int fontFamilyId) {
-    styleBuffer.append("font-family:'").append(myFontNameRegistry.dataById(fontFamilyId)).append("';");
+    String fontName = myFontNameRegistry.dataById(fontFamilyId);
+    styleBuffer.append("font-family:'").append(fontName).append('\'');
+    if (FontMapper.isMonospaced(fontName)) {
+      styleBuffer.append(",monospace");
+    }
+    styleBuffer.append(';');
   }
 
   private static void defineBold(@NotNull StringBuilder styleBuffer) {
