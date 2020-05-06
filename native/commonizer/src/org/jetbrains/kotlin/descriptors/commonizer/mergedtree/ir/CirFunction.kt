@@ -30,6 +30,7 @@ interface CirCallableMemberWithParameters {
 interface CirFunction : CirFunctionOrProperty, CirFunctionModifiers, CirCallableMemberWithParameters
 
 data class CirCommonFunction(
+    override val annotations: List<CirAnnotation>,
     override val name: Name,
     override val modality: Modality,
     override val visibility: Visibility,

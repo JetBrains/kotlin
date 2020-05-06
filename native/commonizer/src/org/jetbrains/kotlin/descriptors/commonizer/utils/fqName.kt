@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
 
+internal val DEPRECATED_ANNOTATION_FQN: FqName = FqName(Deprecated::class.java.name)
+
 private val STANDARD_KOTLIN_PACKAGE_PREFIXES = listOf(
     KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString(),
     "kotlinx"

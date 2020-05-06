@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.getAbbreviation
-
-private val DEPRECATED_ANNOTATION_FQN = FqName(Deprecated::class.java.name)
 
 internal fun SimpleFunctionDescriptor.isKniBridgeFunction() =
     name.asString().startsWith("kniBridge")

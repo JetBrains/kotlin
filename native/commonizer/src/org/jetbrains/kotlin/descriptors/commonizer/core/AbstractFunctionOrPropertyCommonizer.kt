@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionOrPr
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.isNonAbstractMemberInInterface
 import org.jetbrains.kotlin.name.Name
 
-abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(cache: CirClassifiersCache) : AbstractStandardCommonizer<T, T>() {
+abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
+    cache: CirClassifiersCache
+) : AbstractStandardCommonizer<T, T>() {
     protected lateinit var name: Name
     protected val modality = ModalityCommonizer.default()
     protected val visibility = VisibilityCommonizer.lowering()

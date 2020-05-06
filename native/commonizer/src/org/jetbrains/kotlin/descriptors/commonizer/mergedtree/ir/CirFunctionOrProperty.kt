@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver.Companion.toReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 
-interface CirFunctionOrProperty : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility, CirDeclarationWithModality, CirMaybeCallableMemberOfClass {
+interface CirFunctionOrProperty : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters,
+    CirDeclarationWithVisibility, CirDeclarationWithModality, CirMaybeCallableMemberOfClass {
     val isExternal: Boolean
     val extensionReceiver: CirExtensionReceiver?
     val returnType: CirType
@@ -17,7 +18,6 @@ interface CirFunctionOrProperty : CirAnnotatedDeclaration, CirNamedDeclaration, 
 }
 
 abstract class CirCommonFunctionOrProperty : CirFunctionOrProperty {
-    final override val annotations: List<CirAnnotation> get() = emptyList() // TODO: commonize annotations, KT-34234
     final override val containingClassKind: ClassKind? get() = unsupported()
     final override val containingClassModality: Modality? get() = unsupported()
     final override val containingClassIsData: Boolean? get() = unsupported()
@@ -50,8 +50,12 @@ data class CirExtensionReceiver(
     val type: CirType
 ) {
     companion object {
-        fun CirType.toReceiverNoAnnotations() = CirExtensionReceiver( /* TODO: commonize annotations, KT-34234 */ emptyList(), this)
-        fun ReceiverParameterDescriptor.toReceiver() = CirExtensionReceiver(annotations.map(CirAnnotation.Companion::create), CirType.create(type))
+        fun CirType.toReceiverNoAnnotations() = CirExtensionReceiver(annotations = emptyList(), type = this)
+
+        fun ReceiverParameterDescriptor.toReceiver() = CirExtensionReceiver(
+            annotations = annotations.map(CirAnnotation.Companion::create),
+            type = CirType.create(type)
+        )
     }
 }
 

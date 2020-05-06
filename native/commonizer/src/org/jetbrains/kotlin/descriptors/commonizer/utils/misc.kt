@@ -13,6 +13,16 @@ internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
     return result
 }
 
+internal infix fun <K, V> Map<K, V>.concat(other: Map<K, V>): Map<K, V> =
+    when {
+        isEmpty() -> other
+        other.isEmpty() -> this
+        else -> HashMap<K, V>(size + other.size, 1F).apply {
+            putAll(this@concat)
+            putAll(other)
+        }
+    }
+
 internal inline fun <reified T> Iterable<T?>.firstNonNull() = firstIsInstance<T>()
 
 internal fun Any?.isNull(): Boolean = this == null

@@ -40,7 +40,7 @@ data class CirCommonClass(
     override val isInline: Boolean,
     override val isInner: Boolean
 ) : CirClass {
-    override val annotations: List<CirAnnotation> get() = emptyList() // TODO: commonize annotations, KT-34234
+    override val annotations: List<CirAnnotation> get() = emptyList()
     override val isData get() = false
     override val isExternal get() = false
     override var companion: FqName? = null
@@ -56,7 +56,7 @@ data class CirCommonClassConstructor(
     override val hasStableParameterNames: Boolean,
     override val hasSynthesizedParameterNames: Boolean
 ) : CirClassConstructor {
-    override val annotations: List<CirAnnotation> get() = emptyList() // TODO: commonize annotations, KT-34234
+    override val annotations: List<CirAnnotation> get() = emptyList()
     override val containingClassKind get() = unsupported()
     override val containingClassModality get() = unsupported()
     override val containingClassIsData get() = unsupported()

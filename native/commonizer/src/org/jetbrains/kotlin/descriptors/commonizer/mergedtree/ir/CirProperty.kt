@@ -36,6 +36,7 @@ data class CirCommonProperty(
     override val setter: CirSetter?,
     override val typeParameters: List<CirTypeParameter>
 ) : CirCommonFunctionOrProperty(), CirProperty {
+    override val annotations: List<CirAnnotation> get() = emptyList()
     override val isVar get() = setter != null
     override val isLateInit get() = false
     override val isConst get() = false

@@ -10,22 +10,16 @@ import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.utils.concat
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.storage.getValue
 
 class CommonizedAnnotationDescriptor(
-    private val targetComponents: TargetDeclarationsBuilderComponents,
-    override val fqName: FqName,
-    rawValueArguments: Map<Name, ConstantValue<*>>
+    targetComponents: TargetDeclarationsBuilderComponents,
+    cirAnnotation: CirAnnotation
 ) : AnnotationDescriptor {
-    constructor(targetComponents: TargetDeclarationsBuilderComponents, cirAnnotation: CirAnnotation) : this(
-        targetComponents,
-        cirAnnotation.fqName,
-        cirAnnotation.allValueArguments
-    )
+    override val fqName: FqName = cirAnnotation.fqName
 
     override val type by targetComponents.storageManager.createLazyValue {
         val annotationClass = findClassOrTypeAlias(targetComponents, fqName)
@@ -36,17 +30,10 @@ class CommonizedAnnotationDescriptor(
     }
 
     override val allValueArguments by targetComponents.storageManager.createLazyValue {
-        rawValueArguments.mapValues { (_, value) -> substituteValueArgument(value) }
+        cirAnnotation.constantValueArguments concat cirAnnotation.annotationValueArguments.mapValues { (_, nestedCirAnnotation) ->
+            AnnotationValue(CommonizedAnnotationDescriptor(targetComponents, nestedCirAnnotation))
+        }
     }
 
     override val source: SourceElement get() = SourceElement.NO_SOURCE
-
-    private fun substituteValueArgument(value: ConstantValue<*>) =
-        (value as? AnnotationValue)?.value?.let { nestedAnnotationDescriptor ->
-            // re-build annotation descriptors
-            val fqName = nestedAnnotationDescriptor.fqName
-                ?: error("Annotation with no FQ name: ${nestedAnnotationDescriptor::class.java}, $nestedAnnotationDescriptor")
-
-            AnnotationValue(CommonizedAnnotationDescriptor(targetComponents, fqName, nestedAnnotationDescriptor.allValueArguments))
-        } ?: value // keep other values as they are platform agnostic
 }

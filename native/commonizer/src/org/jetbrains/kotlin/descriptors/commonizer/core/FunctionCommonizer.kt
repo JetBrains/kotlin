@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonFuncti
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunction
 
 class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirFunction>(cache) {
+    private val annotations = AnnotationsCommonizer()
     private val modifiers = FunctionModifiersCommonizer.default()
     private val valueParameters = ValueParameterListCommonizer.default(cache)
     private var hasStableParameterNames = true
     private var hasSynthesizedParameterNames = false
 
     override fun commonizationResult() = CirCommonFunction(
+        annotations = annotations.result,
         name = name,
         modality = modality.result,
         visibility = visibility.result,
@@ -31,6 +33,7 @@ class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropert
 
     override fun doCommonizeWith(next: CirFunction): Boolean {
         val result = super.doCommonizeWith(next)
+                && annotations.commonizeWith(next.annotations)
                 && modifiers.commonizeWith(next)
                 && valueParameters.commonizeWith(next.valueParameters)
 

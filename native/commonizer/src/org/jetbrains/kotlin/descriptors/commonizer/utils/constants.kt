@@ -12,11 +12,13 @@ internal fun checkConstantSupportedInCommonization(
     constantValue: ConstantValue<*>,
     constantName: Name? = null,
     owner: Any,
+    allowAnnotationValues: Boolean = false,
     onError: (String) -> Nothing = ::error
 ) {
     checkConstantSupportedInCommonization(
         constantValue = constantValue,
         location = { "${owner::class.java}, $owner" + constantName?.asString()?.let { "[$it]" } },
+        allowAnnotationValues = allowAnnotationValues,
         onError = onError
     )
 }
@@ -24,6 +26,7 @@ internal fun checkConstantSupportedInCommonization(
 private fun checkConstantSupportedInCommonization(
     constantValue: ConstantValue<*>,
     location: () -> String,
+    allowAnnotationValues: Boolean,
     onError: (String) -> Nothing
 ) {
     @Suppress("TrailingComma")
@@ -36,21 +39,28 @@ private fun checkConstantSupportedInCommonization(
         is DoubleValue,
         is FloatValue,
         is EnumValue -> {
-            // OK
+            return // OK
         }
         is AnnotationValue -> {
-            if (constantValue.value.fqName?.isUnderStandardKotlinPackages != true)
-                onError("Only ${constantValue::class.java} const values from Kotlin standard packages are supported, $constantValue at ${location()}")
+            if (allowAnnotationValues) {
+                if (constantValue.value.fqName?.isUnderStandardKotlinPackages != true)
+                    onError("Only ${constantValue::class.java} const values from Kotlin standard packages are supported, $constantValue at ${location()}")
+                return // OK
+            } // else fail (see below)
         }
         is ArrayValue -> {
             constantValue.value.forEachIndexed { index, innerConstantValue ->
                 checkConstantSupportedInCommonization(
                     constantValue = innerConstantValue,
                     location = { "${location()}[$index]" },
+                    allowAnnotationValues = allowAnnotationValues,
                     onError = onError
                 )
             }
+            return // OK
         }
-        else -> onError("Unsupported const value type: ${constantValue::class.java}, $constantValue at ${location()}")
     }
+
+    onError("Unsupported const value type: ${constantValue::class.java}, $constantValue at ${location()}")
 }
+
