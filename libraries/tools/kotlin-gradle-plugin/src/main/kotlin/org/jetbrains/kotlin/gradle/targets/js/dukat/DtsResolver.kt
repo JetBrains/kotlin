@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,11 +16,16 @@ class DtsResolver(val npmProject: NpmProject) {
         indexFileSuffixes = listOf(".d.ts")
     )
 
-    fun getAllDts(externalNpmDependencies: Collection<NpmDependency>): List<Dts> = externalNpmDependencies
-        .filter { it.scope != NpmDependency.Scope.DEV }
-        .flatMap { it.getDependenciesRecursively() }
-        .mapNotNullTo(mutableSetOf()) { typeModules.resolve(it.key)?.let { file -> Dts(file.canonicalFile, it) } }
-        .sortedBy { it.inputKey }
+    fun getAllDts(externalNpmDependencies: Collection<NpmDependency>): List<Dts> {
+        return externalNpmDependencies
+            .asSequence()
+            .filter { it.generateKotlinExternals }
+            .filter { it.scope != NpmDependency.Scope.DEV }
+            .flatMap { it.getDependenciesRecursively().asSequence() }
+            .mapNotNullTo(mutableSetOf()) { typeModules.resolve(it.key)?.let { file -> Dts(file.canonicalFile, it) } }
+            .sortedBy { it.inputKey }
+            .toList()
+    }
 
     class Dts(val file: File, val npmDependency: NpmDependency) {
         val inputKey: String

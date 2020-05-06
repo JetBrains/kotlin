@@ -24,7 +24,8 @@ data class NpmDependency(
     internal val project: Project,
     private val name: String,
     private val version: String,
-    val scope: Scope = Scope.NORMAL
+    val scope: Scope = Scope.NORMAL,
+    val generateKotlinExternals: Boolean = true
 ) : SelfResolvingDependency,
     SelfResolvingDependencyInternal,
     ResolvableDependency,
