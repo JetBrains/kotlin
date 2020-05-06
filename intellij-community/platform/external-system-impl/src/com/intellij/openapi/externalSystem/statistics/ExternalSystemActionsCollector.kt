@@ -4,12 +4,12 @@ package com.intellij.openapi.externalSystem.statistics
 import com.intellij.execution.Executor
 import com.intellij.internal.statistic.collectors.fus.actions.persistence.ActionsCollectorImpl
 import com.intellij.internal.statistic.collectors.fus.actions.persistence.ActionsEventLogGroup
+import com.intellij.internal.statistic.collectors.fus.actions.persistence.ActionsEventLogGroup.Companion.ACTION_INVOKED_EVENT_ID
 import com.intellij.internal.statistic.eventLog.EventFields
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
-import com.intellij.internal.statistic.service.fus.collectors.FeatureUsagesCollector
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
@@ -26,7 +26,7 @@ class ExternalSystemActionsCollector : CounterUsagesCollector() {
   companion object {
     private val GROUP = EventLogGroup("build.tools.actions", 2)
     private val EXTERNAL_SYSTEM_ID = EventFields.String("system_id").withCustomEnum("build_tools")
-    private val ACTION_INVOKED = ActionsEventLogGroup.registerActionInvokedEvent(GROUP, "action.invoked", EXTERNAL_SYSTEM_ID)
+    private val ACTION_INVOKED = ActionsEventLogGroup.registerActionInvokedEvent(GROUP, ACTION_INVOKED_EVENT_ID, EXTERNAL_SYSTEM_ID)
 
     @JvmStatic
     fun trigger(project: Project?,
