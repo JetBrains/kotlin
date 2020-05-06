@@ -158,7 +158,7 @@ class FirSyntheticCallGenerator(
         typeArguments = emptyList(),
         session = session,
         containingFile = file,
-        implicitReceiverStack = implicitReceiverStack
+        containingDeclarations = containingDeclarations
     )
 
     private fun generateSyntheticSelectTypeParameter(): Pair<FirTypeParameter, FirResolvedTypeRef> {

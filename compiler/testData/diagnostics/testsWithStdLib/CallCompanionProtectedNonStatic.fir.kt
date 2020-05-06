@@ -48,7 +48,7 @@ class Derived : Base() {
         foo() // Ok
         gav() // Ok
         bar()
-        <!INAPPLICABLE_CANDIDATE!>baz<!>()
+        baz()
         prop = 0
     }
 
@@ -57,7 +57,7 @@ class Derived : Base() {
             foo() // Ok
             gav() // Ok
             bar()
-            <!INAPPLICABLE_CANDIDATE!>baz<!>()
+            baz()
             prop = 0
         }
     }
@@ -66,7 +66,7 @@ class Derived : Base() {
         fun test2() {
             gav() // Ok
             bar()
-            <!INAPPLICABLE_CANDIDATE!>baz<!>()
+            baz()
             prop = 0
         }
     }

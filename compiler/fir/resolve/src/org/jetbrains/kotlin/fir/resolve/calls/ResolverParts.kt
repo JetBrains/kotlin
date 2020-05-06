@@ -335,54 +335,72 @@ internal object CheckVisibility : CheckerStage() {
     private fun ClassId.isSame(other: ClassId): Boolean =
         packageFqName == other.packageFqName && relativeClassName == other.relativeClassName
 
-    private fun ImplicitReceiverStack.canSeePrivateMemberOf(ownerId: ClassId): Boolean {
-        for (implicitReceiverValue in receiversAsReversed()) {
-            if (implicitReceiverValue !is ImplicitDispatchReceiverValue) continue
-            if (implicitReceiverValue.companionFromSupertype) continue
-            val boundSymbol = implicitReceiverValue.boundSymbol
+    private fun canSeePrivateMemberOf(
+        containingDeclarationOfUseSite: List<FirDeclaration>,
+        ownerId: ClassId,
+        session: FirSession
+    ): Boolean {
+        ownerId.ownerIfCompanion(session)?.let { companionOwnerClassId ->
+            return canSeePrivateMemberOf(containingDeclarationOfUseSite, companionOwnerClassId, session)
+        }
+
+        for (declaration in containingDeclarationOfUseSite) {
+            if (declaration !is FirClass<*>) continue
+            val boundSymbol = declaration.symbol
             if (boundSymbol.classId.isSame(ownerId)) {
                 return true
             }
         }
+
         return false
     }
 
-    private fun FirRegularClassSymbol.canSeeProtectedMemberOf(
-        ownerId: ClassId,
-        session: FirSession,
-        visited: MutableSet<ClassId>
-    ): Boolean {
-        if (classId in visited) return false
-        visited += classId
+    private fun ClassId.ownerIfCompanion(session: FirSession): ClassId? {
+        if (outerClassId == null || isLocal) return null
+        val ownerSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(this) as? FirRegularClassSymbol
+
+        return outerClassId.takeIf { ownerSymbol?.fir?.isCompanion == true }
+    }
+
+    private fun FirClass<*>.isSubClass(ownerId: ClassId, session: FirSession): Boolean {
         if (classId.isSame(ownerId)) return true
 
-        fir.companionObject?.let { companion ->
-            if (companion.classId.isSame(ownerId)) return true
+        return lookupSuperTypes(this, lookupInterfaces = true, deep = true, session).any { superType ->
+            (superType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag?.classId?.isSame(ownerId) == true
+        }
+    }
+
+    private fun canSeeProtectedMemberOf(
+        containingUseSiteClass: FirClass<*>,
+        dispatchReceiver: ReceiverValue?,
+        ownerId: ClassId, session: FirSession
+    ): Boolean {
+        dispatchReceiver?.ownerIfCompanion(session)?.let { companionOwnerClassId ->
+            if (containingUseSiteClass.isSubClass(companionOwnerClassId, session)) return true
         }
 
-        val superTypes = fir.superConeTypes
-        for (superType in superTypes) {
-            val superTypeSymbol = superType.lookupTag.toSymbol(session) as? FirRegularClassSymbol ?: continue
-            if (superTypeSymbol.canSeeProtectedMemberOf(ownerId, session, visited)) return true
+        // TODO: Add check for receiver, see org.jetbrains.kotlin.descriptors.Visibility#doesReceiverFitForProtectedVisibility
+        return containingUseSiteClass.isSubClass(ownerId, session)
+    }
+
+    private fun canSeeProtectedMemberOf(
+        containingDeclarationOfUseSite: List<FirDeclaration>,
+        dispatchReceiver: ReceiverValue?,
+        ownerId: ClassId, session: FirSession
+    ): Boolean {
+        if (canSeePrivateMemberOf(containingDeclarationOfUseSite, ownerId, session)) return true
+
+        for (containingDeclaration in containingDeclarationOfUseSite) {
+            if (containingDeclaration !is FirClass<*>) continue
+            val boundSymbol = containingDeclaration.symbol
+            if (canSeeProtectedMemberOf(boundSymbol.fir, dispatchReceiver, ownerId, session)) return true
         }
+
         return false
     }
 
-    private fun ImplicitReceiverStack.canSeeProtectedMemberOf(ownerId: ClassId, session: FirSession): Boolean {
-        if (canSeePrivateMemberOf(ownerId)) return true
-        val visited = mutableSetOf<ClassId>()
-        for (implicitReceiverValue in receiversAsReversed()) {
-            if (implicitReceiverValue !is ImplicitDispatchReceiverValue) continue
-            if (implicitReceiverValue.companionFromSupertype) continue
-            val boundSymbol = implicitReceiverValue.boundSymbol
-            val superTypes = boundSymbol.fir.superConeTypes
-            for (superType in superTypes) {
-                val superTypeSymbol = superType.lookupTag.toSymbol(session) as? FirRegularClassSymbol ?: continue
-                if (superTypeSymbol.canSeeProtectedMemberOf(ownerId, session, visited)) return true
-            }
-        }
-        return false
-    }
+    private fun ReceiverValue?.ownerIfCompanion(session: FirSession): ClassId? =
+        (this?.type as? ConeClassLikeType)?.lookupTag?.classId?.ownerIfCompanion(session)
 
     private fun AbstractFirBasedSymbol<*>.getOwnerId(): ClassId? {
         return when (this) {
@@ -409,10 +427,11 @@ internal object CheckVisibility : CheckerStage() {
         declaration: FirMemberDeclaration,
         symbol: AbstractFirBasedSymbol<*>,
         sink: CheckerSink,
-        callInfo: CallInfo
+        candidate: Candidate
     ): Boolean {
+        val callInfo = candidate.callInfo
         val useSiteFile = callInfo.containingFile
-        val implicitReceiverStack = callInfo.implicitReceiverStack
+        val containingDeclarations = callInfo.containingDeclarations
         val session = callInfo.session
         val provider = session.firProvider
         val candidateFile = when (symbol) {
@@ -435,20 +454,20 @@ internal object CheckVisibility : CheckerStage() {
                         candidateFile == useSiteFile
                     } else {
                         // Member: visible inside parent class, including all its member classes
-                        implicitReceiverStack.canSeePrivateMemberOf(ownerId)
+                        canSeePrivateMemberOf(containingDeclarations, ownerId, session)
                     }
                 } else {
                     false
                 }
             }
             Visibilities.PROTECTED -> {
-                ownerId != null && implicitReceiverStack.canSeeProtectedMemberOf(ownerId, session)
+                ownerId != null && canSeeProtectedMemberOf(containingDeclarations, candidate.dispatchReceiverValue, ownerId, session)
             }
             JavaVisibilities.PROTECTED_AND_PACKAGE, JavaVisibilities.PROTECTED_STATIC_VISIBILITY -> {
                 if (symbol.packageFqName() == useSiteFile.packageFqName) {
                     true
                 } else {
-                    ownerId != null && implicitReceiverStack.canSeeProtectedMemberOf(ownerId, session)
+                    ownerId != null && canSeeProtectedMemberOf(containingDeclarations, candidate.dispatchReceiverValue, ownerId, session)
                 }
             }
             else -> true
@@ -465,7 +484,7 @@ internal object CheckVisibility : CheckerStage() {
         val symbol = candidate.symbol
         val declaration = symbol.fir
         if (declaration is FirMemberDeclaration) {
-            if (!checkVisibility(declaration, symbol, sink, callInfo)) {
+            if (!checkVisibility(declaration, symbol, sink, candidate)) {
                 return
             }
         }
@@ -479,7 +498,7 @@ internal object CheckVisibility : CheckerStage() {
                 if (classSymbol.fir.classKind.isSingleton) {
                     sink.yieldApplicability(CandidateApplicability.HIDDEN)
                 }
-                checkVisibility(classSymbol.fir, classSymbol, sink, callInfo)
+                checkVisibility(classSymbol.fir, classSymbol, sink, candidate)
             }
         }
     }

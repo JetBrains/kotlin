@@ -31,6 +31,7 @@ interface SessionHolder {
 interface BodyResolveComponents : SessionHolder {
     val returnTypeCalculator: ReturnTypeCalculator
     val implicitReceiverStack: ImplicitReceiverStack
+    val containingDeclarations: List<FirDeclaration>
     val fileImportsScope: List<FirScope>
     val typeParametersScopes: List<FirScope>
     val localScopes: FirLocalScopes
