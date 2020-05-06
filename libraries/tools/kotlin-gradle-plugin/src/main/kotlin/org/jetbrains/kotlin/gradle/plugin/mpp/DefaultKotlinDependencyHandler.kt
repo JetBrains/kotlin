@@ -118,6 +118,23 @@ class DefaultKotlinDependencyHandler(
             directory = directory
         )
 
+    override fun optionalNpm(name: String, version: String): NpmDependency =
+        NpmDependency(
+            project = project,
+            name = name,
+            version = version,
+            scope = NpmDependency.Scope.OPTIONAL
+        )
+
+    override fun optionalNpm(name: String, directory: File): NpmDependency =
+        directoryNpmDependency(name, directory, NpmDependency.Scope.OPTIONAL)
+
+    override fun optionalNpm(directory: File): NpmDependency =
+        optionalNpm(
+            name = moduleName(directory),
+            directory = directory
+        )
+
     override fun peerNpm(name: String, version: String): NpmDependency =
         NpmDependency(
             project = project,
