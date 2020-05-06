@@ -2,8 +2,6 @@
 package com.intellij.util.indexing;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.HiddenFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
@@ -85,15 +83,8 @@ public class FindSymbolParameters {
 
   @NotNull
   public static GlobalSearchScope searchScopeFor(@Nullable Project project, boolean searchInLibraries) {
-    GlobalSearchScope baseScope =
-      project == null ? new EverythingGlobalScope() :
-      searchInLibraries ? ProjectScope.getAllScope(project) : ProjectScope.getProjectScope(project);
-
-    return baseScope.intersectWith(new EverythingGlobalScope(project) {
-      @Override
-      public boolean contains(@NotNull VirtualFile file) {
-        return !(file.getFileSystem() instanceof HiddenFileSystem);
-      }
-    });
+    return project == null ? new EverythingGlobalScope() :
+           searchInLibraries ? ProjectScope.getAllScope(project) :
+           ProjectScope.getProjectScope(project);
   }
 }
