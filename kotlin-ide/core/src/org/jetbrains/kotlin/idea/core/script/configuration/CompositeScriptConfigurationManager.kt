@@ -25,6 +25,21 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
+/**
+ * The [CompositeScriptConfigurationManager] will provide redirection of [ScriptConfigurationManager] calls to the
+ * custom [ScriptingSupport] or [DefaultScriptingSupport] if that script lack of custom [ScriptingSupport].
+ *
+ * The [ScriptConfigurationManager] is implemented by caching all scripts using the [ScriptClassRootsCache].
+ * The [ScriptClassRootsCache] is always available and never blacked by the writer, as all writes occurs
+ * using the copy-on-write strategy.
+ *
+ * This cache are loaded on start and will be updating asynchronously using the [updater].
+ * Sync updates still my be occurred from the [DefaultScriptingSupport].
+ *
+ * We are also watching all script documents:
+ * [notifier] will call first applicable [ScriptChangesNotifier.listeners] when editor is activated or document changed.
+ * Listener should do something to invalidate configuration and schedule reloading.
+ */
 class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigurationManager {
     @Suppress("unused")
     private val notifier = ScriptChangesNotifier(project)

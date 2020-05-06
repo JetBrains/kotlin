@@ -16,18 +16,23 @@ import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import java.io.File
 
 /**
- * See [GradleBuildRootsManager]
+ * [GradleBuildRoot] is a linked gradle build (don't confuse with gradle project and included build).
+ * Each [GradleBuildRoot] may have it's own Gradle version, Java home and other settings.
+ *
+ * Typically, IntelliJ project have no more than one [GradleBuildRoot].
+ *
+ * See [GradleBuildRootsManager] for more details.
  */
 sealed class GradleBuildRoot {
     /**
-     * Add Gradle Project
-     * for other scripts too
-     *
-     * precompiled script
-     * may be also included scripts not returned by gradle: todo proper notification
+     * The script not related to any Gradle build that is linked to IntelliJ Project,
+     * or we cannot known what is it
      */
-    class Unlinked() : GradleBuildRoot()
+    class Unlinked : GradleBuildRoot()
 
+    /**
+     * Linked project, that may be itself: [Legacy], [New] or [Imported].
+     */
     abstract class Linked : GradleBuildRoot() {
         @Volatile
         var importing = false
@@ -38,25 +43,19 @@ sealed class GradleBuildRoot {
     }
 
     /**
-     * Notification: please update to Gradle 6.0
-     * default loader, cases:
-     * - not loaded: Notification: Load configration to get code insights
-     * - loaded, not up-to-date: Notifaction: Reload configuraiton
-     * - loaded, up-to-date: Nothing
+     * Gradle build with old Gradle version (<6.0)
      */
     class Legacy(override val pathPrefix: String) : Linked()
 
     /**
-     * not imported:
-     *  Notification: Import Gradle project to get code insights
-     * during import:
-     * - disable action on importing. todo: don't miss failed import
-     * - pause analyzing, todo: change status text to: importing gradle project
+     * Linked but not yet imported Gradle build.
      */
     class New(override val pathPrefix: String) : Linked()
 
-    // precompiled scripts not detected by gradle
-
+    /**
+     * Imported Gradle build.
+     * Each imported build have info about all of it's Kotlin Build Scripts.
+     */
     class Imported(
         val project: Project,
         val dir: VirtualFile,
