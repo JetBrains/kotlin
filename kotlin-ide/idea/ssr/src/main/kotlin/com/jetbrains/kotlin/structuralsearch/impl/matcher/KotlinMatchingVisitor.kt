@@ -180,8 +180,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitArgument(argument: KtValueArgument) {
         val other = getTreeElement<KtValueArgument>() ?: return
-        myMatchingVisitor.result = matchTextOrVariable(argument.getArgumentName(), other.getArgumentName())
-                && myMatchingVisitor.match(argument.getArgumentExpression(), other.getArgumentExpression())
+        myMatchingVisitor.result = myMatchingVisitor.match(argument.getArgumentExpression(), other.getArgumentExpression())
+                && (!argument.isNamed() || !other.isNamed() || matchTextOrVariable(
+            argument.getArgumentName(), other.getArgumentName()
+        ))
     }
 
     private fun matchValueArgumentList(queryArgs: List<KtValueArgument>?, codeArgs: List<KtValueArgument>?): Boolean {

@@ -58,4 +58,14 @@ class KotlinSSWhenExpressionTest : KotlinSSTest() {
             """
         )
     }
+
+    fun testWhenVarRefEntry() {
+        doTest(
+            """
+            when (i) {
+                '_ -> println("one")
+             }
+            """.trimIndent()
+        )
+    }
 }
