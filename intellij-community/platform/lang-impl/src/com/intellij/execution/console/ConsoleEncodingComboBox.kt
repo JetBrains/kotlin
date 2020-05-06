@@ -90,7 +90,7 @@ class ConsoleEncodingComboBox : ComboBox<ConsoleEncodingComboBox.EncodingItem>()
    *    Charset n
    * ```
    */
-  fun reset(charsetName: String) {
+  fun reset(charset: Charset) {
     val encodingManager = EncodingManager.getInstance()
     val favorites = encodingManager.favorites.map { CharsetItem(it) }
     val available = Charset.availableCharsets().values.map { CharsetItem(it) }
@@ -101,10 +101,10 @@ class ConsoleEncodingComboBox : ComboBox<ConsoleEncodingComboBox.EncodingItem>()
     listModel.add(LabelItem(ApplicationBundle.message("combobox.console.more.separator.label")))
     listModel.add(available)
 
-    listModel.selectedItem = if (charsetName.isEmpty()) {
+    listModel.selectedItem = if (charset == NO_ENCODING) {
       NoEncodingItem
     } else {
-      CharsetToolkit.forName(charsetName)?.let { CharsetItem(it) } ?: NoEncodingItem
+      CharsetItem(charset)
     }
   }
 
