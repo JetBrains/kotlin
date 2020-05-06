@@ -14,9 +14,8 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStackImpl
+import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
@@ -60,8 +58,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             dataFlowAnalyzerContext: DataFlowAnalyzerContext<PersistentFlow>
         ): FirDataFlowAnalyzer<*> =
             object : FirDataFlowAnalyzer<PersistentFlow>(components, dataFlowAnalyzerContext) {
-                private val receiverStack: ImplicitReceiverStackImpl
-                    get() = components.implicitReceiverStack as ImplicitReceiverStackImpl
+                private val receiverStack: PersistentImplicitReceiverStack
+                    get() = components.implicitReceiverStack as PersistentImplicitReceiverStack
 
                 override val logicSystem: PersistentLogicSystem = object : PersistentLogicSystem(components.inferenceComponents.ctx) {
                     override fun processUpdatedReceiverVariable(flow: PersistentFlow, variable: RealVariable) {
