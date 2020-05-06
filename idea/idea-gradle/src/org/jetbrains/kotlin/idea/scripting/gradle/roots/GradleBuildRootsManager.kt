@@ -31,6 +31,7 @@ import org.jetbrains.plugins.gradle.settings.*
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.nio.file.Paths
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -118,7 +119,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
     fun findScriptBuildRoot(gradleKtsFile: VirtualFile): ScriptUnderRoot? =
         findScriptBuildRoot(gradleKtsFile.path)
 
-    fun findScriptBuildRoot(filePath: String, searchNearestLegacy: Boolean = true): ScriptUnderRoot? {
+    private fun findScriptBuildRoot(filePath: String, searchNearestLegacy: Boolean = true): ScriptUnderRoot? {
         if (!filePath.endsWith(".gradle.kts")) return null
 
         val scriptInfo = getScriptInfo(filePath)
@@ -150,6 +151,11 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
 
     fun getBuildRoot(gradleWorkingDir: String) =
         roots.getBuildRoot(gradleWorkingDir)
+
+    fun fileChanged(filePath: String, ts: Long = System.currentTimeMillis()) {
+        val root = findScriptBuildRoot(filePath, searchNearestLegacy = false)?.root as? GradleBuildRoot.Linked
+        root?.fileChanged(filePath, ts)
+    }
 
     fun markImportingInProgress(workingDir: String, inProgress: Boolean = true) {
         actualizeBuildRoot(workingDir)?.importing = inProgress
