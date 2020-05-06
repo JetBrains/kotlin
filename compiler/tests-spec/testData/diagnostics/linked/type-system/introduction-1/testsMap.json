@@ -8,7 +8,8 @@
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.2.kt",
           "unexpectedBehaviour": false,
-          "linkType": "primary"
+          "linkType": "primary",
+          "helpers": "checkType, functions"
         },
         {
           "specVersion": "0.1-296",
@@ -16,7 +17,8 @@
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "primary"
+          "linkType": "primary",
+          "helpers": "checkType, functions"
         }
       ]
     }
@@ -60,7 +62,8 @@
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos/2.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ],
       "1": [
@@ -70,7 +73,8 @@
           "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/introduction-1/p-8/pos/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ]
     }

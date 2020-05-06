@@ -8,7 +8,8 @@
           "description": "check any if-statement in kotlin may be trivially turned into such an expression by replacing the missing branch with a kotlin.Unit object expression.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/neg/2.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ],
       "1": [
@@ -54,7 +55,8 @@
           "description": "check any if-statement in kotlin may be trivially turned into such an expression by replacing the missing branch with a kotlin.Unit object expression.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/2.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType, functions"
         }
       ],
       "1": [
@@ -64,7 +66,8 @@
           "description": "check if-expressions must have both branches.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/1.2.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         },
         {
           "specVersion": "0.1-296",
@@ -72,7 +75,8 @@
           "description": "check if-expressions must have both branches.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis/control-flow-graph/expressions-1/conditional-expressions/p-1/pos/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         },
         {
           "specVersion": "0.1-152",

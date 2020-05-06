@@ -8,7 +8,8 @@
           "description": "Non-exhaustive when using nullable enum values.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/10.3.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "enumClasses"
         },
         {
           "specVersion": "0.1-100",
@@ -16,7 +17,8 @@
           "description": "Non-exhaustive when using subclasses of the nullable sealed class.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/10.2.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "sealedClasses"
         },
         {
           "specVersion": "0.1-100",
@@ -190,7 +192,8 @@
           "description": "Non-exhaustive when using subclasses of the sealed class.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/6.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "sealedClasses"
         },
         {
           "specVersion": "0.1-152",
@@ -420,7 +423,8 @@
           "description": "Exhaustive when using subclasses of the nullable sealed class.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.3.kt",
           "unexpectedBehaviour": true,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "sealedClasses"
         },
         {
           "specVersion": "0.1-100",
@@ -428,7 +432,8 @@
           "description": "Exhaustive when using nullable enum values.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.2.kt",
           "unexpectedBehaviour": true,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "enumClasses"
         },
         {
           "specVersion": "0.1-100",
@@ -478,7 +483,8 @@
           "description": "Exhaustive when, with bound value (sealed, enum, boolean), with redundant else branch.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.3.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "enumClasses, sealedClasses"
         },
         {
           "specVersion": "0.1-100",
@@ -578,7 +584,8 @@
           "description": "Exhaustive when using enum values.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/8.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "enumClasses"
         }
       ],
       "6": [
@@ -588,7 +595,8 @@
           "description": "Exhaustive when using subclasses of the sealed class.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/6.1.kt",
           "unexpectedBehaviour": true,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "sealedClasses"
         }
       ],
       "9": [

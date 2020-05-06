@@ -322,7 +322,8 @@
           "description": "A type checking of a real literal with an exponent mark.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.2.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         },
         {
           "specVersion": "0.1-100",
@@ -330,7 +331,8 @@
           "description": "A type checking of a real literal with omitted a whole-number part.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.3.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         },
         {
           "specVersion": "0.1-100",
@@ -338,7 +340,8 @@
           "description": "A type checking of a real literal with omitted a whole-number part and an exponent mark.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.4.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         },
         {
           "specVersion": "0.1-100",
@@ -346,7 +349,8 @@
           "description": "A type checking of a real literal with omitted a fraction part and an exponent mark.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.5.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         },
         {
           "specVersion": "0.1-100",
@@ -354,7 +358,8 @@
           "description": "A type checking of a simple real literal (with/without underscores).",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-5/pos/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ]
     }

@@ -8,7 +8,8 @@
           "description": "Check of Nothing type",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/neg/2.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ]
     },
@@ -20,7 +21,8 @@
           "description": "Check of Nothing as a subtype of any type",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/2.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType, functions"
         }
       ],
       "1": [
@@ -30,7 +32,8 @@
           "description": "Check of Nothing type is a subtype of any types",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType, functions"
         }
       ]
     }

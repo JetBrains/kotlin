@@ -20,7 +20,8 @@
           "description": "condition expression is not a subtype of kotlin.Boolean.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "primary"
+          "linkType": "primary",
+          "helpers": "checkType"
         }
       ]
     }
@@ -46,7 +47,8 @@
           "description": "condition expression is not a subtype of kotlin.Boolean.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ]
     }

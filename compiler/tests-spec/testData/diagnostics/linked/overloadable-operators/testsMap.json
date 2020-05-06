@@ -28,7 +28,8 @@
           "description": "All comparison expressions always have type kotlin.Boolean.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "primary"
+          "linkType": "primary",
+          "helpers": "checkType"
         },
         {
           "specVersion": "0.1-218",
@@ -36,7 +37,8 @@
           "description": "The return type of these functions is not restricted.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "primary"
+          "linkType": "primary",
+          "helpers": "checkType"
         }
       ]
     }

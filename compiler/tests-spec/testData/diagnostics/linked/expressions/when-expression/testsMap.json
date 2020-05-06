@@ -18,7 +18,8 @@
           "description": "\u0027When\u0027 with bound value and type test condition on the non-type operand of the type checking operator.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/1.2.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "classes"
         },
         {
           "specVersion": "0.1-296",
@@ -26,7 +27,8 @@
           "description": "\u0027When\u0027 with bound value and type test condition (without companion object in classes), but without type checking operator.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "classes"
         },
         {
           "specVersion": "0.1-152",
@@ -92,7 +94,8 @@
           "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with range expression, but without containment checking operator.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/3.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider"
         },
         {
           "specVersion": "0.1-296",
@@ -100,7 +103,8 @@
           "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with contains operator and type without defined contains operator.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/3.2.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "classes"
         },
         {
           "specVersion": "0.1-152",
@@ -228,7 +232,8 @@
           "description": "\u0027When\u0027 with bound value and type test condition (invert type checking operator).",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.2.kt",
           "unexpectedBehaviour": true,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "classes, sealedClasses, objects"
         },
         {
           "specVersion": "0.1-296",
@@ -236,7 +241,8 @@
           "description": "\u0027When\u0027 with bound value and enumaration of type test conditions.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.3.kt",
           "unexpectedBehaviour": true,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "classes, sealedClasses, objects"
         },
         {
           "specVersion": "0.1-296",
@@ -244,7 +250,8 @@
           "description": "\u0027When\u0027 with bound value and enumaration of type test conditions (with invert type checking operator).",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.4.kt",
           "unexpectedBehaviour": true,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "sealedClasses"
         },
         {
           "specVersion": "0.1-296",
@@ -252,7 +259,8 @@
           "description": "\u0027When\u0027 with bound value and type test condition.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/1.1.kt",
           "unexpectedBehaviour": true,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "classes, objects"
         },
         {
           "specVersion": "0.1-313",
@@ -286,7 +294,8 @@
           "description": "\u0027When\u0027 with different variants of the arithmetic expressions (additive expression and multiplicative expression) in \u0027when condition\u0027.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/10.2.kt",
           "unexpectedBehaviour": true,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider, classes, functions"
         },
         {
           "specVersion": "0.1-201",
@@ -294,7 +303,8 @@
           "description": "\u0027When\u0027 with enumeration of the different variants of expressions in \u0027when condition\u0027.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/10.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider, classes, functions"
         }
       ],
       "3": [
@@ -304,7 +314,8 @@
           "description": "\u0027When\u0027 with bound value and containment operator.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/3.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider, classes"
         },
         {
           "specVersion": "0.1-296",
@@ -312,7 +323,8 @@
           "description": "\u0027When\u0027 with bound value and enumeration of the containment operators.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/3.2.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider, classes"
         }
       ],
       "7": [
@@ -472,7 +484,8 @@
           "description": "When with non-boolean value in the when condition.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg/2.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider"
         },
         {
           "specVersion": "0.1-100",
@@ -480,7 +493,8 @@
           "description": "When without bound value, forbidden comma in the when condition.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/neg/2.2.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider, classes"
         }
       ],
       "1": [
@@ -528,7 +542,8 @@
           "description": "When without bound value, various boolean values in the when condition.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider, enumClasses, sealedClasses, classes"
         },
         {
           "specVersion": "0.1-100",
@@ -536,7 +551,8 @@
           "description": "\u0027When\u0027 without bound value and with Nothing in condition (subtype of Boolean).",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/2.3.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider"
         },
         {
           "specVersion": "0.1-100",
@@ -562,7 +578,8 @@
           "description": "When without bound value, various expressions in the control structure body.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/1.1.kt",
           "unexpectedBehaviour": true,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider, classes, functions"
         },
         {
           "specVersion": "0.1-152",
@@ -636,7 +653,8 @@
           "description": "\u0027When\u0027 with bound value and with different variants of expressions in the control structure body.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.1.kt",
           "unexpectedBehaviour": true,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "typesProvider, classes, functions"
         },
         {
           "specVersion": "0.1-313",

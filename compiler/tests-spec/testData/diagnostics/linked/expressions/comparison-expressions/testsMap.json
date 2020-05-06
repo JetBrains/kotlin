@@ -36,7 +36,8 @@
           "description": "All comparison expressions always have type kotlin.Boolean.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos/1.1.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ]
     }

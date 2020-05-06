@@ -144,7 +144,8 @@
           "description": "Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.2.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType, functions"
         },
         {
           "specVersion": "0.1-213",
@@ -152,7 +153,8 @@
           "description": "Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.3.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType, functions"
         },
         {
           "specVersion": "0.1-213",
@@ -160,7 +162,8 @@
           "description": "Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/pos/1.4.kt",
           "unexpectedBehaviour": false,
-          "linkType": "main"
+          "linkType": "main",
+          "helpers": "checkType, functions"
         },
         {
           "specVersion": "0.1-213",

@@ -56,6 +56,7 @@ object TestsJsonMapGenerator {
                 test.unexpectedBehavior || test.cases.byNumbers.any { it.value.unexpectedBehavior }
             )
             addProperty("linkType", linkType.toString())
+            test.helpers?.run { addProperty("helpers", test.helpers.joinToString()) }
         }
 
 
