@@ -258,13 +258,18 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         instructions: InsnList,
         type: KT
     ) = rewriteNextTypeInsn(insn, Opcodes.ACONST_NULL) { stubConstNull: AbstractInsnNode ->
-        val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        val stackSize = typeSystem.generateTypeOf(InstructionAdapter(newMethodNode), type, intrinsicsSupport)
+        val newMethodNode = MethodNode(Opcodes.API_VERSION, "fake", "()V", null, null)
+        val mv = wrapWithMaxLocalCalc(newMethodNode)
+        typeSystem.generateTypeOf(InstructionAdapter(mv), type, intrinsicsSupport)
 
-        instructions.insert(insn, newMethodNode.instructions)
+        // Adding a fake return (and removing it below) to trigger maxStack calculation
+        mv.visitInsn(Opcodes.RETURN)
+        mv.visitMaxs(-1, -1)
+
+        instructions.insert(insn, newMethodNode.instructions.apply { remove(last) })
         instructions.remove(stubConstNull)
 
-        maxStackSize = max(maxStackSize, stackSize)
+        maxStackSize = max(maxStackSize, newMethodNode.maxStack)
         return true
     }
 

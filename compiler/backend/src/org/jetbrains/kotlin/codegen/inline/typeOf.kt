@@ -36,10 +36,9 @@ private fun TypeSystemCommonBackendContext.putTypeOfReifiedTypeParameter(
     v.aconst(null)
 }
 
-// Returns some upper bound on maximum stack size
 internal fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
     v: InstructionAdapter, type: KT, intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>
-): Int {
+) {
     intrinsicsSupport.putClassInstance(v, type)
 
     val argumentsSize = type.argumentsCount()
@@ -50,16 +49,13 @@ internal fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateType
         v.newarray(K_TYPE_PROJECTION)
     }
 
-    var maxStackSize = 3
-
     for (i in 0 until argumentsSize) {
         if (useArray) {
             v.dup()
             v.iconst(i)
         }
 
-        val stackSize = doGenerateTypeProjection(v, type.getArgument(i), intrinsicsSupport)
-        maxStackSize = maxOf(maxStackSize, stackSize + i + 5)
+        doGenerateTypeProjection(v, type.getArgument(i), intrinsicsSupport)
 
         if (useArray) {
             v.astore(K_TYPE_PROJECTION)
@@ -77,30 +73,27 @@ internal fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateType
     val signature = Type.getMethodDescriptor(K_TYPE, JAVA_CLASS_TYPE, *projections)
 
     v.invokestatic(REFLECTION, methodName, signature, false)
-
-    return maxStackSize
 }
 
 private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.doGenerateTypeProjection(
     v: InstructionAdapter,
     projection: TypeArgumentMarker,
     intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>
-): Int {
+) {
     // KTypeProjection members could be static, see KT-30083 and KT-30084
     v.getstatic(K_TYPE_PROJECTION.internalName, "Companion", K_TYPE_PROJECTION_COMPANION.descriptor)
 
     if (projection.isStarProjection()) {
         v.invokevirtual(K_TYPE_PROJECTION_COMPANION.internalName, "getSTAR", Type.getMethodDescriptor(K_TYPE_PROJECTION), false)
-        return 1
+        return
     }
 
     @Suppress("UNCHECKED_CAST")
     val type = projection.getType() as KT
     val typeParameterClassifier = type.typeConstructor().getTypeParameterClassifier()
-    val stackSize = if (typeParameterClassifier != null) {
+    if (typeParameterClassifier != null) {
         if (typeParameterClassifier.isReified()) {
             putTypeOfReifiedTypeParameter(v, typeParameterClassifier, type.isMarkedNullable())
-            2
         } else {
             // TODO: support non-reified type parameters in typeOf
             @Suppress("UNCHECKED_CAST")
@@ -116,6 +109,4 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.doGenerateTyp
         TypeVariance.OUT -> "covariant"
     }
     v.invokevirtual(K_TYPE_PROJECTION_COMPANION.internalName, methodName, Type.getMethodDescriptor(K_TYPE_PROJECTION, K_TYPE), false)
-
-    return stackSize + 1
 }
