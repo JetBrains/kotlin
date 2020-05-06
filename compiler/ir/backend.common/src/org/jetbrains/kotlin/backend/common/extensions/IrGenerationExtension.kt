@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
+// TODO: Make IrPluginContext be interface
 open class IrPluginContext(
     @Deprecated("FrontEnd API shouldn't be accessed in Ir plugin environment")
     val moduleDescriptor: ModuleDescriptor,
@@ -58,8 +59,8 @@ open class IrPluginContext(
         if (symbol.isBound) return symbol
 
         linker.getDeclaration(symbol)
-        // TODO: post process
-//        linker.
+        linker.postProcess()
+
         return symbol
     }
 
@@ -70,8 +71,8 @@ open class IrPluginContext(
 
         symbols.forEach { if (!it.isBound) linker.getDeclaration(it) }
 
-        // TODO: post process
-//        linker.
+        linker.postProcess()
+
         return symbols
     }
 

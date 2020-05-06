@@ -537,7 +537,7 @@ abstract class KotlinIrLinker(
         deserializersForModules.values.forEach { it.init() }
     }
 
-    fun postProcess() {
+    override fun postProcess() {
         deserializersForModules.values.forEach { it.postProcess() }
         finalizeExpectActualLinker()
     }
