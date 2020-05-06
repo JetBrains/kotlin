@@ -192,8 +192,9 @@ fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     val expression = argument.getArgumentExpression()!!
     assert(expression.unpackFunctionLiteral() != null)
 
-    val dummyCall = KtPsiFactory(this).createExpressionByPattern("foo()$0:'{}'", expression) as KtCallExpression
+    val dummyCall = KtPsiFactory(project).createExpression("foo() {}") as KtCallExpression
     val functionLiteralArgument = dummyCall.lambdaArguments.single()
+    functionLiteralArgument.getArgumentExpression()?.replace(expression)
     this.add(functionLiteralArgument)
     /* we should not remove empty parenthesis when callee is a call too - it won't parse */
     if (argumentList.arguments.size == 1 && calleeExpression !is KtCallExpression) {
