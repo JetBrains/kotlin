@@ -3,8 +3,11 @@
 package com.intellij.codeInsight.actions;
 
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.codeInsight.daemon.impl.ShowAutoImportPass;
+import com.intellij.codeInspection.HintAction;
 import com.intellij.lang.ImportOptimizer;
 import com.intellij.lang.LanguageImportStatements;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -83,7 +86,10 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
       }
     }
 
-    Runnable runnable = runnables.isEmpty() ? EmptyRunnable.getInstance() : () -> {
+    List<HintAction> hints = ShowAutoImportPass.getImportHints(file);
+
+    Runnable writeTask = runnables.isEmpty() ? EmptyRunnable.getInstance() : () -> {
+      ApplicationManager.getApplication().assertIsDispatchThread();
       CodeStyleManagerImpl.setSequentialProcessingAllowed(false);
       try {
         for (Runnable runnable1 : runnables) {
@@ -91,13 +97,14 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
           myOptimizerNotifications.add(getNotificationInfo(runnable1));
         }
         putNotificationInfoIntoCollector();
+        ShowAutoImportPass.fixAllImportsSilently(file, hints);
       }
       finally {
         CodeStyleManagerImpl.setSequentialProcessingAllowed(true);
       }
     };
 
-    return new FutureTask<>(runnable, true);
+    return new FutureTask<>(writeTask, true);
   }
 
   @NotNull
