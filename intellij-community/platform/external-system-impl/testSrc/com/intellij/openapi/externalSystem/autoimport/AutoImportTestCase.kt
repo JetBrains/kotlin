@@ -40,6 +40,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   private val notificationAware get() = ProjectNotificationAware.getInstance(myProject)
   private val projectTracker get() = AutoImportProjectTracker.getInstance(myProject).also { it.enableAutoImportInTests() }
   private val projectTrackerSettings get() = ProjectTrackerSettings.getInstance(myProject)
+  private val projectTrackerDisposables = mutableMapOf<ExternalSystemProjectId, Disposable>()
 
   private fun ensureExistsParentDirectory(relativePath: String): VirtualFile {
     return relativePath.split("/").dropLast(1)
@@ -179,7 +180,9 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
     }
 
   protected fun register(projectAware: ExternalSystemProjectAware, activate: Boolean = true) {
-    projectTracker.register(projectAware)
+    val disposable = Disposer.newDisposable()
+    projectTrackerDisposables[projectAware.projectId] = disposable
+    projectTracker.register(projectAware, disposable)
     if (activate) activate(projectAware.projectId)
   }
 
@@ -187,7 +190,9 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
     projectTracker.activate(projectId)
   }
 
-  protected fun remove(projectId: ExternalSystemProjectId) = projectTracker.remove(projectId)
+  protected fun remove(projectId: ExternalSystemProjectId) {
+    Disposer.dispose(projectTrackerDisposables[projectId]!!)
+  }
 
   protected fun refreshProject() = projectTracker.scheduleProjectRefresh()
 

@@ -11,15 +11,12 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros.CACHE_FILE
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTrackerSettings.AutoReloadType
-import com.intellij.openapi.extensions.ExtensionPointUtil
-import com.intellij.openapi.externalSystem.ExternalSystemManager
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.SUCCESS
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.EXTERNAL
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.autoimport.update.PriorityEatUpdate
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrace
 import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
@@ -176,46 +173,26 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
       .orElse(null)
   }
 
-  override fun register(projectAware: ExternalSystemProjectAware) {
+  override fun register(projectAware: ExternalSystemProjectAware, parentDisposable: Disposable) {
     val projectId = projectAware.projectId
     val activationProperty = AtomicBooleanProperty(false)
     val projectStatus = ProjectStatus(debugName = projectId.readableName)
-    val parentDisposable = Disposer.newDisposable(projectId.readableName)
     val settingsTracker = ProjectSettingsTracker(project, this, backgroundExecutor, projectAware, parentDisposable)
     val projectData = ProjectData(projectStatus, activationProperty, projectAware, settingsTracker, parentDisposable)
     val notificationAware = ProjectNotificationAware.getInstance(project)
 
-    registerProjectAwareDisposable(projectAware)
     projectDataMap[projectId] = projectData
+    Disposer.register(parentDisposable, Disposable { remove(projectId) })
 
     val id = "ProjectSettingsTracker: ${projectData.projectAware.projectId.readableName}"
     settingsTracker.beforeApplyChanges { projectRefreshOperation.startTask(id) }
     settingsTracker.afterApplyChanges { projectRefreshOperation.finishTask(id) }
     activationProperty.afterSet({ scheduleChangeProcessing() }, parentDisposable)
 
-    Disposer.register(project, parentDisposable)
     projectAware.subscribe(createProjectRefreshListener(projectData), parentDisposable)
     Disposer.register(parentDisposable, Disposable { notificationAware.notificationExpire(projectId) })
 
     loadState(projectId, projectData)
-  }
-
-  private fun registerProjectAwareDisposable(projectAware: ExternalSystemProjectAware) {
-    val projectId = projectAware.projectId
-    val projectAwareDisposable: Disposable?
-    if (projectAware is Disposable) {
-      projectAwareDisposable = projectAware
-    }
-    else {
-      projectAwareDisposable = ExternalSystemApiUtil.getManager(projectId.systemId)?.run {
-        val disposable = ExtensionPointUtil.createExtensionDisposable(this, ExternalSystemManager.EP_NAME)
-        Disposer.register(project, disposable)
-        return@run disposable
-      }
-    }
-    if (projectAwareDisposable != null) {
-      Disposer.register(projectAwareDisposable, Disposable { remove(projectId) })
-    }
   }
 
   override fun activate(id: ExternalSystemProjectId) {
