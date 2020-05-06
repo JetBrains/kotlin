@@ -6,6 +6,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
+/**
+ * Provides a way to specify file types, which can be processed by a build process. This knowledge allows the IDE to treat files of these types
+ * accordingly: for example, this enables "Compile" action on such files in a context menu.
+ * The implementation should be registered in plugin.xml file:
+ *
+ * <pre>
+ * &lt;extensions defaultExtensionNs="com.intellij"&gt;
+ * &nbsp;&nbsp;&lt;compilableFileTypesProvider implementation="com.mycompany.compiler.MyTypesProvider"/&gt;
+ * &lt;/extensions&gt;
+ * </pre>
+ *
+ * @see com.intellij.openapi.compiler.CompilerManager#isCompilableFileType
+ */
 public interface CompilableFileTypesProvider {
   @NotNull
   Set<FileType> getCompilableFileTypes();
