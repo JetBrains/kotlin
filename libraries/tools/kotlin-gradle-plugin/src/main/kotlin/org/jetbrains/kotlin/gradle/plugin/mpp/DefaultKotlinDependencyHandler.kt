@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinNpmDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
+import org.jetbrains.kotlin.gradle.targets.js.npm.onlyNameNpmDependency
 import java.io.File
 
 class DefaultKotlinDependencyHandler(
@@ -66,10 +67,6 @@ class DefaultKotlinDependencyHandler(
     override fun project(notation: Map<String, Any?>): ProjectDependency =
         project.dependencies.project(notation) as ProjectDependency
 
-    override fun npm(name: String): Dependency {
-        throw IllegalArgumentException("NPM dependency '$name' doesn't have version. Please, set version explicitly.")
-    }
-
     private fun addDependencyByAnyNotation(
         configurationName: String,
         dependencyNotation: Any
@@ -92,6 +89,9 @@ class DefaultKotlinDependencyHandler(
             configure(it)
             project.dependencies.add(configurationName, it)
         }
+
+    override fun npm(name: String): Dependency =
+        onlyNameNpmDependency(name)
 
     override fun npm(name: String, version: String): NpmDependency =
         NpmDependency(

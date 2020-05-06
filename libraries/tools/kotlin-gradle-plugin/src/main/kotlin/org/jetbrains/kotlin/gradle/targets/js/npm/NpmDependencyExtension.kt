@@ -27,7 +27,7 @@ private class DefaultNpmDependencyExtension(
     private val scope: NpmDependency.Scope
 ) : NpmDependencyExtension, Closure<NpmDependency>(project.dependencies) {
     override fun invoke(name: String): NpmDependency =
-        throw IllegalArgumentException("NPM dependency '$name' doesn't have version. Please, set version explicitly.")
+        onlyNameNpmDependency(name)
 
     override operator fun invoke(name: String, version: String): NpmDependency =
         NpmDependency(
