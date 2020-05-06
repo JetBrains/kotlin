@@ -17,22 +17,21 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
         addVfsListener(this)
     }
 
-    fun fileChanged(filePath: String, ts: Long) {
-        // NOTE: this is required for legacy roots too
-        val root = GradleBuildRootsManager.getInstance(project)
-            .findScriptBuildRoot(filePath, searchNearestLegacy = false)
-            ?.root as? GradleBuildRoot.Linked
+    fun fileChanged(filePath: String, ts: Long) =
+        GradleBuildRootsManager.getInstance(project).fileChanged(filePath, ts)
 
-        root?.fileChanged(filePath, ts)
+    override fun isApplicable(vFile: VirtualFile) =
+        GradleBuildRootsManager.getInstance(project).isApplicable(vFile)
+
+    override fun editorActivated(vFile: VirtualFile) =
+        checkUpToDate(vFile)
+
+    override fun documentChanged(vFile: VirtualFile) {
+        fileChanged(vFile.path, System.currentTimeMillis())
+        checkUpToDate(vFile)
     }
 
-    override fun isApplicable(vFile: VirtualFile) = GradleBuildRootsManager.getInstance(project).isApplicable(vFile)
-
-    override fun editorActivated(vFile: VirtualFile) = checkUpToDate(vFile)
-
-    override fun documentChanged(vFile: VirtualFile) = checkUpToDate(vFile)
-
-    fun checkUpToDate(vFile: VirtualFile) {
+    private fun checkUpToDate(vFile: VirtualFile) {
         val upToDate = GradleBuildRootsManager.getInstance(project)
             .getScriptInfo(vFile)?.model?.inputs?.isUpToDate(project, vFile) ?: return
 
