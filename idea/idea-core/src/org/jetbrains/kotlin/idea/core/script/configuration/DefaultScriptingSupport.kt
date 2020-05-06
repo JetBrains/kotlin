@@ -36,6 +36,60 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.script.experimental.api.ScriptDiagnostic
 
+/**
+ * Standard implementation of scripts configuration loading and caching.
+ *
+ * ## Loading initiation
+ *
+ * [getOrLoadConfiguration] will be called when we need to show or analyze some script file.
+ *
+ * As described in [DefaultScriptingSupportBase], configuration may be loaded from [cache]
+ * or [reloadOutOfDateConfiguration] will be called on [cache] miss.
+ *
+ * There are 2 tiers [cache]: memory and FS. For now FS cache implemented by [ScriptConfigurationLoader]
+ * because we are not storing classpath roots yet. As a workaround cache.all() will return only memory
+ * cached configurations.  So, for now we are indexing roots that loaded from FS with
+ * default [reloadOutOfDateConfiguration] mechanics.
+ *
+ * Also, [ensureConfigurationUpToDate] may be called from [UnusedSymbolInspection]
+ * to ensure that configuration of all scripts containing some symbol are up-to-date or try load it in sync.
+ * Note: it makes sense only in case of "auto apply" mode and sync loader, in other cases all symbols just
+ * will be treated as used.
+ *
+ * ## Loading
+ *
+ * When requested, configuration will be loaded using first applicable [loaders].
+ * It can work synchronously or asynchronously.
+ *
+ * Synchronous loader will be called just immediately. Despite this, its result may not be applied immediately,
+ * see next section for details.
+ *
+ * Asynchronous loader will be called in background thread (by [BackgroundExecutor]).
+ *
+ * ## Applying
+ *
+ * By default loaded configuration will *not* be applied immediately. Instead, we show in editor notification
+ * that suggests user to apply changed configuration. This was done to avoid sporadically starting indexing of new roots,
+ * which may happens regularly for large Gradle projects.
+ *
+ * Notification will be displayed when configuration is going to be updated. First configuration will be loaded
+ * without notification.
+ *
+ * This behavior may be disabled by enabling "auto reload" in project settings.
+ * When enabled, all loaded configurations will be applied immediately, without any notification.
+ *
+ * ## Concurrency
+ *
+ * Each files may be in on of this state:
+ * - scriptDefinition is not ready
+ * - not loaded
+ * - up-to-date
+ * - invalid, in queue (in [BackgroundExecutor] queue)
+ * - invalid, loading
+ * - invalid, waiting for apply
+ *
+ * [reloadOutOfDateConfiguration] guard this states. See it's docs for more details.
+ */
 class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : DefaultScriptingSupportBase(manager) {
     // TODO public for tests
     val backgroundExecutor: BackgroundExecutor =
@@ -286,7 +340,19 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
     }
 }
 
-abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigurationManager) : ScriptingSupport() {
+/**
+ * Abstraction for [DefaultScriptingSupportBase] based [cache] and [reloadOutOfDateConfiguration].
+ * Among this two methods concrete implementation should provide script changes listening.
+ *
+ * Basically all requests routed to [cache]. If there is no entry in [cache] or it is considered out-of-date,
+ * then [reloadOutOfDateConfiguration] will be called, which, in turn, should call [setAppliedConfiguration]
+ * immediately or in some future  (e.g. after user will click "apply context" or/and configuration will
+ * be calculated by some background thread).
+ *
+ * [ScriptClassRootsCache] will be calculated based on [cache]d configurations.
+ * Every change in [cache] will invalidate [ScriptClassRootsCache] cache.
+ */
+abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigurationManager) {
     val project: Project
         get() = manager.project
 
