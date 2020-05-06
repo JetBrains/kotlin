@@ -32,6 +32,8 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.impl.MapIndexStorage;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.*;
+import com.intellij.util.io.keyStorage.AppendableObjectStorage;
+import com.intellij.util.io.keyStorage.AppendableStorageBackedByResizableMappedFile;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +50,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   private static final Logger LOG = Logger.getInstance(MapIndexStorage.class);
   private static final boolean ENABLE_CACHED_HASH_IDS = SystemProperties.getBooleanProperty("idea.index.no.cashed.hashids", true);
   private final boolean myBuildKeyHashToVirtualFileMapping;
-  private AppendableStorageBackedByResizableMappedFile myKeyHashToVirtualFileMapping;
+  private AppendableObjectStorage<int[]> myKeyHashToVirtualFileMapping;
   private volatile int myLastScannedId;
 
   private static final ConcurrentIntObjectMap<Boolean> ourInvalidatedSessionIds = ContainerUtil.createConcurrentIntObjectMap();
@@ -82,7 +84,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
       FileSystem projectFileFS = getProjectFile().getFileSystem();
       assert !projectFileFS.isReadOnly() : "File system " + projectFileFS + " is read only";
       myKeyHashToVirtualFileMapping =
-        new AppendableStorageBackedByResizableMappedFile(getProjectFile(), 4096, null, PagedFileStorage.MB, true);
+        new AppendableStorageBackedByResizableMappedFile<>(getProjectFile(), 4096, null, PagedFileStorage.MB, true, IntPairInArrayKeyDescriptor.INSTANCE);
     }
     else {
       myKeyHashToVirtualFileMapping = null;
@@ -100,11 +102,11 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   }
 
   private <T extends Throwable> void withLock(ThrowableRunnable<T> r) throws T {
-    myKeyHashToVirtualFileMapping.getPagedFileStorage().lock();
+    myKeyHashToVirtualFileMapping.lock();
     try {
       r.run();
     } finally {
-      myKeyHashToVirtualFileMapping.getPagedFileStorage().unlock();
+      myKeyHashToVirtualFileMapping.unlock();
     }
   }
 
@@ -126,21 +128,30 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   public void close() throws StorageException {
     super.close();
     try {
-      if (myKeyHashToVirtualFileMapping != null) {
-        withLock(() -> myKeyHashToVirtualFileMapping.close());
-      }
+      closeKeyHashToFileMapping();
     }
     catch (RuntimeException e) {
       unwrapCauseAndRethrow(e);
     }
   }
 
+  private void closeKeyHashToFileMapping() throws StorageException {
+    if (myKeyHashToVirtualFileMapping != null) {
+      try {
+        withLock(() -> {
+          myKeyHashToVirtualFileMapping.close();
+        });
+      }
+      catch (IOException e) {
+        throw new StorageException(e);
+      }
+    }
+  }
+
   @Override
   public void clear() throws StorageException{
     try {
-      if (myKeyHashToVirtualFileMapping != null) {
-        withLock(() -> myKeyHashToVirtualFileMapping.close());
-      }
+      closeKeyHashToFileMapping();
     }
     catch (RuntimeException e) {
       LOG.info(e);
@@ -198,7 +209,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
               if (!idFilter.containsFileId(key[1])) return true;
               finalHashMaskSet.add(key[0]);
               return true;
-            }, IntPairInArrayKeyDescriptor.INSTANCE);
+            });
           });
 
           if (useCachedHashIds) {
@@ -296,7 +307,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   public void addValue(final Key key, final int inputId, final Value value) throws StorageException {
     try {
       if (myKeyHashToVirtualFileMapping != null) {
-        withLock(() -> myKeyHashToVirtualFileMapping.append(new int[] { myKeyDescriptor.getHashCode(key), inputId }, IntPairInArrayKeyDescriptor.INSTANCE));
+        withLock(() -> myKeyHashToVirtualFileMapping.append(new int[] { myKeyDescriptor.getHashCode(key), inputId }));
         int lastScannedId = myLastScannedId;
         if (lastScannedId != 0) { // we have write lock
           ourInvalidatedSessionIds.cacheOrGet(lastScannedId, Boolean.TRUE);
