@@ -21,6 +21,8 @@ See [calculator sample](https://github.com/JetBrains/kotlin-native/tree/master/s
 
 The table below shows how Kotlin concepts are mapped to Swift/Objective-C and vice versa.
 
+"->" and "<-" indicate that mapping only goes one way.
+
 | Kotlin | Swift | Objective-C | Notes |
 | ------ | ----- |------------ | ----- |
 | `class` | `class` | `@interface` | [note](#name-translation) |
@@ -28,6 +30,7 @@ The table below shows how Kotlin concepts are mapped to Swift/Objective-C and vi
 | `constructor`/`create` | Initializer | Initializer | [note](#initializers) |
 | Property | Property | Property | [note](#top-level-functions-and-properties) [note](#setters)|
 | Method | Method | Method | [note](#top-level-functions-and-properties) [note](#method-names-translation) |
+| `suspend` -> | `completionHandler:` | | |
 | `@Throws` | `throws` | `error:(NSError**)error` | [note](#errors-and-exceptions) |
 | Extension | Extension | Category member | [note](#category-members) |
 | `companion` member <- | Class method or property | Class method or property |  |
@@ -44,7 +47,6 @@ The table below shows how Kotlin concepts are mapped to Swift/Objective-C and vi
 | `Map` | `Dictionary` | `NSDictionary` | |
 | `MutableMap` | `NSMutableDictionary` | `NSMutableDictionary` | [note](#collections) |
 | Function type | Function type | Block pointer type | [note](#function-types) |
-| Suspend functions| Unsupported| Unsupported| [note](#unsupported) |
 | Inline classes | Unsupported| Unsupported| [note](#unsupported) |
 
 
@@ -401,7 +403,6 @@ See [INTEROP.md](INTEROP.md) for an example case where the library uses some pla
 
 Some features of Kotlin programming language are not yet mapped into respective features of Objective-C or Swift.
 Currently, following features are not properly exposed in generated framework headers:
-   * suspend functions
    * inline classes (arguments are mapped as either underlying primitive type or `id`)
    * custom classes implementing standard Kotlin collection interfaces (`List`, `Map`, `Set`) and other special classes
    * Kotlin subclasses of Objective-C classes
