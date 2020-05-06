@@ -41,6 +41,16 @@ object KotlinPredefinedConfigurations {
             "{ '_Parameter* -> '_Expr* }",
             EXPRESSION_TYPE
         ),
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.strings"),
+            """ "$$'_Entry*" """,
+            EXPRESSION_TYPE
+        ),
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.strings.with.long.template"),
+            """ "$$'_EntryBefore*${'$'}{ '_LongTemplateExpr }$$'_EntryAfter*" """,
+            EXPRESSION_TYPE
+        ),
 
         // Operators
         searchTemplate(

@@ -476,8 +476,14 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
-        val other = getTreeElement<KtSimpleNameStringTemplateEntry>() ?: return
-        myMatchingVisitor.result = matchTextOrVariable(entry.expression, other.expression)
+        val other = myMatchingVisitor.element
+        myMatchingVisitor.result = when (other) {
+            is KtSimpleNameStringTemplateEntry -> matchTextOrVariable(entry.expression, other.expression)
+            is KtLiteralStringTemplateEntry -> matchTextOrVariable(entry.expression, other)
+            is KtEscapeStringTemplateEntry -> matchTextOrVariable(entry.expression, other)
+            is KtBlockStringTemplateEntry -> myMatchingVisitor.match(entry.expression, other.expression)
+            else -> false
+        }
     }
 
     override fun visitBlockStringTemplateEntry(entry: KtBlockStringTemplateEntry) {

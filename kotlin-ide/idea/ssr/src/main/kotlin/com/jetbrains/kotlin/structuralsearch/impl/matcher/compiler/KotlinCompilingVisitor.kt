@@ -7,10 +7,7 @@ import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtReferenceExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
 
@@ -54,6 +51,22 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
         if (handler is SubstitutionHandler) {
             handler.setFilter { it is KtExpression }
+        }
+    }
+
+    override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
+        visitElement(entry)
+        val expression = entry.expression ?: return
+        val pattern = myCompilingVisitor.context.pattern
+        val exprHandler = pattern.getHandler(expression)
+
+        if (exprHandler is SubstitutionHandler) {
+            val newHandler = SubstitutionHandler("${exprHandler.name}_parent", false, exprHandler.minOccurs, exprHandler.maxOccurs, true).apply {
+                setFilter { it is KtStringTemplateEntry }
+                val exprPredicate = exprHandler.predicate
+                if (exprPredicate != null) predicate = exprPredicate
+            }
+            pattern.setHandler(entry, newHandler)
         }
     }
 }

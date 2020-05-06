@@ -15,4 +15,8 @@ class KotlinSSStringTemplateEntryTest : KotlinSSTest() {
 
     fun testSingleVariable() { doTest(""" "'_" """) }
 
+    fun testAllStrings() { doTest(""" "$$'_*" """) }
+
+    fun testStringsContainingLongTemplate() { doTest(""" "$$'_*${'$'}{ '_ }$$'_*" """) }
+
 }
