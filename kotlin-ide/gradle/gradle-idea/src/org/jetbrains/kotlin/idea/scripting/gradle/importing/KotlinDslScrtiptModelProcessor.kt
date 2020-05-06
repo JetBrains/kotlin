@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -15,9 +14,8 @@ import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.gradle.BrokenKotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
-import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
@@ -115,14 +113,8 @@ fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {
         errorReporter.reportError(File(model.file), model)
     }
 
-    project.service<GradleScriptInputsWatcher>().saveGradleProjectRootsAfterImport(
-        build.models.map { FileUtil.toSystemIndependentName(File(it.file).parent) }.toSet()
-    )
-
     // todo: use real info about projects
     build.projectRoots.addAll(build.models.map { FileUtil.toSystemIndependentName(File(it.file).parent) })
 
     GradleBuildRootsManager.getInstance(project).update(build)
-
-    project.service<GradleScriptInputsWatcher>().clearState()
 }
