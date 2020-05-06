@@ -71,6 +71,12 @@ interface KotlinDependencyHandler {
 
     fun devNpm(directory: File): Dependency
 
+    fun optionalNpm(name: String, version: String = "*"): Dependency
+
+    fun optionalNpm(name: String, directory: File): Dependency
+
+    fun optionalNpm(directory: File): Dependency
+
     fun peerNpm(name: String, version: String = "*"): Dependency
 }
 
