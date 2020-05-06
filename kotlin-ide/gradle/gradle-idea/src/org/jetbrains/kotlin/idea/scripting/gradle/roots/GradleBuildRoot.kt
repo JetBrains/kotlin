@@ -59,7 +59,7 @@ sealed class GradleBuildRoot {
             LastModifiedFiles.write(dir ?: return, lastModifiedFiles)
         }
 
-        fun areRelatedFilesUpToDate(file: VirtualFile, lastModified: Long): Boolean =
+        fun areRelatedFilesChangedBefore(file: VirtualFile, lastModified: Long): Boolean =
             lastModifiedFiles.lastModifiedTimeStampExcept(file.path) < lastModified
 
         fun fileChanged(filePath: String, ts: Long) {

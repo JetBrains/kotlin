@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtFile
  * 1. It is out of date when essential [sections] are changed
  * @see getGradleScriptInputsStamp
  * 2. When some related file is changed (other gradle script, gradle.properties file)
- * @see GradleScriptInputsWatcher.areRelatedFilesUpToDate
+ * @see GradleBuildRoot.Linked.areRelatedFilesChangedBefore
  *
  * [lastModifiedTs] is needed to check if some related file was changed since last update
  */
@@ -35,7 +36,7 @@ data class GradleKotlinScriptConfigurationInputs(
             return buildRoot == null ||
                     GradleBuildRootsManager.getInstance(project)
                         .getBuildRoot(buildRoot)
-                        ?.areRelatedFilesUpToDate(file, lastModifiedTs) ?: false
+                        ?.areRelatedFilesChangedBefore(file, lastModifiedTs) ?: false
         } catch (cancel: ProcessCanceledException) {
             return false
         }
