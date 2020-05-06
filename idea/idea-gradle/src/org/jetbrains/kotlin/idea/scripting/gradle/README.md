@@ -56,9 +56,9 @@ Note that we can provide custom scripting support only for projects that using G
 
 To have consistent sate of scripts, we should also be aware of external script changes. This is achieved by watching files using the IntelliJ VFS events. [GradleScriptInputsWatcher] is responsible for that.
 
-The first tricky part is that scripts are depending on each other: so, when one script is changed, we actually should invalidate all other scripts as we don't know dependencies between them (Gradle will provide this information later, but it is not yet implemented). Actually, we should know the last modified timestamp of all scripts excepting a particular one. This can be achieved by storing timestamps of two last modified files. [LastModifiedFiles] utility is responsible for that. This is not multiple linked Gradle builds aware yet (currently there is only one global state), but it will be fixed shortly.
+The first tricky part is that scripts are depending on each other: so, when one script is changed, we actually should invalidate all other scripts as we don't know dependencies between them (Gradle will provide this information later, but it is not yet implemented). Actually, we should know the last modified timestamp of all scripts excepting a particular one. This can be achieved by storing timestamps of two last modified files. [LastModifiedFiles] utility is responsible for that.
 
-Another tricky part is that we should track only scripts belong the Gradle project and should ignore all other `*.gradle.kts` files (in `testData` for example). This is achieved by storing Gradle project roots, as scripts can be exactly near Gradle project roots (excepting included and precompiled scripts which are not fully supported yet). This can be gathered from the Gradle project import information or from GradleProjectSettings when the import has not occurred yet. `GradleScriptInputsWatcher.cachedGradleProjectsRoots` is responsible for that.
+Another tricky part is that we should track only scripts belong the Gradle project and should ignore all other `*.gradle.kts` files (in `testData` for example). This is achieved by storing Gradle project roots, as scripts can be exactly near Gradle project roots (excepting included and precompiled scripts which are not fully supported yet). This can be gathered from the Gradle project import information or from GradleProjectSettings when the import has not occurred yet. `GradleBuildRootsManager` does it.
 
 ## Out of project Gradle scripts
 
@@ -68,7 +68,7 @@ There are scripts that are not linked to any import Gradle project. In `testData
 
 For Gradle versions before 6.0, we are still falling back to the [DefaultScriptingSupport] with some extensions.
 
-We are showing notification before loading as we knew what changes will case it. This is done by:
+We are showing notification before loading as we knew what changes will cause it. This is done by:
 - implementing `org.jetbrains.kotlin.scripting.idea.listener` extension point and calling `suggestToUpdateConfigurationIfOutOfDate` instead of `ensureUpToDatedConfigurationSuggested` on document changes.
 - implementing `org.jetbrains.kotlin.scripting.idea.loader` extension point and overriding `getInputsStamp`
 
