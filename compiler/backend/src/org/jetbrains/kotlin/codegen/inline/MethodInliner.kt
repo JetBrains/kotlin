@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
+import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
@@ -39,7 +40,9 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.LocalVariablesSorter
 import org.jetbrains.org.objectweb.asm.commons.MethodRemapper
 import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.util.Printer
 import java.util.*
 import kotlin.math.max
@@ -502,7 +505,7 @@ class MethodInliner(
 
         val toDelete = SmartSet.create<AbstractInsnNode>()
 
-        val sources = analyzeMethodWithFunctionalArgumentInterpreter(this, processingNode, toDelete)
+        val sources = analyzeMethodNodeWithInterpreter(processingNode, FunctionalArgumentInterpreter(this, toDelete))
         val instructions = processingNode.instructions
 
         var awaitClassReification = false
@@ -671,7 +674,7 @@ class MethodInliner(
         if (inliningContext.state.isIrBackend) return
         val lambdaInfo = inliningContext.lambdaInfo ?: return
         if (!lambdaInfo.isSuspend) return
-        val sources = analyzeMethodNodeBeforeInline(processingNode)
+        val sources = analyzeMethodNodeWithInterpreter(processingNode, Aload0Interpreter(processingNode))
         val cfg = ControlFlowGraph.build(processingNode)
         val aload0s = processingNode.instructions.asSequence().filter { it.opcode == Opcodes.ALOAD && it.safeAs<VarInsnNode>()?.`var` == 0 }
 
@@ -726,10 +729,17 @@ class MethodInliner(
                     "${suspensionPoint.name}${suspensionPoint.desc} shall have 1+ parameters"
                 }
             }
-            paramTypes.reversed().asSequence().withIndex()
-                .filter { it.value == languageVersionSettings.continuationAsmType() || it.value == OBJECT_TYPE }
-                .flatMap { frame.getStack(frame.stackSize - it.index - 1).insns.asSequence() }
-                .filter { it in aload0s }.let { toReplace.addAll(it) }
+
+            for ((index, param) in paramTypes.reversed().withIndex()) {
+                if (param != languageVersionSettings.continuationAsmType() && param != OBJECT_TYPE) continue
+                val sourceIndices = (frame.getStack(frame.stackSize - index - 1) as? Aload0BasicValue)?.indices ?: continue
+                for (sourceIndex in sourceIndices) {
+                    val src = processingNode.instructions[sourceIndex]
+                    if (src in aload0s) {
+                        toReplace.add(src)
+                    }
+                }
+            }
         }
 
         // Expected pattern here:
@@ -776,7 +786,7 @@ class MethodInliner(
             ApiVersionCallsPreprocessingMethodTransformer(targetApiVersion).transform("fake", node)
         }
 
-        val frames = analyzeMethodNodeWithBasicInterpreter(node)
+        val frames = analyzeMethodNodeWithInterpreter(node, BasicInterpreter())
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
 
@@ -1016,51 +1026,6 @@ class MethodInliner(
             )
         }
 
-        private fun analyzeMethodNodeWithBasicInterpreter(node: MethodNode): Array<Frame<BasicValue>?> {
-            val analyzer = object : Analyzer<BasicValue>(BasicInterpreter()) {
-                override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> {
-
-                    return object : Frame<BasicValue>(nLocals, nStack) {
-                        @Throws(AnalyzerException::class)
-                        override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<BasicValue>) {
-                            // This can be a void non-local return from a non-void method; Frame#execute would throw and do nothing else.
-                            if (insn.opcode == Opcodes.RETURN) return
-                            super.execute(insn, interpreter)
-                        }
-                    }
-                }
-            }
-
-            try {
-                return analyzer.analyze("fake", node)
-            } catch (e: AnalyzerException) {
-                throw RuntimeException(e)
-            }
-        }
-
-        private fun analyzeMethodNodeBeforeInline(node: MethodNode): Array<Frame<SourceValue>?> {
-            val analyzer = object : Analyzer<SourceValue>(SourceInterpreter()) {
-                override fun newFrame(nLocals: Int, nStack: Int): Frame<SourceValue> {
-
-                    return object : Frame<SourceValue>(nLocals, nStack) {
-                        @Throws(AnalyzerException::class)
-                        override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<SourceValue>) {
-                            // This can be a void non-local return from a non-void method; Frame#execute would throw and do nothing else.
-                            if (insn.opcode == Opcodes.RETURN) return
-                            super.execute(insn, interpreter)
-                        }
-                    }
-                }
-            }
-
-            try {
-                return analyzer.analyze("fake", node)
-            } catch (e: AnalyzerException) {
-                throw RuntimeException(e)
-            }
-
-        }
-
         //remove next template:
         //      aload x
         //      LDC paramName
@@ -1068,7 +1033,7 @@ class MethodInliner(
         private fun removeClosureAssertions(node: MethodNode) {
             val toDelete = arrayListOf<AbstractInsnNode>()
             InsnSequence(node.instructions).filterIsInstance<MethodInsnNode>().forEach { methodInsnNode ->
-                if (isParameterNullabilityCheck(methodInsnNode)) {
+                if (methodInsnNode.isCheckParameterIsNotNull()) {
                     val prev = methodInsnNode.previous
                     assert(Opcodes.LDC == prev?.opcode) { "'${methodInsnNode.name}' should go after LDC but $prev" }
                     val prevPev = methodInsnNode.previous.previous
