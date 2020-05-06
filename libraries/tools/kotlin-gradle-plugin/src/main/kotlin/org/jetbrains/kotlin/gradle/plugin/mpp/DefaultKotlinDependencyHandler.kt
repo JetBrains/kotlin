@@ -113,9 +113,6 @@ class DefaultKotlinDependencyHandler(
             directory = directory
         )
 
-    override fun npm(org: String?, packageName: String, version: String) =
-        npm("${if (org != null) "@$org/" else ""}$packageName", version)
-
     override fun devNpm(name: String, version: String): NpmDependency =
         NpmDependency(
             project = project,

@@ -17,11 +17,6 @@ interface KotlinNpmDependencyHandler {
 
     fun npm(directory: File): Dependency
 
-    @Deprecated(
-        message = "Use npm(name, version) instead. Name like in package.json"
-    )
-    fun npm(org: String? = null, packageName: String, version: String = "*"): Dependency
-
     fun devNpm(name: String, version: String): Dependency
 
     fun devNpm(name: String, directory: File): Dependency
