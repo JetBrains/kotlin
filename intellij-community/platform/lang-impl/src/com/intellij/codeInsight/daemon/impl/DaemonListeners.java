@@ -39,6 +39,8 @@ import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEventMulticasterEx;
+import com.intellij.openapi.editor.ex.ErrorStripeEvent;
+import com.intellij.openapi.editor.ex.ErrorStripeListener;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.markup.CustomHighlighterRenderer;
@@ -306,12 +308,15 @@ public final class DaemonListeners implements Disposable {
       }
     });
 
-    eventMulticaster.addErrorStripeListener(e -> {
-      RangeHighlighter highlighter = e.getHighlighter();
-      if (!highlighter.isValid()) return;
-      HighlightInfo info = HighlightInfo.fromRangeHighlighter(highlighter);
-      if (info != null) {
-        GotoNextErrorHandler.navigateToError(myProject, e.getEditor(), info, null);
+    eventMulticaster.addErrorStripeListener(new ErrorStripeListener() {
+      @Override
+      public void errorMarkerClicked(@NotNull ErrorStripeEvent e) {
+        RangeHighlighter highlighter = e.getHighlighter();
+        if (!highlighter.isValid()) return;
+        HighlightInfo info = HighlightInfo.fromRangeHighlighter(highlighter);
+        if (info != null) {
+          GotoNextErrorHandler.navigateToError(myProject, e.getEditor(), info, null);
+        }
       }
     }, this);
 
