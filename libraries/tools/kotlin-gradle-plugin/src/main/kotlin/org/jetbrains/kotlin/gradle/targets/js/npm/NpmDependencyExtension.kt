@@ -9,6 +9,7 @@ import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.reflect.TypeOf
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
 interface NpmDependencyExtension {
@@ -19,11 +20,10 @@ interface NpmDependencyExtension {
     operator fun invoke(directory: File): NpmDependency
 }
 
-private abstract class AbstractNpmDependencyExtension(
-    dependencies: ExtensionAware,
+private class DefaultNpmDependencyExtension(
     private val project: Project,
     private val scope: NpmDependency.Scope
-) : NpmDependencyExtension, Closure<NpmDependency>(dependencies) {
+) : NpmDependencyExtension, Closure<NpmDependency>(project.dependencies) {
     override operator fun invoke(name: String, version: String): NpmDependency =
         NpmDependency(
             project = project,
@@ -92,29 +92,20 @@ private abstract class AbstractNpmDependencyExtension(
     }
 }
 
-private const val NAME_DEPENDENCIES = "npm"
-private const val NAME_DEV_DEPENDENCIES = "devNpm"
-private const val NAME_PEER_DEPENDENCIES = "peerNpm"
-
 fun Project.addNpmDependencyExtension() {
-    val dependencies = this.dependencies as ExtensionAware
+    val extensions = (dependencies as ExtensionAware).extensions
 
-    listOf(NpmDependency.Scope.NORMAL, NpmDependency.Scope.DEV, NpmDependency.Scope.PEER).forEach { scope ->
-        val name = when (scope) {
-            NpmDependency.Scope.DEV -> NAME_DEV_DEPENDENCIES
-            NpmDependency.Scope.PEER -> NAME_PEER_DEPENDENCIES
-            else -> NAME_DEPENDENCIES
+    NpmDependency.Scope.values()
+        .forEach { scope ->
+            val extension = scope.name
+                .removePrefix(NpmDependency.Scope.NORMAL.name)
+                .toLowerCase()
+
+            extensions
+                .add(
+                    TypeOf.typeOf<NpmDependencyExtension>(NpmDependencyExtension::class.java),
+                    lowerCamelCaseName(extension, "npm"),
+                    DefaultNpmDependencyExtension(this, scope)
+                )
         }
-
-        val dependencyExtension: NpmDependencyExtension = object : AbstractNpmDependencyExtension(dependencies, this, scope) {}
-
-        dependencies
-            .extensions
-            .add(
-                TypeOf.typeOf<NpmDependencyExtension>(NpmDependencyExtension::class.java),
-                name,
-                dependencyExtension
-            )
-
-    }
 }
