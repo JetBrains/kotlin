@@ -89,15 +89,8 @@ class DefaultKotlinDependencyHandler(
             version = version
         )
 
-    override fun npm(name: String, directory: File): NpmDependency {
-        check(directory.isDirectory) {
-            "Dependency on local path should point on directory but $directory found"
-        }
-        return npm(
-            name = name,
-            version = fileVersion(directory)
-        )
-    }
+    override fun npm(name: String, directory: File): NpmDependency =
+        directoryNpmDependency(name, directory, NpmDependency.Scope.NORMAL)
 
     override fun npm(directory: File): NpmDependency =
         npm(
@@ -116,15 +109,8 @@ class DefaultKotlinDependencyHandler(
             scope = NpmDependency.Scope.DEV
         )
 
-    override fun devNpm(name: String, directory: File): NpmDependency {
-        check(directory.isDirectory) {
-            "Dependency on local path should point on directory but $directory found"
-        }
-        return devNpm(
-            name = name,
-            version = fileVersion(directory)
-        )
-    }
+    override fun devNpm(name: String, directory: File): NpmDependency =
+        directoryNpmDependency(name, directory, NpmDependency.Scope.DEV)
 
     override fun devNpm(directory: File): NpmDependency =
         devNpm(
@@ -139,4 +125,21 @@ class DefaultKotlinDependencyHandler(
             version = version,
             scope = NpmDependency.Scope.PEER
         )
+
+    private fun directoryNpmDependency(
+        name: String,
+        directory: File,
+        scope: NpmDependency.Scope
+    ): NpmDependency {
+        check(directory.isDirectory) {
+            "Dependency on local path should point on directory but $directory found"
+        }
+
+        return NpmDependency(
+            project = project,
+            name = name,
+            version = fileVersion(directory),
+            scope = scope
+        )
+    }
 }
