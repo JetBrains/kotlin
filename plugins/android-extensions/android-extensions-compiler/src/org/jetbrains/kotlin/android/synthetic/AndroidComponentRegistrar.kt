@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.common.extensions.PureIrGenerationExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.*
@@ -41,8 +40,8 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.utils.decodePluginOptions
 
@@ -105,7 +104,10 @@ class AndroidComponentRegistrar : ComponentRegistrar {
     companion object {
         fun registerParcelExtensions(project: Project) {
             ExpressionCodegenExtension.registerExtension(project, ParcelableCodegenExtension())
-            PureIrGenerationExtension.registerExtension(project, ParcelableIrGeneratorExtension())
+            @Suppress("DEPRECATION_ERROR")
+            org.jetbrains.kotlin.backend.common.extensions.PureIrGenerationExtension.registerExtension(
+                project, ParcelableIrGeneratorExtension()
+            )
             SyntheticResolveExtension.registerExtension(project, ParcelableResolveExtension())
             ClassBuilderInterceptorExtension.registerExtension(project, ParcelableClinitClassBuilderInterceptorExtension())
         }

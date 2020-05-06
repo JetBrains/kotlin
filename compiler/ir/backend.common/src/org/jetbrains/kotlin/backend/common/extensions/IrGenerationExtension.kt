@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrExtensionGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -41,9 +39,13 @@ interface IrGenerationExtension : IrExtensionGenerator {
 }
 
 // Extension point for plugins which run before any lowerings, but after the Ir has been constructed.
+@Deprecated("This is a temporary class which will be replaced with another extension mechanism soon.", level = DeprecationLevel.ERROR)
 interface PureIrGenerationExtension {
+    @Suppress("DEPRECATION_ERROR")
     companion object :
-        ProjectExtensionDescriptor<PureIrGenerationExtension>("org.jetbrains.kotlin.pureIrGenerationExtension", PureIrGenerationExtension::class.java)
+        ProjectExtensionDescriptor<PureIrGenerationExtension>(
+            "org.jetbrains.kotlin.pureIrGenerationExtension", PureIrGenerationExtension::class.java
+        )
 
     fun generate(
         moduleFragment: IrModuleFragment,

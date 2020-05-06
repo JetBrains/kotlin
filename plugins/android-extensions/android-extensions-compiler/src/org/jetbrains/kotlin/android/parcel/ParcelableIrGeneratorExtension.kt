@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.android.parcel
 import org.jetbrains.kotlin.android.parcel.ir.AndroidSymbols
 import org.jetbrains.kotlin.android.parcel.ir.ParcelableIrTransformer
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.extensions.PureIrGenerationExtension
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
-class ParcelableIrGeneratorExtension : PureIrGenerationExtension {
+@Suppress("DEPRECATION_ERROR")
+class ParcelableIrGeneratorExtension : org.jetbrains.kotlin.backend.common.extensions.PureIrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, context: CommonBackendContext) {
         ParcelableIrTransformer(context, AndroidSymbols(context, moduleFragment)).transform(moduleFragment)
     }
