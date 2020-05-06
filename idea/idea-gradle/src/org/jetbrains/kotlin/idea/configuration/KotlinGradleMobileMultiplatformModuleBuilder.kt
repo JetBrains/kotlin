@@ -37,7 +37,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
     )
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
-        addBuildscriptDependencyNotation("classpath 'com.android.tools.build:gradle:3.2.1'")
+        addBuildscriptDependencyNotation("classpath 'com.android.tools.build:gradle:3.6.3'")
         addBuildscriptRepositoriesDefinition("google()")
         addBuildscriptRepositoriesDefinition("jcenter()")
         addRepositoriesDefinition("google()")
