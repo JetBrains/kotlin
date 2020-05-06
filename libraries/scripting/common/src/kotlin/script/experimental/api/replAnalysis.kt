@@ -5,15 +5,12 @@
 
 package kotlin.script.experimental.api
 
+import kotlin.script.experimental.util.PropertiesCollection
+
 /**
  * Type for [ReplCompleter.complete] return value
  */
 typealias ReplCompletionResult = Sequence<SourceCodeCompletionVariant>
-
-/**
- * Type for [ReplCodeAnalyzer.analyze] return value
- */
-typealias ReplAnalyzerResult = Sequence<ScriptDiagnostic>
 
 /**
  * Single code completion result
@@ -24,6 +21,33 @@ data class SourceCodeCompletionVariant(
     val tail: String,
     val icon: String
 )
+
+interface ReplAnalyzerResultKeys
+
+/**
+ * The container for analysis results data returned from the [ReplCodeAnalyzer.analyze]
+ */
+class ReplAnalyzerResult(baseConfigurations: Iterable<ReplAnalyzerResult>, body: Builder.() -> Unit = {}) :
+    PropertiesCollection(Builder(baseConfigurations).apply(body).data) {
+
+    constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
+
+    class Builder internal constructor(baseConfigurations: Iterable<ReplAnalyzerResult>) :
+        ReplAnalyzerResultKeys,
+        PropertiesCollection.Builder(baseConfigurations)
+
+    companion object : ReplAnalyzerResultKeys
+}
+
+/**
+ * Script compile-time errors and warning with their locations
+ */
+val ReplAnalyzerResultKeys.analysisDiagnostics by PropertiesCollection.key<Sequence<ScriptDiagnostic>>(emptySequence())
+
+/**
+ * String representing snippet return value, or null, if script returns nothing
+ */
+val ReplAnalyzerResultKeys.renderedResultType by PropertiesCollection.key<String?>()
 
 /**
  * Interface for REPL context completion
