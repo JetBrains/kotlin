@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
@@ -58,6 +63,10 @@ class DefaultKotlinDependencyHandler(
 
     override fun project(notation: Map<String, Any?>): ProjectDependency =
         project.dependencies.project(notation) as ProjectDependency
+
+    override fun npm(name: String): Dependency {
+        throw IllegalArgumentException("NPM dependency '$name' doesn't have version. Please, set version explicitly.")
+    }
 
     private fun addDependencyByAnyNotation(
         configurationName: String,

@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
 interface NpmDependencyExtension {
-    operator fun invoke(name: String, version: String = "*"): NpmDependency
+    operator fun invoke(name: String): NpmDependency
+
+    operator fun invoke(name: String, version: String): NpmDependency
 
     operator fun invoke(name: String, directory: File): NpmDependency
 
@@ -24,6 +26,9 @@ private class DefaultNpmDependencyExtension(
     private val project: Project,
     private val scope: NpmDependency.Scope
 ) : NpmDependencyExtension, Closure<NpmDependency>(project.dependencies) {
+    override fun invoke(name: String): NpmDependency =
+        throw IllegalArgumentException("NPM dependency '$name' doesn't have version. Please, set version explicitly.")
+
     override operator fun invoke(name: String, version: String): NpmDependency =
         NpmDependency(
             project = project,
@@ -34,7 +39,7 @@ private class DefaultNpmDependencyExtension(
 
     override operator fun invoke(name: String, directory: File): NpmDependency {
         check(directory.isDirectory) {
-            "Dependency on local path should point on directory but $directory found"
+            "Dependency '$name' on local path should point on directory but '$directory' found"
         }
         return invoke(
             name = name,
@@ -49,7 +54,7 @@ private class DefaultNpmDependencyExtension(
         )
 
     override fun call(vararg args: Any?): NpmDependency {
-        if (args.size > 2) throw npmDeclarationException(args)
+        if (args.size > 2) npmDeclarationException(args)
 
         val arg = args[0]
         return when (arg) {
@@ -58,7 +63,7 @@ private class DefaultNpmDependencyExtension(
                 args = *args
             )
             is File -> invoke(arg)
-            else -> throw npmDeclarationException(args)
+            else -> npmDeclarationException(args)
         }
     }
 
@@ -76,12 +81,12 @@ private class DefaultNpmDependencyExtension(
                 name = name,
                 directory = arg
             )
-            else -> throw npmDeclarationException(args)
+            else -> npmDeclarationException(args)
         }
     }
 
-    private fun npmDeclarationException(args: Array<out Any?>): IllegalArgumentException {
-        return IllegalArgumentException(
+    private fun npmDeclarationException(args: Array<out Any?>): Nothing {
+        throw IllegalArgumentException(
             """
                             Unable to add NPM dependency by $args
                             - npm('name') -> name:*
