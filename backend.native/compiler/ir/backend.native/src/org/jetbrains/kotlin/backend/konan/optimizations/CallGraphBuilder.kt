@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.DirectedGraph
 import org.jetbrains.kotlin.backend.konan.DirectedGraphNode
 import org.jetbrains.kotlin.backend.konan.Context
@@ -70,14 +72,26 @@ internal class CallGraphBuilder(val context: Context,
     private val directEdges = mutableMapOf<DataFlowIR.FunctionSymbol, CallGraphNode>()
     private val reversedEdges = mutableMapOf<DataFlowIR.FunctionSymbol, MutableList<DataFlowIR.FunctionSymbol>>()
     private val callGraph = CallGraph(directEdges, reversedEdges)
+    private val functionStack = mutableListOf<DataFlowIR.FunctionSymbol>()
 
     fun build(): CallGraph {
         val rootSet = Devirtualization.computeRootSet(context, moduleDFG, externalModulesDFG)
         @Suppress("LoopToCallChain")
-        for (symbol in rootSet) {
-            if (!visitedFunctions.contains(symbol))
-                dfs(symbol)
+        for (symbol in rootSet)
+            functionStack.push(symbol)
+
+        while (functionStack.isNotEmpty()) {
+            val symbol = functionStack.pop()
+            if (symbol !in visitedFunctions)
+                handleFunction(symbol)
         }
+
+        DEBUG_OUTPUT(0) {
+            println("DirectEdges: ${directEdges.size}")
+            println("ReversedEdges: ${reversedEdges.size}")
+            println("Sum: ${directEdges.values.sumBy { it.callSites.size }}")
+        }
+
         return callGraph
     }
 
@@ -157,10 +171,10 @@ internal class CallGraphBuilder(val context: Context,
         callGraph.addEdge(caller, CallGraphNode.CallSite(call, false, callee))
         if (callee is DataFlowIR.FunctionSymbol.Declared
                 && !directEdges.containsKey(callee))
-            dfs(callee)
+            functionStack.push(callee)
     }
 
-    private fun dfs(symbol: DataFlowIR.FunctionSymbol) {
+    private fun handleFunction(symbol: DataFlowIR.FunctionSymbol) {
         visitedFunctions += symbol
         if (gotoExternal) {
             addNode(symbol)
@@ -225,7 +239,7 @@ internal class CallGraphBuilder(val context: Context,
                     if (callee is DataFlowIR.FunctionSymbol.Declared
                             && call !is DataFlowIR.Node.VirtualCall
                             && !visitedFunctions.contains(callee))
-                        dfs(callee)
+                        functionStack.push(callee)
                 } else {
                     devirtualizedCallSite.possibleCallees.forEach {
                         val callee = it.callee.resolved()
@@ -235,7 +249,7 @@ internal class CallGraphBuilder(val context: Context,
                             callGraph.addEdge(symbol, CallGraphNode.CallSite(call, false, callee))
                         if (callee is DataFlowIR.FunctionSymbol.Declared
                                 && !visitedFunctions.contains(callee))
-                            dfs(callee)
+                            functionStack.push(callee)
                     }
                 }
             }
