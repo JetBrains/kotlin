@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
@@ -19,11 +19,12 @@ import org.jetbrains.kotlin.psi.KtFile
  * 2. When some related file is changed (other gradle script, gradle.properties file)
  * @see GradleScriptInputsWatcher.areRelatedFilesUpToDate
  *
- * [inputsTS] is needed to check if some related file was changed since last update
+ * [lastModifiedTs] is needed to check if some related file was changed since last update
  */
 data class GradleKotlinScriptConfigurationInputs(
     val sections: String,
-    val inputsTS: Long
+    val lastModifiedTs: Long,
+    val buildRoot: String? = null
 ) : CachedConfigurationInputs {
     override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean {
         try {
@@ -31,7 +32,10 @@ data class GradleKotlinScriptConfigurationInputs(
 
             if (actualStamp.sections != this.sections) return false
 
-            return project.service<GradleScriptInputsWatcher>().areRelatedFilesUpToDate(file, inputsTS)
+            return buildRoot == null ||
+                    GradleBuildRootsManager.getInstance(project)
+                        .getBuildRoot(buildRoot)
+                        ?.areRelatedFilesUpToDate(file, lastModifiedTs) ?: false
         } catch (cancel: ProcessCanceledException) {
             return false
         }
