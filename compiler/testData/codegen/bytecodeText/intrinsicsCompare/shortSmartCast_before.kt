@@ -1,4 +1,6 @@
 // !LANGUAGE: -ProperIeee754Comparisons
+// IGNORE_BACKEND: JVM_IR
+
 fun equals3(a: Short?, b: Short?) = a != null && b != null && a == b
 
 fun equals4(a: Short?, b: Short?) = if (a is Short && b is Short) a == b else null!!
