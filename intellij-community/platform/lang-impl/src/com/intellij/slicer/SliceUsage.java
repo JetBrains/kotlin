@@ -82,8 +82,11 @@ public abstract class SliceUsage extends UsageInfo2UsageAdapter {
         @Override
         public boolean process(SliceUsage usage) {
           SliceValueFilter filter = usage.params.valueFilter;
-          if (filter != null && !filter.allowed(usage.getElement())) {
-            return true;
+          if (filter != null) {
+            PsiElement psiElement = usage.getElement();
+            if (psiElement != null && !filter.allowed(psiElement)) {
+              return true;
+            }
           }
           return transformToLanguageSpecificUsage(usage).stream().allMatch(super::process);
         }
