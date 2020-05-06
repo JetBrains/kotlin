@@ -553,7 +553,7 @@ public class EditorSearchSession implements SearchSession,
 
   private void updateUIWithEmptyResults() {
     myComponent.setRegularBackground();
-    myComponent.setStatusText("");
+    myComponent.setStatusText(ApplicationBundle.message("editorsearch.matches", 0));
     myClickToHighlightLabel.setVisible(false);
   }
 
