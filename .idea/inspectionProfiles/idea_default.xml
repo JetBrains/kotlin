@@ -184,6 +184,7 @@
     <inspection_tool class="CfmlReferenceInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ChainedEquality" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="CheckNodeTest" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ClassGetClass" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="CloneCallsSuperClone" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CloneDeclaresCloneNotSupported" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CodeBlock2Expr" enabled="true" level="INFORMATION" enabled_by_default="true" />
@@ -191,7 +192,7 @@
     <inspection_tool class="CommaExpressionJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ComparisonOfShortAndChar" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ConditionCoveredByFurtherCondition" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="ConditionalBreakInInfiniteLoop" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="ConditionalBreakInInfiniteLoop" enabled="true" level="Strong Warning" enabled_by_default="true">
       <option name="noConversionToDoWhile" value="true" />
     </inspection_tool>
     <inspection_tool class="ConfusingOctalEscape" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -260,8 +261,7 @@
       <scope name="Tests" level="Strong Warning" enabled="false" />
     </inspection_tool>
     <inspection_tool class="ExceptionCaughtLocallyJS" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="ExceptionNameDoesntEndWithException" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="ExtendsObject" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="ExplicitArrayFilling" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ExtendsTagPositionInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FallthroughInSwitchStatementJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FieldAccessedSynchronizedAndUnsynchronized" enabled="true" level="WARNING" enabled_by_default="true">
@@ -279,11 +279,13 @@
       <option name="m_ignoreLoopsWithoutConditions" value="true" />
     </inspection_tool>
     <inspection_tool class="ForLoopThatDoesntUseLoopVariable" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ForwardCompatibility" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="FunctionalExpressionCanBeFolded" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="FuseStreamOperations" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="GemInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="Geronimo" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="GlassFish" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="GrEqualsBetweenInconvertibleTypes" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="GrUnresolvedAccess" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="GtkPreferredJComboBoxRenderer" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="Guava" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -365,6 +367,7 @@
       <option name="suggestIntSwitches" value="false" />
       <option name="suggestEnumSwitches" value="false" />
     </inspection_tool>
+    <inspection_tool class="IfStatementMissingBreakInLoop" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="IfStatementWithIdenticalBranches" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="IgnoreResultOfCall" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_reportAllNonLibraryCalls" value="false" />
@@ -383,7 +386,7 @@
     <inspection_tool class="InfiniteLoopJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="InfiniteRecursion" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="InfiniteRecursionJS" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="InspectionDescriptionNotFoundInspection" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="InnerClassMayBeStatic" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="InstanceofCatchParameter" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="InstanceofIncompatibleInterface" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="InstantiatingObjectToGetClassObject" enabled="true" level="Strong Warning" enabled_by_default="true" />
@@ -583,6 +586,7 @@
     <inspection_tool class="LambdaUnfriendlyMethodOverload" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="LiftReturnOrAssignment" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="ListIndexOfReplaceableByContains" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="ListRemoveInLoop" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="LocalVariableName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[a-z][A-Za-z\d_]*" />
     </inspection_tool>
@@ -604,6 +608,8 @@
     <inspection_tool class="MethodOverridesStaticMethod" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MinMaxValuesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MinitestFrameworkSupportInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="MismatchedArrayReadWrite" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="MismatchedStringBuilderQueryUpdate" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MismatchedStringCase" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MisorderedAssertEqualsParameters" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MissingDeprecatedAnnotation" enabled="true" level="WARNING" enabled_by_default="true">
@@ -638,6 +644,9 @@
     <inspection_tool class="NewObjectEquality" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="NewStringBufferWithCharArgument" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="NoExplicitFinalizeCalls" enabled="true" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="NonAsciiCharacters" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="CHECK_FOR_DIFFERENT_LANGUAGES_IN_STRING" value="true" />
+    </inspection_tool>
     <inspection_tool class="NonExceptionNameEndsWithException" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NonStaticFinalLogger" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false">
@@ -933,6 +942,7 @@
     <inspection_tool class="PointlessBinding" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PointlessBooleanExpressionJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PointlessNullCheck" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PrimitiveArrayArgumentToVariableArgMethod" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="PrivatePropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="([A-Z_][A-Z_\d]*)|(_?[a-z][A-Za-z\d]*)" />
     </inspection_tool>
@@ -948,10 +958,12 @@
     <inspection_tool class="RedundantCast" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="IGNORE_SUSPICIOUS_METHOD_CALLS" value="true" />
     </inspection_tool>
+    <inspection_tool class="RedundantCollectionOperation" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="RedundantComparatorComparing" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="RedundantSamConstructor" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantScopeBinding" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantStreamOptionalCall" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="RedundantStringFormatCall" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="RedundantStringOperationMerged" />
     <inspection_tool class="RedundantSuppression" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="android" level="WARNING" enabled="false">
@@ -1303,8 +1315,7 @@
     <inspection_tool class="SeamDuplicateComponentsInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="SeamIllegalComponentScopeInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="SeamJamComponentInspection" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="SessionScopedInjectsRequestScoped" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="SetReplaceableByEnumSet" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="SetReplaceableByEnumSet" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="SetupCallsSuperSetup" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SetupIsPublicVoidNoArg" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ShiftOutOfRange" enabled="true" level="Strong Warning" enabled_by_default="true" />
@@ -1345,8 +1356,12 @@
     <inspection_tool class="StrutsTilesInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="StrutsValidatorFormInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="StrutsValidatorInspection" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="SuspiciousDateFormat" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="SuspiciousIntegerDivAssignment" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="SuspiciousListRemoveInLoop" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="SuspiciousMethodCalls" enabled="true" level="Strong Warning" enabled_by_default="true">
+      <option name="REPORT_CONVERTIBLE_METHOD_CALLS" value="false" />
+    </inspection_tool>
     <inspection_tool class="SuspiciousPackagePrivateAccess" enabled="true" level="ERROR" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false" />
       <option name="MODULES_SETS_LOADED_TOGETHER">

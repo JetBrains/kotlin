@@ -2,8 +2,18 @@
 <component name="ProjectDictionaryState">
   <dictionary name="intellij-zolotov">
     <words>
+      <w>contextless</w>
       <w>fsdaemon</w>
+      <w>gopath</w>
+      <w>gopkg</w>
+      <w>goproxy</w>
+      <w>goroot</w>
+      <w>imag</w>
+      <w>mozilla</w>
       <w>noria</w>
+      <w>toml</w>
+      <w>vendorexperiment</w>
+      <w>vendoring</w>
     </words>
   </dictionary>
 </component>

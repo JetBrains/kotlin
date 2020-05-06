@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Go" pattern="src[group:intellij.go]:*..*" />
+</component>

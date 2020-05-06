@@ -628,7 +628,9 @@
       <option name="m_limit" value="15" />
     </inspection_tool>
     <inspection_tool class="ClassEscapesItsScope" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="ClassGetClass" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ClassGetClass" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="ClassHasNoToStringMethod" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="excludeClassNames" value="" />
       <option name="excludeException" value="true" />
@@ -730,7 +732,10 @@
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="ConditionSignal" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="ConditionalBreakInInfiniteLoop" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ConditionalBreakInInfiniteLoop" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="noConversionToDoWhile" value="true" />
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="ConditionalCanBeOptional" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="ConditionalCanBePushedInsideExpression" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="ConditionalExpression" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1121,7 +1126,9 @@
     <inspection_tool class="ExpectedExceptionNeverThrown" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ExpectedExceptionNeverThrownTestNG" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ExplicitArgumentCanBeLambda" enabled="false" level="INFORMATION" enabled_by_default="false" />
-    <inspection_tool class="ExplicitArrayFilling" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ExplicitArrayFilling" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="ExplicitThis" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="ExtendsAnnotation" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ExtendsConcreteCollection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1225,7 +1232,9 @@
     </inspection_tool>
     <inspection_tool class="ForeachStatement" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FormSpellChecking" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="ForwardCompatibility" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ForwardCompatibility" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="FrequentlyUsedInheritorInspection" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="FromClosedRangeMigration" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="FtlCallsInspection" enabled="false" level="ERROR" enabled_by_default="false" />
@@ -1260,7 +1269,9 @@
     <inspection_tool class="GlassFish" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="Glassfish" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="GrDeprecatedAPIUsage" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="GrEqualsBetweenInconvertibleTypes" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="GrEqualsBetweenInconvertibleTypes" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="GrFieldAlreadyDefined" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="GrFinalVariableAccess" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="GrMethodMayBeStatic" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1536,7 +1547,7 @@
     </inspection_tool>
     <inspection_tool class="IfMayBeConditional" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="IfNullToElvis" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-    <inspection_tool class="IfStatementMissingBreakInLoop" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="IfStatementMissingBreakInLoop" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="IfStatementWithIdenticalBranches" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="IfStatementWithIdenticalBranchesJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="IfStatementWithTooManyBranches" enabled="false" level="WARNING" enabled_by_default="false">
@@ -1602,7 +1613,10 @@
     <inspection_tool class="InjectedReferences" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="InjectionNotApplicable" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="InjectionValueTypeInspection" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="InnerClassMayBeStatic" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="InnerClassMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="Tests" level="ERROR" enabled="false" />
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="InnerClassOnInterface" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="m_ignoreInnerInterfaces" value="false" />
     </inspection_tool>
@@ -2025,7 +2039,9 @@
     <inspection_tool class="ListIndexOfReplaceableByContains" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="android" level="ERROR" enabled="false" />
     </inspection_tool>
-    <inspection_tool class="ListRemoveInLoop" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ListRemoveInLoop" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="ERROR" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="ListenerMayUseAdapter" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="checkForEmptyMethods" value="true" />
     </inspection_tool>
@@ -2148,7 +2164,9 @@
     <inspection_tool class="MimeType" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="MinMaxValuesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MinitestFrameworkSupportInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="MismatchedArrayReadWrite" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="MismatchedArrayReadWrite" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="MismatchedCollectionQueryUpdate" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="queryNames">
         <value />
@@ -2160,7 +2178,9 @@
         <value />
       </option>
     </inspection_tool>
-    <inspection_tool class="MismatchedStringBuilderQueryUpdate" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="MismatchedStringBuilderQueryUpdate" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="MismatchedStringCase" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
@@ -2606,7 +2626,9 @@
     <inspection_tool class="PointlessNullCheck" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PostfixTemplateDescriptionNotFound" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PresentationAnnotation" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="PrimitiveArrayArgumentToVariableArgMethod" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PrimitiveArrayArgumentToVariableArgMethod" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="PrivateMemberAccessBetweenOuterAndInnerClass" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PrivatePropertyName" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="ProblematicVarargsMethodOverride" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -2797,7 +2819,9 @@
       <option name="IGNORE_SUSPICIOUS_METHOD_CALLS" value="true" />
     </inspection_tool>
     <inspection_tool class="RedundantClassCall" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="RedundantCollectionOperation" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="RedundantCollectionOperation" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="RedundantCompanionReference" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantComparatorComparing" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="android" level="WARNING" enabled="false" />
@@ -2835,7 +2859,9 @@
     <inspection_tool class="RedundantStreamOptionalCall" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
-    <inspection_tool class="RedundantStringFormatCall" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="RedundantStringFormatCall" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="RedundantStringOperation" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantSuppression" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantSuspendModifier" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -3213,7 +3239,9 @@
     <inspection_tool class="ServerEndpointInconsistencyInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="ServletWithoutMappingInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="SessionScopedInjectsRequestScoped" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="SetReplaceableByEnumSet" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="SetReplaceableByEnumSet" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="SetterBackingFieldAssignment" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SetupCallsSuperSetup" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SetupIsPublicVoidNoArg" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -3498,7 +3526,9 @@
     <inspection_tool class="SuspiciousArrayMethodCall" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SuspiciousAsDynamic" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="SuspiciousCollectionReassignment" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="SuspiciousDateFormat" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="SuspiciousDateFormat" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="SuspiciousEqualsCombination" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="SuspiciousGetterSetter" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SuspiciousIndentAfterControlStatement" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -3509,8 +3539,9 @@
     </inspection_tool>
     <inspection_tool class="SuspiciousLiteralUnderscore" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SuspiciousLocalesLanguages" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="SuspiciousMethodCalls" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="REPORT_CONVERTIBLE_METHOD_CALLS" value="true" />
+    <inspection_tool class="SuspiciousMethodCalls" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+      <option name="REPORT_CONVERTIBLE_METHOD_CALLS" value="false" />
     </inspection_tool>
     <inspection_tool class="SuspiciousNameCombination" enabled="false" level="WARNING" enabled_by_default="false">
       <group names="x,width,left,right" />

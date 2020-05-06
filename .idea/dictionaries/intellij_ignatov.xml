@@ -7,12 +7,25 @@
       <w>deferrability</w>
       <w>desaturate</w>
       <w>desaturation</w>
+      <w>entersyscall</w>
+      <w>exitsyscall</w>
       <w>externalizer</w>
+      <w>gogland</w>
+      <w>goland</w>
+      <w>jmoiron</w>
+      <w>libexec</w>
+      <w>markbates</w>
+      <w>printf</w>
       <w>rdbms</w>
       <w>relativizer</w>
       <w>rgba</w>
+      <w>sqlx</w>
+      <w>syscall</w>
+      <w>syscalls</w>
       <w>teardown</w>
+      <w>tmpl</w>
       <w>touchpad</w>
+      <w>zversion</w>
     </words>
   </dictionary>
 </component>

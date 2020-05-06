@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="jackson-validator" type="repository">
+    <properties maven-id="com.worldturner.medeia:medeia-validator-jackson:1.1.1">
+      <exclude>
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-reflect" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib" />
+        <dependency maven-id="com.fasterxml.jackson.core:jackson-core" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/worldturner/medeia/medeia-validator-jackson/1.1.1/medeia-validator-jackson-1.1.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/worldturner/medeia/medeia-validator-core/1.1.1/medeia-validator-core-1.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/worldturner/medeia/medeia-validator-jackson/1.1.1/medeia-validator-jackson-1.1.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/worldturner/medeia/medeia-validator-core/1.1.1/medeia-validator-core-1.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -2763,6 +2763,9 @@
     <inspection_tool class="NoScrollPane" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
+    <inspection_tool class="NonAsciiCharacters" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="CHECK_FOR_DIFFERENT_LANGUAGES_IN_STRING" value="true" />
+    </inspection_tool>
     <inspection_tool class="NonAtomicOperationOnVolatileField" enabled="false" level="WARNING" enabled_by_default="false">
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
