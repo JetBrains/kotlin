@@ -13,11 +13,11 @@ class CompletionLoggingPsiFeaturesTest: CompletionLoggingTestBase() {
                                                      "    }\n" +
                                                      "}")
     myFixture.completeBasic()
-    checkParentsPsiIs("com.intellij.psi.impl.source.tree.java.PsiExpressionStatementImpl",
-                      "com.intellij.psi.impl.source.tree.java.PsiCodeBlockImpl",
-                      "com.intellij.psi.impl.source.PsiMethodImpl",
-                      "com.intellij.psi.impl.source.PsiClassImpl",
-                      "com.intellij.psi.impl.source.PsiJavaFileImpl")
+    checkParentsPsiIs("PsiExpressionStatementImpl",
+                      "PsiCodeBlockImpl",
+                      "PsiMethodImpl",
+                      "PsiClassImpl",
+                      "PsiJavaFileImpl")
   }
 
   fun `test psi parent feature in if statement`() {
@@ -27,11 +27,11 @@ class CompletionLoggingPsiFeaturesTest: CompletionLoggingTestBase() {
                                                      "    }\n" +
                                                      "}")
     myFixture.completeBasic()
-    checkParentsPsiIs("com.intellij.psi.impl.source.tree.java.PsiIfStatementImpl",
-                      "com.intellij.psi.impl.source.tree.java.PsiCodeBlockImpl",
-                      "com.intellij.psi.impl.source.PsiMethodImpl",
-                      "com.intellij.psi.impl.source.PsiClassImpl",
-                      "com.intellij.psi.impl.source.PsiJavaFileImpl")
+    checkParentsPsiIs("PsiIfStatementImpl",
+                      "PsiCodeBlockImpl",
+                      "PsiMethodImpl",
+                      "PsiClassImpl",
+                      "PsiJavaFileImpl")
   }
 
   fun `test psi parent feature in arguments context`() {
@@ -43,13 +43,13 @@ class CompletionLoggingPsiFeaturesTest: CompletionLoggingTestBase() {
                                                      "    }\n" +
                                                      "}")
     myFixture.completeBasic()
-    checkParentsPsiIs("com.intellij.psi.impl.source.tree.java.PsiExpressionListImpl",
-                      "com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl",
-                      "com.intellij.psi.impl.source.tree.java.PsiExpressionStatementImpl",
-                      "com.intellij.psi.impl.source.tree.java.PsiCodeBlockImpl",
-                      "com.intellij.psi.impl.source.PsiMethodImpl",
-                      "com.intellij.psi.impl.source.PsiClassImpl",
-                      "com.intellij.psi.impl.source.PsiJavaFileImpl")
+    checkParentsPsiIs("PsiExpressionListImpl",
+                      "PsiMethodCallExpressionImpl",
+                      "PsiExpressionStatementImpl",
+                      "PsiCodeBlockImpl",
+                      "PsiMethodImpl",
+                      "PsiClassImpl",
+                      "PsiJavaFileImpl")
   }
 
   fun `test is after dot true`() {
