@@ -13,7 +13,7 @@ class GradleBuildRootIndex {
     private val byWorkingDir = HashMap<String, GradleBuildRoot.Linked>()
     private val byProjectDir = HashMap<String, GradleBuildRoot.Linked>()
 
-    val list: Collection<GradleBuildRoot>
+    val list: Collection<GradleBuildRoot.Linked>
         get() = byWorkingDir.values
 
     @Synchronized

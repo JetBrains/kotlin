@@ -16,12 +16,9 @@ import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * [ScriptChangesNotifier] will call first applicable [ScriptChangeListener] when editor is activated or document changed.
- *
- * Listener may call [ScriptConfigurationUpdater] to invalidate configuration and schedule reloading.
- *
- * @see DefaultScriptConfigurationManager for more details.
+ * Listener should do something to invalidate configuration and schedule reloading.
  */
-abstract class ScriptChangeListener(protected val project: Project) {
+abstract class ScriptChangeListener(val project: Project) {
     val default: DefaultScriptingSupport
         get() = DefaultScriptingSupport.getInstance(project)
 
