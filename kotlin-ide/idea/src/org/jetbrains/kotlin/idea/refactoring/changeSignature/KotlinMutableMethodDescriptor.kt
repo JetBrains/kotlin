@@ -42,7 +42,7 @@ class KotlinMutableMethodDescriptor(override val original: KotlinMethodDescripto
         receiver?.let { parameters.add(it) }
     }
 
-    override fun getVisibility(): Visibility? {
+    override fun getVisibility(): Visibility {
         return original.visibility
     }
 }
