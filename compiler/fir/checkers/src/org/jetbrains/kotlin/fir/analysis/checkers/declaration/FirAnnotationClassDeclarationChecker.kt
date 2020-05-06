@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.KtNodeTypes.FUN
+import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
 import org.jetbrains.kotlin.lexer.KtTokens.VAL_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.VAR_KEYWORD
 import org.jetbrains.kotlin.psi.KtParameter
@@ -30,7 +30,7 @@ object FirAnnotationClassDeclarationChecker : FirDeclarationChecker<FirDeclarati
         if (declaration.isLocal) reporter.report(declaration.source, FirErrors.LOCAL_ANNOTATION_CLASS_ERROR)
         for (it in declaration.declarations) {
             when {
-                it is FirConstructor && it.isPrimary ->
+                it is FirConstructor && it.isPrimary -> {
                     for (parameter in it.valueParameters)
                         when (val parameterSourceElement = parameter.source) {
                             is FirPsiSourceElement<*> -> {
@@ -49,12 +49,20 @@ object FirAnnotationClassDeclarationChecker : FirDeclarationChecker<FirDeclarati
                                     reporter.report(parameterSourceElement, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
                             }
                         }
-                it is FirRegularClass
-                        || it is FirProperty && it.initializer is FirQualifiedAccessExpression
-                        || it is FirSimpleFunction && it.source?.elementType != FUN -> {
-                    // DO NOTHING
                 }
-                else -> reporter.report(it.source, FirErrors.ANNOTATION_CLASS_MEMBER)
+                it is FirRegularClass -> {
+                    // DO NOTHING: nested annotation classes are allowed in 1.3+
+                }
+                it is FirProperty && it.source?.elementType == VALUE_PARAMETER -> {
+                    // DO NOTHING to avoid reporting constructor properties
+                }
+                it is FirSimpleFunction && it.source?.elementType != FUN -> {
+                    // DO NOTHING to avoid reporting synthetic functions
+                    // TODO: replace with origin check
+                }
+                else -> {
+                    reporter.report(it.source, FirErrors.ANNOTATION_CLASS_MEMBER)
+                }
             }
         }
 
