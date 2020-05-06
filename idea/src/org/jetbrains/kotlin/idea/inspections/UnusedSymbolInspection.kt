@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.QuickFixBundle
-import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightUtil
 import com.intellij.codeInsight.daemon.impl.analysis.JavaHighlightUtil
 import com.intellij.codeInspection.*
@@ -45,7 +44,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isInheritable
-import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
@@ -136,12 +135,13 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             val project = declaration.project
             val psiSearchHelper = PsiSearchHelper.getInstance(project)
 
-//            val usedScripts = findScriptsWithUsages(declaration)
-//            if (usedScripts.isNotEmpty()) {
-//                if (!ScriptConfigurationManager.getInstance(declaration.project).updater.ensureConfigurationUpToDate(usedScripts)) {
-//                    return TOO_MANY_OCCURRENCES
-//                }
-//            }
+            val usedScripts = findScriptsWithUsages(declaration)
+            if (usedScripts.isNotEmpty()) {
+                if (!DefaultScriptingSupport.getInstance(declaration.project).ensureLoadedFromCache(usedScripts)) {
+                    // Not all script configuration are loaded; behave like it is used
+                    return TOO_MANY_OCCURRENCES
+                }
+            }
 
             val useScope = psiSearchHelper.getUseScope(declaration)
             if (useScope is GlobalSearchScope) {
