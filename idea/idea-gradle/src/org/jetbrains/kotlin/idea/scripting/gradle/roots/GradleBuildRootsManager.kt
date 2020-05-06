@@ -33,7 +33,9 @@ import java.nio.file.Paths
 
 /**
  * [GradleBuildRoot] is a linked gradle build (don't confuse with gradle project and included build).
- * Each [GradleBuildRoot] may have it's own Gradle version, java home and other settings.
+ * Each [GradleBuildRoot] may have it's own Gradle version, Java home and other settings.
+ *
+ * Typically, IntelliJ project have no more than one [GradleBuildRoot].
  *
  * This manager allows to find related Gradle build by the Gradle Kotlin script file path.
  * Each imported build have info about all of it's Kotlin Build Scripts.
@@ -88,7 +90,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
     }
 
     override fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
-        roots.values.forEach { root ->
+        roots.list.forEach { root ->
             if (root is GradleBuildRoot.Imported) {
                 root.collectConfigurations(builder)
             }
