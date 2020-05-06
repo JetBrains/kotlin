@@ -37,15 +37,13 @@ private class DefaultNpmDependencyExtension(
             scope = scope
         )
 
-    override operator fun invoke(name: String, directory: File): NpmDependency {
-        check(directory.isDirectory) {
-            "Dependency '$name' on local path should point on directory but '$directory' found"
-        }
-        return invoke(
+    override operator fun invoke(name: String, directory: File): NpmDependency =
+        directoryNpmDependency(
+            project = project,
             name = name,
-            version = fileVersion(directory)
+            directory = directory,
+            scope = scope
         )
-    }
 
     override operator fun invoke(directory: File): NpmDependency =
         invoke(

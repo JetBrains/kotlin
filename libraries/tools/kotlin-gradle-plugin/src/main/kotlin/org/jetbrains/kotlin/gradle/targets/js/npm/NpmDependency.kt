@@ -127,6 +127,24 @@ data class NpmDependency(
     override fun getReason(): String? = reason
 }
 
+internal fun directoryNpmDependency(
+    project: Project,
+    name: String,
+    directory: File,
+    scope: NpmDependency.Scope
+): NpmDependency {
+    check(directory.isDirectory) {
+        "Dependency on local path should point on directory but $directory found"
+    }
+
+    return NpmDependency(
+        project = project,
+        name = name,
+        version = fileVersion(directory),
+        scope = scope
+    )
+}
+
 internal fun String.isFileVersion() =
     startsWith(FILE_VERSION_PREFIX)
 

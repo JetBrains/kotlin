@@ -11,15 +11,17 @@ import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.KotlinNpmDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.fileVersion
+import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
 import java.io.File
 
 class DefaultKotlinDependencyHandler(
     val parent: HasKotlinDependencies,
     val project: Project
-) : KotlinDependencyHandler {
+) : KotlinDependencyHandler,
+    KotlinNpmDependencyHandler {
     override fun api(dependencyNotation: Any): Dependency? =
         addDependencyByAnyNotation(parent.apiConfigurationName, dependencyNotation)
 
@@ -99,7 +101,11 @@ class DefaultKotlinDependencyHandler(
         )
 
     override fun npm(name: String, directory: File): NpmDependency =
-        directoryNpmDependency(name, directory, NpmDependency.Scope.NORMAL)
+        directoryNpmDependency(
+            name,
+            directory,
+            NpmDependency.Scope.NORMAL
+        )
 
     override fun npm(directory: File): NpmDependency =
         npm(
@@ -119,7 +125,11 @@ class DefaultKotlinDependencyHandler(
         )
 
     override fun devNpm(name: String, directory: File): NpmDependency =
-        directoryNpmDependency(name, directory, NpmDependency.Scope.DEV)
+        directoryNpmDependency(
+            name,
+            directory,
+            NpmDependency.Scope.DEV
+        )
 
     override fun devNpm(directory: File): NpmDependency =
         devNpm(
@@ -136,7 +146,11 @@ class DefaultKotlinDependencyHandler(
         )
 
     override fun optionalNpm(name: String, directory: File): NpmDependency =
-        directoryNpmDependency(name, directory, NpmDependency.Scope.OPTIONAL)
+        directoryNpmDependency(
+            name,
+            directory,
+            NpmDependency.Scope.OPTIONAL
+        )
 
     override fun optionalNpm(directory: File): NpmDependency =
         optionalNpm(
@@ -156,16 +170,11 @@ class DefaultKotlinDependencyHandler(
         name: String,
         directory: File,
         scope: NpmDependency.Scope
-    ): NpmDependency {
-        check(directory.isDirectory) {
-            "Dependency on local path should point on directory but $directory found"
-        }
-
-        return NpmDependency(
-            project = project,
-            name = name,
-            version = fileVersion(directory),
-            scope = scope
+    ): NpmDependency =
+        directoryNpmDependency(
+            project,
+            name,
+            directory,
+            scope
         )
-    }
 }
