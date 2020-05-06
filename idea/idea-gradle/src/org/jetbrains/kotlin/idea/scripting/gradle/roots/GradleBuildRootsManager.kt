@@ -202,9 +202,10 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
     fun scheduleLastModifiedFilesSave() {
         if (lastModifiedFilesSaveScheduled.compareAndSet(false, true)) {
             BackgroundTaskUtil.executeOnPooledThread(project) {
-                lastModifiedFilesSaveScheduled.set(false)
-                roots.list.forEach {
-                    it.saveLastModifiedFiles()
+                if (lastModifiedFilesSaveScheduled.compareAndSet(true, false)) {
+                    roots.list.forEach {
+                        it.saveLastModifiedFiles()
+                    }
                 }
             }
         }
