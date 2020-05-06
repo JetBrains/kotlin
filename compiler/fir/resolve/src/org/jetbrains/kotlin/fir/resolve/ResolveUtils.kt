@@ -355,10 +355,12 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
         }
         is FirSuperReference -> {
             val labelName = newCallee.labelName
-            val implicitReceiver = implicitReceiverStack[labelName] as? ImplicitDispatchReceiverValue
+            val implicitReceiver =
+                if (labelName != null) implicitReceiverStack[labelName] as? ImplicitDispatchReceiverValue
+                else implicitReceiverStack.lastDispatchReceiver()
             val resolvedTypeRef =
-                if (implicitReceiver != null) implicitReceiver.boundSymbol.phasedFir.superTypeRefs.singleOrNull() as? FirResolvedTypeRef
-                else newCallee.superTypeRef as? FirResolvedTypeRef
+                newCallee.superTypeRef as? FirResolvedTypeRef
+                    ?: implicitReceiver?.boundSymbol?.phasedFir?.superTypeRefs?.singleOrNull() as? FirResolvedTypeRef
             resolvedTypeRef ?: buildErrorTypeRef {
                 source = newCallee.source
                 diagnostic = ConeUnresolvedNameError(Name.identifier("super"))
