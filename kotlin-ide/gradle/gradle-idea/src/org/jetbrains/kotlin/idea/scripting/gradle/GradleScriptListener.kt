@@ -5,16 +5,25 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 
 class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
     init {
-        // start GradleScriptInputsWatcher to track changes in gradle-configuration related files
-        project.service<GradleScriptInputsWatcher>().startWatching()
+        // listen changes using VFS events, including gradle-configuration related files
+        addVfsListener(this)
+    }
+
+    fun fileChanged(filePath: String, ts: Long) {
+        // NOTE: this is required for legacy roots too
+        val root = GradleBuildRootsManager.getInstance(project)
+            .findScriptBuildRoot(filePath, searchNearestLegacy = false)
+            ?.root as? GradleBuildRoot.Linked
+
+        root?.fileChanged(filePath, ts)
     }
 
     override fun isApplicable(vFile: VirtualFile) = GradleBuildRootsManager.getInstance(project).isApplicable(vFile)
