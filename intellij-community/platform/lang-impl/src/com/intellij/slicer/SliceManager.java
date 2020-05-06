@@ -66,13 +66,23 @@ public class SliceManager implements PersistentStateComponent<SliceManager.Store
     SliceAnalysisParams params = handler.askForParams(element, myStoredSettings, StringUtil.unescapeXmlEntities(dialogTitle));
     if (params == null) return;
 
+    createToolWindow(element, params);
+  }
+
+  /**
+   * Opens the dataflow analysis toolwindow starting from the given element 
+   * 
+   * @param element root element
+   * @param params analysis parameters
+   */
+  public void createToolWindow(@NotNull PsiElement element, @NotNull SliceAnalysisParams params) {
     SliceRootNode rootNode = new SliceRootNode(myProject, new DuplicateMap(),
                                                LanguageSlicing.getProvider(element).createRootUsage(element, params));
     String suffix = null;
     if (params.valueFilter != null) {
       suffix = " " + StringUtil.escapeXmlEntities(LangBundle.message("slice.analysis.title.filter", params.valueFilter));
     }
-    createToolWindow(dataFlowToThis, rootNode, false, getElementDescription(null, element, suffix));
+    createToolWindow(params.dataFlowToThis, rootNode, false, getElementDescription(null, element, suffix));
   }
 
   public void createToolWindow(boolean dataFlowToThis, @NotNull SliceRootNode rootNode, boolean splitByLeafExpressions, @NotNull String displayName) {

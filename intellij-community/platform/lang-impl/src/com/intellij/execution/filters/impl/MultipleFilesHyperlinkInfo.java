@@ -18,9 +18,11 @@ package com.intellij.execution.filters.impl;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.filters.FileHyperlinkInfo;
 import com.intellij.execution.filters.HyperlinkInfoBase;
-import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.ide.util.gotoByName.GotoFileCellRenderer;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -38,13 +40,13 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.ToIntFunction;
+import java.util.function.BiConsumer;
 
 class MultipleFilesHyperlinkInfo extends HyperlinkInfoBase implements FileHyperlinkInfo {
   private final List<? extends VirtualFile> myVirtualFiles;
   private final int myLineNumber;
   private final Project myProject;
-  private final ToIntFunction<? super PsiFile> myColumnFinder;
+  private final BiConsumer<PsiFile, Editor> myAction;
 
   MultipleFilesHyperlinkInfo(@NotNull List<? extends VirtualFile> virtualFiles, int lineNumber, @NotNull Project project) {
     this(virtualFiles, lineNumber, project, null);
@@ -53,11 +55,11 @@ class MultipleFilesHyperlinkInfo extends HyperlinkInfoBase implements FileHyperl
   MultipleFilesHyperlinkInfo(@NotNull List<? extends VirtualFile> virtualFiles,
                              int lineNumber,
                              @NotNull Project project,
-                             @Nullable ToIntFunction<? super PsiFile> columnFinder) {
+                             @Nullable BiConsumer<PsiFile, Editor> action) {
     myVirtualFiles = virtualFiles;
     myLineNumber = lineNumber;
     myProject = project;
-    myColumnFinder = columnFinder == null ? f -> 0 : columnFinder;
+    myAction = action == null ? (f, e) -> {} : action;
   }
 
   @Override
@@ -83,8 +85,7 @@ class MultipleFilesHyperlinkInfo extends HyperlinkInfoBase implements FileHyperl
     if (currentFiles.isEmpty()) return;
 
     if (currentFiles.size() == 1) {
-      PsiFile file = currentFiles.get(0);
-      new OpenFileHyperlinkInfo(myProject, file.getVirtualFile(), myLineNumber, myColumnFinder.applyAsInt(file)).navigate(project);
+      open(currentFiles.get(0));
     }
     else {
       JFrame frame = WindowManager.getInstance().getFrame(project);
@@ -93,10 +94,7 @@ class MultipleFilesHyperlinkInfo extends HyperlinkInfoBase implements FileHyperl
         .createPopupChooserBuilder(currentFiles)
         .setRenderer(new GotoFileCellRenderer(width))
         .setTitle(ExecutionBundle.message("popup.title.choose.target.file"))
-        .setItemChosenCallback(selectedValue -> {
-          VirtualFile file = selectedValue.getVirtualFile();
-          new OpenFileHyperlinkInfo(myProject, file, myLineNumber, myColumnFinder.applyAsInt(selectedValue)).navigate(project);
-        })
+        .setItemChosenCallback(this::open)
         .createPopup();
       if (hyperlinkLocationPoint != null) {
         popup.show(hyperlinkLocationPoint);
@@ -104,6 +102,19 @@ class MultipleFilesHyperlinkInfo extends HyperlinkInfoBase implements FileHyperl
       else {
         popup.showInFocusCenter();
       }
+    }
+  }
+
+  private void open(@NotNull PsiFile file) {
+    Document document = file.getViewProvider().getDocument();
+    int offset = 0;
+    if (document != null && myLineNumber >= 0 && myLineNumber < document.getLineCount()) {
+      offset = document.getLineStartOffset(myLineNumber);
+    } 
+    OpenFileDescriptor descriptor = new OpenFileDescriptor(myProject, file.getVirtualFile(), offset);
+    Editor editor = FileEditorManager.getInstance(myProject).openTextEditor(descriptor, true);
+    if (editor != null) {
+      myAction.accept(file, editor);
     }
   }
 
