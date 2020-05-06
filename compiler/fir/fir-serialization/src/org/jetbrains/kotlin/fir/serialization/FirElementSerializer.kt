@@ -730,7 +730,7 @@ class FirElementSerializer private constructor(
     private operator fun FirArgumentList.get(name: Name): ConstantValue<*>? {
         // TODO: constant evaluation
         val expression = arguments.filterIsInstance<FirNamedArgumentExpression>().find {
-            name == name
+            it.name == name
         }?.expression
         if (expression !is FirConstExpression<*>) {
             return null
