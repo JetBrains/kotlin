@@ -187,16 +187,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     private fun matchValueArgumentList(queryArgs: List<KtValueArgument>?, codeArgs: List<KtValueArgument>?): Boolean {
-        if(queryArgs == null || codeArgs == null) return queryArgs == codeArgs
+        if (queryArgs == null || codeArgs == null) return queryArgs == codeArgs
         var queryIndex = 0
         var codeIndex = 0
         while (queryIndex < queryArgs.size) {
             val queryArg = queryArgs[queryIndex]
             val codeArg = codeArgs.getOrElse(codeIndex) { return false }
             val handler = myMatchingVisitor.matchContext.pattern.getHandler(queryArg)
-            if(handler is SubstitutionHandler && handler.minOccurs != handler.maxOccurs) {
-                for(i in handler.minOccurs..handler.maxOccurs) {
-                    if(!myMatchingVisitor.match(queryArg, codeArgs[codeIndex++])) return false
+            if (handler is SubstitutionHandler && handler.minOccurs != handler.maxOccurs) {
+                for (i in handler.minOccurs..handler.maxOccurs) {
+                    if (!myMatchingVisitor.match(queryArg, codeArgs[codeIndex++])) return false
                     if (codeIndex == codeArgs.size) return true
                 }
             }
@@ -227,7 +227,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             }
             // normal argument matching
             if (!myMatchingVisitor.match(queryArg, codeArg)) {
-                return if (queryArg.isNamed()) { // start comparing for out of order arguments
+                return if (queryArg.isNamed() || codeArg.isNamed()) { // start comparing for out of order arguments
                     val sortQueryArgs = queryArgs.subList(queryIndex, queryArgs.lastIndex + 1)
                     val sortCodeArgs = codeArgs.subList(codeIndex, codeArgs.lastIndex + 1)
                     myMatchingVisitor.matchInAnyOrder(sortQueryArgs, sortCodeArgs)
