@@ -72,4 +72,49 @@ class LastModifiedFilesTest {
         assertEquals(3, files.lastModifiedTimeStampExcept("a"))
         assertEquals(3, files.lastModifiedTimeStampExcept("b"))
     }
+
+    @Test
+    fun testSameFile() {
+        files.fileChanged(1, "x")
+        files.fileChanged(2, "x")
+        assertEquals(Long.MIN_VALUE, files.lastModifiedTimeStampExcept("x"))
+    }
+
+    @Test
+    fun testSameFile1() {
+        files.fileChanged(1, "z")
+        files.fileChanged(2, "x")
+        files.fileChanged(3, "x")
+        assertEquals(1, files.lastModifiedTimeStampExcept("x"))
+        assertEquals(3, files.lastModifiedTimeStampExcept("z"))
+    }
+
+    @Test
+    fun testSameFile2() {
+        files.fileChanged(1, "z")
+        files.fileChanged(1, "x")
+        files.fileChanged(2, "x")
+        assertEquals(1, files.lastModifiedTimeStampExcept("x"))
+        assertEquals(2, files.lastModifiedTimeStampExcept("z"))
+    }
+
+    @Test
+    fun testSameFile3() {
+        files.fileChanged(1, "x")
+        files.fileChanged(1, "y")
+        files.fileChanged(2, "x")
+        assertEquals(1, files.lastModifiedTimeStampExcept("x"))
+        assertEquals(2, files.lastModifiedTimeStampExcept("y"))
+    }
+
+    @Test
+    fun testSameFile4() {
+        files.fileChanged(1, "z")
+        files.fileChanged(2, "x")
+        files.fileChanged(2, "y")
+        files.fileChanged(3, "x")
+        assertEquals(2, files.lastModifiedTimeStampExcept("x"))
+        assertEquals(3, files.lastModifiedTimeStampExcept("y"))
+        assertEquals(3, files.lastModifiedTimeStampExcept("z"))
+    }
 }

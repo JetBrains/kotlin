@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.idea.core.util.readNullable
 import org.jetbrains.kotlin.idea.core.util.readStringList
 import org.jetbrains.kotlin.idea.core.util.writeNullable
 import org.jetbrains.kotlin.idea.core.util.writeStringList
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootData
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootDataSerializer
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.readKotlinDslScriptModels
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.writeKotlinDslScriptModels
 import java.io.DataInputStream
 import java.io.DataOutput
 
@@ -40,7 +36,10 @@ class LastModifiedFiles(
     fun fileChanged(ts: Long, fileId: String) {
         when {
             ts > last.ts -> {
+                val prevPrev = previous
                 previous = last
+                previous.fileIds.remove(fileId)
+                if (previous.fileIds.isEmpty()) previous = prevPrev
                 last = SimultaneouslyChangedFiles(ts, hashSetOf(fileId))
             }
             ts == last.ts -> last.fileIds.add(fileId)
