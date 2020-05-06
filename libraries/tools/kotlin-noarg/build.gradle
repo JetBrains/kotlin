@@ -56,4 +56,6 @@ pluginBundle {
     }
 }
 
+configurePluginMarkers(project)
+
 test.executable = "${JDK_18}/bin/java"

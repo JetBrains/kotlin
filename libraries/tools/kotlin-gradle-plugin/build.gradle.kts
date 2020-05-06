@@ -206,3 +206,5 @@ pluginBundle {
         display = "Kotlin Native plugin for CocoaPods integration"
     )
 }
+
+publishPluginMarkers()
