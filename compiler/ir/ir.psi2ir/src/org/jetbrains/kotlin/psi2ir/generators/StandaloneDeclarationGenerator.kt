@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.withScope
@@ -120,7 +121,11 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         )
     }
 
-    protected fun generateValueParameterDeclarations(irFunction: IrFunction, functionDescriptor: FunctionDescriptor) {
+    protected fun generateValueParameterDeclarations(
+        irFunction: IrFunction,
+        functionDescriptor: FunctionDescriptor,
+        defaultArgumentFactory: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody?
+    ) {
 
         // TODO: KtElements
 
@@ -135,18 +140,23 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         // Declare all the value parameters up first.
         irFunction.valueParameters = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            declareParameter(valueParameterDescriptor, ktParameter, irFunction)
+            declareParameter(valueParameterDescriptor, ktParameter, irFunction).also {
+                it.defaultValue = irFunction.defaultArgumentFactory(valueParameterDescriptor)
+            }
         }
     }
 
-    fun generateConstructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassConstructorDescriptor, symbol: IrConstructorSymbol): IrConstructor {
+    fun generateConstructor(
+        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassConstructorDescriptor, symbol: IrConstructorSymbol,
+        defaultArgumentFactory: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody? = { null }
+    ): IrConstructor {
         val irConstructor = IrConstructorImpl(startOffset, endOffset, origin, symbol, IrUninitializedType)
         irConstructor.metadata = MetadataSource.Function(descriptor)
 
         symbolTable.withScope(descriptor) {
             val ctorTypeParameters = descriptor.typeParameters.filter { it.containingDeclaration === descriptor }
             generateScopedTypeParameterDeclarations(irConstructor, ctorTypeParameters)
-            generateValueParameterDeclarations(irConstructor, descriptor)
+            generateValueParameterDeclarations(irConstructor, descriptor, defaultArgumentFactory)
             irConstructor.returnType = descriptor.returnType.toIrType()
         }
 
@@ -157,14 +167,17 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         irFunction.overriddenSymbols = overridens.map { symbolTable.referenceSimpleFunction(it.original) }
     }
 
-    fun generateSimpleFunction(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: FunctionDescriptor, symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
+    fun generateSimpleFunction(
+        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: FunctionDescriptor, symbol: IrSimpleFunctionSymbol,
+        defaultArgumentFactory: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody? = { null }
+    ): IrSimpleFunction {
         val irFunction = IrFunctionImpl(startOffset, endOffset, origin, symbol, IrUninitializedType)
         irFunction.metadata = MetadataSource.Function(descriptor)
 
         symbolTable.withScope(descriptor) {
             generateOverridenSymbols(irFunction, descriptor.overriddenDescriptors)
             generateScopedTypeParameterDeclarations(irFunction, descriptor.typeParameters)
-            generateValueParameterDeclarations(irFunction, descriptor)
+            generateValueParameterDeclarations(irFunction, descriptor, defaultArgumentFactory)
             irFunction.returnType = descriptor.returnType?.toIrType() ?: error("Expected return type $descriptor")
         }
 

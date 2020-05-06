@@ -8,8 +8,13 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.Variance
 
 class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDescriptorVisitor<Unit, IrDeclarationContainer?> {
 
@@ -26,6 +31,17 @@ class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDes
         return this
     }
 
+    private val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
+
+    private fun IrFunction.defaultArgumentFactory(descriptor: ValueParameterDescriptor): IrExpressionBody? {
+        if (!descriptor.declaresDefaultValue()) return null
+
+        val description = "Default Argument Value stub for ${descriptor.name}|${descriptor.index}"
+        return IrExpressionBodyImpl(IrErrorExpressionImpl(startOffset, endOffset, errorType, description))
+    }
+
+    private val defaultFactoryReference: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody? = { defaultArgumentFactory(it) }
+
     override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: IrDeclarationContainer?) {
         error("Unexpected declaration descriptor $descriptor")
     }
@@ -39,7 +55,7 @@ class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDes
     }
 
     private fun createFunctionStub(descriptor: FunctionDescriptor, symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
-        return generator.generateSimpleFunction(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
+        return generator.generateSimpleFunction(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol, defaultFactoryReference)
     }
 
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: IrDeclarationContainer?) {
@@ -97,7 +113,7 @@ class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDes
     }
 
     private fun createConstructorStub(descriptor: ClassConstructorDescriptor, symbol: IrConstructorSymbol): IrConstructor {
-        return generator.generateConstructor(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
+        return generator.generateConstructor(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol, defaultFactoryReference)
     }
 
     override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: IrDeclarationContainer?) {
