@@ -94,7 +94,7 @@ class ScriptClassRootsUpdater(
         if (!invalidated) return
         invalidated = false
 
-        if (syncUpdateRequired) {
+        if (syncUpdateRequired || ApplicationManager.getApplication().isUnitTestMode) {
             syncUpdateRequired = false
             updateSynchronously()
         } else {
