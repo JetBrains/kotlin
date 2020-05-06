@@ -49,8 +49,15 @@ sealed class GradleBuildRoot {
         private val dir: VirtualFile?
             get() = LocalFileSystem.getInstance().findFileByPath(pathPrefix)
 
-        private val lastModifiedFiles =
-            dir?.let { LastModifiedFiles.read(it) } ?: LastModifiedFiles()
+        private lateinit var lastModifiedFiles: LastModifiedFiles
+
+        fun loadLastModifiedFiles() {
+            lastModifiedFiles = dir?.let { LastModifiedFiles.read(it) } ?: LastModifiedFiles()
+        }
+
+        fun saveLastModifiedFiles() {
+            LastModifiedFiles.write(dir ?: return, lastModifiedFiles)
+        }
 
         fun areRelatedFilesUpToDate(file: VirtualFile, lastModified: Long): Boolean =
             lastModifiedFiles.lastModifiedTimeStampExcept(file.path) < lastModified
@@ -59,15 +66,15 @@ sealed class GradleBuildRoot {
             lastModifiedFiles.fileChanged(ts, filePath)
             manager.scheduleLastModifiedFilesSave()
         }
-
-        fun saveLastModifiedFiles() {
-            LastModifiedFiles.write(dir ?: return, lastModifiedFiles)
-        }
     }
 
     abstract class WithoutScriptModels(settings: GradleProjectSettings) : Linked() {
         final override val pathPrefix = settings.externalProjectPath!!
         final override val projectRoots = settings.modules.takeIf { it.isNotEmpty() } ?: listOf(pathPrefix)
+
+        init {
+            loadLastModifiedFiles()
+        }
     }
 
     /**
@@ -76,7 +83,11 @@ sealed class GradleBuildRoot {
     class Legacy(
         override val manager: GradleBuildRootsManager,
         settings: GradleProjectSettings
-    ) : WithoutScriptModels(settings)
+    ) : WithoutScriptModels(settings) {
+        init {
+            loadLastModifiedFiles()
+        }
+    }
 
     /**
      * Linked but not yet imported Gradle build.
@@ -84,7 +95,11 @@ sealed class GradleBuildRoot {
     class New(
         override val manager: GradleBuildRootsManager,
         settings: GradleProjectSettings
-    ) : WithoutScriptModels(settings)
+    ) : WithoutScriptModels(settings) {
+        init {
+            loadLastModifiedFiles()
+        }
+    }
 
     /**
      * Imported Gradle build.
@@ -103,6 +118,10 @@ sealed class GradleBuildRoot {
 
         override val projectRoots: Collection<String>
             get() = data.projectRoots
+
+        init {
+            loadLastModifiedFiles()
+        }
 
         fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
             if (javaHome != null) {
