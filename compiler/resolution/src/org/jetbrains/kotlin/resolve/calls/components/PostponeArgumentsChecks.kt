@@ -20,11 +20,10 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.LHSArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -63,8 +62,20 @@ private fun preprocessLambdaArgument(
     forceResolution: Boolean = false,
     returnTypeVariable: TypeVariableForLambdaReturnType? = null
 ): ResolvedAtom {
-    if (expectedType != null && !forceResolution && csBuilder.isTypeVariable(expectedType)) {
-        return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType)
+
+    if (expectedType != null && !forceResolution) {
+        // postpone lambda processing if expected type is a type variable that could be fixed into something non-trivial
+        val expectedTypeVariableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.constructor]
+
+        if (expectedTypeVariableWithConstraints != null) {
+            val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
+                it.kind == ConstraintKind.EQUALITY && it.position.from is ExplicitTypeParameterConstraintPosition
+            }?.type as? KotlinType
+
+            if (explicitTypeArgument == null || explicitTypeArgument.arguments.isNotEmpty()) {
+                return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType)
+            }
+        }
     }
 
     val resolvedArgument = extractLambdaInfoFromFunctionalType(expectedType, argument, returnTypeVariable)
