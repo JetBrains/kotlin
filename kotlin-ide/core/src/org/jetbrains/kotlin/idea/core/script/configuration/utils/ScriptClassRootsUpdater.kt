@@ -39,19 +39,29 @@ class ScriptClassRootsUpdater(
     val manager: CompositeScriptConfigurationManager
 ) {
     private var invalidated: Boolean = false
+    private var syncUpdateRequired: Boolean = false
     private val concurrentUpdates = AtomicInteger()
 
+    /**
+     * @param synchronous Used from legacy FS cache only, don't use
+     */
     @Synchronized
     @Suppress("UNUSED_PARAMETER")
-    fun invalidate(file: VirtualFile) {
+    fun invalidate(file: VirtualFile, synchronous: Boolean = false) {
         // todo: record invalided files for some optimisations in update
-        invalidate()
+        invalidate(synchronous)
     }
 
+    /**
+     * @param synchronous Used from legacy FS cache only, don't use
+     */
     @Synchronized
-    fun invalidate() {
+    fun invalidate(synchronous: Boolean = false) {
         checkInTransaction()
         invalidated = true
+        if (synchronous) {
+            syncUpdateRequired = true
+        }
     }
 
     fun checkInTransaction() {
@@ -79,11 +89,17 @@ class ScriptClassRootsUpdater(
         scheduleUpdateIfInvalid()
     }
 
+    @Synchronized
     private fun scheduleUpdateIfInvalid() {
         if (!invalidated) return
         invalidated = false
 
-        ensureUpdateScheduled()
+        if (syncUpdateRequired) {
+            syncUpdateRequired = false
+            updateSynchronously()
+        } else {
+            ensureUpdateScheduled()
+        }
     }
 
     private val syncLock = ReentrantLock()
@@ -97,11 +113,8 @@ class ScriptClassRootsUpdater(
         }
     }
 
-    /**
-     * Used from legacy FS cache only, don't use
-     */
     @Synchronized
-    fun updateSynchronously() {
+    private fun updateSynchronously() {
         syncLock.withLock {
             scheduledUpdate?.cancel()
             doUpdate(false)
