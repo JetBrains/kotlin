@@ -27,6 +27,11 @@ class LastModifiedFiles(
     private var last: SimultaneouslyChangedFiles = SimultaneouslyChangedFiles(),
     private var previous: SimultaneouslyChangedFiles = SimultaneouslyChangedFiles()
 ) {
+    init {
+        previous.fileIds.removeAll(last.fileIds)
+        if (previous.fileIds.isEmpty()) previous = SimultaneouslyChangedFiles()
+    }
+
     class SimultaneouslyChangedFiles(
         val ts: Long = Long.MIN_VALUE,
         val fileIds: MutableSet<String> = mutableSetOf()

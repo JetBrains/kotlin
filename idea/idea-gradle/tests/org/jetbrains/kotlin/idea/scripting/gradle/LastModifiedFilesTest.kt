@@ -117,4 +117,36 @@ class LastModifiedFilesTest {
         assertEquals(3, files.lastModifiedTimeStampExcept("y"))
         assertEquals(3, files.lastModifiedTimeStampExcept("z"))
     }
+
+    @Test
+    fun testLoadingAfterSameFileBug() {
+        val restored = LastModifiedFiles(
+            LastModifiedFiles.SimultaneouslyChangedFiles(2, mutableSetOf("x")),
+            LastModifiedFiles.SimultaneouslyChangedFiles(1, mutableSetOf("x"))
+        )
+
+        assertEquals(Long.MIN_VALUE, restored.lastModifiedTimeStampExcept("x"))
+    }
+
+    @Test
+    fun testLoadingAfterSameFileBug2() {
+        val restored = LastModifiedFiles(
+            LastModifiedFiles.SimultaneouslyChangedFiles(2, mutableSetOf("x", "y")),
+            LastModifiedFiles.SimultaneouslyChangedFiles(1, mutableSetOf("x"))
+        )
+
+        assertEquals(2, restored.lastModifiedTimeStampExcept("x"))
+        assertEquals(2, restored.lastModifiedTimeStampExcept("y"))
+    }
+
+    @Test
+    fun testLoadingAfterSameFileBug3() {
+        val restored = LastModifiedFiles(
+            LastModifiedFiles.SimultaneouslyChangedFiles(2, mutableSetOf("x", "y")),
+            LastModifiedFiles.SimultaneouslyChangedFiles(1, mutableSetOf("x", "z"))
+        )
+
+        assertEquals(2, restored.lastModifiedTimeStampExcept("x"))
+        assertEquals(2, restored.lastModifiedTimeStampExcept("y"))
+    }
 }
