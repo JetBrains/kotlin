@@ -31,8 +31,18 @@ fun getKJvmCompletion(
     bindingContext: BindingContext,
     resolutionFacade: KotlinResolutionFacadeForRepl,
     moduleDescriptor: ModuleDescriptor,
-    cursor: Int
-) = KJvmReplCompleter(ktScript, bindingContext, resolutionFacade, moduleDescriptor, cursor).getCompletion()
+    cursor: Int,
+    filterOutShadowedDescriptors: Boolean,
+    nameFilter: (String, String) -> Boolean,
+) = KJvmReplCompleter(
+    ktScript,
+    bindingContext,
+    resolutionFacade,
+    moduleDescriptor,
+    cursor,
+    filterOutShadowedDescriptors,
+    nameFilter
+).getCompletion()
 
 // Insert a constant string right after a cursor position to make this identifiable as a simple reference
 // For example, code line
@@ -49,7 +59,9 @@ private class KJvmReplCompleter(
     private val bindingContext: BindingContext,
     private val resolutionFacade: KotlinResolutionFacadeForRepl,
     private val moduleDescriptor: ModuleDescriptor,
-    private val cursor: Int
+    private val cursor: Int,
+    private val filterOutShadowedDescriptors: Boolean,
+    private val nameFilter: (String, String) -> Boolean,
 ) {
 
     fun getCompletion() = sequence<SourceCodeCompletionVariant> gen@{
@@ -90,9 +102,9 @@ private class KJvmReplCompleter(
             ).getReferenceVariants(
                 simpleExpression,
                 DescriptorKindFilter.ALL,
-                { name: Name -> !name.isSpecial && name.identifier.startsWith(prefix) },
+                { name: Name -> !name.isSpecial && nameFilter(name.identifier, prefix) },
                 filterOutJavaGettersAndSetters = true,
-                filterOutShadowed = false, // setting to true makes it slower up to 4 times
+                filterOutShadowed = filterOutShadowedDescriptors, // setting to true makes it slower up to 4 times
                 excludeNonInitializedVariable = true,
                 useReceiverType = null
             )
@@ -158,7 +170,8 @@ private class KJvmReplCompleter(
                         receiverExpression,
                         CallTypeAndReceiver.DOT(receiverExpression),
                         DescriptorKindFilter.ALL,
-                        ALL_NAME_FILTER
+                        ALL_NAME_FILTER,
+                        filterOutShadowed = filterOutShadowedDescriptors,
                     )
                 }
             } else {
@@ -204,7 +217,7 @@ private class KJvmReplCompleter(
                 .forEach {
                     val descriptor = it.first
                     val (rawName, presentableText, tailText, completionText) = it.second
-                    if (rawName.startsWith(prefix)) {
+                    if (nameFilter(rawName, prefix)) {
                         val fullName: String =
                             formatName(
                                 presentableText
