@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -81,6 +80,13 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 qualifiedAccessExpression
             }
             is FirSuperReference -> {
+                val labelName = callee.labelName
+                val implicitReceiver =
+                    if (labelName != null) implicitReceiverStack[labelName] as? ImplicitDispatchReceiverValue
+                    else implicitReceiverStack.lastDispatchReceiver()
+                implicitReceiver?.receiverExpression?.let {
+                    qualifiedAccessExpression.transformDispatchReceiver(StoreReceiver, it)
+                }
                 when (val superTypeRef = callee.superTypeRef) {
                     is FirResolvedTypeRef -> {
                         qualifiedAccessExpression.resultType = superTypeRef
@@ -90,10 +96,6 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                         qualifiedAccessExpression.resultType = callee.superTypeRef
                     }
                     else -> {
-                        val labelName = callee.labelName
-                        val implicitReceiver =
-                            if (labelName != null) implicitReceiverStack[labelName] as? ImplicitDispatchReceiverValue
-                            else implicitReceiverStack.lastDispatchReceiver()
                         val superTypeRefs = implicitReceiver?.boundSymbol?.phasedFir?.superTypeRefs
                         val resultType = when {
                             superTypeRefs?.isNotEmpty() != true -> {

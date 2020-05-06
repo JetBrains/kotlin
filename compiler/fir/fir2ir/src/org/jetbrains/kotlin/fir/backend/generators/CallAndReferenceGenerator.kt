@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 
@@ -165,21 +162,15 @@ internal class CallAndReferenceGenerator(
             conversionScope
         )
         return typeRef.convertWithOffsets { startOffset, endOffset ->
+            val dispatchReceiver = qualifiedAccess.dispatchReceiver
             if (qualifiedAccess.calleeReference is FirSuperReference) {
-                val superReference = qualifiedAccess.calleeReference as FirSuperReference
-                if (typeRef !is FirComposedSuperTypeRef) {
-                    val label = superReference.labelName
-                    val dispatchReceiver =
-                        if (label != null) conversionScope.dispatchReceiverParameter(label)
-                        else conversionScope.lastDispatchReceiverParameter()
-                    if (dispatchReceiver != null) {
-                        return@convertWithOffsets IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
-                    }
+                if (typeRef !is FirComposedSuperTypeRef && dispatchReceiver !is FirNoReceiverExpression) {
+                    return@convertWithOffsets visitor.convertToIrExpression(dispatchReceiver)
                 }
             }
             var superQualifierSymbol: IrClassSymbol? = null
-            if (qualifiedAccess.dispatchReceiver is FirQualifiedAccess) {
-                val dispatchReceiverReference = (qualifiedAccess.dispatchReceiver as FirQualifiedAccess).calleeReference
+            if (dispatchReceiver is FirQualifiedAccess) {
+                val dispatchReceiverReference = dispatchReceiver.calleeReference
                 if (dispatchReceiverReference is FirSuperReference) {
                     val coneSuperType = dispatchReceiverReference.superTypeRef.coneTypeSafe<ConeClassLikeType>()
                     (coneSuperType?.lookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.let {

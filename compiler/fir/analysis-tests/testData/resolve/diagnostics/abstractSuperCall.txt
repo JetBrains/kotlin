@@ -25,8 +25,8 @@ FILE: abstractSuperCall.kt
         public abstract fun f(): R|kotlin/Unit|
 
         public final fun t(): R|kotlin/Unit| {
-            super<R|C|>.R|/C.h|()
-            super<R|C|>.R|/C.x|
+            this@R|/A|.super<R|C|>.R|/C.h|()
+            this@R|/A|.super<R|C|>.R|/C.x|
         }
 
     }
@@ -39,10 +39,10 @@ FILE: abstractSuperCall.kt
         }
 
         public final fun g(): R|kotlin/Unit| {
-            super<R|A|>.R|/A.f|()
-            super<R|A|>.R|/A.t|()
-            super<R|A|>.R|/A.x|
-            super<R|A|>.R|/A.y|
+            this@R|/B|.super<R|A|>.R|/A.f|()
+            this@R|/B|.super<R|A|>.R|/A.t|()
+            this@R|/B|.super<R|A|>.R|/A.x|
+            this@R|/B|.super<R|A|>.R|/A.y|
         }
 
     }
@@ -52,10 +52,10 @@ FILE: abstractSuperCall.kt
         }
 
         public final fun r(): R|kotlin/Unit| {
-            super<R|A|>.R|/A.f|()
-            super<R|A|>.R|/A.t|()
-            super<R|A|>.R|/A.x|
-            super<R|A|>.R|/A.y|
+            this@R|/J|.super<R|A|>.R|/A.f|()
+            this@R|/J|.super<R|A|>.R|/A.t|()
+            this@R|/J|.super<R|A|>.R|/A.x|
+            this@R|/J|.super<R|A|>.R|/A.y|
         }
 
     }

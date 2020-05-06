@@ -54,11 +54,11 @@ FILE: nestedVisibility.kt
 
         public final fun foo(): R|kotlin/Unit| {
             Q|Outer|.<Inapplicable(HIDDEN): [/Outer.PrivateNested.PrivateNested]>#()
-            super<R|Outer|>.<Inapplicable(HIDDEN): [/Outer.PrivateInner.PrivateInner]>#()
+            this@R|/Derived|.super<R|Outer|>.<Inapplicable(HIDDEN): [/Outer.PrivateInner.PrivateInner]>#()
             Q|Outer|.R|/Outer.ProtectedNested.ProtectedNested|()
-            super<R|Outer|>.R|/Outer.ProtectedInner.ProtectedInner|()
+            this@R|/Derived|.super<R|Outer|>.R|/Outer.ProtectedInner.ProtectedInner|()
             Q|Outer|.R|/Outer.PublicNested.PublicNested|()
-            super<R|Outer|>.R|/Outer.PublicInner.PublicInner|()
+            this@R|/Derived|.super<R|Outer|>.R|/Outer.PublicInner.PublicInner|()
         }
 
     }
