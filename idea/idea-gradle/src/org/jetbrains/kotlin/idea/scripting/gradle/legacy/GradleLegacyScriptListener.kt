@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.legacy
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
-import org.jetbrains.kotlin.idea.scripting.gradle.*
+import org.jetbrains.kotlin.idea.scripting.gradle.isGradleKotlinScript
+import org.jetbrains.kotlin.idea.scripting.gradle.isInAffectedGradleProjectFiles
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.idea.scripting.gradle.useScriptConfigurationFromImportOnly
 
 class GradleLegacyScriptListener(project: Project) : ScriptChangeListener(project) {
     override fun isApplicable(vFile: VirtualFile): Boolean {
@@ -29,6 +31,8 @@ class GradleLegacyScriptListener(project: Project) : ScriptChangeListener(projec
 
     override fun documentChanged(vFile: VirtualFile) {
         if (!isInAffectedGradleProjectFiles(project, vFile.path)) return
+
+        GradleBuildRootsManager.getInstance(project).fileChanged(vFile.path)
 
         val file = getAnalyzableKtFileForScript(vFile)
         if (file != null) {
