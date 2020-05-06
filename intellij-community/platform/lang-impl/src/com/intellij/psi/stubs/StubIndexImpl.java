@@ -1,14 +1,13 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
-/*
- * @author max
- */
 package com.intellij.psi.stubs;
 
 import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
@@ -58,10 +57,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.function.IntPredicate;
 
-@State(name = "FileBasedIndex", storages = {
-  @Storage(StoragePathMacros.CACHE_FILE),
-  @Storage(value = "stubIndex.xml", deprecated = true, roamingType = RoamingType.DISABLED)
-})
+@State(name = "FileBasedIndex", storages = @Storage(StoragePathMacros.CACHE_FILE))
 public final class StubIndexImpl extends StubIndexEx implements PersistentStateComponent<StubIndexState> {
   private static final AtomicReference<Boolean> ourForcedClean = new AtomicReference<>(null);
   static final Logger LOG = Logger.getInstance(StubIndexImpl.class);
@@ -645,7 +641,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     protected void prepare() {
       Iterator<StubIndexExtension<?, ?>> extensionsIterator =
         IndexInfrastructure.hasIndices() ?
-          ((ExtensionPointImpl<StubIndexExtension<?, ?>>)StubIndexExtension.EP_NAME.getPoint(null)).iterator() :
+          ((ExtensionPointImpl<StubIndexExtension<?, ?>>)StubIndexExtension.EP_NAME.getPoint()).iterator() :
           Collections.emptyIterator();
 
       boolean forceClean = Boolean.TRUE == ourForcedClean.getAndSet(Boolean.FALSE);
@@ -686,7 +682,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     return ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID);
   }
 
-  private static class CompositeKey<K> {
+  private static final class CompositeKey<K> {
     private final K key;
     private final int fileId;
 
