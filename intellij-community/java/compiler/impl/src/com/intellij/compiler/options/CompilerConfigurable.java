@@ -3,6 +3,7 @@ package com.intellij.compiler.options;
 
 import com.intellij.compiler.CompilerSettingsFactory;
 import com.intellij.openapi.compiler.JavaCompilerBundle;
+import com.intellij.openapi.extensions.BaseExtensionPointName;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -12,8 +13,10 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Collection;
+import java.util.Collections;
 
-public class CompilerConfigurable implements SearchableConfigurable.Parent, Configurable.NoScroll {
+public class CompilerConfigurable implements SearchableConfigurable.Parent, Configurable.NoScroll, Configurable.WithEpDependencies {
 
   private final Project myProject;
   private final CompilerUIConfigurable myCompilerUIConfigurable;
@@ -68,6 +71,11 @@ public class CompilerConfigurable implements SearchableConfigurable.Parent, Conf
   @Override
   public void disposeUIResources() {
     myCompilerUIConfigurable.disposeUIResources();
+  }
+
+  @Override
+  public @NotNull Collection<BaseExtensionPointName<?>> getDependencies() {
+    return Collections.singleton(CompilerSettingsFactory.EP_NAME);
   }
 
   @Override
