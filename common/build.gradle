@@ -15,7 +15,7 @@ targetList.each { targetName ->
     tasks.create("${targetName}Files", CompileToBitcode, file("src/files"), 'files', targetName)
 }
 
-CompilationDatabaseKt.createCompilationDatabaseFromCompileToBitcodeTasks(project, "compdb")
+CompilationDatabaseKt.createCompilationDatabasesFromCompileToBitcodeTasks(project, "CompilationDatabase")
 
 task build {
     dependsOn "${hostName}Hash"

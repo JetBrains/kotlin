@@ -739,7 +739,7 @@ task clean {
     doLast {
         delete distDir
         delete bundle.outputs.files
-        delete tasks.findByName("compdb").outputFile
+        delete "${projectDir}/compile_commands.json"
     }
 }
 
@@ -752,9 +752,17 @@ task pusher(type: KotlinBuildPusher){
     token = project.findProperty("teamcityBearToken") ?: System.getenv("TEAMCITY_BEAR_TOKEN")
 }
 
-CompilationDatabaseKt.mergeCompilationDatabases(project, "compdb", [
-    ":common:compdb",
-    ":runtime:compdb"
-]).configure {
-    outputFile = file("$projectDir/compile_commands.json")
+targetList.each { target ->
+    CompilationDatabaseKt.mergeCompilationDatabases(project, "${target}CompilationDatabase".toString(), [
+            ":common:${target}CompilationDatabase".toString(),
+            ":runtime:${target}CompilationDatabase".toString()
+    ]).configure {
+        outputFile = file("$buildDir/${target}/compile_commands.json")
+    }
+}
+
+task compdb(type: Copy) {
+    dependsOn "${hostName}CompilationDatabase"
+    from "$buildDir/${hostName}/compile_commands.json"
+    into "$projectDir"
 }

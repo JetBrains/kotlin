@@ -78,7 +78,7 @@ targetList.each { targetName ->
     }
 }
 
-CompilationDatabaseKt.createCompilationDatabaseFromCompileToBitcodeTasks(project, "compdb")
+CompilationDatabaseKt.createCompilationDatabasesFromCompileToBitcodeTasks(project, "CompilationDatabase")
 
 task hostRuntime(dependsOn: "${hostName}Runtime")
 
