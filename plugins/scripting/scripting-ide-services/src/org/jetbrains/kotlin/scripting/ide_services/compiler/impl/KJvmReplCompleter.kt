@@ -5,34 +5,23 @@
 
 package org.jetbrains.kotlin.scripting.ide_services.compiler.impl
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
-import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.asFlexibleType
-import org.jetbrains.kotlin.types.isFlexible
 import java.io.File
 import java.util.*
 import kotlin.script.experimental.api.SourceCodeCompletionVariant
@@ -63,16 +52,8 @@ private class KJvmReplCompleter(
     private val cursor: Int
 ) {
 
-    private fun getElementAt(cursorPos: Int): PsiElement? {
-        var element: PsiElement? = ktScript.findElementAt(cursorPos)
-        while (element !is KtExpression && element != null) {
-            element = element.parent
-        }
-        return element
-    }
-
     fun getCompletion() = sequence<SourceCodeCompletionVariant> gen@{
-        val element = getElementAt(cursor)
+        val element = ktScript.getElementAt(cursor)
 
         var descriptors: Collection<DeclarationDescriptor>? = null
         var isTipsManagerCompletion = true
@@ -256,99 +237,10 @@ private class KJvmReplCompleter(
         }
     }
 
-    private class VisibilityFilter(
-        private val inDescriptor: DeclarationDescriptor
-    ) : (DeclarationDescriptor) -> Boolean {
-        override fun invoke(descriptor: DeclarationDescriptor): Boolean {
-            if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
-
-            if (descriptor is DeclarationDescriptorWithVisibility) {
-                return try {
-                    descriptor.visibility.isVisible(null, descriptor, inDescriptor)
-                } catch (e: IllegalStateException) {
-                    true
-                }
-            }
-
-            return true
-        }
-
-        private fun isTypeParameterVisible(typeParameter: TypeParameterDescriptor): Boolean {
-            val owner = typeParameter.containingDeclaration
-            var parent: DeclarationDescriptor? = inDescriptor
-            while (parent != null) {
-                if (parent == owner) return true
-                if (parent is ClassDescriptor && !parent.isInner) return false
-                parent = parent.containingDeclaration
-            }
-            return true
-        }
-    }
-
     companion object {
         const val INSERTED_STRING = "ABCDEF"
-        private const val NUMBER_OF_CHAR_IN_COMPLETION_NAME = 40
 
-        private fun keywordsCompletionVariants(
-            keywords: TokenSet,
-            prefix: String
-        ) = sequence {
-            keywords.types.forEach {
-                val token = (it as KtKeywordToken).value
-                if (token.startsWith(prefix)) yield(
-                    SourceCodeCompletionVariant(
-                        token,
-                        token,
-                        "keyword",
-                        "keyword"
-                    )
-                )
-            }
-        }
-
-        private val RENDERER =
-            IdeDescriptorRenderers.SOURCE_CODE.withOptions {
-                this.classifierNamePolicy =
-                    ClassifierNamePolicy.SHORT
-                this.typeNormalizer =
-                    IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
-                this.parameterNameRenderingPolicy =
-                    ParameterNameRenderingPolicy.NONE
-                this.renderDefaultAnnotationArguments = false
-                this.typeNormalizer = lambda@{ kotlinType: KotlinType ->
-                    if (kotlinType.isFlexible()) {
-                        return@lambda kotlinType.asFlexibleType().upperBound
-                    }
-                    kotlinType
-                }
-            }
-
-        private fun getIconFromDescriptor(descriptor: DeclarationDescriptor): String = when (descriptor) {
-            is FunctionDescriptor -> "method"
-            is PropertyDescriptor -> "property"
-            is LocalVariableDescriptor -> "property"
-            is ClassDescriptor -> "class"
-            is PackageFragmentDescriptor -> "package"
-            is PackageViewDescriptor -> "package"
-            is ValueParameterDescriptor -> "genericValue"
-            is TypeParameterDescriptorImpl -> "class"
-            else -> ""
-        }
-
-        private fun formatName(builder: String, symbols: Int = NUMBER_OF_CHAR_IN_COMPLETION_NAME): String {
-            return if (builder.length > symbols) {
-                builder.substring(0, symbols) + "..."
-            } else builder
-        }
-
-        data class DescriptorPresentation(
-            val rawName: String,
-            val presentableText: String,
-            val tailText: String,
-            val completionText: String
-        )
-
-        fun getPresentation(descriptor: DeclarationDescriptor): DescriptorPresentation {
+        private fun getPresentation(descriptor: DeclarationDescriptor): DescriptorPresentation {
             val rawDescriptorName = descriptor.name.asString()
             val descriptorName = rawDescriptorName.quoteIfNeeded()
             var presentableText = descriptorName
@@ -409,7 +301,8 @@ private class KJvmReplCompleter(
                 rawDescriptorName,
                 presentableText,
                 tailText,
-                completionText
+                completionText,
+                typeText
             )
         }
     }
