@@ -17,6 +17,8 @@ class MLFeaturesLoggingTest : CompletionLoggingTestBase() {
     TestCase.assertEquals("1", contextFactors[contextFactorName("binary")])
     TestCase.assertEquals("1.0", contextFactors[contextFactorName("float")])
     TestCase.assertEquals("VALUE1", contextFactors[contextFactorName("categorical")])
+    TestCase.assertEquals(TestContextFeatureProvider::class.java.simpleName, contextFactors[contextFactorName("classSimpleName")])
+    TestCase.assertEquals(TestContextFeatureProvider::class.java.name, contextFactors[contextFactorName("classFullName")])
   }
 
   fun `test element features logged`() = doTest { startedEvent ->
@@ -57,7 +59,9 @@ class MLFeaturesLoggingTest : CompletionLoggingTestBase() {
       environment.putUserData(USER_DATA_KEY, USER_DATA_TEST_VALUE)
       return mapOf("binary" to MLFeatureValue.binary(true),
                    "float" to MLFeatureValue.numerical(1),
-                   "categorical" to MLFeatureValue.categorical(Category.VALUE1))
+                   "categorical" to MLFeatureValue.categorical(Category.VALUE1),
+                   "classSimpleName" to MLFeatureValue.className(TestContextFeatureProvider::class.java, useSimpleName = true),
+                   "classFullName" to MLFeatureValue.className(TestContextFeatureProvider::class.java, useSimpleName = false))
     }
   }
 

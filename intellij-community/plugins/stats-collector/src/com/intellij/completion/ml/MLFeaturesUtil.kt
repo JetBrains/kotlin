@@ -23,17 +23,26 @@ object MLFeaturesUtil {
     }
   }
 
-  val classNameSafeCache = CacheBuilder
+  private data class ClassNames(val simpleName: String, val fullName: String)
+
+  private fun Class<*>.getNames(): ClassNames {
+    return ClassNames(simpleName, name)
+  }
+
+  private val THIRD_PARTY_NAME = ClassNames("third.party", "third.party")
+
+  private val classNameSafeCache = CacheBuilder
     .newBuilder()
     .softValues()
     .maximumSize(100)
-    .build(object: CacheLoader<Class<*>, String>() {
-      override fun load(clazz: Class<*>) = if (getPluginInfo(clazz).isSafeToReport()) clazz.name else "third.party"
+    .build(object : CacheLoader<Class<*>, ClassNames>() {
+      override fun load(clazz: Class<*>) = if (getPluginInfo(clazz).isSafeToReport()) clazz.getNames() else THIRD_PARTY_NAME
     })
 
   private fun getClassNameSafe(feature: MLFeatureValue.ClassNameValue): String {
     val clazz = feature.value
-    return classNameSafeCache[clazz]
+    val names = classNameSafeCache[clazz]
+    return if (feature.useSimpleName) names.simpleName else names.fullName
   }
 
   fun addWeighersToNonDefaultSorter(sorter: CompletionSorter, location: CompletionLocation, vararg weigherIds: String): CompletionSorter {
