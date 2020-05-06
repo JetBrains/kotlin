@@ -9,13 +9,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.IrExtensionGenerator
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-class SyntheticDeclarationsGenerator(
-    private val context: GeneratorContext,
-    private val pluginProviders: Collection<IrExtensionGenerator>
-) : DeclarationDescriptorVisitor<Unit, IrDeclarationContainer?> {
+class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDescriptorVisitor<Unit, IrDeclarationContainer?> {
 
     private val generator = StandaloneDeclarationGenerator(context)
     private val symbolTable = context.symbolTable
@@ -28,17 +24,6 @@ class SyntheticDeclarationsGenerator(
         parent = declarationContainer
         declarationContainer.declarations.add(this)
         return this
-    }
-
-    private inline fun <S : IrSymbol, R : IrDeclaration> generateOrDefault(symbol: S, onDefault: (S) -> R): R {
-        for (p in pluginProviders) {
-            p.declare(symbol)?.let {
-                @Suppress("UNCHECKED_CAST")
-                return it as R
-            }
-        }
-
-        return onDefault(symbol)
     }
 
     override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: IrDeclarationContainer?) {
@@ -54,9 +39,7 @@ class SyntheticDeclarationsGenerator(
     }
 
     private fun createFunctionStub(descriptor: FunctionDescriptor, symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
-        return generateOrDefault(symbol) {
-            generator.generateSimpleFunction(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
-        }
+        return generator.generateSimpleFunction(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
     }
 
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: IrDeclarationContainer?) {
@@ -74,16 +57,13 @@ class SyntheticDeclarationsGenerator(
 
     private fun createClassStub(descriptor: ClassDescriptor, symbol: IrClassSymbol): IrClass {
         assert(!DescriptorUtils.isEnumEntry(descriptor))
-        return generateOrDefault(symbol) {
-            generator.generateClass(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
-        }
+        return generator.generateClass(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
     }
 
     private fun createEnumEntruStub(descriptor: ClassDescriptor, symbol: IrEnumEntrySymbol): IrEnumEntry {
         assert(DescriptorUtils.isEnumEntry(descriptor))
-        return generateOrDefault(symbol) {
-            generator.generateEnumEntry(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
-        }
+        return generator.generateEnumEntry(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
+
     }
 
     override fun visitClassDescriptor(descriptor: ClassDescriptor, data: IrDeclarationContainer?) {
@@ -101,9 +81,7 @@ class SyntheticDeclarationsGenerator(
     }
 
     private fun declareTypeAliasStub(descriptor: TypeAliasDescriptor, symbol: IrTypeAliasSymbol): IrTypeAlias {
-        return generateOrDefault(symbol) {
-            generator.generateTypeAlias(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
-        }
+        return generator.generateTypeAlias(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
     }
 
     override fun visitTypeAliasDescriptor(descriptor: TypeAliasDescriptor, data: IrDeclarationContainer?) {
@@ -119,9 +97,7 @@ class SyntheticDeclarationsGenerator(
     }
 
     private fun createConstructorStub(descriptor: ClassConstructorDescriptor, symbol: IrConstructorSymbol): IrConstructor {
-        return generateOrDefault(symbol) {
-            generator.generateConstructor(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
-        }
+        return generator.generateConstructor(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
     }
 
     override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: IrDeclarationContainer?) {
@@ -137,9 +113,7 @@ class SyntheticDeclarationsGenerator(
     }
 
     private fun createPropertyStub(descriptor: PropertyDescriptor, symbol: IrPropertySymbol): IrProperty {
-        return generateOrDefault(symbol) {
-            generator.generateProperty(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
-        }
+        return generator.generateProperty(offset, offset, IrDeclarationOrigin.DEFINED, descriptor, symbol)
     }
 
     private fun declareAccessor(accessorDescriptor: PropertyAccessorDescriptor, property: IrProperty): IrSimpleFunction {

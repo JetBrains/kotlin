@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class IrSyntheticDeclarationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
 
-    private val descriptorGenerator = SyntheticDeclarationsGenerator(context, emptyList())
+    private val descriptorGenerator = SyntheticDeclarationsGenerator(context)
     private val symbolTable = context.symbolTable
 
     override fun visitElement(element: IrElement) {

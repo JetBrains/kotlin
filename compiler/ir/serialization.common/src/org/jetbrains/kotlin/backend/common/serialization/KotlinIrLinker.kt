@@ -525,7 +525,7 @@ abstract class KotlinIrLinker(
     protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
         CurrentModuleDeserializer(moduleFragment, dependencies)
 
-    override fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrExtensionGenerator>) {
+    override fun init(moduleFragment: IrModuleFragment?) {
         if (moduleFragment != null) {
             val currentModuleDependencies = moduleFragment.descriptor.allDependencyModules.map {
                 deserializersForModules[it] ?: error("No deserializer found for $it")

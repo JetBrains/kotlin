@@ -52,7 +52,7 @@ interface IrExtensionGenerator {
 }
 
 interface IrDeserializer : IrProvider {
-    fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrExtensionGenerator>) {}
+    fun init(moduleFragment: IrModuleFragment?) {}
 }
 
 interface ReferenceSymbolTable {
