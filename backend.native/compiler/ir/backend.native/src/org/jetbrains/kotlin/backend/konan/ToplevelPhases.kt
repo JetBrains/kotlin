@@ -23,12 +23,14 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.utils.DFS
@@ -147,20 +149,6 @@ internal val psiToIrPhase = konanUnitPhase(
 
             val pluginExtensions = IrGenerationExtension.getInstances(config.project)
 
-            translator.addPostprocessingStep { module ->
-                val pluginContext = IrPluginContext(
-                    generatorContext.moduleDescriptor,
-                    generatorContext.bindingContext,
-                    generatorContext.languageVersionSettings,
-                    generatorContext.symbolTable,
-                    generatorContext.typeTranslator,
-                    generatorContext.irBuiltIns
-                )
-                pluginExtensions.forEach { extension ->
-                    extension.generate(module, pluginContext)
-                }
-            }
-
             val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
             val modulesWithoutDCE = moduleDescriptor.allDependencyModules
@@ -171,11 +159,12 @@ internal val psiToIrPhase = konanUnitPhase(
             val exportedDependencies = (getExportedDependencies() + modulesWithoutDCE).distinct()
             val functionIrClassFactory = BuiltInFictitiousFunctionIrClassFactory(
                     symbolTable, generatorContext.irBuiltIns, reflectionTypes)
+            generatorContext.irBuiltIns.functionFactory = functionIrClassFactory
             val stubGenerator = DeclarationStubGenerator(
                     moduleDescriptor, symbolTable,
                     config.configuration.languageVersionSettings
             )
-            val symbols = KonanSymbols(this, symbolTable, symbolTable.lazyWrapper, functionIrClassFactory)
+            val symbols = KonanSymbols(this, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper, functionIrClassFactory)
 
             val irProviderForCEnumsAndCStructs =
                     IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
@@ -190,6 +179,21 @@ internal val psiToIrPhase = konanUnitPhase(
                     irProviderForCEnumsAndCStructs,
                     exportedDependencies
             )
+
+            translator.addPostprocessingStep { module ->
+                val pluginContext = IrPluginContext(
+                        generatorContext.moduleDescriptor,
+                        generatorContext.bindingContext,
+                        generatorContext.languageVersionSettings,
+                        generatorContext.symbolTable,
+                        generatorContext.typeTranslator,
+                        generatorContext.irBuiltIns,
+                        linker = deserializer
+                )
+                pluginExtensions.forEach { extension ->
+                    extension.generate(module, pluginContext)
+                }
+            }
 
             var dependenciesCount = 0
             while (true) {
