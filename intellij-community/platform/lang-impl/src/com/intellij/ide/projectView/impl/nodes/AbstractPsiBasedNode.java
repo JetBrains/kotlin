@@ -196,10 +196,6 @@ public abstract class AbstractPsiBasedNode<Value> extends ProjectViewNode<Value>
       icon = composite;
     }
 
-    if (!file.isWritable()) {
-      icon = LayeredIcon.create(icon, PlatformIcons.LOCKED_ICON);
-    }
-
     if (file.is(VFileProperty.SYMLINK)) {
       icon = LayeredIcon.create(icon, PlatformIcons.SYMLINK_ICON);
     }
