@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
+import com.android.tools.idea.util.toIoFile
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.runner.RunWith
@@ -34,12 +36,25 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         val settings: KtFile = addFileToProject(rootDir + GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
         val prop: PsiFile = addFileToProject(rootDir + "gradle.properties")
 
+        val gradleWrapperProperties = settings.virtualFile.parent.toIoFile().resolve("gradle/wrapper/gradle-wrapper.properties")
+        gradleWrapperProperties.parentFile.mkdirs()
+        gradleWrapperProperties.writeText(
+            """
+            distributionBase=GRADLE_USER_HOME
+            distributionPath=wrapper/dists
+            distributionUrl=https\://services.gradle.org/distributions/gradle-1.0.0-bin.zip
+            zipStoreBase=GRADLE_USER_HOME
+            zipStorePath=wrapper/dists
+        """.trimIndent()
+        )
+
         val buildGradleKts = File(rootDir).walkTopDown().find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME }
             ?: error("Couldn't find main script")
         configureScriptFile(rootDir, buildGradleKts)
         val build = (myFile as? KtFile) ?: error("")
 
         val newProjectSettings = GradleProjectSettings()
+        newProjectSettings.distributionType = DistributionType.DEFAULT_WRAPPED
         newProjectSettings.externalProjectPath = settings.virtualFile.parent.path
         ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).linkProject(newProjectSettings)
 
