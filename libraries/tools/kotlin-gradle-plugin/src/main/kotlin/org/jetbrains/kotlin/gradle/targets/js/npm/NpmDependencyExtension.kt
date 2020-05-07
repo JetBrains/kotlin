@@ -171,7 +171,7 @@ private abstract class AbstractNpmDependencyExtension(
 
     private fun withName(name: String, vararg args: Any?): NpmDependency {
         val arg1 = if (args.size > 1) args[1] else null
-        val generateKotlinExternals = secondArgOrFalse(*args)
+        val generateKotlinExternals = generateKotlinExternalsIfPossible(*args)
 
         return when (arg1) {
             null -> invoke(
@@ -212,9 +212,15 @@ private abstract class AbstractNpmDependencyExtension(
         return listOf("npm('name', 'version')" to "name:version")
     }
 
-    protected fun secondArgOrFalse(vararg args: Any?): Boolean {
-        val arg2 = if (args.size > 2) args[2] else null
-        return (arg2 as? Boolean) ?: defaultGenerateKotlinExternals
+    protected fun generateKotlinExternalsIfPossible(vararg args: Any?): Boolean {
+        val arg2 = (if (args.size > 2) args[2] else null) as? Boolean
+
+        if (arg2 != null && !defaultGenerateKotlinExternals) {
+            npmDeclarationException(args)
+        }
+
+        return arg2
+            ?: defaultGenerateKotlinExternals
     }
 }
 
@@ -241,7 +247,7 @@ private class DefaultNpmDependencyExtension(
         )
 
     override fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency {
-        val generateKotlinExternals = secondArgOrFalse(args)
+        val generateKotlinExternals = generateKotlinExternalsIfPossible(args)
 
         return when (arg) {
             is File -> invoke(
