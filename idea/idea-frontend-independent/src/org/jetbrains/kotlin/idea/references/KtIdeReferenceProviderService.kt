@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.psi.ContributedReferenceHost
 import com.intellij.psi.PsiElement
@@ -21,15 +22,20 @@ import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.SmartList
 
-internal interface KotlinPsiReferenceProvider {
+interface KotlinPsiReferenceProvider {
     fun getReferencesByElement(element: PsiElement): Array<PsiReference>
 }
 
-internal interface KotlinReferenceProviderContributor {
+interface KotlinReferenceProviderContributor {
     fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar)
+
+    companion object {
+        fun getInstance(): KotlinReferenceProviderContributor = service()
+    }
 }
 
-internal class KotlinPsiReferenceRegistrar {
+
+class KotlinPsiReferenceRegistrar {
     val providers: MultiMap<Class<out PsiElement>, KotlinPsiReferenceProvider> = MultiMap.create()
 
     inline fun <reified E : KtElement> registerProvider(crossinline factory: (E) -> PsiReference?) {
@@ -38,10 +44,9 @@ internal class KotlinPsiReferenceRegistrar {
         }
     }
 
-    inline fun <reified E : KtElement> registerMultiProvider(crossinline factory: (E) -> Array<PsiReference>) {
+    inline fun <reified E : KtElement>  registerMultiProvider(crossinline factory: (E) -> Array<PsiReference>) {
         val provider: KotlinPsiReferenceProvider = object : KotlinPsiReferenceProvider {
             override fun getReferencesByElement(element: PsiElement): Array<PsiReference> {
-                @Suppress("UNCHECKED_CAST")
                 return factory(element as E)
             }
         }
@@ -58,15 +63,13 @@ class KtIdeReferenceProviderService : KotlinReferenceProvidersService() {
     private val originalProvidersBinding: MultiMap<Class<out PsiElement>, KotlinPsiReferenceProvider>
     private val providersBindingCache: Map<Class<out PsiElement>, List<KotlinPsiReferenceProvider>>
 
-    private val referenceContributors = listOf(KotlinReferenceContributor(), KotlinDefaultAnnotationMethodImplicitReferenceContributor())
-
     init {
         val registrar = KotlinPsiReferenceRegistrar()
-        referenceContributors.forEach { it.registerReferenceProviders(registrar) }
+        KotlinReferenceProviderContributor.getInstance().registerReferenceProviders(registrar)
         originalProvidersBinding = registrar.providers
 
         providersBindingCache = ConcurrentFactoryMap.createMap<Class<out PsiElement>, List<KotlinPsiReferenceProvider>> { klass ->
-            val result = ContainerUtil.newSmartList<KotlinPsiReferenceProvider>()
+            val result = SmartList<KotlinPsiReferenceProvider>()
             for (bindingClass in originalProvidersBinding.keySet()) {
                 if (bindingClass.isAssignableFrom(klass)) {
                     result.addAll(originalProvidersBinding.get(bindingClass))

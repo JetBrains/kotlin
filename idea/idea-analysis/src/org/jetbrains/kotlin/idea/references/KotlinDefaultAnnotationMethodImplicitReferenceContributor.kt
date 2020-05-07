@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -66,14 +66,10 @@ class ReferenceImpl(private val argument: KtValueArgument) : PsiReference {
     override fun isSoft() = false
 }
 
-internal class KotlinDefaultAnnotationMethodImplicitReferenceContributor : KotlinReferenceProviderContributor {
-    override fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar) {
-        registrar.registerProvider<KtValueArgument> {
-            if (it.isNamed()) return@registerProvider null
-            val annotationEntry = it.getParentOfTypeAndBranch<KtAnnotationEntry> { valueArgumentList } ?: return@registerProvider null
-            if (annotationEntry.valueArguments.size != 1) return@registerProvider null
+internal val KotlinDefaultAnnotationMethodImplicitReferenceProvider = provider@{ element: KtValueArgument ->
+    if (element.isNamed()) return@provider null
+    val annotationEntry = element.getParentOfTypeAndBranch<KtAnnotationEntry> { valueArgumentList } ?: return@provider null
+    if (annotationEntry.valueArguments.size != 1) return@provider null
 
-            ReferenceImpl(it)
-        }
-    }
+    ReferenceImpl(element)
 }

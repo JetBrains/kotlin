@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve
@@ -44,21 +33,6 @@ class CollectionLiteralResolver(
     val callResolver: CallResolver,
     val languageVersionSettings: LanguageVersionSettings
 ) {
-    companion object {
-        val PRIMITIVE_TYPE_TO_ARRAY: Map<PrimitiveType, Name> = hashMapOf(
-            PrimitiveType.BOOLEAN to Name.identifier("booleanArrayOf"),
-            PrimitiveType.CHAR to Name.identifier("charArrayOf"),
-            PrimitiveType.INT to Name.identifier("intArrayOf"),
-            PrimitiveType.BYTE to Name.identifier("byteArrayOf"),
-            PrimitiveType.SHORT to Name.identifier("shortArrayOf"),
-            PrimitiveType.FLOAT to Name.identifier("floatArrayOf"),
-            PrimitiveType.LONG to Name.identifier("longArrayOf"),
-            PrimitiveType.DOUBLE to Name.identifier("doubleArrayOf")
-        )
-
-        val ARRAY_OF_FUNCTION = Name.identifier("arrayOf")
-    }
-
     fun resolveCollectionLiteral(
         collectionLiteralExpression: KtCollectionLiteralExpression,
         context: ExpressionTypingContext
@@ -120,11 +94,11 @@ class CollectionLiteralResolver(
 
     private fun getArrayFunctionCallName(expectedType: KotlinType): Name {
         if (NO_EXPECTED_TYPE === expectedType || !KotlinBuiltIns.isPrimitiveArray(expectedType)) {
-            return ARRAY_OF_FUNCTION
+            return ArrayFqNames.ARRAY_OF_FUNCTION
         }
 
-        val descriptor = expectedType.constructor.declarationDescriptor ?: return ARRAY_OF_FUNCTION
+        val descriptor = expectedType.constructor.declarationDescriptor ?: return ArrayFqNames.ARRAY_OF_FUNCTION
 
-        return PRIMITIVE_TYPE_TO_ARRAY[KotlinBuiltIns.getPrimitiveArrayType(descriptor)] ?: ARRAY_OF_FUNCTION
+        return ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY[KotlinBuiltIns.getPrimitiveArrayType(descriptor)] ?: ArrayFqNames.ARRAY_OF_FUNCTION
     }
 }
