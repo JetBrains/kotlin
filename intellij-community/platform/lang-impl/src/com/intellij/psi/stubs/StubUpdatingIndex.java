@@ -41,6 +41,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -137,7 +138,7 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
           if (prebuiltTree != null) {
             prebuiltTree = prebuiltTree.reSerialize(mySerializationManager, myStubIndexesExternalizer);
             if (PrebuiltIndexProvider.DEBUG_PREBUILT_INDICES) {
-              assertRebuiltTreeMatchesActualTree(inputData, type, prebuiltTree);
+              assertPrebuiltStubTreeMatchesActualTree(prebuiltTree, inputData, type);
             }
             return prebuiltTree;
           }
@@ -146,11 +147,15 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
         }
 
         try {
-          SerializedStubTree builtTree = buildSerializedStubTree(inputData, type);
-          if (builtTree != null && IndexDebugAssertions.DEBUG) {
-            assertRebuiltTreeMatchesActualTree(inputData, type, builtTree);
+          Stub stub = StubTreeBuilder.buildStubTree(inputData, type);
+          if (stub == null) {
+            return null;
           }
-          return builtTree;
+          SerializedStubTree serializedStubTree = SerializedStubTree.serializeStub(stub, mySerializationManager, myStubIndexesExternalizer);
+          if (IndexDebugAssertions.DEBUG) {
+            assertDeserializedStubMatchesOriginalStub(serializedStubTree, stub);
+          }
+          return serializedStubTree;
         }
         catch (ProcessCanceledException pce) {
           throw pce;
@@ -175,29 +180,42 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
     return prebuiltStubsProvider.findStub(fileContent);
   }
 
-  @Nullable
-  private SerializedStubTree buildSerializedStubTree(@NotNull FileContent inputData,
-                                                     @NotNull StubBuilderType type) throws IOException {
-    Stub stub = StubTreeBuilder.buildStubTree(inputData, type);
-    if (stub == null) {
-      return null;
+  private static void assertDeserializedStubMatchesOriginalStub(@NotNull SerializedStubTree stubTree,
+                                                                @NotNull Stub originalStub) {
+    Stub deserializedStub;
+    try {
+      deserializedStub = stubTree.getStub();
     }
-    return SerializedStubTree.serializeStub(stub, mySerializationManager, myStubIndexesExternalizer);
+    catch (SerializerNotFoundException e) {
+      throw new RuntimeException("Failed to deserialize stub tree", e);
+    }
+    assertStubsAreSimilar(originalStub, deserializedStub);
   }
 
-  private void assertRebuiltTreeMatchesActualTree(@NotNull FileContent fileContent,
-                                                  @NotNull StubBuilderType type,
-                                                  @NotNull SerializedStubTree actualTree) {
+  private static void assertStubsAreSimilar(@NotNull Stub stub, @NotNull Stub stub2) {
+    assert stub.getStubType() == stub2.getStubType();
+    List<? extends Stub> stubs = stub.getChildrenStubs();
+    List<? extends Stub> stubs2 = stub2.getChildrenStubs();
+    assert stubs.size() == stubs2.size();
+    for (int i = 0, len = stubs.size(); i < len; ++i) {
+      assertStubsAreSimilar(stubs.get(i), stubs2.get(i));
+    }
+  }
+
+  private void assertPrebuiltStubTreeMatchesActualTree(@NotNull SerializedStubTree prebuiltStubTree,
+                                                       @NotNull FileContent fileContent,
+                                                       @NotNull StubBuilderType type) {
     try {
-      SerializedStubTree rebuiltTree = buildSerializedStubTree(fileContent, type);
-      if (rebuiltTree == null) {
-        throw new IllegalStateException("Cannot build tree for " + fileContent.getFile().getUrl());
+      Stub stub = StubTreeBuilder.buildStubTree(fileContent, type);
+      if (stub == null) {
+        return;
       }
-      if (!IndexDataComparer.INSTANCE.areStubTreesTheSame(rebuiltTree, actualTree)) {
+      SerializedStubTree actualTree = SerializedStubTree.serializeStub(stub, mySerializationManager, myStubIndexesExternalizer);
+      if (!IndexDataComparer.INSTANCE.areStubTreesTheSame(actualTree, prebuiltStubTree)) {
         throw new RuntimeExceptionWithAttachments(
-          "Stubs mismatch",
-          new Attachment("rebuilt-stub-tree.txt", IndexDataPresenter.INSTANCE.getPresentableSerializedStubTree(rebuiltTree)),
-          new Attachment("actual-stub-tree.txt", IndexDataPresenter.INSTANCE.getPresentableSerializedStubTree(actualTree))
+          "Prebuilt stub tree does not match actual stub tree",
+          new Attachment("actual-stub-tree.txt", IndexDataPresenter.INSTANCE.getPresentableSerializedStubTree(actualTree)),
+          new Attachment("prebuilt-stub-tree.txt", IndexDataPresenter.INSTANCE.getPresentableSerializedStubTree(prebuiltStubTree))
         );
       }
     }
