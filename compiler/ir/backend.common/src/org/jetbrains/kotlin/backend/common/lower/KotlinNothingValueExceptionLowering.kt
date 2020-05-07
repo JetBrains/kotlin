@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class KotlinNothingValueExceptionLowering(val backendContext: CommonBackendContext) : BodyLoweringPass {
+class KotlinNothingValueExceptionLowering(
+    val backendContext: CommonBackendContext, val skip: (IrDeclaration) -> Boolean = { false }
+) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(
-            Transformer((container as IrSymbolDeclaration<*>).symbol)
-        )
+        if (!skip(container)) {
+            irBody.transformChildrenVoid(Transformer((container as IrSymbolDeclaration<*>).symbol))
+        }
     }
 
     private inner class Transformer(val parent: IrSymbol) : IrElementTransformerVoid() {
