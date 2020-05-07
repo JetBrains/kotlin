@@ -1,1 +1,3 @@
-publishTestJar(":compiler:tests-common")
+idePluginDependency {
+    publishTestJar(":compiler:tests-common")
+}

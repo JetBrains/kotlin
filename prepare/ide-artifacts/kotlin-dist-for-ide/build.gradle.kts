@@ -2,17 +2,19 @@ plugins {
     java
 }
 
-publish()
+idePluginDependency {
+    publish()
 
-val jar: Jar by tasks
+    val jar: Jar by tasks
 
-jar.apply {
-    val distKotlincTask = project(":kotlin-compiler").tasks.getByName("distKotlinc")
+    jar.apply {
+        val distKotlincTask = project(":kotlin-compiler").tasks.getByName("distKotlinc")
 
-    dependsOn(distKotlincTask)
-    from(distKotlincTask)
+        dependsOn(distKotlincTask)
+        from(distKotlincTask)
 
+    }
+
+    sourcesJar()
+    javadocJar()
 }
-
-sourcesJar()
-javadocJar()

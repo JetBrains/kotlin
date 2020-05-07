@@ -753,32 +753,34 @@ tasks {
     }
 
     register("publishIdeArtifacts") {
-        dependsOn(
-            ":prepare:ide-artifacts:android-extensions-compiler-plugin-for-ide:publish",
-            ":prepare:ide-artifacts:allopen-compiler-plugin-for-ide:publish",
-            ":prepare:ide-artifacts:allopen-compiler-plugin-tests-for-ide:publish",
-            ":prepare:ide-artifacts:incremental-compilation-impl-tests-for-ide:publish",
-            ":prepare:ide-artifacts:kotlin-build-common-tests-for-ide:publish",
-            ":prepare:ide-artifacts:kotlin-compiler-for-ide:publish",
-            ":prepare:ide-artifacts:kotlin-dist-for-ide:publish",
-            ":prepare:ide-artifacts:kotlin-gradle-statistics-for-ide:publish",
-            ":prepare:ide-artifacts:kotlinx-serialization-compiler-plugin-for-ide:publish",
-            ":prepare:ide-artifacts:noarg-compiler-plugin-for-ide:publish",
-            ":prepare:ide-artifacts:sam-with-receiver-compiler-plugin-for-ide:publish",
-            ":prepare:ide-artifacts:tests-common-tests-for-ide:publish",
-            ":prepare:ide-artifacts:compiler-components-for-jps:publish",
-            ":kotlin-script-runtime:publish",
-            ":kotlin-script-util:publish",
-            ":kotlin-scripting-common:publish",
-            ":kotlin-scripting-jvm:publish",
-            ":kotlin-scripting-compiler:publish",
-            ":kotlin-scripting-compiler-impl:publish",
-            ":kotlin-android-extensions-runtime:publish",
-            ":kotlin-stdlib:publish",
-            ":kotlin-stdlib-jdk7:publish",
-            ":kotlin-stdlib-jdk8:publish",
-            ":kotlin-reflect:publish"
-        )
+        idePluginDependency {
+            dependsOn(
+                ":prepare:ide-artifacts:android-extensions-compiler-plugin-for-ide:publish",
+                ":prepare:ide-artifacts:allopen-compiler-plugin-for-ide:publish",
+                ":prepare:ide-artifacts:allopen-compiler-plugin-tests-for-ide:publish",
+                ":prepare:ide-artifacts:incremental-compilation-impl-tests-for-ide:publish",
+                ":prepare:ide-artifacts:kotlin-build-common-tests-for-ide:publish",
+                ":prepare:ide-artifacts:kotlin-compiler-for-ide:publish",
+                ":prepare:ide-artifacts:kotlin-dist-for-ide:publish",
+                ":prepare:ide-artifacts:kotlin-gradle-statistics-for-ide:publish",
+                ":prepare:ide-artifacts:kotlinx-serialization-compiler-plugin-for-ide:publish",
+                ":prepare:ide-artifacts:noarg-compiler-plugin-for-ide:publish",
+                ":prepare:ide-artifacts:sam-with-receiver-compiler-plugin-for-ide:publish",
+                ":prepare:ide-artifacts:tests-common-tests-for-ide:publish",
+                ":prepare:ide-artifacts:compiler-components-for-jps:publish",
+                ":kotlin-script-runtime:publish",
+                ":kotlin-script-util:publish",
+                ":kotlin-scripting-common:publish",
+                ":kotlin-scripting-jvm:publish",
+                ":kotlin-scripting-compiler:publish",
+                ":kotlin-scripting-compiler-impl:publish",
+                ":kotlin-android-extensions-runtime:publish",
+                ":kotlin-stdlib:publish",
+                ":kotlin-stdlib-jdk7:publish",
+                ":kotlin-stdlib-jdk8:publish",
+                ":kotlin-reflect:publish"
+            )
+        }
     }
 
     register("test") {

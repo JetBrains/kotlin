@@ -1,1 +1,3 @@
-publishProjectJars(listOf(":kotlin-gradle-statistics"))
+idePluginDependency {
+    publishProjectJars(listOf(":kotlin-gradle-statistics"))
+}

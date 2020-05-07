@@ -1,1 +1,3 @@
-publishProjectJars(listOf(":kotlinx-serialization-compiler-plugin"))
+idePluginDependency {
+    publishProjectJars(listOf(":kotlinx-serialization-compiler-plugin"))
+}
