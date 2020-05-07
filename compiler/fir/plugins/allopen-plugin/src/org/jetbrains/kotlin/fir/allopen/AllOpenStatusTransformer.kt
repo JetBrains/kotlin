@@ -15,17 +15,24 @@ import org.jetbrains.kotlin.fir.extensions.transform
 import org.jetbrains.kotlin.name.FqName
 
 class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
+    companion object {
+        private val ALL_OPEN = FqName("org.jetbrains.kotlin.fir.allopen.AllOpen")
+    }
+
     override fun transformStatus(declaration: FirDeclaration, status: FirDeclarationStatus): FirDeclarationStatus {
         if (status.modality != null) return status
         return status.transform(modality = Modality.OPEN)
     }
 
     override val mode: Mode
-        get() = Mode.ALL_IN_ANNOTATED_ELEMENT
+        get() = Mode.ANNOTATED_ELEMENT
 
-    override val annotations: Set<AnnotationFqn> =
-        setOf(FqName("org.jetbrains.kotlin.fir.allopen.AllOpen"))
+    override val directlyApplicableAnnotations: Set<AnnotationFqn>
+        get() = setOf(ALL_OPEN)
 
-    override val metaAnnotations: Set<AnnotationFqn> =
-        setOf(FqName("org.jetbrains.kotlin.fir.allopen.AllOpen"))
+    override val childrenApplicableAnnotations: Set<AnnotationFqn>
+        get() = setOf(ALL_OPEN)
+
+    override val metaAnnotations: Map<AnnotationFqn, MetaAnnotationMode>
+        get() = mapOf(ALL_OPEN to MetaAnnotationMode.ANNOTATED_AND_CHILDREN)
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildClassImpl
@@ -45,8 +46,11 @@ class AllOpenClassGenerator(session: FirSession) : FirClassGenerationExtension(s
         return listOf(GeneratedClass(klass, containingFile))
     }
 
-    override val annotations: Set<AnnotationFqn> =
-        setOf(FqName("org.jetbrains.kotlin.fir.allopen.WithClass"))
+    override val directlyApplicableAnnotations: Set<AnnotationFqn> = setOf(FqName("org.jetbrains.kotlin.fir.allopen.WithClass"))
 
-    override val metaAnnotations: Set<AnnotationFqn> = emptySet()
+    override val childrenApplicableAnnotations: Set<AnnotationFqn>
+        get() = emptySet()
+
+    override val metaAnnotations: Map<AnnotationFqn, MetaAnnotationMode>
+        get() = emptyMap()
 }
