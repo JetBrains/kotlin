@@ -25,8 +25,6 @@ import com.intellij.util.BitUtil;
 import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.indexing.*;
-import com.intellij.util.indexing.diagnostic.dump.output.IndexDataComparer;
-import com.intellij.util.indexing.diagnostic.dump.output.IndexDataPresenter;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.InputData;
