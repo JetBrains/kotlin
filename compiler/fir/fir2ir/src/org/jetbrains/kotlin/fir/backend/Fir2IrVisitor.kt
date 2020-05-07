@@ -756,6 +756,19 @@ class Fir2IrVisitor(
         }
     }
 
+    override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: Any?): IrElement {
+        return arrayOfCall.convertWithOffsets { startOffset, endOffset ->
+            IrVarargImpl(
+                startOffset, endOffset,
+                type = arrayOfCall.arguments.firstOrNull()?.typeRef?.toIrType() ?: createErrorType(),
+                varargElementType = arrayOfCall.typeRef.toIrType(),
+                elements = arrayOfCall.arguments.map {
+                    convertToIrExpression(it)
+                }
+            )
+        }
+    }
+
     override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: Any?): IrElement {
         return augmentedArraySetCall.convertWithOffsets { startOffset, endOffset ->
             IrErrorCallExpressionImpl(
