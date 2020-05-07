@@ -87,7 +87,7 @@ class GradleScriptOutOfProjectTest : AbstractScriptConfigurationLoadingTest() {
     }
 
     private fun makeChangesInsideSections() {
-        changeContents(myFile.text.replace(GradleScriptInputsWatcherTest.insidePlaceholder, "application"), myFile)
+        changeContents(myFile.text.replace(GradleScriptListenerTest.insidePlaceholder, "application"), myFile)
     }
 
     private fun assertConfigurationShouldBeLoadedManually() {
