@@ -67,21 +67,33 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.UInt visibility:public [final,static]' type=kotlin.UInt origin=null
   FUN name:takeUByte visibility:public modality:FINAL <> (u:kotlin.UByte) returnType:kotlin.Unit
     VALUE_PARAMETER name:u index:0 type:kotlin.UByte
+      annotations:
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:takeUShort visibility:public modality:FINAL <> (u:kotlin.UShort) returnType:kotlin.Unit
     VALUE_PARAMETER name:u index:0 type:kotlin.UShort
+      annotations:
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:takeUInt visibility:public modality:FINAL <> (u:kotlin.UInt) returnType:kotlin.Unit
     VALUE_PARAMETER name:u index:0 type:kotlin.UInt
+      annotations:
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:takeULong visibility:public modality:FINAL <> (u:kotlin.ULong) returnType:kotlin.Unit
     VALUE_PARAMETER name:u index:0 type:kotlin.ULong
+      annotations:
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:takeUBytes visibility:public modality:FINAL <> (u:kotlin.UByteArray) returnType:kotlin.Unit
     VALUE_PARAMETER name:u index:0 type:kotlin.UByteArray varargElementType:kotlin.UByte [vararg]
+      annotations:
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:takeLong visibility:public modality:FINAL <> (l:kotlin.Long) returnType:kotlin.Unit
     VALUE_PARAMETER name:l index:0 type:kotlin.Long
+      annotations:
+        ImplicitIntegerCoercion
     BLOCK_BODY
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY

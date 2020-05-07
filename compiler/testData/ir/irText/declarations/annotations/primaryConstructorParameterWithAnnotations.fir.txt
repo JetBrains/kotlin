@@ -19,6 +19,8 @@ FILE fqName:<root> fileName:/primaryConstructorParameterWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
+        annotations:
+          Ann
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]'

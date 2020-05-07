@@ -31,7 +31,12 @@ FILE fqName:<root> fileName:/propertyAccessorsFromClassHeaderWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:<root>.C [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
+        annotations:
+          A(x = 'C.x.get')
       VALUE_PARAMETER name:y index:1 type:kotlin.Int
+        annotations:
+          A(x = 'C.y.get')
+          A(x = 'C.y.set')
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
