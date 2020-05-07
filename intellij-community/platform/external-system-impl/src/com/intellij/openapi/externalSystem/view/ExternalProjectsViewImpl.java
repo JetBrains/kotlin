@@ -214,14 +214,14 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
 
     getShortcutsManager().addListener(() -> {
       scheduleTaskAndRunConfigUpdate();
-    });
+    }, this);
 
     getTaskActivator().addListener(new ExternalSystemTaskActivator.Listener() {
       @Override
       public void tasksActivationChanged() {
         scheduleTaskAndRunConfigUpdate();
       }
-    });
+    }, this);
 
     busConnection.subscribe(RunManagerListener.TOPIC, new RunManagerListener() {
       private void changed() {

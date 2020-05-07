@@ -13,13 +13,12 @@ import com.intellij.openapi.keymap.KeymapManagerListener;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.DisposableWrapperList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Vladislav.Soroka
@@ -28,7 +27,7 @@ public class ExternalSystemShortcutsManager implements Disposable {
   private static final String ACTION_ID_PREFIX = "ExternalSystem_";
   @NotNull
   private final Project myProject;
-  private final List<Listener> myListeners = ContainerUtil.createLockFreeCopyOnWriteList();
+  private final DisposableWrapperList<Listener> myListeners = new DisposableWrapperList<>();
 
   public ExternalSystemShortcutsManager(@NotNull Project project) {
     myProject = project;
@@ -91,8 +90,8 @@ public class ExternalSystemShortcutsManager implements Disposable {
     }
   }
 
-  public void addListener(Listener listener) {
-    myListeners.add(listener);
+  public void addListener(Listener listener, Disposable parent) {
+    myListeners.add(listener, parent);
   }
 
   @FunctionalInterface

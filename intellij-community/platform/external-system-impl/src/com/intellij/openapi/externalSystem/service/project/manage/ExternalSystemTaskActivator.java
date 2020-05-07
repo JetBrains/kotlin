@@ -6,6 +6,7 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings;
@@ -32,6 +33,7 @@ import com.intellij.task.impl.ProjectTaskManagerListener;
 import com.intellij.task.impl.ProjectTaskScope;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.DisposableWrapperList;
 import com.intellij.util.containers.FactoryMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +49,7 @@ public class ExternalSystemTaskActivator {
 
   public static final String RUN_CONFIGURATION_TASK_PREFIX = "run: ";
   @NotNull private final Project myProject;
-  private final List<Listener> myListeners = ContainerUtil.createLockFreeCopyOnWriteList();
+  private final DisposableWrapperList<Listener> myListeners = new DisposableWrapperList();
 
   public ExternalSystemTaskActivator(@NotNull Project project) {
     myProject = project;
@@ -257,8 +259,8 @@ public class ExternalSystemTaskActivator {
     return result.get();
   }
 
-  public void addListener(@NotNull Listener l) {
-    myListeners.add(l);
+  public void addListener(@NotNull Listener l, @NotNull Disposable parent) {
+    myListeners.add(l, parent);
   }
 
   public boolean isTaskOfPhase(@NotNull TaskData taskData, @NotNull Phase phase) {
