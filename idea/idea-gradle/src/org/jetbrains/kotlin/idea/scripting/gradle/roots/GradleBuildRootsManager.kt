@@ -180,9 +180,6 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         return ScriptUnderRoot(GradleBuildRoot.Unlinked())
     }
 
-    fun isUnderProjectDir(localPath: String) =
-        roots.getBuildByProjectDir(localPath) != null
-
     fun getBuildRoot(gradleWorkingDir: String) =
         roots.getBuildByRootDir(gradleWorkingDir)
 
