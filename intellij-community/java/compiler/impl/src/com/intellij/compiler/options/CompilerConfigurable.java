@@ -8,13 +8,12 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.NullableFunction;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 public class CompilerConfigurable implements SearchableConfigurable.Parent, Configurable.NoScroll, Configurable.WithEpDependencies {
 
@@ -80,12 +79,10 @@ public class CompilerConfigurable implements SearchableConfigurable.Parent, Conf
 
   @Override
   public Configurable @NotNull [] getConfigurables() {
-    if (myKids == null) {
-      final CompilerSettingsFactory[] factories = CompilerSettingsFactory.EP_NAME.getExtensions(myProject);
-      myKids = ContainerUtil.mapNotNull(factories,
-                                        (NullableFunction<CompilerSettingsFactory, Configurable>)factory -> factory.create(myProject), new Configurable[0]);
+    Configurable[] kids = myKids;
+    if (kids == null) {
+      myKids = kids = CompilerSettingsFactory.EP_NAME.extensions(myProject).map(f -> f.create(myProject)).filter(Objects::nonNull).toArray(Configurable[]::new);
     }
-
-    return myKids;
+    return kids;
   }
 }

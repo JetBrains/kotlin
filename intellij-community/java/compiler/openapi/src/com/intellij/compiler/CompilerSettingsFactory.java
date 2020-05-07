@@ -15,17 +15,16 @@
  */
 package com.intellij.compiler;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.ProjectExtensionPointName;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 
 /**
  * @deprecated Please use {@link com.intellij.openapi.options.ConfigurableEP#parentId} to put your configurable under Compiler Settings
- * @author Eugene Zhuravlev
  */
 @Deprecated
 public interface CompilerSettingsFactory {
-  ExtensionPointName<CompilerSettingsFactory> EP_NAME = ExtensionPointName.create("com.intellij.compilerSettingsFactory");
+  ProjectExtensionPointName<CompilerSettingsFactory> EP_NAME = new ProjectExtensionPointName<>("com.intellij.compilerSettingsFactory");
 
   Configurable create(Project project);
 }
