@@ -11,7 +11,7 @@ import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.util.ConfigureUtil
 
-interface KotlinDependencyHandler {
+interface KotlinDependencyHandler : KotlinNpmDependencyHandler {
     fun api(dependencyNotation: Any): Dependency?
     fun api(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
     fun <T : Dependency> api(dependency: T, configure: T.() -> Unit): T

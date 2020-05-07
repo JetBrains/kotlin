@@ -22,6 +22,24 @@ interface NpmDependencyExtension {
     operator fun invoke(directory: File): NpmDependency
 }
 
+internal fun Project.addNpmDependencyExtension() {
+    val extensions = (dependencies as ExtensionAware).extensions
+
+    NpmDependency.Scope.values()
+        .forEach { scope ->
+            val extension = scope.name
+                .removePrefix(NpmDependency.Scope.NORMAL.name)
+                .toLowerCase()
+
+            extensions
+                .add(
+                    TypeOf.typeOf<NpmDependencyExtension>(NpmDependencyExtension::class.java),
+                    lowerCamelCaseName(extension, "npm"),
+                    DefaultNpmDependencyExtension(this, scope)
+                )
+        }
+}
+
 private class DefaultNpmDependencyExtension(
     private val project: Project,
     private val scope: NpmDependency.Scope
@@ -93,22 +111,4 @@ private class DefaultNpmDependencyExtension(
                             """.trimIndent()
         )
     }
-}
-
-internal fun Project.addNpmDependencyExtension() {
-    val extensions = (dependencies as ExtensionAware).extensions
-
-    NpmDependency.Scope.values()
-        .forEach { scope ->
-            val extension = scope.name
-                .removePrefix(NpmDependency.Scope.NORMAL.name)
-                .toLowerCase()
-
-            extensions
-                .add(
-                    TypeOf.typeOf<NpmDependencyExtension>(NpmDependencyExtension::class.java),
-                    lowerCamelCaseName(extension, "npm"),
-                    DefaultNpmDependencyExtension(this, scope)
-                )
-        }
 }
