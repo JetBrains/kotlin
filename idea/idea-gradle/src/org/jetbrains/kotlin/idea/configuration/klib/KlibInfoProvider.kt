@@ -33,7 +33,7 @@ class KlibInfoProvider(kotlinNativeHome: File) {
 
     private val hostManager by lazy {
         HostManager(
-            distribution = Distribution(konanHomeOverride = kotlinNativeHome.path),
+            distribution = Distribution(kotlinNativeHome.path),
             experimental = true
         )
     }
