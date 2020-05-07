@@ -47,7 +47,7 @@ class PsiInlineIntrinsicsSupport(private val state: GenerationState) : ReifiedTy
         v.aconst(descriptor.arity)
         generateCallableReferenceDeclarationContainerClass(v, descriptor, state)
         v.aconst(descriptor.name.asString())
-        generateCallableReferenceSignature(v, descriptor, state)
+        generateFunctionReferenceSignature(v, descriptor, state)
         v.aconst(getCallableReferenceTopLevelFlag(descriptor))
         v.invokespecial(
             FUNCTION_REFERENCE_IMPL.internalName, "<init>",

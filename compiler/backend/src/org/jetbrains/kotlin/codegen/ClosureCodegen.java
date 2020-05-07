@@ -407,7 +407,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             if (generateBody) {
                 mv.visitCode();
                 InstructionAdapter iv = new InstructionAdapter(mv);
-                CallableReferenceUtilKt.generateCallableReferenceSignature(iv, descriptor, state);
+                CallableReferenceUtilKt.generateFunctionReferenceSignature(iv, descriptor, state);
                 iv.areturn(JAVA_STRING_TYPE);
                 FunctionCodegen.endVisit(iv, "function reference getSignature", element);
             }
@@ -465,7 +465,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                     assert functionReferenceTarget != null : "No function reference target: " + funDescriptor;
                     generateCallableReferenceDeclarationContainerClass(iv, functionReferenceTarget, state);
                     iv.aconst(functionReferenceTarget.getName().asString());
-                    CallableReferenceUtilKt.generateCallableReferenceSignature(iv, functionReferenceTarget, state);
+                    CallableReferenceUtilKt.generateFunctionReferenceSignature(iv, functionReferenceTarget, state);
                     int flags =
                             getCallableReferenceTopLevelFlag(functionReferenceTarget) +
                             (calculateFunctionReferenceFlags(functionReferenceCall, funDescriptor) << 1);

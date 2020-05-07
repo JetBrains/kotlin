@@ -683,12 +683,25 @@ class KotlinTypeMapper @JvmOverloads constructor(
         } else newName
     }
 
+    private fun CallableMemberDescriptor.isPropertyWithGetterSignaturePresent(): Boolean {
+        val propertyDescriptor = when (this) {
+            is PropertyDescriptor -> this
+            is PropertyAccessorDescriptor -> correspondingProperty
+            else -> return false
+        }
+        return PropertyCodegen.isReferenceablePropertyWithGetter(propertyDescriptor)
+    }
+
     private fun getModuleName(descriptor: CallableMemberDescriptor): String {
         return getJvmModuleNameForDeserializedDescriptor(descriptor) ?: moduleName
     }
 
     fun mapAsmMethod(descriptor: FunctionDescriptor): Method {
         return mapSignature(descriptor).asmMethod
+    }
+
+    fun mapPropertyReferenceSignature(descriptor: FunctionDescriptor): Method {
+        return mapSignature(descriptor, OwnerKind.PROPERTY_REFERENCE_SIGNATURE, true).asmMethod
     }
 
     fun mapAsmMethod(descriptor: FunctionDescriptor, kind: OwnerKind): Method {

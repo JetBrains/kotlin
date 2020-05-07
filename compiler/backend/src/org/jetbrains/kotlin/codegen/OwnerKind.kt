@@ -13,12 +13,13 @@ enum class OwnerKind {
     PACKAGE,
     IMPLEMENTATION,
     DEFAULT_IMPLS,
-    ERASED_INLINE_CLASS;
+    ERASED_INLINE_CLASS,
+    PROPERTY_REFERENCE_SIGNATURE;
 
     companion object {
         fun getMemberOwnerKind(descriptor: DeclarationDescriptor): OwnerKind = when (descriptor) {
-            is PackageFragmentDescriptor -> OwnerKind.PACKAGE
-            is ClassDescriptor -> OwnerKind.IMPLEMENTATION
+            is PackageFragmentDescriptor -> PACKAGE
+            is ClassDescriptor -> IMPLEMENTATION
             else -> throw AssertionError("Unexpected declaration container: $this")
         }
     }

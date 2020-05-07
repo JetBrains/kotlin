@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -52,6 +51,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND;
+import static org.jetbrains.kotlin.fileClasses.JvmFileClassUtilKt.isTopLevelInJvmMultifileClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PROPERTY_TYPE;
@@ -135,10 +135,10 @@ public class PropertyCodegen {
 
         boolean isDefaultGetterAndSetter = isDefaultAccessor(getter) && isDefaultAccessor(setter);
 
-        if (isAccessorNeeded(declaration, descriptor, getter, isDefaultGetterAndSetter)) {
+        if (isAccessorNeeded(descriptor, getter, isDefaultGetterAndSetter)) {
             generateGetter(descriptor, getter);
         }
-        if (isAccessorNeeded(declaration, descriptor, setter, isDefaultGetterAndSetter)) {
+        if (isAccessorNeeded(descriptor, setter, isDefaultGetterAndSetter)) {
             generateSetter(descriptor, setter);
         }
     }
@@ -167,17 +167,40 @@ public class PropertyCodegen {
         generateSyntheticMethodIfNeeded(descriptor, isBackingFieldOwner);
     }
 
+    private boolean isAccessorNeeded(
+            @NotNull PropertyDescriptor descriptor,
+            @Nullable KtPropertyAccessor accessor,
+            boolean isDefaultGetterAndSetter
+    ) {
+        return isAccessorNeeded(descriptor, accessor, isDefaultGetterAndSetter, kind);
+    }
+
+    public static boolean isReferenceablePropertyWithGetter(@NotNull PropertyDescriptor descriptor) {
+        PsiElement psiElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
+        KtDeclaration ktDeclaration = psiElement instanceof KtDeclaration ? (KtDeclaration) psiElement : null;
+        if (ktDeclaration instanceof KtProperty) {
+            KtProperty ktProperty = (KtProperty) ktDeclaration;
+            boolean isDefaultGetterAndSetter =
+                    isDefaultAccessor(ktProperty.getGetter()) && isDefaultAccessor(ktProperty.getSetter());
+            return isAccessorNeeded(descriptor, ktProperty.getGetter(), isDefaultGetterAndSetter, OwnerKind.IMPLEMENTATION);
+        } else if (ktDeclaration instanceof KtParameter) {
+            return isAccessorNeeded(descriptor, null, true, OwnerKind.IMPLEMENTATION);
+        } else {
+            return isAccessorNeeded(descriptor, null, false, OwnerKind.IMPLEMENTATION);
+        }
+    }
+
     /**
      * Determines if it's necessary to generate an accessor to the property, i.e. if this property can be referenced via getter/setter
      * for any reason
      *
      * @see JvmCodegenUtil#couldUseDirectAccessToProperty
      */
-    private boolean isAccessorNeeded(
-            @NotNull KtProperty declaration,
+    private static boolean isAccessorNeeded(
             @NotNull PropertyDescriptor descriptor,
             @Nullable KtPropertyAccessor accessor,
-            boolean isDefaultGetterAndSetter
+            boolean isDefaultGetterAndSetter,
+            OwnerKind kind
     ) {
         if (isConstOrHasJvmFieldAnnotation(descriptor)) return false;
 
@@ -187,7 +210,8 @@ public class PropertyCodegen {
         if (kind == OwnerKind.DEFAULT_IMPLS && isDefaultAccessor) return false;
 
         // Delegated or extension properties can only be referenced via accessors
-        if (declaration.hasDelegate() || declaration.getReceiverTypeReference() != null) return true;
+        //noinspection deprecation
+        if (descriptor.isDelegated() || descriptor.getExtensionReceiverParameter() != null) return true;
 
         // Companion object properties should have accessors for non-private properties because these properties can be referenced
         // via getter/setter. But these accessors getter/setter are not required for private properties that have a default getter
@@ -201,7 +225,7 @@ public class PropertyCodegen {
         }
 
         // Non-const properties from multifile classes have accessors regardless of visibility
-        if (isTopLevelPropertyInMultifileClass(declaration, descriptor)) return true;
+        if (isTopLevelInJvmMultifileClass(descriptor)) return true;
 
         // Private class properties have accessors only in cases when those accessors are non-trivial
         if (Visibilities.isPrivate(descriptor.getVisibility())) {
@@ -215,15 +239,12 @@ public class PropertyCodegen {
             return !isDefaultAccessor;
         }
 
-        return true;
-    }
+        // Non-public API (private and internal) primary vals of inline classes don't have getter
+        if (InlineClassesUtilsKt.isUnderlyingPropertyOfInlineClass(descriptor) && !descriptor.getVisibility().isPublicAPI()) {
+            return false;
+        }
 
-    private static boolean isTopLevelPropertyInMultifileClass(
-            @NotNull KtProperty declaration,
-            @NotNull PropertyDescriptor descriptor
-    ) {
-        return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor &&
-               JvmFileClassUtilKt.isInsideJvmMultifileClassFile(declaration);
+        return true;
     }
 
     private static boolean areAccessorsNeededForPrimaryConstructorProperty(

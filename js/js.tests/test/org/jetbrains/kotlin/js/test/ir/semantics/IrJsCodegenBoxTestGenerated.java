@@ -21184,6 +21184,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primaryValOfInlineClass.kt");
                 }
 
+                @TestMetadata("privateCompanionObjectValInDifferentModule.kt")
+                public void testPrivateCompanionObjectValInDifferentModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/privateCompanionObjectValInDifferentModule.kt");
+                }
+
+                @TestMetadata("privateTopLevelValInDifferentModule.kt")
+                public void testPrivateTopLevelValInDifferentModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/privateTopLevelValInDifferentModule.kt");
+                }
+
                 @TestMetadata("properties.kt")
                 public void testProperties() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/properties.kt");

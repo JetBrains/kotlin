@@ -168,11 +168,15 @@ private fun isTopLevelCallableReference(descriptor: CallableDescriptor): Boolean
 internal fun getCallableReferenceTopLevelFlag(descriptor: CallableDescriptor): Int =
     if (isTopLevelCallableReference(descriptor)) 1 else 0
 
-internal fun generateCallableReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
+internal fun generateFunctionReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
     iv.aconst(getSignatureString(callable, state))
 }
 
-private fun getSignatureString(callable: CallableDescriptor, state: GenerationState): String {
+internal fun generatePropertyReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
+    iv.aconst(getSignatureString(callable, state, isPropertySignature = true))
+}
+
+private fun getSignatureString(callable: CallableDescriptor, state: GenerationState, isPropertySignature: Boolean = false): String {
     if (callable is LocalVariableDescriptor) {
         val asmType = state.bindingContext.get(CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER, callable)
             ?: throw AssertionError("No delegated property metadata owner for $callable")
@@ -198,10 +202,13 @@ private fun getSignatureString(callable: CallableDescriptor, state: GenerationSt
         else -> error("Unsupported callable reference: $callable")
     }
     val declaration = DescriptorUtils.unwrapFakeOverride(accessor).original
-    val method =
-        if (callable.containingDeclaration.isInlineClass() && !declaration.isGetterOfUnderlyingPropertyOfInlineClass())
+    val method = when {
+        callable.containingDeclaration.isInlineClass() && !declaration.isGetterOfUnderlyingPropertyOfInlineClass() ->
             state.typeMapper.mapSignatureForInlineErasedClassSkipGeneric(declaration).asmMethod
-        else
+        isPropertySignature ->
+            state.typeMapper.mapPropertyReferenceSignature(declaration)
+        else ->
             state.typeMapper.mapAsmMethod(declaration)
+    }
     return method.name + method.descriptor
 }

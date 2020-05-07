@@ -679,7 +679,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
 
         iv.aconst(property.getName().asString());
-        CallableReferenceUtilKt.generateCallableReferenceSignature(iv, property, state);
+        CallableReferenceUtilKt.generatePropertyReferenceSignature(iv, property, state);
         superCtorArgTypes.add(JAVA_STRING_TYPE);
         superCtorArgTypes.add(JAVA_STRING_TYPE);
 
