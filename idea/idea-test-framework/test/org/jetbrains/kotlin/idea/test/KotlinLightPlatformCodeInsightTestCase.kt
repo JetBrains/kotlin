@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.test
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
+import com.intellij.util.ThrowableRunnable
 
 // BUNCH: 191
 abstract class KotlinLightPlatformCodeInsightTestCase : LightPlatformCodeInsightTestCase() {
@@ -20,7 +21,7 @@ abstract class KotlinLightPlatformCodeInsightTestCase : LightPlatformCodeInsight
     }
 
     override fun tearDown() = runAll(
-        { disableKotlinOfficialCodeStyle(project_) },
-        { super.tearDown() },
+        ThrowableRunnable { disableKotlinOfficialCodeStyle(project_) },
+        ThrowableRunnable { super.tearDown() },
     )
 }

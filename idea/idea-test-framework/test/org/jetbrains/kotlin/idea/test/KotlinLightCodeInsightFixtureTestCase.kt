@@ -106,9 +106,9 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     override fun tearDown() {
         runAll(
-            { LoggedErrorProcessor.restoreDefaultProcessor() },
-            { disableKotlinOfficialCodeStyle(project) },
-            { super.tearDown() },
+            ThrowableRunnable { LoggedErrorProcessor.restoreDefaultProcessor() },
+            ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
+            ThrowableRunnable { super.tearDown() },
         )
 
         if (exceptions.isNotEmpty()) {

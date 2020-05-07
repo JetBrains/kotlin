@@ -9,6 +9,7 @@ import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import java.io.File
@@ -24,9 +25,9 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
     }
 
     override fun tearDown() = runAll(
-        { disableKotlinOfficialCodeStyle(project) },
-        { VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory()) },
-        { super.tearDown() },
+        ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
+        ThrowableRunnable { VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory()) },
+        ThrowableRunnable { super.tearDown() },
     )
 
     protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
