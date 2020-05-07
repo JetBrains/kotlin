@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.toArgumentList
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.types.*
-
-import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
-
+import org.jetbrains.kotlin.resolve.ArrayFqNames
 
 class ArrayInitializerConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -23,9 +21,9 @@ class ArrayInitializerConversion(context: NewJ2kConverterContext) : RecursiveApp
             val primitiveArrayType = element.type.type as? JKJavaPrimitiveType
             val arrayConstructorName =
                 if (primitiveArrayType != null)
-                    CollectionLiteralResolver.PRIMITIVE_TYPE_TO_ARRAY[PrimitiveType.valueOf(primitiveArrayType.jvmPrimitiveType.name)]!!.asString()
+                    ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY[PrimitiveType.valueOf(primitiveArrayType.jvmPrimitiveType.name)]!!.asString()
                 else
-                    CollectionLiteralResolver.ARRAY_OF_FUNCTION.asString()
+                    ArrayFqNames.ARRAY_OF_FUNCTION.asString()
             val typeArguments =
                 if (primitiveArrayType == null) JKTypeArgumentList(listOf(element::type.detached()))
                 else JKTypeArgumentList()

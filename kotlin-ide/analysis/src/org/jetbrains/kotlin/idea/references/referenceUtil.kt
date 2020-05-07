@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -221,20 +221,20 @@ fun AbstractKtReference<out KtExpression>.renameImplicitConventionalCall(newName
     return newExpression
 }
 
-val KtSimpleNameExpression.mainReference: KtSimpleNameReference
+val KtSimpleNameExpression.mainReference: KtSimpleNameReferenceDescriptorsImpl
     get() = references.firstIsInstance()
 
-val KtReferenceExpression.mainReference: KtReference
-    get() = if (this is KtSimpleNameExpression) mainReference else references.firstIsInstance<KtReference>()
+val KtReferenceExpression.mainReference: KtDescriptorsBasedReference
+    get() = if (this is KtSimpleNameExpression) mainReference else references.firstIsInstance<KtDescriptorsBasedReference>()
 
 val KDocName.mainReference: KDocReference
     get() = references.firstIsInstance()
 
-val KtElement.mainReference: KtReference?
+val KtElement.mainReference: KtDescriptorsBasedReference?
     get() = when (this) {
         is KtReferenceExpression -> mainReference
         is KDocName -> mainReference
-        else -> references.firstIsInstanceOrNull<KtReference>()
+        else -> references.firstIsInstanceOrNull<KtDescriptorsBasedReference>()
     }
 
 fun KtElement.resolveMainReferenceToDescriptors(): Collection<DeclarationDescriptor> {
@@ -247,46 +247,6 @@ fun PsiReference.getImportAlias(): KtImportAlias? {
 }
 
 // ----------- Read/write access -----------------------------------------------------------------------------------------------------------------------
-
-enum class ReferenceAccess(val isRead: Boolean, val isWrite: Boolean) {
-    READ(true, false), WRITE(false, true), READ_WRITE(true, true)
-}
-
-fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean) = readWriteAccessWithFullExpression(useResolveForReadWrite).first
-
-fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boolean): Pair<ReferenceAccess, KtExpression> {
-    var expression = getQualifiedExpressionForSelectorOrThis()
-    loop@ while (true) {
-        when (val parent = expression.parent) {
-            is KtParenthesizedExpression, is KtAnnotatedExpression, is KtLabeledExpression -> expression = parent as KtExpression
-            else -> break@loop
-        }
-    }
-
-    val assignment = expression.getAssignmentByLHS()
-    if (assignment != null) {
-        when (assignment.operationToken) {
-            KtTokens.EQ -> return ReferenceAccess.WRITE to assignment
-
-            else -> {
-                if (!useResolveForReadWrite) return ReferenceAccess.READ_WRITE to assignment
-
-                val resolvedCall = assignment.resolveToCall() ?: return ReferenceAccess.READ_WRITE to assignment
-                if (!resolvedCall.isReallySuccess()) return ReferenceAccess.READ_WRITE to assignment
-                return if (resolvedCall.resultingDescriptor.name in OperatorConventions.ASSIGNMENT_OPERATIONS.values)
-                    ReferenceAccess.READ to assignment
-                else
-                    ReferenceAccess.READ_WRITE to assignment
-            }
-        }
-    }
-
-    val unaryExpression = expression.parent as? KtUnaryExpression
-    return if (unaryExpression != null && unaryExpression.operationToken in constant { setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) })
-        ReferenceAccess.READ_WRITE to unaryExpression
-    else
-        ReferenceAccess.READ to expression
-}
 
 fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor, bindingContext: BindingContext): Boolean {
     if (this is KDocReference) {
