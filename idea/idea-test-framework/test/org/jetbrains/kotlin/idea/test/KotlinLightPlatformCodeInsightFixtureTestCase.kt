@@ -23,12 +23,11 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
         invalidateLibraryCache(project)
     }
 
-    override fun tearDown() {
-        disableKotlinOfficialCodeStyle(project)
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
-
-        super.tearDown()
-    }
+    override fun tearDown() = runAll(
+        { disableKotlinOfficialCodeStyle(project) },
+        { VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory()) },
+        { super.tearDown() },
+    )
 
     protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
 

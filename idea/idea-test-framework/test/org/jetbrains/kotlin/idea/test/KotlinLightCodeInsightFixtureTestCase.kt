@@ -32,6 +32,8 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
+import com.intellij.testFramework.RunAll
+import com.intellij.util.ThrowableRunnable
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
@@ -103,9 +105,11 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     }
 
     override fun tearDown() {
-        LoggedErrorProcessor.restoreDefaultProcessor()
-        disableKotlinOfficialCodeStyle(project)
-        super.tearDown()
+        runAll(
+            { LoggedErrorProcessor.restoreDefaultProcessor() },
+            { disableKotlinOfficialCodeStyle(project) },
+            { super.tearDown() },
+        )
 
         if (exceptions.isNotEmpty()) {
             exceptions.forEach { it.printStackTrace() }
@@ -322,6 +326,11 @@ fun enableKotlinOfficialCodeStyle(project: Project) {
 fun disableKotlinOfficialCodeStyle(project: Project) {
     CodeStyle.getSettings(project)
 }
+
+fun runAll(
+    vararg actions: ThrowableRunnable<Throwable>,
+    suppressedExceptions: List<Throwable> = emptyList()
+) = RunAll(*actions).run(suppressedExceptions)
 
 private fun rollbackCompilerOptions(project: Project, module: Module, removeFacet: Boolean) {
     KotlinCompilerSettings.getInstance(project).update { this.additionalArguments = DEFAULT_ADDITIONAL_ARGUMENTS }
