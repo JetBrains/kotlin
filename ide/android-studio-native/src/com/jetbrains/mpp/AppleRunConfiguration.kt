@@ -14,6 +14,8 @@ import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAc
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.jetbrains.kmm.AppleConfigurationFactory
+import com.jetbrains.kmm.AppleRunConfigurationEditor
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mpp.execution.ApplePhysicalDevice
 import com.jetbrains.mpp.execution.Device
@@ -33,7 +35,7 @@ class XCProjectFile(file: File) {
 }
 
 
-class AppleRunConfiguration(project: Project, configurationFactory: MobileConfigurationFactory, name: String) :
+class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigurationFactory, name: String) :
     LocatableConfigurationBase<Element>(project, configurationFactory, name), RunConfigurationWithSuppressedDefaultRunAction {
 
     private val xcodeproj: String?
@@ -70,7 +72,8 @@ class AppleRunConfiguration(project: Project, configurationFactory: MobileConfig
 
     val iosBuildDirectory = "ios_build" // TODO: Allow configuration.
 
-    override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = MobileRunConfigurationEditor(project)
+    override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
+        AppleRunConfigurationEditor(project)
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState? =
         (environment.executionTarget as? Device)?.createState(this, environment)

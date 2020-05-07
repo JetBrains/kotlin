@@ -1,28 +1,29 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.mpp
+package com.jetbrains.kmm
 
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationTypeBase
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
+import com.jetbrains.mpp.AppleRunConfiguration
 
-class MobileRunConfigurationType : ConfigurationTypeBase(
+class AppleRunConfigurationType : ConfigurationTypeBase(
     "MobileRunConfiguration",
     "Mobile App",
     "Mobile Application",
     AllIcons.RunConfigurations.Application
 ) {
     init {
-        addFactory(MobileConfigurationFactory(this))
+        addFactory(AppleConfigurationFactory(this))
     }
 }
 
-class MobileConfigurationFactory(type: MobileRunConfigurationType) : ConfigurationFactory(type) {
+class AppleConfigurationFactory(type: AppleRunConfigurationType) : ConfigurationFactory(type) {
     override fun createTemplateConfiguration(project: Project): RunConfiguration {
         return AppleRunConfiguration(project, this, name)
     }
