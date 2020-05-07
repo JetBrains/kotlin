@@ -16,8 +16,6 @@
 
 package androidx.compose.plugins.kotlin
 
-import android.app.Activity
-import android.view.ViewGroup
 import android.widget.TextView
 import org.junit.Before
 import org.junit.Test

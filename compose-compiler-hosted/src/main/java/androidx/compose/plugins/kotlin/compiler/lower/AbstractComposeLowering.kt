@@ -116,7 +116,6 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import kotlin.math.abs
 
 abstract class AbstractComposeLowering(
     val context: IrPluginContext,
