@@ -202,7 +202,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
         val mergedData = if (build.failed && root is GradleBuildRoot.Imported) merge(root.data, newData) else newData
 
         val newSupport = tryCreateImportedRoot(build.workingDir) { mergedData } ?: return
-        GradleBuildRootDataSerializer.write(newSupport.dir, mergedData)
+        GradleBuildRootDataSerializer.write(newSupport.dir ?: return, mergedData)
 
         add(newSupport)
 
@@ -335,7 +335,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
             .getExecutionSettings<GradleExecutionSettings>(project, externalProjectPath, GradleConstants.SYSTEM_ID)
             .javaHome?.let { File(it) }
 
-        return GradleBuildRoot.Imported(this, buildRoot, javaHome, data)
+        return GradleBuildRoot.Imported(this, externalProjectPath, javaHome, data)
     }
 
     private fun add(newRoot: GradleBuildRoot.Linked) {
