@@ -35,8 +35,7 @@ class KotlinSSFunctionTest : KotlinSSTest() {
 
     fun testFunReceiverType() {
         doTest(
-            "fun <'_T, '_E, '_R> '_name('_f : '_T.('_E) -> '_R) : " +
-                    "('_T, '_E) -> '_R = { '_t, '_e -> '_t.'_f('_e) }"
+            "fun <'_T, '_E, '_R> '_name('_f : '_T.('_E) -> '_R) : ('_T, '_E) -> '_R = { '_t, '_e -> '_t.'_f('_e) }"
         )
     }
 }

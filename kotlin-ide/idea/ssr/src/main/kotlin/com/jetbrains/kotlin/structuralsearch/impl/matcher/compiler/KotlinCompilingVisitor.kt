@@ -1,6 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiIdentifier
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
 import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
@@ -50,7 +51,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         val handler = pattern.getHandler(expression)
 
         if (handler is SubstitutionHandler) {
-            handler.setFilter { it is KtExpression }
+            handler.setFilter { true }
         }
     }
 
