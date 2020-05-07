@@ -100,16 +100,12 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
         return new.diff(old)
     }
 
-    override fun updateScriptDefinitions() {
+    override fun updateScriptDefinitionReferences() {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
         default.updateScriptDefinitions()
 
         if (classpathRoots.customDefinitionsUsed) {
-            plugins.forEach {
-                it.updateScriptDefinitions()
-            }
-
             updater.ensureUpdateScheduled()
         }
     }
