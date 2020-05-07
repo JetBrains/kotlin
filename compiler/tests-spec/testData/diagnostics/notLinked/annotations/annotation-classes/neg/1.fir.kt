@@ -21,13 +21,13 @@ annotation class Case12_2
 annotation class Case1 @JvmOverloads constructor(val x: Int)
 
 // TESTCASE NUMBER: 2
-annotation class Case2 @[Case12_2 Case12_2 Case12_2 Case12_2 Case12_2 Case12_2 JvmOverloads Case12_1] constructor(x: Int = 10)
+annotation class Case2 @[Case12_2 Case12_2 Case12_2 Case12_2 Case12_2 Case12_2 JvmOverloads Case12_1] constructor(<!MISSING_VAL_ON_ANNOTATION_PARAMETER!>x: Int = 10<!>)
 
 // TESTCASE NUMBER: 3
-annotation class Case3 @Case12_2 @Case12_1 @Case12_2 @`JvmOverloads` @Case12_2 @Case12_2 constructor(x: Int = 10)
+annotation class Case3 @Case12_2 @Case12_1 @Case12_2 @`JvmOverloads` @Case12_2 @Case12_2 constructor(<!MISSING_VAL_ON_ANNOTATION_PARAMETER!>x: Int = 10<!>)
 
 // TESTCASE NUMBER: 4
-annotation class Case4 @Case12_2 @[Case12_2 Case12_2 Case12_2 Case12_2 Case12_2 Case12_2 JvmOverloads Case12_1] @Case12_2 @Case12_2 constructor(x: Int = 10)
+annotation class Case4 @Case12_2 @[Case12_2 Case12_2 Case12_2 Case12_2 Case12_2 Case12_2 JvmOverloads Case12_1] @Case12_2 @Case12_2 constructor(<!MISSING_VAL_ON_ANNOTATION_PARAMETER!>x: Int = 10<!>)
 
 // TESTCASE NUMBER: 5
 annotation class Case5 @[JvmOverloads] constructor(val x: Int)
