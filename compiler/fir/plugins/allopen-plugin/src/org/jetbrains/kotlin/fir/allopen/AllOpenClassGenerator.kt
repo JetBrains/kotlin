@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
@@ -53,4 +50,7 @@ class AllOpenClassGenerator(session: FirSession) : FirClassGenerationExtension(s
 
     override val metaAnnotations: Map<AnnotationFqn, MetaAnnotationMode>
         get() = emptyMap()
+
+    override val key: FirPluginKey
+        get() = AllOpenPluginKey
 }

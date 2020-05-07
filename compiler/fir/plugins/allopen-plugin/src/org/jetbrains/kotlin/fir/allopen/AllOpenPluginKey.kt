@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.fir.allopen
 
-import org.jetbrains.kotlin.fir.declarations.FirPluginMarker
+import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 
-object AllOpenPluginKey : FirPluginMarker()
+object AllOpenPluginKey : FirPluginKey()

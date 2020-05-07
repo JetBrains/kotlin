@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.transform
@@ -35,4 +36,7 @@ class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtens
 
     override val metaAnnotations: Map<AnnotationFqn, MetaAnnotationMode>
         get() = mapOf(ALL_OPEN to MetaAnnotationMode.ANNOTATED_AND_CHILDREN)
+
+    override val key: FirPluginKey
+        get() = AllOpenPluginKey
 }
