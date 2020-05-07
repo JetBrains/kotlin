@@ -26,7 +26,7 @@ fun addVfsListener(
                     if (watcher.project.isDisposed) return@Runnable
                     for (event in events) {
                         val file = event.file ?: continue
-                        if (buildRootsManager.maybeAffectedGradleProjectFile(watcher.project, event.path)) {
+                        if (buildRootsManager.maybeAffectedGradleProjectFile(event.path)) {
                             watcher.fileChanged(event.path, file.timeStamp)
                         }
                     }
