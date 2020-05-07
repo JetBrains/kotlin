@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.LinkedMultiMap
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.codegen.state.JvmMethodExceptionTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
@@ -63,7 +64,7 @@ abstract class SignatureCollectingClassBuilderFactory(
             return super.newField(origin, access, name, desc, signature, value)
         }
 
-        override fun newMethod(origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+        override fun newMethod(origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: JvmMethodExceptionTypes): MethodVisitor {
             signatures.putValue(RawSignature(name, desc, MemberKind.METHOD), origin)
             if (!shouldGenerate(origin)) {
                 return AbstractClassBuilder.EMPTY_METHOD_VISITOR

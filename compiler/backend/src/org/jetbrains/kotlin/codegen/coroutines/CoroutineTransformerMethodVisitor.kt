@@ -905,7 +905,7 @@ private class MethodNodeExaminer(
     val methodNode: MethodNode,
     disableTailCallOptimizationForFunctionReturningUnit: Boolean
 ) {
-    private val sourceFrames: Array<Frame<SourceValue>?> =
+    private val sourceFrames: SourceFrames =
         MethodTransformer.analyze(containingClassInternalName, methodNode, IgnoringCopyOperationSourceInterpreter())
     private val controlFlowGraph = ControlFlowGraph.build(methodNode)
 
