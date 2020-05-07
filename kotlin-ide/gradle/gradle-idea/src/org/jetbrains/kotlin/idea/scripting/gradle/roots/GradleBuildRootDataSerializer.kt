@@ -19,7 +19,7 @@ import java.io.DataInputStream
 import java.io.DataOutput
 
 internal object GradleBuildRootDataSerializer {
-    private val attribute = FileAttribute("kotlin-dsl-script-models", 4, false)
+    private val attribute = FileAttribute("kotlin-dsl-script-models", 5, false)
 
     fun read(buildRoot: VirtualFile): GradleBuildRootData? {
         return attribute.readAttribute(buildRoot)?.use {
