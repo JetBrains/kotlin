@@ -137,7 +137,11 @@ val libraries by configurations.creating {
     exclude("org.jetbrains.intellij.deps", "trove4j") // Idea already has trove4j
 }
 
-val jpsPlugin by configurations.creating
+val jpsPlugin by configurations.creating {
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 
 configurations.all {
     resolutionStrategy {
