@@ -6,6 +6,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.AbstractTreeStructure;
 import com.intellij.ide.util.treeView.IndexComparator;
 import com.intellij.ide.util.treeView.NodeDescriptor;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Eugene Belyaev
  */
-public abstract class AbstractListBuilder {
+public abstract class AbstractListBuilder implements Disposable {
   protected final Project myProject;
   protected final JList myList;
   protected final Model myModel;
@@ -252,6 +253,7 @@ public abstract class AbstractListBuilder {
 
   protected abstract List<AbstractTreeNode<?>> getAllAcceptableNodes(Object[] childElements, VirtualFile file);
 
+  @Override
   public void dispose() {
     myIsDisposed = true;
   }

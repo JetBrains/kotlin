@@ -15,7 +15,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -94,7 +93,7 @@ public abstract class TodoTreeBuilder implements Disposable {
 
     PsiManager psiManager = PsiManager.getInstance(myProject);
     mySearchHelper = PsiTodoSearchHelper.SERVICE.getInstance(myProject);
-    psiManager.addPsiTreeChangeListener(new MyPsiTreeChangeListener());
+    psiManager.addPsiTreeChangeListener(new MyPsiTreeChangeListener(), this);
 
     myFileStatusListener = new MyFileStatusListener();
 
