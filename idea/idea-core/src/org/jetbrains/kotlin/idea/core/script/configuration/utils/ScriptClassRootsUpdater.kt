@@ -123,12 +123,14 @@ class ScriptClassRootsUpdater(
 
     fun doUpdate(underProgressManager: Boolean = true) {
         syncLock.withLock {
-            val updates = manager.collectRootsAndCheckNew()
-
-            if (!updates.changed) return
-
             try {
-                ProgressManager.checkCanceled()
+                val updates = manager.collectRootsAndCheckNew()
+
+                if (!updates.changed) return
+
+                if (underProgressManager) {
+                    ProgressManager.checkCanceled()
+                }
 
                 if (updates.hasNewRoots) {
                     notifyRootsChanged()
