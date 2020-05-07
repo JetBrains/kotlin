@@ -159,7 +159,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             localScopes = localScopes.add(localScope)
         }
 
-        fun storeClass(klass: FirRegularClass) {
+        fun storeClassIfNotNested(klass: FirRegularClass) {
+            if (containerIfAny is FirClass<*>) return
             updateLastScope { storeClass(klass) }
         }
 

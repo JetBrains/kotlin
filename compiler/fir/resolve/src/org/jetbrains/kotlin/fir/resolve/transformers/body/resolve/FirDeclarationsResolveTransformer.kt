@@ -317,7 +317,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        context.storeClass(regularClass)
+        context.storeClassIfNotNested(regularClass)
 
         if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
             return regularClass.runAllPhasesForLocalClass(transformer, components, data).compose()

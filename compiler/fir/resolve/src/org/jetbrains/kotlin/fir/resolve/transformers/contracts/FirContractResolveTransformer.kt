@@ -163,7 +163,7 @@ class FirContractResolveTransformer(
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
             regularClass.updatePhase()
-            context.storeClass(regularClass)
+            context.storeClassIfNotNested(regularClass)
             regularClass.transformCompanionObject(this, data)
             withTypeParametersOf(regularClass) {
                 context.withContainer(regularClass) {
