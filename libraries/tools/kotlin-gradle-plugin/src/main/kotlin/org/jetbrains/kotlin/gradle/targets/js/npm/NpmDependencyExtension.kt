@@ -31,7 +31,7 @@ internal fun Project.addNpmDependencyExtension() {
 
     values()
         .forEach { scope ->
-            val extension = scope.name
+            val scopePrefix = scope.name
                 .removePrefix(NORMAL.name)
                 .toLowerCase()
 
@@ -40,16 +40,21 @@ internal fun Project.addNpmDependencyExtension() {
                 PEER -> NpmDependencyExtension::class.java
             }
 
+            val extension = when (scope) {
+                NORMAL, DEV, OPTIONAL -> DefaultNpmDependencyExtension(this, scope)
+                PEER -> NpmDependencyWithoutDirectoryExtension(this, scope)
+            }
+
             extensions
                 .add(
                     TypeOf.typeOf<NpmDependencyExtension>(type),
-                    lowerCamelCaseName(extension, "npm"),
-                    DefaultNpmDependencyExtension(this, scope)
+                    lowerCamelCaseName(scopePrefix, "npm"),
+                    extension
                 )
         }
 }
 
-private class DefaultNpmDependencyExtension(
+private abstract class AbstractNpmDependencyExtension(
     private val project: Project,
     private val scope: NpmDependency.Scope
 ) : NpmDependencyExtension,
@@ -63,14 +68,6 @@ private class DefaultNpmDependencyExtension(
             project = project,
             name = name,
             version = version,
-            scope = scope
-        )
-
-    override operator fun invoke(name: String, directory: File): NpmDependency =
-        directoryNpmDependency(
-            project = project,
-            name = name,
-            directory = directory,
             scope = scope
         )
 
@@ -89,10 +86,11 @@ private class DefaultNpmDependencyExtension(
                 name = arg,
                 args = *args
             )
-            is File -> invoke(arg)
-            else -> npmDeclarationException(args)
+            else -> processNonStringFirstArgument(args)
         }
     }
+
+    protected abstract fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency
 
     private fun withName(name: String, vararg args: Any?): NpmDependency {
         val arg = if (args.size > 1) args[1] else null
@@ -104,6 +102,65 @@ private class DefaultNpmDependencyExtension(
                 name = name,
                 version = arg
             )
+            else -> processNonStringNameArgument(name, arg, args)
+        }
+    }
+
+    protected abstract fun processNonStringNameArgument(
+        name: String,
+        arg: Any?,
+        vararg args: Any?
+    ): NpmDependency
+
+    protected fun npmDeclarationException(args: Array<out Any?>): Nothing {
+        throw IllegalArgumentException(
+            """
+                            |Unable to add NPM with scope '$scope' dependency by ${args.joinToString()}
+                            |Possible variants:
+                            |${possibleVariants().joinToString("\n") { "- ${it.first} -> ${it.second}" }}
+            """.trimMargin()
+        )
+    }
+
+    protected open fun possibleVariants(): List<Pair<String, String>> {
+        return listOf("npm('name', 'version')" to "name:version")
+    }
+}
+
+private class DefaultNpmDependencyExtension(
+    private val project: Project,
+    private val scope: NpmDependency.Scope
+) : AbstractNpmDependencyExtension(project, scope) {
+    override fun invoke(name: String): NpmDependency =
+        onlyNameNpmDependency(name)
+
+    override operator fun invoke(name: String, directory: File): NpmDependency =
+        directoryNpmDependency(
+            project = project,
+            name = name,
+            directory = directory,
+            scope = scope
+        )
+
+    override operator fun invoke(directory: File): NpmDependency =
+        invoke(
+            name = moduleName(directory),
+            directory = directory
+        )
+
+    override fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency {
+        return when (arg) {
+            is File -> invoke(arg)
+            else -> npmDeclarationException(args)
+        }
+    }
+
+    override fun processNonStringNameArgument(
+        name: String,
+        arg: Any?,
+        vararg args: Any?
+    ): NpmDependency {
+        return when (arg) {
             is File -> invoke(
                 name = name,
                 directory = arg
@@ -112,14 +169,24 @@ private class DefaultNpmDependencyExtension(
         }
     }
 
-    private fun npmDeclarationException(args: Array<out Any?>): Nothing {
-        throw IllegalArgumentException(
-            """
-                            Unable to add NPM dependency by $args
-                            - npm('name', 'version') -> name:version
-                            - npm(File) -> File.name:File
-                            - npm('name', File) -> name:File
-                            """.trimIndent()
+    override fun possibleVariants(): List<Pair<String, String>> {
+        return super.possibleVariants() + listOf(
+            "npm(File)" to "File.name:File",
+            "npm('name', File)" to "name:File"
         )
     }
+}
+
+private class NpmDependencyWithoutDirectoryExtension(
+    project: Project,
+    scope: NpmDependency.Scope
+) : AbstractNpmDependencyExtension(project, scope) {
+    override fun invoke(name: String, directory: File): NpmDependency =
+        npmDeclarationException(arrayOf(name, directory))
+
+    override fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency =
+        npmDeclarationException(args)
+
+    override fun processNonStringNameArgument(name: String, arg: Any?, vararg args: Any?): NpmDependency =
+        npmDeclarationException(args)
 }
