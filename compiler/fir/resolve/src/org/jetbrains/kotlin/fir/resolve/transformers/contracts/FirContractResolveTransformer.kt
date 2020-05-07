@@ -166,7 +166,9 @@ class FirContractResolveTransformer(
             context.storeClass(regularClass)
             regularClass.transformCompanionObject(this, data)
             withTypeParametersOf(regularClass) {
-                regularClass.transformDeclarations(this, data)
+                context.withContainer(regularClass) {
+                    regularClass.transformDeclarations(this, data)
+                }
             }
             return regularClass.compose()
         }
