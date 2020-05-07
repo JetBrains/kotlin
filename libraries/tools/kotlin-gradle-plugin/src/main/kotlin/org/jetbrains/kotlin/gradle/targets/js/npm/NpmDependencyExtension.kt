@@ -9,34 +9,40 @@ import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.reflect.TypeOf
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
 interface NpmDependencyExtension {
-    operator fun invoke(name: String, version: String): NpmDependency
+    @Deprecated("Declaring NPM dependency without version is forbidden")
+    operator fun invoke(name: String): NpmDependency
 
+    operator fun invoke(name: String, version: String): NpmDependency
+}
+
+interface NpmDirectoryDependencyExtension : NpmDependencyExtension {
     operator fun invoke(name: String, directory: File): NpmDependency
 
     operator fun invoke(directory: File): NpmDependency
 }
 
-interface NpmDependencyWithNameOnlyExtension : NpmDependencyExtension {
-    @Deprecated("Declaring NPM dependency without version is forbidden")
-    operator fun invoke(name: String): NpmDependency
-}
-
 internal fun Project.addNpmDependencyExtension() {
     val extensions = (dependencies as ExtensionAware).extensions
 
-    NpmDependency.Scope.values()
+    values()
         .forEach { scope ->
             val extension = scope.name
-                .removePrefix(NpmDependency.Scope.NORMAL.name)
+                .removePrefix(NORMAL.name)
                 .toLowerCase()
+
+            val type = when (scope) {
+                NORMAL, DEV, OPTIONAL -> NpmDirectoryDependencyExtension::class.java
+                PEER -> NpmDependencyExtension::class.java
+            }
 
             extensions
                 .add(
-                    TypeOf.typeOf(NpmDependencyWithNameOnlyExtension::class.java),
+                    TypeOf.typeOf<NpmDependencyExtension>(type),
                     lowerCamelCaseName(extension, "npm"),
                     DefaultNpmDependencyExtension(this, scope)
                 )
@@ -47,7 +53,7 @@ private class DefaultNpmDependencyExtension(
     private val project: Project,
     private val scope: NpmDependency.Scope
 ) : NpmDependencyExtension,
-    NpmDependencyWithNameOnlyExtension,
+    NpmDirectoryDependencyExtension,
     Closure<NpmDependency>(project.dependencies) {
     override fun invoke(name: String): NpmDependency =
         onlyNameNpmDependency(name)
