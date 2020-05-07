@@ -79,7 +79,7 @@ class RunExternalTestGroup extends JavaExec {
             classpath = project.fileTree("$dist.canonicalPath/konan/lib/") {
                 include '*.jar'
             }
-            jvmArgs "-Dkonan.home=${dist.canonicalPath}", "-Xmx4G"
+            jvmArgs "-Xmx4G"
             enableAssertions = true
             def sources = File.createTempFile(name,".lst")
             sources.deleteOnExit()

@@ -51,7 +51,6 @@ if not "!ARG!" == "" (
     goto again
 )
 
-set "NATIVE_LIB=%_KONAN_HOME%\konan\nativelib"
 set "KONAN_LIB=%_KONAN_HOME%\konan\lib"
 
 set "KONAN_JAR=%KONAN_LIB%\kotlin-native.jar"
@@ -62,7 +61,6 @@ set "KONAN_CLASSPATH=%KONAN_JAR%;%TROVE_JAR%"
 set JAVA_OPTS=-ea ^
     -Xmx3G ^
     -XX:TieredStopAtLevel=1 ^
-    "-Dkonan.home=%_KONAN_HOME%" ^
     -Dfile.encoding=UTF-8 ^
     %JAVA_OPTS%
 

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
+import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.lang.System.out
@@ -170,7 +171,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
         if (!module.isNativeStdlib()) {
             val resolver = resolverByName(
                     emptyList(),
-                    distributionKlib = Distribution().klib,
+                    distributionKlib = Distribution(KonanHomeProvider.determineKonanHome()).klib,
                     skipCurrentDir = true,
                     logger = KlibToolLogger)
             resolver.defaultLinks(false, true, true)
@@ -202,7 +203,8 @@ fun libraryInRepoOrCurrentDir(repository: File, name: String) =
 fun main(args: Array<String>) {
     val command = Command(args)
 
-    val targetManager = PlatformManager().targetManager(command.options["-target"]?.last())
+    val targetManager = PlatformManager(KonanHomeProvider.determineKonanHome())
+            .targetManager(command.options["-target"]?.last())
     val target = targetManager.targetName
 
     val repository = command.options["-repository"]?.last()

@@ -20,15 +20,17 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
     internal val distribution = Distribution(
-        false,
-        null,
-        configuration.get(KonanConfigKeys.RUNTIME_FILE))
+            configuration.get(KonanConfigKeys.KONAN_HOME) ?: KonanHomeProvider.determineKonanHome(),
+            false,
+            configuration.get(KonanConfigKeys.RUNTIME_FILE)
+    )
 
     internal val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))

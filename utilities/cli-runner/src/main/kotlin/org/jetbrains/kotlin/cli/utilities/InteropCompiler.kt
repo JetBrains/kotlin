@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.utilities
 import org.jetbrains.kotlin.cli.bc.SHORT_MODULE_NAME_ARG
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.native.interop.gen.jvm.InternalInteropOptions
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.native.interop.tool.*
@@ -39,7 +40,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
     val repos = arguments.repo
     val targetRequest = if (arguments is CInteropArguments) arguments.target
         else (arguments as JSInteropArguments).target
-    val target = PlatformManager().targetManager(targetRequest).target
+    val target = PlatformManager(KonanHomeProvider.determineKonanHome()).targetManager(targetRequest).target
 
     val cinteropArgsToCompiler = interop(flavor, args,
             InternalInteropOptions(generatedDir.absolutePath,

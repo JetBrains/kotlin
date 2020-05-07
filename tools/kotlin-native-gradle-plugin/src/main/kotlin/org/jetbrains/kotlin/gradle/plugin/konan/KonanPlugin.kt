@@ -345,7 +345,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
 
         project.warnAboutDeprecatedProperty(ProjectProperty.KONAN_HOME)
 
-        // Set additional project properties like konan.home, konan.build.targets etc.
+        // Set additional project properties like org.jetbrains.kotlin.native.home, konan.build.targets etc.
         if (!project.hasProperty(ProjectProperty.KONAN_HOME)) {
             project.setProperty(ProjectProperty.KONAN_HOME, project.konanCompilerDownloadDir())
             project.setProperty(ProjectProperty.DOWNLOAD_COMPILER, true)

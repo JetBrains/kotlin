@@ -26,7 +26,7 @@ class PathSpecification extends BaseKonanSpecification {
         project.konanBuildDir.toPath().resolve(path).toFile().exists()
     }
 
-    def platformManager = new PlatformManager()
+    def platformManager = new PlatformManager(KonanProject.konanHome)
 
     def 'Plugin should provide a correct path to the artifacts created'() {
         expect:

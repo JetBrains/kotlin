@@ -155,7 +155,7 @@ open class KonanLibrariesSpec(
         defaultResolver(
             repos.map { it.absolutePath },
             task.konanTarget,
-            Distribution(konanHomeOverride = project.konanHome)
+            Distribution(project.konanHome)
         )
     )
 

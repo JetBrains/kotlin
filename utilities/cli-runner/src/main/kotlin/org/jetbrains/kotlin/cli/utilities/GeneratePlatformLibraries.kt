@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
+import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.konan.util.PlatformLibsInfo
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.DEFAULT_MODE
@@ -120,7 +121,7 @@ fun generatePlatformLibraries(args: Array<String>) {
 
     argParser.parse(args)
 
-    val distribution = customerDistribution()
+    val distribution = customerDistribution(KonanHomeProvider.determineKonanHome())
     val target = HostManager(distribution).targetByName(targetName)
 
     val inputDirectory = inputDirectoryPath?.File()

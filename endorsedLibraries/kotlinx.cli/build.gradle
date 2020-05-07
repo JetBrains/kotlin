@@ -72,9 +72,7 @@ def commonSrc = new File("$projectDir/src/main/kotlin")
 def nativeSrc = new File("$projectDir/src/main/kotlin-native")
 
 targetList.each { target ->
-    def konanJvmArgs =  [*HostManager.regularJvmArgs,
-                         "-Dkonan.home=${rootProject.projectDir}/dist",
-    ]
+    def konanJvmArgs =  [*HostManager.regularJvmArgs]
 
     def defaultArgs = ['-nopack', '-no-default-libs', '-no-endorsed-libs']
     if (target != "wasm32") defaultArgs += '-g'
@@ -88,10 +86,14 @@ targetList.each { target ->
         // See :endorsedLibraries.ext for full endorsedLibraries list.
         def moduleName = endorsedLibraries[project].name
 
+        dependsOn ":distCompiler"
         dependsOn ":${target}CrossDistRuntime"
 
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-        classpath = project(":backend.native").configurations.cli_bc
+        // This task depends on distCompiler, so the compiler jar is already in the dist directory.
+        classpath = fileTree("${rootProject.projectDir}/dist/konan/lib") {
+            include "*.jar"
+        }
         jvmArgs = konanJvmArgs
         args = [*konanArgs,
                 '-output', outputFile,

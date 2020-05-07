@@ -29,8 +29,10 @@ class Platform(val configurables: Configurables)
     }
 }
 
-class PlatformManager(distribution: Distribution = Distribution(), experimental: Boolean = false) :
+class PlatformManager(private val distribution: Distribution, experimental: Boolean = false) :
         HostManager(distribution, experimental) {
+
+    constructor(konanHome: String, experimental: Boolean = false): this(Distribution(konanHome), experimental)
 
     private val loaders = filteredOutEnabledButNotSupported.map {
         it to loadConfigurables(it, distribution.properties, DependencyProcessor.defaultDependenciesRoot.absolutePath)

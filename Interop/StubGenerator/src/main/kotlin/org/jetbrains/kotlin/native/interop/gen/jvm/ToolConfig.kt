@@ -20,12 +20,13 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.customerDistribution
+import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 
 class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform) {
 
-    private val konanHome = System.getProperty("konan.home")
+    private val konanHome = KonanHomeProvider.determineKonanHome()
     private val distribution = customerDistribution(konanHome)
     private val platformManager = PlatformManager(distribution)
     private val targetManager = platformManager.targetManager(userProvidedTargetName)

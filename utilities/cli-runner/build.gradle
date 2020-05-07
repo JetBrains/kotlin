@@ -22,8 +22,9 @@ compileKotlin {
 
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    compile project(':backend.native')
-    compile project(':Interop:StubGenerator')
-    compile project(':klib')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation project(':backend.native')
+    implementation project(':Interop:StubGenerator')
+    implementation project(':klib')
+    implementation project(":utilities:basic-utils")
 }

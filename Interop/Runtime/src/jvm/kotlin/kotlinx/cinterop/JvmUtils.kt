@@ -16,6 +16,7 @@
 
 package kotlinx.cinterop
 
+import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -93,7 +94,7 @@ fun loadKonanLibrary(name: String) {
         System.loadLibrary(name)
     } catch (e: UnsatisfiedLinkError) {
         val fullLibraryName = System.mapLibraryName(name)
-        val dir = "${System.getProperty("konan.home")}/konan/nativelib"
+        val dir = "${KonanHomeProvider.determineKonanHome()}/konan/nativelib"
         try {
             System.load("$dir/$fullLibraryName")
         } catch (e: UnsatisfiedLinkError) {

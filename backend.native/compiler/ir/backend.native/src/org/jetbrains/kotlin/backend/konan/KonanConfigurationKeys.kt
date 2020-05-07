@@ -48,6 +48,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("generate test runner") 
         val INCLUDED_BINARY_FILES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("included binary file paths")
+        val KONAN_HOME: CompilerConfigurationKey<String>
+                = CompilerConfigurationKey.create("overridden compiler distribution path")
         val LIBRARY_FILES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("library file paths")
         val LIBRARY_VERSION: CompilerConfigurationKey<String?>

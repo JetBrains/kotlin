@@ -33,7 +33,8 @@ class ContentsTest {
     @Test
     fun `Stdlib content should be printed without exceptions`() {
         val output = StringBuilder()
-        Library(Distribution().stdlib, null, "host").contents(output)
+        val distributionPath = System.getProperty("konan.home")
+        Library(Distribution(distributionPath).stdlib, null, "host").contents(output)
     }
 
     @Test
@@ -357,6 +358,6 @@ class ContentsTest {
     }
 
     companion object {
-        val LIBRARY_DIRECTORY = Paths.get("build/konan/libs").resolve( HostManager.hostName)
+        val LIBRARY_DIRECTORY = Paths.get("build/konan/libs").resolve(HostManager.hostName)
     }
 }

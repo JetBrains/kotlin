@@ -87,11 +87,7 @@ class KonanProject {
         this.targets = targets
         projectPath = projectDir.toPath()
         konanBuildDir = projectPath.resolve('build/konan').toFile()
-        def konanHome = System.getProperty("konan.home") ?: System.getProperty("org.jetbrains.kotlin.native.home")
-        if (konanHome == null) {
-            throw new IllegalStateException("konan.home isn't specified")
-        }
-        def konanHomeDir = new File(konanHome)
+        def konanHomeDir = new File(getKonanHome())
         if (!konanHomeDir.exists() || !konanHomeDir.directory) {
             throw new IllegalStateException("konan.home doesn't exist or is not a directory: $konanHomeDir.canonicalPath")
         }
@@ -368,6 +364,14 @@ class KonanProject {
 
     static String escapeBackSlashes(String value) {
         return value.replace('\\', '\\\\')
+    }
+
+    static String getKonanHome() {
+        def konanHome = System.getProperty("konan.home") ?: System.getProperty("org.jetbrains.kotlin.native.home")
+        if (konanHome == null) {
+            throw new IllegalStateException("konan.home isn't specified")
+        }
+        return konanHome
     }
 
 }

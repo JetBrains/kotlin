@@ -20,9 +20,7 @@ inline fun <reified T: AbstractArchiveTask> createLlvmPackingTask(
         blacklist: File?,
         crossinline additionalConfiguration: T.() -> Unit
 ) {
-    val distribution = Distribution(
-            konanHomeOverride = rootProject.projectDir.absolutePath
-    )
+    val distribution = Distribution(rootProject.projectDir.absolutePath)
     val reducedLlvmAppendix = distribution.properties
             .getProperty("reducedLlvmAppendix")
     val propertiesLoader = object : KonanPropertiesLoader(

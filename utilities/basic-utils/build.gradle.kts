@@ -19,6 +19,11 @@ tasks.named<KotlinCompile>("compileKotlin") {
     }
 }
 
-dependencies {
+// Convert to normal strings since originally these properties contain GStrings.
+val kotlinCompilerModule = rootProject.ext["kotlinCompilerModule"].toString()
+val kotlinStdLibModule = rootProject.ext["kotlinStdLibModule"].toString()
 
+dependencies {
+    api(kotlinStdLibModule)
+    implementation(kotlinCompilerModule)
 }

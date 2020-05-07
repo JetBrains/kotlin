@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverImpl
@@ -406,7 +407,7 @@ private fun getLibraryResolver(
             repos,
             libraries.filter { it.contains(org.jetbrains.kotlin.konan.file.File.separator) },
             target,
-            Distribution()
+            Distribution(KonanHomeProvider.determineKonanHome())
     ).libraryResolver()
 }
 

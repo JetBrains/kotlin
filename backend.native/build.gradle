@@ -153,6 +153,8 @@ dependencies {
         kotlinCommonSources(it) { transitive = false }
     }
 
+    compilerCompile project(":utilities:basic-utils")
+
     compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
 
     compilerCompile kotlinCompilerModule
@@ -192,12 +194,10 @@ final List<File> stdLibSrc = [
 ]
 
 // These files are built before the 'dist' is complete,
-// so we provide custom values for konan.home, --runtime etc
+// so we provide a custom value for --runtime
 
 targetList.each { target ->
-    def konanJvmArgs =  [*HostManager.regularJvmArgs,
-            "-Dkonan.home=${rootProject.projectDir}/dist"
-    ]
+    def konanJvmArgs =  [*HostManager.regularJvmArgs]
 
     def defaultArgs = ['-nopack', '-nostdlib', '-no-default-libs', '-no-endorsed-libs']
     if (target != "wasm32") defaultArgs += '-g'
@@ -208,7 +208,10 @@ targetList.each { target ->
 
     task("${target}Stdlib", type: JavaExec) {
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-        classpath = project.configurations.cli_bc
+        // This task depends on distCompiler, so the compiler jar is already in the dist directory.
+        classpath = fileTree("${rootProject.projectDir}/dist/konan/lib") {
+            include "*.jar"
+        }
         jvmArgs = konanJvmArgs
         args = [*konanArgs,
                 '-output', project(':runtime').file("build/${target}Stdlib"),

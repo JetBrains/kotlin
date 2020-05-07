@@ -62,12 +62,9 @@ findHome() {
 }
 KONAN_HOME="$(findHome)"
 
-NATIVE_LIB="${KONAN_HOME}/konan/nativelib"
-
 java_opts=(-ea \
             -Xmx3G \
             -XX:TieredStopAtLevel=1 \
-            "-Dkonan.home=${KONAN_HOME}" \
             -Dfile.encoding=UTF-8 \
             ${JAVA_OPTS})
 

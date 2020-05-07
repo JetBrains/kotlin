@@ -329,7 +329,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         val resolver = defaultResolver(
             repos.map { it.absolutePath },
             konanTarget,
-            Distribution(konanHomeOverride = project.konanHome)
+            Distribution(project.konanHome)
         )
 
         return KonanModelArtifactImpl(

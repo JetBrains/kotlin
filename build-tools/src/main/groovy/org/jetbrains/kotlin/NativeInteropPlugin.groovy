@@ -204,6 +204,8 @@ class NamedNativeInteropConfig implements Named {
                     new File(project.findProject(":Interop:Indexer").buildDir, "nativelibs"),
                     new File(project.findProject(":Interop:Runtime").buildDir, "nativelibs")
             ).asPath
+            // Set the konan.home property because we run the cinterop tool not from a distribution jar
+            // so it will not be able to determine this path by itself.
             systemProperties "konan.home": project.rootProject.projectDir
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
 

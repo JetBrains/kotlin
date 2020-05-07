@@ -113,6 +113,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         with(KonanConfigKeys) {
             with(configuration) {
+                arguments.kotlinHome?.let { put(KONAN_HOME, it) }
 
                 put(NODEFAULTLIBS, arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
                 put(NOENDORSEDLIBS, arguments.noendorsedlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
