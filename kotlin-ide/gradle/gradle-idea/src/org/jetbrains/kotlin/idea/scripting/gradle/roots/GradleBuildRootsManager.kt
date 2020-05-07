@@ -316,11 +316,6 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         }
     }
 
-    private fun removeData(rootPath: String) {
-        val buildRoot = LocalFileSystem.getInstance().findFileByPath(rootPath)
-        if (buildRoot != null) GradleBuildRootDataSerializer.remove(buildRoot)
-    }
-
     private fun loadLinkedRoot(settings: GradleProjectSettings) =
         tryLoadFromFsCache(settings) ?: createOtherLinkedRoot(settings)
 
@@ -368,6 +363,14 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         }
 
         updateNotifications(rootPath)
+    }
+
+    private fun removeData(rootPath: String) {
+        val buildRoot = LocalFileSystem.getInstance().findFileByPath(rootPath)
+        if (buildRoot != null) {
+            GradleBuildRootDataSerializer.remove(buildRoot)
+            LastModifiedFiles.remove(buildRoot)
+        }
     }
 
     private fun updateNotifications(dir1: String) {
