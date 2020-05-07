@@ -13,13 +13,15 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
 interface NpmDependencyExtension {
-    operator fun invoke(name: String): NpmDependency
-
     operator fun invoke(name: String, version: String): NpmDependency
 
     operator fun invoke(name: String, directory: File): NpmDependency
 
     operator fun invoke(directory: File): NpmDependency
+}
+
+interface NpmDependencyWithNameOnlyExtension : NpmDependencyExtension {
+    operator fun invoke(name: String): NpmDependency
 }
 
 internal fun Project.addNpmDependencyExtension() {
@@ -33,7 +35,7 @@ internal fun Project.addNpmDependencyExtension() {
 
             extensions
                 .add(
-                    TypeOf.typeOf<NpmDependencyExtension>(NpmDependencyExtension::class.java),
+                    TypeOf.typeOf(NpmDependencyWithNameOnlyExtension::class.java),
                     lowerCamelCaseName(extension, "npm"),
                     DefaultNpmDependencyExtension(this, scope)
                 )
@@ -43,7 +45,9 @@ internal fun Project.addNpmDependencyExtension() {
 private class DefaultNpmDependencyExtension(
     private val project: Project,
     private val scope: NpmDependency.Scope
-) : NpmDependencyExtension, Closure<NpmDependency>(project.dependencies) {
+) : NpmDependencyExtension,
+    NpmDependencyWithNameOnlyExtension,
+    Closure<NpmDependency>(project.dependencies) {
     override fun invoke(name: String): NpmDependency =
         onlyNameNpmDependency(name)
 
