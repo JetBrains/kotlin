@@ -306,19 +306,19 @@ include ":kotlin-build-common",
         ":kotlin-serialization-unshaded",
         ":kotlin-serialization:plugin-marker"
 
-include ":prepare:ide-artifacts:android-extensions-compiler-plugin-for-ide",
-        ":prepare:ide-artifacts:allopen-compiler-plugin-for-ide",
-        ":prepare:ide-artifacts:allopen-compiler-plugin-tests-for-ide",
-        ":prepare:ide-artifacts:incremental-compilation-impl-tests-for-ide",
-        ":prepare:ide-artifacts:kotlin-build-common-tests-for-ide",
-        ":prepare:ide-artifacts:kotlin-compiler-for-ide",
-        ":prepare:ide-artifacts:kotlin-dist-for-ide",
-        ":prepare:ide-artifacts:kotlin-gradle-statistics-for-ide",
-        ":prepare:ide-artifacts:kotlinx-serialization-compiler-plugin-for-ide",
-        ":prepare:ide-artifacts:noarg-compiler-plugin-for-ide",
-        ":prepare:ide-artifacts:sam-with-receiver-compiler-plugin-for-ide",
-        ":prepare:ide-artifacts:tests-common-tests-for-ide",
-        ":prepare:ide-artifacts:compiler-components-for-jps"
+include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-dist-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:tests-common-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:compiler-components-for-jps"
 
 if (buildProperties.includeCidrPlugins) {
     logger.info("Including CIDR modules in settings.gradle")
