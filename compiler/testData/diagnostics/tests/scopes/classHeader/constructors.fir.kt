@@ -37,8 +37,8 @@ class A(
         Companion.CONST,
         Nested.CONST,
         Interface.CONST,
-        <!UNRESOLVED_REFERENCE!>a<!>,
-        <!UNRESOLVED_REFERENCE!>b<!>()
+        a,
+        b()
     )
 
     class Nested {

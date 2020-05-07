@@ -4,8 +4,8 @@ class D : C {
     constructor() : super(
             {
                 val s = ""
-                <!UNRESOLVED_REFERENCE!>s<!>()
-                <!UNRESOLVED_REFERENCE!>""()<!>
+                s()
+                ""()
                 42
             }())
 
