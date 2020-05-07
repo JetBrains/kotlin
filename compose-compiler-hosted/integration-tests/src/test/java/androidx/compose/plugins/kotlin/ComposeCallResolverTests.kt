@@ -107,7 +107,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
             import androidx.compose.*
 
             @Composable
-            fun test(children: @Composable() () -> Unit) {
+            fun test(children: @Composable () -> Unit) {
                 <call>children()
             }
         """
@@ -117,13 +117,13 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
             import androidx.compose.*
 
-            @Composable fun <T> A(value: T, block: @Composable() (T) -> Unit) {
+            @Composable fun <T> A(value: T, block: @Composable (T) -> Unit) {
                 <call>block(value)
             }
 
             @Composable fun <T> B(
                 value: T,
-                block: @Composable() (@Composable() (T) -> Unit) -> Unit
+                block: @Composable (@Composable (T) -> Unit) -> Unit
             ) {
                 <call>block({ })
             }
@@ -164,7 +164,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
             @Composable fun Foo(
                 scope: TextSpanScope, 
-                composable: @Composable() TextSpanScope.() -> Unit
+                composable: @Composable TextSpanScope.() -> Unit
             ) {
                 with(scope) {
                     <call>composable()
@@ -200,7 +200,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
             @Composable
             inline fun PointerInputWrapper(
-                crossinline children: @Composable() () -> Unit
+                crossinline children: @Composable () -> Unit
             ) {
                 // Hide the internals of PointerInputNode
                 <emit>LinearLayout {

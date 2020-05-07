@@ -220,7 +220,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testSetContent(): Unit = ensureSetup {
         codegen(
             """
-                fun fakeCompose(block: @Composable() ()->Unit) { }
+                fun fakeCompose(block: @Composable ()->Unit) { }
 
                 class Test {
                     fun test() {
@@ -237,7 +237,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testComposeWithResult(): Unit = ensureSetup {
         compose(
             """
-                @Composable fun <T> identity(block: @Composable() ()->T): T = block()
+                @Composable fun <T> identity(block: @Composable ()->T): T = block()
 
                 @Composable
                 fun TestCall() {
@@ -310,7 +310,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
 
                 @Composable
-                fun FancyBox2(children: @Composable() ()->Unit) {
+                fun FancyBox2(children: @Composable ()->Unit) {
                     children()
                 }
             """,
@@ -761,7 +761,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testInline_NonComposable_Identity(): Unit = ensureSetup {
         compose("""
-            @Composable inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
+            @Composable inline fun InlineWrapper(base: Int, children: @Composable ()->Unit) {
               children()
             }
             """,
@@ -779,7 +779,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testInline_Composable_Identity(): Unit = ensureSetup {
         compose("""
             @Composable
-            inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
+            inline fun InlineWrapper(base: Int, children: @Composable ()->Unit) {
               children()
             }
             """,
@@ -797,7 +797,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testInline_Composable_EmitChildren(): Unit = ensureSetup {
         compose("""
             @Composable
-            inline fun InlineWrapper(base: Int, crossinline children: @Composable() ()->Unit) {
+            inline fun InlineWrapper(base: Int, crossinline children: @Composable ()->Unit) {
               LinearLayout(id = base + 0) {
                 children()
               }
@@ -1372,7 +1372,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         compose(
             """
                 @Composable
-                fun Block(children: @Composable() () -> Unit) {
+                fun Block(children: @Composable () -> Unit) {
                     children()
                 }
             """,
@@ -1547,7 +1547,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testImplicitReceiverPassing1(): Unit = ensureSetup {
         compose(
             """
-                @Composable fun Int.Foo(x: @Composable() Int.() -> Unit) {
+                @Composable fun Int.Foo(x: @Composable Int.() -> Unit) {
                     x()
                 }
             """,
@@ -1569,7 +1569,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testImplicitReceiverPassing2(): Unit = ensureSetup {
         compose(
             """
-                @Composable fun Int.Foo(x: @Composable() Int.(text: String) -> Unit, text: String) {
+                @Composable fun Int.Foo(x: @Composable Int.(text: String) -> Unit, text: String) {
                     x(text=text)
                 }
 
@@ -1778,7 +1778,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 val component = @Composable {
                     TextView(text="Hello, world!", id=42)
                 }
-                class HolderA(val composable: @Composable() () -> Unit)
+                class HolderA(val composable: @Composable () -> Unit)
 
                 val holder = HolderA(component)
 
@@ -1800,7 +1800,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 val component = @Composable {
                     TextView(text="Hello, world!", id=42)
                 }
-                class HolderB(val composable: @Composable() () -> Unit) {
+                class HolderB(val composable: @Composable () -> Unit) {
                     @Composable
                     fun Foo() {
                         composable()
@@ -1845,7 +1845,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         compose(
             """
                 @Composable
-                fun Foo(a: Int = 42, b: String, c: @Composable() () -> Unit) {
+                fun Foo(a: Int = 42, b: String, c: @Composable () -> Unit) {
                     c()
                     TextView(text=b, id=a)
                 }
@@ -1963,7 +1963,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
 
                 @Composable
-                fun Box(children: @Composable() ()->Unit) {
+                fun Box(children: @Composable ()->Unit) {
                     LinearLayout(orientation=LinearLayout.VERTICAL) {
                         children()
                     }
@@ -2064,7 +2064,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 @Composable
                 fun DefineAction(
                     onAction: Action = Action(param = 1) {},
-                    children: @Composable() ()->Unit
+                    children: @Composable ()->Unit
                  ) { }
             """
         )
@@ -2241,7 +2241,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             fun log(msg: String) { output.add(msg) }
 
             @Composable
-            fun Container(children: @Composable() () -> Unit) {
+            fun Container(children: @Composable () -> Unit) {
               log("Container")
               children()
             }
@@ -2310,12 +2310,12 @@ class FcsCodegenTests : AbstractCodegenTest() {
             val m = M()
 
             @Composable
-            inline fun InlineContainer(children: @Composable() () -> Unit) {
+            inline fun InlineContainer(children: @Composable () -> Unit) {
                 children()
             }
 
             @Composable
-            fun Container(children: @Composable() () -> Unit) {
+            fun Container(children: @Composable () -> Unit) {
                 children()
             }
 
@@ -2365,7 +2365,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             class Receiver { var r: Int = 0 }
 
             @Composable
-            fun Container(children: @Composable() Receiver.() -> Unit) {
+            fun Container(children: @Composable Receiver.() -> Unit) {
                 Receiver().children()
             }
 

@@ -49,7 +49,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
     fun testIfInLambda(): Unit = comparisonPropagation(
         """
             @Composable fun A(x: Int = 0, y: Int = 0) {}
-            @Composable fun Wrap(children: @Composable() () -> Unit) {
+            @Composable fun Wrap(children: @Composable () -> Unit) {
                 children()
             }
         """,
@@ -110,7 +110,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             @Composable fun A(x: Int = 0, y: Int = 0) {}
         """,
         """
-            @Composable fun Wrap(y: Int, children: @Composable() (x: Int) -> Unit) {
+            @Composable fun Wrap(y: Int, children: @Composable (x: Int) -> Unit) {
                 children(y)
             }
             @Composable
@@ -157,7 +157,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(y)) 0b1000 else 0b00010000
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
-                Wrap(10, restartableFunction(%composer, -756386995, true) { it: Int, %composer: Composer<*>?, %changed: Int ->
+                Wrap(10, restartableFunction(%composer, -756386997, true) { it: Int, %composer: Composer<*>?, %changed: Int ->
                   A(x, 0, %composer, 0b0110 and %dirty, 0b0010)
                 }, %composer, 0b0110)
               } else {
@@ -652,7 +652,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
     fun testNestedCalls(): Unit = comparisonPropagation(
         """
             @Composable fun B(a: Int = 0, b: Int = 0, c: Int = 0) {}
-            @Composable fun Provide(children: @Composable() (Int) -> Unit) {}
+            @Composable fun Provide(children: @Composable (Int) -> Unit) {}
         """,
         """
             @Composable

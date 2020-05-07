@@ -100,7 +100,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
         """
             import androidx.compose.*
 
-            @Composable fun Wrap(block: @Composable() () -> Unit) { block() }
+            @Composable fun Wrap(block: @Composable () -> Unit) { block() }
 
             @Composable
             fun Bar() {
@@ -135,7 +135,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
         """
             import androidx.compose.*
 
-            fun kickOff(block: @Composable() () -> Unit) {  }
+            fun kickOff(block: @Composable () -> Unit) {  }
 
             fun Bar() {
                 <normal>

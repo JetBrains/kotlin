@@ -36,7 +36,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
             fun eventFired() { }
 
             @Composable
-            fun EventHolder(event: () -> Unit, block: @Composable() () -> Unit) {
+            fun EventHolder(event: () -> Unit, block: @Composable () -> Unit) {
               workToBeAvoided()
               block()
             }
@@ -74,7 +74,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
             fun eventFired() { }
 
             @Composable
-            fun EventHolder(event: () -> Unit, block: @Composable() () -> Unit) {
+            fun EventHolder(event: () -> Unit, block: @Composable () -> Unit) {
               workToBeAvoided()
               block()
             }
@@ -144,7 +144,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
             fun eventFired(data: String) { }
 
             @Composable
-            fun EventHolder(event: () -> Unit, block: @Composable() () -> Unit) {
+            fun EventHolder(event: () -> Unit, block: @Composable () -> Unit) {
                workToBeRepeated()
                block()
             }
@@ -172,7 +172,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
             fun eventFired(data: String) { }
 
             @Composable
-            fun EventHolder(event: () -> Unit, block: @Composable() () -> Unit) {
+            fun EventHolder(event: () -> Unit, block: @Composable () -> Unit) {
                workToBeRepeated()
                block()
             }
@@ -251,7 +251,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         }
 
         @Composable
-        fun Wrapped(block: @Composable() () -> Unit) {
+        fun Wrapped(block: @Composable () -> Unit) {
           block()
         }
 
@@ -290,7 +290,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         }
 
         @Composable
-        fun Wrapped(block: @Composable() () -> Unit) {
+        fun Wrapped(block: @Composable () -> Unit) {
           block()
         }
 
@@ -421,7 +421,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         }
 
         @Composable
-        fun Wrap(block: @Composable() () -> Unit) {
+        fun Wrap(block: @Composable () -> Unit) {
           workToBeAvoided()
           block()
           workToBeAvoided()
@@ -479,7 +479,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     @Test
     fun wrapLambaExpressions() = skipping("""
             @Composable
-            fun Wrapper(block: @Composable() () -> Unit) {
+            fun Wrapper(block: @Composable () -> Unit) {
                workToBeAvoided()
                block()
                workToBeAvoided()
@@ -498,21 +498,21 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     @Test
     fun nonCapturingComposableLambda() = skipping("""
             @Composable
-            fun Wrapper1(block: @Composable() () -> Unit) {
+            fun Wrapper1(block: @Composable () -> Unit) {
               workToBeAvoided("Wrapper1.1")
               block()
               workToBeAvoided("Wrapper1.2")
             }
 
             @Composable
-            fun Wrapper2(block: @Composable() () -> Unit) {
+            fun Wrapper2(block: @Composable () -> Unit) {
               workToBeAvoided("Wrapper2.1")
               Wrapper1(block = block)
               workToBeAvoided("Wrapper2.2")
             }
 
             @Composable
-            fun Wrapper3(block: @Composable() () -> Unit) {
+            fun Wrapper3(block: @Composable () -> Unit) {
               workToBeAvoided("Wrapper3.1")
               Wrapper2 {
                 block()
@@ -536,7 +536,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     @Test
     fun wrappingOneParameter() = skipping("""
         @Composable
-        fun Wrap(block: @Composable() (p1: String) -> Unit) {
+        fun Wrap(block: @Composable (p1: String) -> Unit) {
           workToBeAvoided()
           block("test")
           workToBeAvoided()
@@ -557,7 +557,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     @Test // Selecting 23 as 22 is the maximum number handled by RestartingFunction
     fun wrapping23Parameters() = skipping("""
         @Composable
-        fun Wrap(block: @Composable() (
+        fun Wrap(block: @Composable (
             p1: String,
             p2: String,
             p3: String,
@@ -635,7 +635,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         class Receiver() { }
 
         @Composable
-        fun Wrapper(block: @Composable() Receiver.() -> Unit) {
+        fun Wrapper(block: @Composable Receiver.() -> Unit) {
           workToBeAvoided()
           val receiver = Receiver()
           receiver.block()
@@ -655,7 +655,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     @Test
     fun untrackedLambdasShouldNotForceEvaluation() = skipping("""
         @Composable
-        fun Wrapper(block: @Composable() () -> Unit) {
+        fun Wrapper(block: @Composable () -> Unit) {
           workToBeAvoided()
           block()
           workToBeAvoided()
@@ -680,14 +680,14 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     fun lambdasWithReturnResultsShouldBeUntracked() = skipping("""
 
         @Composable
-        fun Test1(param: @Composable() () -> String) {
+        fun Test1(param: @Composable () -> String) {
           workToBeRepeated()
           param()
           workToBeRepeated()
         }
 
         @Composable
-        fun Test2(param: @Composable() () -> String) {
+        fun Test2(param: @Composable () -> String) {
           workToBeAvoided()
           Test1(param)
           workToBeAvoided()
