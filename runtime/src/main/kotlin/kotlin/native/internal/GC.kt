@@ -70,6 +70,14 @@ object GC {
         set(value) = setThreshold(value)
 
     /**
+     * GC allocation threshold, controlling how frequenly GC collect cycles, and how much time
+     * this process takes. Bigger values lead to longer GC pauses, but less GCs.
+     */
+    var collectCyclesThreshold: Long
+        get() = getCollectCyclesThreshold()
+        set(value) = setCollectCyclesThreshold(value)
+
+    /**
      * GC allocation threshold, controlling how many bytes allocated since last
      * collection will trigger new GC.
      */
@@ -97,6 +105,12 @@ object GC {
 
     @SymbolName("Kotlin_native_internal_GC_setThreshold")
     private external fun setThreshold(value: Int)
+
+    @SymbolName("Kotlin_native_internal_GC_getCollectCyclesThreshold")
+    private external fun getCollectCyclesThreshold(): Long
+
+    @SymbolName("Kotlin_native_internal_GC_setCollectCyclesThreshold")
+    private external fun setCollectCyclesThreshold(value: Long)
 
     @SymbolName("Kotlin_native_internal_GC_getThresholdAllocations")
     private external fun getThresholdAllocations(): Long
