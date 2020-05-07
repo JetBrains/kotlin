@@ -450,12 +450,9 @@ class ExpressionCodegen(
         }
 
         return when {
-            expression.type.isNothing() -> {
-                unitValue
-            }
             expression is IrConstructorCall ->
                 MaterialValue(this, asmType, expression.type)
-            expression.type.isUnit() && irFunction.shouldContainSuspendMarkers() -> {
+            (expression.type.isNothing() || expression.type.isUnit()) && irFunction.shouldContainSuspendMarkers() -> {
                 // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
                 // Also, if the callee is a suspend function with a suspending tail call, the next `resumeWith`
                 // will continue from here, but the value passed to it might not have been `Unit`. An exception
