@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 
 @ApiStatus.Internal
 public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInputMappingIndex<Key, Value, FileContent> {
@@ -42,6 +43,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   @NotNull
   private final PersistentMapBasedForwardIndex myContents;
   private volatile PersistentHashMap<Integer, String> myIndexingTrace;
+  private final Statistics myStatistics = IndexDebugAssertions.DEBUG ? new Statistics() : null;
 
   private final HashIdForwardIndexAccessor<Key, Value, FileContent> myHashIdForwardIndexAccessor;
 
@@ -92,6 +94,11 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     int hashId = getHashId(content);
 
     Map<Key, Value> data = doReadData(hashId);
+
+    if (myStatistics != null) {
+      myStatistics.update(data == null);
+    }
+
     if (data != null && IndexDebugAssertions.EXTRA_SANITY_CHECKS) {
       Map<Key, Value> contentData = myIndexer.map(content);
       boolean sameValueForSavedIndexedResultAndCurrentOne;
@@ -331,5 +338,35 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
       throw new RuntimeException(ex);
     }
     return true;
+  }
+
+  @ApiStatus.Internal
+  public void dumpStatistics() {
+    if (myStatistics != null) {
+      myStatistics.dumpStatistics();
+    }
+  }
+
+  private class Statistics {
+    private final LongAdder totalRequests = new LongAdder();
+    private final LongAdder totalMisses = new LongAdder();
+
+    void update(boolean miss) {
+      totalRequests.increment();
+      if (miss) {
+        totalMisses.increment();
+      }
+    }
+
+    void dumpStatistics() {
+      long requests = totalRequests.longValue();
+      long misses = totalMisses.longValue();
+      String message =
+        "Snapshot mappings stats for " + myIndexId +
+        ". requests: " + requests +
+        ", hits: " + (requests - misses) +
+        ", misses: " + misses;
+      LOG.info(message);
+    }
   }
 }

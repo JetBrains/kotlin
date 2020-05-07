@@ -169,6 +169,8 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     });
 
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Unindexed files update");
+
+    myIndex.dumpIndexStatistics();
   }
 
   private static long nowMillis() {

@@ -116,6 +116,13 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
     installMemoryModeListener();
   }
 
+  @ApiStatus.Internal
+  public void dumpStatistics() {
+    if (mySnapshotInputMappings instanceof SnapshotInputMappings<?, ?>) {
+      ((SnapshotInputMappings<?, ?>) mySnapshotInputMappings).dumpStatistics();
+    }
+  }
+
   public static boolean isCompositeIndexer(@NotNull DataIndexer<?, ?, ?> indexer) {
     return indexer instanceof CompositeDataIndexer && !FileBasedIndex.USE_IN_MEMORY_INDEX;
   }

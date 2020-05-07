@@ -265,6 +265,14 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     ShutDownTracker.getInstance().registerShutdownTask(myShutDownTask);
   }
 
+  @ApiStatus.Internal
+  public void dumpIndexStatistics() {
+    IndexConfiguration state = getRegisteredIndexes().getState();
+    for (ID<?, ?> id : state.getIndexIDs()) {
+      ((VfsAwareMapReduceIndex<?, ?>)state.getIndex(id)).dumpStatistics();
+    }
+  }
+
   static class MyShutDownTask implements Runnable {
     @Override
     public void run() {
