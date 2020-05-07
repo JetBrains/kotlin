@@ -1,20 +1,21 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.core.script.configuration.utils
+package org.jetbrains.kotlin.idea.core.script.uсache
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElementFinder
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTrack
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.util.EDT
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
@@ -36,11 +38,22 @@ import kotlin.concurrent.withLock
  */
 class ScriptClassRootsUpdater(
     val project: Project,
-    val manager: CompositeScriptConfigurationManager
+    val manager: CompositeScriptConfigurationManager,
+    private val buildNewRoots: (ScriptClassRootsBuilder) -> Unit
 ) {
+    private var lastSeen: ScriptClassRootsCache? = null
     private var invalidated: Boolean = false
     private var syncUpdateRequired: Boolean = false
     private val concurrentUpdates = AtomicInteger()
+
+    private fun recreateRootsCache(): ScriptClassRootsCache {
+        val builder = ScriptClassRootsBuilder(project)
+        buildNewRoots(builder)
+        return builder.build()
+    }
+
+    var classpathRoots: ScriptClassRootsCache = recreateRootsCache()
+        private set
 
     /**
      * @param synchronous Used from legacy FS cache only, don't use
@@ -108,8 +121,12 @@ class ScriptClassRootsUpdater(
     @Synchronized
     fun ensureUpdateScheduled() {
         scheduledUpdate?.cancel()
-        scheduledUpdate = BackgroundTaskUtil.executeOnPooledThread(project) {
-            doUpdate()
+        runReadAction {
+            if (project.isDisposed && !Disposer.isDisposing(project)) {
+                scheduledUpdate = BackgroundTaskUtil.executeOnPooledThread(project) {
+                    doUpdate()
+                }
+            }
         }
     }
 
@@ -119,16 +136,30 @@ class ScriptClassRootsUpdater(
         doUpdate(false)
     }
 
+    fun checkInvalidSdks(remove: Sdk? = null) {
+        // sdks should be updated synchronously to avoid disposed roots usage
+        syncLock.withLock {
+            val current = classpathRoots
+            val actualSdks = current.sdks.rebuild(remove = remove)
+            if (actualSdks != current.sdks) {
+                classpathRoots = current.withUpdatedSdks(actualSdks)
+                ensureUpdateScheduled()
+            }
+        }
+    }
+
     private fun doUpdate(underProgressManager: Boolean = true) {
         syncLock.withLock {
             try {
-                val updates = manager.collectRootsAndCheckNew()
+                val updates = recreateRootsCacheAndDiff()
 
                 if (!updates.changed) return
 
                 if (underProgressManager) {
                     ProgressManager.checkCanceled()
                 }
+
+                if (project.isDisposed) return
 
                 if (updates.hasNewRoots) {
                     notifyRootsChanged()
@@ -139,19 +170,25 @@ class ScriptClassRootsUpdater(
 
                 ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
-                if (updates.updatedScripts.isNotEmpty()) {
+                if (updates.hasUpdatedScripts) {
                     updateHighlighting(project) {
-                        it.path in updates.updatedScripts
+                        updates.isScriptChanged(it.path)
                     }
                 }
-            } catch (cancel: ProcessCanceledException) {
-                if (underProgressManager) throw cancel
+
+                lastSeen = updates.cache
             } finally {
                 synchronized(this) {
                     scheduledUpdate = null
                 }
             }
         }
+    }
+
+    private fun recreateRootsCacheAndDiff(): ScriptClassRootsCache.Updates {
+        val new = recreateRootsCache()
+        classpathRoots = new
+        return new.diff(lastSeen)
     }
 
     private fun notifyRootsChanged() {
@@ -173,7 +210,7 @@ class ScriptClassRootsUpdater(
         }
     }
 
-    fun updateHighlighting(project: Project, filter: (VirtualFile) -> Boolean) {
+    private fun updateHighlighting(project: Project, filter: (VirtualFile) -> Boolean) {
         if (!project.isOpen) return
 
         val openFiles = FileEditorManager.getInstance(project).openFiles

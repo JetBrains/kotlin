@@ -137,7 +137,7 @@ interface ScriptConfigurationManager {
         @TestOnly
         fun clearCaches(project: Project) {
             (getInstance(project) as CompositeScriptConfigurationManager).default
-                .updateScriptDefinitions()
+                .updateScriptDefinitionsReferences()
         }
 
         fun clearManualConfigurationLoadingIfNeeded(file: VirtualFile) {

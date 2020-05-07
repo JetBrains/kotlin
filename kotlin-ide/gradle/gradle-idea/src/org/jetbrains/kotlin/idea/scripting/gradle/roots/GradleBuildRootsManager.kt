@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
+import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.scripting.gradle.*
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslGradleBuildSync
@@ -88,7 +88,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
         return !script.model.inputs.isUpToDate(project, file)
     }
 
-    override fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
+    override fun collectConfigurations(builder: ScriptClassRootsBuilder) {
         roots.list.forEach { root ->
             if (root is GradleBuildRoot.Imported) {
                 root.collectConfigurations(builder)
