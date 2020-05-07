@@ -10,11 +10,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 
-fun addVfsListener(watcher: GradleScriptListener) {
+fun addVfsListener(
+    watcher: GradleScriptListener,
+    buildRootsManager: GradleBuildRootsManager
+) {
     VirtualFileManager.getInstance().addAsyncFileListener(
         object : AsyncFileChangeListenerBase() {
             override fun isRelevant(path: String): Boolean {
-                return isInAffectedGradleProjectFiles(watcher.project, path)
+                return buildRootsManager.maybeAffectedGradleProjectFile(watcher.project, path)
             }
 
             override fun updateFile(file: VirtualFile, event: VFileEvent) {

@@ -9,13 +9,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
 import org.jetbrains.kotlin.idea.scripting.gradle.isGradleKotlinScript
-import org.jetbrains.kotlin.idea.scripting.gradle.isInAffectedGradleProjectFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
-import org.jetbrains.kotlin.idea.scripting.gradle.useScriptConfigurationFromImportOnly
 
 // called from GradleScriptListener
 // todo(gradle6): remove
 class GradleLegacyScriptListener(project: Project) : ScriptChangeListener(project) {
+    private val buildRootsManager = GradleBuildRootsManager.getInstance(project)
+
     override fun isApplicable(vFile: VirtualFile) =
         isGradleKotlinScript(vFile)
 
@@ -26,7 +26,7 @@ class GradleLegacyScriptListener(project: Project) : ScriptChangeListener(projec
         checkUpToDate(vFile)
 
     private fun checkUpToDate(vFile: VirtualFile) {
-        if (!isInAffectedGradleProjectFiles(project, vFile.path)) return
+        if (!buildRootsManager.isAffectedGradleProjectFile(vFile.path)) return
 
         val file = getAnalyzableKtFileForScript(vFile)
         if (file != null) {

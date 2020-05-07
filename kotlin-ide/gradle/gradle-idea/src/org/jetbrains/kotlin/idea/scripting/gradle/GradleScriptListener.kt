@@ -18,7 +18,7 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
 
     init {
         // listen changes using VFS events, including gradle-configuration related files
-        addVfsListener(this)
+        addVfsListener(this, buildRootsManager)
     }
 
     fun fileChanged(filePath: String, ts: Long) =
