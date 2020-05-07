@@ -17,7 +17,7 @@ import org.jdom.Element
 import java.util.*
 
 private val LOG = Logger.getInstance("com.intellij.configurationStore.statistic.eventLog.FeatureUsageSettingsEventPrinter")
-private val GROUP = EventLogGroup("settings", 4)
+private val GROUP = EventLogGroup("settings", 5)
 
 private val recordedComponents: MutableSet<String> = ContainerUtil.newConcurrentSet()
 private val recordedOptionNames: MutableSet<String> = ContainerUtil.newConcurrentSet()
@@ -95,12 +95,15 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
         logConfigValue(accessor, state, "bool", eventId, isDefaultProject, true, hash, componentName)
       }
       else if (type === Int::class.javaPrimitiveType || type === Long::class.javaPrimitiveType) {
-        val reportValue = accessor.getAnnotation(ReportValue::class.java) != null
-        logConfigValue(accessor, state, "int", eventId, isDefaultProject, reportValue, hash, componentName)
+        logConfigValue(accessor, state, "int", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName)
       }
       else if (type === Float::class.javaPrimitiveType || type === Double::class.javaPrimitiveType) {
-        val reportValue = accessor.getAnnotation(ReportValue::class.java) != null
-        logConfigValue(accessor, state, "float", eventId, isDefaultProject, reportValue, hash, componentName)
+        logConfigValue(accessor, state, "float", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName)
+      }
+      else if (type is Class<*> && type.isEnum) {
+        logConfigValue(accessor, state, "enum", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName) {
+          (it as? Enum<*>)?.name
+        }
       }
     }
 
@@ -109,6 +112,8 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
     }
   }
 
+  private fun shouldReportValue(accessor: MutableAccessor): Boolean = accessor.getAnnotation(ReportValue::class.java) != null
+
   private fun logConfigValue(accessor: MutableAccessor,
                              state: Any,
                              type: String,
@@ -116,8 +121,8 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
                              isDefaultProject: Boolean,
                              reportValue: Boolean,
                              hash: String?,
-                             componentName: String) {
-    val value = accessor.readUnsafe(state)
+                             componentName: String,
+                             transformValue: ((Any?) -> Any?)? = null) {
     val isDefault = !jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
     if (!isDefault || recordDefault) {
       recordedOptionNames.add(accessor.name)
@@ -126,7 +131,11 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
       content["component"] = componentName
       content["name"] = accessor.name
       if (reportValue) {
-        content["value"] = value
+        val value = accessor.readUnsafe(state)
+        val transformedValue = if (transformValue != null) transformValue(value) else value
+        if (transformedValue != null) {
+          content["value"] = transformedValue
+        }
       }
       if (recordDefault) {
         content["default"] = isDefault

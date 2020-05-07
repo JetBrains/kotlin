@@ -339,6 +339,22 @@ class FeatureUsageSettingsEventsTest {
     assertNotDefaultState(printer.getOptionByName("absDoubleOption"), "absDoubleOption", 3.4, "float", false, withProject, defaultProject)
   }
 
+  @Test
+  fun `record enum fields`() {
+    val component = TestComponent()
+    component.loadState(ComponentStateWithEnum(ComponentStateWithEnum.EnumOption.BAR, ComponentStateWithEnum.EnumOption.BAR))
+    val spec = getStateSpec(component)
+    val printer = TestFeatureUsageSettingsEventsPrinter(false)
+    printer.logConfigurationState(spec.name, component.state, null)
+
+    val withProject = false
+    val defaultProject = false
+    Assert.assertEquals(3, printer.result.size)
+    assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("enumOption"), "enumOption", null, "enum", false, withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("absEnumOption"), "absEnumOption", ComponentStateWithEnum.EnumOption.BAR.name, "enum", false, withProject, defaultProject)
+  }
+
   private fun assertDefaultWithoutDefaultRecording(printer: TestFeatureUsageSettingsEventsPrinter,
                                                    withProject: Boolean,
                                                    defaultProject: Boolean) {
@@ -540,5 +556,19 @@ class FeatureUsageSettingsEventsTest {
     @Attribute("abs-double-option")
     @field:ReportValue
     val absDoubleOption: Double = absDoubleOpt
+  }
+
+  private class ComponentStateWithEnum(enumOpt: EnumOption = EnumOption.FOO,
+                                       absEnumOpt: EnumOption = EnumOption.FOO) : ComponentState() {
+    @Attribute("enum-option")
+    val enumOption: EnumOption = enumOpt
+
+    @Attribute("abs-enum-option")
+    @field:ReportValue
+    val absEnumOption: EnumOption = absEnumOpt
+
+    enum class EnumOption {
+      FOO, BAR
+    }
   }
 }
