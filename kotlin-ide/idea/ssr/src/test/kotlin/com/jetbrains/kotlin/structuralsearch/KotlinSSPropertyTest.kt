@@ -16,4 +16,6 @@ class KotlinSSPropertyTest : KotlinSSTest() {
     fun testValWithInitializer() { doTest("val '_ = 1") }
 
     fun testTypedValWithInitializer() { doTest("val '_ : Int = 1") }
+
+    fun testValReceiverType() { doTest("val '_ : ('_T) -> '_U = '_") }
 }
