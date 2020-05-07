@@ -44,12 +44,22 @@ FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      A(x = 'abc', y = '123')
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      A(x = 'def', y = <null>)
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      A(x = 'ghi', y = <null>)
     BLOCK_BODY
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      A(x = '456', y = <null>)
     BLOCK_BODY
   FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      A(x = <null>, y = <null>)
     BLOCK_BODY

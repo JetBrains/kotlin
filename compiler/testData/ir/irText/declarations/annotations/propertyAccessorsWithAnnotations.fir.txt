@@ -29,17 +29,23 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FUN name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.String
+      annotations:
+        TestAnn(x = 'test1.get')
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value=""
   PROPERTY name:test2 visibility:public modality:FINAL [var]
     FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.String
+      annotations:
+        TestAnn(x = 'test2.get')
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.String declared in <root>'
           CONST String type=kotlin.String value=""
     FUN name:<set-test2> visibility:public modality:FINAL <> (value:kotlin.String) returnType:kotlin.Unit
+      annotations:
+        TestAnn(x = 'test2.set')
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY

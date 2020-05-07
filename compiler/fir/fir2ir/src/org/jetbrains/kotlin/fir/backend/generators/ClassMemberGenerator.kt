@@ -101,6 +101,9 @@ internal class ClassMemberGenerator(
                 for ((valueParameter, firValueParameter) in valueParameters.zip(firFunction.valueParameters)) {
                     valueParameter.setDefaultValue(firValueParameter)
                 }
+                annotations = firFunction.annotations.mapNotNull {
+                    it.accept(visitor, null) as? IrConstructorCall
+                }
             }
             if (firFunction is FirConstructor && irFunction is IrConstructor && !parentAsClass.isAnnotationClass) {
                 val body = IrBlockBodyImpl(startOffset, endOffset)

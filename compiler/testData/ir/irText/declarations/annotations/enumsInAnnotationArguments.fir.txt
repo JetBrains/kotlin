@@ -86,4 +86,6 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      TestAnn(x = GET_ENUM 'ENUM_ENTRY name:A' type=<root>.En)
     BLOCK_BODY

@@ -86,4 +86,8 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      A1(xs = <null>)
+      A2(xs = <null>)
+      AA(xs = <null>)
     BLOCK_BODY

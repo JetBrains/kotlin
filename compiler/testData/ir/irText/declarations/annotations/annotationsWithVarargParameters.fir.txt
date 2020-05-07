@@ -30,6 +30,10 @@ FILE fqName:<root> fileName:/annotationsWithVarargParameters.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      A(xs = 'abc')
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      A(xs = <null>)
     BLOCK_BODY
