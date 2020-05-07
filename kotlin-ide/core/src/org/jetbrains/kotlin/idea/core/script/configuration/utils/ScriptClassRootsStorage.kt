@@ -10,11 +10,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 /**
- * Actually, this storage is required only for before Gradle 6.0.
- * For projects starting from Gradle 6.0, [org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupportProvider]
- * will also store all roots in FS, and will overwrite this one shrotly after start.
+ * This cache is used by [org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport] only.
+ * @see org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport.collectConfigurations
  *
- * Btw, this is still useful for projects without custom scripting support.
  */
 @State(
     name = "ScriptClassRootsStorage",

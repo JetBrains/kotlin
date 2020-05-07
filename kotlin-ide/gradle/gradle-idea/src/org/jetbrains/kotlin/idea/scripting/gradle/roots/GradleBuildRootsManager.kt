@@ -56,7 +56,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  *   - [GradleBuildRoot.New] - not yet imported
  *   - [GradleBuildRoot.Imported] - imported
  */
-class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider() {
+class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
     private val manager: CompositeScriptConfigurationManager
         get() = ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager
 
