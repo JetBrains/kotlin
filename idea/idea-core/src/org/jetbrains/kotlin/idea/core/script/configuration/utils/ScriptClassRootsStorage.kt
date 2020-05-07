@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,9 +19,9 @@ import com.intellij.util.xmlb.XmlSerializerUtil
     storages = [Storage(StoragePathMacros.CACHE_FILE)]
 )
 class ScriptClassRootsStorage(val project: Project) : PersistentStateComponent<ScriptClassRootsStorage> {
-    private var classpath: Set<String> = hashSetOf()
-    private var sources: Set<String> = hashSetOf()
-    private var sdks: Set<String> = hashSetOf()
+    var classpath: Set<String> = hashSetOf()
+    var sources: Set<String> = hashSetOf()
+    var sdks: Set<String> = hashSetOf()
 
     override fun getState(): ScriptClassRootsStorage? {
         return this
@@ -29,18 +29,6 @@ class ScriptClassRootsStorage(val project: Project) : PersistentStateComponent<S
 
     override fun loadState(state: ScriptClassRootsStorage) {
         XmlSerializerUtil.copyBean(state, this)
-    }
-
-    fun save(roots: ScriptClassRootsCache.Builder) {
-        classpath = roots.classes
-        sources = roots.sources
-        sdks = roots.sdks.values.mapNotNullTo(mutableSetOf()) { it?.name }
-    }
-
-    fun load(builder: ScriptClassRootsCache.Builder) {
-        builder.sources.addAll(sources)
-        builder.classes.addAll(classpath)
-        sdks.forEach(builder::addSdkByName)
     }
 
     companion object {

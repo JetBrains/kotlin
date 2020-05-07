@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptC
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptOutsiderFileConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsBuilder
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.*
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
@@ -91,8 +93,8 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : DefaultScriptingSupportBase(manager) {
     // TODO public for tests
     val backgroundExecutor: BackgroundExecutor =
-        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(manager.updater)
-        else DefaultBackgroundExecutor(project, manager.updater)
+        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(manager)
+        else DefaultBackgroundExecutor(project, manager)
 
     private val outsiderLoader = ScriptOutsiderFileConfigurationLoader(project)
     private val fileAttributeCache = ScriptConfigurationFileAttributeCache(project)
@@ -121,7 +123,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
      *
      * Each files may be in on of the states described below:
      * - scriptDefinition is not ready. `ScriptDefinitionsManager.getInstance(project).isReady() == false`.
-     * [updateScriptDefinitions] will be called when [ScriptDefinitionsManager] will be ready
+     * [updateScriptDefinitionsReferences] will be called when [ScriptDefinitionsManager] will be ready
      * which will call [reloadOutOfDateConfiguration] for opened editors.
      * - unknown. When [isFirstLoad] true (`cache[file] == null`).
      * - up-to-date. `cache[file]?.upToDate == true`.
@@ -509,22 +511,20 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         }
     }
 
-    fun updateScriptDefinitions() {
+    fun updateScriptDefinitionsReferences() {
         cache.clear()
     }
 
-    fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
+    fun collectConfigurations(builder: ScriptClassRootsBuilder) {
         // todo: drop the hell below
         // keep this one only:
         // cache.allApplied().forEach { (vFile, configuration) -> builder.add(vFile, configuration) }
 
         // own builder for saving to storage
-        val ownBuilder = ScriptClassRootsCache.Builder(project)
         val rootsStorage = ScriptClassRootsStorage.getInstance(project)
-
-        rootsStorage.load(ownBuilder)
+        val ownBuilder = ScriptClassRootsBuilder.fromStorage(rootsStorage)
         cache.allApplied().forEach { (vFile, configuration) -> ownBuilder.add(vFile, configuration) }
-        rootsStorage.save(ownBuilder)
+        ownBuilder.toStorage(rootsStorage)
 
         builder.add(ownBuilder)
     }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle.roots
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
+import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor
 import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
@@ -121,21 +121,24 @@ sealed class GradleBuildRoot {
             loadLastModifiedFiles()
         }
 
-        fun collectConfigurations(builder: ScriptClassRootsCache.Builder) {
+        fun collectConfigurations(builder: ScriptClassRootsBuilder) {
             if (javaHome != null) {
-                builder.addSdk(javaHome)
+                builder.sdks.addSdk(javaHome)
             }
 
             val definitions = GradleScriptDefinitionsContributor.getDefinitions(project)
 
-            builder.classes.addAll(data.templateClasspath)
+            builder.addTemplateClassesRoots(data.templateClasspath)
+
             data.models.forEach { script ->
                 val definition = selectScriptDefinition(script, definitions)
 
-                builder.scripts[script.file] = GradleScriptInfo(this, definition, script)
-
-                builder.classes.addAll(script.classPath)
-                builder.sources.addAll(script.sourcePath)
+                builder.addCustom(
+                    script.file,
+                    script.classPath,
+                    script.sourcePath,
+                    GradleScriptInfo(this, definition, script)
+                )
             }
         }
 
