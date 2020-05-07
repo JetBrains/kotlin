@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
@@ -25,7 +28,8 @@ import kotlin.reflect.KProperty
 class FirRegisteredExtension<P : FirExtensionPoint>(
     val extensionsWithAllMode: List<P>,
     val extensionsWithAnnotatedMode: Multimap<AnnotationFqn, P>,
-    val extensionsWithAllInAnnotatedMode: Multimap<AnnotationFqn, P>
+    val extensionsWithAllInAnnotatedMode: Multimap<AnnotationFqn, P>,
+    val extensionsByPluginKey: Multimap<FirPluginKey, P>
 ) {
     fun isEmpty(): Boolean {
         return extensionsWithAllMode.isEmpty() && extensionsWithAnnotatedMode.isEmpty() && extensionsWithAllInAnnotatedMode.isEmpty()
@@ -58,6 +62,7 @@ class FirExtensionPointService(
         val extensionsWithAllMode = mutableListOf<P>()
         val extensionsWithAnnotatedMode = createMultimap<AnnotationFqn, P>()
         val extensionsWithAllInAnnotatedMode = createMultimap<AnnotationFqn, P>()
+        val extensionsByPlugin = createMultimap<FirPluginKey, P>()
         for (extension in extensions) {
             _metaAnnotations += extension.metaAnnotations.keys
             for (metaAnnotation in extension.metaAnnotations.keys) {
@@ -76,13 +81,15 @@ class FirExtensionPointService(
                 }
                 FirExtensionPoint.Mode.ALL -> extensionsWithAllMode += extension
             }
+            extensionsByPlugin.put(extension.key, extension)
         }
         registerComponent(
             extensionClass,
             FirRegisteredExtension(
                 extensionsWithAllMode,
                 extensionsWithAnnotatedMode,
-                extensionsWithAllInAnnotatedMode
+                extensionsWithAllInAnnotatedMode,
+                extensionsByPlugin
             )
         )
     }
@@ -145,6 +152,10 @@ class FirExtensionPointService(
                     collectExtensions(this, owner, extensions.extensionsWithAllInAnnotatedMode)
                 }
             }
+        }
+
+        fun forGeneratedDeclaration(origin: FirDeclarationOrigin.Plugin): Collection<P> {
+            return extensions.extensionsByPluginKey.get(origin.key)
         }
 
         private fun collectExtensions(result: MutableSet<P>, declaration: FirAnnotationContainer, extensions: Multimap<AnnotationFqn, P>) {

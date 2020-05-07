@@ -14,7 +14,7 @@ sealed class FirDeclarationOrigin {
     object FakeOverride : FirDeclarationOrigin()
     object Enhancement : FirDeclarationOrigin()
 
-    class Plugin(val marker: FirPluginMarker) : FirDeclarationOrigin()
+    class Plugin(val key: FirPluginKey) : FirDeclarationOrigin()
 }
 
-abstract class FirPluginMarker
+abstract class FirPluginKey

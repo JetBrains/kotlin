@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KClass
@@ -20,6 +21,7 @@ abstract class FirExtensionPoint(val session: FirSession) {
     abstract val metaAnnotations: Map<AnnotationFqn, MetaAnnotationMode>
 
     abstract val mode: Mode
+    abstract val key: FirPluginKey
 
     internal abstract val extensionType: KClass<out FirExtensionPoint>
 
