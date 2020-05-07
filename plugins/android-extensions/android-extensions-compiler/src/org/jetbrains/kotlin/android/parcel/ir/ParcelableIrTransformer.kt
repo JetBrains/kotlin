@@ -17,14 +17,18 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -63,6 +67,29 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                 ).apply {
                     copyTypeAndValueArgumentsFrom(expression)
                 }
+            }
+
+            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+                val remappedSymbol = symbolMap[expression.symbol]
+                val remappedReflectionTarget = expression.reflectionTarget?.let { symbolMap[it] }
+                if (remappedSymbol == null && remappedReflectionTarget == null)
+                    return super.visitFunctionReference(expression)
+
+                return IrFunctionReferenceImpl(
+                    expression.startOffset, expression.endOffset, expression.type, remappedSymbol ?: expression.symbol,
+                    expression.typeArgumentsCount, expression.valueArgumentsCount, remappedReflectionTarget,
+                    expression.origin
+                ).apply {
+                    copyTypeAndValueArgumentsFrom(expression)
+                }
+            }
+
+            override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+                // Remap overridden symbols, otherwise the code might break in BridgeLowering
+                declaration.overriddenSymbols = declaration.overriddenSymbols.map { symbol ->
+                    (symbolMap[symbol] ?: symbol) as IrSimpleFunctionSymbol
+                }
+                return super.visitSimpleFunction(declaration)
             }
         })
     }
