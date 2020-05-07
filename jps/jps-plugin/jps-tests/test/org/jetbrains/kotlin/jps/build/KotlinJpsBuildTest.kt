@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.withIC
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.*
 import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
@@ -1116,5 +1115,16 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
                     assertTrue("Can not delete file \"" + file.absolutePath + "\"", file.delete())
             }
         }
+    }
+}
+
+private inline fun <R> withIC(enabled: Boolean = true, fn: () -> R): R {
+    val isEnabledBackup = IncrementalCompilation.isEnabledForJvm()
+    IncrementalCompilation.setIsEnabledForJvm(enabled)
+
+    try {
+        return fn()
+    } finally {
+        IncrementalCompilation.setIsEnabledForJvm(isEnabledBackup)
     }
 }
