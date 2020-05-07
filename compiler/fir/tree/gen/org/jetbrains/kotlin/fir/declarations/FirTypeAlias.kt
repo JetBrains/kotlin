@@ -24,6 +24,7 @@ abstract class FirTypeAlias : FirPureAbstractElement(), FirClassLikeDeclaration<
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
     abstract override val status: FirDeclarationStatus
     abstract override val typeParameters: List<FirTypeParameter>
     abstract val name: Name

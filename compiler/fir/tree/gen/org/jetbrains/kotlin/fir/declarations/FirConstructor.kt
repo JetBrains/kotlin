@@ -27,6 +27,7 @@ abstract class FirConstructor : FirPureAbstractElement(), FirFunction<FirConstru
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val typeParameters: List<FirTypeParameterRef>

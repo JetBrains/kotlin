@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -35,6 +36,8 @@ internal class FirTypeAliasImpl(
     override var expandedTypeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
 ) : FirTypeAlias() {
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+
     init {
         symbol.bind(this)
     }

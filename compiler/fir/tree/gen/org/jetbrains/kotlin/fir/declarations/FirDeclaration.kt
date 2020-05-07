@@ -20,6 +20,7 @@ interface FirDeclaration : FirElement {
     val session: FirSession
     val resolvePhase: FirResolvePhase
     val origin: FirDeclarationOrigin
+    val attributes: FirDeclarationAttributes
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDeclaration(this, data)
 

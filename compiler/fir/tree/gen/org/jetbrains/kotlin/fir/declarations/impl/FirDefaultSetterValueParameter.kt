@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -45,6 +46,7 @@ internal class FirDefaultSetterValueParameter(
     override val isNoinline: Boolean,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val name: Name = Name.identifier("value")
 
     init {

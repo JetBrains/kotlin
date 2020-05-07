@@ -56,6 +56,8 @@ class FirJavaField @FirImplementationDetail constructor(
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Java
 
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         return this

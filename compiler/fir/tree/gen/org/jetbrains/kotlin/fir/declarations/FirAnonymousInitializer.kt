@@ -24,6 +24,7 @@ abstract class FirAnonymousInitializer : FirPureAbstractElement(), FirDeclaratio
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
     abstract val body: FirBlock?
     abstract override val symbol: FirAnonymousInitializerSymbol
     abstract val controlFlowGraphReference: FirControlFlowGraphReference

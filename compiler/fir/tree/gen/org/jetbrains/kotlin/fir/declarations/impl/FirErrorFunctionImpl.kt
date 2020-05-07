@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -38,6 +39,7 @@ internal class FirErrorFunctionImpl(
     override val symbol: FirErrorFunctionSymbol,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirErrorFunction() {
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference

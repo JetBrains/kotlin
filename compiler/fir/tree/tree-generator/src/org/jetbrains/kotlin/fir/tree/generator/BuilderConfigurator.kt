@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractBuilderConfigurator
-import org.jetbrains.kotlin.fir.tree.generator.model.Element
-import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
-import org.jetbrains.kotlin.fir.tree.generator.model.LeafBuilder
+import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.util.traverseParents
 
 object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder) {
@@ -32,13 +29,13 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         val classBuilder by builder {
             parents += annotationContainerBuilder
-            fields from klass without listOf("symbol", "resolvePhase")
+            fields from klass without listOf("symbol", "resolvePhase", "attributes")
         }
 
         val regularClassBuilder by builder("AbstractFirRegularClassBuilder") {
             parents += classBuilder
             parents += typeParameterRefsOwnerBuilder
-            fields from regularClass
+            fields from regularClass without "attributes"
         }
 
         val qualifiedAccessBuilder by builder {
@@ -55,7 +52,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         val functionBuilder by builder {
             parents += annotationContainerBuilder
-            fields from function without listOf("symbol", "resolvePhase", "controlFlowGraphReference", "receiverTypeRef", "typeParameters")
+            fields from function without listOf("symbol", "resolvePhase", "controlFlowGraphReference", "receiverTypeRef", "typeParameters", "attributes")
         }
 
         val loopJumpBuilder by builder {
@@ -64,7 +61,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         val abstractConstructorBuilder by builder {
             parents += functionBuilder
-            fields from constructor without "isPrimary"
+            fields from constructor without listOf("isPrimary", "attributes")
         }
 
         for (constructorType in listOf("FirPrimaryConstructor", "FirConstructorImpl")) {
@@ -330,6 +327,13 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         ) {
             defaultNull(it)
         }
+
+//        configureFieldInAllIntermediateBuilders(
+//            field = "attributes",
+//            fieldPredicate = { it.type == declarationAttributesType.type }
+//        ) {
+//
+//        }
     }
 
     private inline fun findImplementationsWithElementInParents(
@@ -361,6 +365,20 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             if (!builder.allFields.any { it.name == field }) continue
             if (fieldPredicate != null && !fieldPredicate(builder[field])) continue
             LeafBuilderConfigurationContext(builder).init(field)
+        }
+    }
+
+    private fun configureFieldInAllIntermediateBuilders(
+        field: String,
+        builderPredicate: ((IntermediateBuilder) -> Boolean)? = null,
+        fieldPredicate: ((Field) -> Boolean)? = null,
+        init: IntermediateBuilderConfigurationContext.(field: String) -> Unit
+    ) {
+        for (builder in FirTreeBuilder.intermediateBuilders) {
+            if (builderPredicate != null && !builderPredicate(builder)) continue
+            if (!builder.allFields.any { it.name == field }) continue
+            if (fieldPredicate != null && !fieldPredicate(builder[field])) continue
+            IntermediateBuilderConfigurationContext(builder).init(field)
         }
     }
 

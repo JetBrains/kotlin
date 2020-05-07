@@ -57,6 +57,8 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Java
 
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+
     override val companionObject: FirRegularClass?
         get() = null
 

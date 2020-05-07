@@ -23,6 +23,7 @@ interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : Fi
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
     override val origin: FirDeclarationOrigin
+    override val attributes: FirDeclarationAttributes
     override val annotations: List<FirAnnotationCall>
     override val returnTypeRef: FirTypeRef
     override val receiverTypeRef: FirTypeRef?

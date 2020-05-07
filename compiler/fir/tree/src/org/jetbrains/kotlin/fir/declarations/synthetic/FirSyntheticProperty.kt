@@ -71,6 +71,8 @@ class FirSyntheticProperty(
 
     override val controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
 
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+
     // ???
     override val backingFieldSymbol: FirBackingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)
 

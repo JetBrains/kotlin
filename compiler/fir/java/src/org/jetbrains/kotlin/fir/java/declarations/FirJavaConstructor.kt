@@ -54,6 +54,8 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Java
 
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+
     override val controlFlowGraphReference: FirControlFlowGraphReference get() = FirEmptyControlFlowGraphReference
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {

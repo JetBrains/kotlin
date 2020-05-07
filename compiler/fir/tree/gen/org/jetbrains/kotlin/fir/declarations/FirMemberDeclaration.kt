@@ -21,6 +21,7 @@ interface FirMemberDeclaration : FirDeclaration, FirAnnotationContainer {
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
     override val origin: FirDeclarationOrigin
+    override val attributes: FirDeclarationAttributes
     override val annotations: List<FirAnnotationCall>
     val typeParameters: List<FirTypeParameterRef>
     val status: FirDeclarationStatus

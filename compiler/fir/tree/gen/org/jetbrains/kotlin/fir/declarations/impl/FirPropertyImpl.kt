@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -51,6 +52,7 @@ internal class FirPropertyImpl(
     override val typeParameters: MutableList<FirTypeParameter>,
     override var status: FirDeclarationStatus,
 ) : FirProperty() {
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val isVal: Boolean get() = !isVar
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
     override val backingFieldSymbol: FirBackingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)
