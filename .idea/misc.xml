@@ -84,9 +84,8 @@
     <option name="state" value="git@git.labs.intellij.net:idea/ultimate" />
   </component>
   <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/resources/templates/js/ipywidgets.js" />
-    <file url="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/resources/templates/js/lib/marked.min.js" />
-    <file url="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/resources/templates/js/main.js" />
+    <file url="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/resources/static/generated/js/ipywidgets.js" />
+    <file url="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/resources/static/generated/js/main.js" />
   </component>
   <component name="ProjectResources">
     <resource url="http://jetbrains.org/intellij/schema/application-info" location="$PROJECT_DIR$/intellij/community/platform/platform-resources/src/idea/ApplicationInfo.xsd" />

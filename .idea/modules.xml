@@ -1774,6 +1774,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/python/intellij.pycharm.community.main.iml" filepath="$PROJECT_DIR$/intellij/community/python/intellij.pycharm.community.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/intellij.pycharm.ds.iml" filepath="$PROJECT_DIR$/intellij/python/ds/intellij.pycharm.ds.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/build/intellij.pycharm.ds.build.iml" filepath="$PROJECT_DIR$/intellij/python/ds/build/intellij.pycharm.ds.build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/core-impl/intellij.pycharm.ds.core.impl.iml" filepath="$PROJECT_DIR$/intellij/python/ds/core-impl/intellij.pycharm.ds.core.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/intellij.pycharm.ds.customization.iml" filepath="$PROJECT_DIR$/intellij/python/ds/intellij.pycharm.ds.customization.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/datalore-remote/intellij.pycharm.ds.dataloreRemote.iml" filepath="$PROJECT_DIR$/intellij/python/ds/datalore-remote/intellij.pycharm.ds.dataloreRemote.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/jupyter/intellij.pycharm.ds.jupyter.iml" filepath="$PROJECT_DIR$/intellij/python/ds/jupyter/intellij.pycharm.ds.jupyter.iml" />
@@ -1814,6 +1815,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/python/python-javascript-debugger/intellij.python.javascript.debugger.iml" filepath="$PROJECT_DIR$/intellij/python/python-javascript-debugger/intellij.python.javascript.debugger.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/python-javascript-tests/intellij.python.javascript.tests.iml" filepath="$PROJECT_DIR$/intellij/python/python-javascript-tests/intellij.python.javascript.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/jupyter/intellij.python.jupyter.iml" filepath="$PROJECT_DIR$/intellij/python/jupyter/intellij.python.jupyter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/intellij.python.jupyter.frontend.iml" filepath="$PROJECT_DIR$/intellij/python/jupyter/frontend/intellij.python.jupyter.frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/jupyter/pro/intellij.python.jupyter.pro.iml" filepath="$PROJECT_DIR$/intellij/python/jupyter/pro/intellij.python.jupyter.pro.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/python/IntelliLang-python/intellij.python.langInjection.iml" filepath="$PROJECT_DIR$/intellij/community/python/IntelliLang-python/intellij.python.langInjection.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/python-localization/intellij.python.localization.iml" filepath="$PROJECT_DIR$/intellij/python/python-localization/intellij.python.localization.iml" />

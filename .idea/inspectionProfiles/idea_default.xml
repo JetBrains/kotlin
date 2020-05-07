@@ -261,6 +261,8 @@
       <scope name="Tests" level="Strong Warning" enabled="false" />
     </inspection_tool>
     <inspection_tool class="ExceptionCaughtLocallyJS" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ExcessiveLambdaUsage" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="ExcessiveRangeCheck" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ExplicitArrayFilling" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ExtendsTagPositionInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FallthroughInSwitchStatementJS" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -955,6 +957,7 @@
     <inspection_tool class="RawUseOfParameterizedType" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="ignoreParametersOfOverridingMethods" value="true" />
     </inspection_tool>
+    <inspection_tool class="RedundantArrayCreation" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="RedundantCast" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="IGNORE_SUSPICIOUS_METHOD_CALLS" value="true" />
     </inspection_tool>
@@ -1349,6 +1352,9 @@
     </inspection_tool>
     <inspection_tool class="StringEquality" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="StringEqualsEmptyString" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="StringOperationCanBeSimplified" enabled="true" level="Strong Warning" enabled_by_default="true">
+      <option name="ignoreStringConstructor" value="true" />
+    </inspection_tool>
     <inspection_tool class="StringOperationCanBeSimplifiedMerged" />
     <inspection_tool class="StringToUpperWithoutLocale" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="Struts2ModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />

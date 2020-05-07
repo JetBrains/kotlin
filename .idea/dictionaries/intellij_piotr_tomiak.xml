@@ -3,6 +3,9 @@
   <dictionary name="intellij-piotr.tomiak">
     <words>
       <w>angularjs</w>
+      <w>buefy</w>
+      <w>iview</w>
+      <w>vuelidate</w>
       <w>vuex</w>
       <w>webtypes</w>
     </words>
