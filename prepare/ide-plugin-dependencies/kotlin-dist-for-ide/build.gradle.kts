@@ -8,10 +8,11 @@ idePluginDependency {
     val jar: Jar by tasks
 
     jar.apply {
-        val distKotlincTask = project(":kotlin-compiler").tasks.getByName("distKotlinc")
-
-        dependsOn(distKotlincTask)
-        from(distKotlincTask)
+        dependsOn(":kotlin-compiler:distKotlinc")
+//        from {
+//            val distKotlincTask = project(":kotlin-compiler").tasks.getByName("distKotlinc")
+//            (distKotlincTask)
+//        }
 
     }
 

@@ -279,6 +279,28 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:analysis-tests"
 )
 
+extra["compilerModulesForJps"] = listOf(
+    ":core:type-system",
+    ":kotlin-build-common",
+    ":kotlin-util-io",
+    ":kotlin-util-klib",
+    ":kotlin-util-klib-metadata",
+    ":compiler:cli-common",
+    ":kotlin-compiler-runner",
+    ":daemon-common",
+    ":daemon-common-new",
+    ":core:descriptors",
+    ":core:descriptors.jvm",
+    ":idea:idea-jps-common",
+    ":kotlin-preloader",
+    ":compiler:util",
+    ":compiler:config",
+    ":compiler:config.jvm",
+    ":js:js.config",
+    ":core:util.runtime",
+    ":compiler:compiler.version"
+)
+
 val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib",
     ":kotlin-stdlib-common",
