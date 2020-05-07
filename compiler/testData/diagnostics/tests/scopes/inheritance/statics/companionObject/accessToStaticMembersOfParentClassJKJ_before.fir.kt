@@ -18,20 +18,20 @@ open class A {
 
 class B : J2() {
     init {
-        foo()
+        <!UNRESOLVED_REFERENCE!>foo<!>()
         bar()
         boo()
     }
 
     fun test2() {
-        foo()
+        <!UNRESOLVED_REFERENCE!>foo<!>()
         bar()
         boo()
     }
 
     object O {
         fun test() {
-            foo()
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
             boo()
         }
@@ -39,13 +39,13 @@ class B : J2() {
 
     companion object {
         init {
-            foo()
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
             boo()
         }
 
         fun test() {
-            foo()
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
             boo()
         }

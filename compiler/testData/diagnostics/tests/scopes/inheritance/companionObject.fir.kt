@@ -33,7 +33,7 @@ class C: B(), A {
         B.Companion.bar()
         C.<!UNRESOLVED_REFERENCE!>bar<!>()
 
-        B_()
+        <!UNRESOLVED_REFERENCE!>B_<!>()
         B.<!UNRESOLVED_REFERENCE!>B_<!>()
         B.Companion.B_()
         C.<!UNRESOLVED_REFERENCE!>B_<!>()

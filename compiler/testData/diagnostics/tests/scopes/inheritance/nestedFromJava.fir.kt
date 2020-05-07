@@ -26,7 +26,7 @@ class X: A {
     val a_s: A_S = null!!
 
     init {
-        A_S()
+        <!UNRESOLVED_REFERENCE!>A_S<!>()
         A.A_S()
         X.<!UNRESOLVED_REFERENCE!>A_S<!>()
     }
@@ -35,7 +35,7 @@ class X: A {
         val a_: A_S = null!!
 
         init {
-            A_S()
+            <!UNRESOLVED_REFERENCE!>A_S<!>()
         }
     }
 }
@@ -71,7 +71,7 @@ class Z: C() {
     val b_s: B_S = null!!
 
     init {
-        A_S()
+        <!UNRESOLVED_REFERENCE!>A_S<!>()
         B_()
         B_S()
     }
@@ -82,7 +82,7 @@ class Z: C() {
         val b_s: B_S = null!!
 
         init {
-            A_S()
+            <!UNRESOLVED_REFERENCE!>A_S<!>()
             B_()
             B_S()
         }

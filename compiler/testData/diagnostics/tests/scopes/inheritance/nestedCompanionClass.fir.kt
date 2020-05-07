@@ -10,14 +10,14 @@ class C: A() {
     val b: B = null!!
 
     init {
-        B()
+        <!UNRESOLVED_REFERENCE!>B<!>()
     }
 
     object O {
         val b: B = null!!
 
         init {
-            B()
+            <!UNRESOLVED_REFERENCE!>B<!>()
         }
     }
 
@@ -25,7 +25,7 @@ class C: A() {
         val b: B = null!!
 
         init {
-            B()
+            <!UNRESOLVED_REFERENCE!>B<!>()
         }
     }
 
@@ -33,7 +33,7 @@ class C: A() {
         val b: B = null!!
 
         init {
-            B()
+            <!UNRESOLVED_REFERENCE!>B<!>()
         }
     }
 }

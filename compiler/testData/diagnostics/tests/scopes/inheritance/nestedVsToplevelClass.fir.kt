@@ -32,7 +32,7 @@ class B: A() {
         X().A_X()
         X().<!UNRESOLVED_REFERENCE!>T_X<!>()
 
-        Y().A_C_Y()
-        Y().<!UNRESOLVED_REFERENCE!>T_Y<!>()
+        Y().<!UNRESOLVED_REFERENCE!>A_C_Y<!>()
+        Y().T_Y()
     }
 }
