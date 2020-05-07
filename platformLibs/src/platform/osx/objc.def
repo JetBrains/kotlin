@@ -7,7 +7,7 @@ headers = objc/List.h objc/NSObjCRuntime.h objc/NSObject.h objc/Object.h objc/Pr
     objc/objc-sync.h objc/objc.h objc/runtime.h
 
 headerFilter = objc/**
-compilerOpts = -D_XOPEN_SOURCE -DOBJC_OLD_DISPATCH_PROTOTYPES=1
+compilerOpts = -D_XOPEN_SOURCE
 excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN
 
 linkerOpts = -lobjc

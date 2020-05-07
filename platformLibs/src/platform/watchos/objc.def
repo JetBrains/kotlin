@@ -9,7 +9,7 @@ headerFilter = objc/**
 excludedFunctions.watchos_arm64 = _objc_msgForward_stret \
     class_getMethodImplementation_stret method_invoke_stret
 
-compilerOpts = -D_XOPEN_SOURCE -DOBJC_OLD_DISPATCH_PROTOTYPES=1
+compilerOpts = -D_XOPEN_SOURCE
 linkerOpts = -lobjc
 
 ---
