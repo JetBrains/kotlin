@@ -8,17 +8,35 @@ package org.jetbrains.kotlin.idea.core.script.configuration
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
 import org.jetbrains.kotlin.psi.KtFile
 
+/**
+ * Extension point for overriding default Kotlin scripting support.
+ *
+ * Implementation should store script configuration internally (in memory and/or fs),
+ * and provide it inside [collectConfigurations] using the [ScriptClassRootsCache.LightScriptInfo].
+ * Custom data can be attached to [ScriptClassRootsCache.LightScriptInfo] and retrieved
+ * by calling [ScriptClassRootsCache.getLightScriptInfo].
+ *
+ * [ScriptChangeListener] can be used to listen script changes.
+ * [CompositeScriptConfigurationManager.updater] should be used to schedule configuration reloading.
+ *
+ * [isApplicable] should return true for files that is covered by that support.
+ *
+ * [isConfigurationLoadingInProgress] is used to pause analyzing.
+ *
+ * Long read: [idea/idea-gradle/src/org/jetbrains/kotlin/idea/scripting/gradle/README.md].
+ *
+ * @sample GradleBuildRootsManager
+ */
 abstract class ScriptingSupport {
-    abstract class Provider {
-        abstract fun isApplicable(file: VirtualFile): Boolean
-        abstract fun isConfigurationLoadingInProgress(file: KtFile): Boolean
-        abstract fun collectConfigurations(builder: ScriptClassRootsCache.Builder)
+    abstract fun isApplicable(file: VirtualFile): Boolean
+    abstract fun isConfigurationLoadingInProgress(file: KtFile): Boolean
+    abstract fun collectConfigurations(builder: ScriptClassRootsCache.Builder)
 
-        companion object {
-            val EPN: ExtensionPointName<Provider> =
-                ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.scriptingSupportProvider")
-        }
+    companion object {
+        val EPN: ExtensionPointName<ScriptingSupport> =
+            ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.scriptingSupport")
     }
 }
