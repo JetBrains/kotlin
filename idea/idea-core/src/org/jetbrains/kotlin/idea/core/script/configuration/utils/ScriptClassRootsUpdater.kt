@@ -115,8 +115,8 @@ class ScriptClassRootsUpdater(
 
     @Synchronized
     private fun updateSynchronously() {
+        scheduledUpdate?.cancel()
         syncLock.withLock {
-            scheduledUpdate?.cancel()
             doUpdate(false)
         }
     }
