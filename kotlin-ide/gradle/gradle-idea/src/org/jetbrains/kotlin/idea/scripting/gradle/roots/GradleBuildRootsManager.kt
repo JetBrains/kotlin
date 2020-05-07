@@ -68,10 +68,6 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
     ////////////
     /// ScriptingSupport.Provider implementation:
 
-    override fun updateScriptDefinitions() {
-        // nothing related to script definition and project roots are cached
-    }
-
     override fun isApplicable(file: VirtualFile): Boolean {
         val scriptUnderRoot = findScriptBuildRoot(file) ?: return false
         if (scriptUnderRoot.root is GradleBuildRoot.Legacy) return false

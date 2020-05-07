@@ -90,9 +90,9 @@ interface ScriptConfigurationManager {
     fun isConfigurationLoadingInProgress(file: KtFile): Boolean
 
     /**
-     * Clear all caches and re-highlighting opened scripts
+     * Update caches that depends on script definitions and do update if necessary
      */
-    fun updateScriptDefinitions()
+    fun updateScriptDefinitionReferences()
 
     ///////////////
     // classpath roots info:
