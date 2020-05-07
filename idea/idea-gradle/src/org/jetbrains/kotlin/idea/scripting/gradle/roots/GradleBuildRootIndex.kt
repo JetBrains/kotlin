@@ -27,7 +27,7 @@ class GradleBuildRootIndex {
     }
 
     @Synchronized
-    fun getBuildRoot(dir: String) = byWorkingDir[dir]
+    fun getBuildByRootDir(dir: String) = byWorkingDir[dir]
 
     @Synchronized
     fun findNearestRoot(path: String): GradleBuildRoot.Linked? {

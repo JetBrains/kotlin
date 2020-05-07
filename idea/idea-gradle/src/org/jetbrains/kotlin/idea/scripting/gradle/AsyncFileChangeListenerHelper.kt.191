@@ -10,7 +10,10 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.util.concurrency.SequentialTaskExecutor
 
-fun addVfsListener(watcher: GradleScriptListener) {
+fun addVfsListener(
+    watcher: GradleScriptListener,
+    buildRootsManager: GradleBuildRootsManager
+) {
     watcher.project.messageBus.connect().subscribe(
         VirtualFileManager.VFS_CHANGES,
         object : BulkFileListener {
@@ -22,7 +25,7 @@ fun addVfsListener(watcher: GradleScriptListener) {
                     if (watcher.project.isDisposed) return@Runnable
                     for (event in events) {
                         val file = event.file ?: continue
-                        if (isInAffectedGradleProjectFiles(watcher.project, event.path)) {
+                        if (buildRootsManager.maybeAffectedGradleProjectFile(watcher.project, event.path)) {
                             watcher.fileChanged(event.path, file.timeStamp)
                         }
                     }
