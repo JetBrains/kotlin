@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
@@ -90,6 +91,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isNullableAny
@@ -119,22 +121,6 @@ fun IrElement.dumpSrc(): String {
         .replace(Regex("%tab%", RegexOption.MULTILINE), "")
             // remove empty lines
         .replace(Regex("\\n(\\s)*$", RegexOption.MULTILINE), "")
-            // replace source keys for start group calls
-        .replace(
-            Regex(
-                "(\\\$composer\\.start(Restart|Movable|Replaceable)Group\\()(\\d+)(\\))"
-            )
-        ) {
-            "${it.groupValues[1]}<>${it.groupValues[4]}"
-        }
-            // replace source keys for joinKey calls
-        .replace(
-            Regex(
-                "(\\\$composer\\.joinKey\\()(\\d+)"
-            )
-        ) {
-            "${it.groupValues[1]}<>"
-        }
             // brackets with comma on new line
         .replace(Regex("}\\n(\\s)*,", RegexOption.MULTILINE), "},")
 }
@@ -606,8 +592,15 @@ private class IrSourcePrinterVisitor(
     override fun visitVararg(expression: IrVararg) {
         expression
             .elements
-            .map { if (it is IrSpreadElement) it.expression else it as IrExpression }
-            .printJoin(", ")
+            .forEachIndexed { index, it ->
+                if (it is IrSpreadElement) {
+                    print("*")
+                    it.expression.print()
+                } else if (it is IrExpression) {
+                    it.print()
+                }
+                if (index < expression.elements.size - 1) print(", ")
+            }
     }
 
     override fun visitWhen(expression: IrWhen) {
@@ -759,6 +752,9 @@ private class IrSourcePrinterVisitor(
                 print(call.symbol.descriptor.name)
                 call.printArgumentList()
             }
+            IrStatementOrigin.FOR_LOOP -> {
+                expression.statements.printJoin("\n")
+            }
             else -> {
                 expression.statements.printJoin("\n")
             }
@@ -786,6 +782,13 @@ private class IrSourcePrinterVisitor(
     }
 
     override fun visitGetValue(expression: IrGetValue) {
+        print(expression.symbol.owner.name)
+    }
+
+    override fun visitGetEnumValue(expression: IrGetEnumValue) {
+        val classifier = expression.type.classOrNull ?: return
+        print(classifier.owner.name)
+        print(".")
         print(expression.symbol.owner.name)
     }
 

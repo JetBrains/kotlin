@@ -347,7 +347,7 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
 
         val instanceOfClass = instanceClass.newInstance()
 
-        return composeMulti({
+        return composeMulti({ _, _, _ ->
             val composeMethod = instanceClass.getMethod("compose")
             composeMethod.invoke(instanceOfClass)
         }) {

@@ -23,14 +23,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-class ComposerIntrinsicTransformer(
-    val context: IrPluginContext,
-    val functionBodySkipping: Boolean
-) :
+class ComposerIntrinsicTransformer(val context: IrPluginContext) :
     IrElementTransformerVoid(),
     FileLoweringPass,
     ModuleLoweringPass {
@@ -48,13 +46,11 @@ class ComposerIntrinsicTransformer(
             // since this call was transformed by the ComposerParamTransformer, the first argument
             // to this call is the composer itself. We just replace this expression with the
             // argument expression and we are good.
-            if (expression.valueArgumentsCount != 1) {
-                print("")
-            }
-            if (functionBodySkipping) {
-                assert(expression.valueArgumentsCount == 2)
-            } else {
-                assert(expression.valueArgumentsCount == 1)
+            val expectedArgumentsCount = 1 + // composer parameter
+                    1 + // key parameter
+                    1 // changed parameter
+            assert(expression.valueArgumentsCount == expectedArgumentsCount) {
+                expression.dump()
             }
             val composerExpr = expression.getValueArgument(0)
             if (composerExpr == null) error("Expected non-null composer argument")

@@ -19,14 +19,14 @@ package androidx.compose.plugins.kotlin
 import org.junit.Test
 
 class ComposerParamTransformTests : AbstractIrTransformTest() {
-    fun composerParam(
+    private fun composerParam(
         source: String,
         expectedTransformed: String,
         dumpTree: Boolean = false
     ) = verifyComposeIrTransform(
-        ComposeTransforms.COMPOSER_PARAM,
         """
             import androidx.compose.Composable
+            import androidx.compose.Direct
 
             $source
         """.trimIndent(),
@@ -40,18 +40,24 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """
             @Composable val bar: Int get() { return 123 }
 
-            @Composable fun Example() {
+            @Direct @Composable fun Example() {
                 bar
             }
         """,
         """
             val bar: Int
               get() {
-                return 123
+                %composer.startReplaceableGroup(%key)
+                val tmp0 = 123
+                %composer.endReplaceableGroup()
+                return tmp0
               }
+            @Direct
             @Composable
-            fun Example(%composer: Composer<*>?) {
+            fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
               bar
+              %composer.endReplaceableGroup()
             }
         """
     )
@@ -60,23 +66,30 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
     fun testAbstractComposable(): Unit = composerParam(
         """
             abstract class BaseFoo {
+                @Direct
                 @Composable
                 abstract fun bar()
             }
 
             class FooImpl : BaseFoo() {
+                @Direct
                 @Composable
                 override fun bar() {}
             }
         """,
         """
             abstract class BaseFoo {
+              @Direct
               @Composable
-              abstract fun bar(%composer: Composer<*>?)
+              abstract fun bar(%composer: Composer<*>?, %key: Int, %changed: Int)
             }
             class FooImpl : BaseFoo {
+              @Direct
               @Composable
-              override fun bar(%composer: Composer<*>?) { }
+              override fun bar(%composer: Composer<*>?, %key: Int, %changed: Int) {
+                %composer.startReplaceableGroup(%key)
+                %composer.endReplaceableGroup()
+              }
             }
         """
     )
@@ -84,14 +97,18 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
     @Test
     fun testLocalClassAndObjectLiterals(): Unit = composerParam(
         """
+            @Direct
             @Composable
             fun Wat() {}
 
+            @Direct
             @Composable
             fun Foo(x: Int) {
                 Wat()
+                @Direct
                 @Composable fun goo() { Wat() }
                 class Bar {
+                    @Direct
                     @Composable fun baz() { Wat() }
                 }
                 goo()
@@ -99,23 +116,36 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
+            @Direct
             @Composable
-            fun Wat(%composer: Composer<*>?) { }
+            fun Wat(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
+              %composer.endReplaceableGroup()
+            }
+            @Direct
             @Composable
-            fun Foo(x: Int, %composer: Composer<*>?) {
-              Wat(%composer)
+            fun Foo(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
+              Wat(%composer, <>, 0)
+              @Direct
               @Composable
-              fun goo(%composer: Composer<*>?) {
-                Wat(%composer)
+              fun goo(%composer: Composer<*>?, %key: Int, %changed: Int) {
+                %composer.startReplaceableGroup(%key)
+                Wat(%composer, <>, 0)
+                %composer.endReplaceableGroup()
               }
               class Bar {
+                @Direct
                 @Composable
-                fun baz(%composer: Composer<*>?) {
-                  Wat(%composer)
+                fun baz(%composer: Composer<*>?, %key: Int, %changed: Int) {
+                  %composer.startReplaceableGroup(%key)
+                  Wat(%composer, <>, 0)
+                  %composer.endReplaceableGroup()
                 }
               }
-              goo(%composer)
-              Bar().baz(%composer)
+              goo(%composer, <>, 0)
+              Bar().baz(%composer, <>, 0)
+              %composer.endReplaceableGroup()
             }
         """
     )
@@ -182,14 +212,18 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
     @Test
     fun testCircularCall(): Unit = composerParam(
         """
+            @Direct
             @Composable fun Example() {
                 Example()
             }
         """,
         """
+            @Direct
             @Composable
-            fun Example(%composer: Composer<*>?) {
-              Example(%composer)
+            fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
+              Example(%composer, <>, 0)
+              %composer.endReplaceableGroup()
             }
         """
     )
@@ -201,19 +235,30 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
                 children()
             }
 
+            @Direct
             @Composable fun Test() {
                 Example {}
             }
         """,
         """
             @Composable
-            fun Example(children: Function1<Composer<*>, Unit>, %composer: Composer<*>?) {
-              children(%composer)
+            fun Example(children: Function3<Composer<*>, Int, Int, Unit>, %composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
+              children(%composer, <>, 0b0110 and %changed)
+              %composer.endReplaceableGroup()
             }
+            @Direct
             @Composable
-            fun Test(%composer: Composer<*>?) {
-              Example({ %composer: Composer<*>? ->
-              }, %composer)
+            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
+              Example({ %composer: Composer<*>?, %key: Int, %changed: Int ->
+                if (%changed !== 0 || !%composer.skipping) {
+                  Unit
+                } else {
+                  %composer.skipToGroupEnd()
+                }
+              }, %composer, <>, 0)
+              %composer.endReplaceableGroup()
             }
         """
     )
@@ -225,6 +270,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
 
             private fun TextView.setRef(ref: (TextView) -> Unit) {}
 
+            @Direct
             @Composable
             fun Test() {
                 TextView(ref = {  })
@@ -232,12 +278,23 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             private fun TextView.setRef(ref: Function1<TextView, Unit>) { }
+            @Direct
             @Composable
-            fun Test(%composer: Composer<*>?) {
-              TextView(
-                ref = { it: TextView ->
+            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
+              val tmp0 = remember({
+                { it: TextView ->
                 }
-              )
+              }, %composer, <>, 0)
+              %composer.emit(-1248659145, { context: @[ParameterName(name = 'context')] Context ->
+                TextView(context)
+              }
+              ) {
+                set(tmp0) { p0: Function1<TextView, Unit> ->
+                  setRef(p0)
+                }
+              }
+              %composer.endReplaceableGroup()
             }
         """
     )
@@ -253,8 +310,11 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """
             val myProperty: Function0<Unit>
               get() {
-                return {
+                %composer.startReplaceableGroup(%key)
+                val tmp0 = {
                 }
+                %composer.endReplaceableGroup()
+                return tmp0
               }
         """
     )

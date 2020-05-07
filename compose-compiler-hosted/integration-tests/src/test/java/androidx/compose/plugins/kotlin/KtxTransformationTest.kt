@@ -625,56 +625,6 @@ class KtxTransformationTest : AbstractCodegenTest() {
         """
     ) }
 
-    fun testMultiplePivotalAttributesOdd() = ensureSetup { testCompile(
-        """
-        import androidx.compose.*
-
-        @Composable fun Foo(
-            @Pivotal a: Int,
-            @Pivotal b: Int,
-            @Pivotal c: Int,
-            @Pivotal d: Int,
-            @Pivotal e: Int
-        ) {
-
-        }
-
-        class Bar {
-            @Composable
-            operator fun invoke() {
-                Foo(
-                    a=1,
-                    b=2,
-                    c=3,
-                    d=4,
-                    e=5
-                )
-            }
-        }
-        """
-    ) }
-
-    fun testSinglePivotalAttribute() = ensureSetup { testCompile(
-        """
-        import androidx.compose.*
-
-        @Composable fun Foo(
-            @Pivotal a: Int
-        ) {
-
-        }
-
-        class Bar {
-            @Composable
-            operator fun invoke() {
-                Foo(
-                    a=1
-                )
-            }
-        }
-        """
-    ) }
-
     fun testKtxVariableTagsProperlyCapturedAcrossKtxLambdas() = ensureSetup {
         testCompile(
         """

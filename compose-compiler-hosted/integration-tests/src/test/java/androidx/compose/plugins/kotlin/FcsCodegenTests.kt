@@ -23,7 +23,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.Composer
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
@@ -1039,13 +1038,12 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }
     }
 
-    @Ignore("Test case for b/143464846 - re-enable when bug is fixed.")
     @Test
     fun testAmbientConsumedFromDefaultParameter(): Unit = ensureSetup {
         val initialText = "no text"
         val helloWorld = "Hello World!"
         compose("""
-            val TextAmbient = Ambient.of { "$initialText" }
+            val TextAmbient = ambientOf { "$initialText" }
 
             @Composable
             fun Main() {
@@ -1887,15 +1885,17 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
                     LinearLayout(orientation=LinearLayout.VERTICAL) {
                         items.value.forEachIndexed { index, id ->
-                            Item(
-                                id=id,
-                                onMove={ amount ->
-                                    val next = index + amount
-                                    if (next >= 0 && next < items.value.size) {
-                                        items.value = items.value.move(index, index + amount)
+                            key(id) {
+                                Item(
+                                    id=id,
+                                    onMove={ amount ->
+                                        val next = index + amount
+                                        if (next >= 0 && next < items.value.size) {
+                                            items.value = items.value.move(index, index + amount)
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
@@ -1903,7 +1903,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             @Composable
             // TODO: Investigate making this private; looks like perhaps a compiler bug as of rebase
-            fun Item(@Pivotal id: Int, onMove: (Int) -> Unit) {
+            fun Item(id: Int, onMove: (Int) -> Unit) {
                 Observe {
                     val count = state { 0 }
                     LinearLayout(orientation=LinearLayout.HORIZONTAL) {
@@ -2001,7 +2001,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                         )
                         LinearLayout(id=100) {
                             for(id in list) {
-                                key(v1=id) {
+                                key(id) {
                                     StatefulButton()
                                 }
                             }
@@ -2530,12 +2530,18 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }
 
         val instanceOfClass = instanceClass.newInstance()
-        val testMethod = instanceClass.getMethod("test", *parameterTypes, Composer::class.java)
+        val testMethod = instanceClass.getMethod(
+            "test",
+            *parameterTypes,
+            Composer::class.java,
+            Int::class.java,
+            Int::class.java
+        )
 
-        return compose {
+        return compose { composer, _, _ ->
             val values = valuesFactory()
             val arguments = values.map { it.value as Any }.toTypedArray()
-            testMethod.invoke(instanceOfClass, *arguments, it)
+            testMethod.invoke(instanceOfClass, *arguments, composer, 0, 1)
         }
     }
 

@@ -35,11 +35,9 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 object ComposeFqNames {
     val Composable = ComposeUtils.composeFqName("Composable")
     val CurrentComposerIntrinsic = ComposeUtils.composeFqName("<get-currentComposer>")
-    val Pivotal = ComposeUtils.composeFqName("Pivotal")
     val Direct = ComposeUtils.composeFqName("Direct")
     val key = ComposeUtils.composeFqName("key")
     val StableMarker = ComposeUtils.composeFqName("StableMarker")
-    val HiddenAttribute = ComposeUtils.composeFqName("HiddenAttribute")
     val Composer = ComposeUtils.composeFqName("Composer")
     val Untracked = ComposeUtils.composeFqName("Untracked")
     val UiComposer = FqName.fromSegments(listOf("androidx", "ui", "node", "UiComposer"))
@@ -76,10 +74,6 @@ fun Annotated.hasDirectAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Direct) != null
 fun Annotated.hasUntrackedAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Untracked) != null
-fun Annotated.hasPivotalAnnotation(): Boolean =
-    annotations.findAnnotation(ComposeFqNames.Pivotal) != null
-fun Annotated.hasHiddenAttributeAnnotation(): Boolean =
-    annotations.findAnnotation(ComposeFqNames.HiddenAttribute) != null
 
 internal val KotlinType.isSpecialType: Boolean get() =
     this === NO_EXPECTED_TYPE || this === UNIT_EXPECTED_TYPE

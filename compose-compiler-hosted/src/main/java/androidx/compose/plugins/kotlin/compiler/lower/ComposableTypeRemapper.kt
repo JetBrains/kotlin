@@ -77,10 +77,10 @@ import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class DeepCopyIrTreeWithSymbolsPreservingMetadata(
-    val context: IrPluginContext,
-    val symbolRemapper: DeepCopySymbolRemapper,
-    val typeRemapper: TypeRemapper,
-    val typeTranslator: TypeTranslator,
+    private val context: IrPluginContext,
+    private val symbolRemapper: DeepCopySymbolRemapper,
+    private val typeRemapper: TypeRemapper,
+    private val typeTranslator: TypeTranslator,
     symbolRenamer: SymbolRenamer = SymbolRenamer.DEFAULT
 ) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, symbolRenamer) {
 
@@ -315,8 +315,7 @@ class ComposerTypeRemapper(
     private val context: IrPluginContext,
     private val symbolRemapper: SymbolRemapper,
     private val typeTranslator: TypeTranslator,
-    private val composerTypeDescriptor: ClassDescriptor,
-    private val functionBodySkipping: Boolean
+    private val composerTypeDescriptor: ClassDescriptor
 ) : TypeRemapper {
 
     lateinit var deepCopy: IrElementTransformerVoid
@@ -338,12 +337,12 @@ class ComposerTypeRemapper(
     private val IrConstructorCall.annotationClass
         get() = this.symbol.descriptor.returnType.constructor.declarationDescriptor
 
-    fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
+    private fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
         any { it.annotationClass?.fqNameOrNull() == fqName }
 
     private fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
 
-    fun IrType.isFunction(): Boolean {
+    private fun IrType.isFunction(): Boolean {
         val classifier = classifierOrNull ?: return false
         val name = classifier.descriptor.name.asString()
         if (!name.startsWith("Function")) return false
@@ -358,24 +357,17 @@ class ComposerTypeRemapper(
         val oldIrArguments = type.arguments
         val realParams = oldIrArguments.size - 1
         var extraArgs = listOf(
+            // composer param
             makeTypeProjection(
                 composerTypeDescriptor.defaultType.replaceArgumentsWithStarProjections().toIrType(),
                 Variance.INVARIANT
-            )
+            ),
+            // key param
+            makeTypeProjection(context.irBuiltIns.intType, Variance.INVARIANT)
         )
-        if (functionBodySkipping) {
-            val changedParams = changedParamCount(realParams)
-            extraArgs = extraArgs + (0 until changedParams).map {
-                makeTypeProjection(context.irBuiltIns.intType, Variance.INVARIANT)
-            }
-        } else {
-            listOf(
-                makeTypeProjection(
-                    composerTypeDescriptor.defaultType
-                        .replaceArgumentsWithStarProjections().toIrType(),
-                    Variance.INVARIANT
-                )
-            )
+        val changedParams = changedParamCount(realParams, 1)
+        extraArgs = extraArgs + (0 until changedParams).map {
+            makeTypeProjection(context.irBuiltIns.intType, Variance.INVARIANT)
         }
         val newIrArguments =
             oldIrArguments.subList(0, oldIrArguments.size - 1) +

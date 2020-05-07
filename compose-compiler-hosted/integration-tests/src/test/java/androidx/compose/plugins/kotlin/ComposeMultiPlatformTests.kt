@@ -52,16 +52,17 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
             actual @Composable fun Test() {}
         """,
         """
-        final class JvmKt%Test%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function1 {
-          OUTERCLASS JvmKt Test (Landroidx/compose/Composer;)V
+        final class JvmKt%Test%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function3 {
+          OUTERCLASS JvmKt Test (Landroidx/compose/Composer;II)V
           final static INNERCLASS JvmKt%Test%1 null null
-          <init>()V
-          public final invoke(Landroidx/compose/Composer;)V
-          public synthetic bridge invoke(Ljava/lang/Object;)Ljava/lang/Object;
+          private final synthetic I %%changed
+          <init>(I)V
+          public final invoke(Landroidx/compose/Composer;II)V
+          public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
         }
         public final class JvmKt {
           final static INNERCLASS JvmKt%Test%1 null null
-          public final static Test(Landroidx/compose/Composer;)V
+          public final static Test(Landroidx/compose/Composer;II)V
         }
         """
         )

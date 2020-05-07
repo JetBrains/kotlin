@@ -17,7 +17,6 @@
 package androidx.compose.plugins.kotlin
 
 import androidx.compose.plugins.kotlin.compiler.lower.ComposableCallTransformer
-import androidx.compose.plugins.kotlin.compiler.lower.ComposeObservePatcher
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerIntrinsicTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerLambdaMemoization
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
@@ -33,33 +32,10 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getDeclaration
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
-object ComposeTransforms {
-    const val DEFAULT = 0b00111111
-    const val NONE = 0b00000000
-    const val FRAMED_CLASSES = 0b00000001
-    const val LAMBDA_MEMOIZATION = 0b00000010
-    const val COMPOSER_PARAM = 0b00000100
-    const val INTRINSICS = 0b00001000
-    const val CALLS_AND_EMITS = 0b00010000
-    const val RESTART_GROUPS = 0b00100000
-    const val CONTROL_FLOW_GROUPS = 0b01000000
-    const val FUNCTION_BODY_SKIPPING = 0b10000000
-}
-
 class ComposeIrGenerationExtension : IrGenerationExtension {
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
-    ) = generate(
-        moduleFragment,
-        pluginContext,
-        transforms = ComposeTransforms.DEFAULT
-    )
-
-    fun generate(
-        module: IrModuleFragment,
-        pluginContext: IrPluginContext,
-        transforms: Int
     ) {
         // TODO: refactor transformers to work with just BackendContext
         val bindingTrace = DelegatingBindingTrace(pluginContext.bindingContext, "trace in " +
@@ -70,66 +46,42 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
 
         // add metadata from the frontend onto IR Nodes so that the metadata will travel
         // with the ir nodes as they transform and get copied
-        ComposeResolutionMetadataTransformer(pluginContext).lower(module)
+        ComposeResolutionMetadataTransformer(pluginContext).lower(moduleFragment)
 
-            // transform @Model classes
-            if (transforms and ComposeTransforms.FRAMED_CLASSES != 0) {
-                FrameIrTransformer(pluginContext).lower(module)
-            }
+        // transform @Model classes
+        FrameIrTransformer(pluginContext).lower(moduleFragment)
 
-            // Memoize normal lambdas and wrap composable lambdas
-            if (transforms and ComposeTransforms.LAMBDA_MEMOIZATION != 0) {
-                ComposerLambdaMemoization(pluginContext, symbolRemapper, bindingTrace).lower(module)
-            }
-
-            val functionBodySkipping = transforms and ComposeTransforms.FUNCTION_BODY_SKIPPING != 0
+        // Memoize normal lambdas and wrap composable lambdas
+        ComposerLambdaMemoization(pluginContext, symbolRemapper, bindingTrace).lower(moduleFragment)
 
         generateSymbols(pluginContext)
 
-            // transform all composable functions to have an extra synthetic composer
-            // parameter. this will also transform all types and calls to include the extra
-            // parameter.
-            if (transforms and ComposeTransforms.COMPOSER_PARAM != 0) {
-                ComposerParamTransformer(
-                    pluginContext,
-                    symbolRemapper,
-                    bindingTrace,
-                    functionBodySkipping
-                ).lower(module)
-            } else if (functionBodySkipping) {
-                error("Cannot have FUNCTION_BODY_SKIPPING on without COMPOSER_PARAM")
-            }
+        // transform all composable functions to have an extra synthetic composer
+        // parameter. this will also transform all types and calls to include the extra
+        // parameter.
+        ComposerParamTransformer(
+            pluginContext,
+            symbolRemapper,
+            bindingTrace
+        ).lower(moduleFragment)
 
-            // transform calls to the currentComposer to just use the local parameter from the
-            // previous transform
-            if (transforms and ComposeTransforms.INTRINSICS != 0) {
-                ComposerIntrinsicTransformer(pluginContext, functionBodySkipping).lower(module)
-            }
+        // transform calls to the currentComposer to just use the local parameter from the
+        // previous transform
+        ComposerIntrinsicTransformer(pluginContext).lower(moduleFragment)
 
-            if (transforms and ComposeTransforms.CONTROL_FLOW_GROUPS != 0) {
-                ComposableFunctionBodyTransformer(
-                    pluginContext,
-                    symbolRemapper,
-                    bindingTrace
-                ).lower(module)
-            }
+        ComposableFunctionBodyTransformer(
+            pluginContext,
+            symbolRemapper,
+            bindingTrace
+        ).lower(moduleFragment)
 
-            generateSymbols(pluginContext)
+        generateSymbols(pluginContext)
 
-            // transform composable calls and emits into their corresponding calls appealing
-            // to the composer
-            if (transforms and ComposeTransforms.CALLS_AND_EMITS != 0) {
-                ComposableCallTransformer(pluginContext, symbolRemapper, bindingTrace).lower(module)
-            }
+        // transform composable calls and emits into their corresponding calls appealing
+        // to the composer
+        ComposableCallTransformer(pluginContext, symbolRemapper, bindingTrace).lower(moduleFragment)
 
-            generateSymbols(pluginContext)
-
-            // transform composable functions to have restart groups so that they can be
-            // recomposed
-            if (transforms and ComposeTransforms.RESTART_GROUPS != 0) {
-                ComposeObservePatcher(pluginContext, symbolRemapper, bindingTrace).lower(module)
-            }
-            generateSymbols(pluginContext)
+        generateSymbols(pluginContext)
     }
 }
 

@@ -412,11 +412,7 @@ class ComposeEmitResolver(
         val result = mutableListOf<String>()
 
         if (returnType == null || returnType.isUnit()) {
-            return callParamInfos
-                .filter { it.descriptor.hasPivotalAnnotation() }
-                .map {
-                    it.attribute.name
-                }
+            return emptyList()
         }
 
         val validationSet = validations.map { it.name }.toSet()
@@ -435,10 +431,6 @@ class ComposeEmitResolver(
             val name = assignment.name
             val descriptor = assignment.descriptor
 
-            if (descriptor.hasPivotalAnnotation()) {
-                result.add(name)
-                continue
-            }
             if (descriptor is PropertyDescriptor &&
                 attrsUsedInCall.contains(name) && !descriptor.isVar) {
                 result.add(name)
@@ -597,7 +589,6 @@ class ComposeEmitResolver(
                     it.isLateInit && it.visibility.isVisibleOutside() &&
                             !Visibilities.isPrivate(it.visibility)
                 }
-                .filter { !it.hasHiddenAttributeAnnotation() }
 
             requiredAttributes
                 .filter { !consumedAttributes.contains(it.name.asString()) }
