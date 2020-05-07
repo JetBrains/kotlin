@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -198,8 +199,6 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         changeSettingsKtsOutsideSections()
 
-//        project.service<GradleScriptInputsWatcher>().clearAndRefillState()
-
         assertConfigurationUpToDate(testFiles.settings)
         assertConfigurationUpdateWasDone(testFiles.buildKts)
     }
@@ -233,7 +232,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
     }
 
     private fun markFileChanged(virtualFile: VirtualFile, ts: Long) {
-//        project.service<GradleScriptInputsWatcher>().fileChanged(virtualFile.path, ts)
+        GradleBuildRootsManager.getInstance(project).fileChanged(virtualFile.path, ts)
     }
 
     fun testLoadedConfigurationWhenExternalFileChanged() {
