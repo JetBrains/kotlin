@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.vfs.VfsUtil
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
@@ -90,11 +90,10 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
 
         // todo(KT-34440): take inputs snapshot before starting import
         KotlinDslScriptModel(
-            file.absolutePath,
-            // TODO: NPE
-            getGradleScriptInputsStamp(project, virtualFile)!!,
-            model.classPath.map { it.absolutePath },
-            model.sourcePath.map { it.absolutePath },
+            toSystemIndependentName(file.absolutePath),
+            getGradleScriptInputsStamp(project, virtualFile)!!, // TODO: NPE
+            model.classPath.map { toSystemIndependentName(it.absolutePath) },
+            model.sourcePath.map { toSystemIndependentName(it.absolutePath) },
             model.implicitImports,
             messages
         )
@@ -114,7 +113,7 @@ fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {
     }
 
     // todo: use real info about projects
-    build.projectRoots.addAll(build.models.map { FileUtil.toSystemIndependentName(File(it.file).parent) })
+    build.projectRoots.addAll(build.models.map { toSystemIndependentName(File(it.file).parent) })
 
     GradleBuildRootsManager.getInstance(project).update(build)
 }
