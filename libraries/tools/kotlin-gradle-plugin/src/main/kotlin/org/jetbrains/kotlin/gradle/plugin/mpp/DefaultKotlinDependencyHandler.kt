@@ -91,27 +91,44 @@ class DefaultKotlinDependencyHandler(
     override fun npm(name: String): Dependency =
         onlyNameNpmDependency(name)
 
-    override fun npm(name: String, version: String): NpmDependency =
+    override fun npm(
+        name: String,
+        version: String,
+        generateKotlinExternals: Boolean
+    ): NpmDependency =
         NpmDependency(
             project = project,
             name = name,
-            version = version
+            version = version,
+            generateKotlinExternals = generateKotlinExternals
         )
 
-    override fun npm(name: String, directory: File): NpmDependency =
+    override fun npm(
+        name: String,
+        directory: File,
+        generateKotlinExternals: Boolean
+    ): NpmDependency =
         directoryNpmDependency(
-            name,
-            directory,
-            NpmDependency.Scope.NORMAL
+            name = name,
+            directory = directory,
+            scope = NpmDependency.Scope.NORMAL,
+            generateKotlinExternals = generateKotlinExternals
         )
 
-    override fun npm(directory: File): NpmDependency =
+    override fun npm(
+        directory: File,
+        generateKotlinExternals: Boolean
+    ): NpmDependency =
         npm(
             name = moduleName(directory),
-            directory = directory
+            directory = directory,
+            generateKotlinExternals = generateKotlinExternals
         )
 
-    override fun devNpm(name: String, version: String): NpmDependency =
+    override fun devNpm(
+        name: String,
+        version: String
+    ): NpmDependency =
         NpmDependency(
             project = project,
             name = name,
@@ -121,9 +138,10 @@ class DefaultKotlinDependencyHandler(
 
     override fun devNpm(name: String, directory: File): NpmDependency =
         directoryNpmDependency(
-            name,
-            directory,
-            NpmDependency.Scope.DEV
+            name = name,
+            directory = directory,
+            scope = NpmDependency.Scope.DEV,
+            generateKotlinExternals = false
         )
 
     override fun devNpm(directory: File): NpmDependency =
@@ -132,28 +150,45 @@ class DefaultKotlinDependencyHandler(
             directory = directory
         )
 
-    override fun optionalNpm(name: String, version: String): NpmDependency =
+    override fun optionalNpm(
+        name: String,
+        version: String,
+        generateKotlinExternals: Boolean
+    ): NpmDependency =
         NpmDependency(
             project = project,
             name = name,
             version = version,
-            scope = NpmDependency.Scope.OPTIONAL
+            scope = NpmDependency.Scope.OPTIONAL,
+            generateKotlinExternals = generateKotlinExternals
         )
 
-    override fun optionalNpm(name: String, directory: File): NpmDependency =
+    override fun optionalNpm(
+        name: String,
+        directory: File,
+        generateKotlinExternals: Boolean
+    ): NpmDependency =
         directoryNpmDependency(
             name,
             directory,
-            NpmDependency.Scope.OPTIONAL
+            NpmDependency.Scope.OPTIONAL,
+            generateKotlinExternals = generateKotlinExternals
         )
 
-    override fun optionalNpm(directory: File): NpmDependency =
+    override fun optionalNpm(
+        directory: File,
+        generateKotlinExternals: Boolean
+    ): NpmDependency =
         optionalNpm(
             name = moduleName(directory),
-            directory = directory
+            directory = directory,
+            generateKotlinExternals = generateKotlinExternals
         )
 
-    override fun peerNpm(name: String, version: String): NpmDependency =
+    override fun peerNpm(
+        name: String,
+        version: String
+    ): NpmDependency =
         NpmDependency(
             project = project,
             name = name,
@@ -164,12 +199,14 @@ class DefaultKotlinDependencyHandler(
     private fun directoryNpmDependency(
         name: String,
         directory: File,
-        scope: NpmDependency.Scope
+        scope: NpmDependency.Scope,
+        generateKotlinExternals: Boolean
     ): NpmDependency =
         directoryNpmDependency(
-            project,
-            name,
-            directory,
-            scope
+            project = project,
+            name = name,
+            directory = directory,
+            scope = scope,
+            generateKotlinExternals = generateKotlinExternals
         )
 }

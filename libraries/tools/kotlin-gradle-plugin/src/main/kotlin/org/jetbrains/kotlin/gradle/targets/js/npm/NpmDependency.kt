@@ -25,7 +25,7 @@ data class NpmDependency(
     private val name: String,
     private val version: String,
     val scope: Scope = Scope.NORMAL,
-    val generateKotlinExternals: Boolean = true
+    val generateKotlinExternals: Boolean = false
 ) : SelfResolvingDependency,
     SelfResolvingDependencyInternal,
     ResolvableDependency,
@@ -132,7 +132,8 @@ internal fun directoryNpmDependency(
     project: Project,
     name: String,
     directory: File,
-    scope: NpmDependency.Scope
+    scope: NpmDependency.Scope,
+    generateKotlinExternals: Boolean
 ): NpmDependency {
     check(directory.isDirectory) {
         "Dependency on local path should point on directory but $directory found"
@@ -142,7 +143,8 @@ internal fun directoryNpmDependency(
         project = project,
         name = name,
         version = fileVersion(directory),
-        scope = scope
+        scope = scope,
+        generateKotlinExternals = generateKotlinExternals
     )
 }
 
