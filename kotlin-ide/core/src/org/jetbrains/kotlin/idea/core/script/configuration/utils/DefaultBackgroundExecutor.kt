@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.containers.HashSetQueue
+import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import java.util.*
@@ -33,13 +34,14 @@ import javax.swing.SwingUtilities
  */
 internal class DefaultBackgroundExecutor(
     val project: Project,
-    val rootsManager: ScriptClassRootsUpdater
+    val manager: CompositeScriptConfigurationManager
 ) : BackgroundExecutor {
     companion object {
         const val PROGRESS_INDICATOR_DELAY = 1000
         const val PROGRESS_INDICATOR_MIN_QUEUE = 3
     }
 
+    val rootsManager get() = manager.updater
     private val work = Any()
     private val queue: Queue<LoadTask> = HashSetQueue()
 

@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.idea.core.script.configuration
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
+import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
+import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtFile
 abstract class ScriptingSupport {
     abstract fun isApplicable(file: VirtualFile): Boolean
     abstract fun isConfigurationLoadingInProgress(file: KtFile): Boolean
-    abstract fun collectConfigurations(builder: ScriptClassRootsCache.Builder)
+    abstract fun collectConfigurations(builder: ScriptClassRootsBuilder)
 
     companion object {
         val EPN: ExtensionPointName<ScriptingSupport> =
