@@ -14,7 +14,6 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin.scripting.idea">
         <listener order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListener"/>
-        <listener order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptListener"/>
 
         <loader order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptConfigurationLoader"/>
 
