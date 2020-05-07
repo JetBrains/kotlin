@@ -204,7 +204,7 @@ private abstract class AbstractNpmDependencyExtension(
     protected fun npmDeclarationException(args: Array<out Any?>): Nothing {
         throw IllegalArgumentException(
             """
-                            |Unable to add NPM with scope '$scope' dependency by ${args.joinToString()}
+                            |Unable to add NPM dependency with scope '$scope' by ${args.joinToString()}
                             |Possible variants:
                             |${possibleVariants().joinToString("\n") { "- ${it.first} -> ${it.second}" }}
             """.trimMargin()
