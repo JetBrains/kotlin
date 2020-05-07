@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,9 +13,11 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
+import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReferenceDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class KotlinAwareJavaGetterRenameProcessor : RenameJavaMethodProcessor() {
@@ -38,12 +40,12 @@ class KotlinAwareJavaGetterRenameProcessor : RenameJavaMethodProcessor() {
             .filter { it.parameters.size == 1 && it.returnType == PsiType.VOID }
             .flatMap {
                 super.findReferences(it, searchScope, searchInCommentsAndStrings)
-                    .filterIsInstance<SyntheticPropertyAccessorReference.Setter>()
+                    .filterIsInstanceWithChecker<SyntheticPropertyAccessorReference> { !it.getter }
             }
             .ifEmpty { return getterReferences }
         return ArrayList<PsiReference>(getterReferences.size + setterReferences.size).apply {
             addAll(getterReferences)
-            setterReferences.mapTo(this) { SyntheticPropertyAccessorReference.Getter(it.expression) }
+            setterReferences.mapTo(this) { SyntheticPropertyAccessorReferenceDescriptorImpl(it.expression, getter = true) }
         }
     }
 }

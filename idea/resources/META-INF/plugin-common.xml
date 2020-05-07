@@ -171,6 +171,12 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.caches.FileAttributeService"
                         serviceImplementation="org.jetbrains.kotlin.idea.caches.FileAttributeServiceImpl"/>
 
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker"
+                        serviceImplementation="org.jetbrains.kotlin.idea.references.ReadWriteAccessCheckerDescriptorsImpl"/>
+
+   <applicationService serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
+                        serviceImplementation="org.jetbrains.kotlin.idea.references.KotlinReferenceContributor"/>
+
     <applicationService serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"

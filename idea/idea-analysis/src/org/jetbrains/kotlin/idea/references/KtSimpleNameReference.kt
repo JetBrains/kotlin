@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
@@ -33,15 +34,21 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
+class KtSimpleNameReferenceDescriptorsImpl(
+    expression: KtSimpleNameExpression
+) : KtSimpleNameReference(expression), KtDescriptorsBasedReference {
+    override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean =
+        canBeReferenceTo(candidateTarget)
+
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         return SmartList<DeclarationDescriptor>().apply {
             // Replace Java property with its accessor(s)
-            for (descriptor in super.getTargetDescriptors(context)) {
+            for (descriptor in expression.getReferenceTargets(context)) {
                 val sizeBefore = size
 
                 if (descriptor !is JavaPropertyDescriptor) {
@@ -71,7 +78,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
             if (extension.isReferenceTo(this, element)) return true
         }
 
-        return super.isReferenceTo(element)
+        return super<KtDescriptorsBasedReference>.isReferenceTo(element)
     }
 
     override fun getRangeInElement(): TextRange {
@@ -141,23 +148,18 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         return expression
     }
 
-    enum class ShorteningMode {
-        NO_SHORTENING,
-        DELAYED_SHORTENING,
-        FORCED_SHORTENING
-    }
 
     // By default reference binding is delayed
     override fun bindToElement(element: PsiElement): PsiElement =
         bindToElement(element, ShorteningMode.DELAYED_SHORTENING)
 
-    fun bindToElement(element: PsiElement, shorteningMode: ShorteningMode): PsiElement =
+    override fun bindToElement(element: PsiElement, shorteningMode: ShorteningMode): PsiElement =
         element.getKotlinFqName()?.let { fqName -> bindToFqName(fqName, shorteningMode, element) } ?: expression
 
-    fun bindToFqName(
+    override fun bindToFqName(
         fqName: FqName,
-        shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING,
-        targetElement: PsiElement? = null
+        shorteningMode: ShorteningMode,
+        targetElement: PsiElement?
     ): PsiElement {
         val expression = expression
         if (fqName.isRoot) return expression
@@ -289,7 +291,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
             return listOf(element.getReferencedNameAsName())
         }
 
-    fun getImportAlias(): KtImportAlias? {
+    override fun getImportAlias(): KtImportAlias? {
         fun DeclarationDescriptor.unwrap() = if (this is ImportedFromObjectCallableDescriptor<*>) callableFromObject else this
 
         val element = element

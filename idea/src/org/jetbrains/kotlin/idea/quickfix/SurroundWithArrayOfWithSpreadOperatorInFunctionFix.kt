@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.CollectionLiteralResolver.Companion.ARRAY_OF_FUNCTION
-import org.jetbrains.kotlin.resolve.CollectionLiteralResolver.Companion.PRIMITIVE_TYPE_TO_ARRAY
+import org.jetbrains.kotlin.resolve.ArrayFqNames
 
 class SurroundWithArrayOfWithSpreadOperatorInFunctionFix(
     val wrapper: Name,
@@ -52,7 +51,7 @@ class SurroundWithArrayOfWithSpreadOperatorInFunctionFix(
 
             val parameterType = actualDiagnostic.a
 
-            val wrapper = PRIMITIVE_TYPE_TO_ARRAY[KotlinBuiltIns.getPrimitiveArrayElementType(parameterType)] ?: ARRAY_OF_FUNCTION
+            val wrapper = ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY[KotlinBuiltIns.getPrimitiveArrayElementType(parameterType)] ?: ArrayFqNames.ARRAY_OF_FUNCTION
             return SurroundWithArrayOfWithSpreadOperatorInFunctionFix(wrapper, actualDiagnostic.psiElement)
         }
     }
