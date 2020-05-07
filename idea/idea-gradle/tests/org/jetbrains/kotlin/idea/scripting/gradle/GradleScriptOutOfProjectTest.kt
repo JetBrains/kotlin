@@ -92,7 +92,6 @@ class GradleScriptOutOfProjectTest : AbstractScriptConfigurationLoadingTest() {
 
     private fun assertConfigurationShouldBeLoadedManually() {
         assertNull(getConfiguration())
-        assertAndDoAllBackgroundTasks()
         assertNoLoading()
     }
 
