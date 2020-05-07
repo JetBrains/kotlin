@@ -18,4 +18,6 @@ class KotlinSSPropertyTest : KotlinSSTest() {
     fun testTypedValWithInitializer() { doTest("val '_ : Int = 1") }
 
     fun testValReceiverType() { doTest("val '_ : ('_T) -> '_U = '_") }
+
+    fun testVarTypeProjection() { doTest("var '_ : Comparable<'_T>") }
 }

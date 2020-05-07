@@ -51,6 +51,8 @@ class KotlinSSClassTest : KotlinSSTest() {
 
     fun testClassTypeParamExtBound() { doTest("class '_<'_, '_ : List<*>>(val a: T, val b: R, val c: T)") }
 
+    fun testClassTypeParamProjection() { doTest("class '_<'_T : Comparable<'_T>>") }
+
     fun testClassTypeParamVariance() { doTest("class '_<out V>") }
 
     fun testInterface() { doTest("interface '_") }
