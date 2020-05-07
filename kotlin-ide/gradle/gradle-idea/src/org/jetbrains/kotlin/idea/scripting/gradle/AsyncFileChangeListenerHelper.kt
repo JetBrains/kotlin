@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.autoimport.AsyncFileChangeListenerBas
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 
 fun addVfsListener(
     watcher: GradleScriptListener,
