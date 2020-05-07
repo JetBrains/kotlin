@@ -18,8 +18,12 @@ class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any>
     override val typeRegistry: TypeRegistry<FirDeclarationDataKey, Any>
         get() = FirDeclarationDataRegistry
 
-    internal operator fun set(key: KClass<out FirDeclarationDataKey>, value: Any) {
-        registerComponent(key, value)
+    internal operator fun set(key: KClass<out FirDeclarationDataKey>, value: Any?) {
+        if (value == null) {
+            removeComponent(key)
+        } else {
+            registerComponent(key, value)
+        }
     }
 }
 
@@ -44,9 +48,7 @@ object FirDeclarationDataRegistry : TypeRegistry<FirDeclarationDataKey, Any>() {
         }
 
         override fun setValue(thisRef: FirDeclaration, property: KProperty<*>, value: V?) {
-            if (value != null) {
-                thisRef.attributes[key] = value
-            }
+            thisRef.attributes[key] = value
         }
     }
 }

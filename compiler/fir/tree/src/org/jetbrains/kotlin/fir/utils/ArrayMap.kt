@@ -38,7 +38,7 @@ internal class OneElementArrayMap<T : Any>(val value: T, val index: Int) : Array
     }
 }
 
-internal  class ArrayMapImpl<T : Any> : ArrayMap<T>() {
+internal class ArrayMapImpl<T : Any> : ArrayMap<T>() {
     companion object {
         private const val DEFAULT_SIZE = 20
         private const val INCREASE_K = 2
@@ -56,13 +56,28 @@ internal  class ArrayMapImpl<T : Any> : ArrayMap<T>() {
 
     override operator fun set(index: Int, value: T) {
         ensureCapacity(index)
+        if (data[index] == null) {
+            size++
+        }
         data[index] = value
-
-        size++
     }
 
     override operator fun get(index: Int): T? {
         @Suppress("UNCHECKED_CAST")
         return data.getOrNull(index) as T?
     }
+
+    fun remove(index: Int) {
+        if (data[index] != null) {
+            size--
+        }
+        data[index] = null
+    }
+
+    fun entries(): List<Entry<T>> {
+        @Suppress("UNCHECKED_CAST")
+        return data.mapIndexedNotNull { index, value -> if (value != null) Entry(index, value as T) else null }
+    }
+
+    data class Entry<T>(override val key: Int, override val value: T) : Map.Entry<Int, T>
 }

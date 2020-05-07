@@ -12,6 +12,9 @@ import kotlin.reflect.KClass
  *   depending on array map fullness
  * [AttributeArrayOwner] can be used in classes with many instances,
  *   like user data for Fir elements or attributes for cone types
+ *
+ * Note that you can remove attributes from [AttributeArrayOwner] despite
+ *   from components in [ComponentArrayOwner]
  */
 abstract class AttributeArrayOwner<K : Any, T : Any> : AbstractArrayMapOwner<K, T>() {
     @Suppress("UNCHECKED_CAST")
@@ -35,5 +38,22 @@ abstract class AttributeArrayOwner<K : Any, T : Any> : AbstractArrayMapOwner<K, 
         }
 
         arrayMap[id] = value
+    }
+
+    protected fun removeComponent(tClass: KClass<out K>) {
+        val id = typeRegistry.getId(tClass)
+        if (arrayMap[id] == null) return
+        @Suppress("UNCHECKED_CAST")
+        when (arrayMap.size) {
+            1 -> arrayMap = EmptyArrayMap as ArrayMap<T>
+            else -> {
+                val map = arrayMap as ArrayMapImpl<T>
+                map.remove(id)
+                if (map.size == 1) {
+                    val (index, value) = map.entries().first()
+                    arrayMap = OneElementArrayMap(value, index)
+                }
+            }
+        }
     }
 }
