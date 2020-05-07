@@ -3,6 +3,9 @@ package com.intellij.util.indexing.diagnostic
 
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.PersistentFSConstants
+import com.intellij.util.indexing.UnindexedFilesUpdater
 import com.intellij.util.text.DateFormatUtil
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -36,12 +39,12 @@ fun PerThreadTime.toJsonPerThreadTime(): JsonPerThreadTimeStats {
   )
 }
 
-private fun <N: Number> getMeanOfArray(elements: Collection<N>): Double {
+private fun <N : Number> getMeanOfArray(elements: Collection<N>): Double {
   require(elements.isNotEmpty())
   return elements.map { it.toDouble() }.sum() / elements.size
 }
 
-private fun <N: Number> getMedianOfArray(elements: Collection<N>): Double {
+private fun <N : Number> getMedianOfArray(elements: Collection<N>): Double {
   require(elements.isNotEmpty())
   val sorted = elements.map { it.toDouble() }.sorted()
   return if (sorted.size % 2 == 0) {
@@ -169,14 +172,37 @@ data class JsonIndexDiagnosticAppInfo(
   }
 }
 
+data class JsonRuntimeInfo(
+  val maxMemory: Long,
+  val numberOfProcessors: Int,
+  val maxNumberOfIndexingThreads: Int,
+  val maxSizeOfFileForIntelliSense: Int,
+  val maxSizeOfFileForContentLoading: Int
+) {
+  companion object {
+    fun create(): JsonRuntimeInfo {
+      val runtime = Runtime.getRuntime()
+      return JsonRuntimeInfo(
+        runtime.maxMemory(),
+        runtime.availableProcessors(),
+        UnindexedFilesUpdater.getMaxNumberOfIndexingThreads(),
+        PersistentFSConstants.getMaxIntellisenseFileSize(),
+        FileUtilRt.LARGE_FOR_CONTENT_LOADING
+      )
+    }
+  }
+}
+
 data class JsonIndexDiagnostic(
   val appInfo: JsonIndexDiagnosticAppInfo,
+  val runtimeInfo: JsonRuntimeInfo,
   val projectIndexingHistory: JsonProjectIndexingHistory
 ) {
   companion object {
     fun generateForHistory(projectIndexingHistory: ProjectIndexingHistory): JsonIndexDiagnostic =
       JsonIndexDiagnostic(
         JsonIndexDiagnosticAppInfo.create(),
+        JsonRuntimeInfo.create(),
         projectIndexingHistory.convertToJson()
       )
   }
