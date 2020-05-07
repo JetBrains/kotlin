@@ -108,7 +108,7 @@ private abstract class AbstractNpmDependencyExtension(
     DevNpmDependencyExtension,
     PeerNpmDependencyExtension,
     Closure<NpmDependency>(project.dependencies) {
-    private val defaultGenerateKotlinExternals: Boolean
+    protected val defaultGenerateKotlinExternals: Boolean
         get() = _defaultGenerateKotlinExternals ?: false
 
     override fun invoke(name: String): NpmDependency =
@@ -277,10 +277,20 @@ private class DefaultNpmDependencyExtension(
     }
 
     override fun possibleVariants(): List<Pair<String, String>> {
-        return super.possibleVariants() + listOf(
+        val result = super.possibleVariants() + listOf(
             "npm(File)" to "File.name:File",
             "npm('name', File)" to "name:File"
         )
+
+        if (_defaultGenerateKotlinExternals == null) {
+            return result
+        }
+
+        return result
+            .map { (first, second) ->
+                val value = first.replace(")", ", generateKotlinExternals = $defaultGenerateKotlinExternals)")
+                value to second
+            }
     }
 }
 
