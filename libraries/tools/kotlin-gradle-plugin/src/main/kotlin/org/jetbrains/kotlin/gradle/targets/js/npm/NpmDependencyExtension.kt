@@ -82,12 +82,12 @@ internal fun Project.addNpmDependencyExtension() {
                 DEV -> DefaultNpmDependencyExtension(
                     this,
                     scope,
-                    false
+                    null
                 )
                 PEER -> NpmDependencyWithoutDirectoryExtension(
                     this,
                     scope,
-                    false
+                    null
                 )
             }
 
@@ -103,11 +103,14 @@ internal fun Project.addNpmDependencyExtension() {
 private abstract class AbstractNpmDependencyExtension(
     protected val project: Project,
     protected val scope: NpmDependency.Scope,
-    protected val defaultGenerateKotlinExternals: Boolean
+    protected val _defaultGenerateKotlinExternals: Boolean?
 ) : NpmDependencyExtension,
     DevNpmDependencyExtension,
     PeerNpmDependencyExtension,
     Closure<NpmDependency>(project.dependencies) {
+    private val defaultGenerateKotlinExternals: Boolean
+        get() = _defaultGenerateKotlinExternals ?: false
+
     override fun invoke(name: String): NpmDependency =
         onlyNameNpmDependency(name)
 
@@ -215,19 +218,18 @@ private abstract class AbstractNpmDependencyExtension(
     protected fun generateKotlinExternalsIfPossible(vararg args: Any?): Boolean {
         val arg2 = (if (args.size > 2) args[2] else null) as? Boolean
 
-        if (arg2 != null && !defaultGenerateKotlinExternals) {
+        if (arg2 != null && _defaultGenerateKotlinExternals == null) {
             npmDeclarationException(args)
         }
 
-        return arg2
-            ?: defaultGenerateKotlinExternals
+        return arg2 ?: defaultGenerateKotlinExternals
     }
 }
 
 private class DefaultNpmDependencyExtension(
     project: Project,
     scope: NpmDependency.Scope,
-    defaultGenerateKotlinExternals: Boolean
+    defaultGenerateKotlinExternals: Boolean?
 ) : AbstractNpmDependencyExtension(
     project,
     scope,
@@ -285,7 +287,7 @@ private class DefaultNpmDependencyExtension(
 private class NpmDependencyWithoutDirectoryExtension(
     project: Project,
     scope: NpmDependency.Scope,
-    defaultGenerateKotlinExternals: Boolean
+    defaultGenerateKotlinExternals: Boolean?
 ) : AbstractNpmDependencyExtension(
     project,
     scope,
