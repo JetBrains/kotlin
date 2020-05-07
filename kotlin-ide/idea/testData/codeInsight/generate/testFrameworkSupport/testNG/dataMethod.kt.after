@@ -1,5 +1,5 @@
 // ACTION_CLASS: org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Data
-// CONFIGURE_LIBRARY: TestNG@testng(-|[0-9]|\.)*jar
+// CONFIGURE_LIBRARY: TestNG
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 

@@ -1,4 +1,4 @@
-// CONFIGURE_LIBRARY: JUnit@lib/junit-4.12.jar
+// CONFIGURE_LIBRARY: JUnit
 // REF: (<root>).FooTest2
 // REF: FooTest
 import junit.framework.TestCase;

@@ -1,4 +1,4 @@
-// CONFIGURE_LIBRARY: TestNG@testng(-|[0-9]|\.)*jar
+// CONFIGURE_LIBRARY: TestNG
 package testing
 
 import org.testng.annotations.Test

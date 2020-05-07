@@ -37,6 +37,11 @@ object ConfigLibraryUtil {
     private const val DEFAULT_KOTLIN_JS_STDLIB_NAME = "KOTLIN_JS_STDLIB_NAME"
     private const val DEFAULT_KOTLIN_COMMON_STDLIB_NAME = "KOTLIN_COMMON_STDLIB_NAME"
 
+    private val LIBRARY_NAME_TO_JAR_PATH = mapOf(
+            "JUnit" to com.intellij.util.PathUtil.getJarPathForClass(junit.framework.TestCase::class.java),
+            "TestNG" to com.intellij.util.PathUtil.getJarPathForClass(org.testng.annotations.Test::class.java)
+    )
+
     private fun getKotlinRuntimeLibEditor(libName: String, library: File): NewLibraryEditor {
         val editor = NewLibraryEditor()
         editor.name = libName
@@ -179,14 +184,11 @@ object ConfigLibraryUtil {
         }
     }
 
-    fun addLibrary(module: Module, libraryName: String, rootPath: String?, jarPaths: Array<String>) {
+    private fun addLibrary(module: Module, libraryName: String, jarPaths: List<String>) {
         val editor = NewLibraryEditor()
         editor.name = libraryName
         for (jarPath in jarPaths) {
-            val jarFile = rootPath?.let {
-                File(rootPath, jarPath).takeIf { it.exists() }
-                    ?: FileUtil.findFilesByMask(jarPath.toPattern(), File(rootPath)).firstOrNull()
-            } ?: File(jarPath)
+            val jarFile = File(jarPath)
 
             require(jarFile.exists()) {
                 "Cannot configure library with given path, file doesn't exists $jarPath"
@@ -197,16 +199,17 @@ object ConfigLibraryUtil {
         addLibrary(editor, module)
     }
 
-    fun configureLibraries(module: Module, rootPath: String, libraryInfos: List<String>) {
-        for (libraryInfo in libraryInfos) {
-            val i = libraryInfo.indexOf('@')
-            val libraryName = libraryInfo.substring(0, i)
-            val jarPaths = libraryInfo.substring(i + 1).split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            addLibrary(module, libraryName, rootPath, jarPaths)
+    private fun libraryNameToJar(libraryName: String): String =
+            LIBRARY_NAME_TO_JAR_PATH[libraryName] ?: error("$libraryName isn't registered")
+
+    private fun configureLibraries(module: Module, rootPath: String, libraryNames: List<String>) {
+        for (libraryName in libraryNames) {
+            val jarPaths = libraryName.split(";".toRegex()).dropLastWhile { it.isEmpty() }.map { libraryNameToJar(it) }
+            addLibrary(module, libraryName, jarPaths)
         }
     }
 
-    fun unconfigureLibrariesByName(module: Module, libraryNames: MutableList<String>) {
+    private fun unconfigureLibrariesByName(module: Module, libraryNames: MutableList<String>) {
         val iterator = libraryNames.iterator()
         while (iterator.hasNext()) {
             val libraryName = iterator.next()
@@ -223,14 +226,10 @@ object ConfigLibraryUtil {
     }
 
     fun unconfigureLibrariesByDirective(module: Module, fileText: String) {
-        val libraryNames = ArrayList<String>()
-        for (libInfo in InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ")) {
-            libraryNames.add(libInfo.substring(0, libInfo.indexOf('@')))
-        }
-        for (libraryName in InTextDirectivesUtils.findListWithPrefixes(fileText, "// UNCONFIGURE_LIBRARY: ")) {
-            libraryNames.add(libraryName)
-        }
+        val libraryNames =
+                InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ") +
+                InTextDirectivesUtils.findListWithPrefixes(fileText, "// UNCONFIGURE_LIBRARY: ")
 
-        unconfigureLibrariesByName(module, libraryNames)
+        unconfigureLibrariesByName(module, libraryNames.toMutableList())
     }
 }

@@ -1,4 +1,4 @@
-// CONFIGURE_LIBRARY: JUnit@lib/junit-4.12.jar
+// CONFIGURE_LIBRARY: JUnit
 // REF: /src.fromKotlinTestToKotlinFile.kt
 // REF: /src.fromKotlinTestToKotlinFile.2.kt
 import junit.framework.TestCase

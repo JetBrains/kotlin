@@ -1,4 +1,4 @@
-// CONFIGURE_LIBRARY: JUnit@lib/junit-4.12.jar
+// CONFIGURE_LIBRARY: JUnit
 // IS_APPLICABLE: false
 
 import org.junit.Test
