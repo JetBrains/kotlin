@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.extensionPointService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
-import org.jetbrains.kotlin.fir.firEffectiveVisibility
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -173,9 +172,9 @@ private class FirStatusResolveTransformer(
         return block.compose()
     }
 
-    private fun prepareStatus(declaration: FirDeclaration, status: FirDeclarationStatus): FirDeclarationStatus {
+    private fun <D> prepareStatus(declaration: D, status: FirDeclarationStatus): FirDeclarationStatus where D : FirDeclaration, D : FirAnnotationContainer {
         var result = status
-        session.extensionPointService.statusTransformerExtensions.forEach {
+        session.extensionPointService.statusTransformerExtensions.forDeclaration(declaration).forEach {
             result = it.transformStatus(declaration, status)
         }
         return result

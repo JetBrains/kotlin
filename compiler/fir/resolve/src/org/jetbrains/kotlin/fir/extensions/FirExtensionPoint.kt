@@ -6,10 +6,16 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+
+typealias AnnotationFqn = FqName
 
 abstract class FirExtensionPoint(val session: FirSession) {
     abstract val name: FirExtensionPointName
+
+    abstract val annotations: Set<AnnotationFqn>
+    abstract val metaAnnotations: Set<AnnotationFqn>
 
     fun interface Factory<P : FirExtensionPoint> {
         fun create(session: FirSession): P

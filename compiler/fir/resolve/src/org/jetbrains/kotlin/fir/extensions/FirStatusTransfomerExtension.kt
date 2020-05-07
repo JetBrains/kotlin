@@ -27,7 +27,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     fun interface Factory : FirExtensionPoint.Factory<FirStatusTransformerExtension>
 }
 
-val FirExtensionPointService.statusTransformerExtensions: List<FirStatusTransformerExtension> by FirExtensionPointService.registeredExtensions()
+val FirExtensionPointService.statusTransformerExtensions: FirExtensionPointService.ExtensionsAccessor<FirStatusTransformerExtension> by FirExtensionPointService.registeredExtensions()
 
 inline fun FirDeclarationStatus.transform(
     visibility: Visibility = this.visibility,
