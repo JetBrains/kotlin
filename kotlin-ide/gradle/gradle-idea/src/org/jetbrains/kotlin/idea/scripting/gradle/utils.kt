@@ -29,21 +29,6 @@ private val sections = arrayListOf("buildscript", "plugins", "initscript", "plug
 
 fun isGradleKotlinScript(virtualFile: VirtualFile) = virtualFile.name.endsWith(".gradle.kts")
 
-fun isInAffectedGradleProjectFiles(project: Project, filePath: String): Boolean {
-    if (filePath.endsWith("/gradle.properties")) return true
-    if (filePath.endsWith("/gradle-wrapper.properties")) return true
-
-    if (filePath.endsWith(".gradle") || filePath.endsWith(".gradle.kts")) {
-        if (ApplicationManager.getApplication().isUnitTestModeWithoutAffectedGradleProjectFilesCheck) {
-            return true
-        }
-
-        return GradleBuildRootsManager.getInstance(project).isUnderProjectDir(filePath.substringBeforeLast("/"))
-    }
-
-    return false
-}
-
 fun getGradleScriptInputsStamp(
     project: Project,
     file: VirtualFile,
