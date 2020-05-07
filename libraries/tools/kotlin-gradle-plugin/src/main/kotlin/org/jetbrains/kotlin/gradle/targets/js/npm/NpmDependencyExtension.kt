@@ -163,7 +163,7 @@ private abstract class AbstractNpmDependencyExtension(
                 name = arg,
                 args = *args
             )
-            else -> processNonStringFirstArgument(arg, args)
+            else -> processNonStringFirstArgument(arg, *args)
         }
     }
 
@@ -171,7 +171,7 @@ private abstract class AbstractNpmDependencyExtension(
 
     private fun withName(name: String, vararg args: Any?): NpmDependency {
         val arg1 = if (args.size > 1) args[1] else null
-        val generateKotlinExternals = secondArgOrFalse(args)
+        val generateKotlinExternals = secondArgOrFalse(*args)
 
         return when (arg1) {
             null -> invoke(
@@ -186,7 +186,7 @@ private abstract class AbstractNpmDependencyExtension(
                 name,
                 arg1,
                 generateKotlinExternals,
-                args
+                *args
             )
         }
     }
@@ -214,7 +214,7 @@ private abstract class AbstractNpmDependencyExtension(
 
     protected fun secondArgOrFalse(vararg args: Any?): Boolean {
         val arg2 = if (args.size > 2) args[2] else null
-        return (arg2 as? Boolean) ?: false
+        return (arg2 as? Boolean) ?: defaultGenerateKotlinExternals
     }
 }
 
