@@ -138,6 +138,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         // other scripts: "included", "precompiled" scripts, scripts in unlinked projects,
         // or just random files with ".gradle.kts" ending
 
+        // todo(gradle6): remove, it is required only for projects with old gradle
         if (searchNearestLegacy) {
             val found = roots.findNearestRoot(filePath)
             if (found is GradleBuildRoot.Legacy) return ScriptUnderRoot(found)
@@ -221,7 +222,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
         val listener = object : GradleSettingsListenerAdapter() {
             override fun onProjectsLinked(settings: MutableCollection<GradleProjectSettings>) {
                 settings.forEach {
-                    loadLinkedRoot(it)
+                    add(loadLinkedRoot(it))
                 }
             }
 
