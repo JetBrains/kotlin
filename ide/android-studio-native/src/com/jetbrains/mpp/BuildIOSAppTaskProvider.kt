@@ -63,16 +63,6 @@ private class BuildConfiguration : CidrBuildConfiguration {
     override fun getName(): String = "Xcode Build Configuration"
 }
 
-private class XCProjectFile(file: File) {
-    val absolutePath: String = file.absolutePath
-
-    val selector: String
-        get() = if (absolutePath.endsWith(XCFileExtensions.workspace))
-            "-workspace"
-        else
-            "-project"
-}
-
 class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
     override fun getName() = "Build iOS app"
 
@@ -89,7 +79,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
     ): Boolean {
         if (configuration !is AppleRunConfiguration) return false
         val workDirectory = configuration.project.basePath ?: return false
-        val xcProjectFile = findXCProjectFile(workDirectory, configuration.xcodeproj) ?: return false
+        val xcProjectFile = configuration.xcProjectFile() ?: return false
 
         val buildContext = CidrBuild.BuildContext(
             configuration.project,
@@ -139,28 +129,5 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
         cmd.addParameters("-sdk", sdk)
 
         return OSProcessHandler(cmd)
-    }
-
-    private fun findXCProjectFile(workDirectory: String, xcodeprojRelativeDirectory: String?): XCProjectFile? {
-        if (xcodeprojRelativeDirectory == null) {
-            return null
-        }
-
-        val xcodeprojAbsoluteDirectory = FileUtil.join(workDirectory, xcodeprojRelativeDirectory)
-
-        val projectFilePatterns = listOf(
-            Pattern.compile(".+\\.${XCFileExtensions.workspace}"),
-            Pattern.compile(".+\\.${XCFileExtensions.project}")
-        )
-
-        for (pattern in projectFilePatterns) {
-            val files = FileUtil.findFilesOrDirsByMask(pattern, File(xcodeprojAbsoluteDirectory))
-
-            files.minBy { it.absolutePath.lastIndexOf('/') }?.also {
-                return XCProjectFile(it)
-            }
-        }
-
-        return null
     }
 }

@@ -8,18 +8,30 @@ package com.jetbrains.mpp.execution
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.configurations.RunProfileState
+import com.intellij.execution.configurations.RuntimeConfigurationError
 import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.RunContentDescriptor
+import com.intellij.notification.NotificationGroup
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
+import com.intellij.xml.util.XmlStringUtil
 import com.jetbrains.cidr.execution.CidrCommandLineState
-import com.jetbrains.mpp.KonanCommandLineState
+import com.jetbrains.konan.KonanBundle
+import com.jetbrains.mpp.*
+import com.jetbrains.mpp.XCFileExtensions
 import com.jetbrains.mpp.debugger.KonanExternalSystemState
-import com.jetbrains.mpp.RunnerBase
-import com.jetbrains.mpp.AppleRunConfiguration
-import com.jetbrains.mpp.ProjectWorkspace
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
+import java.io.File
+
+internal const val ACTUAL_XC_PROJECT_FILE = "project.pbxproj"
+internal const val DEBUG_INFORMATION_FORMAT_KEY = "DEBUG_INFORMATION_FORMAT"
+internal const val DEBUG_INFORMATION_FORMAT_VALUE = "dwarf-with-dsym"
+
 
 class AppleRunner : RunnerBase() {
+
+    private val balloonNotification = NotificationGroup.balloonGroup("Xcode");
 
     override fun getRunnerId(): String = "AppleRunner"
 
@@ -29,6 +41,30 @@ class AppleRunner : RunnerBase() {
         is BinaryRunConfiguration -> canRunBinary(executorId, profile)
         is AppleRunConfiguration -> true
         else -> false
+    }
+
+    private fun checkDSYMIsGenerated(configuration: AppleRunConfiguration?) {
+        if (configuration == null) return
+        val xcDir = (configuration.xcProjectFile() ?: return).absolutePath
+
+        // dSYMs are needed in the setting with CocoaPods, which implies that project is being governed by workspace
+        if (xcDir.endsWith(XCFileExtensions.project)) return
+
+        val xcProjectDir = (xcDir.removeSuffix(XCFileExtensions.workspace) + XCFileExtensions.project)
+        val xcActualProjectFile = File(xcProjectDir).resolve(ACTUAL_XC_PROJECT_FILE)
+
+        // do not trigger warning for nontrivial configuration
+        if (!xcActualProjectFile.exists()) return
+
+        val debugFormatSettings = xcActualProjectFile.readLines().filter { it.contains(DEBUG_INFORMATION_FORMAT_KEY) }
+
+        if (!debugFormatSettings.all { it.contains(DEBUG_INFORMATION_FORMAT_VALUE) }) {
+            balloonNotification.createNotification(
+                XmlStringUtil.wrapInHtml(KonanBundle.message("label.informationAboutDSYM.title")),
+                XmlStringUtil.wrapInHtml(KonanBundle.message("label.informationAboutDSYM.text")),
+                NotificationType.INFORMATION, null
+            ).notify(configuration.project)
+        }
     }
 
     @Throws(ExecutionException::class)
@@ -42,6 +78,10 @@ class AppleRunner : RunnerBase() {
             }
 
             return super.doExecute(state, environment)
+        }
+
+        if (state is CidrCommandLineState && environment.runProfile is AppleRunConfiguration) {
+            checkDSYMIsGenerated(environment.runProfile as? AppleRunConfiguration)
         }
 
         return when (state) {
