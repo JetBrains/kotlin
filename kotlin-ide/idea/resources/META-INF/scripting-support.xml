@@ -1,7 +1,7 @@
 <idea-plugin>
   <extensionPoints>
-    <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.scriptingSupportProvider"
-                    interface="org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport$Provider"
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.scriptingSupport"
+                    interface="org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport"
                     area="IDEA_PROJECT"/>
   </extensionPoints>
 
