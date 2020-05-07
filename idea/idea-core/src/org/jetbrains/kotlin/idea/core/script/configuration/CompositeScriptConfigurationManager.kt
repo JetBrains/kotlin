@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.idea.core.script.configuration
 
 import com.intellij.ProjectTopics
 import com.intellij.codeInsight.daemon.OutsidersPsiFileSupport
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.ProjectJdkTable.JDK_TABLE_TOPIC
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
@@ -18,9 +19,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
+import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsCache
+import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsUpdater
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
@@ -44,11 +45,17 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
     @Suppress("unused")
     private val notifier = ScriptChangesNotifier(project)
 
-    val updater = ScriptClassRootsUpdater(project, this)
+    private val classpathRoots: ScriptClassRootsCache
+        get() = updater.classpathRoots
 
     private val plugins = ScriptingSupport.EPN.getPoint(project).extensionList
 
     val default = DefaultScriptingSupport(this)
+
+    val updater = ScriptClassRootsUpdater(project, this) { builder ->
+        default.collectConfigurations(builder)
+        plugins.forEach { it.collectConfigurations(builder) }
+    }
 
     fun tryGetScriptDefinitionFast(locationId: String): ScriptDefinition? {
         return classpathRoots.getLightScriptInfo(locationId)?.definition
@@ -80,30 +87,13 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
         plugins.firstOrNull { it.isApplicable(file.originalFile.virtualFile) }?.isConfigurationLoadingInProgress(file)
             ?: default.isConfigurationLoadingInProgress(file)
 
-    @Volatile
-    private var classpathRoots: ScriptClassRootsCache = recreateRootsCache()
-
     fun getLightScriptInfo(file: String): ScriptClassRootsCache.LightScriptInfo? =
         classpathRoots.getLightScriptInfo(file)
-
-    private fun recreateRootsCache(): ScriptClassRootsCache {
-        val builder = ScriptClassRootsCache.Builder(project)
-        default.collectConfigurations(builder)
-        plugins.forEach { it.collectConfigurations(builder) }
-        return builder.build()
-    }
-
-    fun collectRootsAndCheckNew(): ScriptClassRootsCache.Updates {
-        val old = classpathRoots
-        val new = recreateRootsCache()
-        classpathRoots = new
-        return new.diff(old)
-    }
 
     override fun updateScriptDefinitionReferences() {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
-        default.updateScriptDefinitions()
+        default.updateScriptDefinitionsReferences()
 
         if (classpathRoots.customDefinitionsUsed) {
             updater.ensureUpdateScheduled()
@@ -112,14 +102,18 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
 
     init {
         val connection = project.messageBus.connect(project)
+
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent) {
                 if (event.isCausedByFileTypesChange) return
-
-                if (classpathRoots.hasInvalidSdk(project)) {
-                    updater.ensureUpdateScheduled()
-                }
+                updater.checkInvalidSdks()
             }
+        })
+
+        connection.subscribe(JDK_TABLE_TOPIC, object : ProjectJdkTable.Listener {
+            override fun jdkAdded(jdk: Sdk) = updater.checkInvalidSdks()
+            override fun jdkNameChanged(jdk: Sdk, previousName: String) = updater.checkInvalidSdks()
+            override fun jdkRemoved(jdk: Sdk) = updater.checkInvalidSdks(remove = jdk)
         })
     }
 
