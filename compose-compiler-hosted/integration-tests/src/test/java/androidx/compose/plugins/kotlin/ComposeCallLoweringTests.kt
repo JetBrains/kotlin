@@ -79,6 +79,55 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    fun testVarargCall(): Unit = ensureSetup {
+        compose("""
+            @Composable
+            fun <T : Any> foo(
+                vararg inputs: Any?,
+                key: String? = null,
+                init: () -> T
+            ): T {
+                for (input in inputs) {
+                    print(input)
+                }
+                return init()
+            }
+
+            @Composable
+            fun App() {
+                val x = foo { "hello" }
+                val y = foo(1, 2) { "world" }
+            }
+        """,
+            "App()"
+        ).then {
+            // we are only checking that this call successfully completes without throwing
+            // an exception
+        }
+    }
+
+    @Test
+    fun testVarargs(): Unit = ensureSetup {
+        codegen(
+            """
+            import androidx.compose.*
+
+            @Immutable class Foo
+
+            @Composable
+            fun A(vararg values: Foo) {
+                print(values)
+            }
+
+            @Composable
+            fun B(vararg values: Int) {
+                print(values)
+            }
+            """
+        )
+    }
+
+    @Test
     fun testComposableLambdaCall(): Unit = ensureSetup {
         codegen(
             """
@@ -578,7 +627,7 @@ fun WebComponent(
         }
     }
 
-    @Test // java.lang.ClassNotFoundException: Z
+    @Test
     fun testObservableLambda(): Unit = ensureSetup {
         compose(
             """
@@ -971,7 +1020,7 @@ fun WebComponent(
         }
     }
 
-    @Test // java.lang.ClassNotFoundException: Z
+    @Test
     fun testInliningTemp(): Unit = ensureSetup {
         compose(
             """
@@ -1090,7 +1139,7 @@ fun WebComponent(
         }
     }
 
-    @Test // java.lang.ClassNotFoundException: Z
+    @Test
     fun testCGNInlining(): Unit = ensureSetup {
         compose(
             """
@@ -1119,6 +1168,21 @@ fun WebComponent(
 
                 @Composable fun Bar() {
                   Pass(WrappedInt(1))
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testRangeForLoop(): Unit = ensureSetup {
+        codegen(
+            """
+                @Composable fun Foo(i: Int) {}
+                @Composable
+                fun Bar(items: Array<Int>) {
+                  for (i in items) {
+                    Foo(i)
+                  }
                 }
             """
         )

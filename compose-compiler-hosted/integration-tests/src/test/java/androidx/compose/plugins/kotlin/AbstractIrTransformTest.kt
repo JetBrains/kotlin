@@ -53,7 +53,6 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
     protected open val additionalPaths = emptyList<File>()
 
     fun verifyComposeIrTransform(
-        transforms: Int,
         source: String,
         expectedTransformed: String,
         extra: String = "",
@@ -63,14 +62,51 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             sourceFile("Test.kt", source.replace('%', '$')),
             sourceFile("Extra.kt", extra.replace('%', '$'))
         )
-        val irModule = generateIrModuleWithJvmResolve(
-            files,
-            transforms
-        )
+        val irModule = generateIrModuleWithJvmResolve(files)
         val actualTransformed = irModule
             .files[0]
             .dumpSrc()
             .replace('$', '%')
+            // replace source keys for start group calls
+            .replace(
+                Regex(
+                    "(%composer\\.start(Restart|Movable|Replaceable)Group\\()([-\\d]+)"
+                )
+            ) {
+                "${it.groupValues[1]}<>"
+            }
+            // replace source keys for joinKey calls
+            .replace(
+                Regex(
+                    "(%composer\\.joinKey\\()([-\\d]+)"
+                )
+            ) {
+                "${it.groupValues[1]}<>"
+            }
+            // restartableFunctionInstance(<>, true)
+            .replace(
+                Regex(
+                    "(restartableFunctionInstance\\()([-\\d]+)"
+                )
+            ) {
+                "${it.groupValues[1]}<>"
+            }
+            // restartableFunction(%composer, <>, true)
+            .replace(
+                Regex(
+                    "(restartableFunction\\(%composer,\\s)([-\\d]+)"
+                )
+            ) {
+                "${it.groupValues[1]}<>"
+            }
+                // %composer, -1234,
+            .replace(
+                Regex(
+                    "%composer,\\s([-\\d]+),"
+                )
+            ) {
+                "%composer, <>,"
+            }
             .trimIndent()
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
         if (dumpTree) {
@@ -84,10 +120,7 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
         )
     }
 
-    private fun generateIrModuleWithJvmResolve(
-        files: List<KtFile>,
-        transforms: Int
-    ): IrModuleFragment {
+    private fun generateIrModuleWithJvmResolve(files: List<KtFile>): IrModuleFragment {
         val classPath = createClasspath() + additionalPaths
         val configuration = newConfiguration()
         configuration.addJvmClasspathRoots(classPath)
@@ -140,8 +173,7 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
                     generatorContext.typeTranslator,
                     generatorContext.irBuiltIns,
                     irProviders = irProviders
-                ),
-                transforms = transforms
+                )
             )
         }
 

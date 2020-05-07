@@ -66,6 +66,8 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -87,6 +89,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -96,10 +100,15 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.endOffset
+import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
+import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.startOffset
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -420,6 +429,7 @@ abstract class AbstractComposeLowering(
 
     protected fun irCall(
         symbol: IrFunctionSymbol,
+        origin: IrStatementOrigin? = null,
         dispatchReceiver: IrExpression? = null,
         extensionReceiver: IrExpression? = null,
         vararg args: IrExpression
@@ -429,7 +439,8 @@ abstract class AbstractComposeLowering(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             symbol.owner.returnType,
-            symbol
+            symbol,
+            origin
         ).also {
             if (dispatchReceiver != null) it.dispatchReceiver = dispatchReceiver
             if (extensionReceiver != null) it.extensionReceiver = extensionReceiver
@@ -442,6 +453,7 @@ abstract class AbstractComposeLowering(
     protected fun irAnd(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         return irCall(
             context.symbols.intAnd,
+            null,
             lhs,
             null,
             rhs
@@ -452,6 +464,7 @@ abstract class AbstractComposeLowering(
         val int = context.builtIns.intType
         return irCall(
             context.symbols.getUnaryOperator(OperatorNames.INV, int),
+            null,
             lhs
         )
     }
@@ -460,6 +473,7 @@ abstract class AbstractComposeLowering(
         val int = context.builtIns.intType
         return irCall(
             context.symbols.getBinaryOperator(OperatorNames.OR, int, int),
+            null,
             lhs,
             null,
             rhs
@@ -516,6 +530,7 @@ abstract class AbstractComposeLowering(
         val int = context.builtIns.intType
         return irCall(
             context.symbols.getBinaryOperator(OperatorNames.XOR, int, int),
+            null,
             lhs,
             null,
             rhs
@@ -539,6 +554,7 @@ abstract class AbstractComposeLowering(
     protected fun irEqual(lhs: IrExpression, rhs: IrExpression): IrExpression {
         return irCall(
             context.irBuiltIns.eqeqeqSymbol,
+            null,
             null,
             null,
             lhs,
@@ -587,6 +603,99 @@ abstract class AbstractComposeLowering(
         IrConstKind.Null,
         null
     )
+
+    protected fun irForLoop(
+        scope: DeclarationDescriptor,
+        elementType: IrType,
+        subject: IrExpression,
+        loopBody: (IrValueDeclaration) -> IrExpression
+    ): IrStatement {
+        val primitiveType = subject.type.getPrimitiveArrayElementType()
+        val iteratorSymbol = primitiveType?.let {
+            context.symbols.primitiveIteratorsByType[it]
+        } ?: context.symbols.iterator
+        val unitType = context.irBuiltIns.unitType
+
+        val getIteratorSymbol = subject.type.classOrNull!!.getSimpleFunction("iterator")!!
+        val nextSymbol = iteratorSymbol.getSimpleFunction("next")!!
+        val hasNextSymbol = iteratorSymbol.getSimpleFunction("hasNext")!!
+
+        val iteratorVar = irTemporary(
+            containingDeclaration = scope,
+            value = irCall(
+                symbol = getIteratorSymbol,
+                origin = IrStatementOrigin.FOR_LOOP_ITERATOR,
+                dispatchReceiver = subject
+            ),
+            isVar = false,
+            name = "tmp0_iterator",
+            irType = iteratorSymbol.defaultType,
+            origin = IrDeclarationOrigin.FOR_LOOP_ITERATOR
+        )
+        return irBlock(
+            type = unitType,
+            origin = IrStatementOrigin.FOR_LOOP,
+            statements = listOf(
+                iteratorVar,
+                IrWhileLoopImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    unitType,
+                    IrStatementOrigin.FOR_LOOP_INNER_WHILE
+                ).apply {
+                    val loopVar = irTemporary(
+                        containingDeclaration = scope,
+                        value = irCall(
+                            symbol = nextSymbol,
+                            origin = IrStatementOrigin.FOR_LOOP_NEXT,
+                            dispatchReceiver = irGet(iteratorVar)
+                        ),
+                        origin = IrDeclarationOrigin.FOR_LOOP_VARIABLE,
+                        isVar = false,
+                        name = "value",
+                        irType = elementType
+                    )
+                    condition = irCall(
+                        symbol = hasNextSymbol,
+                        origin = IrStatementOrigin.FOR_LOOP_HAS_NEXT,
+                        dispatchReceiver = irGet(iteratorVar)
+                    )
+                    body = irBlock(
+                        type = unitType,
+                        origin = IrStatementOrigin.FOR_LOOP_INNER_WHILE,
+                        statements = listOf(
+                            loopVar,
+                            loopBody(loopVar)
+                        )
+                    )
+                }
+            )
+        )
+    }
+
+    protected fun irTemporary(
+        containingDeclaration: DeclarationDescriptor,
+        value: IrExpression,
+        name: String,
+        irType: IrType = value.type,
+        isVar: Boolean = false,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+    ): IrVariableImpl {
+        val tempVarDescriptor = IrTemporaryVariableDescriptorImpl(
+            containingDeclaration,
+            Name.identifier(name),
+            irType.toKotlinType(),
+            isVar
+        )
+        return IrVariableImpl(
+            value.startOffset,
+            value.endOffset,
+            origin,
+            tempVarDescriptor,
+            irType,
+            value
+        )
+    }
 
     protected fun irGet(type: IrType, symbol: IrValueSymbol): IrExpression {
         return IrGetValueImpl(
@@ -652,6 +761,20 @@ abstract class AbstractComposeLowering(
         statements: List<IrStatement>
     ): IrExpression {
         return IrBlockImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            type,
+            origin,
+            statements
+        )
+    }
+
+    protected fun irComposite(
+        type: IrType = context.irBuiltIns.unitType,
+        origin: IrStatementOrigin? = null,
+        statements: List<IrStatement>
+    ): IrExpression {
+        return IrCompositeImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             type,

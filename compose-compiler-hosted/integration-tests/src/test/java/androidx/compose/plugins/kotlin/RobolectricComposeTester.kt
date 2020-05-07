@@ -41,13 +41,13 @@ private class TestActivity : Activity() {
 
 private val Activity.root get() = findViewById(ROOT_ID) as ViewGroup
 
-fun compose(composable: (Composer<*>) -> Unit) =
+fun compose(composable: (Composer<*>, Int, Int) -> Unit) =
     RobolectricComposeTester(composable)
-fun composeMulti(composable: (Composer<*>) -> Unit, advance: () -> Unit) =
+fun composeMulti(composable: (Composer<*>, Int, Int) -> Unit, advance: () -> Unit) =
     RobolectricComposeTester(composable, advance)
 
 class RobolectricComposeTester internal constructor(
-    val composable: (Composer<*>) -> Unit,
+    val composable: (Composer<*>, Int, Int) -> Unit,
     val advance: (() -> Unit)? = null
 ) {
     inner class ActiveTest(

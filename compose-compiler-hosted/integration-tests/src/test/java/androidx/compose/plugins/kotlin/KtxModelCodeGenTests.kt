@@ -332,10 +332,15 @@ class KtxModelCodeGenTests : AbstractCodegenTest() {
 
         val instanceOfClass = instanceClass.newInstance()
         val advanceMethod = instanceClass.getMethod("advance", *parameterTypes)
-        val composeMethod = instanceClass.getMethod("compose", Composer::class.java)
+        val composeMethod = instanceClass.getMethod(
+            "compose",
+            Composer::class.java,
+            Int::class.java,
+            Int::class.java
+        )
 
-        return composeMulti({
-            composeMethod.invoke(instanceOfClass, it)
+        return composeMulti({ composer, _, _ ->
+            composeMethod.invoke(instanceOfClass, composer, 0, 1)
         }) {
             val values = valuesFactory()
             val arguments = values.map { it.value }.toTypedArray()

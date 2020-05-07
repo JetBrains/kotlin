@@ -152,8 +152,8 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             )
         ) {
             // Check that the composable functions were properly mangled
-            assert(it.contains("public final static foo-M7K8KNI(ILandroidx/compose/Composer;)V"))
-            assert(it.contains("public final static foo-fpD6Y9w(ILandroidx/compose/Composer;)V"))
+            assert(it.contains("public final static foo-pxsymTM(ILandroidx/compose/Composer;II)V"))
+            assert(it.contains("public final static foo-UYB6V-A(ILandroidx/compose/Composer;II)V"))
             // Check that we didn't leave any references to the original name, which probably
             // leads to a compile error.
             assert(!it.contains("foo("))
@@ -232,7 +232,6 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     package x
 
                     import androidx.compose.Composable
-                    import androidx.compose.Pivotal
 
                     @Composable
                     inline fun <T> key(
@@ -265,12 +264,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     package x
 
                     import androidx.compose.Composable
-                    import androidx.compose.Pivotal
 
                     @Composable
                     inline fun key(
                         @Suppress("UNUSED_PARAMETER")
-                        @Pivotal
                         v1: Int,
                         block: @Composable () -> Int
                     ): Int = block()
@@ -953,10 +950,15 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
         val instanceOfClass = instanceClass.newInstance()
         val advanceMethod = instanceClass.getMethod("advance")
-        val composeMethod = instanceClass.getMethod("compose", Composer::class.java)
+        val composeMethod = instanceClass.getMethod(
+            "compose",
+            Composer::class.java,
+            Int::class.java,
+            Int::class.java
+        )
 
-        return composeMulti({
-            composeMethod.invoke(instanceOfClass, it)
+        return composeMulti({ composer, _, _ ->
+            composeMethod.invoke(instanceOfClass, composer, 0, 1)
         }) {
             advanceMethod.invoke(instanceOfClass)
         }

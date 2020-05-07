@@ -6,15 +6,12 @@ import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.ValidatedAssignment
 import androidx.compose.plugins.kotlin.ValidationType
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
-import androidx.compose.plugins.kotlin.hasPivotalAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -24,18 +21,15 @@ import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irFalse
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irReturnUnit
 import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.getIrValueParameter
@@ -44,15 +38,10 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.getValueArgument
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.putValueArgument
-import org.jetbrains.kotlin.ir.expressions.typeParametersCount
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -60,7 +49,6 @@ import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class ComposableCallTransformer(
     context: IrPluginContext,
@@ -74,9 +62,6 @@ class ComposableCallTransformer(
     override fun lower(module: IrModuleFragment) {
         module.transformChildrenVoid(this)
     }
-
-    private val orFunctionDescriptor = builtIns.builtIns.booleanType.memberScope
-        .findFirstFunction("or") { it is FunctionDescriptor && it.isInfix }
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -95,28 +80,6 @@ class ComposableCallTransformer(
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.isTransformedComposableCall() || expression.isSyntheticComposableCall()) {
-            val descriptor = expression.symbol.descriptor
-            val returnType = descriptor.returnType
-            val isUnit = returnType == null || returnType.isUnit() || expression.type.isUnit()
-            val isInline = descriptor.isInline || context.irTrace[
-                    ComposeWritableSlices.IS_INLINE_COMPOSABLE_CALL,
-                    expression
-            ] == true
-            return if (isUnit && !isInline) {
-                DeclarationIrBuilder(context, declarationStack.last().symbol).irBlock {
-                    +irComposableCall(expression.transformChildren())
-                }
-            } else {
-                val call = if (isInline)
-                    expression.transformChildrenWithoutConvertingLambdas()
-                else
-                    expression.transformChildren()
-                DeclarationIrBuilder(context, declarationStack.last().symbol)
-                    .irComposableExpr(call)
-            }
-        }
-
         val emitMetadata = context.irTrace[
                 ComposeWritableSlices.COMPOSABLE_EMIT_METADATA,
                 expression
@@ -129,22 +92,6 @@ class ComposableCallTransformer(
         return super.visitCall(expression)
     }
 
-    private fun IrCall.transformChildrenWithoutConvertingLambdas(): IrCall {
-        dispatchReceiver = dispatchReceiver?.transform(this@ComposableCallTransformer, null)
-        extensionReceiver = extensionReceiver?.transform(this@ComposableCallTransformer, null)
-        for (i in 0 until valueArgumentsCount) {
-            val arg = getValueArgument(i) ?: continue
-            if (arg is IrFunctionExpression) {
-                // we convert function expressions into their lowered lambda equivalents, but we
-                // want to avoid doing this for inlined lambda calls.
-                putValueArgument(i, super.visitFunctionExpression(arg))
-            } else {
-                putValueArgument(i, arg.transform(this@ComposableCallTransformer, null))
-            }
-        }
-        return this
-    }
-
     override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
         if (expression.origin == IrStatementOrigin.LAMBDA) {
             if (expression.function.valueParameters.lastOrNull()?.isComposerParam() == true) {
@@ -154,310 +101,6 @@ class ComposableCallTransformer(
             }
         }
         return super.visitFunctionExpression(expression)
-    }
-
-    private fun IrBlockBuilder.irComposableCall(
-        original: IrCall
-    ): IrExpression {
-        val composerArg = original.getValueArgument(original.valueArgumentsCount - 1)!!
-        // TODO(lmr): we may want to rewrite this in a way that doesn't do a deepCopy...
-        val getComposer = { composerArg.deepCopyWithVariables() }
-        return irComposableCallBase(
-            original,
-            getComposer
-        )
-    }
-
-    private fun IrBlockBuilder.irComposableCallBase(
-        original: IrCall,
-        getComposer: () -> IrExpression
-    ): IrExpression {
-
-        /*
-
-        Foo(text="foo")
-
-        // transforms into
-
-        val attr_text = "foo"
-        composer.call(
-            key = 123,
-            invalid = { changed(attr_text) },
-            block = { Foo(attr_text) }
-        )
-         */
-        // TODO(lmr): the way we grab temporaries here feels wrong. We should investigate the right
-        // way to do this. Additionally, we are creating temporary vars for variables which is
-        // causing larger stack space than needed in our generated code.
-
-        val irGetArguments = original
-            .symbol
-            .descriptor
-            .valueParameters
-            .map {
-                val arg = original.getValueArgument(it)
-                it to getParameterExpression(it, arg)
-            }
-
-        val tmpDispatchReceiver = original.dispatchReceiver?.let { irTemporary(it) }
-        val tmpExtensionReceiver = original.extensionReceiver?.let { irTemporary(it) }
-
-        val callDescriptor = composerTypeDescriptor
-            .unsubstitutedMemberScope
-            .findFirstFunction(KtxNameConventions.CALL.identifier) {
-                it.valueParameters.size == 3
-            }
-
-        val joinKeyDescriptor = composerTypeDescriptor
-            .unsubstitutedMemberScope
-            .findFirstFunction(KtxNameConventions.JOINKEY.identifier) {
-                it.valueParameters.size == 2
-            }
-
-        val callParameters = callDescriptor.valueParameters
-            .map { it.name to it }
-            .toMap()
-
-        fun getCallParameter(name: Name) = callParameters[name]
-            ?: error("Expected $name parameter to exist")
-
-        return irCall(
-            callee = referenceFunction(callDescriptor),
-            type = builtIns.unitType // TODO(lmr): refactor call(...) to return a type
-        ).apply {
-            dispatchReceiver = getComposer()
-
-            putValueArgument(
-                getCallParameter(KtxNameConventions.CALL_KEY_PARAMETER),
-                irGroupKey(
-                    original = original,
-                    getComposer = getComposer,
-                    joinKey = joinKeyDescriptor,
-                    pivotals = irGetArguments.mapNotNull { (param, getExpr) ->
-                        if (!param.hasPivotalAnnotation()) null
-                        else getExpr()
-                    }
-                )
-            )
-
-            val invalidParameter = getCallParameter(KtxNameConventions.CALL_INVALID_PARAMETER)
-
-            val validatorType = invalidParameter.type.getReceiverTypeFromFunctionType()
-                ?: error("Expected validator type to be on receiver of the invalid lambda")
-
-            val changedDescriptor = validatorType
-                .memberScope
-                .findFirstFunction("changed") { it.typeParametersCount == 1 }
-
-            val validatedArguments = irGetArguments
-                .take(irGetArguments.size - 1)
-                .mapNotNull { (_, getExpr) -> getExpr() } +
-                    listOfNotNull(
-                        tmpDispatchReceiver?.let { irGet(it) },
-                        tmpExtensionReceiver?.let { irGet(it) }
-                    )
-
-            val isSkippable = validatedArguments.all { it.type.toKotlinType().isStable() }
-
-            putValueArgument(
-                invalidParameter,
-                irLambdaExpression(
-                    original.startOffset,
-                    original.endOffset,
-                    descriptor = createFunctionDescriptor(
-                        type = invalidParameter.type,
-                        owner = symbol.descriptor.containingDeclaration
-                    ),
-                    type = invalidParameter.type.toIrType()
-                ) { fn ->
-                    if (!isSkippable) {
-                        // if it's not skippable, we don't validate any arguments.
-                        +irReturn(irTrue())
-                    } else {
-                        val validationCalls = validatedArguments
-                            .map {
-                                irChangedCall(
-                                    changedDescriptor = changedDescriptor,
-                                    receiver = irGet(fn.extensionReceiverParameter!!),
-                                    attributeValue = it
-                                )
-                            }
-
-                        // all as one expression: a or b or c ... or z
-                        +irReturn(when (validationCalls.size) {
-                            0 -> irFalse()
-                            1 -> validationCalls.single()
-                            else -> validationCalls.reduce { accumulator, value ->
-                                when {
-                                    // if it is a constant, the value is `false`
-                                    accumulator is IrConst<*> -> value
-                                    value is IrConst<*> -> accumulator
-                                    else -> irOr(accumulator, value)
-                                }
-                            }
-                        })
-                    }
-                }
-            )
-
-            val blockParameter = getCallParameter(KtxNameConventions.CALL_BLOCK_PARAMETER)
-
-            putValueArgument(
-                blockParameter,
-                irLambdaExpression(
-                    original.startOffset,
-                    original.endOffset,
-                    descriptor = createFunctionDescriptor(
-                        type = blockParameter.type,
-                        owner = symbol.descriptor.containingDeclaration
-                    ),
-                    type = blockParameter.type.toIrType()
-                ) {
-                    +irCall(
-                        callee = original.symbol,
-                        type = original.type
-                    ).apply {
-                        copyTypeArgumentsFrom(original)
-
-                        dispatchReceiver = tmpDispatchReceiver?.let { irGet(it) }
-                        extensionReceiver = tmpExtensionReceiver?.let { irGet(it) }
-
-                        irGetArguments.forEach { (param, getExpr) ->
-                            putValueArgument(param, getExpr())
-                        }
-                    }
-                }
-            )
-        }
-    }
-
-    private fun DeclarationIrBuilder.irComposableExpr(
-        original: IrCall
-    ): IrExpression {
-        return irBlock(resultType = original.type) {
-            val composerParam = nearestComposer()
-            val getComposer = { irGet(composerParam) }
-            irComposableExprBase(
-                original,
-                getComposer
-            )
-        }
-    }
-
-    private fun IrBlockBuilder.irComposableExprBase(
-        original: IrCall,
-        getComposer: () -> IrExpression
-    ) {
-        /*
-
-        Foo(text="foo")
-
-        // transforms into
-
-        composer.startExpr(123)
-        val result = Foo(text="foo")
-        composer.endExpr()
-        result
-         */
-
-        // TODO(lmr): the way we grab temporaries here feels wrong. We should investigate the right
-        // way to do this. Additionally, we are creating temporary vars for variables which is
-        // causing larger stack space than needed in our generated code.
-
-        // for composableExpr, we only need to create temporaries if there are any pivotals
-        val hasPivotals = original
-            .symbol
-            .descriptor
-            .valueParameters
-            .any { it.hasPivotalAnnotation() }
-
-        // if we don't have any pivotal parameters, we don't use the parameters more than once,
-        // so we can just use the original call itself.
-        val irGetArguments = original
-            .symbol
-            .descriptor
-            .valueParameters
-            .map {
-                val arg = original.getValueArgument(it)
-                val expr = if (hasPivotals)
-                    getParameterExpression(it, arg)
-                else
-                    ({ arg })
-                it to expr
-            }
-
-        val startExpr = composerTypeDescriptor
-            .unsubstitutedMemberScope
-            .findFirstFunction(KtxNameConventions.START_EXPR.identifier) {
-                it.valueParameters.size == 1
-            }
-
-        val endExpr = composerTypeDescriptor
-            .unsubstitutedMemberScope
-            .findFirstFunction(KtxNameConventions.END_EXPR.identifier) {
-                it.valueParameters.size == 0
-            }
-
-        val joinKeyDescriptor = composerTypeDescriptor
-            .unsubstitutedMemberScope
-            .findFirstFunction(KtxNameConventions.JOINKEY.identifier) {
-                it.valueParameters.size == 2
-            }
-
-        val startCall = irCall(
-            callee = referenceFunction(startExpr),
-            type = builtIns.unitType
-        ).apply {
-            dispatchReceiver = getComposer()
-            putValueArgument(
-                startExpr.valueParameters.first(),
-                irGroupKey(
-                    original = original,
-                    getComposer = getComposer,
-                    joinKey = joinKeyDescriptor,
-                    pivotals = irGetArguments.mapNotNull { (param, getExpr) ->
-                        if (!param.hasPivotalAnnotation()) null
-                        else getExpr()
-                    }
-                )
-            )
-        }
-
-        val newCall = if (hasPivotals) irCall(
-            callee = IrSimpleFunctionSymbolImpl(original.symbol.descriptor).also {
-                it.bind(original.symbol.owner as IrSimpleFunction)
-            },
-            type = original.type
-        ).apply {
-            copyTypeArgumentsFrom(original)
-
-            dispatchReceiver = original.dispatchReceiver
-            extensionReceiver = original.extensionReceiver
-
-            irGetArguments.forEach { (param, getExpr) ->
-                putValueArgument(param, getExpr())
-            }
-        } else original
-
-        val endCall = irCall(
-            callee = referenceFunction(endExpr),
-            type = builtIns.unitType
-        ).apply {
-            dispatchReceiver = getComposer()
-        }
-
-        val hasResult = !original.type.isUnit()
-
-        if (hasResult) {
-            +startCall
-            val tmpResult = irTemporary(newCall, irType = original.type)
-            +endCall
-            +irGet(tmpResult)
-        } else {
-            +startCall
-            +newCall
-            +endCall
-        }
     }
 
     private fun isChildrenParameter(desc: ValueParameterDescriptor, expr: IrExpression): Boolean {
@@ -490,8 +133,8 @@ class ComposableCallTransformer(
     private fun nearestComposer(): IrValueParameter {
         for (fn in declarationStack.asReversed()) {
             if (fn is IrFunction) {
-                val param = fn.valueParameters.lastOrNull()
-                if (param != null && param.isComposerParam()) {
+                val param = fn.composerParam()
+                if (param != null) {
                     return param
                 }
             }
@@ -698,37 +341,6 @@ class ComposableCallTransformer(
 
     private fun IrCall.sourceLocationHash(): Int {
         return symbol.descriptor.fqNameSafe.toString().hashCode() xor startOffset
-    }
-
-    private fun IrBuilderWithScope.irChangedCall(
-        changedDescriptor: FunctionDescriptor,
-        receiver: IrExpression,
-        attributeValue: IrExpression
-    ): IrExpression {
-        // TODO(lmr): make it so we can use the "changed" overloads with primitive types.
-        // Right now this is causing a lot of boxing/unboxing for primitives
-        return if (attributeValue is IrConst<*>) irFalse()
-        else irCall(
-            callee = referenceFunction(changedDescriptor),
-            type = changedDescriptor.returnType?.toIrType()!!
-        ).apply {
-            putTypeArgument(0, attributeValue.type)
-            dispatchReceiver = receiver
-            putValueArgument(0, attributeValue)
-        }
-    }
-
-    private fun IrBuilderWithScope.irOr(
-        left: IrExpression,
-        right: IrExpression
-    ): IrExpression {
-        return irCall(
-            callee = referenceFunction(orFunctionDescriptor),
-            type = builtIns.booleanType
-        ).apply {
-            dispatchReceiver = left
-            putValueArgument(0, right)
-        }
     }
 
     private fun IrBuilderWithScope.irValidatedAssignment(
