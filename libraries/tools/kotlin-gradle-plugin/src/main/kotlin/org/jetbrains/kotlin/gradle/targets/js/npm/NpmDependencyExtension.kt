@@ -14,18 +14,49 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
-interface NpmDependencyExtension {
+interface BaseNpmDependencyExtension {
     @Deprecated("Declaring NPM dependency without version is forbidden")
     operator fun invoke(name: String): NpmDependency
 
     operator fun invoke(name: String, version: String): NpmDependency
 }
 
-interface NpmDirectoryDependencyExtension : NpmDependencyExtension {
+interface NpmDirectoryDependencyExtension {
     operator fun invoke(name: String, directory: File): NpmDependency
 
     operator fun invoke(directory: File): NpmDependency
 }
+
+interface NpmDependencyWithExternalsExtension {
+    operator fun invoke(
+        name: String,
+        version: String,
+        generateKotlinExternals: Boolean
+    ): NpmDependency
+
+    operator fun invoke(
+        name: String,
+        directory: File,
+        generateKotlinExternals: Boolean
+    ): NpmDependency
+
+    operator fun invoke(
+        directory: File,
+        generateKotlinExternals: Boolean
+    ): NpmDependency
+}
+
+interface NpmDependencyExtension :
+    BaseNpmDependencyExtension,
+    NpmDirectoryDependencyExtension,
+    NpmDependencyWithExternalsExtension
+
+interface DevNpmDependencyExtension :
+    BaseNpmDependencyExtension,
+    NpmDirectoryDependencyExtension
+
+interface PeerNpmDependencyExtension :
+    BaseNpmDependencyExtension
 
 internal fun Project.addNpmDependencyExtension() {
     val extensions = (dependencies as ExtensionAware).extensions
@@ -37,8 +68,9 @@ internal fun Project.addNpmDependencyExtension() {
                 .toLowerCase()
 
             val type = when (scope) {
-                NORMAL, DEV, OPTIONAL -> NpmDirectoryDependencyExtension::class.java
-                PEER -> NpmDependencyExtension::class.java
+                NORMAL, OPTIONAL -> NpmDependencyExtension::class.java
+                DEV -> DevNpmDependencyExtension::class.java
+                PEER -> PeerNpmDependencyExtension::class.java
             }
 
             val extension = when (scope) {
@@ -61,7 +93,7 @@ internal fun Project.addNpmDependencyExtension() {
 
             extensions
                 .add(
-                    TypeOf.typeOf<NpmDependencyExtension>(type),
+                    TypeOf.typeOf<BaseNpmDependencyExtension>(type),
                     lowerCamelCaseName(scopePrefix, "npm"),
                     extension
                 )
@@ -73,24 +105,53 @@ private abstract class AbstractNpmDependencyExtension(
     protected val scope: NpmDependency.Scope,
     protected val defaultGenerateKotlinExternals: Boolean
 ) : NpmDependencyExtension,
-    NpmDirectoryDependencyExtension,
+    DevNpmDependencyExtension,
+    PeerNpmDependencyExtension,
     Closure<NpmDependency>(project.dependencies) {
     override fun invoke(name: String): NpmDependency =
         onlyNameNpmDependency(name)
 
-    override operator fun invoke(name: String, version: String): NpmDependency =
+    override operator fun invoke(
+        name: String,
+        version: String,
+        generateKotlinExternals: Boolean
+    ): NpmDependency =
         NpmDependency(
             project = project,
             name = name,
             version = version,
             scope = scope,
+            generateKotlinExternals = generateKotlinExternals
+        )
+
+    override fun invoke(name: String, version: String): NpmDependency =
+        invoke(
+            name = name,
+            version = version,
             generateKotlinExternals = defaultGenerateKotlinExternals
         )
 
-    override operator fun invoke(directory: File): NpmDependency =
+    override fun invoke(name: String, directory: File): NpmDependency =
+        invoke(
+            name = name,
+            directory = directory,
+            generateKotlinExternals = defaultGenerateKotlinExternals
+        )
+
+    override fun invoke(directory: File): NpmDependency =
+        invoke(
+            directory = directory,
+            generateKotlinExternals = defaultGenerateKotlinExternals
+        )
+
+    override operator fun invoke(
+        directory: File,
+        generateKotlinExternals: Boolean
+    ): NpmDependency =
         invoke(
             name = moduleName(directory),
-            directory = directory
+            directory = directory,
+            generateKotlinExternals = generateKotlinExternals
         )
 
     override fun call(vararg args: Any?): NpmDependency {
@@ -152,22 +213,17 @@ private class DefaultNpmDependencyExtension(
     scope,
     defaultGenerateKotlinExternals
 ) {
-    override fun invoke(name: String): NpmDependency =
-        onlyNameNpmDependency(name)
-
-    override operator fun invoke(name: String, directory: File): NpmDependency =
+    override operator fun invoke(
+        name: String,
+        directory: File,
+        generateKotlinExternals: Boolean
+    ): NpmDependency =
         directoryNpmDependency(
             project = project,
             name = name,
             directory = directory,
             scope = scope,
-            generateKotlinExternals = defaultGenerateKotlinExternals
-        )
-
-    override operator fun invoke(directory: File): NpmDependency =
-        invoke(
-            name = moduleName(directory),
-            directory = directory
+            generateKotlinExternals = generateKotlinExternals
         )
 
     override fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency {
@@ -208,7 +264,11 @@ private class NpmDependencyWithoutDirectoryExtension(
     scope,
     defaultGenerateKotlinExternals
 ) {
-    override fun invoke(name: String, directory: File): NpmDependency =
+    override fun invoke(
+        name: String,
+        directory: File,
+        generateKotlinExternals: Boolean
+    ): NpmDependency =
         npmDeclarationException(arrayOf(name, directory))
 
     override fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency =
