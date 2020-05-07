@@ -16,7 +16,6 @@
 
 package androidx.compose.plugins.kotlin
 
-import org.junit.Before
 import org.junit.Ignore
 
 class KtxTransformationTest : AbstractCodegenTest() {
