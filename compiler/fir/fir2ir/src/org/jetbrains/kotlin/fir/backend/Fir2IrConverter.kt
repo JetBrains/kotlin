@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
@@ -161,7 +162,8 @@ class Fir2IrConverter(
             firFiles: List<FirFile>,
             languageVersionSettings: LanguageVersionSettings,
             fakeOverrideMode: FakeOverrideMode = FakeOverrideMode.NORMAL,
-            signaturer: IdSignatureComposer
+            signaturer: IdSignatureComposer,
+            generatorExtensions: GeneratorExtensions = GeneratorExtensions()
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer)
@@ -186,7 +188,9 @@ class Fir2IrConverter(
             }
             val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, irFiles)
             val externalDependenciesGenerator = ExternalDependenciesGenerator(
-                symbolTable, generateTypicalIrProviderList(irModuleFragment.descriptor, builtIns, symbolTable), languageVersionSettings
+                symbolTable,
+                generateTypicalIrProviderList(irModuleFragment.descriptor, builtIns, symbolTable, extensions = generatorExtensions),
+                languageVersionSettings
             )
             // Necessary call to generate built-in IR classes
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()

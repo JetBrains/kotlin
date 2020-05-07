@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -453,3 +454,8 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     }
 }
 
+fun FirClass<*>.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
+    firProvider.getFirClassifierContainerFileIfAny(symbol) != null -> IrDeclarationOrigin.DEFINED
+    origin == FirDeclarationOrigin.Java -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+    else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+}

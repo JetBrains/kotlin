@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
@@ -85,7 +86,9 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
         return Fir2IrConverter.createModuleFragment(
             session, resolveTransformer.scopeSession, firFiles,
             myEnvironment.configuration.languageVersionSettings,
-            signaturer = signaturer
+            signaturer = signaturer,
+            // TODO: differentiate JVM resolve from other targets, such as JS resolve.
+            generatorExtensions = JvmGeneratorExtensions(generateFacades = false)
         ).irModuleFragment
     }
 }

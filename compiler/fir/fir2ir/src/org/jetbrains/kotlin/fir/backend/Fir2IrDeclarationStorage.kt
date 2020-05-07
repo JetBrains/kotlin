@@ -922,7 +922,8 @@ class Fir2IrDeclarationStorage(
                 val irEnumEntry = classifierStorage.createIrEnumEntry(
                     firDeclaration,
                     irParent = irParentClass,
-                    origin = if (containingFile == null) IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB else IrDeclarationOrigin.DEFINED
+                    origin = if (containingFile != null) IrDeclarationOrigin.DEFINED else
+                        (parentClassSymbol?.fir as? FirClass<*>)?.irOrigin(firProvider) ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
                 )
                 symbolTable.referenceEnumEntry(irEnumEntry.descriptor)
             }

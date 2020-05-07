@@ -142,9 +142,7 @@ class Fir2IrClassifierStorage(
             return createIrAnonymousObject(klass, irParent = parent)
         }
         val regularClass = klass as FirRegularClass
-        val origin =
-            if (firProvider.getFirClassifierContainerFileIfAny(klass.symbol) != null) IrDeclarationOrigin.DEFINED
-            else IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+        val origin = regularClass.irOrigin(firProvider)
         val irClass = registerIrClass(regularClass, parent, origin)
         processClassHeader(regularClass, irClass)
         return irClass
