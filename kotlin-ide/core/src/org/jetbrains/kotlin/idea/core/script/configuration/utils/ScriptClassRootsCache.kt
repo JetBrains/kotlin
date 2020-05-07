@@ -12,6 +12,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
@@ -102,7 +103,7 @@ class ScriptClassRootsCache(
 
         fun addSdk(javaHome: File?): Sdk? {
             if (javaHome == null) return defaultSdk
-            val canonicalPath = javaHome.canonicalPath
+            val canonicalPath = toSystemIndependentName(javaHome.canonicalPath)
             return sdks.getOrPut(canonicalPath) {
                 getScriptSdkByJavaHome(javaHome) ?: defaultSdk
             }
