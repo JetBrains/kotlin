@@ -95,7 +95,7 @@ private val constantMap = ConcurrentHashMap<Function0<*>, Any>()
 fun String.indexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? =
         indexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
-fun String.lastIndexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? =
+fun String.lastIndexOfOrNull(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int? =
         lastIndexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
 inline fun <T, R : Any> Iterable<T>.firstNotNullResult(transform: (T) -> R?): R? {
