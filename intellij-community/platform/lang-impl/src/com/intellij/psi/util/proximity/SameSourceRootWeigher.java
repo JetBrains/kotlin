@@ -15,38 +15,35 @@
  */
 package com.intellij.psi.util.proximity;
 
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.NullableLazyKey;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.ProximityLocation;
-import com.intellij.util.LogicalRoot;
-import com.intellij.util.LogicalRootsManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author peter
 */
-public class SameLogicalRootWeigher extends ProximityWeigher {
-  private static final NullableLazyKey<LogicalRoot, ProximityLocation> LOGICAL_ROOT_KEY = NullableLazyKey.create("logicalRoot",
-                                                                                                                 proximityLocation -> findLogicalRoot(proximityLocation.getPosition()));
+public class SameSourceRootWeigher extends ProximityWeigher {
+  private static final NullableLazyKey<VirtualFile, ProximityLocation> SOURCE_ROOT_KEY = NullableLazyKey.create("sourceRoot",
+                                                                                                                 proximityLocation -> findSourceRoot(proximityLocation.getPosition()));
 
   @Override
   public Comparable weigh(@NotNull final PsiElement element, @NotNull final ProximityLocation location) {
     if (location.getPosition() == null){
       return null;
     }
-    final LogicalRoot contextRoot = LOGICAL_ROOT_KEY.getValue(location);
-    if (contextRoot == null) {
+    final VirtualFile sourceRoot = SOURCE_ROOT_KEY.getValue(location);
+    if (sourceRoot == null) {
       return false;
     }
 
-    return contextRoot.equals(findLogicalRoot(element));
+    return sourceRoot.equals(findSourceRoot(element));
   }
 
-  @Nullable
-  private static LogicalRoot findLogicalRoot(PsiElement element) {
+  private static VirtualFile findSourceRoot(PsiElement element) {
     if (element == null) return null;
 
     final PsiFile psiFile = element.getContainingFile();
@@ -55,6 +52,6 @@ public class SameLogicalRootWeigher extends ProximityWeigher {
     final VirtualFile file = psiFile.getOriginalFile().getVirtualFile();
     if (file == null) return null;
 
-    return LogicalRootsManager.getLogicalRootsManager(element.getProject()).findLogicalRoot(file);
+    return ProjectFileIndex.getInstance(element.getProject()).getSourceRootForFile(file);
   }
 }
