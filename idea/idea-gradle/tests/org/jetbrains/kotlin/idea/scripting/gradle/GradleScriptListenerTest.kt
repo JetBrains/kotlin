@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.android.tools.idea.util.toIoFile
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -29,7 +30,12 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
     private lateinit var testFiles: TestFiles
 
-    data class TestFiles(val buildKts: KtFile, val settings: KtFile, val prop: PsiFile)
+    data class TestFiles(
+        val buildKts: KtFile,
+        val settings: KtFile,
+        val prop: PsiFile,
+        val gradleWrapperProperties: VirtualFile
+    )
 
     override fun setUpTestProject() {
         val rootDir = "idea/testData/script/definition/loading/gradle/"
@@ -59,7 +65,12 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         newProjectSettings.externalProjectPath = settings.virtualFile.parent.path
         ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).linkProject(newProjectSettings)
 
-        testFiles = TestFiles(build, settings, prop)
+        testFiles = TestFiles(
+            build,
+            settings,
+            prop,
+            LocalFileSystem.getInstance().findFileByIoFile(gradleWrapperProperties)!!
+        )
     }
 
     private inline fun <reified T : Any> addFileToProject(file: String): T {
@@ -239,6 +250,15 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         assertAndLoadInitialConfiguration(testFiles.buildKts)
 
         changePropertiesFile()
+
+        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpToDate(testFiles.buildKts)
+    }
+
+    fun testChangeGradleWrapperPropertiesFile() {
+        assertAndLoadInitialConfiguration(testFiles.buildKts)
+
+        markFileChanged(testFiles.gradleWrapperProperties, System.currentTimeMillis())
 
         assertConfigurationUpdateWasDone(testFiles.buildKts)
         assertConfigurationUpToDate(testFiles.buildKts)
