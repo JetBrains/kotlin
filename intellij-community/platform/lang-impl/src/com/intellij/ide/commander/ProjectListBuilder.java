@@ -44,9 +44,9 @@ public class ProjectListBuilder extends AbstractListBuilder {
     myPsiTreeChangeListener = new MyPsiTreeChangeListener();
     PsiManager.getInstance(myProject).addPsiTreeChangeListener(myPsiTreeChangeListener, this);
     myFileStatusListener = new MyFileStatusListener();
-    FileStatusManager.getInstance(myProject).addFileStatusListener(myFileStatusListener);
+    FileStatusManager.getInstance(myProject).addFileStatusListener(myFileStatusListener, this);
     myCopyPasteListener = new MyCopyPasteListener();
-    CopyPasteManager.getInstance().addContentChangedListener(myCopyPasteListener);
+    CopyPasteManager.getInstance().addContentChangedListener(myCopyPasteListener, this);
     buildRoot();
   }
 
@@ -83,13 +83,6 @@ public class ProjectListBuilder extends AbstractListBuilder {
     }
 
     return result;
-  }
-
-  @Override
-  public void dispose() {
-    super.dispose();
-    FileStatusManager.getInstance(myProject).removeFileStatusListener(myFileStatusListener);
-    CopyPasteManager.getInstance().removeContentChangedListener(myCopyPasteListener);
   }
 
   public void addUpdateRequest() {
