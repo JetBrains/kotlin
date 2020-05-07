@@ -25,7 +25,7 @@ import com.intellij.util.BitUtil;
 import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.indexing.*;
-import com.intellij.util.indexing.impl.DebugAssertions;
+import com.intellij.util.indexing.impl.IndexDebugAssertions;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.forward.EmptyForwardIndex;
@@ -147,7 +147,7 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
 
         try {
           SerializedStubTree builtTree = buildSerializedStubTree(inputData, type);
-          if (builtTree != null && DebugAssertions.DEBUG) {
+          if (builtTree != null && IndexDebugAssertions.DEBUG) {
             assertRebuiltTreeMatchesActualTree(inputData, type, builtTree);
           }
           return builtTree;

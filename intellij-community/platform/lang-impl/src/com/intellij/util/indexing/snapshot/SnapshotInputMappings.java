@@ -9,7 +9,7 @@ import com.intellij.util.ExceptionUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
-import com.intellij.util.indexing.impl.DebugAssertions;
+import com.intellij.util.indexing.impl.IndexDebugAssertions;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.AbstractMapForwardIndexAccessor;
@@ -60,7 +60,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     myIndexer = indexExtension.getIndexer();
     myContents = createContentsIndex();
     myHashIdForwardIndexAccessor = new HashIdForwardIndexAccessor<>(this, accessor);
-    myIndexingTrace = DebugAssertions.EXTRA_SANITY_CHECKS ? createIndexingTrace() : null;
+    myIndexingTrace = IndexDebugAssertions.EXTRA_SANITY_CHECKS ? createIndexingTrace() : null;
 
     if (VfsAwareMapReduceIndex.isCompositeIndexer(myIndexer)) {
       myCompositeHashIdEnumerator = new CompositeHashIdEnumerator(myIndexId);
@@ -92,7 +92,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     int hashId = getHashId(content);
 
     Map<Key, Value> data = doReadData(hashId);
-    if (data != null && DebugAssertions.EXTRA_SANITY_CHECKS) {
+    if (data != null && IndexDebugAssertions.EXTRA_SANITY_CHECKS) {
       Map<Key, Value> contentData = myIndexer.map(content);
       boolean sameValueForSavedIndexedResultAndCurrentOne;
       if (myIndexer instanceof SingleEntryIndexer) {
@@ -105,7 +105,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
       }
       if (!sameValueForSavedIndexedResultAndCurrentOne) {
         data = contentData;
-        DebugAssertions.error(
+        IndexDebugAssertions.error(
           "Unexpected difference in indexing of %s by index %s\ndiff %s\nprevious indexed info %s",
           getContentDebugData(content),
           myIndexId,
@@ -160,7 +160,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
       result = hashId == 0 ? InputData.empty() : new HashedInputData<>(data.getKeyValues(), hashId);
     }
     boolean saved = savePersistentData(data.getKeyValues(), hashId);
-    if (DebugAssertions.EXTRA_SANITY_CHECKS) {
+    if (IndexDebugAssertions.EXTRA_SANITY_CHECKS) {
       if (saved) {
         try {
           myIndexingTrace.put(hashId, getContentDebugData(content) + "," + ExceptionUtil.getThrowableText(new Throwable()));

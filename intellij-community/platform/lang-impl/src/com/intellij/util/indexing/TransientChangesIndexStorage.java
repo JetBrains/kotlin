@@ -20,7 +20,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.impl.ChangeTrackingValueContainer;
-import com.intellij.util.indexing.impl.DebugAssertions;
+import com.intellij.util.indexing.impl.IndexDebugAssertions;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.UpdatableValueContainer;
 import org.jetbrains.annotations.NotNull;
@@ -101,7 +101,7 @@ public class TransientChangesIndexStorage<Key, Value> implements VfsAwareIndexSt
     try {
       if (myMap.size() == 0) return;
 
-      if (DebugAssertions.DEBUG) {
+      if (IndexDebugAssertions.DEBUG) {
         String message = "Dropping caches for " + myIndexId + ", number of items:" + myMap.size();
         FileBasedIndexImpl.LOG.info(message);
       }
