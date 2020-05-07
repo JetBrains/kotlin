@@ -441,29 +441,24 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff,
                                   DaemonBundle.message("no.analysis.performed"),
-                                  status.reasonWhyDisabled, () -> createUIController(editor)).
-          withExpandedStatus(new StatusItem(DaemonBundle.message("iw.status.off")));
+                                  status.reasonWhyDisabled, () -> createUIController(editor)).withTextStatus(DaemonBundle.message("iw.status.off"));
       }
       if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsPause,
                                   DaemonBundle.message("analysis.suspended"),
                                   status.reasonWhySuspended, () -> createUIController(editor)).
-          withExpandedStatus(new StatusItem(status.heavyProcessType != null ?
-                                            status.heavyProcessType.toString() :
-                                            DaemonBundle.message("iw.status.paused")));
+          withTextStatus(status.heavyProcessType != null ? status.heavyProcessType.toString() : DaemonBundle.message("iw.status.paused"));
       }
       if (status.errorAnalyzingFinished) {
         return isDumb ?
           new AnalyzerStatus(AllIcons.General.InspectionsPause, title, details, () -> createUIController(editor)).
-            withExpandedStatus(new StatusItem(UtilBundle.message("heavyProcess.type.indexing"))) :
-          new AnalyzerStatus(AllIcons.General.InspectionsOK, DaemonBundle.message("no.errors.or.warnings.found"),
-                                  details, () -> createUIController(editor));
+            withTextStatus(UtilBundle.message("heavyProcess.type.indexing")) :
+          new AnalyzerStatus(AllIcons.General.InspectionsOK, DaemonBundle.message("no.errors.or.warnings.found"), details, () -> createUIController(editor));
       }
 
       //noinspection ConstantConditions
-      return new AnalyzerStatus(AllIcons.General.InspectionsEye, title,
-                                details, () -> createUIController(editor)).
-        withExpandedStatus(new StatusItem(DaemonBundle.message("iw.status.analyzing"))).
+      return new AnalyzerStatus(AllIcons.General.InspectionsEye, title, details, () -> createUIController(editor)).
+        withTextStatus(DaemonBundle.message("iw.status.analyzing")).
         withAnalyzingType(AnalyzingType.EMPTY).
         withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
     }
