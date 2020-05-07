@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigur
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
 import org.jetbrains.kotlin.idea.scripting.gradle.isGradleKotlinScript
-import org.jetbrains.kotlin.idea.scripting.gradle.isInAffectedGradleProjectFiles
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.idea.scripting.gradle.useScriptConfigurationFromImportOnly
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
@@ -58,6 +58,8 @@ class GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts(project: Proje
  * TODO(gradle6): remove
  */
 class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptConfigurationLoader(project) {
+    private val buildRootsManager = GradleBuildRootsManager.getInstance(project)
+
     override fun shouldRunInBackground(scriptDefinition: ScriptDefinition): Boolean {
         return if (useScriptConfigurationFromImportOnly()) false else super.shouldRunInBackground(scriptDefinition)
     }
@@ -78,7 +80,7 @@ class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptCon
             return true
         }
 
-        if (!isInAffectedGradleProjectFiles(ktFile.project, vFile.path)) {
+        if (!buildRootsManager.isAffectedGradleProjectFile(vFile.path)) {
             ScriptConfigurationManager.markFileWithManualConfigurationLoading(vFile)
             return true
         }
