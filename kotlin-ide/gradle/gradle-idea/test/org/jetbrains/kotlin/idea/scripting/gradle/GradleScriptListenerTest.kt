@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.runner.RunWith
@@ -30,12 +26,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
     private lateinit var testFiles: TestFiles
 
-    data class TestFiles(
-        val buildKts: KtFile,
-        val settings: KtFile,
-        val prop: PsiFile,
-        val gradleWrapperProperties: VirtualFile
-    )
+    data class TestFiles(val buildKts: KtFile, val settings: KtFile, val prop: PsiFile)
 
     override fun setUpTestProject() {
         val rootDir = "idea/testData/script/definition/loading/gradle/"
@@ -43,35 +34,16 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         val settings: KtFile = addFileToProject(rootDir + GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
         val prop: PsiFile = addFileToProject(rootDir + "gradle.properties")
 
-        val gradleWrapperProperties = VfsUtil.virtualToIoFile(settings.virtualFile.parent)
-            .resolve("gradle/wrapper/gradle-wrapper.properties")
-        gradleWrapperProperties.parentFile.mkdirs()
-        gradleWrapperProperties.writeText(
-            """
-            distributionBase=GRADLE_USER_HOME
-            distributionPath=wrapper/dists
-            distributionUrl=https\://services.gradle.org/distributions/gradle-1.0.0-bin.zip
-            zipStoreBase=GRADLE_USER_HOME
-            zipStorePath=wrapper/dists
-        """.trimIndent()
-        )
-
         val buildGradleKts = File(rootDir).walkTopDown().find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME }
             ?: error("Couldn't find main script")
         configureScriptFile(rootDir, buildGradleKts)
         val build = (myFile as? KtFile) ?: error("")
 
         val newProjectSettings = GradleProjectSettings()
-        newProjectSettings.distributionType = DistributionType.DEFAULT_WRAPPED
         newProjectSettings.externalProjectPath = settings.virtualFile.parent.path
         ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).linkProject(newProjectSettings)
 
-        testFiles = TestFiles(
-            build,
-            settings,
-            prop,
-            LocalFileSystem.getInstance().findFileByIoFile(gradleWrapperProperties)!!
-        )
+        testFiles = TestFiles(build, settings, prop)
     }
 
     private inline fun <reified T : Any> addFileToProject(file: String): T {
@@ -211,6 +183,8 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         changeSettingsKtsOutsideSections()
 
+//        project.service<GradleScriptInputsWatcher>().clearAndRefillState()
+
         assertConfigurationUpToDate(testFiles.settings)
         assertConfigurationUpdateWasDone(testFiles.buildKts)
     }
@@ -244,22 +218,13 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
     }
 
     private fun markFileChanged(virtualFile: VirtualFile, ts: Long) {
-        GradleBuildRootsManager.getInstance(project).fileChanged(virtualFile.path, ts)
+//        project.service<GradleScriptInputsWatcher>().fileChanged(virtualFile.path, ts)
     }
 
     fun testLoadedConfigurationWhenExternalFileChanged() {
         assertAndLoadInitialConfiguration(testFiles.buildKts)
 
         changePropertiesFile()
-
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
-        assertConfigurationUpToDate(testFiles.buildKts)
-    }
-
-    fun testChangeGradleWrapperPropertiesFile() {
-        assertAndLoadInitialConfiguration(testFiles.buildKts)
-
-        markFileChanged(testFiles.gradleWrapperProperties, System.currentTimeMillis())
 
         assertConfigurationUpdateWasDone(testFiles.buildKts)
         assertConfigurationUpToDate(testFiles.buildKts)
