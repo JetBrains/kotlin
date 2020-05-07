@@ -38,7 +38,7 @@ class FirRegisteredExtension<P : FirExtension>(
 class FirExtensionsService(
     val session: FirSession
 ) : ComponentArrayOwner<FirExtension, FirRegisteredExtension<*>>(), FirSessionComponent {
-    companion object : ComponentTypeRegistry<FirExtension, FirRegisteredExtension<*>>() {
+    companion object : TypeRegistry<FirExtension, FirRegisteredExtension<*>>() {
         inline fun <reified P : FirExtension, V : FirRegisteredExtension<P>> registeredExtensions(): ReadOnlyProperty<FirExtensionsService, ExtensionsAccessor<P>> {
             val accessor = generateAccessor<V, P>(P::class)
             return object : ReadOnlyProperty<FirExtensionsService, ExtensionsAccessor<P>> {
@@ -51,7 +51,7 @@ class FirExtensionsService(
         private fun <K, V> createMultimap(): Multimap<K, V> = LinkedHashMultimap.create()
     }
 
-    override val typeRegistry: ComponentTypeRegistry<FirExtension, FirRegisteredExtension<*>>
+    override val typeRegistry: TypeRegistry<FirExtension, FirRegisteredExtension<*>>
         get() = Companion
 
     fun <P : FirExtension> registerExtensions(extensionClass: KClass<P>, extensionFactories: List<FirExtension.Factory<P>>) {

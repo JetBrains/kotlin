@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.fir
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.fir.utils.ComponentArrayAccessor
+import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
 import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
-import org.jetbrains.kotlin.fir.utils.ComponentTypeRegistry
+import org.jetbrains.kotlin.fir.utils.TypeRegistry
 import org.jetbrains.kotlin.utils.Jsr305State
 
 interface FirSessionComponent
 
 abstract class FirSession(val sessionProvider: FirSessionProvider?) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
-    companion object : ComponentTypeRegistry<FirSessionComponent, FirSessionComponent>() {
-        inline fun <reified T : FirSessionComponent> sessionComponentAccessor(): ComponentArrayAccessor<FirSessionComponent, FirSessionComponent, T> {
+    companion object : TypeRegistry<FirSessionComponent, FirSessionComponent>() {
+        inline fun <reified T : FirSessionComponent> sessionComponentAccessor(): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
             return generateAccessor(T::class)
         }
     }
@@ -28,7 +28,7 @@ abstract class FirSession(val sessionProvider: FirSessionProvider?) : ComponentA
 
     val builtinTypes: BuiltinTypes = BuiltinTypes()
 
-    final override val typeRegistry: ComponentTypeRegistry<FirSessionComponent, FirSessionComponent> = Companion
+    final override val typeRegistry: TypeRegistry<FirSessionComponent, FirSessionComponent> = Companion
 }
 
 interface FirSessionProvider {
