@@ -215,9 +215,16 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { it.original.type }
-        val argsValues = args.map { (it as? Complex)?.getOriginal() ?: (it as Primitive<*>).value }
+        val argsValues = args.map {
+            when (it) {
+                is Complex -> it.getOriginal()
+                is Primitive<*> -> it.value
+                else -> it // lambda can be used in built in calculation, for example, in null check
+            }
+        }
         val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
 
+        // TODO replace unary, binary, ternary functions with vararg
         val result = when (argsType.size) {
             1 -> {
                 val function = unaryFunctions[signature]
