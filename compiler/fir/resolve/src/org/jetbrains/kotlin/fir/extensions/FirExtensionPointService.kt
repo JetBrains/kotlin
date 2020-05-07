@@ -59,19 +59,18 @@ class FirExtensionPointService(
         val extensionsWithAnnotatedMode = createMultimap<AnnotationFqn, P>()
         val extensionsWithAllInAnnotatedMode = createMultimap<AnnotationFqn, P>()
         for (extension in extensions) {
-            _metaAnnotations += extension.metaAnnotations
-            for (metaAnnotation in extension.metaAnnotations) {
+            _metaAnnotations += extension.metaAnnotations.keys
+            for (metaAnnotation in extension.metaAnnotations.keys) {
                 extensionsWithMetaAnnotations.put(metaAnnotation, extension)
             }
-            _annotations += extension.annotations
+            _annotations += extension.directlyApplicableAnnotations
+            _annotations += extension.childrenApplicableAnnotations
             when (extension.mode) {
                 FirExtensionPoint.Mode.ANNOTATED_ELEMENT -> {
-                    for (annotation in extension.annotations) {
+                    for (annotation in extension.directlyApplicableAnnotations) {
                         extensionsWithAnnotatedMode.put(annotation, extension)
                     }
-                }
-                FirExtensionPoint.Mode.ALL_IN_ANNOTATED_ELEMENT -> {
-                    for (annotation in extension.annotations) {
+                    for (annotation in extension.childrenApplicableAnnotations) {
                         extensionsWithAllInAnnotatedMode.put(annotation, extension)
                     }
                 }
@@ -98,13 +97,17 @@ class FirExtensionPointService(
             for (extension in extensions) {
                 val registeredExtensions = this[extension.extensionType]
 
-                @Suppress("UNCHECKED_CAST")
-                val map = when (extension.mode) {
-                    FirExtensionPoint.Mode.ANNOTATED_ELEMENT -> registeredExtensions.extensionsWithAnnotatedMode
-                    FirExtensionPoint.Mode.ALL_IN_ANNOTATED_ELEMENT -> registeredExtensions.extensionsWithAllInAnnotatedMode
-                    FirExtensionPoint.Mode.ALL -> throw IllegalStateException("Extension with mode ALL can't be subscribed to meta annotation")
-                } as Multimap<AnnotationFqn, FirExtensionPoint>
-                map.put(fqName, extension)
+                val metaAnnotationMode = extension.metaAnnotations.getValue(metaAnnotation)
+
+                if (metaAnnotationMode.directed) {
+                    @Suppress("UNCHECKED_CAST")
+                    (registeredExtensions.extensionsWithAnnotatedMode as Multimap<AnnotationFqn, FirExtensionPoint>).put(fqName, extension)
+                }
+
+                if (metaAnnotationMode.children) {
+                    @Suppress("UNCHECKED_CAST")
+                    (registeredExtensions.extensionsWithAllInAnnotatedMode as Multimap<AnnotationFqn, FirExtensionPoint>).put(fqName, extension)
+                }
             }
         }
     }

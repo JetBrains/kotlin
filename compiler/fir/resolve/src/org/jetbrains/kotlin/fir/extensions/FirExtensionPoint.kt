@@ -15,8 +15,9 @@ typealias AnnotationFqn = FqName
 abstract class FirExtensionPoint(val session: FirSession) {
     abstract val name: FirExtensionPointName
 
-    abstract val annotations: Set<AnnotationFqn>
-    abstract val metaAnnotations: Set<AnnotationFqn>
+    abstract val directlyApplicableAnnotations: Set<AnnotationFqn>
+    abstract val childrenApplicableAnnotations: Set<AnnotationFqn>
+    abstract val metaAnnotations: Map<AnnotationFqn, MetaAnnotationMode>
 
     abstract val mode: Mode
 
@@ -28,8 +29,13 @@ abstract class FirExtensionPoint(val session: FirSession) {
 
     enum class Mode {
         ANNOTATED_ELEMENT,
-        ALL_IN_ANNOTATED_ELEMENT,
         ALL
+    }
+
+    enum class MetaAnnotationMode(val directed: Boolean, val children: Boolean) {
+        ANNOTATED_DECLARATION(directed = true, children = false),
+        CHILDREN_DECLARATION(directed = false, children = true),
+        ANNOTATED_AND_CHILDREN(directed = true, children = true)
     }
 }
 
