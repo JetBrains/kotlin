@@ -14634,9 +14634,19 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_formatsProperly.kt");
         }
 
+        @TestMetadata("applicable_inPropertyInitializer.kt")
+        public void testApplicable_inPropertyInitializer() throws Exception {
+            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_inPropertyInitializer.kt");
+        }
+
         @TestMetadata("applicable_nestedLiteralsNoUseInside.kt")
         public void testApplicable_nestedLiteralsNoUseInside() throws Exception {
             runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_nestedLiteralsNoUseInside.kt");
+        }
+
+        @TestMetadata("applicable_qualifiedExpression.kt")
+        public void testApplicable_qualifiedExpression() throws Exception {
+            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_qualifiedExpression.kt");
         }
 
         @TestMetadata("notApplicable_alreadyUsesImplicitIt.kt")
@@ -14672,6 +14682,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("notApplicable_notFunctionLiteralParameter.kt")
         public void testNotApplicable_notFunctionLiteralParameter() throws Exception {
             runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_notFunctionLiteralParameter.kt");
+        }
+
+        @TestMetadata("notApplicable_overloadResolutionAmbiguity.kt")
+        public void testNotApplicable_overloadResolutionAmbiguity() throws Exception {
+            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_overloadResolutionAmbiguity.kt");
+        }
+
+        @TestMetadata("notApplicable_overloadResolutionAmbiguity2.kt")
+        public void testNotApplicable_overloadResolutionAmbiguity2() throws Exception {
+            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_overloadResolutionAmbiguity2.kt");
         }
 
         @TestMetadata("notApplicable_parameterHasExplicitType.kt")

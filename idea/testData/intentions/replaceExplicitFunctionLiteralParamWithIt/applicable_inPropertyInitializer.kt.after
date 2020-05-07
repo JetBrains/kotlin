@@ -1,0 +1,5 @@
+fun foo() {
+    val a: (Int) -> Unit = { bar(it) }
+}
+
+fun bar(i: Int) {}
