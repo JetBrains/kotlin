@@ -105,6 +105,12 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
           (it as? Enum<*>)?.name
         }
       }
+      else if (type == String::class.java) {
+        val annotation = accessor.getAnnotation(ReportValue::class.java)
+        logConfigValue(accessor, state, "string", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName) {
+          if (it in annotation.possibleValues) it else null
+        }
+      }
     }
 
     if (!recordDefault) {

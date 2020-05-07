@@ -355,6 +355,37 @@ class FeatureUsageSettingsEventsTest {
     assertNotDefaultState(printer.getOptionByName("absEnumOption"), "absEnumOption", ComponentStateWithEnum.EnumOption.BAR.name, "enum", false, withProject, defaultProject)
   }
 
+  @Test
+  fun `record string field`() {
+    val component = TestComponent()
+    component.loadState(ComponentStateWithString("notDefault", "predefined"))
+    val spec = getStateSpec(component)
+    val printer = TestFeatureUsageSettingsEventsPrinter(false)
+    printer.logConfigurationState(spec.name, component.state, null)
+
+    val withProject = false
+    val defaultProject = false
+    Assert.assertEquals(3, printer.result.size)
+    assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("stringOption"), "stringOption", null, "string", false, withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("absStringOption"), "absStringOption", "predefined", "string", false, withProject, defaultProject)
+  }
+
+  @Test
+  fun `record only predefined strings`() {
+    val component = TestComponent()
+    component.loadState(ComponentStateWithString(absStringOpt = "notPredefined"))
+    val spec = getStateSpec(component)
+    val printer = TestFeatureUsageSettingsEventsPrinter(false)
+    printer.logConfigurationState(spec.name, component.state, null)
+
+    val withProject = false
+    val defaultProject = false
+    Assert.assertEquals(2, printer.result.size)
+    assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("absStringOption"), "absStringOption", null, "string", false, withProject, defaultProject)
+  }
+
   private fun assertDefaultWithoutDefaultRecording(printer: TestFeatureUsageSettingsEventsPrinter,
                                                    withProject: Boolean,
                                                    defaultProject: Boolean) {
@@ -497,12 +528,9 @@ class FeatureUsageSettingsEventsTest {
   }
 
   @Suppress("unused")
-  private open class ComponentState(bool: Boolean = false, str: String = "string-option", list: List<Int> = ArrayList()) {
+  private open class ComponentState(bool: Boolean = false, list: List<Int> = ArrayList()) {
     @Attribute("bool-value")
     val boolOption: Boolean = bool
-
-    @Attribute("str-value")
-    val strOption: String = str
 
     @Attribute("int-values")
     val intOption: List<Int> = list
@@ -511,8 +539,7 @@ class FeatureUsageSettingsEventsTest {
   @Suppress("unused")
   private class MultiComponentState(bool: Boolean = false,
                                     secondBool: Boolean = true,
-                                    str: String = "string-option",
-                                    list: List<Int> = ArrayList()) : ComponentState(bool, str, list) {
+                                    list: List<Int> = ArrayList()) : ComponentState(bool, list) {
     @Attribute("second-bool-value")
     val secondBoolOption: Boolean = secondBool
   }
@@ -527,8 +554,7 @@ class FeatureUsageSettingsEventsTest {
                                             absFloatOpt: Float = 0.0F,
                                             absDoubleOpt: Double = 0.0,
                                             bool: Boolean = false,
-                                            str: String = "string-option",
-                                            list: List<Int> = ArrayList()) : ComponentState(bool, str, list) {
+                                            list: List<Int> = ArrayList()) : ComponentState(bool, list) {
     @Attribute("int-option")
     val integerOption: Int = intOpt
 
@@ -570,5 +596,15 @@ class FeatureUsageSettingsEventsTest {
     enum class EnumOption {
       FOO, BAR
     }
+  }
+
+  private class ComponentStateWithString(stringOpt: String = "test",
+                                         absStringOpt: String = "test") : ComponentState() {
+    @Attribute("string-option")
+    val stringOption: String = stringOpt
+
+    @Attribute("abs-string-option")
+    @field:ReportValue(possibleValues = ["predefined"])
+    val absStringOption: String = absStringOpt
   }
 }

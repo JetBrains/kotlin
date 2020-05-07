@@ -25,7 +25,7 @@ class SettingsComponentNameValidator : CustomWhiteListRule() {
 }
 
 class SettingsEnumValueValidator : CustomWhiteListRule() {
-  override fun acceptRuleId(ruleId: String?): Boolean = "option_enum_value" == ruleId
+  override fun acceptRuleId(ruleId: String?): Boolean = "setting_value" == ruleId
 
   override fun doValidate(data: String, context: EventContext): ValidationResultType {
     val componentName = context.eventData["component"] as? String ?: return REJECTED
