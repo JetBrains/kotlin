@@ -63,10 +63,6 @@ internal fun Project.addNpmDependencyExtension() {
 
     values()
         .forEach { scope ->
-            val scopePrefix = scope.name
-                .removePrefix(NORMAL.name)
-                .toLowerCase()
-
             val type = when (scope) {
                 NORMAL, OPTIONAL -> NpmDependencyExtension::class.java
                 DEV -> DevNpmDependencyExtension::class.java
@@ -94,10 +90,18 @@ internal fun Project.addNpmDependencyExtension() {
             extensions
                 .add(
                     TypeOf.typeOf<BaseNpmDependencyExtension>(type),
-                    lowerCamelCaseName(scopePrefix, "npm"),
+                    scopePrefix(scope),
                     extension
                 )
         }
+}
+
+private fun scopePrefix(scope: NpmDependency.Scope): String {
+    val scopePrefix = scope.name
+        .removePrefix(NORMAL.name)
+        .toLowerCase()
+
+    return lowerCamelCaseName(scopePrefix, "npm")
 }
 
 private abstract class AbstractNpmDependencyExtension(
@@ -204,7 +208,7 @@ private abstract class AbstractNpmDependencyExtension(
     protected fun npmDeclarationException(args: Array<out Any?>): Nothing {
         throw IllegalArgumentException(
             """
-                            |Unable to add NPM dependency with scope '$scope' by ${args.joinToString()}
+                            |Unable to add NPM dependency with scope '${scope.name.toLowerCase()}' by ${args.joinToString()}
                             |Possible variants:
                             |${possibleVariants().joinToString("\n") { "- ${it.first} -> ${it.second}" }}
             """.trimMargin()
@@ -212,7 +216,7 @@ private abstract class AbstractNpmDependencyExtension(
     }
 
     protected open fun possibleVariants(): List<Pair<String, String>> {
-        return listOf("npm('name', 'version')" to "name:version")
+        return listOf("${scopePrefix(scope)}('name', 'version')" to "name:version")
     }
 
     protected fun generateKotlinExternalsIfPossible(vararg args: Any?): Boolean {
@@ -278,8 +282,8 @@ private class DefaultNpmDependencyExtension(
 
     override fun possibleVariants(): List<Pair<String, String>> {
         val result = super.possibleVariants() + listOf(
-            "npm(File)" to "File.name:File",
-            "npm('name', File)" to "name:File"
+            "${scopePrefix(scope)}(File)" to "File.name:File",
+            "${scopePrefix(scope)}('name', File)" to "name:File"
         )
 
         if (_defaultGenerateKotlinExternals == null) {
