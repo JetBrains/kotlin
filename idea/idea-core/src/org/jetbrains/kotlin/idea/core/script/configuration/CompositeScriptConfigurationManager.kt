@@ -46,7 +46,7 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
 
     val updater = ScriptClassRootsUpdater(project, this)
 
-    private val plugins = ScriptingSupport.Provider.EPN.getPoint(project).extensionList
+    private val plugins = ScriptingSupport.EPN.getPoint(project).extensionList
 
     val default = DefaultScriptingSupport(this)
 
