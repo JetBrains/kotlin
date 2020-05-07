@@ -18,7 +18,7 @@ fun addVfsListener(
     VirtualFileManager.getInstance().addAsyncFileListener(
         object : AsyncFileChangeListenerBase() {
             override fun isRelevant(path: String): Boolean {
-                return buildRootsManager.maybeAffectedGradleProjectFile(watcher.project, path)
+                return buildRootsManager.maybeAffectedGradleProjectFile(path)
             }
 
             override fun updateFile(file: VirtualFile, event: VFileEvent) {
