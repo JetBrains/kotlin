@@ -115,13 +115,11 @@ class ScriptClassRootsUpdater(
 
     @Synchronized
     private fun updateSynchronously() {
-        syncLock.withLock {
-            scheduledUpdate?.cancel()
-            doUpdate(false)
-        }
+        scheduledUpdate?.cancel()
+        doUpdate(false)
     }
 
-    fun doUpdate(underProgressManager: Boolean = true) {
+    private fun doUpdate(underProgressManager: Boolean = true) {
         syncLock.withLock {
             try {
                 val updates = manager.collectRootsAndCheckNew()
