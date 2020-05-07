@@ -105,8 +105,8 @@ private class DefaultNpmDependencyExtension(
         throw IllegalArgumentException(
             """
                             Unable to add NPM dependency by $args
-                            - npm('name') -> name:*
                             - npm('name', 'version') -> name:version
+                            - npm(File) -> File.name:File
                             - npm('name', File) -> name:File
                             """.trimIndent()
         )
