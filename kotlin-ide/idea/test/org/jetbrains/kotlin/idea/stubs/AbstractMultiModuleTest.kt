@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.PsiTestUtil
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
@@ -63,9 +64,9 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     }
 
     override fun tearDown() = runAll(
-        { VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory()) },
-        { disableKotlinOfficialCodeStyle(project) },
-        { super.tearDown() },
+        ThrowableRunnable { VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory()) },
+        ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
+        ThrowableRunnable { super.tearDown() },
     )
 
     public override fun createModule(path: String, moduleType: ModuleType<*>): Module {
