@@ -9,6 +9,7 @@ import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.reflect.TypeOf
+import org.jetbrains.kotlin.gradle.plugin.DEFAULT_GENERATE_KOTLIN_EXTERNALS
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
@@ -41,8 +42,21 @@ internal fun Project.addNpmDependencyExtension() {
             }
 
             val extension = when (scope) {
-                NORMAL, DEV, OPTIONAL -> DefaultNpmDependencyExtension(this, scope)
-                PEER -> NpmDependencyWithoutDirectoryExtension(this, scope)
+                NORMAL, OPTIONAL -> DefaultNpmDependencyExtension(
+                    this,
+                    scope,
+                    DEFAULT_GENERATE_KOTLIN_EXTERNALS
+                )
+                DEV -> DefaultNpmDependencyExtension(
+                    this,
+                    scope,
+                    false
+                )
+                PEER -> NpmDependencyWithoutDirectoryExtension(
+                    this,
+                    scope,
+                    false
+                )
             }
 
             extensions
@@ -55,8 +69,9 @@ internal fun Project.addNpmDependencyExtension() {
 }
 
 private abstract class AbstractNpmDependencyExtension(
-    private val project: Project,
-    private val scope: NpmDependency.Scope
+    protected val project: Project,
+    protected val scope: NpmDependency.Scope,
+    protected val defaultGenerateKotlinExternals: Boolean
 ) : NpmDependencyExtension,
     NpmDirectoryDependencyExtension,
     Closure<NpmDependency>(project.dependencies) {
@@ -68,7 +83,8 @@ private abstract class AbstractNpmDependencyExtension(
             project = project,
             name = name,
             version = version,
-            scope = scope
+            scope = scope,
+            generateKotlinExternals = defaultGenerateKotlinExternals
         )
 
     override operator fun invoke(directory: File): NpmDependency =
@@ -128,9 +144,14 @@ private abstract class AbstractNpmDependencyExtension(
 }
 
 private class DefaultNpmDependencyExtension(
-    private val project: Project,
-    private val scope: NpmDependency.Scope
-) : AbstractNpmDependencyExtension(project, scope) {
+    project: Project,
+    scope: NpmDependency.Scope,
+    defaultGenerateKotlinExternals: Boolean
+) : AbstractNpmDependencyExtension(
+    project,
+    scope,
+    defaultGenerateKotlinExternals
+) {
     override fun invoke(name: String): NpmDependency =
         onlyNameNpmDependency(name)
 
@@ -139,7 +160,8 @@ private class DefaultNpmDependencyExtension(
             project = project,
             name = name,
             directory = directory,
-            scope = scope
+            scope = scope,
+            generateKotlinExternals = defaultGenerateKotlinExternals
         )
 
     override operator fun invoke(directory: File): NpmDependency =
@@ -179,8 +201,13 @@ private class DefaultNpmDependencyExtension(
 
 private class NpmDependencyWithoutDirectoryExtension(
     project: Project,
-    scope: NpmDependency.Scope
-) : AbstractNpmDependencyExtension(project, scope) {
+    scope: NpmDependency.Scope,
+    defaultGenerateKotlinExternals: Boolean
+) : AbstractNpmDependencyExtension(
+    project,
+    scope,
+    defaultGenerateKotlinExternals
+) {
     override fun invoke(name: String, directory: File): NpmDependency =
         npmDeclarationException(arrayOf(name, directory))
 
