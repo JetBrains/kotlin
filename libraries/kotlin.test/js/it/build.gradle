@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+
 plugins {
     id "com.github.node-gradle.node" version "2.2.0"
 }
@@ -8,9 +11,10 @@ apply plugin: 'kotlin-platform-js'
 
 configurations {
     nodeModules {
-        extendsFrom testCompile
+        extendsFrom compile
         attributes {
-            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, KotlinUsages.KOTLIN_RUNTIME))
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         }
     }
 }

@@ -357,7 +357,14 @@ val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures
 
 allprojects {
 
-    configurations.maybeCreate("embedded")
+    configurations.maybeCreate("embedded").apply {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        }
+    }
 
     jvmTarget = defaultJvmTarget
     javaHome = defaultJavaHome

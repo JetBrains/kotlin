@@ -4,7 +4,13 @@ plugins {
     kotlin("jvm")
 }
 
-val testCompilerClasspath by configurations.creating
+val testCompilerClasspath by configurations.creating {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+    }
+}
+
 val testCompilationClasspath by configurations.creating
 
 dependencies {

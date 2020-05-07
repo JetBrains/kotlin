@@ -10,6 +10,10 @@ val testCompile by configurations
 testCompile.extendsFrom(allTestsRuntime)
 val embeddableTestRuntime by configurations.creating {
     extendsFrom(allTestsRuntime)
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+    }
 }
 
 dependencies {
