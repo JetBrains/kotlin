@@ -197,7 +197,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
     @Test
     fun testInlineCall(): Unit = composerParam(
         """
-            @Composable inline fun Example(children: @Composable() () -> Unit) {
+            @Composable inline fun Example(children: @Composable () -> Unit) {
                 children()
             }
 

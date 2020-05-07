@@ -32,7 +32,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testParameterlessChildrenLambdasReused(): Unit = checkApi(
         """
-            @Composable fun Foo(children: @Composable() () -> Unit) {
+            @Composable fun Foo(children: @Composable () -> Unit) {
             }
             @Composable fun Bar() {
                 Foo {}
@@ -97,7 +97,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     fun testAnonymousParamNaming(): Unit = validateBytecode(
         """
         @Composable
-        fun Foo(children: @Composable() (a: Int, b: Int) -> Unit) {}
+        fun Foo(children: @Composable (a: Int, b: Int) -> Unit) {}
         @Composable
         fun test() {
             Foo { _, _ -> }
@@ -224,7 +224,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     fun testDataClassHashCode(): Unit = validateBytecode(
         """
         data class Foo(
-            val bar: @Composable() () -> Unit
+            val bar: @Composable () -> Unit
         )
         """) {
         assert(!it.contains("CHECKCAST kotlin/jvm/functions/Function0"))
@@ -339,7 +339,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     fun testCorrectComposerPassed5(): Unit = checkComposerParam(
         """
             var a: Composer<*>? = null
-            @Composable fun Wrap(children: @Composable() () -> Unit) {
+            @Composable fun Wrap(children: @Composable () -> Unit) {
                 children()
             }
             fun run() {
@@ -551,7 +551,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testLocalLambda(): Unit = checkApi(
         """
-            @Composable fun Bar(children: @Composable() () -> Unit) {
+            @Composable fun Bar(children: @Composable () -> Unit) {
                 val foo = @Composable { x: Int -> print(x)  }
                 foo(123)
                 children()
@@ -584,7 +584,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testNesting(): Unit = checkApi(
         """
-            @Composable fun Wrap(children: @Composable() (x: Int) -> Unit) {
+            @Composable fun Wrap(children: @Composable (x: Int) -> Unit) {
                 children(123)
             }
             @Composable fun App(x: Int) {
@@ -756,7 +756,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
         @Composable
         fun Foo() {
-            val c: @Composable() () -> Unit = with(123) {
+            val c: @Composable () -> Unit = with(123) {
                 val x = @Composable {}
                 x
             }
@@ -771,7 +771,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
         @Composable
         fun Scaffold(
-            topAppBar: @Composable() (() -> Unit)? = null
+            topAppBar: @Composable (() -> Unit)? = null
         ) {}
         """
     ) {
@@ -792,9 +792,9 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testLambdaMemoization(): Unit = validateBytecode(
         """
-        fun subcompose(block: @Composable() () -> Unit) {}
+        fun subcompose(block: @Composable () -> Unit) {}
         private class Foo {
-            var children: @Composable() (Double) -> Unit = {}
+            var children: @Composable (Double) -> Unit = {}
             fun subcompose() {
                 val constraints = Math.random()
                 subcompose {
@@ -1053,7 +1053,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testInlineCall(): Unit = checkApi(
         """
-            @Composable inline fun Example(children: @Composable() () -> Unit) {
+            @Composable inline fun Example(children: @Composable () -> Unit) {
                 children()
             }
 

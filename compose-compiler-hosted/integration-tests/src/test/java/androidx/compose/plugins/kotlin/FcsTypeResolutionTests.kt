@@ -95,16 +95,16 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.*
             import android.widget.LinearLayout
 
-            @Composable fun Foo(x: Int, composeItem: @Composable() () -> Unit = {}) {
+            @Composable fun Foo(x: Int, composeItem: @Composable () -> Unit = {}) {
                 println(x)
                 print(composeItem == {})
             }
 
             @Composable fun test(
-                children: @Composable() () -> Unit,
+                children: @Composable () -> Unit,
                 value: Int,
                 x: Int,
-                children2: @Composable() () -> Unit,
+                children2: @Composable () -> Unit,
                 value2: Int
             ) {
                 LinearLayout {
@@ -194,7 +194,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             // NOTE: It's important that the diagnostic be only over the call target, and not the
             // entire element so that a single error doesn't end up making a huge part of an 
             // otherwise correct file "red".
-            @Composable fun Test(F: @Composable() (x: Foo) -> Unit) {
+            @Composable fun Test(F: @Composable (x: Foo) -> Unit) {
                 // NOTE: constructor attributes and fn params get a "missing parameter" diagnostic
                 A(<!NO_VALUE_FOR_PARAMETER!>)<!>
 
@@ -235,7 +235,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
             import androidx.compose.*
 
-            @Composable fun A(children: @Composable() () -> Unit) { children() }
+            @Composable fun A(children: @Composable () -> Unit) { children() }
 
             @Composable fun Test() {
                 A(children={}) <!TOO_MANY_ARGUMENTS!>{ }<!>
@@ -406,7 +406,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.*
 
             object MyNamespace {
-                @Composable fun Bar(children: @Composable() () -> Unit = {}) { 
+                @Composable fun Bar(children: @Composable () -> Unit = {}) { 
                     children() 
                 }
 
@@ -465,17 +465,17 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             import android.widget.Button
             import android.widget.LinearLayout
 
-            @Composable fun ChildrenRequired2(children: @Composable() () -> Unit) { children() }
+            @Composable fun ChildrenRequired2(children: @Composable () -> Unit) { children() }
 
-            @Composable fun ChildrenOptional3(children: @Composable() () -> Unit = {}){ children() }
+            @Composable fun ChildrenOptional3(children: @Composable () -> Unit = {}){ children() }
 
             @Composable fun NoChildren2() {}
 
             @Composable 
-            fun MultiChildren(c: @Composable() (x: Int) -> Unit = {}) { c(1) }
+            fun MultiChildren(c: @Composable (x: Int) -> Unit = {}) { c(1) }
 
             @Composable 
-            fun MultiChildren(c: @Composable() (x: Int, y: Int) -> Unit = { x, y ->println(x + y) }) { c(1,1) }
+            fun MultiChildren(c: @Composable (x: Int, y: Int) -> Unit = { x, y ->println(x + y) }) { c(1,1) }
 
             @Composable fun Test() {
                 ChildrenRequired2 {}

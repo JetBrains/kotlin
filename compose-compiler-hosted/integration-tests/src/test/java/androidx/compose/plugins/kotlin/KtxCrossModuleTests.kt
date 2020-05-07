@@ -171,7 +171,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     import androidx.compose.Composable
                     import android.widget.LinearLayout
 
-                    @Composable inline fun row(crossinline children: @Composable() () -> Unit) {
+                    @Composable inline fun row(crossinline children: @Composable () -> Unit) {
                         LinearLayout {
                             children()
                         }
@@ -236,7 +236,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                     @Composable
                     inline fun <T> key(
-                        block: @Composable() () -> T
+                        block: @Composable () -> T
                     ): T = block()
                  """
                 ),
@@ -272,7 +272,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                         @Suppress("UNUSED_PARAMETER")
                         @Pivotal
                         v1: Int,
-                        block: @Composable() () -> Int
+                        block: @Composable () -> Int
                     ): Int = block()
                  """
                 ),
@@ -670,7 +670,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                     import androidx.compose.*
 
-                    class Foo(val bar: @Composable() () -> Unit)
+                    class Foo(val bar: @Composable () -> Unit)
                  """
                 ),
                 "Main" to mapOf(
@@ -678,7 +678,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     import a.Foo
                     import androidx.compose.*
 
-                    @Composable fun Example(bar: @Composable() () -> Unit) {
+                    @Composable fun Example(bar: @Composable () -> Unit) {
                         val foo = Foo(bar)
                     }
                 """
@@ -699,7 +699,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                     import androidx.compose.*
 
-                    @Composable fun InternalComp(block: @Composable() () -> Unit) {
+                    @Composable fun InternalComp(block: @Composable () -> Unit) {
                         block()
                     }
                  """

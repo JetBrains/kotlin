@@ -65,7 +65,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     fun testSimpleInlining(): Unit = ensureSetup {
         compose("""
             @Composable
-            inline fun foo(block: @Composable() () -> Unit) {
+            inline fun foo(block: @Composable () -> Unit) {
                 block()
             }
 
@@ -85,7 +85,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
                 import androidx.compose.*
 
                 @Composable
-                fun test(children: @Composable() () -> Unit) {
+                fun test(children: @Composable () -> Unit) {
                     children()
                 }
             """
@@ -158,13 +158,13 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
             """
                 import androidx.compose.*
 
-                @Composable fun <T> A(value: T, block: @Composable() (T) -> Unit) {
+                @Composable fun <T> A(value: T, block: @Composable (T) -> Unit) {
                     block(value)
                 }
 
                 @Composable fun <T> B(
                     value: T,
-                    block: @Composable() (@Composable() (T) -> Unit) -> Unit
+                    block: @Composable (@Composable (T) -> Unit) -> Unit
                 ) {
                     block({ })
                 }
@@ -246,7 +246,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
 
                 @Composable
                 inline fun PointerInputWrapper(
-                    crossinline children: @Composable() () -> Unit
+                    crossinline children: @Composable () -> Unit
                 ) {
                     // Hide the internals of PointerInputNode
                     LinearLayout {
@@ -288,7 +288,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
             """
         @Composable
         inline fun PointerInputWrapper(
-            crossinline children: @Composable() () -> Unit
+            crossinline children: @Composable () -> Unit
         ) {
             LinearLayout {
                 children()
@@ -296,7 +296,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
         }
 
         @Composable
-        fun PressReleasedGestureDetector(children: @Composable() () -> Unit) {
+        fun PressReleasedGestureDetector(children: @Composable () -> Unit) {
             PointerInputWrapper {
                 children()
             }
@@ -310,11 +310,11 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
         codegen(
             """
         @Composable
-        inline fun Foo(crossinline children: @Composable() () -> Unit) {
+        inline fun Foo(crossinline children: @Composable () -> Unit) {
                 children()
         }
 
-        @Composable fun test(children: @Composable() () -> Unit) {
+        @Composable fun test(children: @Composable () -> Unit) {
             Foo {
                 println("hello world")
                 children()
@@ -410,7 +410,7 @@ fun <T> B(foo: T, bar: String) { }
         codegen(
             """
 
-            @Composable fun SomeThing(children: @Composable() () -> Unit) {}
+            @Composable fun SomeThing(children: @Composable () -> Unit) {}
 
             @Composable
             fun Example() {
@@ -458,7 +458,7 @@ fun WebComponent(
         codegen(
             """
 
-            fun startCompose(block: @Composable() () -> Unit) {}
+            fun startCompose(block: @Composable () -> Unit) {}
 
             fun nonComposable() {
                 startCompose {
@@ -511,7 +511,7 @@ fun WebComponent(
     fun testSetContent(): Unit = ensureSetup {
         codegen(
             """
-                fun fakeCompose(block: @Composable() ()->Unit) { }
+                fun fakeCompose(block: @Composable ()->Unit) { }
 
                 class Test {
                     fun test() {
@@ -528,7 +528,7 @@ fun WebComponent(
     fun testComposeWithResult(): Unit = ensureSetup {
         compose(
             """
-                @Composable fun <T> identity(block: @Composable() ()->T): T = block()
+                @Composable fun <T> identity(block: @Composable ()->T): T = block()
 
                 @Composable
                 fun TestCall() {
@@ -599,7 +599,7 @@ fun WebComponent(
                 }
 
                 @Composable
-                fun FancyBox2(children: @Composable() ()->Unit) {
+                fun FancyBox2(children: @Composable ()->Unit) {
                     children()
                 }
             """,
@@ -1043,7 +1043,7 @@ fun WebComponent(
     @Test
     fun testInline_NonComposable_Identity(): Unit = ensureSetup {
         compose("""
-            @Composable inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
+            @Composable inline fun InlineWrapper(base: Int, children: @Composable ()->Unit) {
               children()
             }
             """,
@@ -1071,7 +1071,7 @@ fun WebComponent(
     fun testInline_Composable_EmitChildren(): Unit = ensureSetup {
         compose("""
             @Composable
-            inline fun InlineWrapper(base: Int, crossinline children: @Composable() ()->Unit) {
+            inline fun InlineWrapper(base: Int, crossinline children: @Composable ()->Unit) {
               LinearLayout(id = base + 0) {
                 children()
               }

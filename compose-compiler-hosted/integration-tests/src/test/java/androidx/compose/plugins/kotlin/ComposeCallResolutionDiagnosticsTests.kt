@@ -41,7 +41,7 @@ class ComposeCallResolutionDiagnosticsTests : AbstractComposeDiagnosticsTest() {
 
             val x: Any? = null
 
-            fun Activity.setViewContent(composable: @Composable() () -> Unit): Composition? {
+            fun Activity.setViewContent(composable: @Composable () -> Unit): Composition? {
                 assert(composable != x)
                 return null
             }
