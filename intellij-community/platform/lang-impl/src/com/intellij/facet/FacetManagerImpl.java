@@ -2,6 +2,7 @@
 
 package com.intellij.facet;
 
+import com.intellij.facet.impl.FacetEventsPublisher;
 import com.intellij.facet.impl.FacetModelBase;
 import com.intellij.facet.impl.FacetModelImpl;
 import com.intellij.facet.impl.FacetUtil;
@@ -300,8 +301,6 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
     List<Facet<?>> toAdd = new ArrayList<>();
     List<FacetRenameInfo> toRename = new ArrayList<>();
 
-    final FacetManagerListener publisher = myModule.getMessageBus().syncPublisher(FACETS_TOPIC);
-
     try {
       myInsideCommit = true;
 
@@ -328,14 +327,15 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
       }
 
       if (fireEvents) {
+        FacetEventsPublisher publisher = FacetEventsPublisher.getInstance(myModule.getProject());
         for (Facet<?> facet : toAdd) {
-          publisher.beforeFacetAdded(facet);
+          publisher.fireBeforeFacetAdded(facet);
         }
         for (Facet<?> facet : toRemove) {
-          publisher.beforeFacetRemoved(facet);
+          publisher.fireBeforeFacetRemoved(facet);
         }
         for (FacetRenameInfo info : toRename) {
-          publisher.beforeFacetRenamed(info.myFacet);
+          publisher.fireBeforeFacetRenamed(info.myFacet);
         }
       }
 
@@ -358,14 +358,15 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
     }
 
     if (fireEvents) {
+      FacetEventsPublisher publisher = FacetEventsPublisher.getInstance(myModule.getProject());
       for (Facet<?> facet : toAdd) {
-        publisher.facetAdded(facet);
+        publisher.fireFacetAdded(facet);
       }
       for (Facet<?> facet : toRemove) {
-        publisher.facetRemoved(facet);
+        publisher.fireFacetRemoved(myModule, facet);
       }
       for (FacetRenameInfo info : toRename) {
-        publisher.facetRenamed(info.myFacet, info.myOldName);
+        publisher.fireFacetRenamed(info.myFacet, info.myOldName);
       }
     }
     for (Facet<?> facet : toAdd) {
