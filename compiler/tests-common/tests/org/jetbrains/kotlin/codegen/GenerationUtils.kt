@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -143,7 +144,9 @@ object GenerationUtils {
             Fir2IrConverter.createModuleFragment(
                 session, resolveTransformer.scopeSession, firFiles,
                 configuration.languageVersionSettings,
-                signaturer = IdSignatureDescriptor(JvmManglerDesc())
+                signaturer = IdSignatureDescriptor(JvmManglerDesc()),
+                // TODO: differentiate JVM resolve from other targets, such as JS resolve.
+                generatorExtensions = JvmGeneratorExtensions(generateFacades = false)
             )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
