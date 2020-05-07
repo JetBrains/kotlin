@@ -7,19 +7,11 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
-
-fun createSession(
-    environment: KotlinCoreEnvironment,
-    sourceScope: GlobalSearchScope,
-    librariesScope: GlobalSearchScope = GlobalSearchScope.notScope(sourceScope),
-    moduleName: String = "TestModule"
-) = createSession(environment.project, sourceScope, librariesScope, moduleName, environment::createPackagePartProvider)
 
 fun createSession(
     project: Project,

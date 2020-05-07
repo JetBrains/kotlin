@@ -90,11 +90,7 @@ object GenerationUtils {
         trace: BindingTrace = NoScopeRecordCliBindingTrace()
     ): GenerationState {
         val project = files.first().project
-        val state = if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider, trace)
-        } else {
-            compileFilesUsingStandardMode(project, files, configuration, classBuilderFactory, packagePartProvider, trace)
-        }
+        val state = compileFilesUsingStandardMode(project, files, configuration, classBuilderFactory, packagePartProvider, trace)
 
         // For JVM-specific errors
         try {
@@ -104,68 +100,6 @@ object GenerationUtils {
         }
 
         return state
-    }
-
-    private fun compileFilesUsingFrontendIR(
-        project: Project,
-        files: List<KtFile>,
-        configuration: CompilerConfiguration,
-        classBuilderFactory: ClassBuilderFactory,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace
-    ): GenerationState {
-        Extensions.getArea(project)
-            .getExtensionPoint(PsiElementFinder.EP_NAME)
-            .unregisterExtension(JavaElementFinder::class.java)
-
-        val scope = GlobalSearchScope.filesScope(project, files.map { it.virtualFile })
-            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
-        val librariesScope = ProjectScope.getLibrariesScope(project)
-        val session = createSession(project, scope, librariesScope, "main", packagePartProvider)
-
-        val firProvider = (session.firProvider as FirProviderImpl)
-        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
-        val resolveTransformer = FirTotalResolveTransformer()
-        val firFiles = files.map {
-            val firFile = builder.buildFirFile(it)
-            firProvider.recordFile(firFile)
-            firFile
-        }.also {
-            try {
-                resolveTransformer.processFiles(it)
-            } catch (e: Exception) {
-                throw e
-            }
-        }
-        val (moduleFragment, symbolTable, sourceManager, components) =
-            Fir2IrConverter.createModuleFragment(
-                session, resolveTransformer.scopeSession, firFiles,
-                configuration.languageVersionSettings,
-                signaturer = IdSignatureDescriptor(JvmManglerDesc())
-            )
-        val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
-
-        val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
-
-        // Create and initialize the test module and its dependencies
-        val container = TopDownAnalyzerFacadeForJVM.createContainer(
-            project, files, trace, configuration, packagePartProvider, ::FileBasedDeclarationProviderFactory, CompilerEnvironment,
-            TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, files), emptyList()
-        )
-        val generationState = GenerationState.Builder(
-            project, classBuilderFactory, container.get<ModuleDescriptor>(), dummyBindingContext, files, configuration
-        ).codegenFactory(
-            codegenFactory
-        ).isIrBackend(
-            true
-        ).jvmBackendClassResolver(
-            FirJvmBackendClassResolver(components)
-        ).build()
-
-        generationState.beforeCompile()
-        codegenFactory.generateModuleInFrontendIRMode(generationState, moduleFragment, symbolTable, sourceManager)
-        generationState.factory.done()
-        return generationState
     }
 
     private fun compileFilesUsingStandardMode(
