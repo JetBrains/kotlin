@@ -54,7 +54,7 @@ Note that we can provide custom scripting support only for projects that using G
 
 ## Watching files states across IntelliJ restarts
 
-To have consistent sate of scripts, we should also be aware of external script changes. This is achieved by watching files using the IntelliJ VFS events. [GradleScriptInputsWatcher] is responsible for that.
+To have consistent sate of scripts, we should also be aware of external script changes. This is achieved by watching files using the IntelliJ VFS events. [GradleScriptListener] is responsible for that.
 
 The first tricky part is that scripts are depending on each other: so, when one script is changed, we actually should invalidate all other scripts as we don't know dependencies between them (Gradle will provide this information later, but it is not yet implemented). Actually, we should know the last modified timestamp of all scripts excepting a particular one. This can be achieved by storing timestamps of two last modified files. [LastModifiedFiles] utility is responsible for that.
 
