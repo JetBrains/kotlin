@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.runner.RunWith
 import java.io.File
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
-open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
+@RunWith(JUnit3RunnerWithInners::class)
+open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
     companion object {
         internal const val outsidePlaceholder = "// OUTSIDE_SECTIONS"
         internal const val insidePlaceholder = "// INSIDE_SECTIONS"
@@ -28,15 +28,8 @@ open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTes
 
     data class TestFiles(val buildKts: KtFile, val settings: KtFile, val prop: PsiFile)
 
-    override fun setUp() {
-        super.setUp()
-
-        // should be initialized explicitly because we do not have a real Gradle Project in this test
-        project.service<GradleScriptInputsWatcher>().startWatching()
-    }
-
     override fun setUpTestProject() {
-        val rootDir = "${KotlinTestUtils.getHomeDirectory()}/idea/testData/script/definition/loading/gradle/"
+        val rootDir = "idea/testData/script/definition/loading/gradle/"
 
         val settings: KtFile = addFileToProject(rootDir + GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
         val prop: PsiFile = addFileToProject(rootDir + "gradle.properties")
@@ -45,6 +38,10 @@ open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTes
             ?: error("Couldn't find main script")
         configureScriptFile(rootDir, buildGradleKts)
         val build = (myFile as? KtFile) ?: error("")
+
+        val newProjectSettings = GradleProjectSettings()
+        newProjectSettings.externalProjectPath = settings.virtualFile.parent.path
+        ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).linkProject(newProjectSettings)
 
         testFiles = TestFiles(build, settings, prop)
     }
@@ -186,7 +183,7 @@ open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTes
 
         changeSettingsKtsOutsideSections()
 
-        project.service<GradleScriptInputsWatcher>().clearAndRefillState()
+//        project.service<GradleScriptInputsWatcher>().clearAndRefillState()
 
         assertConfigurationUpToDate(testFiles.settings)
         assertConfigurationUpdateWasDone(testFiles.buildKts)
@@ -221,7 +218,7 @@ open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTes
     }
 
     private fun markFileChanged(virtualFile: VirtualFile, ts: Long) {
-        project.service<GradleScriptInputsWatcher>().fileChanged(virtualFile.path, ts)
+//        project.service<GradleScriptInputsWatcher>().fileChanged(virtualFile.path, ts)
     }
 
     fun testLoadedConfigurationWhenExternalFileChanged() {
