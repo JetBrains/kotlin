@@ -17,8 +17,16 @@ abstract class FirExtensionPoint(val session: FirSession) {
     abstract val annotations: Set<AnnotationFqn>
     abstract val metaAnnotations: Set<AnnotationFqn>
 
+    abstract val mode: Mode
+
     fun interface Factory<P : FirExtensionPoint> {
         fun create(session: FirSession): P
+    }
+
+    enum class Mode {
+        ANNOTATED_ELEMENT,
+        ALL_IN_ANNOTATED_ELEMENT,
+        ALL
     }
 }
 

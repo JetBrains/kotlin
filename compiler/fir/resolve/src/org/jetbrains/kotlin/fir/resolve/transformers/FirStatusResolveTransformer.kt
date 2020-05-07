@@ -174,7 +174,7 @@ private class FirStatusResolveTransformer(
 
     private fun <D> prepareStatus(declaration: D, status: FirDeclarationStatus): FirDeclarationStatus where D : FirDeclaration, D : FirAnnotationContainer {
         var result = status
-        session.extensionPointService.statusTransformerExtensions.forDeclaration(declaration).forEach {
+        session.extensionPointService.statusTransformerExtensions.forDeclaration(declaration, classes).forEach {
             result = it.transformStatus(declaration, status)
         }
         return result
