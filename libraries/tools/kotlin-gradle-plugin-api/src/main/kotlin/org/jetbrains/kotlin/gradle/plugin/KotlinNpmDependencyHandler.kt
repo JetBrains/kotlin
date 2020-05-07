@@ -9,6 +9,7 @@ import org.gradle.api.artifacts.Dependency
 import java.io.File
 
 interface KotlinNpmDependencyHandler {
+    @Deprecated("Declaring NPM dependency without version is forbidden")
     fun npm(name: String): Dependency
 
     fun npm(name: String, version: String): Dependency

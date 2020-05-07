@@ -21,6 +21,7 @@ interface NpmDependencyExtension {
 }
 
 interface NpmDependencyWithNameOnlyExtension : NpmDependencyExtension {
+    @Deprecated("Declaring NPM dependency without version is forbidden")
     operator fun invoke(name: String): NpmDependency
 }
 
