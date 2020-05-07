@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.openapi.components.PathMacroManager
@@ -19,7 +19,7 @@ import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.io.delete
 import com.intellij.util.io.outputStream
 import com.intellij.util.io.safeOutputStream
-import gnu.trove.THashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jdom.Attribute
 import org.jdom.Element
 import org.jetbrains.annotations.ApiStatus
@@ -115,7 +115,7 @@ abstract class XmlElementStorage protected constructor(val fileSpec: String,
   abstract class XmlElementStorageSaveSession<T : XmlElementStorage>(private val originalStates: StateMap, protected val storage: T) : SaveSessionBase() {
     private var copiedStates: MutableMap<String, Any>? = null
 
-    private var newLiveStates: MutableMap<String, Element>? = THashMap()
+    private var newLiveStates: MutableMap<String, Element>? = Object2ObjectOpenHashMap()
 
     protected open fun isSaveAllowed() = !storage.checkIsSavingDisabled()
 

@@ -27,7 +27,7 @@ import com.intellij.util.containers.catch
 import com.intellij.util.containers.mapSmart
 import com.intellij.util.io.*
 import com.intellij.util.text.UniqueNameGenerator
-import gnu.trove.THashSet
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import org.jdom.Document
 import org.jdom.Element
 import java.io.File
@@ -162,7 +162,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
   }
 
   internal fun createSchemeLoader(isDuringLoad: Boolean = false): SchemeLoader<T, MUTABLE_SCHEME> {
-    val filesToDelete = THashSet(filesToDelete)
+    val filesToDelete = ObjectOpenHashSet(filesToDelete)
     // caller must call SchemeLoader.apply to bring back scheduled for delete files
     this.filesToDelete.removeAll(filesToDelete)
     // SchemeLoader can use retain list to bring back previously  scheduled for delete file,
@@ -308,7 +308,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
       }
     }
 
-    val filesToDelete = THashSet(filesToDelete)
+    val filesToDelete = ObjectOpenHashSet(filesToDelete)
     for (scheme in changedSchemes) {
       try {
         saveScheme(scheme, nameGenerator, filesToDelete)
@@ -318,7 +318,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
       }
     }
 
-    if (!filesToDelete.isEmpty) {
+    if (!filesToDelete.isEmpty()) {
       val iterator = schemeToInfo.values.iterator()
       for (info in iterator) {
         if (filesToDelete.contains(info.fileName)) {

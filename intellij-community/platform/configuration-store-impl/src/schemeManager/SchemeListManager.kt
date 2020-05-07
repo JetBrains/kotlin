@@ -6,7 +6,7 @@ import com.intellij.openapi.options.ExternalizableScheme
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.filterSmart
 import com.intellij.util.text.UniqueNameGenerator
-import gnu.trove.THashSet
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Predicate
@@ -114,7 +114,7 @@ internal class SchemeListManager<T : Any>(private val schemeManager: SchemeManag
   }
 
   private fun collectExistingNames(schemes: Collection<T>): Collection<String> {
-    val result = THashSet<String>(schemes.size)
+    val result = ObjectOpenHashSet<String>(schemes.size)
     schemes.mapTo(result) { schemeManager.processor.getSchemeKey(it) }
     return result
   }

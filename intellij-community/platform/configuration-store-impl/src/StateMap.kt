@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.openapi.application.ApplicationManager
@@ -8,7 +8,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ArrayUtil
 import com.intellij.util.SystemProperties
 import com.intellij.util.isEmpty
-import gnu.trove.THashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import net.jpountz.lz4.LZ4FrameInputStream
 import net.jpountz.lz4.LZ4FrameOutputStream
 import org.jdom.Element
@@ -42,7 +42,7 @@ fun getNewByteIfDiffers(key: String, newState: Any, oldState: ByteArray): ByteAr
   }
   else {
     newBytes = newState as ByteArray
-    if (Arrays.equals(newBytes, oldState)) {
+    if (newBytes.contentEquals(oldState)) {
       return null
     }
   }
@@ -97,7 +97,7 @@ class StateMap private constructor(private val names: Array<String>, private val
   }
 
   fun toMutableMap(): MutableMap<String, Any> {
-    val map = THashMap<String, Any>(names.size)
+    val map = Object2ObjectOpenHashMap<String, Any>(names.size)
     for (i in names.indices) {
       map.put(names[i], states.get(i))
     }

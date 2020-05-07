@@ -17,7 +17,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.ThreeState
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.systemIndependentPath
-import gnu.trove.THashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jdom.Element
 import org.jetbrains.annotations.TestOnly
 import java.io.IOException
@@ -39,7 +39,7 @@ open class StateStorageManagerImpl(private val rootTagName: String,
                                    private val virtualFileTracker: StorageVirtualFileTracker? = createDefaultVirtualTracker(componentManager)) : StateStorageManager {
   private val macros: MutableList<Macro> = ContainerUtil.createLockFreeCopyOnWriteList()
   private val storageLock = ReentrantReadWriteLock()
-  private val storages = THashMap<String, StateStorage>()
+  private val storages = Object2ObjectOpenHashMap<String, StateStorage>()
 
   val compoundStreamProvider: CompoundStreamProvider = CompoundStreamProvider()
 
@@ -376,10 +376,9 @@ open class StateStorageManagerImpl(private val rootTagName: String,
   fun clearStorages() {
     storageLock.write {
       try {
-        virtualFileTracker?.let {
-          storages.forEachEntry { collapsedPath, _ ->
-            it.remove(expandMacros(collapsedPath))
-            true
+        if (virtualFileTracker != null) {
+          for (collapsedPath in storages.keys) {
+            virtualFileTracker.remove(expandMacros(collapsedPath))
           }
         }
       }

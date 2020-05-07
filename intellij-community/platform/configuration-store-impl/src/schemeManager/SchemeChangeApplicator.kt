@@ -1,11 +1,11 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.schemeManager
 
 import com.intellij.configurationStore.LazySchemeProcessor
 import com.intellij.configurationStore.SchemeContentChangedHandler
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VirtualFile
-import gnu.trove.THashSet
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import java.util.function.Function
 
 internal interface SchemeChangeEvent {
@@ -113,8 +113,8 @@ internal fun sortSchemeChangeEvents(inputEvents: Collection<SchemeChangeEvent>):
   var isThereSomeRemoveEvent = false
 
 
-  val existingAddOrUpdate = THashSet<String>()
-  val removedFileNames = THashSet<String>()
+  val existingAddOrUpdate = ObjectOpenHashSet<String>()
+  val removedFileNames = ObjectOpenHashSet<String>()
   val result = ArrayList(inputEvents)
   // first, remove any event before RemoveAllSchemes and remove RemoveScheme event if there is any subsequent add/update
   for (i in (result.size - 1) downTo 0) {

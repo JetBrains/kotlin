@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.configurationStore.schemeManager.createDir
@@ -14,8 +14,8 @@ import com.intellij.util.SmartList
 import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.isEmpty
-import gnu.trove.THashMap
-import gnu.trove.THashSet
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import org.jdom.Element
 import org.jetbrains.annotations.ApiStatus
 import java.io.IOException
@@ -118,12 +118,12 @@ open class DirectoryBasedStorage(private val dir: Path,
           copiedStorageData!!.clear()
         }
         else if (!originalStates.isEmpty()) {
-          copiedStorageData = THashMap()
+          copiedStorageData = Object2ObjectOpenHashMap()
         }
         return
       }
 
-      val existingFiles = THashSet<String>(stateAndFileNameList.size)
+      val existingFiles = ObjectOpenHashSet<String>(stateAndFileNameList.size)
       for (pair in stateAndFileNameList) {
         doSetState(pair.second, pair.first)
         existingFiles.add(pair.second)

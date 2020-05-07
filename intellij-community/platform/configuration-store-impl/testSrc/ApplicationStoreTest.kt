@@ -19,7 +19,7 @@ import com.intellij.util.io.writeChild
 import com.intellij.util.pico.DefaultPicoContainer
 import com.intellij.util.xmlb.XmlSerializerUtil
 import com.intellij.util.xmlb.annotations.Attribute
-import gnu.trove.THashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.data.MapEntry
@@ -79,7 +79,7 @@ internal class ApplicationStoreTest {
     val component = SeveralStoragesConfigured()
 
     val streamProvider = MyStreamProvider()
-    val map = THashMap<String, String>()
+    val map = Object2ObjectOpenHashMap<String, String>()
     val fileSpec = "new.xml"
     map[fileSpec] = "<application>\n  <component name=\"A\" foo=\"newValue\" />\n</application>"
     streamProvider.data[RoamingType.DEFAULT] = map
@@ -386,13 +386,13 @@ internal class ApplicationStoreTest {
 
     override fun processChildren(path: String, roamingType: RoamingType, filter: (String) -> Boolean, processor: (String, InputStream, Boolean) -> Boolean) = true
 
-    val data: MutableMap<RoamingType, MutableMap<String, String>> = THashMap()
+    val data: MutableMap<RoamingType, MutableMap<String, String>> = Object2ObjectOpenHashMap()
 
     override fun write(fileSpec: String, content: ByteArray, size: Int, roamingType: RoamingType) {
       getMap(roamingType)[fileSpec] = String(content, 0, size, Charsets.UTF_8)
     }
 
-    private fun getMap(roamingType: RoamingType): MutableMap<String, String> = data.getOrPut(roamingType) { THashMap() }
+    private fun getMap(roamingType: RoamingType): MutableMap<String, String> = data.getOrPut(roamingType) { Object2ObjectOpenHashMap() }
 
     override fun read(fileSpec: String, roamingType: RoamingType, consumer: (InputStream?) -> Unit): Boolean {
       val data = getMap(roamingType)[fileSpec]

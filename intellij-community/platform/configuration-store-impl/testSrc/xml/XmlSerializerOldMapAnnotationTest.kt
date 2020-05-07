@@ -1,11 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.xml
 
 import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.annotations.MapAnnotation
 import com.intellij.util.xmlb.annotations.Property
 import com.intellij.util.xmlb.annotations.Tag
-import gnu.trove.THashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.junit.Test
 import java.util.*
 
@@ -14,7 +14,7 @@ internal class XmlSerializerOldMapAnnotationTest {
     @Tag("bean")
     class Bean {
       @MapAnnotation(surroundWithTag = false, surroundKeyWithTag = false, surroundValueWithTag = false)
-      var values: Map<String, BeanWithProperty> = THashMap()
+      var values: Map<String, BeanWithProperty> = Object2ObjectOpenHashMap()
     }
 
     val bean = Bean()
@@ -156,7 +156,7 @@ internal class XmlSerializerOldMapAnnotationTest {
       @Property(surroundWithTag = false)
       @MapAnnotation(keyAttributeName = "type")
       @JvmField
-      var branches = THashMap<String, String>()
+      var branches = Object2ObjectOpenHashMap<String, String>()
     }
 
     val bean = BranchStorage()

@@ -11,14 +11,13 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.*
 import com.intellij.openapi.application.ex.ApplicationEx
 import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.showOkCancelDialog
 import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.getParentPath
 import com.intellij.util.io.*
-import gnu.trove.THashSet
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -139,7 +138,7 @@ open class ImportSettingsAction : AnAction(), DumbAware {
   }
 
   private fun getRelativeNamesToExtract(chosenComponents: Set<ExportableItem>): Set<String> {
-    val result = THashSet<String>()
+    val result = ObjectOpenHashSet<String>()
     val root = PathManager.getConfigDir()
     for (item in chosenComponents) {
       result.add(root.relativize(item.file).systemIndependentPath)
@@ -153,7 +152,7 @@ open class ImportSettingsAction : AnAction(), DumbAware {
 }
 
 fun getPaths(input: InputStream): Set<String> {
-  val result = THashSet<String>()
+  val result = ObjectOpenHashSet<String>()
   val zipIn = ZipInputStream(input)
   zipIn.use {
     while (true) {
