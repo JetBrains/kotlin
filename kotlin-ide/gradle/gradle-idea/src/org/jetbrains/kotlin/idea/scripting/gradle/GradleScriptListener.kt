@@ -8,27 +8,45 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
+import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptListener
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 
 class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
+    // todo(gradle6): remove
+    private val legacy = GradleLegacyScriptListener(project)
+    private val buildRootsManager = GradleBuildRootsManager.getInstance(project)
+
     init {
         // listen changes using VFS events, including gradle-configuration related files
         addVfsListener(this)
     }
 
     fun fileChanged(filePath: String, ts: Long) =
-        GradleBuildRootsManager.getInstance(project).fileChanged(filePath, ts)
+        buildRootsManager.fileChanged(filePath, ts)
 
     override fun isApplicable(vFile: VirtualFile) =
-        GradleBuildRootsManager.getInstance(project).isApplicable(vFile)
+        // todo(gradle6): replace with `isCustomScriptingSupport(vFile)`
+        legacy.isApplicable(vFile)
 
-    override fun editorActivated(vFile: VirtualFile) =
-        checkUpToDate(vFile)
+    private fun isCustomScriptingSupport(vFile: VirtualFile) =
+        buildRootsManager.isApplicable(vFile)
+
+    override fun editorActivated(vFile: VirtualFile) {
+        if (isCustomScriptingSupport(vFile)) {
+            checkUpToDate(vFile)
+        } else {
+            legacy.editorActivated(vFile)
+        }
+    }
 
     override fun documentChanged(vFile: VirtualFile) {
         fileChanged(vFile.path, System.currentTimeMillis())
-        checkUpToDate(vFile)
+
+        if (isCustomScriptingSupport(vFile)) {
+            checkUpToDate(vFile)
+        } else {
+            legacy.documentChanged(vFile)
+        }
     }
 
     private fun checkUpToDate(vFile: VirtualFile) {
