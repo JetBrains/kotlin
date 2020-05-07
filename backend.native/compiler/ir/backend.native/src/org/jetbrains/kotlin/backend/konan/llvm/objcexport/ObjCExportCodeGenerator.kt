@@ -377,7 +377,7 @@ internal class ObjCExportCodeGenerator(
         )
     }
 
-    private val impType = pointerType(functionType(int8TypePtr, true, int8TypePtr, int8TypePtr))
+    private val impType = pointerType(functionType(voidType, false))
 
     internal val directMethodAdapters = mutableMapOf<DirectAdapterRequest, ObjCToKotlinMethodAdapter>()
 
