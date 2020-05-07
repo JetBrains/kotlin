@@ -140,8 +140,8 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport.Provider(
             return roots.getBuildByProjectDir(filePath.substringBeforeLast("/"))
         } else if (filePath.endsWith("/gradle-wrapper.properties")) {
             val gradleWrapperDirIndex = filePath.lastIndexOfOrNull('/') ?: return null
-            val gradleDirIndex = filePath.lastIndexOfOrNull('/', gradleWrapperDirIndex) ?: return null
-            val buildDirIndex = filePath.lastIndexOfOrNull('/', gradleDirIndex) ?: return null
+            val gradleDirIndex = filePath.lastIndexOfOrNull('/', gradleWrapperDirIndex - 1) ?: return null
+            val buildDirIndex = filePath.lastIndexOfOrNull('/', gradleDirIndex - 1) ?: return null
             return roots.getBuildByRootDir(filePath.substring(0, buildDirIndex))
         }
 
