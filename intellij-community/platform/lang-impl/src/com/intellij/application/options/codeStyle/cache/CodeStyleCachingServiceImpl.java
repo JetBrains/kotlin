@@ -5,7 +5,6 @@ import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -27,7 +26,6 @@ public class CodeStyleCachingServiceImpl implements CodeStyleCachingService, Dis
   private final static Key<CodeStyleCachedValueProvider> PROVIDER_KEY = Key.create("code.style.cached.value.provider");
 
   private final Map<String, FileData> myFileDataCache = new HashMap<>();
-  private final Project myProject;
 
   private final Object CACHE_LOCK = new Object();
 
@@ -35,8 +33,7 @@ public class CodeStyleCachingServiceImpl implements CodeStyleCachingService, Dis
     MAX_CACHE_SIZE,
     Comparator.comparingLong(fileData -> fileData.lastRefTimeStamp));
 
-  public CodeStyleCachingServiceImpl(Project project) {
-    myProject = project;
+  public CodeStyleCachingServiceImpl() {
     ApplicationManager.getApplication().getMessageBus().connect(this).
       subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
         @Override
@@ -62,16 +59,13 @@ public class CodeStyleCachingServiceImpl implements CodeStyleCachingService, Dis
     synchronized (CACHE_LOCK) {
       VirtualFile virtualFile = file.getVirtualFile();
       if (virtualFile != null) {
-        String filePath = getFilePath(virtualFile);
-        if (filePath != null) {
-          FileData fileData = getOrCreateFileData(filePath);
-          CodeStyleCachedValueProvider provider = fileData.getUserData(PROVIDER_KEY);
-          if (provider == null || provider.isExpired()) {
-            provider = new CodeStyleCachedValueProvider(file);
-            fileData.putUserData(PROVIDER_KEY, provider);
-          }
-          return provider;
+        FileData fileData = getOrCreateFileData(getFileKey(virtualFile));
+        CodeStyleCachedValueProvider provider = fileData.getUserData(PROVIDER_KEY);
+        if (provider == null || provider.isExpired()) {
+          provider = new CodeStyleCachedValueProvider(file);
+          fileData.putUserData(PROVIDER_KEY, provider);
         }
+        return provider;
       }
       return null;
     }
@@ -96,8 +90,7 @@ public class CodeStyleCachingServiceImpl implements CodeStyleCachingService, Dis
   @Override
   @Nullable
   public UserDataHolder getDataHolder(@NotNull VirtualFile virtualFile) {
-    String filePath = getFilePath(virtualFile);
-    return filePath != null ? getOrCreateFileData(filePath) : null;
+    return getOrCreateFileData(getFileKey(virtualFile));
   }
 
   @NotNull
@@ -119,14 +112,9 @@ public class CodeStyleCachingServiceImpl implements CodeStyleCachingService, Dis
     return newData;
   }
 
-  @Nullable
-  private String getFilePath(VirtualFile file) {
-    if (!file.isInLocalFileSystem()) {
-      return myProject.getBasePath() +
-             "/" + file.getNameWithoutExtension() +
-             "." + file.getFileType().getDefaultExtension();
-    }
-    return file.getCanonicalPath();
+  @NotNull
+  private static String getFileKey(VirtualFile file) {
+    return file.getUrl();
   }
 
   @Override
