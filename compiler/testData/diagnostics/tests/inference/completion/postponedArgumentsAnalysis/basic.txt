@@ -3,6 +3,7 @@ package
 public fun </*0*/ K> id(/*0*/ x: K): K
 public fun </*0*/ K> id1(/*0*/ x: K): K
 public fun </*0*/ L> id2(/*0*/ x: L): L
+public fun main(): kotlin.Unit
 public fun </*0*/ T> select(/*0*/ vararg x: T /*kotlin.Array<out T>*/): T
 public fun </*0*/ T : (A) -> kotlin.Unit> selectA(/*0*/ arg1: T, /*1*/ arg2: T, /*2*/ arg3: T): T
 public fun </*0*/ T : (B) -> kotlin.Unit> selectB(/*0*/ arg1: T, /*1*/ arg2: T, /*2*/ arg3: T): T
@@ -17,7 +18,6 @@ public fun </*0*/ T> takeLambdas(/*0*/ vararg x: (T) -> kotlin.Unit /*kotlin.Arr
 public fun </*0*/ T : R, /*1*/ R : L, /*2*/ L> takeLambdasWithDirectlyDependentTypeParameters(/*0*/ x: (T) -> kotlin.Unit, /*1*/ y: (R) -> kotlin.Unit, /*2*/ z: (L) -> kotlin.Unit): (T) -> kotlin.Unit
 public fun </*0*/ T, /*1*/ R : T, /*2*/ L : R> takeLambdasWithInverselyDependentTypeParameters(/*0*/ x: (T) -> kotlin.Unit, /*1*/ y: (R) -> kotlin.Unit, /*2*/ z: (L) -> kotlin.Unit): (T) -> kotlin.Unit
 public fun takeNumber(/*0*/ i: kotlin.Number): kotlin.Unit
-public fun test1(): kotlin.Unit
 public fun withOverload(/*0*/ i: kotlin.Int): kotlin.Unit
 public fun withOverload(/*0*/ s: kotlin.String): kotlin.Unit
 

@@ -92,18 +92,23 @@ class PostponedArgumentInputTypesResolver(
             }
         }?.toSet()
 
-        val annotations = functionalTypesFromConstraints?.run {
-            Annotations.create(map { it.type.annotations }.flatten())
-        }
-
-        val parameterTypesFromDeclarationOfRelatedLambdas =
+        // An extension function flag can only come from a declaration of anonymous function: `select({ this + it }, fun Int.(x: Int) = 10)`
+        val (parameterTypesFromDeclarationOfRelatedLambdas, isThereExtensionFunctionAmongRelatedLambdas) =
             getDeclaredParametersFromRelatedLambdas(argument, postponedArguments, variableDependencyProvider)
+
+        val annotationsFromConstraints = functionalTypesFromConstraints?.run {
+            Annotations.create(map { it.type.annotations }.flatten())
+        } ?: Annotations.EMPTY
+
+        val annotations = if (isThereExtensionFunctionAmongRelatedLambdas) {
+            annotationsFromConstraints.withExtensionFunctionAnnotation(expectedType.builtIns)
+        } else annotationsFromConstraints
 
         return ParameterTypesInfo(
             parameterTypesFromDeclaration,
             parameterTypesFromDeclarationOfRelatedLambdas,
             parameterTypesFromConstraints,
-            annotations ?: Annotations.EMPTY,
+            annotations,
             isSuspend = !functionalTypesFromConstraints.isNullOrEmpty() && functionalTypesFromConstraints.any { it.type.isSuspendFunctionTypeOrSubtype },
             isNullable = !functionalTypesFromConstraints.isNullOrEmpty() && functionalTypesFromConstraints.all { it.type.isMarkedNullable }
         )
@@ -113,24 +118,26 @@ class PostponedArgumentInputTypesResolver(
         argument: PostponedAtomWithRevisableExpectedType,
         postponedArguments: List<PostponedAtomWithRevisableExpectedType>,
         dependencyProvider: TypeVariableDependencyInformationProvider
-    ): Set<List<UnwrappedType?>>? {
-        fun PostponedAtomWithRevisableExpectedType.getExpectedTypeConstructor() = expectedType?.typeConstructor()
-
+    ): Pair<Set<List<UnwrappedType?>>?, Boolean> {
         val parameterTypesFromDeclarationOfRelatedLambdas = postponedArguments
             .filterIsInstance<LambdaWithTypeVariableAsExpectedTypeAtom>()
             .filter { it.parameterTypesFromDeclaration != null && it != argument }
             .mapNotNull { anotherArgument ->
-                val argumentExpectedTypeConstructor = argument.getExpectedTypeConstructor() ?: return@mapNotNull null
-                val anotherArgumentExpectedTypeConstructor = anotherArgument.getExpectedTypeConstructor() ?: return@mapNotNull null
+                val argumentExpectedTypeConstructor = argument.expectedType?.typeConstructor() ?: return@mapNotNull null
+                val anotherArgumentExpectedTypeConstructor = anotherArgument.expectedType.typeConstructor()
                 val areTypeVariablesRelated = dependencyProvider.areVariablesDependentShallowly(
-                    argumentExpectedTypeConstructor,
-                    anotherArgumentExpectedTypeConstructor
+                    argumentExpectedTypeConstructor, anotherArgumentExpectedTypeConstructor
                 )
+                val anotherAtom = anotherArgument.atom
+                val isAnonymousExtensionFunction = anotherAtom is FunctionExpression && anotherAtom.receiverType != null
+                val parameterTypesFromDeclarationOfRelatedLambda = anotherArgument.parameterTypesFromDeclaration
 
-                if (areTypeVariablesRelated) anotherArgument.parameterTypesFromDeclaration else null
+                if (areTypeVariablesRelated && parameterTypesFromDeclarationOfRelatedLambda != null) {
+                    parameterTypesFromDeclarationOfRelatedLambda to isAnonymousExtensionFunction
+                } else null
             }
 
-        return parameterTypesFromDeclarationOfRelatedLambdas.toSet().takeIf { it.isNotEmpty() }
+        return parameterTypesFromDeclarationOfRelatedLambdas.run { map { it.first }.toSet() to any { it.second } }
     }
 
     private fun Context.createTypeVariableForReturnType(argument: PostponedAtomWithRevisableExpectedType): NewTypeVariable {

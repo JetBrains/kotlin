@@ -62,8 +62,7 @@ class A5<K, Q>: Function2<K, Q, Float> {
     override fun invoke(p1: K, p2: Q): Float = 5f
 }
 
-
-fun test1() {
+fun main() {
     // Inferring lambda parameter types by other lambda explicit parameters; expected type is type variable
     select(id1 { x -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv() }, id2 { x: Int -> })
     select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }, id2 { x: Int -> })
@@ -220,4 +219,17 @@ fun test1() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<*, kotlin.String?>")!>select(id { x: Int -> null }, id { x: String -> "" })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Int>")!>select(id { x: Int -> 10 }, id { x: Int, y: Number -> TODO() })<!>
     val x68: String.(String) -> String = select(id { x: String, y: String -> "10" }, id { x: String, y: String -> "TODO()" })
+
+    // Anonymous functions
+    val x69: (C) -> Unit = selectB({ it }, { }, id(fun (x) { <!DEBUG_INFO_EXPRESSION_TYPE("A")!>x<!> }))
+    select(id1(fun(it) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }), id1 { x: Number -> TODO() }, id1(id2(::takeInt)))
+    select(id(fun (it) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> }), id(id<(Int) -> Unit> { x: Number -> Unit }))
+    select(id(fun (it) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }), id<(Int) -> Unit> { })
+    val x70: (Int) -> Unit = selectNumber(id(fun (it) { }), id {}, id {})
+    val x71: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String.() -> kotlin.Unit")!>id(fun String.() { })<!>, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String) -> kotlin.Unit")!>id(fun(x: String) {})<!>)
+    val x72: String.() -> Unit = select(fun String.() { }, fun(x: String) {}) // must be error
+    select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), fun (x, y) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x<!>;<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>y<!> })
+    select(id<Int.(String) -> Unit>(<!TYPE_MISMATCH!>fun (x, y) {}<!>), { x: Int, y: String -> x }) // receiver of anonymous function must be specified explicitly
+    select(id<Int.(String) -> Unit>(fun Int.(y) {}), { x: Int, y: String -> x })
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Number) -> java.io.Serializable")!>select(A3(), fun (x) = "", { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>a<!> })<!>
 }

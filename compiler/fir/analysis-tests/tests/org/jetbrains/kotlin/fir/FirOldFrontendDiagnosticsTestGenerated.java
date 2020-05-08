@@ -10778,6 +10778,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 public void testLambdasInTryCatch() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/lambdasInTryCatch.kt");
                 }
+
+                @TestMetadata("takingExtensibilityFromDeclarationOfAnonymousFunction.kt")
+                public void testTakingExtensibilityFromDeclarationOfAnonymousFunction() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/takingExtensibilityFromDeclarationOfAnonymousFunction.kt");
+                }
             }
         }
 
