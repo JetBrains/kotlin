@@ -583,7 +583,8 @@ tasks {
             ":compiler:fir:raw-fir:light-tree2fir:test",
             ":compiler:fir:analysis-tests:test",
             ":compiler:fir:fir2ir:test",
-            ":idea:idea-fir:test"
+            ":idea:idea-fir:test",
+            ":plugins:fir:fir-plugin-protoytype:test"
         )
     }
 
