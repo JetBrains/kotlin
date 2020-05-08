@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun test(array: IntArray) {
+    val b = array.none { it == 1 }
+}

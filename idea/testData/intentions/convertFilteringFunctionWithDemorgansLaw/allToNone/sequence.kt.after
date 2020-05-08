@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun test(seq: Sequence<Int>) {
+    val b = seq.none { it == 1 }
+}

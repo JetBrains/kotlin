@@ -1,0 +1,4 @@
+fun test(list: List<Int>) {
+    val filteredList = mutableListOf<Int>()
+    val b = list.filterNotTo(filteredList) { it != 1 }
+}

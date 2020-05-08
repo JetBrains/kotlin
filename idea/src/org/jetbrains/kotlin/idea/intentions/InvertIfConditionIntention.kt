@@ -56,13 +56,12 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
         commentSaver.restore(commentRestoreRange)
 
         val newIfCondition = newIf.condition
-        val simplifyIntention = ConvertBinaryExpressionWithDemorgansLawIntention()
         (newIfCondition as? KtPrefixExpression)?.let {
             //use De Morgan's law only for negated condition to not make it more complex
             if (it.operationReference.getReferencedNameElementType() == KtTokens.EXCL) {
                 val binaryExpr = (it.baseExpression as? KtParenthesizedExpression)?.expression as? KtBinaryExpression
-                if (binaryExpr != null && simplifyIntention.isApplicableTo(binaryExpr)) {
-                    simplifyIntention.applyTo(binaryExpr)
+                if (binaryExpr != null) {
+                    ConvertBinaryExpressionWithDemorgansLawIntention.convertIfPossible(binaryExpr)
                 }
             }
         }
