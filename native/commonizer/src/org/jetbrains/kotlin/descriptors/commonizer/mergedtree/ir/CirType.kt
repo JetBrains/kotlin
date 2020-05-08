@@ -34,9 +34,10 @@ sealed class CirType {
  * expanded type represents right-hand side declaration that should be processed separately.
  *
  * There is no difference between "abbreviation" and "expanded" for types representing classes and type parameters.
+ *
+ * Note: Annotations at simple types are not preserved. After commonization all annotations assigned to types will be lost.
  */
 class CirSimpleType private constructor(original: SimpleType) : CirType() {
-    val annotations: List<CirAnnotation>
     val kind: CirSimpleTypeKind
     val fqName: FqName
     val arguments: List<CirTypeProjection>
@@ -48,7 +49,6 @@ class CirSimpleType private constructor(original: SimpleType) : CirType() {
         val abbreviation = (original as? AbbreviatedType)?.abbreviation ?: original
         val expanded = (original as? AbbreviatedType)?.expandedType ?: original
 
-        annotations = abbreviation.annotations.map(CirAnnotation.Companion::create)
         kind = CirSimpleTypeKind.determineKind(abbreviation.declarationDescriptor)
         fqName = abbreviation.fqNameInterned
         arguments = abbreviation.arguments.map(::CirTypeProjection)
@@ -68,7 +68,6 @@ class CirSimpleType private constructor(original: SimpleType) : CirType() {
                     && kind == other.kind
                     && arguments == other.arguments
                     && fqNameWithTypeParameters == other.fqNameWithTypeParameters
-                    && annotations == other.annotations
                     && isDefinitelyNotNullType == other.isDefinitelyNotNullType
         }
         else -> false
@@ -77,8 +76,7 @@ class CirSimpleType private constructor(original: SimpleType) : CirType() {
     // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
     private var cachedHashCode = 0
 
-    private fun computeHashCode() = hashCode(annotations)
-        .appendHashCode(kind)
+    private fun computeHashCode() = hashCode(kind)
         .appendHashCode(fqName)
         .appendHashCode(arguments)
         .appendHashCode(isMarkedNullable)

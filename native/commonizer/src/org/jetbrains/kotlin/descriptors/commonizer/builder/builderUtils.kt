@@ -121,7 +121,7 @@ internal fun CirSimpleType.buildType(
     }
 
     val simpleType = simpleType(
-        annotations = annotations.buildDescriptors(targetComponents),
+        annotations = Annotations.EMPTY,
         constructor = classifier.typeConstructor,
         arguments = arguments.map { it.buildArgument(targetComponents, typeParameterResolver) },
         nullable = isMarkedNullable,

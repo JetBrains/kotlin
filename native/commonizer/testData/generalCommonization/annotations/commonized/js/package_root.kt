@@ -47,7 +47,7 @@ actual fun function1(@JsAnnotation("parameter") @CommonAnnotation("parameter") t
 
 @JsAnnotation("function")
 @CommonAnnotation("function")
-actual fun <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @JsAnnotation("type1") @CommonAnnotation("type1") Number> @receiver:JsAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): @JsAnnotation("type2") @CommonAnnotation("type2") Q = this
+actual fun <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : Number> @receiver:JsAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): Q = this
 
 @JsAnnotation("class")
 @CommonAnnotation("class")

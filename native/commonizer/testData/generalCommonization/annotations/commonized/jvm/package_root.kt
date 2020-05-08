@@ -47,7 +47,7 @@ actual fun function1(@JvmAnnotation("parameter") @CommonAnnotation("parameter") 
 
 @JvmAnnotation("function")
 @CommonAnnotation("function")
-actual fun <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @JvmAnnotation("type1") @CommonAnnotation("type1") Number> @receiver:JvmAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): @JvmAnnotation("type2") @CommonAnnotation("type2") Q = this
+actual fun <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : Number> @receiver:JvmAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): Q = this
 
 @JvmAnnotation("class")
 @CommonAnnotation("class")
