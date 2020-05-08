@@ -190,7 +190,7 @@ class ParcelableIrTransformer(private val context: CommonBackendContext, private
                         body = context.createIrBuilder(symbol).run {
                             irExprBody(
                                 parcelerNewArray(parcelerObject, sizeParameter)
-                                    ?: irCall(androidSymbols.irSymbols.arrayOfNulls, arrayType).apply {
+                                    ?: irCall(androidSymbols.arrayOfNulls, arrayType).apply {
                                         putTypeArgument(0, arrayType)
                                         putValueArgument(0, irGet(sizeParameter))
                                     }

@@ -216,7 +216,7 @@ class IrArrayParcelSerializer(
 ) : IrParcelSerializer {
     private fun AndroidIrBuilder.newArray(size: IrExpression): IrExpression {
         val arrayConstructor: IrFunctionSymbol = if (arrayType.isBoxedArray)
-            androidSymbols.irSymbols.arrayOfNulls
+            androidSymbols.arrayOfNulls
         else
             arrayType.classOrNull!!.constructors.single { it.owner.valueParameters.size == 1 }
 

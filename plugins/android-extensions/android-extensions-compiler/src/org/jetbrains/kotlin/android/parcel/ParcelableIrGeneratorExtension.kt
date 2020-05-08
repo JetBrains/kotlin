@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 @Suppress("DEPRECATION_ERROR")
 class ParcelableIrGeneratorExtension : org.jetbrains.kotlin.backend.common.extensions.PureIrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, context: CommonBackendContext) {
-        ParcelableIrTransformer(context, AndroidSymbols(context, moduleFragment)).transform(moduleFragment)
+        val arrayOfNulls = context.ir.symbols.arrayOfNulls
+        val charSequence = context.ir.symbols.charSequence
+        val androidSymbols = AndroidSymbols(context.irBuiltIns, arrayOfNulls, charSequence, moduleFragment)
+        ParcelableIrTransformer(context, androidSymbols).transform(moduleFragment)
     }
 }

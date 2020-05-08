@@ -30,13 +30,11 @@ import org.jetbrains.kotlin.name.Name
 // hence contain just enough information to produce correct JVM bytecode for *calls*. In particular, we omit generic types and
 // supertypes, which are not needed to produce correct bytecode.
 class AndroidSymbols(
-    context: CommonBackendContext,
+    val irBuiltIns: IrBuiltIns,
+    val arrayOfNulls: IrSimpleFunctionSymbol,
+    private val charSequence: IrClassSymbol,
     private val moduleFragment: IrModuleFragment
 ) {
-    val irBuiltIns: IrBuiltIns = context.irBuiltIns
-
-    val irSymbols: Symbols<CommonBackendContext> = context.ir.symbols
-
     private val androidOs: IrPackageFragment = createPackage("android.os")
 
     private val androidText: IrPackageFragment = createPackage("android.text")
@@ -117,7 +115,7 @@ class AndroidSymbols(
         modality = Modality.ABSTRACT
     }.apply {
         createImplicitParameterDeclarationWithWrappedDescriptor()
-        val t = addTypeParameter("T", context.irBuiltIns.anyNType)
+        val t = addTypeParameter("T", irBuiltIns.anyNType)
         parent = androidOsParcelable.owner
 
         addFunction("createFromParcel", t.defaultType, Modality.ABSTRACT).apply {
@@ -128,7 +126,7 @@ class AndroidSymbols(
             "newArray", irBuiltIns.arrayClass.typeWith(t.defaultType.makeNullable()),
             Modality.ABSTRACT
         ).apply {
-            addValueParameter("size", context.irBuiltIns.intType)
+            addValueParameter("size", irBuiltIns.intType)
         }
     }.symbol
 
@@ -386,7 +384,7 @@ class AndroidSymbols(
 
     val textUtilsWriteToParcel: IrSimpleFunctionSymbol =
         androidTextTextUtils.owner.addFunction("writeToParcel", irBuiltIns.unitType, isStatic = true).apply {
-            addValueParameter("cs", irSymbols.charSequence.defaultType)
+            addValueParameter("cs", charSequence.defaultType)
             addValueParameter("p", androidOsParcel.defaultType)
             addValueParameter("parcelableFlags", irBuiltIns.intType)
         }.symbol
