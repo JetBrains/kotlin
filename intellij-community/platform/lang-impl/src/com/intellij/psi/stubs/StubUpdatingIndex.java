@@ -48,6 +48,8 @@ import java.util.stream.Stream;
 public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<SerializedStubTree>
   implements CustomImplementationFileBasedIndexExtension<Integer, SerializedStubTree> {
   static final Logger LOG = Logger.getInstance(StubUpdatingIndex.class);
+  public static final boolean USE_SNAPSHOT_MAPPINGS = SystemProperties.is("stubs.use.snapshot.mappings");
+
   private static final int VERSION = 45 + (PersistentHashMapValueStorage.COMPRESSION_ENABLED ? 1 : 0);
 
   // todo remove once we don't need this for stub-ast mismatch debug info
@@ -75,7 +77,7 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
 
   @Override
   public boolean hasSnapshotMapping() {
-    return SystemProperties.is("stubs.use.snapshot.mappings");
+    return USE_SNAPSHOT_MAPPINGS;
   }
 
   public static boolean canHaveStub(@NotNull VirtualFile file) {
