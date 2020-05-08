@@ -25,7 +25,7 @@ abstract class FirExtension(val session: FirSession) {
 
     internal abstract val extensionType: KClass<out FirExtension>
 
-    fun interface Factory<P : FirExtension> {
+    fun interface Factory<out P : FirExtension> {
         fun create(session: FirSession): P
     }
 

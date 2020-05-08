@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
+import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 
 class CheckersComponent : FirSessionComponent {
     companion object {
@@ -32,6 +33,11 @@ class CheckersComponent : FirSessionComponent {
 
     fun register(checkers: ExpressionCheckers) {
         _expressionCheckers.register(checkers)
+    }
+
+    fun register(checkers: FirAdditionalCheckersExtension) {
+        register(checkers.declarationCheckers)
+        register(checkers.expressionCheckers)
     }
 }
 
