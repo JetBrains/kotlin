@@ -71,10 +71,10 @@ public class GenerateRangesCodegenTestData {
     private static final Map<String, String> MIN_MAX_CONSTANTS = new LinkedHashMap<>();
 
     private static final List<String> FIR_PASSING_UNSIGNED_LITERAL_TESTS =
-            Arrays.asList("emptyDownto", "emptyRange", "reversedEmptyBackSequence", "reversedEmptyRange");
+            Arrays.asList("emptyDownto", "emptyRange", "oneElementDownTo", "oneElementRange", "reversedEmptyBackSequence", "reversedEmptyRange");
 
     private static final List<String> FIR_PASSING_UNSIGNED_EXPRESSION_TESTS =
-            Arrays.asList("emptyDownto", "emptyRange", "reversedEmptyBackSequence", "reversedEmptyRange");
+            Arrays.asList("emptyDownto", "emptyRange", "oneElementDownTo", "oneElementRange", "reversedEmptyBackSequence", "reversedEmptyRange");
 
     static {
         for (String integerType : INTEGER_PRIMITIVES) {
