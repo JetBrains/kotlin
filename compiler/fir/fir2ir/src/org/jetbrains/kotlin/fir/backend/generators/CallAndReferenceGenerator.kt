@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -325,22 +328,22 @@ internal class CallAndReferenceGenerator(
                 val argumentsCount = call.arguments.size
                 if (argumentsCount <= valueArgumentsCount) {
                     apply {
+                        val calleeReference = when (call) {
+                            is FirFunctionCall -> call.calleeReference
+                            is FirDelegatedConstructorCall -> call.calleeReference
+                            else -> null
+                        } as? FirResolvedNamedReference
+                        val function = (calleeReference?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
+                        val valueParameters = function?.valueParameters
                         val argumentMapping = call.argumentMapping
                         if (argumentMapping != null && argumentMapping.isNotEmpty()) {
-                            val calleeReference = when (call) {
-                                is FirFunctionCall -> call.calleeReference
-                                is FirDelegatedConstructorCall -> call.calleeReference
-                                else -> throw IllegalArgumentException("Unsupported call: ${call.render()}")
-                            } as? FirResolvedNamedReference
-                            val function = (calleeReference?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
-                            val valueParameters = function?.valueParameters
-
                             if (valueParameters != null) {
                                 return applyArgumentsWithReorderingIfNeeded(argumentMapping, valueParameters)
                             }
                         }
                         for ((index, argument) in call.arguments.withIndex()) {
-                            val argumentExpression = visitor.convertToIrExpression(argument)
+                            val argumentExpression =
+                                visitor.convertToIrExpression(argument).applySamConversionIfNeeded(argument, valueParameters?.get(index))
                             putValueArgument(index, argumentExpression)
                         }
                     }
@@ -373,7 +376,7 @@ internal class CallAndReferenceGenerator(
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
                 for ((argument, parameter) in argumentMapping) {
                     val parameterIndex = valueParameters.indexOf(parameter)
-                    val irArgument = visitor.convertToIrExpression(argument)
+                    val irArgument = visitor.convertToIrExpression(argument).applySamConversionIfNeeded(argument, parameter)
                     if (irArgument.hasNoSideEffects()) {
                         putValueArgument(parameterIndex, irArgument)
                     } else {
@@ -388,7 +391,7 @@ internal class CallAndReferenceGenerator(
             }
         } else {
             for ((argument, parameter) in argumentMapping) {
-                val argumentExpression = visitor.convertToIrExpression(argument)
+                val argumentExpression = visitor.convertToIrExpression(argument).applySamConversionIfNeeded(argument, parameter)
                 putValueArgument(valueParameters.indexOf(parameter), argumentExpression)
             }
             return this
@@ -408,6 +411,21 @@ internal class CallAndReferenceGenerator(
             lastValueParameterIndex = index
         }
         return false
+    }
+
+    private fun IrExpression.applySamConversionIfNeeded(
+        argument: FirExpression,
+        parameter: FirValueParameter?
+    ): IrExpression {
+        if (parameter == null ||
+            parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
+        ) return this
+        if (argument !is FirLambdaArgumentExpression) return this
+        if (argument.expression !is FirAnonymousFunction) return this
+        if (argument.expression.typeRef == parameter.returnTypeRef) return this
+        val samType = parameter.returnTypeRef.toIrType()
+        if (!samType.isSamType) return this
+        return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType, this)
     }
 
     private fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {

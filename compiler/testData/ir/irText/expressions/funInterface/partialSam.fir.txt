@@ -139,14 +139,15 @@ FILE fqName:<root> fileName:/partialSam.kt
       CALL 'public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J' type=kotlin.Int origin=null
         $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
         f1: CALL 'public final fun <get-fsi> (): <root>.fsi.<no name provided> declared in <root>' type=<root>.fsi.<no name provided> origin=GET_PROPERTY
-        f2: FUN_EXPR type=kotlin.Function3<kotlin.String, kotlin.Int, kotlin.Int, kotlin.String> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (s:kotlin.String, i:kotlin.Int, ti:kotlin.Int) returnType:kotlin.String
-            VALUE_PARAMETER name:s index:0 type:kotlin.String
-            VALUE_PARAMETER name:i index:1 type:kotlin.Int
-            VALUE_PARAMETER name:ti index:2 type:kotlin.Int
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (s: kotlin.String, i: kotlin.Int, ti: kotlin.Int): kotlin.String declared in <root>.test'
-                CONST String type=kotlin.String value=""
+        f2: TYPE_OP type=<root>.Fn<kotlin.Int, kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.Fn<kotlin.Int, kotlin.String>
+          FUN_EXPR type=kotlin.Function3<kotlin.String, kotlin.Int, kotlin.Int, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (s:kotlin.String, i:kotlin.Int, ti:kotlin.Int) returnType:kotlin.String
+              VALUE_PARAMETER name:s index:0 type:kotlin.String
+              VALUE_PARAMETER name:i index:1 type:kotlin.Int
+              VALUE_PARAMETER name:ti index:2 type:kotlin.Int
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (s: kotlin.String, i: kotlin.Int, ti: kotlin.Int): kotlin.String declared in <root>.test'
+                  CONST String type=kotlin.String value=""
       CALL 'public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J' type=kotlin.Int origin=null
         $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
         f1: FUN_EXPR type=kotlin.Function3<kotlin.String, kotlin.Int, kotlin.String, kotlin.Int> origin=LAMBDA
