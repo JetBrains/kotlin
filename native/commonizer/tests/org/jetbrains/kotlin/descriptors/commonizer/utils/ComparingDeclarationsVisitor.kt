@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -429,6 +430,7 @@ internal class ComparingDeclarationsVisitor(
                 constantValue = expectedValueArgument,
                 constantName = name,
                 owner = expected,
+                allowAnnotationValues = true,
                 onError = { context.fail(it) }
             )
 
@@ -437,11 +439,26 @@ internal class ComparingDeclarationsVisitor(
                 constantValue = actualValueArgument,
                 constantName = name,
                 owner = actual,
+                allowAnnotationValues = true,
                 onError = { context.fail(it) }
             )
 
-            context.assertEquals(expectedValueArgument::class, actualValueArgument::class, "annotation value argument classe")
-            context.assertEquals(expectedValueArgument.value, actualValueArgument.value, "annotation value argument value")
+            context.assertEquals(expectedValueArgument::class, actualValueArgument::class, "annotation value argument value")
+            if (expectedValueArgument is AnnotationValue && actualValueArgument is AnnotationValue) {
+                context.assertEquals(
+                    expectedValueArgument.value.fqName,
+                    actualValueArgument.value.fqName,
+                    "nested annotation FQ name"
+                )
+
+                visitAnnotation(
+                    expectedValueArgument.value,
+                    actualValueArgument.value,
+                    context.nextLevel("Annotation ${expectedValueArgument.value.fqName}")
+                )
+            } else {
+                context.assertEquals(expectedValueArgument.value, actualValueArgument.value, "annotation value argument value")
+            }
         }
     }
 

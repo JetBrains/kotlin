@@ -17,18 +17,3 @@ fun externalFunction2() {}
 
 inline fun inlineFunction1() {}
 fun inlineFunction2() {}
-
-@Deprecated("This function is deprecated")
-fun deprecatedFunction1() {}
-@Deprecated("This function is deprecated")
-fun deprecatedFunction3() {}
-
-class Holder {
-    @Deprecated("This function is deprecated")
-    fun deprecatedFunction1() {}
-    @Deprecated("This function is deprecated")
-    fun deprecatedFunction3() {}
-
-    fun nonDeprecatedFunction1() {}
-    fun nonDeprecatedFunction3() {}
-}

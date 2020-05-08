@@ -17,13 +17,3 @@ actual fun externalFunction2() {}
 
 actual inline fun inlineFunction1() {}
 actual fun inlineFunction2() {}
-
-actual class Holder actual constructor() {
-    @Deprecated("This function is deprecated")
-    actual fun deprecatedFunction1() {}
-    @Deprecated("This function is deprecated")
-    fun deprecatedFunction3() {}
-
-    actual fun nonDeprecatedFunction1() {}
-    fun nonDeprecatedFunction3() {}
-}

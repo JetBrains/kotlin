@@ -16,8 +16,3 @@ expect fun externalFunction2()
 
 expect inline fun inlineFunction1() {}
 expect fun inlineFunction2() {}
-
-expect class Holder() {
-    expect fun deprecatedFunction1()
-    expect fun nonDeprecatedFunction1()
-}
