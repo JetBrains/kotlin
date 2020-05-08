@@ -59,16 +59,14 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
   private final JPanel myRightPanel;
 
   private final DefaultActionGroup mySearchFieldActions;
-  private final ActionToolbarImpl mySearchActionsToolbar1;
-  private final ActionToolbarImpl mySearchActionsToolbar2;
+  private final ActionToolbarImpl mySearchActionsToolbar;
   private final List<AnAction> myEmbeddedSearchActions = new ArrayList<>();
   private final List<Component> myExtraSearchButtons = new ArrayList<>();
   @NotNull
   private final ActionToolbarImpl.PopupStateModifier mySearchToolbar1PopupStateModifier;
 
   private final DefaultActionGroup myReplaceFieldActions;
-  private final ActionToolbarImpl myReplaceActionsToolbar1;
-  private final ActionToolbarImpl myReplaceActionsToolbar2;
+  private final ActionToolbarImpl myReplaceActionsToolbar;
   private final List<AnAction> myEmbeddedReplaceActions = new ArrayList<>();
   private final List<Component> myExtraReplaceButtons = new ArrayList<>();
 
@@ -174,30 +172,20 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     myLeftPanel.add(myReplaceFieldWrapper, constraints);
     myLeftPanel.setBorder(JBUI.Borders.customLine(JBColor.border(), 0, 0, 0, 1));
 
-    mySearchActionsToolbar1 = createSearchToolbar1(searchToolbar1Actions);
-    Wrapper searchToolbarWrapper1 = new NonOpaquePanel(new BorderLayout());
-    searchToolbarWrapper1.add(mySearchActionsToolbar1, BorderLayout.WEST);
-    mySearchActionsToolbar2 = createSearchToolbar2(searchToolbar2Actions);
-    mySearchActionsToolbar2.setForceShowFirstComponent(true);
-    Wrapper searchToolbarWrapper2 = new Wrapper(mySearchActionsToolbar2);
-    searchToolbarWrapper2.setBorder(JBUI.Borders.emptyLeft(4));
-    JPanel searchPair = new NonOpaquePanel(new BorderLayout());
-    searchPair.add(searchToolbarWrapper1, BorderLayout.WEST);
-    searchPair.add(searchToolbarWrapper2, BorderLayout.CENTER);
+    searchToolbar1Actions.addAll(searchToolbar2Actions.getChildren(null));
+    replaceToolbar1Actions.addAll(replaceToolbar2Actions.getChildren(null));
 
-    myReplaceActionsToolbar1 = createReplaceToolbar1(replaceToolbar1Actions);
-    myReplaceActionsToolbar1.setBorder(JBUI.Borders.empty());
-    Wrapper replaceToolbarWrapper1 = new Wrapper(myReplaceActionsToolbar1);
-    myReplaceActionsToolbar2 = createReplaceToolbar2(replaceToolbar2Actions);
-    myReplaceActionsToolbar2.setForceShowFirstComponent(true);
-    Wrapper replaceToolbarWrapper2 = new Wrapper(myReplaceActionsToolbar2);
-    replaceToolbarWrapper2.setBorder(JBUI.Borders.emptyLeft(4));
+    mySearchActionsToolbar = createSearchToolbar1(searchToolbar1Actions);
+    mySearchActionsToolbar.setForceShowFirstComponent(true);
+    JPanel searchPair = new NonOpaquePanel(new BorderLayout());
+    searchPair.add(mySearchActionsToolbar, BorderLayout.CENTER);
+
+    myReplaceActionsToolbar = createReplaceToolbar1(replaceToolbar1Actions);
+    myReplaceActionsToolbar.setBorder(JBUI.Borders.empty());
+    Wrapper replaceToolbarWrapper1 = new Wrapper(myReplaceActionsToolbar);
     myReplaceToolbarWrapper = new NonOpaquePanel(new BorderLayout());
     myReplaceToolbarWrapper.add(replaceToolbarWrapper1, BorderLayout.WEST);
-    myReplaceToolbarWrapper.add(replaceToolbarWrapper2, BorderLayout.CENTER);
     myReplaceToolbarWrapper.setBorder(JBUI.Borders.emptyTop(3));
-
-    searchToolbarWrapper1.setHorizontalSizeReferent(replaceToolbarWrapper1);
 
     JLabel closeLabel = new JLabel(null, AllIcons.Actions.Close, SwingConstants.RIGHT);
     closeLabel.setBorder(JBUI.Borders.empty(2));
@@ -214,7 +202,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     myRightPanel.add(searchPair);
     myRightPanel.add(myReplaceToolbarWrapper);
 
-    OnePixelSplitter splitter = new OnePixelSplitter(false, .25F);
+    OnePixelSplitter splitter = new OnePixelSplitter(false, .33F);
     myRightPanel.setBorder(JBUI.Borders.emptyLeft(6));
     splitter.setFirstComponent(myLeftPanel);
     splitter.setSecondComponent(myRightPanel);
@@ -446,10 +434,8 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
   }
 
   public void updateActions() {
-    mySearchActionsToolbar1.updateActionsImmediately();
-    mySearchActionsToolbar2.updateActionsImmediately();
-    myReplaceActionsToolbar1.updateActionsImmediately();
-    myReplaceActionsToolbar2.updateActionsImmediately();
+    mySearchActionsToolbar.updateActionsImmediately();
+    myReplaceActionsToolbar.updateActionsImmediately();
     JComponent textComponent = mySearchFieldWrapper.getTargetComponent();
     if (textComponent instanceof SearchTextArea) ((SearchTextArea)textComponent).updateExtraActions();
     textComponent = myReplaceFieldWrapper.getTargetComponent();
@@ -482,7 +468,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
 
     final JBTextArea textComponent = new JBTextArea();
     textComponent.setRows(isMultiline() ? 2 : 1);
-    textComponent.setColumns(32);
+    textComponent.setColumns(12);
     if (search) {
       textComponent.getAccessibleContext().setAccessibleName(FindBundle.message("find.search.accessible.name"));
     }
@@ -542,12 +528,10 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
 
   private void updateBindings() {
     updateBindings(mySearchFieldActions, mySearchFieldWrapper);
-    updateBindings(mySearchActionsToolbar1, mySearchFieldWrapper);
-    updateBindings(mySearchActionsToolbar2, mySearchFieldWrapper);
+    updateBindings(mySearchActionsToolbar, mySearchFieldWrapper);
 
     updateBindings(myReplaceFieldActions, myReplaceFieldWrapper);
-    updateBindings(myReplaceActionsToolbar1, myReplaceToolbarWrapper);
-    updateBindings(myReplaceActionsToolbar2, myReplaceToolbarWrapper);
+    updateBindings(myReplaceActionsToolbar, myReplaceToolbarWrapper);
   }
 
   private void updateBindings(@NotNull DefaultActionGroup group, @NotNull JComponent shortcutHolder) {
@@ -578,11 +562,10 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
   @NotNull
   private ActionToolbarImpl createSearchToolbar1(@NotNull DefaultActionGroup group) {
     ActionToolbarImpl toolbar = createToolbar(group);
-    toolbar.setForceMinimumSize(true);
-    toolbar.setReservePlaceAutoPopupIcon(false);
     toolbar.setSecondaryButtonPopupStateModifier(mySearchToolbar1PopupStateModifier);
     toolbar.setSecondaryActionsTooltip(FindBundle.message("find.popup.show.filter.popup"));
     toolbar.setSecondaryActionsIcon(AllIcons.General.Filter);
+    toolbar.setNoGapMode();
 
     KeyboardShortcut keyboardShortcut = ActionManager.getInstance().getKeyboardShortcut("ShowFilterPopup");
     if (keyboardShortcut != null) {
@@ -594,21 +577,11 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
   }
 
   @NotNull
-  private ActionToolbarImpl createSearchToolbar2(@NotNull DefaultActionGroup group) {
-    return createToolbar(group);
-  }
-
-  @NotNull
   private ActionToolbarImpl createReplaceToolbar1(@NotNull DefaultActionGroup group) {
     ActionToolbarImpl toolbar = createToolbar(group);
     toolbar.setForceMinimumSize(true);
     toolbar.setReservePlaceAutoPopupIcon(false);
     return toolbar;
-  }
-
-  @NotNull
-  private ActionToolbarImpl createReplaceToolbar2(@NotNull DefaultActionGroup group) {
-    return createToolbar(group);
   }
 
   @NotNull
