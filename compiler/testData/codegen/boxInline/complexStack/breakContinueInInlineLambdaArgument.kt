@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// KJS_WITH_FULL_RUNTIME
 // FILE: 1.kt
 inline fun List<String?>.forEachNotNull(s: String, fn: (String, String) -> Unit) {
     for (x in this) {

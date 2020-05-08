@@ -956,9 +956,9 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/complexStack/asCheck2.kt");
         }
 
-        @TestMetadata("breaContinuekInInlineLambdaArgument.kt")
-        public void testBreaContinuekInInlineLambdaArgument() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/complexStack/breaContinuekInInlineLambdaArgument.kt");
+        @TestMetadata("breakContinueInInlineLambdaArgument.kt")
+        public void testBreakContinueInInlineLambdaArgument() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/complexStack/breakContinueInInlineLambdaArgument.kt");
         }
 
         @TestMetadata("simple.kt")
