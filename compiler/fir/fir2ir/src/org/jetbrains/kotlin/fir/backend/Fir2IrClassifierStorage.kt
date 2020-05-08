@@ -43,6 +43,8 @@ class Fir2IrClassifierStorage(
 
     private val localStorage = Fir2IrLocalStorage()
 
+    var converter: Fir2IrConverter? = null
+
     private fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
         with(typeConverter) { toIrType(typeContext) }
 
@@ -145,6 +147,15 @@ class Fir2IrClassifierStorage(
         val origin = regularClass.irOrigin(firProvider)
         val irClass = registerIrClass(regularClass, parent, origin)
         processClassHeader(regularClass, irClass)
+        // TODO: queue-based logic?
+        // Force loading Java methods in Java SAM stub, since FunctionReferenceLowering relies on it.
+        if (converter != null && regularClass.origin == FirDeclarationOrigin.Java) {
+            regularClass.getSamIfAny()?.let { sam ->
+                converter!!.processMemberDeclaration(sam, irClass)?.let {
+                    irClass.declarations += it
+                }
+            }
+        }
         return irClass
     }
 

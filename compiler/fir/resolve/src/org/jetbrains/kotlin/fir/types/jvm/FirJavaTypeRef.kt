@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.fir.types.jvm
 
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.builder.FirUserTypeRefBuilder
 import org.jetbrains.kotlin.fir.types.impl.FirUserTypeRefImpl
 import org.jetbrains.kotlin.load.java.structure.JavaType
 
 class FirJavaTypeRef(
     val type: JavaType,
+    val coneType: ConeKotlinType?,
     annotations: MutableList<FirAnnotationCall>,
     qualifier: MutableList<FirQualifierPart>
 ) : FirUserTypeRefImpl(
@@ -30,9 +30,10 @@ class FirJavaTypeRef(
 class FirJavaTypeRefBuilder : FirUserTypeRefBuilder() {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var type: JavaType
+    var coneType: ConeKotlinType? = null
 
     override fun build(): FirJavaTypeRef {
-        return FirJavaTypeRef(type, annotations, qualifier)
+        return FirJavaTypeRef(type, coneType, annotations, qualifier)
     }
 
     @Deprecated("Modification of 'source' has no impact for FirJavaTypeRefBuilder", level = DeprecationLevel.HIDDEN)

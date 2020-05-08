@@ -460,6 +460,9 @@ fun FirClass<*>.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
     else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 }
 
+fun FirClass<*>.getSamIfAny(): FirSimpleFunction? =
+    declarations.filterIsInstance<FirSimpleFunction>().singleOrNull { it.modality == Modality.ABSTRACT }
+
 val IrType.isSamType: Boolean
     get() {
         val irClass = classOrNull ?: return false

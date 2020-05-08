@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.TypeComponentPosition
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.*
+import java.lang.ClassCastException
+import java.lang.IllegalArgumentException
 
 internal val JavaModifierListOwner.modality: Modality
     get() = when {
@@ -80,9 +82,23 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterStack: JavaTypeParameterStack): FirJavaTypeRef {
     val annotations = (this as? JavaClassifierType)?.annotations.orEmpty()
+    val type = this
     return buildJavaTypeRef {
         annotations.mapTo(this.annotations) { it.toFirAnnotationCall(session, javaTypeParameterStack) }
-        type = this@toFirJavaTypeRef
+        this.type = type
+        coneType =
+            try {
+                type.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
+            } catch (e: IllegalArgumentException) {
+                // TODO: bad way to hide missing type parameter in stack...
+                null
+            } catch (e: UninitializedPropertyAccessException) {
+                // TODO: bad way to hide uninitialized fir in flexible bound...
+                null
+            } catch (e: ClassCastException) {
+                // TODO: bad way to hide unexpected cast (between Fir*TypeRef) while creating raw arguments...
+                null
+            }
     }
 }
 

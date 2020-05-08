@@ -123,7 +123,7 @@ class Fir2IrConverter(
         }
     }
 
-    private fun processMemberDeclaration(declaration: FirDeclaration, parent: IrDeclarationParent): IrDeclaration? {
+    fun processMemberDeclaration(declaration: FirDeclaration, parent: IrDeclarationParent): IrDeclaration? {
         return when (declaration) {
             is FirRegularClass -> {
                 processClassMembers(declaration)
@@ -183,6 +183,7 @@ class Fir2IrConverter(
             val irFiles = mutableListOf<IrFile>()
 
             val converter = Fir2IrConverter(moduleDescriptor, sourceManager, components)
+            classifierStorage.converter = converter
             for (firFile in firFiles) {
                 irFiles += converter.registerFileAndClasses(firFile)
             }
