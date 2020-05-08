@@ -15,5 +15,6 @@ abstract class FirExpressionChecker<in E : FirExpression> {
     abstract fun check(functionCall: E, context: CheckerContext, reporter: DiagnosticReporter)
 }
 
-typealias FirFunctionCallChecker = FirExpressionChecker<FirFunctionCall>
+typealias FirBasicExpresionChecker = FirExpressionChecker<FirExpression>
 typealias FirQualifiedAccessChecker = FirExpressionChecker<FirQualifiedAccessExpression>
+typealias FirFunctionCallChecker = FirExpressionChecker<FirFunctionCall>

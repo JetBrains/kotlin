@@ -5,20 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+abstract class DeclarationCheckers {
+    open val declarationCheckers: List<FirBasicDeclarationChecker> = emptyList()
+    open val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = emptyList()
+    open val constructorCheckers: List<FirConstructorChecker> = emptyList()
 
-object DeclarationCheckers {
-    val DECLARATIONS: List<FirDeclarationChecker<FirDeclaration>> = listOf(
-        FirModifierChecker
-    )
-    val MEMBER_DECLARATIONS: List<FirDeclarationChecker<FirMemberDeclaration>> = DECLARATIONS + listOf(
-        FirAnnotationClassDeclarationChecker,
-        FirInfixFunctionDeclarationChecker,
-        FirExposedVisibilityChecker
-    )
-    val CONSTRUCTORS: List<FirDeclarationChecker<FirConstructor>> = MEMBER_DECLARATIONS + listOf(
-        FirConstructorChecker
-    )
+    internal val allMemberDeclarationCheckers: List<FirMemberDeclarationChecker> get() = memberDeclarationCheckers + declarationCheckers
+    internal val allConstructorCheckers: List<FirConstructorChecker> get() = constructorCheckers + allMemberDeclarationCheckers
 }

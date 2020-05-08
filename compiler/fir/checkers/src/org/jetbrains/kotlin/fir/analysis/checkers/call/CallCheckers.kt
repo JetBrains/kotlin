@@ -5,20 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.call
 
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+abstract class ExpressionCheckers {
+    open val expressionCheckers: List<FirBasicExpresionChecker> = emptyList()
+    open val qualifiedAccessCheckers: List<FirQualifiedAccessChecker> = emptyList()
+    open val functionCallCheckers: List<FirFunctionCallChecker> = emptyList()
 
-object CallCheckers {
-    val EXPRESSIONS: List<FirExpressionChecker<FirExpression>> = listOf()
-
-    val QUALIFIED_ACCESS: List<FirQualifiedAccessChecker> = listOf(
-        FirSuperNotAvailableChecker,
-        FirNotASupertypeChecker,
-        FirSuperclassNotAccessibleFromInterfaceChecker,
-        FirAbstractSuperCallChecker,
-        FirQualifiedSupertypeExtendedByOtherSupertypeChecker,
-    ) + EXPRESSIONS
-
-    val FUNCTION_CALLS: List<FirFunctionCallChecker> = listOf<FirFunctionCallChecker>(
-
-    ) + QUALIFIED_ACCESS
+    internal val allExpressionCheckers get() = expressionCheckers
+    internal val allQualifiedAccessCheckers get() = qualifiedAccessCheckers + allExpressionCheckers
+    internal val allFunctionCallCheckers get() = functionCallCheckers + allQualifiedAccessCheckers
 }

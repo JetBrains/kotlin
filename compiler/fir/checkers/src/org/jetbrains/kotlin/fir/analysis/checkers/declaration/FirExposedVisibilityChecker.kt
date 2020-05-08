@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.lexer.KtTokens
 
-object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>() {
+object FirExposedVisibilityChecker : FirMemberDeclarationChecker() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         when (declaration) {
             is FirTypeAlias -> checkTypeAlias(declaration, reporter)

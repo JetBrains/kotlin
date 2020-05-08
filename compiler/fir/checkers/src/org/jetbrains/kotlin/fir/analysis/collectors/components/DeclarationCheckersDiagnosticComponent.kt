@@ -6,63 +6,65 @@
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.*
 
 class DeclarationCheckersDiagnosticComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
+    private val checkers = session.checkersComponent.declarationCheckers
+
     override fun visitProperty(property: FirProperty, data: CheckerContext) {
-        runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(property, data, it) }
+        runCheck { checkers.memberDeclarationCheckers.check(property, data, it) }
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {
-        runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(regularClass, data, it) }
+        runCheck { checkers.memberDeclarationCheckers.check(regularClass, data, it) }
     }
 
     override fun visitSealedClass(sealedClass: FirSealedClass, data: CheckerContext) {
-        runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(sealedClass, data, it) }
+        runCheck { checkers.memberDeclarationCheckers.check(sealedClass, data, it) }
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {
-        runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(simpleFunction, data, it) }
+        runCheck { checkers.memberDeclarationCheckers.check(simpleFunction, data, it) }
     }
 
     override fun visitTypeAlias(typeAlias: FirTypeAlias, data: CheckerContext) {
-        runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(typeAlias, data, it) }
+        runCheck { checkers.memberDeclarationCheckers.check(typeAlias, data, it) }
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: CheckerContext) {
-        runCheck { DeclarationCheckers.CONSTRUCTORS.check(constructor, data, it) }
+        runCheck { checkers.constructorCheckers.check(constructor, data, it) }
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {
-        runCheck { DeclarationCheckers.DECLARATIONS.check(anonymousFunction, data, it) }
+        runCheck { checkers.declarationCheckers.check(anonymousFunction, data, it) }
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: CheckerContext) {
-        runCheck { DeclarationCheckers.DECLARATIONS.check(propertyAccessor, data, it) }
+        runCheck { checkers.declarationCheckers.check(propertyAccessor, data, it) }
     }
 
     override fun visitValueParameter(valueParameter: FirValueParameter, data: CheckerContext) {
-        runCheck { DeclarationCheckers.DECLARATIONS.check(valueParameter, data, it) }
+        runCheck { checkers.declarationCheckers.check(valueParameter, data, it) }
     }
 
     override fun visitTypeParameter(typeParameter: FirTypeParameter, data: CheckerContext) {
-        runCheck { DeclarationCheckers.DECLARATIONS.check(typeParameter, data, it) }
+        runCheck { checkers.declarationCheckers.check(typeParameter, data, it) }
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: CheckerContext) {
-        runCheck { DeclarationCheckers.DECLARATIONS.check(enumEntry, data, it) }
+        runCheck { checkers.declarationCheckers.check(enumEntry, data, it) }
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: CheckerContext) {
-        runCheck { DeclarationCheckers.DECLARATIONS.check(anonymousObject, data, it) }
+        runCheck { checkers.declarationCheckers.check(anonymousObject, data, it) }
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CheckerContext) {
-        runCheck { DeclarationCheckers.DECLARATIONS.check(anonymousInitializer, data, it) }
+        runCheck { checkers.declarationCheckers.check(anonymousInitializer, data, it) }
     }
 
     private fun <D : FirDeclaration> List<FirDeclarationChecker<D>>.check(

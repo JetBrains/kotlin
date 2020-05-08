@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 
-object FirConstructorChecker : FirDeclarationChecker<FirConstructor>() {
+object FirConstructorAllowedChecker : FirConstructorChecker() {
     override fun check(declaration: FirConstructor, context: CheckerContext, reporter: DiagnosticReporter) {
         val containingClass = context.containingDeclarations.lastOrNull() as? FirClass<*> ?: return
         val source = declaration.source

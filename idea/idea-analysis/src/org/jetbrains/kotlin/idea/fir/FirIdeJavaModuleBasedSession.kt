@@ -9,6 +9,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirModuleBasedSession
+import org.jetbrains.kotlin.fir.analysis.CheckersComponent
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.CommonDeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
@@ -54,6 +57,11 @@ class FirIdeJavaModuleBasedSession(
         registerComponent(
             ConeCallConflictResolverFactory::class,
             JvmCallConflictResolverFactory
+        )
+
+        registerComponent(
+            CheckersComponent::class,
+            CheckersComponent.componentWithDefaultCheckers()
         )
     }
 }

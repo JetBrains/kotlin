@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirModuleBasedSession
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.FirSessionProvider
+import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.extensions.FirExtensionsService
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
@@ -66,6 +67,11 @@ class FirJavaModuleBasedSession(
         registerComponent(
             ConeCallConflictResolverFactory::class,
             JvmCallConflictResolverFactory
+        )
+
+        registerComponent(
+            CheckersComponent::class,
+            CheckersComponent.componentWithDefaultCheckers()
         )
 
         Extensions.getArea(sessionProvider.project)

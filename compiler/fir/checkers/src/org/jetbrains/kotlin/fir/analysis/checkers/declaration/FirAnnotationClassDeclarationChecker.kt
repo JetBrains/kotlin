@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.VAR_KEYWORD
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtParameter
 
-object FirAnnotationClassDeclarationChecker : FirDeclarationChecker<FirDeclaration>() {
+object FirAnnotationClassDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirRegularClass) return
         if (declaration.classKind != ANNOTATION_CLASS) return
