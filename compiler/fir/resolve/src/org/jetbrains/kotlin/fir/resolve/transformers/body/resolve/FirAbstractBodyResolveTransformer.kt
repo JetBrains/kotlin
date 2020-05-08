@@ -178,12 +178,12 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             towerDataContext = newContext
         }
 
-        fun addTowerDataElement(element: FirTowerDataElement) {
-            replaceTowerDataContext(towerDataContext.addTowerDataElements(listOf(element)))
+        fun addNonLocalTowerDataElement(element: FirTowerDataElement) {
+            replaceTowerDataContext(towerDataContext.addNonLocalTowerDataElements(listOf(element)))
         }
 
-        fun addTowerDataElements(newElements: List<FirTowerDataElement>) {
-            replaceTowerDataContext(towerDataContext.addTowerDataElements(newElements))
+        fun addNonLocalTowerDataElements(newElements: List<FirTowerDataElement>) {
+            replaceTowerDataContext(towerDataContext.addNonLocalTowerDataElements(newElements))
         }
 
         fun addLocalScope(localScope: FirLocalScope) {

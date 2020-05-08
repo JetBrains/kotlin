@@ -83,7 +83,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val scope = createTypeParameterScope(declaration) ?: return l()
 
         return context.withTowerDataCleanup {
-            context.addTowerDataElement(scope.asTowerDataElement(isLocal = false))
+            context.addNonLocalTowerDataElement(scope.asTowerDataElement(isLocal = false))
             l()
         }
     }
@@ -691,7 +691,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
         val staticsAndCompanion =
             context.towerDataContext
-                .addTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
+                .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
                 .run {
                     if (towerElementsForClass.companionReceiver != null)
                         addReceiver(null, towerElementsForClass.companionReceiver)

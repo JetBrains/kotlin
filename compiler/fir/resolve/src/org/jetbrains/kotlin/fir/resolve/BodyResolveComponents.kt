@@ -88,7 +88,7 @@ class FirTowerDataContext private constructor(
         )
     }
 
-    fun addTowerDataElements(newElements: List<FirTowerDataElement>): FirTowerDataContext {
+    fun addNonLocalTowerDataElements(newElements: List<FirTowerDataElement>): FirTowerDataContext {
         return FirTowerDataContext(
             towerDataElements.addAll(newElements),
             implicitReceiverStack.addAll(newElements.mapNotNull { it.implicitReceiver }),

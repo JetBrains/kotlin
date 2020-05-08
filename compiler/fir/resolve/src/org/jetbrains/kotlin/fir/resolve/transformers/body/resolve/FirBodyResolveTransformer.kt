@@ -51,7 +51,7 @@ open class FirBodyResolveTransformer(
         return withScopeCleanup(context.fileImportsScope) {
             val importingScopes = createImportingScopes(file, session, components.scopeSession)
             context.fileImportsScope += importingScopes
-            context.addTowerDataElements(importingScopes.map { it.asTowerDataElement(isLocal = false) })
+            context.addNonLocalTowerDataElements(importingScopes.map { it.asTowerDataElement(isLocal = false) })
 
             file.replaceResolvePhase(transformerPhase)
             @Suppress("UNCHECKED_CAST")
