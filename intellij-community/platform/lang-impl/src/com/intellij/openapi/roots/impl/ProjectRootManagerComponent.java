@@ -66,6 +66,8 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
                                              : AppExecutorUtil.createBoundedApplicationPoolExecutor("Project Root Manager", 1);
   private @NotNull Future<?> myCollectWatchRootsFuture = CompletableFuture.completedFuture(null); // accessed in EDT only
 
+  private final OnlyOnceExceptionLogger myRootsChangedLogger = new OnlyOnceExceptionLogger(LOG);
+
   private boolean myPointerChangesDetected;
   private int myInsideRefresh;
   private @NotNull Set<LocalFileSystem.WatchRequest> myRootsToWatch = new THashSet<>();
@@ -293,12 +295,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   private void synchronizeRoots() {
     if (!myStartupActivityPerformed) return;
 
-    if (LOG_CACHES_UPDATE || LOG.isTraceEnabled()) {
-      LOG.trace(new Throwable("sync roots"));
-    }
-    else if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      LOG.info("project roots have changed");
-    }
+    myRootsChangedLogger.info("project roots have changed", new Throwable());
 
     DumbServiceImpl dumbService = DumbServiceImpl.getInstance(myProject);
     if (FileBasedIndex.getInstance() instanceof FileBasedIndexImpl) {
