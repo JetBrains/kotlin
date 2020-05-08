@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.NORMAL
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.OPTIONAL
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import java.io.File
 
@@ -20,8 +22,7 @@ class DtsResolver(val npmProject: NpmProject) {
         return externalNpmDependencies
             .asSequence()
             .filter { it.generateKotlinExternals }
-            .filter { it.scope != NpmDependency.Scope.DEV }
-            .flatMap { it.getDependenciesRecursively().asSequence() }
+            .filter { it.scope == NORMAL || it.scope == OPTIONAL }
             .mapNotNullTo(mutableSetOf()) { typeModules.resolve(it.key)?.let { file -> Dts(file.canonicalFile, it) } }
             .sortedBy { it.inputKey }
             .toList()
