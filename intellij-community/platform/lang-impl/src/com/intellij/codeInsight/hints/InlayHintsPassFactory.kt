@@ -20,6 +20,7 @@ class InlayHintsPassFactory : TextEditorHighlightingPassFactory, TextEditorHighl
 
   override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
     if (editor.isOneLineMode) return null
+    if (editor.getUserData(HINTS_DISABLED_FOR_EDITOR) == false) return null
     val savedStamp = editor.getUserData(PSI_MODIFICATION_STAMP)
     val currentStamp = getCurrentModificationStamp(file)
     if (savedStamp != null && savedStamp == currentStamp) return null
@@ -44,6 +45,8 @@ class InlayHintsPassFactory : TextEditorHighlightingPassFactory, TextEditorHighl
 
     @JvmStatic
     private val PSI_MODIFICATION_STAMP = Key.create<Long>("inlay.psi.modification.stamp")
+    @JvmStatic
+    private val HINTS_DISABLED_FOR_EDITOR = Key.create<Boolean>("inlay.hints.enabled.for.editor")
 
     fun putCurrentModificationStamp(editor: Editor, file: PsiFile) {
       editor.putUserData(PSI_MODIFICATION_STAMP, getCurrentModificationStamp(file))
@@ -51,6 +54,17 @@ class InlayHintsPassFactory : TextEditorHighlightingPassFactory, TextEditorHighl
 
     private fun getCurrentModificationStamp(file: PsiFile): Long {
       return file.manager.modificationTracker.modificationCount
+    }
+
+    @JvmStatic
+    fun setHintsEnabled(editor: Editor, value: Boolean) {
+      if (value) {
+        editor.putUserData(HINTS_DISABLED_FOR_EDITOR, null)
+      }
+      else {
+        editor.putUserData(HINTS_DISABLED_FOR_EDITOR, false)
+      }
+      forceHintsUpdateOnNextPass()
     }
   }
 }
