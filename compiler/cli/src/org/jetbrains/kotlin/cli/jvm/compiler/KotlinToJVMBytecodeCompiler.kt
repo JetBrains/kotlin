@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -348,7 +349,8 @@ object KotlinToJVMBytecodeCompiler {
             val (moduleFragment, symbolTable, sourceManager) =
                 Fir2IrConverter.createModuleFragment(
                     session, resolveTransformer.scopeSession, firFiles,
-                    moduleConfiguration.languageVersionSettings, signaturer = signaturer
+                    moduleConfiguration.languageVersionSettings, signaturer = signaturer,
+                    generatorExtensions = JvmGeneratorExtensions(generateFacades = false)
                 )
             val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 

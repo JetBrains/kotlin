@@ -163,7 +163,7 @@ class Fir2IrConverter(
             languageVersionSettings: LanguageVersionSettings,
             fakeOverrideMode: FakeOverrideMode = FakeOverrideMode.NORMAL,
             signaturer: IdSignatureComposer,
-            generatorExtensions: GeneratorExtensions = GeneratorExtensions()
+            generatorExtensions: GeneratorExtensions
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer)
