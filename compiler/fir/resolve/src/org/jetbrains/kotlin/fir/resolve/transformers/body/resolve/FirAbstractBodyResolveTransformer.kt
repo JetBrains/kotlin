@@ -245,6 +245,9 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
         override val towerDataElements: List<FirTowerDataElement> get() = context.towerDataContext.towerDataElements
         override val localScopes: FirLocalScopes get() = context.towerDataContext.localScopes
+
+        override val towerDataContext: FirTowerDataContext get() = context.towerDataContext
+
         override val file: FirFile get() = context.file
         override val implicitReceiverStack: ImplicitReceiverStack get() = context.implicitReceiverStack
         override val containingDeclarations: List<FirDeclaration> get() = context.containers

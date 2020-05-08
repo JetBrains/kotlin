@@ -39,6 +39,7 @@ interface BodyResolveComponents : SessionHolder {
     val containingDeclarations: List<FirDeclaration>
     val fileImportsScope: List<FirScope>
     val towerDataElements: List<FirTowerDataElement>
+    val towerDataContext: FirTowerDataContext
     val localScopes: FirLocalScopes
     val towerDataContextForAnonymousFunctions: TowerDataContextForAnonymousFunctions
     val noExpectedType: FirTypeRef
@@ -68,12 +69,14 @@ class FirTowerDataContext private constructor(
     // i.e. implicitReceiverStack == towerDataElements.mapNotNull { it.receiver }
     // i.e. localScopes == towerDataElements.mapNotNull { it.scope?.takeIf { it.isLocal } }
     val implicitReceiverStack: PersistentImplicitReceiverStack,
-    val localScopes: FirLocalScopes
+    val localScopes: FirLocalScopes,
+    val nonLocalTowerDataElements: PersistentList<FirTowerDataElement>
 ) {
 
     constructor() : this(
         persistentListOf(),
         PersistentImplicitReceiverStack(),
+        persistentListOf(),
         persistentListOf()
     )
 
@@ -84,7 +87,8 @@ class FirTowerDataContext private constructor(
         return FirTowerDataContext(
             towerDataElements.set(indexOfLastLocalScope, newLastScope.asTowerDataElement(isLocal = true)),
             implicitReceiverStack,
-            localScopes.set(localScopes.lastIndex, newLastScope)
+            localScopes.set(localScopes.lastIndex, newLastScope),
+            nonLocalTowerDataElements
         )
     }
 
@@ -92,7 +96,8 @@ class FirTowerDataContext private constructor(
         return FirTowerDataContext(
             towerDataElements.addAll(newElements),
             implicitReceiverStack.addAll(newElements.mapNotNull { it.implicitReceiver }),
-            localScopes
+            localScopes,
+            nonLocalTowerDataElements.addAll(newElements)
         )
     }
 
@@ -100,15 +105,18 @@ class FirTowerDataContext private constructor(
         return FirTowerDataContext(
             towerDataElements.add(localScope.asTowerDataElement(isLocal = true)),
             implicitReceiverStack,
-            localScopes.add(localScope)
+            localScopes.add(localScope),
+            nonLocalTowerDataElements
         )
     }
 
     fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>): FirTowerDataContext {
+        val element = implicitReceiverValue.asTowerDataElement()
         return FirTowerDataContext(
-            towerDataElements.add(implicitReceiverValue.asTowerDataElement()),
+            towerDataElements.add(element),
             implicitReceiverStack.add(name, implicitReceiverValue),
-            localScopes
+            localScopes,
+            nonLocalTowerDataElements.add(element)
         )
     }
 
@@ -118,10 +126,12 @@ class FirTowerDataContext private constructor(
     }
 
     private fun addNonLocalScope(scope: FirScope): FirTowerDataContext {
+        val element = scope.asTowerDataElement(isLocal = false)
         return FirTowerDataContext(
-            towerDataElements.add(scope.asTowerDataElement(isLocal = false)),
+            towerDataElements.add(element),
             implicitReceiverStack,
-            localScopes
+            localScopes,
+            nonLocalTowerDataElements.add(element)
         )
     }
 }

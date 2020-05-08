@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.asReversedFrozen
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -43,16 +44,12 @@ class FirTowerResolverSession internal constructor(
 
     private val session: FirSession get() = components.session
 
-    private val reversedTowerDataElements = components.towerDataElements.asReversed()
+    private val localScopes: List<FirScope> = components.localScopes.asReversedFrozen()
 
-    private val localScopes: List<FirScope> = reversedTowerDataElements.mapNotNull { lexical ->
-        lexical.scope?.takeIf { lexical.isLocal }
-    }
-
-    private val nonLocalLexical = reversedTowerDataElements.filter { !it.isLocal }
+    private val nonLocalTowerDataElements = components.towerDataContext.nonLocalTowerDataElements.asReversedFrozen()
 
     private val implicitReceivers: List<ImplicitReceiver> by lazy(LazyThreadSafetyMode.NONE) {
-        reversedTowerDataElements.withIndex().mapNotNull { (index, element) ->
+        nonLocalTowerDataElements.withIndex().mapNotNull { (index, element) ->
             element.implicitReceiver?.let { ImplicitReceiver(it, index) }
         }
     }
@@ -404,7 +401,7 @@ class FirTowerResolverSession internal constructor(
             onLocalScope(index, localScope)
         }
 
-        for ((depth, lexical) in nonLocalLexical.withIndex()) {
+        for ((depth, lexical) in nonLocalTowerDataElements.withIndex()) {
             if (!lexical.isLocal && lexical.scope != null) {
                 onNonLocalScope(depth, lexical.scope)
             }
