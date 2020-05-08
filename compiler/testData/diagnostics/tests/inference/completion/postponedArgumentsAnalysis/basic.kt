@@ -142,8 +142,8 @@ fun main() {
     val x18: (C) -> Unit = <!TYPE_MISMATCH!>select(id <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>{ <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }<!>, <!TYPE_MISMATCH, TYPE_MISMATCH!>{ <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }<!>, id<(B) -> Unit> { x -> x })<!>
 
     // Resolution of extension/non-extension functions combination
-    val x19: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String.() -> kotlin.Unit")!>id {}<!>, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String) -> kotlin.Unit")!>id(fun(x: String) {})<!>)
-    val x20: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String.() -> kotlin.Unit")!>{}<!>, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String) -> kotlin.Unit")!>(fun(x: String) {})<!>)
+    val x19: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String.() -> kotlin.Unit")!>id { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this<!> }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String) -> kotlin.Unit")!>id(fun(x: String) {})<!>)
+    val x20: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String.() -> kotlin.Unit")!>{ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this<!> }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String) -> kotlin.Unit")!>(fun(x: String) {})<!>)
     val x21: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String) -> kotlin.Unit")!>id(fun(x: String) {})<!>, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String) -> kotlin.Unit")!>id(fun(x: String) {})<!>)
     select(id<String.() -> Unit>(fun(x: String) {}), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String.() -> kotlin.Unit")!>id(fun(x: String) {})<!>)
     select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String.(kotlin.String) -> kotlin.Unit")!>id(fun String.(x: String) {})<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String.(kotlin.String) -> kotlin.Unit")!>id(fun(x: String, y: String) {})<!>)
@@ -155,7 +155,7 @@ fun main() {
     select(id(id(fun(x: String, y: String) { }), <!TOO_MANY_ARGUMENTS!>fun String.(x: String) {}<!>), { x, y -> x })
     val x26: Int.(String) -> Int = fun (x: String) = 10 // it must be error, see KT-38439
     // Receiver must be specified in anonymous function declaration
-    val x27: Int.(String) -> Int = <!TYPE_MISMATCH!>id(<!TYPE_MISMATCH, TYPE_MISMATCH!>fun (x: String) = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>10<!><!>)<!>
+    val x27: Int.(String) -> Int = id(<!TYPE_MISMATCH!>fun <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>)<!> = 10<!>)
     select(id<Int.(String) -> Unit> {}, { x: Int, y: String -> x })
 
     // Inferring lambda parameter types by partially specified parameter types of other lambdas

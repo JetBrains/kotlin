@@ -72,11 +72,7 @@ class PostponedArgumentInputTypesResolver(
     ): ParameterTypesInfo? {
         val expectedType = argument.expectedType ?: return null
         val variableWithConstraints = notFixedTypeVariables[expectedType.constructor] ?: return null
-
-        // We shouldn't collect functional types from constraints for anonymous functions as they have fully explicit declaration form
-        val functionalTypesFromConstraints = if (!isAnonymousFunction(argument)) {
-            findFunctionalTypesInConstraints(variableWithConstraints, variableDependencyProvider)
-        } else null
+        val functionalTypesFromConstraints = findFunctionalTypesInConstraints(variableWithConstraints, variableDependencyProvider)
 
         // Don't create functional expected type for further error reporting about a different number of arguments
         if (functionalTypesFromConstraints != null && functionalTypesFromConstraints.distinctBy { it.type.argumentsCount() }.size > 1)
