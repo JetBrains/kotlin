@@ -35,6 +35,7 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
 
   protected abstract fun createLibrary(name: String): Library
   protected abstract val libraryTable: LibraryTable
+  protected open fun createLibrary(name: String, model: LibraryTable.ModifiableModel) = model.createLibrary(name) as LibraryEx
 
   @Test
   fun `add edit remove library`() {
@@ -220,6 +221,64 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
   }
 
   @Test
+  fun `rename library`() {
+    val a = createLibrary("a")
+    ModuleRootModificationUtil.addDependency(module, a)
+    projectModel.renameLibrary(a, "b")
+    val libraryEntry = dropModuleSourceEntry(ModuleRootManager.getInstance(module), 1).single() as LibraryOrderEntry
+    assertThat(libraryEntry.library).isEqualTo(a)
+    assertThat(libraryEntry.libraryName).isEqualTo("b")
+  }
+  
+  @Test
+  fun `rename library and commit after committing root model`() {
+    val a = createLibrary("a")
+    val model = createModifiableModel(module)
+    model.addLibraryEntry(a)
+    val libModel = a.modifiableModel
+    libModel.name = "b"
+    val libraryEntry = dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry
+    assertThat(libraryEntry.library).isEqualTo(a)
+    assertThat(libraryEntry.libraryName).isEqualTo("a")
+    val committed = commitModifiableRootModel(model)
+    val committedEntry1 = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
+    assertThat(committedEntry1.library).isEqualTo(a)
+    assertThat(committedEntry1.libraryName).isEqualTo("a")
+    runWriteActionAndWait { libModel.commit() }
+    val committedEntry2 = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
+    assertThat(committedEntry2.library).isEqualTo(a)
+    assertThat(committedEntry2.libraryName).isEqualTo("b")
+  }
+  
+  @Test
+  fun `rename library before committing root model`() {
+    val a = createLibrary("a")
+    val model = createModifiableModel(module)
+    model.addLibraryEntry(a)
+    projectModel.renameLibrary(a, "b")
+    val libraryEntry = dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry
+    assertThat(libraryEntry.library).isEqualTo(a)
+    assertThat(libraryEntry.libraryName).isEqualTo("b")
+    val committed = commitModifiableRootModel(model)
+    val committedEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
+    assertThat(committedEntry.library).isEqualTo(a)
+    assertThat(committedEntry.libraryName).isEqualTo("b")
+  }
+
+  @Test
+  fun `add invalid library and rename library to that name`() {
+    val library = createLibrary("foo")
+    val model = createModifiableModel(module)
+    model.addInvalidLibrary("bar", libraryTable.tableLevel)
+    commitModifiableRootModel(model)
+
+    projectModel.renameLibrary(library, "bar")
+
+    val libraryEntry = dropModuleSourceEntry(ModuleRootManager.getInstance(module), 1).single() as LibraryOrderEntry
+    assertThat(libraryEntry.library).isEqualTo(library)
+  }
+
+  @Test
   fun `dispose model without committing`() {
     val a = createLibrary("a")
     val model = createModifiableModel(module)
@@ -232,7 +291,7 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
   @Test
   fun `add not yet committed library and commit root model`() {
     val libraryTableModel = libraryTable.modifiableModel
-    val a = libraryTableModel.createLibrary("a")
+    val a = createLibrary("a", libraryTableModel)
     run {
       val model = createModifiableModel(module)
       val entry = model.addLibraryEntry(a)
@@ -253,7 +312,7 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
   @Test
   fun `add not yet committed library and commit before committing root model`() {
     val libraryTableModel = libraryTable.modifiableModel
-    val a = libraryTableModel.createLibrary("a")
+    val a = createLibrary("a", libraryTableModel)
     val model = createModifiableModel(module)
     val entry = model.addLibraryEntry(a)
     assertThat(entry.library).isEqualTo(a)
@@ -268,7 +327,7 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
   @Test
   fun `add not yet committed library with configuration accessor`() {
     val libraryTableModel = libraryTable.modifiableModel
-    val a = libraryTableModel.createLibrary("a")
+    val a = createLibrary("a", libraryTableModel)
     run {
       val model = createModifiableModel(module, object : RootConfigurationAccessor() {
         override fun getLibrary(library: Library?, libraryName: String?, libraryLevel: String?): Library? {

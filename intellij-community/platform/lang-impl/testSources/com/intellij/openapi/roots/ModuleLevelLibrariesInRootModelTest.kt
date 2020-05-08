@@ -37,7 +37,7 @@ class ModuleLevelLibrariesInRootModelTest {
   fun `add edit remove unnamed module library`() {
     run {
       val model = createModifiableModel(module)
-      val library = model.moduleLibraryTable.createLibrary()
+      val library = model.moduleLibraryTable.createLibrary() as LibraryEx
       assertThat(model.moduleLibraryTable.libraries.single()).isEqualTo(library)
       val libraryEntry = dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry
       assertThat(libraryEntry.isModuleLevel).isTrue()
@@ -47,7 +47,8 @@ class ModuleLevelLibrariesInRootModelTest {
       assertThat(libraryEntry.isExported).isFalse()
       assertThat(libraryEntry.libraryLevel).isEqualTo(LibraryTableImplUtil.MODULE_LEVEL)
       assertThat(model.findLibraryOrderEntry(library)).isEqualTo(libraryEntry)
-      assertThat((library as LibraryEx).isDisposed).isFalse()
+      assertThat(library.isDisposed).isFalse()
+      assertThat(library.module).isEqualTo(module)
 
       val committed = commitModifiableRootModel(model)
       val committedEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
@@ -58,6 +59,7 @@ class ModuleLevelLibrariesInRootModelTest {
       assertThat(committedEntry.library).isEqualTo(library)
       assertThat(committedEntry.libraryLevel).isEqualTo(LibraryTableImplUtil.MODULE_LEVEL)
       assertThat(library.isDisposed).isTrue()
+      assertThat((committedEntry.library as LibraryEx).module).isEqualTo(module)
       assertThat((committedEntry.library as LibraryEx).isDisposed).isFalse()
     }
 
