@@ -459,3 +459,10 @@ fun FirClass<*>.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
     origin == FirDeclarationOrigin.Java -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 }
+
+val IrType.isSamType: Boolean
+    get() {
+        val irClass = classOrNull ?: return false
+        val am = irClass.functions.singleOrNull { it.owner.modality == Modality.ABSTRACT }
+        return am != null
+    }
