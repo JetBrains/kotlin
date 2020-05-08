@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonProper
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirProperty
 
 class PropertyCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirProperty>(cache) {
-    private val setter = PropertySetterCommonizer.default()
+    private val setter = PropertySetterCommonizer()
     private var isExternal = true
 
     override fun commonizationResult() = CirCommonProperty(

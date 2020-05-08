@@ -17,12 +17,12 @@ abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
     cache: CirClassifiersCache
 ) : AbstractStandardCommonizer<T, T>() {
     protected lateinit var name: Name
-    protected val modality = ModalityCommonizer.default()
+    protected val modality = ModalityCommonizer()
     protected val visibility = VisibilityCommonizer.lowering()
-    protected val extensionReceiver = ExtensionReceiverCommonizer.default(cache)
-    protected val returnType = TypeCommonizer.default(cache)
+    protected val extensionReceiver = ExtensionReceiverCommonizer(cache)
+    protected val returnType = TypeCommonizer(cache)
     protected lateinit var kind: CallableMemberDescriptor.Kind
-    protected val typeParameters = TypeParameterListCommonizer.default(cache)
+    protected val typeParameters = TypeParameterListCommonizer(cache)
 
     override fun initialize(first: T) {
         name = first.name

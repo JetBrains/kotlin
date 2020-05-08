@@ -7,13 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionModifiers
 
-interface FunctionModifiersCommonizer : Commonizer<CirFunctionModifiers, CirFunctionModifiers> {
-    companion object {
-        fun default(): FunctionModifiersCommonizer = DefaultFunctionModifiersCommonizer()
-    }
-}
-
-private class DefaultFunctionModifiersCommonizer : FunctionModifiersCommonizer {
+class FunctionModifiersCommonizer : Commonizer<CirFunctionModifiers, CirFunctionModifiers> {
     private var modifiers: CirFunctionModifiersImpl? = null
     private var error = false
 

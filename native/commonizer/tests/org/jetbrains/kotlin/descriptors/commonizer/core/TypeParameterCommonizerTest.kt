@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.junit.Test
 
-class DefaultTypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, CirTypeParameter>() {
-    override fun createCommonizer() = TypeParameterCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
+class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, CirTypeParameter>() {
+    override fun createCommonizer() = TypeParameterCommonizer(EMPTY_CLASSIFIERS_CACHE)
 
     @Test
     fun allAreReified() = doTestSuccess(

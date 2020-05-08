@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.getAbbreviation
 import org.junit.Before
 import org.junit.Test
 
-class DefaultTypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
+class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     private lateinit var cache: ClassifiersCacheImpl
 
@@ -426,7 +426,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         )
     }
 
-    override fun createCommonizer() = TypeCommonizer.default(cache)
+    override fun createCommonizer() = TypeCommonizer(cache)
 
     override fun isEqual(a: CirType?, b: CirType?) = (a === b) || (a != null && b != null && areTypesEqual(cache, a, b))
 }

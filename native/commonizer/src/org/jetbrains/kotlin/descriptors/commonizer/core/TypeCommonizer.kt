@@ -9,16 +9,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 
-interface TypeCommonizer : Commonizer<CirType, CirType> {
-    companion object {
-        fun default(cache: CirClassifiersCache): TypeCommonizer = DefaultTypeCommonizer(cache)
-    }
-}
-
-private class DefaultTypeCommonizer(private val cache: CirClassifiersCache) :
-    TypeCommonizer,
-    AbstractStandardCommonizer<CirType, CirType>() {
-
+class TypeCommonizer(private val cache: CirClassifiersCache) : AbstractStandardCommonizer<CirType, CirType>() {
     private lateinit var temp: CirType
 
     override fun commonizationResult() = temp

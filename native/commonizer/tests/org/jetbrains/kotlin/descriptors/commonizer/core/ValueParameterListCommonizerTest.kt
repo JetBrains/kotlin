@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Co
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
 import org.junit.Test
 
-class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValueParameter>, List<CirValueParameter>>() {
+class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValueParameter>, List<CirValueParameter>>() {
 
     @Test
     fun emptyValueParameters() = doTestSuccess(
@@ -164,7 +164,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirV
         )
     )
 
-    override fun createCommonizer() = ValueParameterListCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
+    override fun createCommonizer() = ValueParameterListCommonizer(EMPTY_CLASSIFIERS_CACHE)
 
     override fun isEqual(a: List<CirValueParameter>?, b: List<CirValueParameter>?): Boolean {
         if (a === b)
@@ -184,7 +184,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirV
         fun mockValueParams(vararg params: Pair<String, String>): List<CirValueParameter> {
             check(params.isNotEmpty())
             return params.map { (name, returnTypeFqName) ->
-                DefaultValueParameterCommonizerTest.mockValueParam(
+                ValueParameterCommonizerTest.mockValueParam(
                     name = name,
                     returnTypeFqName = returnTypeFqName
                 )

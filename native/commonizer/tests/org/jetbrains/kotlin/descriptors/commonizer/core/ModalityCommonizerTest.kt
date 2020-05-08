@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Modality.*
 import org.junit.Test
 
-class DefaultModalityCommonizerTest : AbstractCommonizerTest<Modality, Modality>() {
+class ModalityCommonizerTest : AbstractCommonizerTest<Modality, Modality>() {
 
     @Test
     fun onlyFinal() = doTestSuccess(FINAL, FINAL, FINAL, FINAL)
@@ -38,5 +38,5 @@ class DefaultModalityCommonizerTest : AbstractCommonizerTest<Modality, Modality>
     @Test
     fun openAndFinal() = doTestSuccess(FINAL, OPEN, OPEN, FINAL)
 
-    override fun createCommonizer() = ModalityCommonizer.default()
+    override fun createCommonizer() = ModalityCommonizer()
 }

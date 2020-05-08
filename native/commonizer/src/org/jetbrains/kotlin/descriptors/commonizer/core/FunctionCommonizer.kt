@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunction
 
 class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirFunction>(cache) {
     private val annotations = AnnotationsCommonizer()
-    private val modifiers = FunctionModifiersCommonizer.default()
-    private val valueParameters = ValueParameterListCommonizer.default(cache)
+    private val modifiers = FunctionModifiersCommonizer()
+    private val valueParameters = ValueParameterListCommonizer(cache)
     private var hasStableParameterNames = true
     private var hasSynthesizedParameterNames = false
 

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.junit.Test
 
-class DefaultRootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
+class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
     @Test
     fun allAreNative() = doTestSuccess(
@@ -148,7 +148,7 @@ class DefaultRootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
         JVM_BUILT_INS.toMock(InputTarget("jvm3"))
     )
 
-    override fun createCommonizer() = RootCommonizer.default()
+    override fun createCommonizer() = RootCommonizer()
 
     override fun isEqual(a: CirRoot?, b: CirRoot?) =
         (a === b)

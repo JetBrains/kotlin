@@ -10,16 +10,9 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionRec
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver.Companion.toReceiverNoAnnotations
 
-interface ExtensionReceiverCommonizer : Commonizer<CirExtensionReceiver?, CirExtensionReceiver?> {
-    companion object {
-        fun default(cache: CirClassifiersCache): ExtensionReceiverCommonizer = DefaultExtensionReceiverCommonizer(cache)
-    }
-}
-
-private class DefaultExtensionReceiverCommonizer(cache: CirClassifiersCache) :
-    ExtensionReceiverCommonizer,
+class ExtensionReceiverCommonizer(cache: CirClassifiersCache) :
     AbstractNullableCommonizer<CirExtensionReceiver, CirExtensionReceiver, CirType, CirType>(
-        wrappedCommonizerFactory = { TypeCommonizer.default(cache) },
+        wrappedCommonizerFactory = { TypeCommonizer(cache) },
         extractor = { it.type },
         builder = { it.toReceiverNoAnnotations() }
     )

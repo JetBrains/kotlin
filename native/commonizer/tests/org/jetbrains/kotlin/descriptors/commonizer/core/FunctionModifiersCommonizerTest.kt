@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestFunctionModifiers
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionModifiers
 import org.junit.Test
 
-class DefaultFunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifiers, CirFunctionModifiers>() {
+class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifiers, CirFunctionModifiers>() {
 
     @Test
     fun allDefault() = doTestSuccess(
@@ -161,7 +161,7 @@ class DefaultFunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctio
         mockFunctionModifiers()
     )
 
-    override fun createCommonizer() = FunctionModifiersCommonizer.default()
+    override fun createCommonizer() = FunctionModifiersCommonizer()
     override fun isEqual(a: CirFunctionModifiers?, b: CirFunctionModifiers?) = (a === b) || (a != null && b != null && areEqual(a, b))
 }
 

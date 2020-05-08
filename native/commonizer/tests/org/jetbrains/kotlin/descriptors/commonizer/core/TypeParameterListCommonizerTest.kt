@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeParameter
 import org.junit.Test
 
-class DefaultTypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParameter>, List<CirTypeParameter>>() {
+class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParameter>, List<CirTypeParameter>>() {
 
     @Test
     fun emptyValueParameters() = doTestSuccess(
@@ -108,13 +108,13 @@ class DefaultTypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTy
         )
     )
 
-    override fun createCommonizer() = TypeParameterListCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
+    override fun createCommonizer() = TypeParameterListCommonizer(EMPTY_CLASSIFIERS_CACHE)
 
     private companion object {
         fun mockTypeParams(vararg params: Pair<String, String>): List<CirTypeParameter> {
             check(params.isNotEmpty())
             return params.map { (name, returnTypeFqName) ->
-                DefaultTypeParameterCommonizerTest.mockTypeParam(
+                TypeParameterCommonizerTest.mockTypeParam(
                     name = name,
                     upperBounds = listOf(returnTypeFqName)
                 )

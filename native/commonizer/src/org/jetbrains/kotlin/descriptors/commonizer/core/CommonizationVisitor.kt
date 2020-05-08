@@ -97,7 +97,7 @@ internal class CommonizationVisitor(
             }
 
             for ((_, supertypesGroup) in supertypesMap) {
-                val commonSupertype = commonize(supertypesGroup.toList(), TypeCommonizer.default(root.cache))
+                val commonSupertype = commonize(supertypesGroup.toList(), TypeCommonizer(root.cache))
                 if (commonSupertype != null)
                     commonClass.supertypes += commonSupertype
             }

@@ -9,16 +9,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirDeclarationWithVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSetter
 
-interface PropertySetterCommonizer : Commonizer<CirSetter?, CirSetter?> {
-    companion object {
-        fun default(): PropertySetterCommonizer = DefaultPropertySetterCommonizer()
-    }
-}
-
-private class DefaultPropertySetterCommonizer :
-    PropertySetterCommonizer,
-    AbstractNullableCommonizer<CirSetter, CirSetter, CirDeclarationWithVisibility, Visibility>(
-        wrappedCommonizerFactory = { VisibilityCommonizer.equalizing() },
-        extractor = { it },
-        builder = { CirSetter.createDefaultNoAnnotations(it) }
-    )
+class PropertySetterCommonizer : AbstractNullableCommonizer<CirSetter, CirSetter, CirDeclarationWithVisibility, Visibility>(
+    wrappedCommonizerFactory = { VisibilityCommonizer.equalizing() },
+    extractor = { it },
+    builder = { CirSetter.createDefaultNoAnnotations(it) }
+)

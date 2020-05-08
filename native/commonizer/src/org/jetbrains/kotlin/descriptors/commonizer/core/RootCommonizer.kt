@@ -12,13 +12,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
 import org.jetbrains.kotlin.descriptors.commonizer.OutputTarget
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRoot
 
-interface RootCommonizer : Commonizer<CirRoot, CirRoot> {
-    companion object {
-        fun default(): RootCommonizer = DefaultRootCommonizer()
-    }
-}
-
-private class DefaultRootCommonizer : RootCommonizer, AbstractStandardCommonizer<CirRoot, CirRoot>() {
+class RootCommonizer : AbstractStandardCommonizer<CirRoot, CirRoot>() {
     private val inputTargets = mutableSetOf<InputTarget>()
     private var konanBuiltInsProvider: BuiltInsProvider? = null
 

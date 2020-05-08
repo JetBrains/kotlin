@@ -15,8 +15,8 @@ class ClassConstructorCommonizer(cache: CirClassifiersCache) : AbstractStandardC
     private var isPrimary = false
     private lateinit var kind: CallableMemberDescriptor.Kind
     private val visibility = VisibilityCommonizer.equalizing()
-    private val typeParameters = TypeParameterListCommonizer.default(cache)
-    private val valueParameters = ValueParameterListCommonizer.default(cache)
+    private val typeParameters = TypeParameterListCommonizer(cache)
+    private val valueParameters = ValueParameterListCommonizer(cache)
     private var hasStableParameterNames = true
     private var hasSynthesizedParameterNames = false
 

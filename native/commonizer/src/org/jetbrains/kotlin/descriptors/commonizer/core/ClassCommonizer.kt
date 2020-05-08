@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.name.Name
 class ClassCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirClass, CirClass>() {
     private lateinit var name: Name
     private lateinit var kind: ClassKind
-    private val typeParameters = TypeParameterListCommonizer.default(cache)
-    private val modality = ModalityCommonizer.default()
+    private val typeParameters = TypeParameterListCommonizer(cache)
+    private val modality = ModalityCommonizer()
     private val visibility = VisibilityCommonizer.equalizing()
     private var isInner = false
     private var isInline = false

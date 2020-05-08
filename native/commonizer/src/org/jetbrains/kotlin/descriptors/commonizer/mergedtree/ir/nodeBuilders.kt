@@ -26,7 +26,7 @@ internal fun buildRootNode(
     storageManager = storageManager,
     descriptors = targetProviders,
     targetDeclarationProducer = { CirRoot(it.target, it.builtInsClass.name, it.builtInsProvider) },
-    commonValueProducer = { commonize(it, RootCommonizer.default()) },
+    commonValueProducer = { commonize(it, RootCommonizer()) },
     recursionMarker = null,
     nodeProducer = ::CirRootNode
 )
@@ -38,7 +38,7 @@ internal fun buildModuleNode(
     storageManager = storageManager,
     descriptors = modules,
     targetDeclarationProducer = ::CirModule,
-    commonValueProducer = { commonize(it, ModuleCommonizer.default()) },
+    commonValueProducer = { commonize(it, ModuleCommonizer()) },
     recursionMarker = null,
     nodeProducer = ::CirModuleNode
 )

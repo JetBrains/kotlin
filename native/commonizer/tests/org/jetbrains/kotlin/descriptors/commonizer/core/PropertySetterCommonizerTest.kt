@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSetter
 import org.junit.Test
 
-class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<CirSetter?, CirSetter?>() {
+class PropertySetterCommonizerTest : AbstractCommonizerTest<CirSetter?, CirSetter?>() {
 
     @Test
     fun absentOnly() = super.doTestSuccess(null, null, null, null)
@@ -66,5 +66,5 @@ class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<CirSetter?, C
             shouldFailOnFirstVariant = false
         )
 
-    override fun createCommonizer() = PropertySetterCommonizer.default()
+    override fun createCommonizer() = PropertySetterCommonizer()
 }

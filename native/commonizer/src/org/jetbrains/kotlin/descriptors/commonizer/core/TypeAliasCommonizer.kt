@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.Name
 
 class TypeAliasCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirClass>() {
     private lateinit var name: Name
-    private val underlyingType = TypeCommonizer.default(cache)
+    private val underlyingType = TypeCommonizer(cache)
     private val visibility = VisibilityCommonizer.lowering(allowPrivate = true)
 
     override fun commonizationResult() = CirCommonClass(

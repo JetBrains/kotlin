@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.junit.Test
 
-class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionReceiver?, CirExtensionReceiver?>() {
+class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionReceiver?, CirExtensionReceiver?>() {
 
     @Test
     fun nullReceiver() = doTestSuccess(
@@ -50,7 +50,7 @@ class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensi
         mockExtensionReceiver("kotlin.String")
     )
 
-    override fun createCommonizer() = ExtensionReceiverCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
+    override fun createCommonizer() = ExtensionReceiverCommonizer(EMPTY_CLASSIFIERS_CACHE)
 }
 
 private fun mockExtensionReceiver(typeFqName: String) = CirExtensionReceiver(
