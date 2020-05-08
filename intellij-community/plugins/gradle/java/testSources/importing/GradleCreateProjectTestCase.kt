@@ -241,16 +241,7 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
     }
   }
 
-  fun Project.use(save: Boolean = false, action: (Project) -> Unit) {
-    utilUse(save) {
-      try {
-        action(this)
-      }
-      finally {
-        GradleSetupProjectTest.removeGradleJvmSdk(this)
-      }
-    }
-  }
+  fun Project.use(save: Boolean = false, action: (Project) -> Unit) = utilUse(save, action)
 
   companion object {
     /**

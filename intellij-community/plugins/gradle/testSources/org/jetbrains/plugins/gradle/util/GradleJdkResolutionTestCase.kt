@@ -46,29 +46,29 @@ abstract class GradleJdkResolutionTestCase : ExternalSystemJdkUtilTestCase() {
     environment.variables(GradleConstants.SYSTEM_DIRECTORY_PATH_KEY to null)
   }
 
-  fun assertGradleJvmSuggestion(expected: TestSdk, projectSdk: TestSdk? = null, expectsSdkRegistration: Boolean = false) {
-    assertGradleJvmSuggestion({ expected }, projectSdk, expectsSdkRegistration)
+  fun assertGradleJvmSuggestion(expected: TestSdk, expectsSdkRegistration: Boolean = false) {
+    assertGradleJvmSuggestion({ expected }, expectsSdkRegistration)
   }
 
-  fun assertGradleJvmSuggestion(expected: () -> TestSdk, projectSdk: TestSdk? = null, expectsSdkRegistration: Boolean = false) {
+  fun assertGradleJvmSuggestion(expected: () -> TestSdk, expectsSdkRegistration: Boolean = false) {
     assertNewlyRegisteredSdks({ if (expectsSdkRegistration) expected() else null }) {
-      val gradleJvm = suggestGradleJvm(project, projectSdk, externalProjectPath, gradleVersion)
+      val gradleJvm = suggestGradleJvm(project, externalProjectPath, gradleVersion)
       val gradleJdk = SdkLookupProviderImpl().nonblockingResolveSdkBySdkName(gradleJvm)
       requireNotNull(gradleJdk) { "expected: ${expected()}" }
       assertSdk(expected(), gradleJdk)
     }
   }
 
-  fun assertGradleJvmSuggestion(expected: String, projectSdk: TestSdk? = null) {
+  fun assertGradleJvmSuggestion(expected: String) {
     assertUnexpectedSdksRegistration {
-      val gradleJvm = suggestGradleJvm(project, projectSdk, externalProjectPath, gradleVersion)
+      val gradleJvm = suggestGradleJvm(project, externalProjectPath, gradleVersion)
       assertEquals(expected, gradleJvm)
     }
   }
 
-  private fun suggestGradleJvm(project: Project, projectSdk: Sdk?, externalProjectPath: String, gradleVersion: GradleVersion): String? {
+  private fun suggestGradleJvm(project: Project, externalProjectPath: String, gradleVersion: GradleVersion): String? {
     val projectSettings = GradleProjectSettings()
-    setupGradleJvm(project, projectSdk, projectSettings, externalProjectPath, gradleVersion)
+    setupGradleJvm(project, projectSettings, externalProjectPath, gradleVersion)
     val provider = getGradleJvmLookupProvider(project, projectSettings)
     provider.waitForLookup()
     return projectSettings.gradleJvm

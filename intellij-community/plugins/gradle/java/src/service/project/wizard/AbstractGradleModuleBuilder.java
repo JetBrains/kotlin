@@ -242,9 +242,8 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   }
 
   private void setupAndLinkGradleProject(@NotNull Project project) {
-    Sdk projectSdk = ObjectUtils.chooseNotNull(getModuleJdk(), getNewProjectJdk(myWizardContext));
     GradleProjectSettings projectSettings = getExternalProjectSettings();
-    setupGradleSettings(projectSettings, rootProjectPath, project, projectSdk);
+    setupGradleSettings(projectSettings, rootProjectPath, project);
     getSystemSettings(project).linkProject(projectSettings);
     GradleJvmValidationUtil.validateJavaHome(project, rootProjectPath, projectSettings.resolveGradleVersion());
   }

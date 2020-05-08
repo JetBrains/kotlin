@@ -28,12 +28,9 @@ abstract class SdkTestCase : LightPlatformTestCase() {
     super.setUp()
 
     TestSdkGenerator.reset()
-    SdkType.EP_NAME.getPoint(null)
-      .registerExtension(TestSdkType, testRootDisposable)
-    SdkType.EP_NAME.getPoint(null)
-      .registerExtension(DependentTestSdkType, testRootDisposable)
-    SdkDownload.EP_NAME.getPoint(null)
-      .registerExtension(TestSdkDownloader, testRootDisposable)
+    SdkType.EP_NAME.point.registerExtension(TestSdkType, testRootDisposable)
+    SdkType.EP_NAME.point.registerExtension(DependentTestSdkType, testRootDisposable)
+    SdkDownload.EP_NAME.point.registerExtension(TestSdkDownloader, testRootDisposable)
   }
 
   fun createAndRegisterSdk(isProjectSdk: Boolean = false): TestSdk {
@@ -82,11 +79,31 @@ abstract class SdkTestCase : LightPlatformTestCase() {
     sdks.forEach(::removeSdk)
   }
 
-  private fun setProjectSdk(sdk: TestSdk) {
+  private fun setProjectSdk(sdk: Sdk?) {
     invokeAndWaitIfNeeded {
       runWriteAction {
         val rootManager = ProjectRootManager.getInstance(project)
         rootManager.projectSdk = sdk
+      }
+    }
+  }
+
+  fun withProjectSdk(sdk: TestSdk, action: () -> Unit) {
+    val projectSdk = projectSdk
+    setProjectSdk(sdk)
+    try {
+      action()
+    }
+    finally {
+      setProjectSdk(projectSdk)
+    }
+  }
+
+  fun withRegisteredSdk(sdk: TestSdk, isProjectSdk: Boolean, action: () -> Unit) {
+    withRegisteredSdks(sdk) {
+      when (isProjectSdk) {
+        true -> withProjectSdk(sdk, action)
+        else -> action()
       }
     }
   }
