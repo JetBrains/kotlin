@@ -3,11 +3,9 @@ package com.intellij.codeInsight.hints
 
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.openapi.editor.EditorCustomElementRenderer
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.annotations.NotNull
 
 class InlayUnloadingListener : DynamicPluginListener {
   override fun beforePluginUnload(pluginDescriptor: IdeaPluginDescriptor, isUpdate: Boolean) {
@@ -19,7 +17,7 @@ class InlayUnloadingListener : DynamicPluginListener {
     }
   }
 
-  private fun closeInlays(inlineElements: @NotNull List<Inlay<EditorCustomElementRenderer>>) {
+  private fun closeInlays(inlineElements: List<Inlay<*>>) {
     for (inlay in inlineElements) {
       if (inlay.renderer !is LinearOrderInlayRenderer<*>) return
       Disposer.dispose(inlay)

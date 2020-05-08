@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.source.tree.injected;
 
 import com.intellij.openapi.Disposable;
@@ -14,7 +14,7 @@ import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
-class InlayModelWindow implements InlayModel {
+final class InlayModelWindow implements InlayModel {
   private static final Logger LOG = Logger.getInstance(InlayModelWindow.class);
 
   @Nullable
@@ -48,21 +48,21 @@ class InlayModelWindow implements InlayModel {
 
   @NotNull
   @Override
-  public List<Inlay> getInlineElementsInRange(int startOffset, int endOffset) {
+  public List<Inlay<?>> getInlineElementsInRange(int startOffset, int endOffset) {
     logUnsupported();
     return Collections.emptyList();
   }
 
   @NotNull
   @Override
-  public List<Inlay> getBlockElementsInRange(int startOffset, int endOffset) {
+  public List<Inlay<?>> getBlockElementsInRange(int startOffset, int endOffset) {
     logUnsupported();
     return Collections.emptyList();
   }
 
   @NotNull
   @Override
-  public List<Inlay> getBlockElementsForVisualLine(int visualLine, boolean above) {
+  public List<Inlay<?>> getBlockElementsForVisualLine(int visualLine, boolean above) {
     logUnsupported();
     return Collections.emptyList();
   }
@@ -75,28 +75,28 @@ class InlayModelWindow implements InlayModel {
 
   @Nullable
   @Override
-  public Inlay getInlineElementAt(@NotNull VisualPosition visualPosition) {
+  public Inlay<?> getInlineElementAt(@NotNull VisualPosition visualPosition) {
     logUnsupported();
     return null;
   }
 
   @Nullable
   @Override
-  public Inlay getElementAt(@NotNull Point point) {
+  public Inlay<?> getElementAt(@NotNull Point point) {
     logUnsupported();
     return null;
   }
 
   @NotNull
   @Override
-  public List<Inlay> getAfterLineEndElementsInRange(int startOffset, int endOffset) {
+  public List<Inlay<?>> getAfterLineEndElementsInRange(int startOffset, int endOffset) {
     logUnsupported();
     return Collections.emptyList();
   }
 
   @NotNull
   @Override
-  public List<Inlay> getAfterLineEndElementsForLogicalLine(int logicalLine) {
+  public List<Inlay<?>> getAfterLineEndElementsForLogicalLine(int logicalLine) {
     logUnsupported();
     return Collections.emptyList();
   }
