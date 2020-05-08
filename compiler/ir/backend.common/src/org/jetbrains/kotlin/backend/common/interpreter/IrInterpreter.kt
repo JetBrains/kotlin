@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 import java.lang.invoke.MethodHandle
 
 private const val MAX_STACK_SIZE = 10_000
@@ -326,14 +327,14 @@ class IrInterpreter(irModule: IrModuleFragment) {
         if (isLocal) valueArguments.addAll(dispatchReceiver.extractNonLocalDeclarations())
 
         return stack.newFrame(asSubFrame = irFunction.isInline || irFunction.isLocal, initPool = valueArguments) {
-            val isWrapper = dispatchReceiver is Wrapper && rawExtensionReceiver == null
-            val isInterfaceDefaultMethod = irFunction.body != null && (irFunction.parent as? IrClass)?.isInterface == true
+            // inline only methods are not presented in lookup table, so must be interpreted instead of execution
+            val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
             return@newFrame when {
-                isWrapper && !isInterfaceDefaultMethod -> (dispatchReceiver as Wrapper).getMethod(irFunction).invokeMethod(irFunction)
+                dispatchReceiver is Wrapper && !isInlineOnly -> dispatchReceiver.getMethod(irFunction).invokeMethod(irFunction)
                 irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction)
                 irFunction.isAbstract() -> calculateAbstract(irFunction) //abstract check must be before fake overridden check
                 irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrSimpleFunction)
-                irFunction.body == null || dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction)
+                irFunction.body == null || dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction) // is Primitive because of js char and long
                 else -> irFunction.interpret()
             }
         }

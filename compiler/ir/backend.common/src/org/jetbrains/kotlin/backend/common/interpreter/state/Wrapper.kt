@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -117,7 +116,7 @@ class Wrapper private constructor(
 
         private fun IrFunction.getMethodType(): MethodType {
             val argsClasses = this.valueParameters.map { it.type.getClass(this.isValueParameterPrimitiveAsObject(it.index)) }
-            return if (this is IrFunctionImpl) {
+            return if (this is IrSimpleFunction) {
                 // for regular methods and functions
                 val returnClass = this.returnType.getClass(this.isReturnTypePrimitiveAsObject())
                 val extensionClass = this.extensionReceiverParameter?.type?.getClass(this.isExtensionReceiverPrimitive())
@@ -130,22 +129,24 @@ class Wrapper private constructor(
         }
 
         private fun IrType.getClass(asObject: Boolean): Class<out Any> {
-            val fqName = this.getFqName()
+            val fqName = this.getFqName() ?: return Any::class.java // null if this.isTypeParameter()
             val owner = this.classOrNull?.owner
             return when {
-                this.isPrimitiveType() -> getPrimitiveClass(fqName!!, asObject)
+                this.isPrimitiveType() -> getPrimitiveClass(fqName, asObject)!!
                 this.isArray() -> if (asObject) Array<Any?>::class.javaObjectType else Array<Any?>::class.java
-                owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
                 //TODO primitive array
-                this.isTypeParameter() -> Any::class.java // TODO use typeArguments
-                else -> JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(fqName!!))?.let { Class.forName(it.getAsString()) }
-            } ?: Class.forName(fqName)
+                owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
+                else -> {
+                    val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(fqName))
+                    val className = javaClassId?.asSingleFqName()?.asString() ?: fqName
+                    Class.forName(className.replaceDotWithDollarForInnerClasses())
+                }
+            }
         }
 
-        private fun ClassId.getAsString(): String {
+        private fun String.replaceDotWithDollarForInnerClasses(): String? {
             // TODO come up with something better
-            val fqName = this.asSingleFqName().toString()
-            val names = fqName.split(".")
+            val names = this.split(".")
             val result = StringBuilder()
             for (i in 0 until (names.size - 1)) {
                 result.append(names[i])
