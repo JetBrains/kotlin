@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
@@ -17,7 +16,6 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
@@ -87,7 +85,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         // when done lazily
         UnusedSymbolInspection()
 
-        (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
+        runPostStartupActivitiesOnce(project)
         VfsRootAccess.allowRootAccess(project, KotlinTestUtils.getHomeDirectory())
 
         editorTrackerProjectOpened(project)

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.intellij.ide.startup.impl.StartupManagerImpl
-import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
@@ -19,7 +17,7 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
     override fun setUp() {
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
-        (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
+        runPostStartupActivitiesOnce(project)
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
         invalidateLibraryCache(project)
     }

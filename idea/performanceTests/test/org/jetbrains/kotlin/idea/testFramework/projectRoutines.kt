@@ -22,6 +22,7 @@ import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.parameterInfo.HintType
+import org.jetbrains.kotlin.idea.test.runPostStartupActivitiesOnce
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.file.Paths
@@ -79,8 +80,8 @@ fun runStartupActivities(project: Project) {
     with(StartupManager.getInstance(project) as StartupManagerImpl) {
         //scheduleInitialVfsRefresh()
         runStartupActivities()
-        runPostStartupActivities()
     }
+    runPostStartupActivitiesOnce(project)
 }
 
 fun waitForAllEditorsFinallyLoaded(project: Project) {

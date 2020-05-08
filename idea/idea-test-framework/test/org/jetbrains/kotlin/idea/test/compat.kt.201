@@ -17,5 +17,5 @@ fun editorTrackerProjectOpened(project: Project) {
 
 // BUNCH: 193
 fun runPostStartupActivitiesOnce(project: Project) {
-    (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
+    (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivitiesRegisteredDynamically()
 }
