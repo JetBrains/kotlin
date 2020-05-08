@@ -24,8 +24,8 @@ import com.jetbrains.cidr.execution.build.CidrBuild
 import com.jetbrains.cidr.execution.build.CidrBuild.startProcess
 import com.jetbrains.cidr.execution.build.CidrBuildResult
 import com.jetbrains.cidr.execution.build.CidrBuildTaskType
+import com.jetbrains.kmm.XCProjectFile
 import java.io.File
-import java.util.regex.Pattern
 
 
 private val BUILD_IOS_APP_TASK_ID = Key.create<BuildIOSAppTask>(BuildIOSAppTask::class.java.name)
@@ -79,7 +79,8 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
     ): Boolean {
         if (configuration !is AppleRunConfiguration) return false
         val workDirectory = configuration.project.basePath ?: return false
-        val xcProjectFile = configuration.xcProjectFile() ?: return false
+        val xcProjectFile = configuration.workspace.xcProjectFile ?: return false
+        val xcodeScheme = configuration.xcodeScheme ?: return false
 
         val buildContext = CidrBuild.BuildContext(
             configuration.project,
@@ -92,7 +93,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
         buildContext.processHandler = createBuildProcess(
             workDirectory,
             xcProjectFile,
-            configuration.xcodeScheme,
+            xcodeScheme,
             FileUtil.join(workDirectory, configuration.iosBuildDirectory),
             configuration.xcodeSdk(environment.executionTarget)
         )

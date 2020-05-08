@@ -10,6 +10,7 @@ proprietaryRepositories(project)
 
 dependencies {
     compileOnly(kotlin("stdlib"))
+    compileOnly(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     compileOnly(project(":compiler:util")) { isTransitive = false }
     compileOnly(project(":idea")) { isTransitive = false }
     compileOnly(project(":idea:idea-gradle")) { isTransitive = false }

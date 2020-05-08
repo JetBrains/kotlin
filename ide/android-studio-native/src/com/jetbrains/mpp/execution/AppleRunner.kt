@@ -45,7 +45,7 @@ class AppleRunner : RunnerBase() {
 
     private fun checkDSYMIsGenerated(configuration: AppleRunConfiguration?) {
         if (configuration == null) return
-        val xcDir = (configuration.xcProjectFile() ?: return).absolutePath
+        val xcDir = (configuration.workspace.xcProjectFile ?: return).absolutePath
 
         // dSYMs are needed in the setting with CocoaPods, which implies that project is being governed by workspace
         if (xcDir.endsWith(XCFileExtensions.project)) return

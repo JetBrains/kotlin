@@ -5,17 +5,51 @@
 
 package com.jetbrains.mpp
 
-import com.intellij.execution.*
-import com.intellij.openapi.components.*
+import com.intellij.execution.ExecutionTargetManager
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
 import com.jetbrains.kmm.KMMTargetListener
+import com.jetbrains.kmm.XCProjectFile
 import com.jetbrains.konan.WorkspaceXML
 import org.jdom.Element
+import java.io.File
 
+sealed class XCProjectStatus {
+    object Found : XCProjectStatus()
+    data class Misconfiguration(val reason: String) : XCProjectStatus()
+    data class NotFound(val reason: String) : XCProjectStatus()
+    object NotLocated : XCProjectStatus()
+}
 
 @State(name = WorkspaceXML.projectComponentName, storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
 class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
-    var xcproject: String? = null
+
+    var xcProjectStatus: XCProjectStatus = XCProjectStatus.NotLocated
+    var xcProjectFile: XCProjectFile? = null
+
+    fun locateXCProject(relativePath: String) {
+        if (project.basePath == null) {
+            xcProjectStatus = XCProjectStatus.Misconfiguration("project base path is absent")
+            return
+        }
+
+        val xcProjectDir = File(project.basePath).resolve(relativePath)
+
+        if (!xcProjectDir.exists()) {
+            xcProjectStatus = XCProjectStatus.NotFound("directory $relativePath doesn't exist")
+            return
+        }
+
+        xcProjectFile = XCProjectFile.findXCProjectFile(xcProjectDir)
+
+        xcProjectStatus = if (xcProjectFile != null) {
+            XCProjectStatus.Found
+        } else {
+            XCProjectStatus.NotFound("can't find Xcode projects located at $relativePath")
+        }
+    }
 
     init {
         val connection = project.messageBus.connect()
@@ -25,9 +59,10 @@ class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
     override fun getState(): Element {
         val stateElement = super.getState()
 
-        val xcElement = Element(WorkspaceXML.XCProject.nodeName)
-        xcproject?.let {
-            xcElement.setAttribute(WorkspaceXML.XCProject.attributePath, xcproject)
+        if (xcProjectFile != null) {
+            val xcElement = Element(WorkspaceXML.XCProject.nodeName)
+            val relativePath = File(xcProjectFile!!.absolutePath).relativeTo(File(project.basePath))
+            xcElement.setAttribute(WorkspaceXML.XCProject.attributePath, relativePath.path)
             stateElement.addContent(xcElement)
         }
 
@@ -39,7 +74,8 @@ class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
 
         val xcElement = stateElement.getChildren(WorkspaceXML.XCProject.nodeName).firstOrNull()
         xcElement?.run {
-            xcproject = getAttributeValue(WorkspaceXML.XCProject.attributePath)
+            val relativePath = getAttributeValue(WorkspaceXML.XCProject.attributePath) ?: return@run
+            locateXCProject(relativePath)
         }
     }
 

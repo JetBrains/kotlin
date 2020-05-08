@@ -32,7 +32,9 @@ class ProjectDataService : ProjectDataServiceBase() {
         modelsProvider: IdeModelsProvider
     ) {
         val workspace = ProjectWorkspace.getInstance(project)
-        workspace.xcproject = readGradleProperty(project, KonanBundle.message("property.xcodeproj"))
+        readGradleProperty(project, KonanBundle.message("property.xcodeproj"))?.let {
+            workspace.locateXCProject(it)
+        }
 
         if (projectData?.owner != GradleConstants.SYSTEM_ID) return
 
