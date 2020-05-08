@@ -22,7 +22,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
     @Test
     fun allAreNative() = doTestSuccess(
-        KONAN_BUILT_INS.toMock(
+        expected = KONAN_BUILT_INS.toMock(
             OutputTarget(
                 setOf(
                     InputTarget("ios_x64", KonanTarget.IOS_X64),
@@ -38,7 +38,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
     @Test
     fun jvmAndNative1() = doTestSuccess(
-        DEFAULT_BUILT_INS.toMock(
+        expected = DEFAULT_BUILT_INS.toMock(
             OutputTarget(
                 setOf(
                     InputTarget("jvm1"),
@@ -54,7 +54,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
     @Test
     fun jvmAndNative2() = doTestSuccess(
-        DEFAULT_BUILT_INS.toMock(
+        expected = DEFAULT_BUILT_INS.toMock(
             OutputTarget(
                 setOf(
                     InputTarget("ios_x64", KonanTarget.IOS_X64),
@@ -70,7 +70,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
     @Test
     fun noNative1() = doTestSuccess(
-        DEFAULT_BUILT_INS.toMock(
+        expected = DEFAULT_BUILT_INS.toMock(
             OutputTarget(
                 setOf(
                     InputTarget("default1"),
@@ -86,7 +86,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
     @Test
     fun noNative2() = doTestSuccess(
-        DEFAULT_BUILT_INS.toMock(
+        expected = DEFAULT_BUILT_INS.toMock(
             OutputTarget(
                 setOf(
                     InputTarget("jvm1"),
@@ -102,7 +102,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
     @Test
     fun noNative3() = doTestSuccess(
-        DEFAULT_BUILT_INS.toMock(
+        expected = DEFAULT_BUILT_INS.toMock(
             OutputTarget(
                 setOf(
                     InputTarget("jvm1"),
@@ -118,7 +118,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
     @Test(expected = IllegalStateException::class)
     fun misconfiguration1() = doTestSuccess(
-        KONAN_BUILT_INS.toMock(
+        expected = KONAN_BUILT_INS.toMock(
             OutputTarget(
                 setOf(
                     InputTarget("ios_x64", KonanTarget.IOS_X64),
@@ -134,7 +134,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
     @Test(expected = IllegalStateException::class)
     fun misconfiguration2() = doTestSuccess(
-        DEFAULT_BUILT_INS.toMock(
+        expected = DEFAULT_BUILT_INS.toMock(
             OutputTarget(
                 setOf(
                     InputTarget("jvm1"),

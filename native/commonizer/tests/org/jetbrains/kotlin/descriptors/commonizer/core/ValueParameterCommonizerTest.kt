@@ -19,7 +19,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     @Test
     fun sameReturnType1() = doTestSuccess(
-        mockValueParam("kotlin.String"),
+        expected = mockValueParam("kotlin.String"),
         mockValueParam("kotlin.String"),
         mockValueParam("kotlin.String"),
         mockValueParam("kotlin.String")
@@ -27,7 +27,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     @Test
     fun sameReturnType2() = doTestSuccess(
-        mockValueParam("org.sample.Foo"),
+        expected = mockValueParam("org.sample.Foo"),
         mockValueParam("org.sample.Foo"),
         mockValueParam("org.sample.Foo"),
         mockValueParam("org.sample.Foo")
@@ -56,7 +56,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     @Test
     fun allHaveVararg1() = doTestSuccess(
-        mockValueParam("kotlin.String", hasVarargElementType = true),
+        expected = mockValueParam("kotlin.String", hasVarargElementType = true),
         mockValueParam("kotlin.String", hasVarargElementType = true),
         mockValueParam("kotlin.String", hasVarargElementType = true),
         mockValueParam("kotlin.String", hasVarargElementType = true)
@@ -64,7 +64,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     @Test
     fun allHaveVararg2() = doTestSuccess(
-        mockValueParam("org.sample.Foo", hasVarargElementType = true),
+        expected = mockValueParam("org.sample.Foo", hasVarargElementType = true),
         mockValueParam("org.sample.Foo", hasVarargElementType = true),
         mockValueParam("org.sample.Foo", hasVarargElementType = true),
         mockValueParam("org.sample.Foo", hasVarargElementType = true)
@@ -86,7 +86,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     @Test
     fun allHaveCrossinline() = doTestSuccess(
-        mockValueParam("kotlin.String", isCrossinline = true),
+        expected = mockValueParam("kotlin.String", isCrossinline = true),
         mockValueParam("kotlin.String", isCrossinline = true),
         mockValueParam("kotlin.String", isCrossinline = true),
         mockValueParam("kotlin.String", isCrossinline = true)
@@ -94,7 +94,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     @Test
     fun someHaveCrossinline1() = doTestSuccess(
-        mockValueParam("kotlin.String", isCrossinline = false),
+        expected = mockValueParam("kotlin.String", isCrossinline = false),
         mockValueParam("kotlin.String", isCrossinline = true),
         mockValueParam("kotlin.String", isCrossinline = true),
         mockValueParam("kotlin.String", isCrossinline = false)
@@ -102,7 +102,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     @Test
     fun someHaveCrossinline2() = doTestSuccess(
-        mockValueParam("kotlin.String", isCrossinline = false),
+        expected = mockValueParam("kotlin.String", isCrossinline = false),
         mockValueParam("kotlin.String", isCrossinline = false),
         mockValueParam("kotlin.String", isCrossinline = true),
         mockValueParam("kotlin.String", isCrossinline = true)
@@ -110,7 +110,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     @Test
     fun allHaveNoinline() = doTestSuccess(
-        mockValueParam("kotlin.String", isNoinline = true),
+        expected = mockValueParam("kotlin.String", isNoinline = true),
         mockValueParam("kotlin.String", isNoinline = true),
         mockValueParam("kotlin.String", isNoinline = true),
         mockValueParam("kotlin.String", isNoinline = true)
@@ -118,7 +118,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     @Test
     fun someHaveNoinline1() = doTestSuccess(
-        mockValueParam("kotlin.String", isNoinline = false),
+        expected = mockValueParam("kotlin.String", isNoinline = false),
         mockValueParam("kotlin.String", isNoinline = true),
         mockValueParam("kotlin.String", isNoinline = true),
         mockValueParam("kotlin.String", isNoinline = false)
@@ -126,7 +126,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     @Test
     fun someHaveNoinline2() = doTestSuccess(
-        mockValueParam("kotlin.String", isNoinline = false),
+        expected = mockValueParam("kotlin.String", isNoinline = false),
         mockValueParam("kotlin.String", isNoinline = false),
         mockValueParam("kotlin.String", isNoinline = true),
         mockValueParam("kotlin.String", isNoinline = true)

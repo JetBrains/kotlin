@@ -12,31 +12,55 @@ import org.junit.Test
 class ModalityCommonizerTest : AbstractCommonizerTest<Modality, Modality>() {
 
     @Test
-    fun onlyFinal() = doTestSuccess(FINAL, FINAL, FINAL, FINAL)
+    fun onlyFinal() = doTestSuccess(
+        expected = FINAL,
+        FINAL, FINAL, FINAL
+    )
 
     @Test
-    fun onlyOpen() = doTestSuccess(OPEN, OPEN, OPEN, OPEN)
+    fun onlyOpen() = doTestSuccess(
+        expected = OPEN,
+        OPEN, OPEN, OPEN
+    )
 
     @Test
-    fun onlySealed() = doTestSuccess(SEALED, SEALED, SEALED, SEALED)
+    fun onlySealed() = doTestSuccess(
+        expected = SEALED,
+        SEALED, SEALED, SEALED
+    )
 
     @Test
-    fun onlyAbstract() = doTestSuccess(ABSTRACT, ABSTRACT, ABSTRACT, ABSTRACT)
+    fun onlyAbstract() = doTestSuccess(
+        expected = ABSTRACT,
+        ABSTRACT, ABSTRACT, ABSTRACT
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun sealedAndAbstract() = doTestFailure(SEALED, ABSTRACT)
+    fun sealedAndAbstract() = doTestFailure(
+        SEALED, ABSTRACT
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun sealedAndFinal() = doTestFailure(SEALED, FINAL)
+    fun sealedAndFinal() = doTestFailure(
+        SEALED, FINAL
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun abstractAndFinal() = doTestFailure(ABSTRACT, FINAL)
+    fun abstractAndFinal() = doTestFailure(
+        ABSTRACT, FINAL
+    )
 
     @Test
-    fun finalAndOpen() = doTestSuccess(FINAL, FINAL, OPEN, FINAL)
+    fun finalAndOpen() = doTestSuccess(
+        expected = FINAL,
+        FINAL, OPEN, FINAL
+    )
 
     @Test
-    fun openAndFinal() = doTestSuccess(FINAL, OPEN, OPEN, FINAL)
+    fun openAndFinal() = doTestSuccess(
+        expected = FINAL,
+        OPEN, OPEN, FINAL
+    )
 
     override fun createCommonizer() = ModalityCommonizer()
 }

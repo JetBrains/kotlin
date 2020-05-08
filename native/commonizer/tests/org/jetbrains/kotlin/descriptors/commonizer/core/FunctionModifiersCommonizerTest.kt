@@ -13,7 +13,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun allDefault() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(),
         mockFunctionModifiers(),
         mockFunctionModifiers()
@@ -21,7 +21,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun allSuspend() = doTestSuccess(
-        mockFunctionModifiers(isSuspend = true),
+        expected = mockFunctionModifiers(isSuspend = true),
         mockFunctionModifiers(isSuspend = true),
         mockFunctionModifiers(isSuspend = true),
         mockFunctionModifiers(isSuspend = true)
@@ -43,7 +43,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun allOperator() = doTestSuccess(
-        mockFunctionModifiers(isOperator = true),
+        expected = mockFunctionModifiers(isOperator = true),
         mockFunctionModifiers(isOperator = true),
         mockFunctionModifiers(isOperator = true),
         mockFunctionModifiers(isOperator = true)
@@ -51,7 +51,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun notOperatorAndOperator() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(),
         mockFunctionModifiers(isOperator = true),
         mockFunctionModifiers(isOperator = true)
@@ -59,7 +59,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun operatorAndNotOperator() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(isOperator = true),
         mockFunctionModifiers(isOperator = true),
         mockFunctionModifiers()
@@ -67,7 +67,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun allInfix() = doTestSuccess(
-        mockFunctionModifiers(isInfix = true),
+        expected = mockFunctionModifiers(isInfix = true),
         mockFunctionModifiers(isInfix = true),
         mockFunctionModifiers(isInfix = true),
         mockFunctionModifiers(isInfix = true)
@@ -75,7 +75,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun notInfixAndInfix() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(),
         mockFunctionModifiers(isInfix = true),
         mockFunctionModifiers(isInfix = true)
@@ -83,7 +83,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun infixAndNotInfix() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(isInfix = true),
         mockFunctionModifiers(isInfix = true),
         mockFunctionModifiers()
@@ -91,7 +91,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun allInline() = doTestSuccess(
-        mockFunctionModifiers(isInline = true),
+        expected = mockFunctionModifiers(isInline = true),
         mockFunctionModifiers(isInline = true),
         mockFunctionModifiers(isInline = true),
         mockFunctionModifiers(isInline = true)
@@ -99,7 +99,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun notInlineAndInline() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(),
         mockFunctionModifiers(isInline = true),
         mockFunctionModifiers(isInline = true)
@@ -107,7 +107,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun inlineAndNotInline() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(isInline = true),
         mockFunctionModifiers(isInline = true),
         mockFunctionModifiers()
@@ -115,7 +115,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun allTailrec() = doTestSuccess(
-        mockFunctionModifiers(isTailrec = true),
+        expected = mockFunctionModifiers(isTailrec = true),
         mockFunctionModifiers(isTailrec = true),
         mockFunctionModifiers(isTailrec = true),
         mockFunctionModifiers(isTailrec = true)
@@ -123,7 +123,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun notTailrecAndTailrec() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(),
         mockFunctionModifiers(isTailrec = true),
         mockFunctionModifiers(isTailrec = true)
@@ -131,7 +131,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun tailrecAndNotTailrec() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(isTailrec = true),
         mockFunctionModifiers(isTailrec = true),
         mockFunctionModifiers()
@@ -139,7 +139,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun allExternal() = doTestSuccess(
-        mockFunctionModifiers(isExternal = true),
+        expected = mockFunctionModifiers(isExternal = true),
         mockFunctionModifiers(isExternal = true),
         mockFunctionModifiers(isExternal = true),
         mockFunctionModifiers(isExternal = true)
@@ -147,7 +147,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun notExternalAndExternal() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(),
         mockFunctionModifiers(isExternal = true),
         mockFunctionModifiers(isExternal = true)
@@ -155,7 +155,7 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
 
     @Test
     fun externalAndNotExternal() = doTestSuccess(
-        mockFunctionModifiers(),
+        expected = mockFunctionModifiers(),
         mockFunctionModifiers(isExternal = true),
         mockFunctionModifiers(isExternal = true),
         mockFunctionModifiers()

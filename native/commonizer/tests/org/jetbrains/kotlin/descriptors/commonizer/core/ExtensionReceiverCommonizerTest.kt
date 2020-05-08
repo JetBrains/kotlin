@@ -15,15 +15,13 @@ class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionRecei
 
     @Test
     fun nullReceiver() = doTestSuccess(
-        null,
-        null,
-        null,
-        null
+        expected = null,
+        null, null, null
     )
 
     @Test
     fun sameReceiver() = doTestSuccess(
-        mockExtensionReceiver("kotlin.String"),
+        expected = mockExtensionReceiver("kotlin.String"),
         mockExtensionReceiver("kotlin.String"),
         mockExtensionReceiver("kotlin.String"),
         mockExtensionReceiver("kotlin.String")

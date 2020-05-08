@@ -19,7 +19,7 @@ class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, Cir
 
     @Test
     fun allAreReified() = doTestSuccess(
-        mockTypeParam(isReified = true),
+        expected = mockTypeParam(isReified = true),
         mockTypeParam(isReified = true),
         mockTypeParam(isReified = true),
         mockTypeParam(isReified = true)
@@ -27,7 +27,7 @@ class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, Cir
 
     @Test
     fun allAreNotReified() = doTestSuccess(
-        mockTypeParam(isReified = false),
+        expected = mockTypeParam(isReified = false),
         mockTypeParam(isReified = false),
         mockTypeParam(isReified = false),
         mockTypeParam(isReified = false)

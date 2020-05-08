@@ -33,7 +33,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun classTypesInKotlinPackageWithSameName() = doTestSuccess(
-        mockClassType("kotlin.collections.List"),
+        expected = mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List")
@@ -62,7 +62,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun classTypesInKotlinxPackageWithSameName() = doTestSuccess(
-        mockClassType("kotlinx.cinterop.CPointer"),
+        expected = mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.cinterop.CPointer")
@@ -91,7 +91,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun classTypesInUserPackageWithSameName() = doTestSuccess(
-        mockClassType("org.sample.Foo"),
+        expected = mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo")
@@ -120,7 +120,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun classTypesInKotlinPackageWithSameNullability1() = doTestSuccess(
-        mockClassType("kotlin.collections.List"),
+        expected = mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List", nullable = false),
         mockClassType("kotlin.collections.List", nullable = false),
         mockClassType("kotlin.collections.List", nullable = false)
@@ -128,7 +128,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun classTypesInKotlinPackageWithSameNullability2() = doTestSuccess(
-        mockClassType("kotlin.collections.List", nullable = true),
+        expected = mockClassType("kotlin.collections.List", nullable = true),
         mockClassType("kotlin.collections.List", nullable = true),
         mockClassType("kotlin.collections.List", nullable = true),
         mockClassType("kotlin.collections.List", nullable = true)
@@ -150,7 +150,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun classTypesInUserPackageWithSameNullability1() = doTestSuccess(
-        mockClassType("org.sample.Foo"),
+        expected = mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo", nullable = false),
         mockClassType("org.sample.Foo", nullable = false),
         mockClassType("org.sample.Foo", nullable = false)
@@ -158,7 +158,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun classTypesInUserPackageWithSameNullability2() = doTestSuccess(
-        mockClassType("org.sample.Foo", nullable = true),
+        expected = mockClassType("org.sample.Foo", nullable = true),
         mockClassType("org.sample.Foo", nullable = true),
         mockClassType("org.sample.Foo", nullable = true),
         mockClassType("org.sample.Foo", nullable = true)
@@ -180,7 +180,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun taTypesInKotlinPackageWithSameNameAndClass() = doTestSuccess(
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
+        expected = mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") }
@@ -202,7 +202,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun taTypesInKotlinxPackageWithSameNameAndClass() = doTestSuccess(
-        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
+        expected = mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") }
@@ -225,7 +225,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test
     fun multilevelTATypesInKotlinPackageWithSameNameAndRightHandSideClass() = doTestSuccess(
         // that's OK as long as the fully expanded right-hand side is the same class
-        mockTAType("kotlin.FictitiousTypeAlias") {
+        expected = mockTAType("kotlin.FictitiousTypeAlias") {
             mockClassType("kotlin.FictitiousClass")
         },
 
@@ -250,7 +250,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun taTypesInUserPackageWithSameNameAndClass() = doTestSuccess(
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
+        expected = mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") }
@@ -286,7 +286,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun taTypesInKotlinPackageWithSameNullability1() = doTestSuccess(
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
+        expected = mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") }
@@ -294,7 +294,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun taTypesInKotlinPackageWithSameNullability2() = doTestSuccess(
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
+        expected = mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") }
@@ -316,7 +316,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun taTypesInKotlinPackageWithDifferentNullability3() = doTestSuccess(
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
+        expected = mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = false) },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = false) },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = true) }
@@ -324,7 +324,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun taTypesInKotlinPackageWithDifferentNullability4() = doTestSuccess(
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
+        expected = mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = true) },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = true) },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = false) }
@@ -332,7 +332,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun taTypesInUserPackageWithSameNullability1() = doTestSuccess(
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
+        expected = mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") }
@@ -340,7 +340,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun taTypesInUserPackageWithSameNullability2() = doTestSuccess(
-        mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
+        expected = mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") }

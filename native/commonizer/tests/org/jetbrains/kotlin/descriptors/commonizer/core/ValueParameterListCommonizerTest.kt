@@ -14,7 +14,7 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
 
     @Test
     fun emptyValueParameters() = doTestSuccess(
-        emptyList(),
+        expected = emptyList(),
         emptyList(),
         emptyList(),
         emptyList()
@@ -22,7 +22,7 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
 
     @Test
     fun matchedParameters() = doTestSuccess(
-        mockValueParams(
+        expected = mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"

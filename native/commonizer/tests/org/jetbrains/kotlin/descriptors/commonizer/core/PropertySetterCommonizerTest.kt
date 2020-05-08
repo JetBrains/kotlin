@@ -13,50 +13,82 @@ import org.junit.Test
 class PropertySetterCommonizerTest : AbstractCommonizerTest<CirSetter?, CirSetter?>() {
 
     @Test
-    fun absentOnly() = super.doTestSuccess(null, null, null, null)
+    fun absentOnly() = super.doTestSuccess(
+        expected = null,
+        null, null, null
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun absentAndPublic() = doTestFailure(null, null, null, PUBLIC)
+    fun absentAndPublic() = doTestFailure(
+        null, null, null, PUBLIC
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun publicAndAbsent() = doTestFailure(PUBLIC, PUBLIC, PUBLIC, null)
+    fun publicAndAbsent() = doTestFailure(
+        PUBLIC, PUBLIC, PUBLIC, null
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun protectedAndAbsent() = doTestFailure(PROTECTED, PROTECTED, null)
+    fun protectedAndAbsent() = doTestFailure(
+        PROTECTED, PROTECTED, null
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun absentAndInternal() = doTestFailure(null, null, INTERNAL)
+    fun absentAndInternal() = doTestFailure(
+        null, null, INTERNAL
+    )
 
     @Test
-    fun publicOnly() = doTestSuccess(PUBLIC, PUBLIC, PUBLIC, PUBLIC)
+    fun publicOnly() = doTestSuccess(
+        expected = PUBLIC,
+        PUBLIC, PUBLIC, PUBLIC
+    )
 
     @Test
-    fun protectedOnly() = doTestSuccess(PROTECTED, PROTECTED, PROTECTED, PROTECTED)
+    fun protectedOnly() = doTestSuccess(
+        expected = PROTECTED,
+        PROTECTED, PROTECTED, PROTECTED
+    )
 
     @Test
-    fun internalOnly() = doTestSuccess(INTERNAL, INTERNAL, INTERNAL, INTERNAL)
+    fun internalOnly() = doTestSuccess(
+        expected = INTERNAL,
+        INTERNAL, INTERNAL, INTERNAL
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun privateOnly() = doTestFailure(PRIVATE)
+    fun privateOnly() = doTestFailure(
+        PRIVATE
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun publicAndProtected() = doTestFailure(PUBLIC, PUBLIC, PROTECTED)
+    fun publicAndProtected() = doTestFailure(
+        PUBLIC, PUBLIC, PROTECTED
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun publicAndInternal() = doTestFailure(PUBLIC, PUBLIC, INTERNAL)
+    fun publicAndInternal() = doTestFailure(
+        PUBLIC, PUBLIC, INTERNAL
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun protectedAndInternal() = doTestFailure(PROTECTED, PROTECTED, INTERNAL)
+    fun protectedAndInternal() = doTestFailure(
+        PROTECTED, PROTECTED, INTERNAL
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun publicAndPrivate() = doTestFailure(PUBLIC, PUBLIC, PRIVATE)
+    fun publicAndPrivate() = doTestFailure(
+        PUBLIC, PUBLIC, PRIVATE
+    )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun somethingUnexpected() = doTestFailure(PUBLIC, LOCAL)
+    fun somethingUnexpected() = doTestFailure(
+        PUBLIC, LOCAL
+    )
 
     private fun doTestSuccess(expected: Visibility?, vararg variants: Visibility?) =
         super.doTestSuccess(
-            expected?.let { CirSetter.createDefaultNoAnnotations(expected) },
+            expected = expected?.let { CirSetter.createDefaultNoAnnotations(expected) },
             *variants.map { it?.let(CirSetter.Companion::createDefaultNoAnnotations) }.toTypedArray()
         )
 

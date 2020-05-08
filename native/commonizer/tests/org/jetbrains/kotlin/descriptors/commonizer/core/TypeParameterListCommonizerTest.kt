@@ -13,7 +13,7 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
 
     @Test
     fun emptyValueParameters() = doTestSuccess(
-        emptyList(),
+        expected = emptyList(),
         emptyList(),
         emptyList(),
         emptyList()
@@ -21,7 +21,7 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
 
     @Test
     fun matchedParameters() = doTestSuccess(
-        mockTypeParams(
+        expected = mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
