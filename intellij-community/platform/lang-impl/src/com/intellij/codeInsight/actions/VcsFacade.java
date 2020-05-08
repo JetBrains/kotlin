@@ -111,6 +111,8 @@ public class VcsFacade {
     return null;
   }
 
+  public void markFilesDirty(@NotNull Project project, @NotNull List<? extends VirtualFile> virtualFiles) { }
+
   /**
    * Allows to temporally suppress document modification tracking.
    *
