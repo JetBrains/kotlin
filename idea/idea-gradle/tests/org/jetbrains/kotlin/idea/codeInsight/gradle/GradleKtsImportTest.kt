@@ -10,7 +10,6 @@ import junit.framework.AssertionFailedError
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.applySuggestedScriptConfiguration
-import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.areSimilar
@@ -38,7 +37,7 @@ class GradleKtsImportTest : GradleImportingTestCase() {
         fun data(): Collection<Array<Any?>> = listOf(arrayOf<Any?>("6.0.1"))
     }
 
-    val scriptConfigurationManager get() = ScriptConfigurationManager.getInstance(myProject) as CompositeScriptConfigurationManager
+    val scriptConfigurationManager get() = ScriptConfigurationManager.getInstance(myProject)
     val projectDir get() = File(GradleSettings.getInstance(myProject).linkedProjectsSettings.first().externalProjectPath)
 
     override fun testDataDirName(): String {
@@ -99,8 +98,8 @@ class GradleKtsImportTest : GradleImportingTestCase() {
 
         // reload configuration and check this it is not changed
         scripts.forEach {
-            val reloadedConfiguration = scriptConfigurationManager.default.forceReloadConfiguration(
-                it.psiFile,
+            val reloadedConfiguration = scriptConfigurationManager.forceReloadConfiguration(
+                it.virtualFile,
                 object : DefaultScriptConfigurationLoader(it.psiFile.project) {
                     override fun shouldRunInBackground(scriptDefinition: ScriptDefinition) = false
                     override fun loadDependencies(

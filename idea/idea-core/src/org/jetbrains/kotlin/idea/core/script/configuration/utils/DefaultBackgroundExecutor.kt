@@ -15,7 +15,6 @@ import com.intellij.util.containers.HashSetQueue
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import java.util.*
-import javax.swing.SwingUtilities
 
 /**
  * Sequentially loads script configuration in background.
@@ -33,7 +32,7 @@ import javax.swing.SwingUtilities
  */
 internal class DefaultBackgroundExecutor(
     val project: Project,
-    val rootsManager: ScriptClassRootsUpdater
+    val rootsManager: ScriptClassRootsIndexer
 ) : BackgroundExecutor {
     companion object {
         const val PROGRESS_INDICATOR_DELAY = 1000
@@ -138,7 +137,7 @@ internal class DefaultBackgroundExecutor(
     private fun ensureInTransaction() {
         if (inTransaction) return
         inTransaction = true
-        rootsManager.beginUpdating()
+        rootsManager.startTransaction()
     }
 
     @Synchronized
@@ -228,12 +227,9 @@ internal class DefaultBackgroundExecutor(
         override fun start() {
             super.start()
 
-            // executeOnPooledThread requires read lock, and we may fail to acquire it
-            SwingUtilities.invokeLater {
-                BackgroundTaskUtil.executeOnPooledThread(project, {
-                    run()
-                })
-            }
+            BackgroundTaskUtil.executeOnPooledThread(project, Runnable {
+                run()
+            })
         }
 
         override fun close() {

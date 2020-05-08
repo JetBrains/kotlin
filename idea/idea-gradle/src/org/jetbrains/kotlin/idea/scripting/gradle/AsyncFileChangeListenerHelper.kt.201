@@ -9,16 +9,12 @@ import com.intellij.openapi.externalSystem.autoimport.AsyncFileChangeListenerBas
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 
-fun addVfsListener(
-    watcher: GradleScriptListener,
-    buildRootsManager: GradleBuildRootsManager
-) {
+fun addVfsListener(watcher: GradleScriptInputsWatcher) {
     VirtualFileManager.getInstance().addAsyncFileListener(
         object : AsyncFileChangeListenerBase() {
             override fun isRelevant(path: String): Boolean {
-                return buildRootsManager.maybeAffectedGradleProjectFile(path)
+                return isInAffectedGradleProjectFiles(watcher.project, path)
             }
 
             override fun updateFile(file: VirtualFile, event: VFileEvent) {
