@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.hint;
 
@@ -24,6 +24,9 @@ import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.accessibility.AccessibleContextUtil;
 import com.intellij.xml.util.XmlStringUtil;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMaps;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -519,7 +522,7 @@ public class ParameterInfoComponent extends JPanel {
     }
   }
 
-  private class OneLineComponent extends JPanel {
+  private final class OneLineComponent extends JPanel {
     JLabel myLabel = new JLabel("", SwingConstants.LEFT);
 
     private OneLineComponent(){
@@ -586,7 +589,7 @@ public class ParameterInfoComponent extends JPanel {
     // flagsMap is supposed to use TEXT_RANGE_COMPARATOR
     private String buildLabelText(@NotNull final String text, @NotNull final TreeMap<TextRange, ParameterInfoUIContextEx.Flag> flagsMap) {
       final StringBuilder labelText = new StringBuilder(text);
-      final Map<Integer, Integer> faultMap = new HashMap<>();
+      final Int2IntOpenHashMap faultMap = new Int2IntOpenHashMap();
 
       for (Map.Entry<TextRange, ParameterInfoUIContextEx.Flag> entry : flagsMap.entrySet()) {
         final TextRange highlightRange = entry.getKey();
@@ -599,10 +602,10 @@ public class ParameterInfoComponent extends JPanel {
         int startOffset = highlightRange.getStartOffset();
         int endOffset = highlightRange.getEndOffset() + tag.length();
 
-        for (Map.Entry<Integer, Integer> entry1 : faultMap.entrySet()) {
-          if (entry1.getKey() <= highlightRange.getStartOffset()) {
-            startOffset += entry1.getValue();
-            endOffset += entry1.getValue();
+        for (Int2IntMap.Entry entry1 : Int2IntMaps.fastIterable(faultMap)) {
+          if (entry1.getIntKey() <= highlightRange.getStartOffset()) {
+            startOffset += entry1.getIntValue();
+            endOffset += entry1.getIntValue();
           }
         }
 

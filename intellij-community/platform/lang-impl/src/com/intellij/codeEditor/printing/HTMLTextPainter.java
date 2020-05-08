@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeEditor.printing;
 
 import com.intellij.application.options.CodeStyle;
@@ -22,6 +22,8 @@ import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
+import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
+import it.unimi.dsi.fastutil.ints.IntIterator;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +32,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.StringTokenizer;
 
 public class HTMLTextPainter {
   private static final Logger LOG = Logger.getInstance(HTMLTextPainter.class);
@@ -106,7 +111,7 @@ public class HTMLTextPainter {
     myFirstLineNumber = firstLineNumber;
   }
 
-  public void paint(@Nullable Map<Integer, PsiReference> refMap, @NotNull Writer writer, boolean isStandalone) throws IOException {
+  public void paint(@Nullable Int2ObjectRBTreeMap<PsiReference> refMap, @NotNull Writer writer, boolean isStandalone) throws IOException {
     HighlighterIterator hIterator = myHighlighter.createIterator(myOffset);
     if (hIterator.atEnd()) {
       return;
@@ -114,16 +119,15 @@ public class HTMLTextPainter {
 
     lineCount = myFirstLineNumber;
     TextAttributes prevAttributes = null;
-    Iterator<Integer> refKeys = null;
-
+    IntIterator refKeys = null;
     int refOffset = -1;
     PsiReference ref = null;
     if (refMap != null) {
       refKeys = refMap.keySet().iterator();
       if (refKeys.hasNext()) {
-        Integer key = refKeys.next();
+        int key = refKeys.nextInt();
         ref = refMap.get(key);
-        refOffset = key.intValue();
+        refOffset = key;
       }
     }
 
@@ -201,9 +205,9 @@ public class HTMLTextPainter {
         writer.write("</a>");
         referenceEnd = -1;
         if (refKeys.hasNext()) {
-          Integer key = refKeys.next();
+          int key = refKeys.nextInt();
           ref = refMap.get(key);
-          refOffset = key.intValue();
+          refOffset = key;
         }
       }
       hIterator.advance();

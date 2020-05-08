@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeEditor.printing;
 
@@ -18,6 +18,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,7 +135,7 @@ class ExportToHTMLManager {
   @NotNull
   protected static String doPaint(@NotNull String dirName,
                                   @NotNull HTMLTextPainter textPainter,
-                                  @Nullable Map<Integer, PsiReference> refMap) throws IOException {
+                                  @Nullable Int2ObjectRBTreeMap<PsiReference> refMap) throws IOException {
     String htmlFile = dirName + File.separator + getHTMLFileName(textPainter.getPsiFile());
     try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(htmlFile), StandardCharsets.UTF_8)) {
       textPainter.paint(refMap, writer, true);
@@ -156,11 +157,11 @@ class ExportToHTMLManager {
       if (!psiFile.isValid()) {
         return;
       }
-      Map<Integer, PsiReference> refMap = null;
+      Int2ObjectRBTreeMap<PsiReference> refMap = null;
       for (PrintOption printOption : PrintOption.EP_NAME.getExtensionList()) {
         final TreeMap<Integer, PsiReference> map = printOption.collectReferences(psiFile, filesMap);
         if (map != null) {
-          refMap = new TreeMap<>(map);
+          refMap = new Int2ObjectRBTreeMap<>(map);
         }
       }
 

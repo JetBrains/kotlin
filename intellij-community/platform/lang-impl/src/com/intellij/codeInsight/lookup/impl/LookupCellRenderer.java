@@ -3,8 +3,10 @@
 package com.intellij.codeInsight.lookup.impl;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.intellij.codeInsight.lookup.*;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.codeInsight.lookup.LookupElementRenderer;
+import com.intellij.codeInsight.lookup.LookupFocusDegree;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.EditorColorsUtil;
@@ -29,13 +31,16 @@ import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.accessibility.AccessibleContextUtil;
+import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.intellij.codeInsight.documentation.DocumentationComponent.COLOR_KEY;
 
@@ -43,9 +48,7 @@ import static com.intellij.codeInsight.documentation.DocumentationComponent.COLO
  * @author peter
  * @author Konstantin Bulenkov
  */
-public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
-  private static final Logger LOG = Logger.getInstance(LookupCellRenderer.class);
-
+public final class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private Icon myEmptyIcon = EmptyIcon.ICON_0;
   private final Font myNormalFont;
   private final Font myBoldFont;
@@ -66,7 +69,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
   private final SimpleColoredComponent myTailComponent;
   private final SimpleColoredComponent myTypeLabel;
   private final LookupPanel myPanel;
-  private final Map<Integer, Boolean> mySelected = new HashMap<>();
+  private final Int2BooleanOpenHashMap mySelected = new Int2BooleanOpenHashMap();
 
   private static final String ELLIPSIS = "\u2026";
   private int myMaxWidth = -1;
@@ -525,7 +528,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
     return 0;
   }
 
-  private static class MySimpleColoredComponent extends SimpleColoredComponent {
+  private static final class MySimpleColoredComponent extends SimpleColoredComponent {
     private MySimpleColoredComponent() {
       setFocusBorderAroundIcon(true);
     }

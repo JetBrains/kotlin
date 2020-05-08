@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.refactoring.rename;
 
@@ -38,13 +38,15 @@ import com.intellij.usageView.UsageInfoFactory;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.MultiMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class RenameUtil {
+public final class RenameUtil {
   private static final Logger LOG = Logger.getInstance(RenameUtil.class);
 
   private RenameUtil() {
@@ -288,7 +290,7 @@ public class RenameUtil {
 
   public static void renameNonCodeUsages(@NotNull Project project, NonCodeUsageInfo @NotNull [] usages) {
     PsiDocumentManager.getInstance(project).commitAllDocuments();
-    Map<Document, Map<Integer, UsageOffset>> docsToOffsetsMap = new HashMap<>();
+    Object2ObjectOpenHashMap<Document, Int2ObjectOpenHashMap<UsageOffset>> docsToOffsetsMap = new Object2ObjectOpenHashMap<>();
     final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
     for (NonCodeUsageInfo usage : usages) {
       PsiElement element = usage.getElement();
@@ -315,9 +317,9 @@ public class RenameUtil {
       }
       int fileOffset = replaceRange.getStartOffset();
 
-      Map<Integer, UsageOffset> offsetMap = docsToOffsetsMap.get(document);
+      Int2ObjectOpenHashMap<UsageOffset> offsetMap = docsToOffsetsMap.get(document);
       if (offsetMap == null) {
-        offsetMap = new HashMap<>();
+        offsetMap = new Int2ObjectOpenHashMap<>();
         docsToOffsetsMap.put(document, offsetMap);
       }
       final UsageOffset substitution = new UsageOffset(fileOffset, fileOffset + rangeInElement.getLength(), usage.newText);

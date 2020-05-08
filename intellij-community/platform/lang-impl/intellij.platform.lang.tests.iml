@@ -37,5 +37,6 @@
     <orderEntry type="library" scope="TEST" name="StreamEx" level="project" />
     <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
     <orderEntry type="module" module-name="intellij.platform.statistics" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="fastutil-min" level="project" />
   </component>
 </module>
