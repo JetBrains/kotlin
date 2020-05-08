@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -25,7 +24,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-class FirRegisteredExtension<P : FirExtensionPoint>(
+class FirRegisteredExtension<P : FirExtension>(
     val extensionsWithAllMode: List<P>,
     val extensionsWithAnnotatedMode: Multimap<AnnotationFqn, P>,
     val extensionsWithAllInAnnotatedMode: Multimap<AnnotationFqn, P>,
@@ -36,14 +35,14 @@ class FirRegisteredExtension<P : FirExtensionPoint>(
     }
 }
 
-class FirExtensionPointService(
+class FirExtensionsService(
     val session: FirSession
-) : ComponentArrayOwner<FirExtensionPoint, FirRegisteredExtension<*>>(), FirSessionComponent {
-    companion object : ComponentTypeRegistry<FirExtensionPoint, FirRegisteredExtension<*>>() {
-        inline fun <reified P : FirExtensionPoint, V : FirRegisteredExtension<P>> registeredExtensions(): ReadOnlyProperty<FirExtensionPointService, ExtensionsAccessor<P>> {
+) : ComponentArrayOwner<FirExtension, FirRegisteredExtension<*>>(), FirSessionComponent {
+    companion object : ComponentTypeRegistry<FirExtension, FirRegisteredExtension<*>>() {
+        inline fun <reified P : FirExtension, V : FirRegisteredExtension<P>> registeredExtensions(): ReadOnlyProperty<FirExtensionsService, ExtensionsAccessor<P>> {
             val accessor = generateAccessor<V, P>(P::class)
-            return object : ReadOnlyProperty<FirExtensionPointService, ExtensionsAccessor<P>> {
-                override fun getValue(thisRef: FirExtensionPointService, property: KProperty<*>): ExtensionsAccessor<P> {
+            return object : ReadOnlyProperty<FirExtensionsService, ExtensionsAccessor<P>> {
+                override fun getValue(thisRef: FirExtensionsService, property: KProperty<*>): ExtensionsAccessor<P> {
                     return ExtensionsAccessor(thisRef.session, accessor.getValue(thisRef, property))
                 }
             }
@@ -52,10 +51,10 @@ class FirExtensionPointService(
         private fun <K, V> createMultimap(): Multimap<K, V> = LinkedHashMultimap.create()
     }
 
-    override val typeRegistry: ComponentTypeRegistry<FirExtensionPoint, FirRegisteredExtension<*>>
+    override val typeRegistry: ComponentTypeRegistry<FirExtension, FirRegisteredExtension<*>>
         get() = Companion
 
-    fun <P : FirExtensionPoint> registerExtensions(extensionClass: KClass<P>, extensionFactories: List<FirExtensionPoint.Factory<P>>) {
+    fun <P : FirExtension> registerExtensions(extensionClass: KClass<P>, extensionFactories: List<FirExtension.Factory<P>>) {
         registeredExtensionsSize += extensionFactories.size
         val extensions = extensionFactories.map { it.create(session) }
 
@@ -71,7 +70,7 @@ class FirExtensionPointService(
             _annotations += extension.directlyApplicableAnnotations
             _annotations += extension.childrenApplicableAnnotations
             when (extension.mode) {
-                FirExtensionPoint.Mode.ANNOTATED_ELEMENT -> {
+                FirExtension.Mode.ANNOTATED_ELEMENT -> {
                     for (annotation in extension.directlyApplicableAnnotations) {
                         extensionsWithAnnotatedMode.put(annotation, extension)
                     }
@@ -79,7 +78,7 @@ class FirExtensionPointService(
                         extensionsWithAllInAnnotatedMode.put(annotation, extension)
                     }
                 }
-                FirExtensionPoint.Mode.ALL -> extensionsWithAllMode += extension
+                FirExtension.Mode.ALL -> extensionsWithAllMode += extension
             }
             extensionsByPlugin.put(extension.key, extension)
         }
@@ -108,12 +107,12 @@ class FirExtensionPointService(
 
                 if (metaAnnotationMode.directed) {
                     @Suppress("UNCHECKED_CAST")
-                    (registeredExtensions.extensionsWithAnnotatedMode as Multimap<AnnotationFqn, FirExtensionPoint>).put(fqName, extension)
+                    (registeredExtensions.extensionsWithAnnotatedMode as Multimap<AnnotationFqn, FirExtension>).put(fqName, extension)
                 }
 
                 if (metaAnnotationMode.children) {
                     @Suppress("UNCHECKED_CAST")
-                    (registeredExtensions.extensionsWithAllInAnnotatedMode as Multimap<AnnotationFqn, FirExtensionPoint>).put(fqName, extension)
+                    (registeredExtensions.extensionsWithAllInAnnotatedMode as Multimap<AnnotationFqn, FirExtension>).put(fqName, extension)
                 }
             }
         }
@@ -127,12 +126,12 @@ class FirExtensionPointService(
         get() = _metaAnnotations
     private val _metaAnnotations: MutableSet<AnnotationFqn> = mutableSetOf()
 
-    private val extensionsWithMetaAnnotations: Multimap<AnnotationFqn, FirExtensionPoint> = createMultimap()
+    private val extensionsWithMetaAnnotations: Multimap<AnnotationFqn, FirExtension> = createMultimap()
 
     var registeredExtensionsSize: Int = 0
         private set
 
-    class ExtensionsAccessor<P : FirExtensionPoint>(
+    class ExtensionsAccessor<P : FirExtension>(
         private val session: FirSession,
         private val extensions: FirRegisteredExtension<P>
     ) {
@@ -167,12 +166,12 @@ class FirExtensionPointService(
     }
 }
 
-val FirSession.extensionPointService: FirExtensionPointService by FirSession.sessionComponentAccessor()
+val FirSession.extensionsService: FirExtensionsService by FirSession.sessionComponentAccessor()
 
 fun FirAnnotationCall.fqName(session: FirSession): FqName? {
     val symbol = session.firSymbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
     return symbol.classId.asSingleFqName()
 }
 
-val FirExtensionPointService.hasExtensions: Boolean
+val FirExtensionsService.hasExtensions: Boolean
     get() = registeredExtensionsSize > 0

@@ -23,13 +23,12 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.extensions.FirExtensionPointService
+import org.jetbrains.kotlin.fir.extensions.FirExtensionsService
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.extensionPointService
+import org.jetbrains.kotlin.fir.extensions.extensionsService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
@@ -81,7 +80,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
             builtInsModuleInfo, sessionProvider, allProjectScope, project,
             environment.createPackagePartProvider(allProjectScope)
         ).also {
-            registerFirExtensions(it.extensionPointService)
+            registerFirExtensions(it.extensionsService)
         }
 
         val configToSession = modules.mapValues { (config, info) ->
@@ -90,7 +89,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 project,
                 moduleFiles.mapNotNull { it.ktFile })
             FirJavaModuleBasedSession(info, sessionProvider, scope).also {
-                registerFirExtensions(it.extensionPointService)
+                registerFirExtensions(it.extensionsService)
             }
         }
 
@@ -110,7 +109,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         runAnalysis(testDataFile, files, firFilesPerSession)
     }
 
-    open fun registerFirExtensions(service: FirExtensionPointService) {
+    open fun registerFirExtensions(service: FirExtensionsService) {
         service.registerExtensions(FirExtensionRegistrar.RegisteredExtensions.EMPTY)
     }
 

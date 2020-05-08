@@ -49,7 +49,7 @@ abstract class FirExtensionRegistrar {
     }
 }
 
-fun FirExtensionPointService.registerExtensions(extensions: FirExtensionRegistrar.RegisteredExtensions) {
+fun FirExtensionsService.registerExtensions(extensions: FirExtensionRegistrar.RegisteredExtensions) {
     registerExtensions(FirStatusTransformerExtension::class, extensions.statusTransformerExtensions)
     registerExtensions(FirClassGenerationExtension::class, extensions.classGenerationExtensions)
 }

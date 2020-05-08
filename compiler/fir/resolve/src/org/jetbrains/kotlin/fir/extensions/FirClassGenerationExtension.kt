@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
  *  - add registration of new files
  *  - check that annotations or meta-annotations is not empty
  */
-abstract class FirClassGenerationExtension(session: FirSession) : FirExtensionPoint(session) {
+abstract class FirClassGenerationExtension(session: FirSession) : FirExtension(session) {
     companion object {
         val NAME = FirExtensionPointName("StatusTransformer")
     }
@@ -27,7 +27,7 @@ abstract class FirClassGenerationExtension(session: FirSession) : FirExtensionPo
 
     final override val mode: Mode = Mode.ANNOTATED_ELEMENT
 
-    final override val extensionType: KClass<out FirExtensionPoint> = FirClassGenerationExtension::class
+    final override val extensionType: KClass<out FirExtension> = FirClassGenerationExtension::class
 
     abstract fun <T> generateClass(
         containingFile: FirFile,
@@ -40,7 +40,7 @@ abstract class FirClassGenerationExtension(session: FirSession) : FirExtensionPo
         }
     }
 
-    fun interface Factory : FirExtensionPoint.Factory<FirClassGenerationExtension>
+    fun interface Factory : FirExtension.Factory<FirClassGenerationExtension>
 }
 
-val FirExtensionPointService.classGenerationExtensions: FirExtensionPointService.ExtensionsAccessor<FirClassGenerationExtension> by FirExtensionPointService.registeredExtensions()
+val FirExtensionsService.classGenerationExtensions: FirExtensionsService.ExtensionsAccessor<FirClassGenerationExtension> by FirExtensionsService.registeredExtensions()

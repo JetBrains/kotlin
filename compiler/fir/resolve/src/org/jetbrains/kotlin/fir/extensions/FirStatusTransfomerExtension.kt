@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import kotlin.reflect.KClass
 
-abstract class FirStatusTransformerExtension(session: FirSession) : FirExtensionPoint(session) {
+abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension(session) {
     companion object {
         val NAME = FirExtensionPointName("StatusTransformer")
     }
@@ -23,14 +21,14 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     final override val name: FirExtensionPointName
         get() = NAME
 
-    final override val extensionType: KClass<out FirExtensionPoint> = FirStatusTransformerExtension::class
+    final override val extensionType: KClass<out FirExtension> = FirStatusTransformerExtension::class
 
     abstract fun transformStatus(declaration: FirDeclaration, status: FirDeclarationStatus): FirDeclarationStatus
 
-    fun interface Factory : FirExtensionPoint.Factory<FirStatusTransformerExtension>
+    fun interface Factory : FirExtension.Factory<FirStatusTransformerExtension>
 }
 
-val FirExtensionPointService.statusTransformerExtensions: FirExtensionPointService.ExtensionsAccessor<FirStatusTransformerExtension> by FirExtensionPointService.registeredExtensions()
+val FirExtensionsService.statusTransformerExtensions: FirExtensionsService.ExtensionsAccessor<FirStatusTransformerExtension> by FirExtensionsService.registeredExtensions()
 
 inline fun FirDeclarationStatus.transform(
     visibility: Visibility = this.visibility,

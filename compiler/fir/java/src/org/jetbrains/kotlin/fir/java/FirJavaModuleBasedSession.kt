@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.FirModuleBasedSession
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.FirSessionProvider
-import org.jetbrains.kotlin.fir.extensions.FirExtensionPointService
+import org.jetbrains.kotlin.fir.extensions.FirExtensionsService
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
@@ -116,8 +116,8 @@ class FirLibrarySession private constructor(
         )
 
         registerComponent(
-            FirExtensionPointService::class,
-            FirExtensionPointService(this)
+            FirExtensionsService::class,
+            FirExtensionsService(this)
         )
 
         sessionProvider.sessionCache[moduleInfo] = this

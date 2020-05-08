@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 
 typealias AnnotationFqn = FqName
 
-abstract class FirExtensionPoint(val session: FirSession) {
+abstract class FirExtension(val session: FirSession) {
     abstract val name: FirExtensionPointName
 
     abstract val directlyApplicableAnnotations: Set<AnnotationFqn>
@@ -23,9 +23,9 @@ abstract class FirExtensionPoint(val session: FirSession) {
     abstract val mode: Mode
     abstract val key: FirPluginKey
 
-    internal abstract val extensionType: KClass<out FirExtensionPoint>
+    internal abstract val extensionType: KClass<out FirExtension>
 
-    fun interface Factory<P : FirExtensionPoint> {
+    fun interface Factory<P : FirExtension> {
         fun create(session: FirSession): P
     }
 
