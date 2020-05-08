@@ -473,7 +473,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   protected abstract class AbstractUIController implements UIController {
     private final boolean inLibrary;
     private final List<LanguageHighlightLevel> myLevelsList;
-    private final List<HectorComponentPanel> myAdditionalPanels;
+    private List<HectorComponentPanel> myAdditionalPanels = Collections.emptyList();
 
     AbstractUIController() {
       PsiFile psiFile = getPsiFile();
@@ -482,12 +482,9 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         VirtualFile virtualFile = psiFile.getVirtualFile();
         assert virtualFile != null;
         inLibrary = fileIndex.isInLibrary(virtualFile) && !fileIndex.isInContent(virtualFile);
-        myAdditionalPanels = HectorComponentPanelsProvider.EP_NAME.extensions(getProject()).
-          map(hp -> hp.createConfigurable(psiFile)).filter(p -> p != null).collect(Collectors.toList());
       }
       else {
         inLibrary = false;
-        myAdditionalPanels = Collections.emptyList();
       }
 
       myLevelsList = initLevels();
@@ -548,22 +545,28 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     @Override
     public void fillHectorPanels(@NotNull Container container, @NotNull GridBag gc) {
-      for (HectorComponentPanel p : myAdditionalPanels) {
-        JComponent c;
-        try {
-          p.reset();
-          c = p.createComponent();
-        }
-        catch (ProcessCanceledException e) {
-          throw e;
-        }
-        catch (Throwable e) {
-          Logger.getInstance(TrafficLightRenderer.class).error(e);
-          continue;
-        }
+      PsiFile psiFile = getPsiFile();
+      if (psiFile != null) {
+        myAdditionalPanels = HectorComponentPanelsProvider.EP_NAME.extensions(getProject()).
+          map(hp -> hp.createConfigurable(psiFile)).filter(p -> p != null).collect(Collectors.toList());
 
-        if (c != null) {
-          container.add(c, gc.nextLine().next().fillCellHorizontally().coverLine().weightx(1.0));
+        for (HectorComponentPanel p : myAdditionalPanels) {
+          JComponent c;
+          try {
+            p.reset();
+            c = p.createComponent();
+          }
+          catch (ProcessCanceledException e) {
+            throw e;
+          }
+          catch (Throwable e) {
+            Logger.getInstance(TrafficLightRenderer.class).error(e);
+            continue;
+          }
+
+          if (c != null) {
+            container.add(c, gc.nextLine().next().fillCellHorizontally().coverLine().weightx(1.0));
+          }
         }
       }
     }
@@ -589,6 +592,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     @Override
     public void onClosePopup() {
       myAdditionalPanels.forEach(p -> p.disposeUIResources());
+      myAdditionalPanels = Collections.emptyList();
     }
 
     @Override
