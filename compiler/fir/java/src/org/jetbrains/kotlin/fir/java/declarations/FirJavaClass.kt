@@ -143,8 +143,9 @@ internal class FirJavaClassBuilder : AbstractFirRegularClassBuilder, FirAnnotati
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaClass {
+        val isInner = !isTopLevel && !isStatic
         val status = FirDeclarationStatusImpl(visibility, modality).apply {
-            isInner = !isTopLevel && !isStatic
+            this.isInner = isInner
             isCompanion = false
             isData = false
             isInline = false
