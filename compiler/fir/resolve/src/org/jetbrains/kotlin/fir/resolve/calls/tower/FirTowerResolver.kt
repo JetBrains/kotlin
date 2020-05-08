@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 class FirTowerResolver(

@@ -206,20 +206,21 @@ class FirTowerResolverSession internal constructor(
 
     private suspend fun runResolverForDelegatingConstructorCall(info: CallInfo, constructorClassSymbol: FirClassSymbol<*>) {
         val scope = constructorClassSymbol.fir.unsubstitutedScope(session, components.scopeSession)
-        // Search for non-inner constructors only
-        processLevel(
-            scope.toScopeTowerLevel(),
-            info, TowerGroup.Implicit(0)
-        )
-        // Search for inner constructors only
-        if (constructorClassSymbol is FirRegularClassSymbol) {
+        if (constructorClassSymbol is FirRegularClassSymbol && constructorClassSymbol.fir.isInner) {
+            // Search for inner constructors only
             // 1 because we search for inner constructor in outer class
             implicitReceiversUsableAsValues.getOrNull(1)?.let { (implicitReceiverValue) ->
                 processLevel(
                     implicitReceiverValue.toMemberScopeTowerLevel(),
-                    info.copy(name = constructorClassSymbol.fir.name), TowerGroup.Implicit(1)
+                    info.copy(name = constructorClassSymbol.fir.name), TowerGroup.Member
                 )
             }
+        } else {
+            // Search for non-inner constructors only
+            processLevel(
+                scope.toScopeTowerLevel(),
+                info, TowerGroup.Member
+            )
         }
     }
 
