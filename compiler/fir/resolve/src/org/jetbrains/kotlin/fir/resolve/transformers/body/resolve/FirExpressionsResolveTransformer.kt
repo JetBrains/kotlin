@@ -9,9 +9,9 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -309,7 +309,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 }
                 else -> buildErrorExpression {
                     source = operatorCall.source
-                    diagnostic = ConeOperatorAmbiguityError(listOf(operatorCallReference.resolvedSymbol, assignCallReference.resolvedSymbol))
+                    diagnostic =
+                        ConeOperatorAmbiguityError(listOf(operatorCallReference.resolvedSymbol, assignCallReference.resolvedSymbol))
                 }.compose()
             }
         }
@@ -541,7 +542,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             FirConstKind.Float -> constructLiteralType(StandardClassIds.Float)
             FirConstKind.Double -> constructLiteralType(StandardClassIds.Double)
             FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> {
-                val integerLiteralType = ConeIntegerLiteralTypeImpl(constExpression.value as Long, isUnsigned = kind == FirConstKind.UnsignedIntegerLiteral)
+                val integerLiteralType =
+                    ConeIntegerLiteralTypeImpl(constExpression.value as Long, isUnsigned = kind == FirConstKind.UnsignedIntegerLiteral)
                 val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
                 if (expectedType != null) {
                     val approximatedType = integerLiteralType.getApproximatedType(expectedType)
@@ -633,15 +635,13 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         var result = delegatedConstructorCall
         try {
             val lastDispatchReceiver = implicitReceiverStack.lastDispatchReceiver()
-            val name = lastDispatchReceiver?.boundSymbol?.classId?.shortClassName
-            if (lastDispatchReceiver != null) {
-                context.implicitReceiverStack.pop(name)
-                context.implicitReceiverStack.add(name, lastDispatchReceiver.copyForDelegated())
-            }
-            delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
-            if (lastDispatchReceiver != null) {
-                context.implicitReceiverStack.pop(name)
-                context.implicitReceiverStack.add(name, lastDispatchReceiver)
+            context.withTowerDataCleanup {
+                if ((context.containerIfAny as? FirConstructor)?.isPrimary == true) {
+                    context.replaceTowerDataContext(context.getTowerDataContextForConstructorResolution())
+                    context.getPrimaryConstructorParametersScope()?.let(context::addLocalScope)
+                }
+
+                delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
             }
             val typeArguments: List<FirTypeProjection>
             val reference = delegatedConstructorCall.calleeReference
@@ -700,7 +700,10 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun transformAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformAugmentedArraySetCall(
+        augmentedArraySetCall: FirAugmentedArraySetCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         assert(augmentedArraySetCall.operation in FirOperation.ASSIGNMENTS)
         assert(augmentedArraySetCall.operation != FirOperation.ASSIGN)
 

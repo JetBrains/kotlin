@@ -190,8 +190,8 @@ class FirCallCompleter(
             lambdaArgument.replaceValueParameters(lambdaArgument.valueParameters + listOfNotNull(itParam))
             lambdaArgument.replaceReturnTypeRef(expectedReturnTypeRef ?: noExpectedType)
 
-            val localContext = localContextForAnonymousFunctions.getValue(lambdaArgument.symbol)
-            transformer.context.withLocalContext(localContext) {
+            val localContext = towerDataContextForAnonymousFunctions.getValue(lambdaArgument.symbol)
+            transformer.context.withTowerDataContext(localContext) {
                 lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
             }
             transformer.context.dropContextForAnonymousFunction(lambdaArgument)

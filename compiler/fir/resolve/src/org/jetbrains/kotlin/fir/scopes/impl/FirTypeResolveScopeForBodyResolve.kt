@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 
@@ -18,12 +17,4 @@ class FirTypeResolveScopeForBodyResolve(
 }
 
 fun BodyResolveComponents.createCurrentScopeList(): List<FirScope> =
-    mutableListOf<FirScope>().apply {
-        addAll(localScopes.asReversed())
-        implicitReceiverStack.receiversAsReversed().mapNotNullTo(this) {
-            (it as? ImplicitDispatchReceiverValue)?.implicitScope
-        }
-
-        addAll(typeParametersScopes.asReversed())
-        addAll(fileImportsScope.asReversed())
-    }
+    towerDataElements.asReversed().mapNotNull { it.scope }

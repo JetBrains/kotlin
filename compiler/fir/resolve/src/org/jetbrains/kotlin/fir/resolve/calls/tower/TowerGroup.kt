@@ -22,11 +22,9 @@ sealed class TowerGroupKind(private val index: Int) : Comparable<TowerGroupKind>
 
     class Local(depth: Int) : WithDepth(40, depth)
 
-    class Implicit(depth: Int) : WithDepth(50, depth)
+    class ImplicitOrNonLocal(depth: Int, val kindForDebugSake: String) : WithDepth(50, depth)
 
     object InvokeExtension : TowerGroupKind(60)
-
-    class Top(depth: Int) : WithDepth(70, depth)
 
     object Last : TowerGroupKind(Integer.MAX_VALUE)
 
@@ -37,6 +35,12 @@ sealed class TowerGroupKind(private val index: Int) : Comparable<TowerGroupKind>
             return depth.compareTo(other.depth)
         }
         return 0
+    }
+
+    companion object {
+        // These two groups intentionally have the same priority
+        fun Implicit(depth: Int): TowerGroupKind = ImplicitOrNonLocal(depth, "Implicit")
+        fun NonLocal(depth: Int): TowerGroupKind = ImplicitOrNonLocal(depth, "NonLocal")
     }
 }
 
@@ -64,8 +68,7 @@ private constructor(
         fun Local(depth: Int) = kindOf(TowerGroupKind.Local(depth))
 
         fun Implicit(depth: Int) = kindOf(TowerGroupKind.Implicit(depth))
-
-        fun Top(depth: Int) = kindOf(TowerGroupKind.Top(depth))
+        fun NonLocal(depth: Int) = kindOf(TowerGroupKind.NonLocal(depth))
 
         fun TopPrioritized(depth: Int) = kindOf(TowerGroupKind.TopPrioritized(depth))
 
@@ -79,10 +82,9 @@ private constructor(
     fun Local(depth: Int) = kindOf(TowerGroupKind.Local(depth))
 
     fun Implicit(depth: Int) = kindOf(TowerGroupKind.Implicit(depth))
+    fun NonLocal(depth: Int) = kindOf(TowerGroupKind.NonLocal(depth))
 
     val InvokeExtension get() = kindOf(TowerGroupKind.InvokeExtension)
-
-    fun Top(depth: Int) = kindOf(TowerGroupKind.Top(depth))
 
     // Treating `a.foo()` common calls as more prioritized than `a.foo.invoke()`
     // It's not the same as TowerGroupKind because it's not about tower levels, but rather a different dimension semantically.

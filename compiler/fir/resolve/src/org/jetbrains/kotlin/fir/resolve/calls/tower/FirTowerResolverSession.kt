@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.isCompanion
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -24,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirStaticScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -42,28 +38,24 @@ class FirTowerResolverSession internal constructor(
 ) {
     private data class ImplicitReceiver(
         val receiver: ImplicitReceiverValue<*>,
-        val depth: Int,
-        val usableAsValue: Boolean
+        val depth: Int
     )
 
     private val session: FirSession get() = components.session
 
-    private val implicitReceivers: List<ImplicitReceiver>
-    private val implicitReceiversUsableAsValues: List<ImplicitReceiver>
+    private val reversedTowerDataElements = components.towerDataElements.asReversed()
 
-    init {
-        val (implicitReceivers, implicitReceiversUsableAsValues) = prepareImplicitReceivers(components.implicitReceiverStack.receiversAsReversed())
-        this.implicitReceivers = implicitReceivers
-        this.implicitReceiversUsableAsValues = implicitReceiversUsableAsValues
+    private val localScopes: List<FirScope> = reversedTowerDataElements.mapNotNull { lexical ->
+        lexical.scope?.takeIf { lexical.isLocal }
     }
 
-    private val localScopes: List<FirScope> = components.localScopes.asReversed()
+    private val nonLocalLexical = reversedTowerDataElements.filter { !it.isLocal }
 
-    private val topLevelScopes: List<FirScope> =
-        if (components.typeParametersScopes.isEmpty())
-            components.fileImportsScope.asReversed()
-        else
-            components.typeParametersScopes.asReversed() + components.fileImportsScope.asReversed()
+    private val implicitReceivers: List<ImplicitReceiver> by lazy(LazyThreadSafetyMode.NONE) {
+        reversedTowerDataElements.withIndex().mapNotNull { (index, element) ->
+            element.implicitReceiver?.let { ImplicitReceiver(it, index) }
+        }
+    }
 
     fun runResolutionForDelegatingConstructor(info: CallInfo, constructorClassSymbol: FirClassSymbol<*>) {
         manager.enqueueResolverTask { runResolverForDelegatingConstructorCall(info, constructorClassSymbol) }
@@ -209,7 +201,7 @@ class FirTowerResolverSession internal constructor(
         val scope = constructorClassSymbol.fir.unsubstitutedScope(session, components.scopeSession)
         if (constructorClassSymbol is FirRegularClassSymbol && constructorClassSymbol.fir.isInner) {
             // Search for inner constructors only
-            for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues.drop(1)) {
+            for ((implicitReceiverValue, depth) in implicitReceivers.drop(1)) {
                 processLevel(
                     implicitReceiverValue.toMemberScopeTowerLevel(),
                     info.copy(name = constructorClassSymbol.fir.name), TowerGroup.Implicit(depth)
@@ -229,12 +221,39 @@ class FirTowerResolverSession internal constructor(
     ) {
         processExtensionsThatHideMembers(info, explicitReceiverValue = null)
         val nonEmptyLocalScopes = mutableListOf<FirScope>()
-        processLocalScopesWithNoReceiver(info, nonEmptyLocalScopes)
 
         val emptyTopLevelScopes = mutableSetOf<FirScope>()
-        processImplicitReceiversWithNoExplicit(info, nonEmptyLocalScopes, emptyTopLevelScopes)
+        val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
 
-        processTopLevelScopesNoReceiver(info, emptyTopLevelScopes)
+        enumerateTowerLevels(
+            onLocalScope = { index, scope ->
+                val result = processLevel(
+                    scope.toScopeTowerLevel(), info, TowerGroup.Local(index)
+                )
+                if (result != ProcessorAction.NONE) {
+                    nonEmptyLocalScopes += scope
+                }
+            },
+            onNonLocalScope = l@{ index, scope ->
+                // NB: this check does not work for variables
+                // because we do not search for objects if we have extension receiver
+                if (info.callKind != CallKind.VariableAccess && scope in emptyTopLevelScopes) return@l
+
+                processLevel(
+                    scope.toScopeTowerLevel(), info, TowerGroup.NonLocal(index)
+                )
+            },
+            onImplicitReceiver = { index, receiver ->
+                processCandidatesWithGivenImplicitReceiverAsValue(
+                    receiver,
+                    info,
+                    TowerGroup.Implicit(index),
+                    implicitReceiverValuesWithEmptyScopes,
+                    nonEmptyLocalScopes,
+                    emptyTopLevelScopes
+                )
+            }
+        )
     }
 
     private suspend fun processExtensionsThatHideMembers(
@@ -246,14 +265,15 @@ class FirTowerResolverSession internal constructor(
 
         if (!shouldProcessExtensionsBeforeMembers) return
 
-        for ((index, topLevelScope) in topLevelScopes.withIndex()) {
+        val importingScopes = components.fileImportsScope.asReversed()
+        for ((index, topLevelScope) in importingScopes.withIndex()) {
             if (explicitReceiverValue != null) {
                 processHideMembersLevel(
                     explicitReceiverValue, topLevelScope, info, index, depth = null,
                     ExplicitReceiverKind.EXTENSION_RECEIVER
                 )
             } else {
-                for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
+                for ((implicitReceiverValue, depth) in implicitReceivers) {
                     processHideMembersLevel(
                         implicitReceiverValue, topLevelScope, info, index, depth,
                         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
@@ -279,53 +299,6 @@ class FirTowerResolverSession internal constructor(
         explicitReceiverKind,
     )
 
-    private suspend fun processLocalScopesWithNoReceiver(
-        info: CallInfo,
-        nonEmptyLocalScopes: MutableList<FirScope>
-    ) {
-        for ((index, localScope) in localScopes.withIndex()) {
-            val result = processLevel(
-                localScope.toScopeTowerLevel(), info, TowerGroup.Local(index)
-            )
-            if (result != ProcessorAction.NONE) {
-                nonEmptyLocalScopes += localScope
-            }
-        }
-    }
-
-    private suspend fun processImplicitReceiversWithNoExplicit(
-        info: CallInfo,
-        nonEmptyLocalScopes: MutableList<FirScope>,
-        emptyTopLevelScopes: MutableSet<FirScope>
-    ) {
-        val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
-        for ((implicitReceiverValue, depth, usableAsValue) in implicitReceivers) {
-            // NB: companions are processed via implicitReceiverValues!
-            val parentGroup = TowerGroup.Implicit(depth)
-
-            if (usableAsValue) {
-                processCandidatesWithGivenImplicitReceiverAsValue(
-                    implicitReceiverValue,
-                    info,
-                    parentGroup,
-                    implicitReceiverValuesWithEmptyScopes,
-                    nonEmptyLocalScopes,
-                    emptyTopLevelScopes
-                )
-            }
-
-            if (implicitReceiverValue is ImplicitDispatchReceiverValue) {
-                val scope = implicitReceiverValue.scope(session, components.scopeSession)
-                if (scope != null) {
-                    processLevel(
-                        FirStaticScope(scope).toScopeTowerLevel(),
-                        info, parentGroup.Static(depth)
-                    )
-                }
-            }
-        }
-    }
-
     private suspend fun processCandidatesWithGivenImplicitReceiverAsValue(
         receiver: ImplicitReceiverValue<*>,
         info: CallInfo,
@@ -342,45 +315,35 @@ class FirTowerResolverSession internal constructor(
             implicitReceiverValuesWithEmptyScopes += receiver
         }
 
-        for ((localIndex, localScope) in nonEmptyLocalScopes.withIndex()) {
-            processLevel(
-                localScope.toScopeTowerLevel(extensionReceiver = receiver),
-                info, parentGroup.Local(localIndex)
-            )
-        }
+        enumerateTowerLevels(
+            localScopesToUse = nonEmptyLocalScopes,
+            onLocalScope = { index, scope ->
+                processLevel(
+                    scope.toScopeTowerLevel(extensionReceiver = receiver),
+                    info, parentGroup.Local(index)
+                )
+            },
+            onNonLocalScope = l@{ index, scope ->
+                if (scope in emptyTopLevelScopes) return@l
 
-        for ((implicitDispatchReceiverValue, dispatchDepth) in implicitReceiversUsableAsValues) {
-            if (implicitDispatchReceiverValue in implicitReceiverValuesWithEmptyScopes) continue
-            processLevel(
-                implicitDispatchReceiverValue.toMemberScopeTowerLevel(extensionReceiver = receiver),
-                info, parentGroup.Implicit(dispatchDepth)
-            )
-        }
+                val result = processLevel(
+                    scope.toScopeTowerLevel(extensionReceiver = receiver),
+                    info, parentGroup.NonLocal(index)
+                )
 
-        for ((topIndex, topLevelScope) in topLevelScopes.withIndex()) {
-            if (topLevelScope in emptyTopLevelScopes) continue
-            val result = processLevel(
-                topLevelScope.toScopeTowerLevel(extensionReceiver = receiver),
-                info, parentGroup.Top(topIndex)
-            )
-            if (result == ProcessorAction.NONE) {
-                emptyTopLevelScopes += topLevelScope
+                if (result == ProcessorAction.NONE) {
+                    emptyTopLevelScopes += scope
+                }
+            },
+            onImplicitReceiver = l@{ index, implicitReceiverValue ->
+                if (implicitReceiverValue in implicitReceiverValuesWithEmptyScopes) return@l
+                processLevel(
+                    implicitReceiverValue.toMemberScopeTowerLevel(extensionReceiver = receiver),
+                    info, parentGroup.Implicit(index)
+                )
             }
-        }
-    }
+        )
 
-    private suspend fun processTopLevelScopesNoReceiver(
-        info: CallInfo,
-        emptyTopLevelScopes: Collection<FirScope>
-    ) {
-        for ((index, topLevelScope) in topLevelScopes.withIndex()) {
-            // NB: this check does not work for variables
-            // because we do not search for objects if we have extension receiver
-            if (info.callKind != CallKind.VariableAccess && topLevelScope in emptyTopLevelScopes) continue
-            processLevel(
-                topLevelScope.toScopeTowerLevel(), info, TowerGroup.Top(index)
-            )
-        }
     }
 
     private suspend fun runResolverForExpressionReceiver(
@@ -404,29 +367,51 @@ class FirTowerResolverSession internal constructor(
         }
 
         val nonEmptyLocalScopes = mutableListOf<FirScope>()
-        for ((index, localScope) in localScopes.withIndex()) {
-            if (processScopeForExplicitReceiver(
-                    localScope,
+
+        enumerateTowerLevels(
+            onLocalScope = { index, scope ->
+                if (processScopeForExplicitReceiver(
+                        scope,
+                        explicitReceiverValue,
+                        info,
+                        TowerGroup.Local(index)
+                    ) != ProcessorAction.NONE
+                ) {
+                    nonEmptyLocalScopes += scope
+                }
+            },
+            onNonLocalScope = { index, scope ->
+                processScopeForExplicitReceiver(
+                    scope,
                     explicitReceiverValue,
                     info,
-                    TowerGroup.Local(index)
-                ) != ProcessorAction.NONE
-            ) {
-                nonEmptyLocalScopes += localScope
+                    TowerGroup.NonLocal(index)
+                )
+            },
+            onImplicitReceiver = { index, implicitReceiverValue ->
+                processCombinationOfReceivers(implicitReceiverValue, explicitReceiverValue, info, index, nonEmptyLocalScopes)
             }
+        )
+    }
+
+    private inline fun enumerateTowerLevels(
+        onLocalScope: (Int, FirScope) -> Unit,
+        onNonLocalScope: (Int, FirScope) -> Unit,
+        onImplicitReceiver: (Int, ImplicitReceiverValue<*>) -> Unit,
+        localScopesToUse: List<FirScope> = localScopes
+    ) {
+        for ((index, localScope) in localScopesToUse.withIndex()) {
+            onLocalScope(index, localScope)
         }
 
-        for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
-            processCombinationOfReceivers(implicitReceiverValue, explicitReceiverValue, info, depth, nonEmptyLocalScopes)
-        }
+        for ((depth, lexical) in nonLocalLexical.withIndex()) {
+            if (!lexical.isLocal && lexical.scope != null) {
+                onNonLocalScope(depth, lexical.scope)
+            }
 
-        for ((index, topLevelScope) in topLevelScopes.withIndex()) {
-            processScopeForExplicitReceiver(
-                topLevelScope,
-                explicitReceiverValue,
-                info,
-                TowerGroup.Top(index)
-            )
+            lexical.implicitReceiver?.let { implicitReceiverValue ->
+                onImplicitReceiver(depth, implicitReceiverValue)
+            }
         }
     }
 
@@ -468,26 +453,27 @@ class FirTowerResolverSession internal constructor(
             implicitReceiverValue.toMemberScopeTowerLevel(), info, parentGroup.Member
         )
 
-        for ((localIndex, localScope) in nonEmptyLocalScopes.withIndex()) {
-            processLevelForPropertyWithInvoke(
-                localScope.toScopeTowerLevel(extensionReceiver = implicitReceiverValue),
-                info, parentGroup.Local(localIndex)
-            )
-        }
-
-        for ((implicitDispatchReceiverValue, dispatchDepth) in implicitReceiversUsableAsValues) {
-            processLevelForPropertyWithInvoke(
-                implicitDispatchReceiverValue.toMemberScopeTowerLevel(extensionReceiver = implicitReceiverValue),
-                info, parentGroup.Implicit(dispatchDepth)
-            )
-        }
-
-        for ((topIndex, topLevelScope) in topLevelScopes.withIndex()) {
-            processLevelForPropertyWithInvoke(
-                topLevelScope.toScopeTowerLevel(extensionReceiver = implicitReceiverValue),
-                info, parentGroup.Top(topIndex)
-            )
-        }
+        enumerateTowerLevels(
+            localScopesToUse = nonEmptyLocalScopes,
+            onLocalScope = { index, scope ->
+                processLevelForPropertyWithInvoke(
+                    scope.toScopeTowerLevel(extensionReceiver = implicitReceiverValue),
+                    info, parentGroup.Local(index)
+                )
+            },
+            onNonLocalScope = { index, scope ->
+                processLevelForPropertyWithInvoke(
+                    scope.toScopeTowerLevel(extensionReceiver = implicitReceiverValue),
+                    info, parentGroup.NonLocal(index)
+                )
+            },
+            onImplicitReceiver = { index, receiver ->
+                processLevelForPropertyWithInvoke(
+                    receiver.toMemberScopeTowerLevel(extensionReceiver = implicitReceiverValue),
+                    info, parentGroup.Implicit(index)
+                )
+            }
+        )
     }
 
     private suspend fun runResolverForSuperReceiver(
@@ -520,34 +506,34 @@ class FirTowerResolverSession internal constructor(
             invokeOnGivenReceiverCandidateFactory
         )
 
-        for ((index, localScope) in localScopes.withIndex()) {
-            processLevelForRegularInvoke(
-                localScope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
-                info, parentGroupForInvokeCandidates.Local(index),
-                ExplicitReceiverKind.EXTENSION_RECEIVER,
-                invokeOnGivenReceiverCandidateFactory
-            )
-        }
-
-        for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
-            // NB: companions are processed via implicitReceiverValues!
-            val group = parentGroupForInvokeCandidates.Implicit(depth).Member
-            processLevelForRegularInvoke(
-                implicitReceiverValue.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
-                info, group,
-                ExplicitReceiverKind.EXTENSION_RECEIVER,
-                invokeOnGivenReceiverCandidateFactory
-            )
-        }
-
-        for ((index, topLevelScope) in topLevelScopes.withIndex()) {
-            processLevelForRegularInvoke(
-                topLevelScope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
-                info, parentGroupForInvokeCandidates.Top(index),
-                ExplicitReceiverKind.EXTENSION_RECEIVER,
-                invokeOnGivenReceiverCandidateFactory
-            )
-        }
+        enumerateTowerLevels(
+            onLocalScope = { index, scope ->
+                processLevelForRegularInvoke(
+                    scope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
+                    info, parentGroupForInvokeCandidates.Local(index),
+                    ExplicitReceiverKind.EXTENSION_RECEIVER,
+                    invokeOnGivenReceiverCandidateFactory
+                )
+            },
+            onNonLocalScope = { index, scope ->
+                processLevelForRegularInvoke(
+                    scope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
+                    info, parentGroupForInvokeCandidates.NonLocal(index),
+                    ExplicitReceiverKind.EXTENSION_RECEIVER,
+                    invokeOnGivenReceiverCandidateFactory
+                )
+            },
+            onImplicitReceiver = { index, receiver ->
+                // NB: companions are processed via implicitReceiverValues!
+                val group = parentGroupForInvokeCandidates.Implicit(index).Member
+                processLevelForRegularInvoke(
+                    receiver.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
+                    info, group,
+                    ExplicitReceiverKind.EXTENSION_RECEIVER,
+                    invokeOnGivenReceiverCandidateFactory
+                )
+            }
+        )
     }
 
     private suspend fun processLevelForRegularInvoke(
@@ -585,7 +571,7 @@ class FirTowerResolverSession internal constructor(
         invokeOnGivenReceiverCandidateFactory: CandidateFactory,
         parentGroupForInvokeCandidates: TowerGroup
     ) {
-        for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
+        for ((implicitReceiverValue, depth) in implicitReceivers) {
             val towerGroup =
                 parentGroupForInvokeCandidates
                     .Implicit(depth)
@@ -688,54 +674,6 @@ class FirTowerResolverSession internal constructor(
                 invokeFunctionInfo, explicitReceiver, invokeOnGivenReceiverCandidateFactory,
                 parentGroupForInvokeCandidates
             )
-        }
-    }
-
-    private companion object {
-        private fun prepareImplicitReceivers(
-            implicitReceiverValues: List<ImplicitReceiverValue<*>>
-        ): Pair<List<ImplicitReceiver>, List<ImplicitReceiver>> {
-            var depth = 0
-            var firstDispatchValue = true
-            val explicitCompanions = mutableListOf<FirRegularClassSymbol>()
-            val implicitReceiversUsableAsValues = mutableListOf<ImplicitReceiver>()
-            val implicitReceivers = implicitReceiverValues.mapNotNull { receiverValue ->
-                val usableAsValue = when (receiverValue) {
-                    is ImplicitExtensionReceiverValue -> true
-                    is ImplicitDispatchReceiverValue -> {
-                        val symbol = receiverValue.boundSymbol
-                        val klass = symbol.fir as? FirRegularClass
-
-                        if (!receiverValue.implicitCompanion && klass?.isCompanion == true) {
-                            explicitCompanions += klass.symbol
-                        }
-
-                        if (firstDispatchValue && !receiverValue.inDelegated) {
-                            if (!receiverValue.implicitCompanion &&
-                                klass?.isInner == false &&
-                                !symbol.classId.isLocal
-                            ) {
-                                firstDispatchValue = false
-                            }
-                            true
-                        } else {
-                            symbol.fir.classKind == ClassKind.OBJECT && !receiverValue.inDelegated
-                        }
-                    }
-                }
-
-                if (receiverValue is ImplicitDispatchReceiverValue && receiverValue.implicitCompanion && receiverValue.boundSymbol in explicitCompanions) {
-                    null
-                } else {
-                    ImplicitReceiver(receiverValue, depth++, usableAsValue).also {
-                        if (usableAsValue) {
-                            implicitReceiversUsableAsValues.add(it)
-                        }
-                    }
-                }
-            }
-
-            return implicitReceivers to implicitReceiversUsableAsValues
         }
     }
 }

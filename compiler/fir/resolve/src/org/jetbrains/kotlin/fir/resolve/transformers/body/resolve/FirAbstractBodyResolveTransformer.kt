@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
@@ -24,6 +25,8 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.sure
 
 abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAbstractPhaseTransformer<ResolutionMode>(phase) {
     abstract val context: BodyResolveContext
@@ -42,7 +45,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         }
 
     protected inline fun <T> withLocalScopeCleanup(crossinline l: () -> T): T {
-        return context.withLocalScopesCleanup(l)
+        return context.withTowerDataCleanup(l)
     }
 
     protected fun addLocalScope(localScope: FirLocalScope?) {
@@ -97,17 +100,16 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         val fileImportsScope: MutableList<FirScope> = mutableListOf()
 
         @set:PrivateForInline
-        var typeParametersScopes: FirTypeParametersScopes = persistentListOf()
-
-        @set:PrivateForInline
-        var localScopes: FirLocalScopes = persistentListOf()
-
-        @set:PrivateForInline
         lateinit var file: FirFile
             internal set
 
+        val implicitReceiverStack: ImplicitReceiverStack get() = towerDataContext.implicitReceiverStack
+
         @set:PrivateForInline
-        var implicitReceiverStack: MutableImplicitReceiverStack = ImplicitReceiverStackImpl()
+        var towerDataContext: FirTowerDataContext = FirTowerDataContext()
+
+        @set:PrivateForInline
+        var towerDataContextsForClassParts: FirTowerDataContextsForClassParts? = null
 
         val containerIfAny: FirDeclaration?
             get() = containers.lastOrNull()
@@ -115,7 +117,33 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         @set:PrivateForInline
         var containers: PersistentList<FirDeclaration> = persistentListOf()
 
-        val localContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirLocalContext> = mutableMapOf()
+        val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
+
+        @OptIn(PrivateForInline::class)
+        inline fun <T> withNewTowerDataForClassParts(newContexts: FirTowerDataContextsForClassParts, f: () -> T): T {
+            val old = towerDataContextsForClassParts
+
+            towerDataContextsForClassParts = newContexts
+
+            return try {
+                f()
+            } finally {
+
+                towerDataContextsForClassParts = old
+            }
+        }
+
+        fun getTowerDataContextForStaticNestedClassesUnsafe(): FirTowerDataContext =
+            firTowerDataContextsForClassParts().forNestedClasses
+
+        fun getTowerDataContextForConstructorResolution(): FirTowerDataContext =
+            firTowerDataContextsForClassParts().forConstructorHeaders
+
+        fun getPrimaryConstructorParametersScope(): FirLocalScope? =
+            towerDataContextsForClassParts?.primaryConstructorParametersScope
+
+        private fun firTowerDataContextsForClassParts() =
+            towerDataContextsForClassParts.sure { "towerDataContextForStaticNestedClasses should not be null" }
 
         @OptIn(PrivateForInline::class)
         inline fun <T> withContainer(declaration: FirDeclaration, crossinline f: () -> T): T {
@@ -128,35 +156,42 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             }
         }
 
-        @OptIn(PrivateForInline::class)
-        inline fun <T> withLocalContext(localContext: FirLocalContext, f: () -> T): T {
-            val existedStack = this.implicitReceiverStack
-            val existedLocalScopes = this.localScopes
-
-            implicitReceiverStack = localContext.implicitReceiverStack
-            localScopes = localContext.localScopes
-
-            return try {
+        inline fun <T> withTowerDataContext(context: FirTowerDataContext, f: () -> T): T {
+            return withTowerDataCleanup {
+                replaceTowerDataContext(context)
                 f()
-            } finally {
-                implicitReceiverStack = existedStack
-                localScopes = existedLocalScopes
             }
         }
 
         @OptIn(PrivateForInline::class)
-        inline fun <R> withLocalScopesCleanup(l: () -> R): R {
-            val initialLocalScopes = localScopes
+        inline fun <R> withTowerDataCleanup(l: () -> R): R {
+            val initialContext = towerDataContext
             return try {
                 l()
             } finally {
-                localScopes = initialLocalScopes
+                towerDataContext = initialContext
             }
         }
 
         @OptIn(PrivateForInline::class)
+        fun replaceTowerDataContext(newContext: FirTowerDataContext) {
+            towerDataContext = newContext
+        }
+
+        fun addTowerDataElement(element: FirTowerDataElement) {
+            replaceTowerDataContext(towerDataContext.addTowerDataElements(listOf(element)))
+        }
+
+        fun addTowerDataElements(newElements: List<FirTowerDataElement>) {
+            replaceTowerDataContext(towerDataContext.addTowerDataElements(newElements))
+        }
+
         fun addLocalScope(localScope: FirLocalScope) {
-            localScopes = localScopes.add(localScope)
+            replaceTowerDataContext(towerDataContext.addLocalScope(localScope))
+        }
+
+        fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>) {
+            replaceTowerDataContext(towerDataContext.addReceiver(name, implicitReceiverValue))
         }
 
         fun storeClassIfNotNested(klass: FirRegularClass) {
@@ -173,21 +208,20 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         }
 
         fun saveContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-            localContextForAnonymousFunctions[anonymousFunction.symbol] = FirLocalContext(localScopes, implicitReceiverStack.snapshot())
+            towerDataContextForAnonymousFunctions[anonymousFunction.symbol] = towerDataContext
         }
 
         fun dropContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-            localContextForAnonymousFunctions.remove(anonymousFunction.symbol)
+            towerDataContextForAnonymousFunctions.remove(anonymousFunction.symbol)
         }
 
         fun cleanContextForAnonymousFunction() {
-            localContextForAnonymousFunctions.clear()
+            towerDataContextForAnonymousFunctions.clear()
         }
 
-        @OptIn(PrivateForInline::class)
         private inline fun updateLastScope(transform: FirLocalScope.() -> FirLocalScope) {
-            val lastScope = localScopes.lastOrNull() ?: return
-            localScopes = localScopes.set(localScopes.size - 1, lastScope.transform())
+            val lastScope = towerDataContext.localScopes.lastOrNull() ?: return
+            replaceTowerDataContext(towerDataContext.setLastLocalScope(lastScope.transform()))
         }
 
         @OptIn(PrivateForInline::class)
@@ -195,13 +229,10 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             returnTypeCalculator: ReturnTypeCalculator,
             targetedLocalClasses: Set<FirClass<*>>
         ) = BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses).apply {
-            fileImportsScope.addAll(this@BodyResolveContext.fileImportsScope)
-            typeParametersScopes = this@BodyResolveContext.typeParametersScopes
-            localScopes = this@BodyResolveContext.localScopes
             file = this@BodyResolveContext.file
-            implicitReceiverStack = this@BodyResolveContext.implicitReceiverStack
-            localContextForAnonymousFunctions.putAll(this@BodyResolveContext.localContextForAnonymousFunctions)
+            towerDataContextForAnonymousFunctions.putAll(this@BodyResolveContext.towerDataContextForAnonymousFunctions)
             containers = this@BodyResolveContext.containers
+            towerDataContext = this@BodyResolveContext.towerDataContext
         }
     }
 
@@ -212,12 +243,12 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         val context: BodyResolveContext
     ) : BodyResolveComponents {
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
-        override val typeParametersScopes: List<FirScope> get() = context.typeParametersScopes
-        override val localScopes: FirLocalScopes get() = context.localScopes
+        override val towerDataElements: List<FirTowerDataElement> get() = context.towerDataContext.towerDataElements
+        override val localScopes: FirLocalScopes get() = context.towerDataContext.localScopes
         override val file: FirFile get() = context.file
         override val implicitReceiverStack: ImplicitReceiverStack get() = context.implicitReceiverStack
         override val containingDeclarations: List<FirDeclaration> get() = context.containers
-        override val localContextForAnonymousFunctions: LocalContextForAnonymousFunctions get() = context.localContextForAnonymousFunctions
+        override val towerDataContextForAnonymousFunctions: TowerDataContextForAnonymousFunctions get() = context.towerDataContextForAnonymousFunctions
         override val returnTypeCalculator: ReturnTypeCalculator get() = context.returnTypeCalculator
         override val container: FirDeclaration get() = context.containerIfAny!!
 

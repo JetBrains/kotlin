@@ -589,6 +589,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/companionInvoke.kt");
         }
 
+        @TestMetadata("companionVsSuperStatic.kt")
+        public void testCompanionVsSuperStatic() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/companionVsSuperStatic.kt");
+        }
+
         @TestMetadata("debugExpressionType.kt")
         public void testDebugExpressionType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/debugExpressionType.kt");

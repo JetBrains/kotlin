@@ -31,6 +31,10 @@ class PersistentImplicitReceiverStack private constructor(
         persistentListOf(),
     )
 
+    fun addAll(receivers: List<ImplicitReceiverValue<*>>): PersistentImplicitReceiverStack {
+        return receivers.fold(this) { acc, value -> acc.add(name = null, value) }
+    }
+
     fun add(name: Name?, value: ImplicitReceiverValue<*>): PersistentImplicitReceiverStack {
         val stack = stack.add(value)
         val originalTypes = originalTypes.add(value.type)

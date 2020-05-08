@@ -169,14 +169,14 @@ FILE: objectInnerClass.kt
             }
 
             public[local] final fun caseForBase(): R|kotlin/Unit| {
-                lval base: R|Case3.<anonymous>.Base| = R|/Case3.<anonymous>.Base.Base|(R|/B.B|())
+                lval base: R|Case3.<anonymous>.Base| = this@R|/anonymous|.R|/Case3.<anonymous>.Base.Base|(R|/B.B|())
                 R|<local>/base|.R|/Case3.<anonymous>.Base.baseFun|()
                 R|<local>/base|.R|/Case3.<anonymous>.Base.property|
                 (this@R|/anonymous|, R|<local>/base|).R|/anonymous.hoo|()
             }
 
             public[local] final fun caseForChild(): R|kotlin/Unit| {
-                lval child: R|Case3.<anonymous>.Child| = R|/Case3.<anonymous>.Child.Child|(R|/B.B|())
+                lval child: R|Case3.<anonymous>.Child| = this@R|/anonymous|.R|/Case3.<anonymous>.Child.Child|(R|/B.B|())
                 R|<local>/child|.R|/Case3.<anonymous>.Base.baseFun|()
                 R|<local>/child|.R|/Case3.<anonymous>.Base.property|
                 R|<local>/child|.R|/Case3.<anonymous>.Child.foo|()
