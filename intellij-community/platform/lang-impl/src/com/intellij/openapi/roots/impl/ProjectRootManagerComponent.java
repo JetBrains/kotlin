@@ -295,7 +295,13 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   private void synchronizeRoots() {
     if (!myStartupActivityPerformed) return;
 
-    myRootsChangedLogger.info("project roots have changed", new Throwable());
+    String message = "project roots have changed";
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      LOG.info(message);
+    }
+    else {
+      myRootsChangedLogger.info(message, new Throwable());
+    }
 
     DumbServiceImpl dumbService = DumbServiceImpl.getInstance(myProject);
     if (FileBasedIndex.getInstance() instanceof FileBasedIndexImpl) {
