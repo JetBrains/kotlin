@@ -84,6 +84,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -169,7 +170,7 @@ public final class DaemonListeners implements Disposable {
           return;
         }
 
-        myActiveEditors = activeEditors;
+        myActiveEditors = new ArrayList<>(activeEditors);
         // do not stop daemon if idea loses/gains focus
         DaemonListeners.this.stopDaemon(true, "Active editor change");
         if (ApplicationManager.getApplication().isDispatchThread() && LaterInvocator.isInModalContext()) {
@@ -209,6 +210,7 @@ public final class DaemonListeners implements Disposable {
 
       @Override
       public void editorReleased(@NotNull EditorFactoryEvent event) {
+        myActiveEditors.remove(event.getEditor());
         // mem leak after closing last editor otherwise
         UIUtil.invokeLaterIfNeeded(() -> {
           IntentionsUI intentionUI = myProject.getServiceIfCreated(IntentionsUI.class);
