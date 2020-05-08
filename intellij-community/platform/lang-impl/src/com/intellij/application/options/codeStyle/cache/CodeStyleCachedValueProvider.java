@@ -1,10 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle.cache;
 
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SimpleModificationTracker;
@@ -19,6 +16,8 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.CancellablePromise;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ class CodeStyleCachedValueProvider implements CachedValueProvider<CodeStyleSetti
   }
 
   boolean isExpired() {
-    return myFileRef.get() == null;
+    return myFileRef.get() == null || myComputation.isExpired();
   }
 
   CodeStyleSettings tryGetSettings() {
@@ -71,12 +70,19 @@ class CodeStyleCachedValueProvider implements CachedValueProvider<CodeStyleSetti
     }
   }
 
-  @NotNull
+  @Nullable
   @Override
   public Result<CodeStyleSettings> compute() {
     CodeStyleSettings settings = myComputation.getCurrResult();
-    logCached(getReferencedPsi(), settings);
-    return new Result<>(settings, getDependencies(settings, myComputation));
+    if (settings != null) {
+      logCached(getReferencedPsi(), settings);
+      return new Result<>(settings, getDependencies(settings, myComputation));
+    }
+    return null;
+  }
+
+  public void cancelComputation() {
+    myComputation.cancel();
   }
 
   Object @NotNull [] getDependencies(@NotNull CodeStyleSettings settings, @NotNull AsyncComputation computation) {
@@ -103,10 +109,11 @@ class CodeStyleCachedValueProvider implements CachedValueProvider<CodeStyleSetti
    */
   private class AsyncComputation {
     private final             AtomicBoolean             myIsActive = new AtomicBoolean();
-    private volatile @NotNull CodeStyleSettings         myCurrResult;
+    private volatile          CodeStyleSettings         myCurrResult;
     private final @NotNull    CodeStyleSettingsManager  mySettingsManager;
     private final             SimpleModificationTracker myTracker  = new SimpleModificationTracker();
     private final             Project                   myProject;
+    private                   CancellablePromise<Void>  myPromise;
 
     private AsyncComputation() {
       myProject = getReferencedPsi().getProject();
@@ -117,16 +124,27 @@ class CodeStyleCachedValueProvider implements CachedValueProvider<CodeStyleSetti
 
     private void start() {
       if (isRunOnBackground()) {
-        ReadAction.nonBlocking(() -> computeSettings())
-                  .expireWith(myProject)
-                  .expireWhen(() -> myFileRef.get() == null)
-                  .finishOnUiThread(ModalityState.NON_MODAL, val -> notifyCachedValueComputed())
-                  .submit(ourExecutorService);
+        myPromise = ReadAction.nonBlocking(() -> computeSettings())
+                              .expireWith(myProject)
+                              .expireWhen(() -> myFileRef.get() == null)
+                              .finishOnUiThread(ModalityState.NON_MODAL, val -> notifyCachedValueComputed())
+                              .submit(ourExecutorService);
       }
       else {
         ReadAction.run((() -> computeSettings()));
         notifyOnEdt();
       }
+    }
+
+    public void cancel() {
+      if (myPromise != null && !myPromise.isDone()) {
+        myPromise.cancel();
+      }
+      myCurrResult = null;
+    }
+
+    public boolean isExpired() {
+      return myCurrResult == null;
     }
 
     private boolean isRunOnBackground() {
@@ -176,7 +194,7 @@ class CodeStyleCachedValueProvider implements CachedValueProvider<CodeStyleSetti
       }
     }
 
-    @NotNull
+    @Nullable
     public CodeStyleSettings getCurrResult() {
       if (myIsActive.compareAndSet(false, true)) {
         start();

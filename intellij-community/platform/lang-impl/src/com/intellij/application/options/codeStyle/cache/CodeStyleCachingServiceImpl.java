@@ -12,6 +12,7 @@ import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,6 +79,14 @@ public class CodeStyleCachingServiceImpl implements CodeStyleCachingService, Dis
 
   private void clearCache() {
     synchronized (CACHE_LOCK) {
+      myFileDataCache.values().forEach(
+        fileData -> {
+          ObjectUtils.consumeIfNotNull(
+            fileData.getUserData(PROVIDER_KEY),
+            provider -> provider.cancelComputation()
+          );
+        }
+      );
       myFileDataCache.clear();
       myRemoveQueue.clear();
     }
