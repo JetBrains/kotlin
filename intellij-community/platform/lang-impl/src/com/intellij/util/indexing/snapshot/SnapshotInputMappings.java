@@ -193,8 +193,9 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     int hash = doGetContentHash((FileContentImpl)content);
     if (myCompositeHashIdEnumerator != null) {
       int subIndexerTypeId = mySubIndexerRetriever.getFileIndexerId(content);
-      return myCompositeHashIdEnumerator.enumerate(hash, subIndexerTypeId);
+      hash = myCompositeHashIdEnumerator.enumerate(hash, subIndexerTypeId);
     }
+
     return hash;
   }
 

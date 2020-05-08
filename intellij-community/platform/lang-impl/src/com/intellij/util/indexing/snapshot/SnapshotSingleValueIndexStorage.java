@@ -96,6 +96,7 @@ public class SnapshotSingleValueIndexStorage<Key, Value> implements VfsAwareInde
   public void addValue(Key key, int inputId, Value value) {
     assert myInitialized;
     checkKeyInputIdConsistency(key, inputId);
+    myCache.remove(key);
     // do nothing, all data update is served by forward index, the only one we need to serve here is read access
   }
 
@@ -103,6 +104,7 @@ public class SnapshotSingleValueIndexStorage<Key, Value> implements VfsAwareInde
   public void removeAllValues(@NotNull Key key, int inputId) {
     assert myInitialized;
     checkKeyInputIdConsistency(key, inputId);
+    myCache.remove(key);
     // do nothing, all data update is served by forward index, the only one we need to serve here is read access
   }
 
