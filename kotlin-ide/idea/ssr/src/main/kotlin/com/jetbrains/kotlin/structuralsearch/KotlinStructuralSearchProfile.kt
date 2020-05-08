@@ -58,7 +58,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         project: Project,
         physical: Boolean
     ): Array<PsiElement> {
-        val fragment = KtPsiFactory(project).createBlockCodeFragment(text, null)
+        val fragment = KtPsiFactory(project, false).createBlockCodeFragment(text, null)
         val result = getNonWhitespaceChildren(fragment)
         if (result.isEmpty()) return PsiElement.EMPTY_ARRAY
         val blockContent = result.first().children // Remove the first block element

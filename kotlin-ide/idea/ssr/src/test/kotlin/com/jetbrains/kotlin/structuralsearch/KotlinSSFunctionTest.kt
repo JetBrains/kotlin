@@ -9,7 +9,7 @@ class KotlinSSFunctionTest : KotlinSSTest() {
 
     fun testFunParam() { doTest("fun '_(b: Int, c: String) { }") }
 
-    fun testFunTypeParam() { doTest("fun<T, R> '_(a: T, b: R, c: T) { }") }
+    fun testFunTypeParam() { doTest("fun<T, R> '_(a: T, b: R, c: T) { '_* }") }
 
     fun testFunReturnType() { doTest("fun '_(b: Int): Int { return b }") }
 
