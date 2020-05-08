@@ -51,14 +51,8 @@ class PersistentImplicitReceiverStack private constructor(
     }
 
     override operator fun get(name: String?): ImplicitReceiverValue<*>? {
-        if (name == null) {
-            return stack.lastOrNull {
-                it !is ImplicitDispatchReceiverValue || !it.inDelegated
-            }
-        }
-        return indexesPerLabel[Name.identifier(name)].lastOrNull()?.let { stack[it] }?.takeIf {
-            it !is ImplicitDispatchReceiverValue || !it.inDelegated
-        }
+        if (name == null) return stack.lastOrNull()
+        return indexesPerLabel[Name.identifier(name)].lastOrNull()?.let { stack[it] }
     }
 
     override fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {
