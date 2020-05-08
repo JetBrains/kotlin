@@ -116,7 +116,6 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
     installMemoryModeListener();
   }
 
-  @ApiStatus.Internal
   public void dumpStatistics() {
     if (mySnapshotInputMappings instanceof SnapshotInputMappings<?, ?>) {
       ((SnapshotInputMappings<?, ?>) mySnapshotInputMappings).dumpStatistics();

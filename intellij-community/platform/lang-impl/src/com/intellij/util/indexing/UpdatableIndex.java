@@ -63,4 +63,6 @@ public interface UpdatableIndex<Key, Value, Input> extends InvertedIndex<Key,Val
 
   @TestOnly
   void cleanupForNextTest();
+
+  void dumpStatistics();
 }

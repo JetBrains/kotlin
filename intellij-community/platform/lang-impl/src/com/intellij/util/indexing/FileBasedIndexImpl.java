@@ -269,7 +269,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   public void dumpIndexStatistics() {
     IndexConfiguration state = getRegisteredIndexes().getState();
     for (ID<?, ?> id : state.getIndexIDs()) {
-      ((VfsAwareMapReduceIndex<?, ?>)state.getIndex(id)).dumpStatistics();
+      state.getIndex(id).dumpStatistics();
     }
   }
 
