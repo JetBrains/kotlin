@@ -10,6 +10,7 @@ import com.intellij.codeInsight.hints.HintInfo.MethodInfo
 import com.intellij.codeInsight.hints.settings.Diff
 import com.intellij.codeInsight.hints.settings.InlayHintsConfigurable
 import com.intellij.codeInsight.hints.settings.ParameterNameHintsSettings
+import com.intellij.codeInsight.hints.settings.language.ParameterInlayProviderSettingsModel
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
@@ -31,6 +32,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
+import java.util.function.Predicate
 
 
 class ShowSettingsWithAddedPattern : AnAction() {
@@ -81,7 +83,7 @@ fun showParameterHintsDialog(e: AnActionEvent, getPattern: (HintInfo) -> String?
   val selectedLanguage = (info as? MethodInfo)?.language ?: fileLanguage
 
   when (val pattern = getPattern(info)) {
-    null -> InlayHintsConfigurable.showSettingsDialogForLanguage(file.project, fileLanguage)
+    null -> InlayHintsConfigurable.showSettingsDialogForLanguage(file.project, fileLanguage, Predicate { it is ParameterInlayProviderSettingsModel })
     else -> BlackListDialog(selectedLanguage, pattern).show()
   }
 }

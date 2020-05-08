@@ -90,6 +90,14 @@ class SingleLanguageInlayHintsSettingsPanel(
     updateWithNewProvider()
   }
 
+  internal fun getModels(): Array<InlayProviderSettingsModel> {
+    return myModels
+  }
+
+  internal fun setCurrentModel(model: InlayProviderSettingsModel) {
+    myProviderList.setSelectedValue(model, true)
+  }
+
   private fun selectLastViewedProvider(): InlayProviderSettingsModel {
     return myModels[findIndexToSelect()]
   }

@@ -14,6 +14,7 @@ import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.MessageBusConnection
+import java.util.function.Predicate
 import javax.swing.JComponent
 
 class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite, Configurable.WithEpDependencies {
@@ -87,14 +88,30 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
 
     @JvmStatic
     fun showSettingsDialogForLanguage(project: Project, language: Language) {
+      showSettingsDialogForLanguage(project, language, null)
+    }
+
+    @JvmStatic
+    fun showSettingsDialogForLanguage(project: Project, language: Language, selector: Predicate<InlayProviderSettingsModel>?) {
       val languages = hashSetOf<Language>()
       var current: Language? = language
       while (current != null) {
         languages.add(current)
         current = current.baseLanguage
       }
-      ShowSettingsUtil.getInstance()
-        .showSettingsDialog(project, { it is SingleLanguageInlayHintsConfigurable && it.language in languages }, {})
+      ShowSettingsUtil.getInstance().showSettingsDialog(
+        project,
+        { it is SingleLanguageInlayHintsConfigurable && it.language in languages },
+        { configurable ->
+          if (selector == null) return@showSettingsDialog
+          configurable as SingleLanguageInlayHintsConfigurable
+          val models = configurable.getModels()
+          val model = models.find { selector.test(it) }
+          if (model != null) {
+            configurable.setCurrentModel(model)
+          }
+        }
+      )
     }
   }
 

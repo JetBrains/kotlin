@@ -1,7 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.hints.settings.language
 
-import com.intellij.codeInsight.hints.*
+import com.intellij.codeInsight.hints.InlayHintsPassFactory
+import com.intellij.codeInsight.hints.ParameterHintsPassFactory
 import com.intellij.codeInsight.hints.settings.InlayProviderSettingsModel
 import com.intellij.codeInsight.hints.settings.InlaySettingsProvider
 import com.intellij.lang.Language
@@ -40,6 +41,14 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
 
   override fun getHelpTopic(): String {
     return getHelpTopic(language)
+  }
+
+  internal fun getModels(): Array<InlayProviderSettingsModel> {
+    return panel.getModels()
+  }
+
+  internal fun setCurrentModel(model: InlayProviderSettingsModel) {
+    panel.setCurrentModel(model)
   }
 
   companion object {
