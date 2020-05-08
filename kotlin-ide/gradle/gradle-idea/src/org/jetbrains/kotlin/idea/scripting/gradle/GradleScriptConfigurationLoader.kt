@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.scripting.gradle.legacy
+package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -15,20 +15,11 @@ import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigura
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.util.EDT
-import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
-import org.jetbrains.kotlin.idea.scripting.gradle.isGradleKotlinScript
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
-import org.jetbrains.kotlin.idea.scripting.gradle.useScriptConfigurationFromImportOnly
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
-/**
- * Loader that performs loading for .gralde.kts scripts configuration through the [DefaultScriptingSupport]
- *
- * TODO(gradle6): remove
- */
-class GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts(project: Project) : DefaultScriptConfigurationLoader(project) {
+class GradleScriptConfigurationLoaderForOutOfProjectScripts(project: Project) : DefaultScriptConfigurationLoader(project) {
     override fun loadDependencies(
         isFirstLoad: Boolean,
         ktFile: KtFile,
@@ -52,14 +43,7 @@ class GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts(project: Proje
     }
 }
 
-/**
- * Loader that performs loading for .gralde.kts scripts configuration through the [DefaultScriptingSupport]
- *
- * TODO(gradle6): remove
- */
-class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptConfigurationLoader(project) {
-    private val buildRootsManager = GradleBuildRootsManager.getInstance(project)
-
+class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigurationLoader(project) {
     override fun shouldRunInBackground(scriptDefinition: ScriptDefinition): Boolean {
         return if (useScriptConfigurationFromImportOnly()) false else super.shouldRunInBackground(scriptDefinition)
     }
@@ -80,7 +64,7 @@ class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptCon
             return true
         }
 
-        if (!buildRootsManager.isAffectedGradleProjectFile(vFile.path)) {
+        if (!isInAffectedGradleProjectFiles(ktFile.project, vFile.path)) {
             ScriptConfigurationManager.markFileWithManualConfigurationLoading(vFile)
             return true
         }
