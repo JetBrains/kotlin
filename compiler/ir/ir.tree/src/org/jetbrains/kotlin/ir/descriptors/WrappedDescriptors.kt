@@ -648,6 +648,14 @@ open class WrappedClassDescriptor(
     }
 }
 
+// Descriptors for classes converted from FirJavaClass, which could be used in JavaIncompatibilityRulesOverridabilityCondition
+// to check if a class is a Java class
+class WrappedJavaClassDescriptor(
+    annotations: Annotations = Annotations.EMPTY,
+    private val sourceElement: SourceElement = SourceElement.NO_SOURCE
+) : WrappedClassDescriptor(annotations, sourceElement),
+    org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+
 class LazyTypeConstructor(
     val classDescriptor: ClassDescriptor,
     val parametersBuilder: () -> List<TypeParameterDescriptor>,

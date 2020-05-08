@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.load.java.JavaIncompatibilityRulesOverridabilityCondition
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -362,8 +364,13 @@ fun isOverriding(
     target: IrDeclaration,
     superCandidate: IrDeclaration
 ): Boolean {
+
     val typeCheckerContext = IrTypeCheckerContext(irBuiltIns) as AbstractTypeCheckerContext
     fun equalTypes(first: IrType, second: IrType): Boolean {
+        // Filter out IrErrorType, which may come from FirJavaTypeRef
+        if (first is IrErrorType || second is IrErrorType) {
+            return false
+        }
         return AbstractTypeChecker.equalTypes(
             typeCheckerContext, first, second
         ) ||
@@ -375,7 +382,8 @@ fun isOverriding(
     return when {
         target is IrFunction && superCandidate is IrFunction -> {
             // Not checking the return type (they should match each other if everything other match, otherwise it's a compilation error)
-            target.name == superCandidate.name &&
+            !isIncompatible(target, superCandidate) &&
+                    target.name == superCandidate.name &&
                     target.extensionReceiverParameter?.type?.let {
                         val superCandidateReceiverType = superCandidate.extensionReceiverParameter?.type
                         superCandidateReceiverType != null && equalTypes(it, superCandidateReceiverType)
@@ -391,6 +399,17 @@ fun isOverriding(
         }
         else -> false
     }
+}
+
+private fun isIncompatible(target: IrFunction, superCandidate: IrFunction): Boolean {
+    val subDescriptor = target.descriptor
+    val superDescriptor = superCandidate.descriptor
+    val subClassDescriptor = target.parentClassOrNull?.descriptor
+    return JavaIncompatibilityRulesOverridabilityCondition.isIncompatibleInAccordanceWithBuiltInOverridabilityRules(superDescriptor, subDescriptor, subClassDescriptor)
+            || JavaIncompatibilityRulesOverridabilityCondition.doesJavaOverrideHaveIncompatibleValueParameterKinds(
+        superDescriptor,
+        subDescriptor
+    )
 }
 
 private val nameToOperationConventionOrigin = mutableMapOf(

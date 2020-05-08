@@ -455,7 +455,7 @@ class Fir2IrDeclarationStorage(
                 created.overriddenSymbols += getIrFunctionSymbol(it) as IrSimpleFunctionSymbol
             }
         }
-        if (!created.isFakeOverride && simpleFunction?.isOverride == true && thisReceiverOwner != null) {
+        if (!created.isFakeOverride && thisReceiverOwner != null) {
             created.populateOverriddenSymbols(thisReceiverOwner)
         }
         functionCache[function] = created
