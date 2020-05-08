@@ -196,9 +196,9 @@ class ScopeTowerLevel(
     session: FirSession,
     private val bodyResolveComponents: BodyResolveComponents,
     val scope: FirScope,
-    val extensionReceiver: ReceiverValue? = null,
-    private val extensionsOnly: Boolean = false,
-    private val noInnerConstructors: Boolean = false
+    val extensionReceiver: ReceiverValue?,
+    private val extensionsOnly: Boolean,
+    private val noInnerConstructors: Boolean
 ) : SessionBasedTowerLevel(session) {
     private fun FirCallableSymbol<*>.hasConsistentReceivers(extensionReceiver: Receiver?): Boolean =
         when {
@@ -279,14 +279,38 @@ class ScopeTowerLevel(
                     implicitExtensionReceiverValue = null
                 )
             }
+            TowerScopeLevel.Token.Constructors -> {
+                throw AssertionError("Should not be here")
+            }
+        }
+        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
+    }
+}
+
+class ConstructorScopeTowerLevel(
+    session: FirSession,
+    val scope: FirScope
+) : SessionBasedTowerLevel(session) {
+    override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
+        token: TowerScopeLevel.Token<T>,
+        name: Name,
+        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
+    ): ProcessorAction {
+        var empty = true
+        when (token) {
             TowerScopeLevel.Token.Constructors -> scope.processDeclaredConstructors { candidate ->
                 // NB: here we cannot resolve inner constructors, because they should have dispatch receiver
                 if (!candidate.fir.isInner) {
+                    empty = false
                     processor.consumeCandidate(
-                        candidate as T, dispatchReceiverValue(scope, candidate),
+                        candidate as T,
+                        dispatchReceiverValue = null,
                         implicitExtensionReceiverValue = null
                     )
                 }
+            }
+            else -> {
+                throw AssertionError("Should not be here: token = $token")
             }
         }
         return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT

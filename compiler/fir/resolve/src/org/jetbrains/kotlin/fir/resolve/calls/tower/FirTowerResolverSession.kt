@@ -133,6 +133,9 @@ class FirTowerResolverSession internal constructor(
         extensionReceiver, extensionsOnly, noInnerConstructors
     )
 
+    private fun FirScope.toConstructorScopeTowerLevel(): ConstructorScopeTowerLevel =
+        ConstructorScopeTowerLevel(session, this)
+
     private fun ReceiverValue.toMemberScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
         implicitExtensionInvokeMode: Boolean = false
@@ -217,7 +220,7 @@ class FirTowerResolverSession internal constructor(
         } else {
             // Search for non-inner constructors only
             processLevel(
-                scope.toScopeTowerLevel(),
+                scope.toConstructorScopeTowerLevel(),
                 info, TowerGroup.Member
             )
         }
