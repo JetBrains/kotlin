@@ -15,7 +15,6 @@
     <orderEntry type="module" module-name="intellij.platform.projectModel.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.bootstrap" />
-    <orderEntry type="module" module-name="intellij.platform.vcs" />
     <orderEntry type="library" name="XStream" level="project" />
     <orderEntry type="library" name="lz4-java" level="project" />
     <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
@@ -24,5 +23,6 @@
     <orderEntry type="library" name="snakeyaml-engine" level="project" />
     <orderEntry type="module" module-name="intellij.platform.statistics" />
     <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.diff" />
   </component>
 </module>
