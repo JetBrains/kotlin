@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -179,7 +182,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass<*>, defaultTy
     val companionObject = (owner as? FirRegularClass)?.companionObject
     val companionReceiver = companionObject?.let { companion ->
         ImplicitDispatchReceiverValue(
-            companion.symbol, session, scopeSession, kind = ImplicitDispatchReceiverKind.COMPANION
+            companion.symbol, session, scopeSession
         )
     }
     allImplicitCompanionValues.addIfNotNull(companionReceiver)
@@ -192,7 +195,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass<*>, defaultTy
 
         (superClass as? FirRegularClass)?.companionObject?.let { companion ->
             val superCompanionReceiver = ImplicitDispatchReceiverValue(
-                companion.symbol, session, scopeSession, kind = ImplicitDispatchReceiverKind.COMPANION_FROM_SUPERTYPE
+                companion.symbol, session, scopeSession
             )
 
             superClassesStaticsAndCompanionReceivers += superCompanionReceiver.asTowerDataElement()
