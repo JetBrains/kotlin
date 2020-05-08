@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsR
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.allopen.AbstractFirAllOpenDiagnosticTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
 import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
@@ -627,12 +626,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractFirVisualizer>("FirVisualizerForUncommonCasesGenerated") {
             model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
-        }
-    }
-    
-    testGroup("compiler/fir/plugins/allopen-plugin/tests", "compiler/fir/plugins/allopen-plugin/testData") {
-        testClass<AbstractFirAllOpenDiagnosticTest> {
-            model("")
         }
     }
 }

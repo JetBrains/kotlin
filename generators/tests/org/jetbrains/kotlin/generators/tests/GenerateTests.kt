@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesWithDisableComponentSearchTest
 import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
+import org.jetbrains.kotlin.fir.plugin.AbstractFirAllOpenDiagnosticTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
 import org.jetbrains.kotlin.generators.tests.generator.TestGroup
@@ -1443,6 +1444,12 @@ fun main(args: Array<String>) {
 
         testClass<AbstractSerializationIrBytecodeListingTest> {
             model("codegen")
+        }
+    }
+
+    testGroup("plugins/fir/fir-plugin-prototype/tests", "plugins/fir/fir-plugin-prototype/testData") {
+        testClass<AbstractFirAllOpenDiagnosticTest> {
+            model("")
         }
     }
 

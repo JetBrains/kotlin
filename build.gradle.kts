@@ -273,8 +273,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:java",
     ":compiler:fir:jvm",
     ":compiler:fir:checkers",
-    ":compiler:fir:analysis-tests",
-    ":compiler:fir:plugins:allopen-plugin"
+    ":compiler:fir:analysis-tests"
 )
 
 val coreLibProjects = listOfNotNull(
