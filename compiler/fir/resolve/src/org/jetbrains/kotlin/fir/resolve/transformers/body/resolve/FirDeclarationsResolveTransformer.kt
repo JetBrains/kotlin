@@ -439,6 +439,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return simpleFunction.compose()
         }
 
+        if (context.containerIfAny !is FirClass<*>) {
+            context.storeFunction(simpleFunction)
+        }
+
         return withTypeParametersOf(simpleFunction) {
             val containingDeclaration = context.containerIfAny
             if (containingDeclaration != null && containingDeclaration !is FirClass<*>) {
@@ -464,9 +468,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         function: F,
         resolutionMode: ResolutionMode,
     ): CompositeTransformResult<F> {
-        if (function is FirSimpleFunction && context.containerIfAny !is FirClass<*>) {
-            context.storeFunction(function)
-        }
 
         @Suppress("UNCHECKED_CAST")
         val result = transformFunction(function, resolutionMode).single as F
