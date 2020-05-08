@@ -78,6 +78,43 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
   }
 
   @Test
+  fun `edit and commit library before committing root model`() {
+    val library = createLibrary("foo")
+    val model = createModifiableModel(module)
+    val libraryEntry = model.addLibraryEntry(library)
+    assertThat(libraryEntry.library).isEqualTo(library)
+    val libraryModel = library.modifiableModel
+    val libRoot = projectModel.baseProjectDir.newVirtualDirectory("lib")
+    libraryModel.addRoot(libRoot, OrderRootType.CLASSES)
+    runWriteActionAndWait { libraryModel.commit() }
+    val committed = commitModifiableRootModel(model)
+    val committedEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
+    assertThat(committedEntry.library).isEqualTo(library)
+    assertThat(committedEntry.getFiles(OrderRootType.CLASSES).single()).isEqualTo(libRoot)
+  }
+
+  @Test
+  fun `edit library before committing root model and commit after that`() {
+    val library = createLibrary("foo")
+    val model = createModifiableModel(module)
+    val libraryEntry = model.addLibraryEntry(library)
+    assertThat(libraryEntry.library).isEqualTo(library)
+    val libraryModel = library.modifiableModel
+    val libRoot = projectModel.baseProjectDir.newVirtualDirectory("lib")
+    libraryModel.addRoot(libRoot, OrderRootType.CLASSES)
+
+    val committed = commitModifiableRootModel(model)
+    val committedEntry1 = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
+    assertThat(committedEntry1.getFiles(OrderRootType.CLASSES)).isEmpty()
+    assertThat(committedEntry1.library).isEqualTo(library)
+
+    runWriteActionAndWait { libraryModel.commit() }
+    val committedEntry2 = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
+    assertThat(committedEntry2.library).isEqualTo(library)
+    assertThat(committedEntry2.getFiles(OrderRootType.CLASSES).single()).isEqualTo(libRoot)
+  }
+
+  @Test
   fun `add same library twice`() {
     val library = createLibrary("foo")
     run {
@@ -177,13 +214,23 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
       assertThat((model.orderEntries[2] as LibraryOrderEntry).libraryName).isEqualTo("b")
       model.removeOrderEntry(model.orderEntries[1])
       val committed = commitModifiableRootModel(model)
-      val libraryEntry = dropModuleSourceEntry(ModuleRootManager.getInstance(module), 1).single() as LibraryOrderEntry
+      val libraryEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
       assertThat(libraryEntry.library).isEqualTo(b)
     }
   }
 
   @Test
-  fun `add not yet committed library`() {
+  fun `dispose model without committing`() {
+    val a = createLibrary("a")
+    val model = createModifiableModel(module)
+    val entry = model.addLibraryEntry(a)
+    assertThat(entry.library).isEqualTo(a)
+    model.dispose()
+    dropModuleSourceEntry(ModuleRootManager.getInstance(module), 0)
+  }
+
+  @Test
+  fun `add not yet committed library and commit root model`() {
     val libraryTableModel = libraryTable.modifiableModel
     val a = libraryTableModel.createLibrary("a")
     run {
@@ -202,7 +249,22 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
       assertThat(libraryEntry.library).isEqualTo(a)
     }
   }
-  
+
+  @Test
+  fun `add not yet committed library and commit before committing root model`() {
+    val libraryTableModel = libraryTable.modifiableModel
+    val a = libraryTableModel.createLibrary("a")
+    val model = createModifiableModel(module)
+    val entry = model.addLibraryEntry(a)
+    assertThat(entry.library).isEqualTo(a)
+    assertThat(entry.libraryName).isEqualTo("a")
+    runWriteActionAndWait { libraryTableModel.commit() }
+    val committed = commitModifiableRootModel(model)
+    val committedEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
+    assertThat(committedEntry.library).isEqualTo(a)
+    assertThat(committedEntry.libraryName).isEqualTo("a")
+  }
+
   @Test
   fun `add not yet committed library with configuration accessor`() {
     val libraryTableModel = libraryTable.modifiableModel
