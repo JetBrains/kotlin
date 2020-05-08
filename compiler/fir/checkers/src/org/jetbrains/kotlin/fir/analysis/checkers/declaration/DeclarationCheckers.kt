@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 abstract class DeclarationCheckers {
+    companion object {
+        val EMPTY: DeclarationCheckers = object : DeclarationCheckers() {}
+    }
+
     open val declarationCheckers: List<FirBasicDeclarationChecker> = emptyList()
     open val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = emptyList()
     open val constructorCheckers: List<FirConstructorChecker> = emptyList()

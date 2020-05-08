@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 abstract class ExpressionCheckers {
+    companion object {
+        val EMPTY: ExpressionCheckers = object : ExpressionCheckers() {}
+    }
+
     open val expressionCheckers: List<FirBasicExpresionChecker> = emptyList()
     open val qualifiedAccessCheckers: List<FirQualifiedAccessChecker> = emptyList()
     open val functionCallCheckers: List<FirFunctionCallChecker> = emptyList()
