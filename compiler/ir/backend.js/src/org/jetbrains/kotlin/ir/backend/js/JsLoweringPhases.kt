@@ -228,7 +228,14 @@ private val removeInlineFunctionsWithReifiedTypeParametersLoweringPhase = makeDe
 )
 
 private val throwableSuccessorsLoweringPhase = makeBodyLoweringPhase(
-    ::ThrowableLowering,
+    { context ->
+        context.run {
+            val extendThrowableSymbol =
+                if (es6mode) setPropertiesToThrowableInstanceSymbol else extendThrowableSymbol
+
+            ThrowableLowering(this, extendThrowableSymbol)
+        }
+    },
     name = "ThrowableLowering",
     description = "Link kotlin.Throwable and JavaScript Error together to provide proper interop between language and platform exceptions"
 )
@@ -515,6 +522,19 @@ private val typeOperatorLoweringPhase = makeBodyLoweringPhase(
         removeInlineFunctionsWithReifiedTypeParametersLoweringPhase,
         singleAbstractMethodPhase
     )
+)
+
+private val es6AddInternalParametersToConstructorPhase = makeBodyLoweringPhase(
+    ::ES6AddInternalParametersToConstructorPhase,
+    name = "ES6CreateInitFunctionPhase",
+    description = "Add `box` and `resultType` params, create init functions for constructors"
+)
+
+private val es6ConstructorLowering = makeBodyLoweringPhase(
+    ::ES6ConstructorLowering,
+    name = "ES6ConstructorLoweringPhase",
+    description = "Lower constructors",
+    prerequisite = setOf(es6AddInternalParametersToConstructorPhase)
 )
 
 private val secondaryConstructorLoweringPhase = makeDeclarationTransformerPhase(

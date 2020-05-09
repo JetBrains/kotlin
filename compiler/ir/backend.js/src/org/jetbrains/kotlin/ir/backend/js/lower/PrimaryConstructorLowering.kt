@@ -38,7 +38,7 @@ class PrimaryConstructorLowering(context: JsCommonBackendContext) : DeclarationT
         return null
     }
 
-    private object SYNTHETIC_PRIMARY_CONSTRUCTOR : IrDeclarationOriginImpl("SYNTHETIC_PRIMARY_CONSTRUCTOR")
+    object SYNTHETIC_PRIMARY_CONSTRUCTOR : IrDeclarationOriginImpl("SYNTHETIC_PRIMARY_CONSTRUCTOR")
 
     private val unitType = context.irBuiltIns.unitType
 

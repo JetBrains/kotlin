@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 class SecondaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        assert(!context.es6mode)
 
         if (declaration is IrConstructor && !declaration.isPrimary) {
             val irClass = declaration.parentAsClass
@@ -228,7 +229,10 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
 
         val target = expression.symbol.owner
         return if (target.isSecondaryConstructorCall) {
-            val factory = context.buildConstructorFactory(target, target.parentAsClass)
+            val factory = with(context) {
+                if (es6mode) mapping.secondaryConstructorToDelegate[target] ?: error("Not found IrFunction for secondary ctor")
+                else buildConstructorFactory(target, target.parentAsClass)
+            }
             replaceSecondaryConstructorWithFactoryFunction(expression, factory.symbol)
         } else expression
     }
@@ -240,8 +244,14 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
 
         return if (target.isSecondaryConstructorCall) {
             val klass = target.parentAsClass
-            val delegate = context.buildConstructorDelegate(target, klass)
+            val delegate = with(context) {
+                if (es6mode) mapping.secondaryConstructorToDelegate[target] ?: error("Not found IrFunction for secondary ctor")
+                else buildConstructorDelegate(target, klass)
+            }
             val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, delegate.symbol)
+            if (context.es6mode) {
+                return newCall
+            }
 
             val readThis = expression.run {
                 if (data!! is IrConstructor) {
