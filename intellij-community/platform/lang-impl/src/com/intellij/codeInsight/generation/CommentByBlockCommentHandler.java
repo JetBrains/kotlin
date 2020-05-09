@@ -1,19 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.generation;
 
 import com.intellij.application.options.CodeStyle;
@@ -47,8 +32,8 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.ui.LightweightHint;
-import com.intellij.util.containers.IntArrayList;
 import com.intellij.util.text.CharArrayUtil;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +41,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHandler {
+public final class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHandler {
   private Editor myEditor;
   private Caret myCaret;
   private PsiFile myFile;
@@ -171,7 +156,7 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
       myEditor.getScrollingModel().disableAnimation();
       myEditor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
       myEditor.getScrollingModel().enableAnimation();
-      
+
       LogicalPosition hintPosition = myCaret.getLogicalPosition();
       if (myWarningLocation != null) {
         LogicalPosition targetPosition = myEditor.offsetToLogicalPosition(myWarningLocation.getStartOffset());
@@ -459,15 +444,15 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
     CodeDocumentationAwareCommenter commenter = (CodeDocumentationAwareCommenter)myCommenter;
     HighlighterIterator it = ((EditorEx)myEditor).getHighlighter().createIterator(offset - 1);
     IElementType tokenType = it.getTokenType();
-    return  (tokenType != null && (it.getEnd() > offset && (tokenType == commenter.getLineCommentTokenType() || 
+    return  (tokenType != null && (it.getEnd() > offset && (tokenType == commenter.getLineCommentTokenType() ||
                                                             tokenType == commenter.getBlockCommentTokenType() ||
-                                                            tokenType == commenter.getDocumentationCommentTokenType()) || 
-                                   includingAfterLineComment && it.getEnd() == offset && tokenType == commenter.getLineCommentTokenType() && 
+                                                            tokenType == commenter.getDocumentationCommentTokenType()) ||
+                                   includingAfterLineComment && it.getEnd() == offset && tokenType == commenter.getLineCommentTokenType() &&
                                    !(commenter instanceof CommenterWithLineSuffix)));
   }
 
   private boolean canDetectBlockComments() {
-    return myEditor instanceof EditorEx && myCommenter instanceof CodeDocumentationAwareCommenter && 
+    return myEditor instanceof EditorEx && myCommenter instanceof CodeDocumentationAwareCommenter &&
            ((CodeDocumentationAwareCommenter)myCommenter).getBlockCommentTokenType() != null;
   }
 
@@ -561,13 +546,13 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
     }
     if (warnAboutNestedComments) {
       myWarning = CodeInsightBundle.message("block.comment.nested.comment", nestedCommentPrefixes.size());
-      myWarningLocation = myDocument.createRangeMarker(nestedCommentPrefixes.get(0), 
-                                                       nestedCommentPrefixes.get(0) + normalizedPrefix.length());
+      myWarningLocation = myDocument.createRangeMarker(nestedCommentPrefixes.getInt(0),
+                                                       nestedCommentPrefixes.getInt(0) + normalizedPrefix.length());
     }
     int shift = 0;
     if (!(commentedSuffix == null &&
           !nestedCommentSuffixes.isEmpty() &&
-          nestedCommentSuffixes.get(nestedCommentSuffixes.size() - 1) + commentSuffix.length() == endOffset)) {
+          nestedCommentSuffixes.getInt(nestedCommentSuffixes.size() - 1) + commentSuffix.length() == endOffset)) {
       myDocument.insertString(endOffset, commentSuffix);
       shift += commentSuffix.length();
     }
@@ -577,8 +562,8 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
     int j = nestedCommentSuffixes.size() - 1;
     final TextRange selection = new TextRange(startOffset, endOffset);
     while (i >= 0 && j >= 0) {
-      final int prefixIndex = nestedCommentPrefixes.get(i);
-      final int suffixIndex = nestedCommentSuffixes.get(j);
+      final int prefixIndex = nestedCommentPrefixes.getInt(i);
+      final int suffixIndex = nestedCommentSuffixes.getInt(j);
       if (prefixIndex > suffixIndex) {
         shift += doBoundCommentingAndGetShift(prefixIndex, commentedPrefix, normalizedPrefix.length(), commentSuffix, false, selection);
         --i;
@@ -592,16 +577,16 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
       }
     }
     while (i >= 0) {
-      final int prefixIndex = nestedCommentPrefixes.get(i);
+      final int prefixIndex = nestedCommentPrefixes.getInt(i);
       shift += doBoundCommentingAndGetShift(prefixIndex, commentedPrefix, normalizedPrefix.length(), commentSuffix, false, selection);
       --i;
     }
     while (j >= 0) {
-      final int suffixIndex = nestedCommentSuffixes.get(j);
+      final int suffixIndex = nestedCommentSuffixes.getInt(j);
       shift += doBoundCommentingAndGetShift(suffixIndex, commentedSuffix, normalizedSuffix.length(), commentPrefix, true, selection);
       --j;
     }
-    if (!(commentedPrefix == null && !nestedCommentPrefixes.isEmpty() && nestedCommentPrefixes.get(0) == startOffset)) {
+    if (!(commentedPrefix == null && !nestedCommentPrefixes.isEmpty() && nestedCommentPrefixes.getInt(0) == startOffset)) {
       myDocument.insertString(startOffset, commentPrefix);
       shift += commentPrefix.length();
     }
@@ -684,8 +669,8 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
 
     int prefixIndex = prefixes.size() - 1;
     for (int i = toReplaceWithComments.size() - 1; i >= 0; i--) {
-      int position = toReplaceWithComments.get(i);
-      if (prefixIndex >= 0 && position == prefixes.get(prefixIndex)) {
+      int position = toReplaceWithComments.getInt(i);
+      if (prefixIndex >= 0 && position == prefixes.getInt(prefixIndex)) {
         prefixIndex--;
         document.replaceString(offset + position, offset + position + commentedPrefix.length(), commentPrefix);
       }

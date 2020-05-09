@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeEditor.printing;
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -22,7 +22,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.ui.paint.LinePainter2D;
-import com.intellij.util.containers.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-class TextPainter extends BasePainter {
+final class TextPainter extends BasePainter {
   private final DocumentEx myDocument;
   private RangeMarker myRangeToPrint;
   private int myOffset;
@@ -631,7 +631,7 @@ class TextPainter extends BasePainter {
         IntArrayList breakOffsets = LineWrapper.calcBreakOffsets(text, myOffset, end, lineStart, position.getX(), clip.getWidth(),
                                                                  (t, start, count, x) -> getTextSegmentWidth(t, start, count, x, g));
         for (int i = 0; i < breakOffsets.size(); i++) {
-          int breakOffset = breakOffsets.get(i);
+          int breakOffset = breakOffsets.getInt(i);
           drawTabbedString(g, text, breakOffset - myOffset, position, backColor, underscoredColor);
           position.setLocation(0, position.getY() + getLineHeight(g));
           if (position.getY() > clip.getY() + clip.getHeight() - getLineHeight(g)) {
@@ -736,7 +736,7 @@ class TextPainter extends BasePainter {
     return v.getLogicalBounds().getWidth();
   }
 
-  public double nextTabStop(Graphics2D g, double x) {
+  private double nextTabStop(Graphics2D g, double x) {
     double tabSize = myCodeStyleSettings.getTabSize(myFileType);
     if (tabSize <= 0) {
       tabSize = 1;
@@ -755,7 +755,7 @@ class TextPainter extends BasePainter {
   }
 
   // Wraps HighlighterIterator, joining adjacent regions with identical attributes
-  private static class HighlightingAttributesIterator {
+  private static final class HighlightingAttributesIterator {
     @NotNull private final HighlighterIterator myDelegate;
     private int myEnd;
     private TextAttributes myAttributes;

@@ -56,7 +56,6 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.util.*;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
-import com.intellij.util.containers.IntArrayList;
 import com.intellij.util.io.BaseOutputReader;
 import com.intellij.util.io.PathKt;
 import com.intellij.util.io.storage.HeavyProcessLatch;
@@ -73,6 +72,7 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.util.internal.ThreadLocalRandom;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
@@ -1799,7 +1799,7 @@ public final class BuildManager implements Disposable {
         final String element = tokenizer.nextToken();
         list.add(FileNameCache.storeName(element));
       }
-      myPath = list.toArray();
+      myPath = list.toIntArray();
     }
 
     public abstract String getValue();
@@ -1824,7 +1824,7 @@ public final class BuildManager implements Disposable {
     }
   }
 
-  private static class WinInternedPath extends InternedPath {
+  private static final class WinInternedPath extends InternedPath {
     private WinInternedPath(String path) {
       super(path);
     }
@@ -1848,7 +1848,7 @@ public final class BuildManager implements Disposable {
     }
   }
 
-  private static class XInternedPath extends InternedPath {
+  private static final class XInternedPath extends InternedPath {
     private XInternedPath(String path) {
       super(path);
     }

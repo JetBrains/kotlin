@@ -54,13 +54,13 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.rename.inplace.InplaceRefactoring;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class TemplateState implements Disposable {
+public final class TemplateState implements Disposable {
   private static final Logger LOG = Logger.getInstance(TemplateState.class);
   private Project myProject;
   private Editor myEditor;
@@ -753,7 +753,7 @@ public class TemplateState implements Disposable {
     });
   }
 
-  private static class TemplateDocumentChange {
+  private static final class TemplateDocumentChange {
     public final String newValue;
     public final int startOffset;
     public final int endOffset;
@@ -1182,7 +1182,7 @@ public class TemplateState implements Disposable {
   private void restoreEmptyVariables(IntArrayList indices) {
     List<TextRange> rangesToRemove = new ArrayList<>();
     for (int i = 0; i < indices.size(); i++) {
-      int index = indices.get(i);
+      int index = indices.getInt(i);
       rangesToRemove.add(TextRange.create(mySegments.getSegmentStart(index), mySegments.getSegmentEnd(index)));
     }
     rangesToRemove.sort((o1, o2) -> {
@@ -1436,7 +1436,7 @@ public class TemplateState implements Disposable {
     return myEditor;
   }
 
-  private static class MyBasicUndoableAction extends BasicUndoableAction implements Disposable {
+  private static final class MyBasicUndoableAction extends BasicUndoableAction implements Disposable {
     @Nullable
     private TemplateState myTemplateState;
 
