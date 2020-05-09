@@ -101,6 +101,36 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 }
             }
 
+            add(intrinsics.jsNewTarget) { _, _ ->
+                JsNameRef(JsName("target"), JsNameRef(JsName("new")))
+            }
+
+            add(intrinsics.jsOpenInitializerBox) { call, context ->
+                val arguments = translateCallArguments(call, context)
+
+                JsInvocation(
+                    JsNameRef("Object.assign"),
+                    arguments
+                )
+            }
+
+            add(intrinsics.jsEmptyObject) { _, _ ->
+                JsObjectLiteral()
+            }
+
+            add(intrinsics.es6DefaultType) { call, context ->
+                val classifier: IrClassifierSymbol = call.getTypeArgument(0)!!.classifierOrFail
+                val owner = classifier.owner
+
+                when {
+                    owner is IrClass && owner.isEffectivelyExternal() ->
+                        context.getRefForExternalClass(owner)
+
+                    else ->
+                        context.getNameForStaticDeclaration(owner as IrDeclarationWithName).makeRef()
+                }
+            }
+
             addIfNotNull(intrinsics.jsCode) { _, _ -> error("Should not be called") }
 
             add(intrinsics.jsGetContinuation) { _, context: JsGenerationContext ->
