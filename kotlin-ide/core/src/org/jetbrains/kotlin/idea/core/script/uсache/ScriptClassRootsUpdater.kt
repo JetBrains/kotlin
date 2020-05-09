@@ -34,12 +34,22 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 /**
- * Utility for postponing indexing of new roots to the end of some bulk operation.
+ * Holder for [ScriptClassRootsCache].
+ *
+ * Updates of [classpathRoots] performed asynchronously using the copy-on-write strategy.
+ * [gatherRoots] called when updating is required. Cache will built from the scratch.
+ *
+ * Updates can be coalesced by using `update { invalidate() }` transaction.
+ * As an alternative you can just call [invalidateAndCommit].
+ *
+ * After update roots changed event will be triggered if there are new root.
+ * This will start indexing.
+ * Also analysis cache will be cleared and changed opened script files will be reanalyzed.
  */
 class ScriptClassRootsUpdater(
     val project: Project,
     val manager: CompositeScriptConfigurationManager,
-    private val buildNewRoots: (ScriptClassRootsBuilder) -> Unit
+    private val gatherRoots: (ScriptClassRootsBuilder) -> Unit
 ) {
     private var lastSeen: ScriptClassRootsCache? = null
     private var invalidated: Boolean = false
@@ -48,10 +58,11 @@ class ScriptClassRootsUpdater(
 
     private fun recreateRootsCache(): ScriptClassRootsCache {
         val builder = ScriptClassRootsBuilder(project)
-        buildNewRoots(builder)
+        gatherRoots(builder)
         return builder.build()
     }
 
+    @Volatile
     var classpathRoots: ScriptClassRootsCache = recreateRootsCache()
         private set
 
@@ -75,6 +86,10 @@ class ScriptClassRootsUpdater(
         if (synchronous) {
             syncUpdateRequired = true
         }
+    }
+
+    fun invalidateAndCommit() {
+        update { invalidate() }
     }
 
     fun checkInTransaction() {
@@ -119,7 +134,7 @@ class ScriptClassRootsUpdater(
     private var scheduledUpdate: ProgressIndicator? = null
 
     @Synchronized
-    fun ensureUpdateScheduled() {
+    private fun ensureUpdateScheduled() {
         scheduledUpdate?.cancel()
         runReadAction {
             if (project.isDisposed && !Disposer.isDisposing(project)) {
@@ -136,12 +151,14 @@ class ScriptClassRootsUpdater(
         doUpdate(false)
     }
 
-    fun checkInvalidSdks(remove: Sdk? = null) {
+    internal fun checkInvalidSdks(remove: Sdk? = null) {
         // sdks should be updated synchronously to avoid disposed roots usage
         syncLock.withLock {
             val current = classpathRoots
             val actualSdks = current.sdks.rebuild(remove = remove)
             if (actualSdks != current.sdks) {
+                // don't call invalidateAndCommit as it may be synchronous
+                // let's update sdks immediately and schedule cache rebuilding
                 classpathRoots = current.withUpdatedSdks(actualSdks)
                 ensureUpdateScheduled()
             }

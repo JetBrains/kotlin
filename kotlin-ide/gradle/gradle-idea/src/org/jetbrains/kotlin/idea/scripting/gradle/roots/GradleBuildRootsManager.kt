@@ -342,7 +342,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
         val old = roots.add(newRoot)
         if (old is GradleBuildRoot.Imported) removeData(old.pathPrefix)
         if (old is GradleBuildRoot.Imported || newRoot is GradleBuildRoot.Imported) {
-            updater.ensureUpdateScheduled()
+            updater.invalidateAndCommit()
         }
 
         updateNotifications(newRoot.pathPrefix)
@@ -352,7 +352,7 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
         val removed = roots.remove(rootPath)
         if (removed is GradleBuildRoot.Imported) {
             removeData(rootPath)
-            updater.ensureUpdateScheduled()
+            updater.invalidateAndCommit()
         }
 
         updateNotifications(rootPath)
