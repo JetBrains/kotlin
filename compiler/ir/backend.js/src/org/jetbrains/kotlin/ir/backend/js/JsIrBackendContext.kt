@@ -41,7 +41,8 @@ class JsIrBackendContext(
     irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
-    override val scriptMode: Boolean = false
+    override val scriptMode: Boolean = false,
+    override val es6mode: Boolean = false
 ) : JsCommonBackendContext {
     override val transformedFunction
         get() = error("Use Mapping.inlineClassMemberToStatic instead")
@@ -280,6 +281,7 @@ class JsIrBackendContext(
 
     val newThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
     val extendThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("extendThrowable"))
+    val setPropertiesToThrowableInstanceSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("setPropertiesToThrowableInstance"))
 
     val throwISEsymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
     val throwIAEsymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_IAE"))).single())
