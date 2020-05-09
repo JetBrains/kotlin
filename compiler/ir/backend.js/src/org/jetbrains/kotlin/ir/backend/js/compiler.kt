@@ -45,7 +45,8 @@ fun compile(
     exportedDeclarations: Set<FqName> = emptySet(),
     generateFullJs: Boolean = true,
     generateDceJs: Boolean = false,
-    dceDriven: Boolean = false
+    dceDriven: Boolean = false,
+    es6mode: Boolean = false
 ): CompilerResult {
     stageController = object : StageController {}
 
@@ -56,7 +57,7 @@ fun compile(
 
     val mainFunction = JsMainFunctionDetector.getMainFunctionOrNull(moduleFragment)
 
-    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)
+    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration, es6mode = es6mode)
 
     // Load declarations referenced during `context` initialization
     val irProviders = listOf(deserializer)
