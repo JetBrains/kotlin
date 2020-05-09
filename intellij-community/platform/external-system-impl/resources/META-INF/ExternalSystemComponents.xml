@@ -1,0 +1,8 @@
+<idea-plugin>
+  <project-components>
+    <component>
+      <interface-class>com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManager</interface-class>
+      <implementation-class>com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManagerImpl</implementation-class>
+    </component>
+  </project-components>
+</idea-plugin>

@@ -1,0 +1,6 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="ExternalSystemExtensionPoints.xml"/>
+  <xi:include href="ExternalSystemExtensions.xml"/>
+  <xi:include href="ExternalSystemActions.xml"/>
+  <xi:include href="ExternalSystemComponents.xml"/>
+</idea-plugin>
