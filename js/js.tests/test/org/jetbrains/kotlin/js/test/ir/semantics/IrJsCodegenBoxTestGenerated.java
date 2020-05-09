@@ -20805,6 +20805,34 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     runTest("compiler/testData/codegen/box/ranges/unsigned/literal/simpleSteppedRange.kt");
                 }
             }
+
+            @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NullableLoopParameter extends AbstractIrJsCodegenBoxTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInNullableLoopParameter() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                }
+
+                @TestMetadata("progressionExpression.kt")
+                public void testProgressionExpression() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter/progressionExpression.kt");
+                }
+
+                @TestMetadata("rangeExpression.kt")
+                public void testRangeExpression() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter/rangeExpression.kt");
+                }
+
+                @TestMetadata("rangeLiteral.kt")
+                public void testRangeLiteral() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter/rangeLiteral.kt");
+                }
+            }
         }
     }
 
