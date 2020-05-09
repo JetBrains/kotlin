@@ -78,51 +78,48 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
         get() = field.deepCopyWithSymbols()
 
     protected val symbols = context.ir.symbols
-    private val elementType: IrType
 
     init {
         with(builder) {
-            elementType = headerInfo.progressionType.elementType(symbols)
+            with(headerInfo.progressionType) {
+                // For this loop:
+                //
+                //   for (i in first()..last() step step())
+                //
+                // We need to cast first(), last(). and step() to conform to the progression type so
+                // that operations on the induction variable within the loop are more efficient.
+                //
+                // In the above example, if first() is a Long and last() is an Int, this creates a
+                // LongProgression so last() should be cast to a Long.
+                inductionVariable =
+                    scope.createTmpVariable(
+                        headerInfo.first.asElementType(),
+                        nameHint = "inductionVariable",
+                        isMutable = true,
+                        irType = elementClass.defaultType
+                    )
 
-            // For this loop:
-            //
-            //   for (i in first()..last() step step())
-            //
-            // We need to cast first(), last(). and step() to conform to the progression type so
-            // that operations on the induction variable within the loop are more efficient.
-            //
-            // In the above example, if first() is a Long and last() is an Int, this creates a
-            // LongProgression so last() should be cast to a Long.
-            inductionVariable = scope.createTmpVariable(
-                headerInfo.progressionType.castElementIfNecessary(headerInfo.first, context),
-                nameHint = "inductionVariable",
-                isMutable = true
-            )
+                // Due to features of PSI2IR we can obtain nullable arguments here while actually
+                // they are non-nullable (the frontend takes care about this). So we need to cast
+                // them to non-nullable.
+                // TODO: Confirm if casting to non-nullable is still necessary
+                val last = headerInfo.last.asElementType()
 
-            // Due to features of PSI2IR we can obtain nullable arguments here while actually
-            // they are non-nullable (the frontend takes care about this). So we need to cast
-            // them to non-nullable.
-            // TODO: Confirm if casting to non-nullable is still necessary
-            val last = ensureNotNullable(headerInfo.progressionType.castElementIfNecessary(headerInfo.last, context))
+                lastVariableIfCanCacheLast = if (headerInfo.canCacheLast) {
+                    scope.createTmpVariable(last, nameHint = "last")
+                } else null
 
-            lastVariableIfCanCacheLast = if (headerInfo.canCacheLast) {
-                scope.createTmpVariable(
-                    last,
-                    nameHint = "last"
-                )
-            } else null
+                lastExpression = if (headerInfo.canCacheLast) irGet(lastVariableIfCanCacheLast!!) else last
 
-            lastExpression = if (headerInfo.canCacheLast) irGet(lastVariableIfCanCacheLast!!) else last
-
-            val stepType = headerInfo.progressionType.stepType(context.irBuiltIns)
-            val (tmpStepVar, tmpStepExpression) =
-                createTemporaryVariableIfNecessary(
-                    ensureNotNullable(headerInfo.progressionType.castStepIfNecessary(headerInfo.step, context)),
-                    nameHint = "step",
-                    irType = stepType
-                )
-            stepVariable = tmpStepVar
-            stepExpression = tmpStepExpression
+                val (tmpStepVar, tmpStepExpression) =
+                    createTemporaryVariableIfNecessary(
+                        ensureNotNullable(headerInfo.step.asStepType()),
+                        nameHint = "step",
+                        irType = stepClass.defaultType
+                    )
+                stepVariable = tmpStepVar
+                stepExpression = tmpStepExpression
+            }
         }
     }
 
@@ -135,112 +132,117 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
 
     /** Statement used to increment the induction variable. */
     protected fun incrementInductionVariable(builder: DeclarationIrBuilder): IrStatement = with(builder) {
-        // inductionVariable = inductionVariable + step
-        // NOTE: We cannot use `stepExpression.type` to match the value parameter type because it may be of type `Nothing`.
-        // This happens in the case of an illegal step where the "step" is actually a `throw IllegalArgumentException(...)`.
-        val stepType = headerInfo.progressionType.stepType(context.irBuiltIns)
-        val plusFun = elementType.getClass()!!.functions.single {
-            it.name == OperatorNameConventions.PLUS &&
-                    it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type == stepType
-        }
-        irSetVar(
-            inductionVariable.symbol, irCallOp(
-                plusFun.symbol, plusFun.returnType,
-                irGet(inductionVariable),
-                stepExpression
+        with(headerInfo.progressionType) {
+            // inductionVariable = inductionVariable + step
+            // NOTE: We cannot use `stepExpression.type` to match the value parameter type because it may be of type `Nothing`.
+            // This happens in the case of an illegal step where the "step" is actually a `throw IllegalArgumentException(...)`.
+            val stepType = stepClass.defaultType
+            val plusFun = elementClass.defaultType.getClass()!!.functions.single {
+                it.name == OperatorNameConventions.PLUS &&
+                        it.valueParameters.size == 1 &&
+                        it.valueParameters[0].type == stepType
+            }
+            irSetVar(
+                inductionVariable.symbol, irCallOp(
+                    plusFun.symbol, plusFun.returnType,
+                    irGet(inductionVariable),
+                    stepExpression
+                )
             )
-        )
+        }
     }
 
-    protected fun buildLoopCondition(builder: DeclarationIrBuilder): IrExpression =
+    protected fun buildLoopCondition(builder: DeclarationIrBuilder): IrExpression {
         with(builder) {
-            val builtIns = context.irBuiltIns
-            val progressionType = headerInfo.progressionType
-            val progressionCompareType = progressionType.compareType(symbols)
+            with(headerInfo.progressionType) {
+                val builtIns = context.irBuiltIns
 
-            // `compareTo` must be used for UInt/ULong; they don't have intrinsic comparison operators.
-            val intCompFun = if (isLastInclusive) {
-                builtIns.lessOrEqualFunByOperandType.getValue(builtIns.intClass)
-            } else {
-                builtIns.lessFunByOperandType.getValue(builtIns.intClass)
-            }
-            val elementCompareToFun = progressionCompareType.getClass()!!.functions.single {
-                it.name == OperatorNameConventions.COMPARE_TO &&
-                        it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null &&
-                        it.valueParameters.size == 1 && it.valueParameters[0].type == progressionCompareType
-            }
-
-            val elementCompFun =
-                if (isLastInclusive) {
-                    builtIns.lessOrEqualFunByOperandType[progressionCompareType.classifierOrFail]
+                // Bounds are signed for unsigned progressions but bound comparisons should be done as unsigned, to ensure that the
+                // correct comparison function is used (`UInt/ULongCompare`). Also, `compareTo` must be used for UInt/ULong;
+                // they don't have intrinsic comparison operators.
+                val intCompFun = if (isLastInclusive) {
+                    builtIns.lessOrEqualFunByOperandType.getValue(builtIns.intClass)
                 } else {
-                    builtIns.lessFunByOperandType[progressionCompareType.classifierOrFail]
+                    builtIns.lessFunByOperandType.getValue(builtIns.intClass)
                 }
+                val unsignedCompareToFun = if (this is UnsignedProgressionType) {
+                    unsignedType.getClass()!!.functions.single {
+                        it.name == OperatorNameConventions.COMPARE_TO &&
+                                it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null &&
+                                it.valueParameters.size == 1 && it.valueParameters[0].type == unsignedType
+                    }
+                } else null
 
-            fun conditionForDecreasing(): IrExpression =
-                // last <= inductionVar (use `<` if last is exclusive)
-                if (progressionType.isUnsigned) {
-                    irCall(intCompFun).apply {
-                        putValueArgument(0, irCall(elementCompareToFun).apply {
-                            dispatchReceiver = progressionType.coerceToUnsigned(lastExpression, symbols)
-                            putValueArgument(0, progressionType.coerceToUnsigned(irGet(inductionVariable), symbols))
-                        })
-                        putValueArgument(1, irInt(0))
+                val elementCompFun =
+                    if (isLastInclusive) {
+                        builtIns.lessOrEqualFunByOperandType[elementClass.symbol]
+                    } else {
+                        builtIns.lessFunByOperandType[elementClass.symbol]
                     }
-                } else {
-                    irCall(elementCompFun!!).apply {
-                        putValueArgument(0, lastExpression)
-                        putValueArgument(1, irGet(inductionVariable))
-                    }
-                }
 
-            fun conditionForIncreasing(): IrExpression =
-                // inductionVar <= last (use `<` if last is exclusive)
-                if (progressionType.isUnsigned) {
-                    irCall(intCompFun).apply {
-                        putValueArgument(0, irCall(elementCompareToFun).apply {
-                            dispatchReceiver = progressionType.coerceToUnsigned(irGet(inductionVariable), symbols)
-                            putValueArgument(0, progressionType.coerceToUnsigned(lastExpression, symbols))
-                        })
-                        putValueArgument(1, irInt(0))
+                fun conditionForDecreasing(): IrExpression =
+                    // last <= inductionVar (use `<` if last is exclusive)
+                    if (this is UnsignedProgressionType) {
+                        irCall(intCompFun).apply {
+                            putValueArgument(0, irCall(unsignedCompareToFun!!).apply {
+                                dispatchReceiver = lastExpression.asUnsigned()
+                                putValueArgument(0, irGet(inductionVariable).asUnsigned())
+                            })
+                            putValueArgument(1, irInt(0))
+                        }
+                    } else {
+                        irCall(elementCompFun!!).apply {
+                            putValueArgument(0, lastExpression)
+                            putValueArgument(1, irGet(inductionVariable))
+                        }
                     }
-                } else {
-                    irCall(elementCompFun!!).apply {
-                        putValueArgument(0, irGet(inductionVariable))
-                        putValueArgument(1, lastExpression)
-                    }
-                }
 
-            // The default condition depends on the direction.
-            when (headerInfo.direction) {
-                ProgressionDirection.DECREASING -> conditionForDecreasing()
-                ProgressionDirection.INCREASING -> conditionForIncreasing()
-                ProgressionDirection.UNKNOWN -> {
-                    // If the direction is unknown, we check depending on the "step" value:
-                    //   // (use `<` if last is exclusive)
-                    //   (step > 0 && inductionVar <= last) || (step < 0 || last <= inductionVar)
-                    val stepTypeClassifier = progressionType.stepClassifier(builtIns)
-                    context.oror(
-                        context.andand(
-                            irCall(builtIns.greaterFunByOperandType.getValue(stepTypeClassifier)).apply {
-                                putValueArgument(0, stepExpression)
-                                putValueArgument(1, if (progressionType.isLong) irLong(0) else irInt(0))
-                            },
-                            conditionForIncreasing()
-                        ),
-                        context.andand(
-                            irCall(builtIns.lessFunByOperandType.getValue(stepTypeClassifier)).apply {
-                                putValueArgument(0, stepExpression)
-                                putValueArgument(1, if (progressionType.isLong) irLong(0) else irInt(0))
-                            },
-                            conditionForDecreasing()
+                fun conditionForIncreasing(): IrExpression =
+                    // inductionVar <= last (use `<` if last is exclusive)
+                    if (this is UnsignedProgressionType) {
+                        irCall(intCompFun).apply {
+                            putValueArgument(0, irCall(unsignedCompareToFun!!).apply {
+                                dispatchReceiver = irGet(inductionVariable).asUnsigned()
+                                putValueArgument(0, lastExpression.asUnsigned())
+                            })
+                            putValueArgument(1, irInt(0))
+                        }
+                    } else {
+                        irCall(elementCompFun!!).apply {
+                            putValueArgument(0, irGet(inductionVariable))
+                            putValueArgument(1, lastExpression)
+                        }
+                    }
+
+                // The default condition depends on the direction.
+                return when (headerInfo.direction) {
+                    ProgressionDirection.DECREASING -> conditionForDecreasing()
+                    ProgressionDirection.INCREASING -> conditionForIncreasing()
+                    ProgressionDirection.UNKNOWN -> {
+                        // If the direction is unknown, we check depending on the "step" value:
+                        //   // (use `<` if last is exclusive)
+                        //   (step > 0 && inductionVar <= last) || (step < 0 || last <= inductionVar)
+                        context.oror(
+                            context.andand(
+                                irCall(builtIns.greaterFunByOperandType.getValue(stepClass.symbol)).apply {
+                                    putValueArgument(0, stepExpression)
+                                    putValueArgument(1, zeroStepExpression())
+                                },
+                                conditionForIncreasing()
+                            ),
+                            context.andand(
+                                irCall(builtIns.lessFunByOperandType.getValue(stepClass.symbol)).apply {
+                                    putValueArgument(0, stepExpression)
+                                    putValueArgument(1, zeroStepExpression())
+                                },
+                                conditionForDecreasing()
+                            )
                         )
-                    )
+                    }
                 }
             }
-
         }
+    }
 }
 
 internal class ProgressionLoopHeader(
@@ -283,7 +285,14 @@ internal class ProgressionLoopHeader(
                     isMutable = true
                 )
             } else {
-                loopVariable?.initializer = headerInfo.progressionType.coerceToUnsigned(irGet(inductionVariable), symbols)
+                loopVariable?.initializer = irGet(inductionVariable).let {
+                    headerInfo.progressionType.run {
+                        if (this is UnsignedProgressionType) {
+                            // The induction variable is signed for unsigned progressions but the loop variable should be unsigned.
+                            it.asUnsigned()
+                        } else it
+                    }
+                }
                 loopVariable
             }
 
@@ -307,8 +316,16 @@ internal class ProgressionLoopHeader(
                 //     } while (loopVar != last)
                 //   }
                 IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
+                    val loopVariableExpression = irGet(loopVariable!!).let {
+                        headerInfo.progressionType.run {
+                            if (this is UnsignedProgressionType) {
+                                // The loop variable is signed but bounds are signed for unsigned progressions.
+                                it.asSigned()
+                            } else it
+                        }
+                    }
                     label = oldLoop.label
-                    condition = irNotEquals(headerInfo.progressionType.coerceToSigned(irGet(loopVariable!!), symbols), lastExpression)
+                    condition = irNotEquals(loopVariableExpression, lastExpression)
                     body = newBody
                 }
             } else {
