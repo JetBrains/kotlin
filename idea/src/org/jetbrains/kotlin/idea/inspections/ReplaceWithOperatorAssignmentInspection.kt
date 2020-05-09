@@ -50,7 +50,7 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
         if (!checkExpressionRepeat(left, right, bindingContext)) return false
 
         // now check that the resulting operator assignment will be resolved
-        val opAssign = buildOperatorAssignment(element)
+        val opAssign = buildOperatorAssignment(element) ?: return false
         opAssign.containingKtFile.doNotAnalyze = null //TODO: strange hack
         val newBindingContext = opAssign.analyzeAsReplacement(element, bindingContext)
         return newBindingContext.diagnostics.forElement(opAssign.operationReference).isEmpty()
@@ -119,15 +119,15 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
             operationToken == KtTokens.PERC
 
     override fun applyTo(element: KtBinaryExpression, project: Project, editor: Editor?) {
-        element.replace(buildOperatorAssignment(element))
+        val operatorAssignment = buildOperatorAssignment(element) ?: return
+        element.replace(operatorAssignment)
     }
 
-    private fun buildOperatorAssignment(element: KtBinaryExpression): KtBinaryExpression {
-        val replacement = buildOperatorAssignmentText(
-            element.left as KtNameReferenceExpression,
-            element.right as KtBinaryExpression,
-            ""
-        )
+    private fun buildOperatorAssignment(element: KtBinaryExpression): KtBinaryExpression? {
+        val variableExpression = element.left as? KtNameReferenceExpression ?: return null
+        val assignedExpression = element.right as? KtBinaryExpression ?: return null
+
+        val replacement = buildOperatorAssignmentText(variableExpression, assignedExpression, "")
         return KtPsiFactory(element).createExpression(replacement) as KtBinaryExpression
     }
 
