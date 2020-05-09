@@ -362,7 +362,13 @@ class EnumEntryInstancesBodyLowering(val context: JsIrBackendContext) : BodyLowe
             val enum = entryClass.parentAsClass
             if (enum.goodEnum) {
                 val entry = enum.declarations.filterIsInstance<IrEnumEntry>().find { it.correspondingClass === entryClass }!!
-                (irBody as IrBlockBody).statements.add(0, context.createIrBuilder(container.symbol).run {
+
+                //In ES6 using `this` before superCall is unavailable, so
+                //need to find superCall and put `instance = this` after it
+                val index = (irBody as IrBlockBody).statements
+                    .indexOfFirst { it is IrTypeOperatorCall && it.argument is IrDelegatingConstructorCall } + 1
+
+                (irBody as IrBlockBody).statements.add(index, context.createIrBuilder(container.symbol).run {
                     irSetField(null, entry.correspondingField!!, irGet(entryClass.thisReceiver!!))
                 })
             }
