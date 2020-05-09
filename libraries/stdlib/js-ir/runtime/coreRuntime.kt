@@ -99,6 +99,10 @@ internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
 
 internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?) {
     js("Error").call(this_)
+    setPropertiesToThrowableInstance(this_, message, cause)
+}
+
+internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, cause: Throwable?) {
     if (!hasOwnPrototypeProperty(this_, "message")) {
         this_.message = message ?: cause?.toString() ?: undefined
     }
