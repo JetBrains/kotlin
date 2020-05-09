@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// This test depends on line numbers.
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // WITH_COROUTINES
