@@ -96,7 +96,7 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
         default.updateScriptDefinitionsReferences()
 
         if (classpathRoots.customDefinitionsUsed) {
-            updater.ensureUpdateScheduled()
+            updater.invalidateAndCommit()
         }
     }
 
