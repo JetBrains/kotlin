@@ -7,7 +7,10 @@ import com.intellij.ide.AppLifecycleListener;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.startup.ServiceNotReadyException;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
-import com.intellij.openapi.application.*;
+import com.intellij.openapi.application.AppUIExecutor;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.impl.EditorHighlighterCache;
@@ -65,7 +68,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
@@ -86,7 +88,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   private static final ThreadLocal<VirtualFile> ourFileToBeIndexed = new ThreadLocal<>();
   private static final ThreadLocal<DumbModeAccessType> ourDumbModeAccessType = new ThreadLocal<>();
   public static final Logger LOG = Logger.getInstance(FileBasedIndexImpl.class);
-  static final String CORRUPTION_MARKER_NAME = "corruption.marker";
 
   private volatile RegisteredIndexes myRegisteredIndexes;
 
@@ -1708,15 +1709,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
   @Override
   public void invalidateCaches() {
-    File indexRoot = PathManager.getIndexRoot();
-    LOG.info("Requesting explicit indices invalidation");
-    try {
-      final File corruptionMarker = new File(indexRoot, CORRUPTION_MARKER_NAME);
-      //noinspection IOResourceOpenedButNotSafelyClosed
-      new FileOutputStream(corruptionMarker).close();
-    }
-    catch (Throwable ignore) {
-    }
+    CorruptionMarker.requestInvalidation();
   }
 
   @Override

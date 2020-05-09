@@ -18,7 +18,6 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl;
-import com.intellij.psi.stubs.SerializationManagerEx;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.IOUtil;
 import gnu.trove.THashSet;
@@ -90,21 +89,9 @@ class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitializ
 
     initAssociatedDataForExtensions();
 
-    File indexRoot = PathManager.getIndexRoot();
-
     PersistentIndicesConfiguration.loadConfiguration();
 
-    final File corruptionMarker = new File(indexRoot, FileBasedIndexImpl.CORRUPTION_MARKER_NAME);
-    currentVersionCorrupted = IndexInfrastructure.hasIndices() && corruptionMarker.exists();
-    if (currentVersionCorrupted) {
-      FileUtil.deleteWithRenaming(indexRoot);
-      indexRoot.mkdirs();
-      // serialization manager is initialized before and use removed index root so we need to reinitialize it
-      SerializationManagerEx.getInstanceEx().reinitializeNameStorage();
-      ID.reinitializeDiskStorage();
-      PersistentIndicesConfiguration.saveConfiguration();
-      FileUtil.delete(corruptionMarker);
-    }
+    currentVersionCorrupted = CorruptionMarker.invalidateIndexesIfNeeded();
 
     FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.initialize());
   }
