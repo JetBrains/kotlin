@@ -208,6 +208,8 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
         val argument = expression.getValueArgument(index)
         val result = argument?.accept(transformer, context)
         if (result == null) {
+            if (context.staticContext.backendContext.es6mode) return@mapTo JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(2))
+
             assert(expression is IrFunctionAccessExpression && expression.symbol.owner.isExternalOrInheritedFromExternal())
             JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
         } else
