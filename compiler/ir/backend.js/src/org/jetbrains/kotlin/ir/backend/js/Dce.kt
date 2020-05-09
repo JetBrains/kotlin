@@ -15,14 +15,13 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isAssociatedObjectAnnotatedAnnot
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 fun eliminateDeadDeclarations(
@@ -319,6 +318,22 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                             if (expression.getValueArgument(0)?.type?.classOrNull == context.irBuiltIns.stringClass) {
                                 toStringMethod.enqueue("intrinsic: jsPlus")
                             }
+                        }
+                        context.intrinsics.jsConstruct -> {
+                            val callType = expression.getTypeArgument(0)!!
+                            val constructor = callType.getClass()!!.primaryConstructor
+                            constructor!!.enqueue("ctor call from jsConstruct-intrinsic")
+                        }
+                        context.intrinsics.es6DefaultType -> {
+                            //same as jsClass
+                            val ref = expression.getTypeArgument(0)!!.classifierOrFail.owner as IrDeclaration
+                            ref.enqueue("intrinsic: jsClass")
+                            referencedJsClasses += ref
+
+                            //Generate klass in `val currResultType = resultType || klass`
+                            val arg = expression.getTypeArgument(0)!!
+                            val klass = arg.getClass()
+                            constructedClasses.addIfNotNull(klass)
                         }
                     }
                 }

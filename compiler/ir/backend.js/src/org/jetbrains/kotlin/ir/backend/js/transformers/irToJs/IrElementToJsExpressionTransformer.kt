@@ -135,7 +135,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return JsBinaryOperation(JsBinaryOperator.ASG, thisRef, arguments.single())
         }
 
-        return JsInvocation(callFuncRef, listOf(thisRef) + arguments)
+        return if (context.staticContext.backendContext.es6mode) {
+            JsInvocation(JsNameRef("super"), arguments)
+        } else {
+            JsInvocation(callFuncRef, listOf(thisRef) + arguments)
+        }
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
