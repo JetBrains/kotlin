@@ -10,162 +10,12 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isUnsigned
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-
-/** Represents a progression type in the Kotlin stdlib. */
-internal enum class ProgressionType(
-    private val elementCastFunctionName: Name,
-    private val stepCastFunctionName: Name,
-    val isLong: Boolean = false,
-    val isUnsigned: Boolean = false
-) {
-    INT_PROGRESSION(Name.identifier("toInt"), Name.identifier("toInt")),
-    LONG_PROGRESSION(Name.identifier("toLong"), Name.identifier("toLong"), isLong = true),
-    CHAR_PROGRESSION(Name.identifier("toChar"), Name.identifier("toInt")),
-    UINT_PROGRESSION(Name.identifier("toInt"), Name.identifier("toInt"), isUnsigned = true),
-    ULONG_PROGRESSION(Name.identifier("toLong"), Name.identifier("toLong"), isLong = true, isUnsigned = true);
-
-    /** Returns the [IrType] of the `first`/`last` properties and elements in the progression. */
-    fun elementType(symbols: Symbols<CommonBackendContext>): IrType = when (this) {
-        INT_PROGRESSION, UINT_PROGRESSION -> symbols.int
-        LONG_PROGRESSION, ULONG_PROGRESSION -> symbols.long
-        CHAR_PROGRESSION -> symbols.char
-    }.defaultType
-
-    /** Returns the [IrClassSymbol] of the `first`/`last` properties and elements in the progression. */
-    fun elementClassifier(symbols: Symbols<CommonBackendContext>): IrClassSymbol = when (this) {
-        INT_PROGRESSION -> symbols.int
-        LONG_PROGRESSION -> symbols.long
-        CHAR_PROGRESSION -> symbols.char
-        UINT_PROGRESSION -> symbols.uInt!!
-        ULONG_PROGRESSION -> symbols.uLong!!
-    }
-
-    /** Returns the [IrType] of the `step` property in the progression. */
-    fun stepType(builtIns: IrBuiltIns): IrType = when (this) {
-        INT_PROGRESSION, CHAR_PROGRESSION, UINT_PROGRESSION -> builtIns.intType
-        LONG_PROGRESSION, ULONG_PROGRESSION -> builtIns.longType
-    }
-
-    /** Returns the [IrClassSymbol] of the `step` property type constructor in the progression. */
-    fun stepClassifier(builtIns: IrBuiltIns): IrClassSymbol = when(this) {
-        INT_PROGRESSION, CHAR_PROGRESSION , UINT_PROGRESSION-> builtIns.intClass
-        LONG_PROGRESSION, ULONG_PROGRESSION -> builtIns.longClass
-    }
-
-    /** Returns the [IrType] used in loop conditions (`buildLoopCondition()`) and when calling `getProgressionLastElement()`. */
-    fun compareType(symbols: Symbols<CommonBackendContext>): IrType = when (this) {
-        INT_PROGRESSION -> symbols.int
-        LONG_PROGRESSION -> symbols.long
-        CHAR_PROGRESSION -> symbols.char
-        UINT_PROGRESSION -> symbols.uInt!!
-        ULONG_PROGRESSION -> symbols.uLong!!
-    }.defaultType
-
-    fun castElementIfNecessary(element: IrExpression, context: CommonBackendContext) =
-        element.castIfNecessary(elementType(context.ir.symbols), elementCastFunctionName)
-
-    fun castStepIfNecessary(step: IrExpression, context: CommonBackendContext) =
-        step.castIfNecessary(stepType(context.irBuiltIns), stepCastFunctionName)
-
-    private fun IrExpression.castIfNecessary(targetType: IrType, numberCastFunctionName: Name) =
-        // This expression's type could be Nothing from an exception throw.
-        if (type == targetType || type.isNothing()) {
-            this
-        } else {
-            val castFun = type.getClass()!!.functions.single {
-                it.name == numberCastFunctionName &&
-                        it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
-            }
-            IrCallImpl(startOffset, endOffset, castFun.returnType, castFun.symbol)
-                .apply { dispatchReceiver = this@castIfNecessary }
-        }
-
-    fun coerceToUnsigned(value: IrExpression, symbols: Symbols<CommonBackendContext>): IrExpression {
-        if (!isUnsigned || value.type.isUnsigned()) return value
-
-        val unsafeCoerceIntrinsic = symbols.unsafeCoerceIntrinsic
-        return if (unsafeCoerceIntrinsic != null) {
-            val from = when (this) {
-                UINT_PROGRESSION -> symbols.int.defaultType
-                ULONG_PROGRESSION -> symbols.long.defaultType
-                else -> error("Unexpected progression type")
-            }
-            val to = when (this) {
-                UINT_PROGRESSION -> symbols.uInt!!.defaultType
-                ULONG_PROGRESSION -> symbols.uLong!!.defaultType
-                else -> error("Unexpected progression type")
-            }
-            IrCallImpl(value.startOffset, value.endOffset, to, unsafeCoerceIntrinsic).apply {
-                putTypeArgument(0, from)
-                putTypeArgument(1, to)
-                putValueArgument(0, value)
-            }
-        } else {
-            val conversionFunctionMap = when (this) {
-                UINT_PROGRESSION -> symbols.toUIntByExtensionReceiver
-                ULONG_PROGRESSION -> symbols.toULongByExtensionReceiver
-                else -> error("Unexpected progression type")
-            }
-            val from = when (this) {
-                UINT_PROGRESSION -> symbols.int.defaultType
-                ULONG_PROGRESSION -> symbols.long.defaultType
-                else -> error("Unexpected progression type")
-            }.toKotlinType()
-            val castFun = conversionFunctionMap.getValue(from)
-            IrCallImpl(value.startOffset, value.endOffset, castFun.owner.returnType, castFun).apply {
-                extensionReceiver = value
-            }
-        }
-    }
-
-    fun coerceToSigned(value: IrExpression, symbols: Symbols<CommonBackendContext>): IrExpression {
-        if (!isUnsigned || !value.type.isUnsigned()) return value
-
-        val unsafeCoerceIntrinsic = symbols.unsafeCoerceIntrinsic
-        return if (unsafeCoerceIntrinsic != null) {
-            val from = when (this) {
-                UINT_PROGRESSION -> symbols.uInt!!.defaultType
-                ULONG_PROGRESSION -> symbols.uLong!!.defaultType
-                else -> error("Unexpected progression type")
-            }
-            val to = when (this) {
-                UINT_PROGRESSION -> symbols.int.defaultType
-                ULONG_PROGRESSION -> symbols.long.defaultType
-                else -> error("Unexpected progression type")
-            }
-            IrCallImpl(value.startOffset, value.endOffset, to, unsafeCoerceIntrinsic).apply {
-                putTypeArgument(0, from)
-                putTypeArgument(1, to)
-                putValueArgument(0, value)
-            }
-        } else {
-            castElementIfNecessary(value, symbols.context)
-        }
-    }
-
-    companion object {
-        fun fromIrType(irType: IrType, symbols: Symbols<CommonBackendContext>): ProgressionType? = when {
-            irType.isSubtypeOfClass(symbols.charProgression) -> CHAR_PROGRESSION
-            irType.isSubtypeOfClass(symbols.intProgression) -> INT_PROGRESSION
-            irType.isSubtypeOfClass(symbols.longProgression) -> LONG_PROGRESSION
-            symbols.uIntProgression != null && irType.isSubtypeOfClass(symbols.uIntProgression) -> UINT_PROGRESSION
-            symbols.uLongProgression != null && irType.isSubtypeOfClass(symbols.uLongProgression) -> ULONG_PROGRESSION
-            else -> null
-        }
-    }
-}
 
 internal enum class ProgressionDirection {
     DECREASING {
@@ -252,24 +102,16 @@ internal class ProgressionHeaderInfo(
         //   - `0..someLast()` CAN overflow (we don't know the direction)
         //   - `someProgression()` CAN overflow (we don't know the direction)
 
-        if (progressionType.isUnsigned) {
+        if (progressionType is UnsignedProgressionType) {
             // "step" is still signed for unsigned progressions.
             val lastValueAsULong = last.constLongValue?.toULong() ?: return@lazy true  // If "last" is not a const Number or Char.
             when (direction) {
                 ProgressionDirection.DECREASING -> {
-                    val constLimitAsULong = when (progressionType) {
-                        ProgressionType.UINT_PROGRESSION -> UInt.MIN_VALUE.toULong()
-                        ProgressionType.ULONG_PROGRESSION -> ULong.MIN_VALUE
-                        else -> error("Unexpected progression type")
-                    }
+                    val constLimitAsULong = progressionType.minValueAsLong.toULong()
                     lastValueAsULong < (constLimitAsULong - stepValueAsLong.toULong())
                 }
                 ProgressionDirection.INCREASING -> {
-                    val constLimitAsULong = when (progressionType) {
-                        ProgressionType.UINT_PROGRESSION -> UInt.MAX_VALUE.toULong()
-                        ProgressionType.ULONG_PROGRESSION -> ULong.MAX_VALUE
-                        else -> error("Unexpected progression type")
-                    }
+                    val constLimitAsULong = progressionType.maxValueAsLong.toULong()
                     lastValueAsULong > (constLimitAsULong - stepValueAsLong.toULong())
                 }
                 else -> error("Unexpected progression direction")
@@ -278,21 +120,11 @@ internal class ProgressionHeaderInfo(
             val lastValueAsLong = last.constLongValue ?: return@lazy true  // If "last" is not a const Number or Char.
             when (direction) {
                 ProgressionDirection.DECREASING -> {
-                    val constLimitAsLong = when (progressionType) {
-                        ProgressionType.INT_PROGRESSION -> Int.MIN_VALUE.toLong()
-                        ProgressionType.CHAR_PROGRESSION -> Char.MIN_VALUE.toLong()
-                        ProgressionType.LONG_PROGRESSION -> Long.MIN_VALUE
-                        else -> error("Unexpected progression type")
-                    }
+                    val constLimitAsLong = progressionType.minValueAsLong
                     lastValueAsLong < (constLimitAsLong - stepValueAsLong)
                 }
                 ProgressionDirection.INCREASING -> {
-                    val constLimitAsLong = when (progressionType) {
-                        ProgressionType.INT_PROGRESSION -> Int.MAX_VALUE.toLong()
-                        ProgressionType.CHAR_PROGRESSION -> Char.MAX_VALUE.toLong()
-                        ProgressionType.LONG_PROGRESSION -> Long.MAX_VALUE
-                        else -> error("Unexpected progression type")
-                    }
+                    val constLimitAsLong = progressionType.maxValueAsLong
                     lastValueAsLong > (constLimitAsLong - stepValueAsLong)
                 }
                 else -> error("Unexpected progression direction")
@@ -317,6 +149,7 @@ internal class ProgressionHeaderInfo(
  * The internal induction variable used is an Int.
  */
 internal class IndexedGetHeaderInfo(
+    symbols: Symbols<CommonBackendContext>,
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,
@@ -324,7 +157,7 @@ internal class IndexedGetHeaderInfo(
     val objectVariable: IrVariable,
     val expressionHandler: IndexedGetIterationHandler
 ) : NumericHeaderInfo(
-    ProgressionType.INT_PROGRESSION,
+    IntProgressionType(symbols),
     first,
     last,
     step,
@@ -435,6 +268,7 @@ internal abstract class HeaderInfoBuilder(context: CommonBackendContext, private
     override fun visitElement(element: IrElement, data: IrCall?): HeaderInfo? = null
 
     /** Builds a [HeaderInfo] for iterable expressions that are calls (e.g., `.reversed()`, `.indices`. */
+    @ExperimentalUnsignedTypes
     override fun visitCall(iterable: IrCall, iteratorCall: IrCall?): HeaderInfo? {
         // Return the HeaderInfo from the first successful match.
         // First, try to match a `reversed()` or `withIndex()` call.

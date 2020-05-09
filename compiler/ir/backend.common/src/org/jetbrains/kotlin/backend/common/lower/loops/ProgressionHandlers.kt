@@ -88,100 +88,94 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
     @ExperimentalUnsignedTypes
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
-            // `A until B` is essentially the same as `A .. (B-1)`. However, B could be MIN_VALUE and hence `(B-1)` could underflow.
-            // If B is MIN_VALUE, then `A until B` is an empty range. We handle this special case be adding an additional "not empty"
-            // condition in the lowered for-loop. Therefore the following for-loop:
-            //
-            //   for (i in A until B) { // Loop body }
-            //
-            // is lowered into:
-            //
-            //   var inductionVar = A
-            //   val last = B - 1
-            //   if (inductionVar <= last && B != MIN_VALUE) {
-            //     // Loop is not empty
-            //     do {
-            //       val i = inductionVar
-            //       inductionVar++
-            //       // Loop body
-            //     } while (inductionVar <= last)
-            //   }
-            //
-            // However, `B` may be an expression with side-effects that should only be evaluated once, and `A` may also have side-effects.
-            // They are evaluated once and in the correct order (`A` then `B`), the final lowered form is:
-            //
-            //   // Additional variables
-            //   val untilReceiverValue = A
-            //   val untilArg = B
-            //   // Standard form of loop over progression
-            //   var inductionVar = untilReceiverValue
-            //   val last = untilArg - 1
-            //   if (inductionVar <= last && untilArg != MIN_VALUE) {
-            //     // Loop is not empty
-            //     do {
-            //       val i = inductionVar
-            //       inductionVar++
-            //       // Loop body
-            //     } while (inductionVar <= last)
-            //   }
-            val receiverValue = expression.extensionReceiver!!
-            val untilArg = expression.getValueArgument(0)!!
+            with(data) {
+                // `A until B` is essentially the same as `A .. (B-1)`. However, B could be MIN_VALUE and hence `(B-1)` could underflow.
+                // If B is MIN_VALUE, then `A until B` is an empty range. We handle this special case be adding an additional "not empty"
+                // condition in the lowered for-loop. Therefore the following for-loop:
+                //
+                //   for (i in A until B) { // Loop body }
+                //
+                // is lowered into:
+                //
+                //   var inductionVar = A
+                //   val last = B - 1
+                //   if (inductionVar <= last && B != MIN_VALUE) {
+                //     // Loop is not empty
+                //     do {
+                //       val i = inductionVar
+                //       inductionVar++
+                //       // Loop body
+                //     } while (inductionVar <= last)
+                //   }
+                //
+                // However, `B` may be an expression with side-effects that should only be evaluated once, and `A` may also have
+                // side-effects. They are evaluated once and in the correct order (`A` then `B`), the final lowered form is:
+                //
+                //   // Additional variables
+                //   val untilReceiverValue = A
+                //   val untilArg = B
+                //   // Standard form of loop over progression
+                //   var inductionVar = untilReceiverValue
+                //   val last = untilArg - 1
+                //   if (inductionVar <= last && untilArg != MIN_VALUE) {
+                //     // Loop is not empty
+                //     do {
+                //       val i = inductionVar
+                //       inductionVar++
+                //       // Loop body
+                //     } while (inductionVar <= last)
+                //   }
+                val receiverValue = expression.extensionReceiver!!
+                val untilArg = expression.getValueArgument(0)!!
 
-            // Ensure that the argument conforms to the progression type before we decrement.
-            val untilArgCasted = data.castElementIfNecessary(untilArg, this@UntilHandler.context)
+                // Ensure that the argument conforms to the progression type before we decrement.
+                val untilArgCasted = untilArg.asElementType()
 
-            // To reduce local variable usage, we create and use temporary variables only if necessary.
-            var receiverValueVar: IrVariable? = null
-            var untilArgVar: IrVariable? = null
-            var additionalVariables = emptyList<IrVariable>()
-            if (untilArg.canHaveSideEffects) {
-                if (receiverValue.canHaveSideEffects) {
-                    receiverValueVar = scope.createTmpVariable(receiverValue, nameHint = "untilReceiverValue")
+                // To reduce local variable usage, we create and use temporary variables only if necessary.
+                var receiverValueVar: IrVariable? = null
+                var untilArgVar: IrVariable? = null
+                var additionalVariables = emptyList<IrVariable>()
+                if (untilArg.canHaveSideEffects) {
+                    if (receiverValue.canHaveSideEffects) {
+                        receiverValueVar = scope.createTmpVariable(receiverValue, nameHint = "untilReceiverValue")
+                    }
+                    untilArgVar = scope.createTmpVariable(untilArgCasted, nameHint = "untilArg")
+                    additionalVariables = listOfNotNull(receiverValueVar, untilArgVar)
                 }
-                untilArgVar = scope.createTmpVariable(untilArgCasted, nameHint = "untilArg")
-                additionalVariables = listOfNotNull(receiverValueVar, untilArgVar)
+
+                val first = if (receiverValueVar == null) receiverValue else irGet(receiverValueVar)
+                val untilArgExpression = if (untilArgVar == null) untilArgCasted else irGet(untilArgVar)
+                val last = untilArgExpression.decrement()
+
+                // Type of MIN_VALUE constant is signed even for unsigned progressions since the bounds are signed.
+                val additionalNotEmptyCondition = untilArg.constLongValue.let {
+                    when {
+                        it == null && isAdditionalNotEmptyConditionNeeded(receiverValue.type, untilArg.type) ->
+                            // Condition is needed and untilArg is non-const.
+                            // Build the additional "not empty" condition: `untilArg != MIN_VALUE`.
+                            // Make sure to copy untilArgExpression as it is also used in `last`.
+                            irNotEquals(untilArgExpression.deepCopyWithSymbols(), minValueExpression())
+                        it == data.minValueAsLong ->
+                            // Hardcode "false" as additional condition so that the progression is considered empty.
+                            // The entire lowered loop becomes a candidate for dead code elimination, depending on backend.
+                            irFalse()
+                        else ->
+                            // We know that untilArg != MIN_VALUE, so the additional condition is not necessary.
+                            null
+                    }
+                }
+
+                ProgressionHeaderInfo(
+                    data,
+                    first = first,
+                    last = last,
+                    step = irInt(1),
+                    canOverflow = false,
+                    additionalVariables = additionalVariables,
+                    additionalNotEmptyCondition = additionalNotEmptyCondition,
+                    direction = ProgressionDirection.INCREASING
+                )
             }
-
-            val first = if (receiverValueVar == null) receiverValue else irGet(receiverValueVar)
-            val untilArgExpression = if (untilArgVar == null) untilArgCasted else irGet(untilArgVar)
-            val last = untilArgExpression.decrement()
-
-            // Type of MIN_VALUE constant is signed even for unsigned progressions since the bounds are signed.
-            val (minValueAsLong, minValueIrConst) =
-                when (data) {
-                    ProgressionType.INT_PROGRESSION -> Pair(Int.MIN_VALUE.toLong(), irInt(Int.MIN_VALUE))
-                    ProgressionType.CHAR_PROGRESSION -> Pair(Char.MIN_VALUE.toLong(), irChar(Char.MIN_VALUE))
-                    ProgressionType.LONG_PROGRESSION -> Pair(Long.MIN_VALUE, irLong(Long.MIN_VALUE))
-                    ProgressionType.UINT_PROGRESSION -> Pair(UInt.MIN_VALUE.toLong(), irInt(UInt.MIN_VALUE.toInt()))
-                    ProgressionType.ULONG_PROGRESSION -> Pair(ULong.MIN_VALUE.toLong(), irLong(ULong.MIN_VALUE.toLong()))
-                }
-            val additionalNotEmptyCondition = untilArg.constLongValue.let {
-                when {
-                    it == null && isAdditionalNotEmptyConditionNeeded(receiverValue.type, untilArg.type) ->
-                        // Condition is needed and untilArg is non-const.
-                        // Build the additional "not empty" condition: `untilArg != MIN_VALUE`.
-                        // Make sure to copy untilArgExpression as it is also used in `last`.
-                        irNotEquals(untilArgExpression.deepCopyWithSymbols(), minValueIrConst)
-                    it == minValueAsLong ->
-                        // Hardcode "false" as additional condition so that the progression is considered empty.
-                        // The entire lowered loop becomes a candidate for dead code elimination, depending on backend.
-                        irFalse()
-                    else ->
-                        // We know that untilArg != MIN_VALUE, so the additional condition is not necessary.
-                        null
-                }
-            }
-
-            ProgressionHeaderInfo(
-                data,
-                first = first,
-                last = last,
-                step = irInt(1),
-                canOverflow = false,
-                additionalVariables = additionalVariables,
-                additionalNotEmptyCondition = additionalNotEmptyCondition,
-                direction = ProgressionDirection.INCREASING
-            )
         }
 
     private fun isAdditionalNotEmptyConditionNeeded(receiverType: IrType, argType: IrType): Boolean {
@@ -270,9 +264,9 @@ internal class StepHandler(
             //   if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
             //
             // We insert this check in the lowered form only if necessary.
-            val stepType = data.stepType(context.irBuiltIns)
-            val stepGreaterFun = context.irBuiltIns.greaterFunByOperandType[data.stepClassifier(context.irBuiltIns)]!!
-            val zeroStep = if (data.isLong) irLong(0) else irInt(0)
+            val stepType = data.stepClass.defaultType
+            val stepGreaterFun = context.irBuiltIns.greaterFunByOperandType.getValue(data.stepClass.symbol)
+            val zeroStep = data.run { zeroStepExpression() }
             val throwIllegalStepExceptionCall = {
                 irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
                     val exceptionMessage = irConcat()
@@ -477,44 +471,25 @@ internal class StepHandler(
         //   - getProgressionLastElement(Long, Long, Long): Long      // Used by LongProgression
         //   - getProgressionLastElement(UInt, UInt, Int): UInt       // Used by UIntProgression (uses Int step)
         //   - getProgressionLastElement(ULong, ULong, Long): ULong   // Used by ULongProgression (uses Long step)
-        //
-        // We make sure to retrieve the correct symbol and use the correct argument types.
-        return with(progressionType) {
-            val returnTypeClassifier = if (progressionType.isUnsigned) {
-                progressionType.elementClassifier(symbols)
+        with(progressionType) {
+            val getProgressionLastElementFun = getProgressionLastElementFunction
+                ?: error("No `getProgressionLastElement` for progression type ${progressionType::class.simpleName}")
+            return if (this is UnsignedProgressionType) {
+                // Bounds are signed for unsigned progressions but `getProgressionLastElement` expects unsigned.
+                // The return value is finally converted back to signed since it will be assigned back to `last`.
+                irCall(getProgressionLastElementFun).apply {
+                    putValueArgument(0, first.deepCopyWithSymbols().asElementType().asUnsigned())
+                    putValueArgument(1, last.deepCopyWithSymbols().asElementType().asUnsigned())
+                    putValueArgument(2, step.deepCopyWithSymbols().asStepType())
+                }.asSigned()
             } else {
-                progressionType.stepClassifier(context.irBuiltIns)
-            }
-            val getProgressionLastElementFun = symbols.getProgressionLastElementByReturnType[returnTypeClassifier]
-                ?: throw IllegalArgumentException("No `getProgressionLastElement` for return type ${returnTypeClassifier.defaultType}")
-            val call = irCall(getProgressionLastElementFun).apply {
-                if (isUnsigned) {
-                    putValueArgument(
-                        0,
-                        coerceToUnsigned(
-                            castElementIfNecessary(first.deepCopyWithSymbols(), this@StepHandler.context),
-                            symbols
-                        )
-                    )
-                    putValueArgument(
-                        1,
-                        coerceToUnsigned(
-                            castElementIfNecessary(last.deepCopyWithSymbols(), this@StepHandler.context),
-                            symbols
-                        )
-                    )
-                } else {
-                    putValueArgument(0, castStepIfNecessary(first.deepCopyWithSymbols(), this@StepHandler.context))
-                    putValueArgument(1, castStepIfNecessary(last.deepCopyWithSymbols(), this@StepHandler.context))
+                irCall(getProgressionLastElementFun).apply {
+                    // Step type is used for casting because it works for all signed progressions. In particular,
+                    // getProgressionLastElement(Int, Int, Int) is called for CharProgression, which uses an Int step.
+                    putValueArgument(0, first.deepCopyWithSymbols().asStepType())
+                    putValueArgument(1, last.deepCopyWithSymbols().asStepType())
+                    putValueArgument(2, step.deepCopyWithSymbols().asStepType())
                 }
-                putValueArgument(2, castStepIfNecessary(step.deepCopyWithSymbols(), this@StepHandler.context))
-            }
-
-            if (isUnsigned) {
-                // Bounds are signed for unsigned progressions.
-                coerceToSigned(call, symbols)
-            } else {
-                call
             }
         }
     }
@@ -608,8 +583,10 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
 
     private val symbols = context.ir.symbols
 
+    @ExperimentalUnsignedTypes
     override fun matchIterable(expression: IrExpression) = ProgressionType.fromIrType(expression.type, symbols) != null
 
+    @ExperimentalUnsignedTypes
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Directly use the `first/last/step` properties of the progression.
@@ -666,6 +643,7 @@ internal abstract class IndexedGetIterationHandler(
             }
 
             IndexedGetHeaderInfo(
+                this@IndexedGetIterationHandler.context.ir.symbols,
                 first = irInt(0),
                 last = last,
                 step = irInt(1),
