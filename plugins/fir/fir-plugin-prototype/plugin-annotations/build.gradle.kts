@@ -9,5 +9,4 @@ sourceSets {
     "test" { none() }
 }
 
-publish()
 runtimeJar()
