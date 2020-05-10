@@ -137,7 +137,7 @@ object RegexReplace : IntrinsicBase() {
 object EnumHashCode : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
-        return fqName.endsWith(".hashCode") && irFunction.parentAsClass.isEnumClass
+        return fqName == "kotlin.Enum.hashCode"
     }
 
     override suspend fun evaluate(

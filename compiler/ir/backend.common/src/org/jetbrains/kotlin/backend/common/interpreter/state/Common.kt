@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.state
 
+import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isInterface
 
 class Common private constructor(
@@ -42,10 +44,11 @@ class Common private constructor(
         return owner
     }
 
-    fun getToStringFunction(): IrFunctionImpl {
+    fun getToStringFunction(): IrFunction {
         return irClass.declarations.filterIsInstance<IrFunction>()
             .filter { it.descriptor.name.asString() == "toString" }
-            .first { it.descriptor.valueParameters.isEmpty() } as IrFunctionImpl
+            .first { it.descriptor.valueParameters.isEmpty() }
+            .let { getOverridden(it as IrSimpleFunction, this) }
     }
 
     override fun copy(): State {

@@ -12,20 +12,15 @@ import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // main purpose is to get receiver from constructor call
@@ -50,7 +45,7 @@ fun IrFunctionAccessExpression.getBody(): IrBody? {
 }
 
 fun DeclarationDescriptor.equalTo(other: DeclarationDescriptor): Boolean {
-    return this.isSubtypeOf(other) || this.hasSameNameAs(other) || this == other
+    return this.isEqualByReceiverTo(other) || this.hasSameNameAs(other) || this == other
 }
 
 private fun WrappedReceiverParameterDescriptor.isEqualTo(other: DeclarationDescriptor): Boolean {
@@ -60,14 +55,14 @@ private fun WrappedReceiverParameterDescriptor.isEqualTo(other: DeclarationDescr
     }
 }
 
-private fun DeclarationDescriptor.isSubtypeOf(other: DeclarationDescriptor): Boolean {
+private fun DeclarationDescriptor.isEqualByReceiverTo(other: DeclarationDescriptor): Boolean {
     if (this !is ReceiverParameterDescriptor || other !is ReceiverParameterDescriptor) return false
     return when {
         this is WrappedReceiverParameterDescriptor && other is WrappedReceiverParameterDescriptor ->
             this.isEqualTo(other) || other.isEqualTo(this)
         this is WrappedReceiverParameterDescriptor -> this.isEqualTo(other)
         other is WrappedReceiverParameterDescriptor -> other.isEqualTo(this)
-        this.value is ImplicitClassReceiver && other.value is ImplicitClassReceiver -> this.value.type.isSubtypeOf(other.value.type)
+        this.value is ImplicitClassReceiver && other.value is ImplicitClassReceiver -> this.value.type == other.value.type
         this.value is ExtensionReceiver && other.value is ExtensionReceiver -> this.value == other.value
         else -> false
     }
@@ -79,14 +74,6 @@ private fun DeclarationDescriptor.hasSameNameAs(other: DeclarationDescriptor): B
             (this is FunctionDescriptor && other is FunctionDescriptor && //this == other
                     this.valueParameters.map { it.type.toString() } == other.valueParameters.map { it.type.toString() } &&
                     this.name == other.name)
-}
-
-fun IrFunction.isAbstract(): Boolean {
-    return (this as? IrSimpleFunction)?.modality == Modality.ABSTRACT
-}
-
-fun IrFunction.isFakeOverridden(): Boolean {
-    return this.isFakeOverride
 }
 
 fun State.toIrExpression(expression: IrExpression): IrExpression {
@@ -177,7 +164,7 @@ fun getPrimitiveClass(fqName: String, asObject: Boolean = false): Class<*>? {
 }
 
 fun IrType.getFqName(): String? {
-    return this.classOrNull?.owner?.fqNameForIrSerialization?.asString()
+    return this.classOrNull?.owner?.fqNameWhenAvailable?.asString()
 }
 
 fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
@@ -202,13 +189,9 @@ fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
 }
 
 fun IrFunction.getLastOverridden(): IrFunction {
-    if (this !is IrFunctionImpl) return this
+    if (this !is IrSimpleFunction) return this
 
-    var function = this as IrFunctionImpl
-    while (function.overriddenSymbols.isNotEmpty()) {
-        function = function.overriddenSymbols.first().owner as IrFunctionImpl
-    }
-    return function
+    return generateSequence(listOf(this)) { it.firstOrNull()?.overriddenSymbols?.map { it.owner } }.flatten().last()
 }
 
 fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
@@ -222,18 +205,6 @@ fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
         "kotlin.DoubleArray" -> Primitive(DoubleArray(size) { i -> (this[i] as Number).toDouble() }, type)
         "kotlin.BooleanArray" -> Primitive(BooleanArray(size) { i -> this[i].toString().toBoolean() }, type)
         else -> Primitive<Array<*>>(this.toTypedArray(), type)
-    }
-}
-
-fun State?.getFunctionReceiver(superIrClass: IrClass?): State? {
-    return when {
-        superIrClass == null -> this
-        superIrClass.isInterface -> {
-            val interfaceState = Common(superIrClass)
-            (this!!.copy() as Complex).setSuperClassInstance(interfaceState)
-            interfaceState
-        }
-        else -> (this as Complex).superClass
     }
 }
 
@@ -268,4 +239,12 @@ fun State?.extractNonLocalDeclarations(): List<Variable> {
     this ?: return listOf()
     val state = this.takeIf { it !is Complex } ?: (this as Complex).getOriginal()
     return state.fields.filterNot { it.descriptor.containingDeclaration == state.irClass.descriptor }
+}
+
+fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State? {
+    if (this !is Complex) return this
+
+    val original: Complex? = this.getOriginal()
+    val other = irFunction.dispatchReceiverParameter?.descriptor ?: return this
+    return generateSequence(original) { it.superClass }.firstOrNull { it.irClass.descriptor.thisAsReceiverParameter.equalTo(other) } ?: this
 }

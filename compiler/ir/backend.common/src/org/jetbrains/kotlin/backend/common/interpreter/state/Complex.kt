@@ -6,12 +6,17 @@
 package org.jetbrains.kotlin.backend.common.interpreter.state
 
 import org.jetbrains.kotlin.backend.common.interpreter.equalTo
+import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
+import org.jetbrains.kotlin.backend.common.interpreter.getCorrectReceiverByFunction
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.isInterface
 
 abstract class Complex(
     override val irClass: IrClass, override val fields: MutableList<Variable>, var superClass: Complex?, var subClass: Complex?
@@ -47,9 +52,45 @@ abstract class Complex(
         }
     }
 
-    override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
+    private fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
         val propertyGetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }
         val functions = irClass.declarations.filterIsInstance<IrFunction>()
         return (propertyGetters + functions).singleOrNull { it.descriptor.equalTo(descriptor) }
+    }
+
+    private fun getThisOrSuperReceiver(superIrClass: IrClass?): Complex? {
+        return when {
+            superIrClass == null -> this.getOriginal()
+            superIrClass.isInterface -> {
+                val interfaceState = Common(superIrClass)
+                (this.copy() as Complex).setSuperClassInstance(interfaceState)
+                interfaceState
+            }
+            else -> this.superClass
+        }
+    }
+
+    protected fun getOverridden(owner: IrSimpleFunction, qualifier: State?): IrSimpleFunction {
+        if (!owner.isFakeOverride) return owner
+        if (qualifier == null || qualifier is ExceptionState || (qualifier as? Complex)?.superClass == null) {
+            return owner.getLastOverridden() as IrSimpleFunction
+        }
+
+        val overriddenOwner = owner.overriddenSymbols.single().owner
+        return when {
+            overriddenOwner.body != null -> overriddenOwner
+            else -> getOverridden(overriddenOwner, qualifier.superClass!!)
+        }
+    }
+
+    override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
+        val receiver = getThisOrSuperReceiver(expression.superQualifierSymbol?.owner) ?: return null
+
+        val irFunction = receiver.getIrFunction(expression.symbol.descriptor) ?: return null
+
+        return when (irFunction.body) {
+            null -> getOverridden(irFunction as IrSimpleFunction, this.getCorrectReceiverByFunction(irFunction))
+            else -> irFunction
+        }
     }
 }

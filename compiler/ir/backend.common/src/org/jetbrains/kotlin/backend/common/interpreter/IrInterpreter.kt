@@ -164,51 +164,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return IntrinsicEvaluator().evaluate(irFunction, stack) { this.interpret() }
     }
 
-    private suspend fun calculateAbstract(irFunction: IrFunction): ExecutionResult {
-        if (irFunction.body == null) {
-            val receiver = stack.getVariableState(irFunction.getReceiver()!!) as Complex
-            val instance = receiver.getOriginal()
-
-            val functionImplementation = instance.getIrFunction(irFunction.descriptor)
-            if (functionImplementation?.body == null) throw InterpreterMethodNotFoundException("Method \"${irFunction.name}\" wasn't implemented")
-
-            val valueArguments = mutableListOf<Variable>()
-            valueArguments.add(Variable(functionImplementation.getReceiver()!!, instance))
-            functionImplementation.valueParameters
-                .map { Variable(it.descriptor, stack.getVariableState(it.descriptor)) }
-                .forEach { valueArguments.add(it) }
-            return stack.newFrame(asSubFrame = true, initPool = valueArguments) {
-                functionImplementation.interpret()
-            }
-        }
-        return irFunction.body!!.interpret()
-    }
-
-    private suspend fun calculateOverridden(owner: IrSimpleFunction): ExecutionResult {
-        val variableDescriptor = owner.getReceiver()!!
-        val superQualifier = (stack.getVariableState(variableDescriptor) as? Complex)?.superClass
-        if (superQualifier == null) {
-            // superQualifier is null for exception state => find method in builtins
-            return calculateBuiltIns(owner.getLastOverridden() as IrSimpleFunction)
-        }
-        val overridden = owner.overriddenSymbols.single()
-
-        val valueArguments = mutableListOf<Variable>()
-        valueArguments.add(Variable(overridden.owner.getReceiver()!!, superQualifier))
-        owner.valueParameters.zip(overridden.owner.valueParameters)
-            .map { Variable(it.second.descriptor, stack.getVariableState(it.first.descriptor)) }
-            .forEach { valueArguments.add(it) }
-
-        return stack.newFrame(asSubFrame = true, initPool = valueArguments) {
-            val overriddenOwner = overridden.owner
-            return@newFrame when {
-                overriddenOwner.body != null -> overriddenOwner.interpret()
-                superQualifier.superClass == null -> calculateBuiltIns(overriddenOwner)
-                else -> calculateOverridden(overriddenOwner)
-            }
-        }
-    }
-
     private suspend fun calculateBuiltIns(irFunction: IrFunction): ExecutionResult {
         val descriptor = irFunction.descriptor
         val methodName = when (val property = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol) {
@@ -286,7 +241,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return stack.newFrame(asSubFrame = true, initPool = pool) {
             for (i in valueArguments.indices) {
                 (valueArguments[i] ?: defaultValues[i])?.interpret()?.check { return@newFrame it }
-                    ?: stack.pushReturnValue(listOf<Any?>().toPrimitiveStateArray(expression.getVarargType(i)!!))
+                    ?: stack.pushReturnValue(listOf<Any?>().toPrimitiveStateArray(expression.getVarargType(i)!!)) // if vararg is empty
 
                 with(Variable(valueParametersDescriptors[i], stack.popReturnValue())) {
                     stack.addVar(this)  //must add value argument in current stack because it can be used later as default argument
@@ -309,9 +264,9 @@ class IrInterpreter(irModule: IrModuleFragment) {
         rawExtensionReceiver?.interpret()?.check { return it }
         val extensionReceiver = rawExtensionReceiver?.let { stack.popReturnValue() }
 
-        // find correct ir function
-        val functionReceiver = dispatchReceiver?.getFunctionReceiver(expression.superQualifierSymbol?.owner)
-        val irFunction = functionReceiver?.getIrFunction(expression.symbol.descriptor) ?: expression.symbol.owner
+        // get correct ir function
+        val irFunction = dispatchReceiver?.getIrFunctionByIrCall(expression) ?: expression.symbol.owner
+        val functionReceiver = dispatchReceiver.getCorrectReceiverByFunction(irFunction)
 
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
         irFunction.getDispatchReceiver()?.let { functionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
@@ -332,9 +287,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             return@newFrame when {
                 dispatchReceiver is Wrapper && !isInlineOnly -> dispatchReceiver.getMethod(irFunction).invokeMethod(irFunction)
                 irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction)
-                irFunction.isAbstract() -> calculateAbstract(irFunction) //abstract check must be before fake overridden check
-                irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrSimpleFunction)
-                irFunction.body == null || dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction) // is Primitive because of js char and long
+                irFunction.body == null || dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction) // 'is Primitive' because of js char and long
                 else -> irFunction.interpret()
             }
         }
@@ -730,7 +683,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                     is Common -> {
                         val toStringFun = returnValue.getToStringFunction()
                         stack.newFrame(initPool = mutableListOf(Variable(toStringFun.getReceiver()!!, returnValue))) {
-                            toStringFun.body?.let { toStringFun.interpret() } ?: calculateOverridden(toStringFun)
+                            toStringFun.body?.let { toStringFun.interpret() } ?: calculateBuiltIns(toStringFun)
                         }.check { executionResult -> return executionResult }
                         stack.popReturnValue().asString()
                     }

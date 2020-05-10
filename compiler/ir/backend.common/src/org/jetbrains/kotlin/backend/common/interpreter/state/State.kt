@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.backend.common.interpreter.state
 import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrCall
 
 interface State {
     val fields: MutableList<Variable>
@@ -31,7 +31,7 @@ interface State {
      */
     fun copy(): State
 
-    fun getIrFunction(descriptor: FunctionDescriptor): IrFunction?
+    fun getIrFunctionByIrCall(expression: IrCall): IrFunction?
 }
 
 fun State.asInt() = (this as Primitive<*>).value as Int

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.backend.common.interpreter.state
 
 import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 
@@ -23,8 +23,8 @@ class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State 
         throw UnsupportedOperationException("Method setState is not supported in Lambda class")
     }
 
-    override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
-        return if (invokeDescriptor.equalTo(descriptor)) irFunction else null
+    override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
+        return if (invokeDescriptor.equalTo(expression.symbol.descriptor)) irFunction else null
     }
 
     override fun copy(): State {
