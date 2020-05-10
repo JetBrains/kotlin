@@ -72,7 +72,8 @@ class KotlinBuildPublishingPlugin @Inject constructor(
 
                     pom {
                         packaging = "jar"
-                        description.set(project.description)
+                        name.set(humanReadableName(project))
+                        description.set(project.description ?: humanReadableName(project))
                         url.set("https://kotlinlang.org/")
                         licenses {
                             license {
@@ -145,5 +146,8 @@ class KotlinBuildPublishingPlugin @Inject constructor(
 
         const val COMPILE_CONFIGURATION = "publishedCompile"
         const val RUNTIME_CONFIGURATION = "publishedRuntime"
+
+        fun humanReadableName(project: Project) =
+            project.name.split("-").joinToString(separator = " ") { it.capitalize() }
     }
 }
