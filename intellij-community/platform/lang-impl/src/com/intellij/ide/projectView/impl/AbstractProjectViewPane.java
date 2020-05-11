@@ -19,7 +19,9 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.extensions.ProjectExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -124,12 +126,35 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
     project.getMessageBus().connect(this).subscribe(ProblemListener.TOPIC, problemListener);
     Disposer.register(project, this);
 
-    TreeStructureProvider.EP.addChangeListener(project, this::rebuildCompletely, this);
-    ProjectViewNodeDecorator.EP.addChangeListener(project, this::rebuildCompletely, this);
+    TreeStructureProvider.EP.addExtensionPointListener(project, new ExtensionPointListener<TreeStructureProvider>() {
+      @Override
+      public void extensionAdded(@NotNull TreeStructureProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
+        rebuildCompletely(false);
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull TreeStructureProvider extension, @NotNull PluginDescriptor pluginDescriptor) {
+        rebuildCompletely(true);
+      }
+    }, this);
+    ProjectViewNodeDecorator.EP.addExtensionPointListener(project, new ExtensionPointListener<ProjectViewNodeDecorator>() {
+      @Override
+      public void extensionAdded(@NotNull ProjectViewNodeDecorator extension, @NotNull PluginDescriptor pluginDescriptor) {
+        rebuildCompletely(false);
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull ProjectViewNodeDecorator extension, @NotNull PluginDescriptor pluginDescriptor) {
+        rebuildCompletely(true);
+      }
+    }, this);
   }
 
-  private void rebuildCompletely() {
-    updateFromRoot(true).waitFor(5000);
+  private void rebuildCompletely(boolean wait) {
+    ActionCallback callback = updateFromRoot(true);
+    if (wait) {
+      callback.waitFor(5000);
+    }
     myReadTreeState.clear(); // cleanup cached tree paths
     JTree tree = getTree();
     if (tree != null) {
