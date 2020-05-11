@@ -25,8 +25,6 @@ FILE fqName:<root> fileName:/primaryConstructorParameterWithAnnotations.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      annotations:
-        Ann
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.Test.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER

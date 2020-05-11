@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -164,22 +165,31 @@ internal class ClassMemberGenerator(
         val initializer = property.initializer
         val delegate = property.delegate
         val propertyType = property.returnTypeRef.toIrType()
-        irProperty.initializeBackingField(descriptor, initializerExpression = initializer ?: delegate)
+        irProperty.initializeBackingField(property, descriptor, initializerExpression = initializer ?: delegate)
         irProperty.getter?.setPropertyAccessorContent(
-            property.getter, irProperty, propertyType, property.getter is FirDefaultPropertyGetter
+            property, property.getter, irProperty, propertyType, property.getter is FirDefaultPropertyGetter
         )
         if (property.isVar) {
             irProperty.setter?.setPropertyAccessorContent(
-                property.setter, irProperty, propertyType, property.setter is FirDefaultPropertySetter
+                property, property.setter, irProperty, propertyType, property.setter is FirDefaultPropertySetter
             )
         }
-        irProperty.annotations = property.annotations.mapNotNull {
-            it.accept(visitor, null) as? IrConstructorCall
-        }
+        irProperty.annotations +=
+            property.annotations
+                .filter {
+                    it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY
+                }
+                .mapNotNull {
+                    it.accept(visitor, null) as? IrConstructorCall
+                }
         return irProperty
     }
 
-    private fun IrProperty.initializeBackingField(descriptor: PropertyDescriptor, initializerExpression: FirExpression?) {
+    private fun IrProperty.initializeBackingField(
+        property: FirProperty,
+        descriptor: PropertyDescriptor,
+        initializerExpression: FirExpression?
+    ) {
         val irField = backingField ?: return
         conversionScope.withParent(irField) {
             declarationStorage.enterScope(descriptor)
@@ -189,9 +199,17 @@ internal class ClassMemberGenerator(
             }
             declarationStorage.leaveScope(descriptor)
         }
+        irField.annotations +=
+            property.annotations
+                .filter {
+                    it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
+                            it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+                }
+                .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
     }
 
     private fun IrFunction.setPropertyAccessorContent(
+        property: FirProperty,
         propertyAccessor: FirPropertyAccessor?,
         correspondingProperty: IrProperty,
         propertyType: IrType,
@@ -228,6 +246,29 @@ internal class ClassMemberGenerator(
                 }
             }
         }
+        if (isSetter) {
+            annotations +=
+                property.annotations
+                    .filter { it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER }
+                    .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
+            valueParameters.singleOrNull()?.annotations =
+                valueParameters.singleOrNull()?.annotations?.plus(
+                    property.annotations
+                        .filter { it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER }
+                        .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
+                )!!
+        } else {
+            annotations +=
+                property.annotations
+                    .filter { it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER }
+                    .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
+        }
+        extensionReceiverParameter?.annotations =
+            extensionReceiverParameter?.annotations?.plus(
+                property.annotations
+                    .filter { it.useSiteTarget == AnnotationUseSiteTarget.RECEIVER }
+                    .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
+            )!!
     }
 
     private fun IrFieldAccessExpression.setReceiver(declaration: IrDeclaration): IrFieldAccessExpression {

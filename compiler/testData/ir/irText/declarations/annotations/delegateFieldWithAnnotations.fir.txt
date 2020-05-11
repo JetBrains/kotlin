@@ -16,9 +16,9 @@ FILE fqName:<root> fileName:/delegateFieldWithAnnotations.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:test1 visibility:public modality:FINAL [delegated,val]
-    annotations:
-      Ann
     FIELD PROPERTY_DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]
+      annotations:
+        Ann
       EXPRESSION_BODY
         CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Int> origin=null
           <T>: kotlin.Int
