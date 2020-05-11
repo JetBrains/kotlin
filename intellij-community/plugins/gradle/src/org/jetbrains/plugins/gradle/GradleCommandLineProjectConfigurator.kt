@@ -33,7 +33,7 @@ class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigu
     Registry.get("external.system.auto.import.disabled").setValue(true)
   }
 
-  override fun configureProject(project: Project, scope: AnalysisScope, logger: CommandLineInspectionProgressReporter) {
+  override fun configureProject(project: Project, logger: CommandLineInspectionProgressReporter) {
     val basePath = project.basePath ?: return
 
     val state = GradleImportHintService.getInstance(project).state
