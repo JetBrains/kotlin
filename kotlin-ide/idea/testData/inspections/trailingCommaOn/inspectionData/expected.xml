@@ -1914,18 +1914,6 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
     <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Missing line break</description>
-    <highlighted_element>-</highlighted_element>
-    <offset>44</offset>
-    <length>1</length>
-  </problem>
-  <problem>
-    <file>WhenEntry.kt</file>
-    <line>15</line>
-    <module>testProject</module>
-    <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
-    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
     <highlighted_element>s</highlighted_element>
     <offset>20</offset>
@@ -1986,33 +1974,9 @@
     <package>light_idea_test_case</package>
     <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
     <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Missing line break</description>
-    <highlighted_element>-</highlighted_element>
-    <offset>15</offset>
-    <length>1</length>
-  </problem>
-  <problem>
-    <file>WhenEntry.kt</file>
-    <line>54</line>
-    <module>testProject</module>
-    <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
-    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing trailing comma</description>
     <highlighted_element>3</highlighted_element>
     <offset>8</offset>
-    <length>1</length>
-  </problem>
-  <problem>
-    <file>WhenEntry.kt</file>
-    <line>62</line>
-    <module>testProject</module>
-    <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="WhenEntry.kt" />
-    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
-    <description>Missing line break</description>
-    <highlighted_element>-</highlighted_element>
-    <offset>15</offset>
     <length>1</length>
   </problem>
   <problem>
