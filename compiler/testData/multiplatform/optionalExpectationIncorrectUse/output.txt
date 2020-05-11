@@ -16,6 +16,9 @@ annotation class InOtherAnnotation(val a: A)
 compiler/testData/multiplatform/optionalExpectationIncorrectUse/common.kt:19:20: error: declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry
 @InOtherAnnotation(A())
                    ^
+compiler/testData/multiplatform/optionalExpectationIncorrectUse/common.kt:25:5: error: '@OptionalExpectation' cannot be used on a nested class
+    @OptionalExpectation
+    ^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
@@ -38,6 +41,9 @@ annotation class InOtherAnnotation(val a: A)
 compiler/testData/multiplatform/optionalExpectationIncorrectUse/common.kt:19:20: error: declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry
 @InOtherAnnotation(A())
                    ^
+compiler/testData/multiplatform/optionalExpectationIncorrectUse/common.kt:25:5: error: '@OptionalExpectation' cannot be used on a nested class
+    @OptionalExpectation
+    ^
 compiler/testData/multiplatform/optionalExpectationIncorrectUse/jvm.kt:1:24: error: declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry
 fun useInReturnType(): A? = null
                        ^
