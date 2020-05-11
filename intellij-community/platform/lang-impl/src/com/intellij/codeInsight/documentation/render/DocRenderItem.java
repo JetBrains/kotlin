@@ -221,6 +221,14 @@ public class DocRenderItem {
     });
   }
 
+  public static void resetToDefaultEditorState(@NotNull Editor editor) {
+    resetToDefaultState(editor);
+    DocRenderPassFactory.forceRefreshOnNextPass(editor);
+    for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+      DaemonCodeAnalyzer.getInstance(project).restart();
+    }
+  }
+
   public static void resetAllToDefaultState() {
     for (Editor editor : EditorFactory.getInstance().getAllEditors()) {
       resetToDefaultState(editor);
