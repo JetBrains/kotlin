@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalUnsignedTypes::class)
+
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
@@ -51,7 +53,6 @@ internal sealed class ProgressionType(
         }
 
     companion object {
-        @ExperimentalUnsignedTypes
         fun fromIrType(irType: IrType, symbols: Symbols<CommonBackendContext>): ProgressionType? = when {
             irType.isSubtypeOfClass(symbols.charProgression) -> CharProgressionType(symbols)
             irType.isSubtypeOfClass(symbols.intProgression) -> IntProgressionType(symbols)
@@ -168,7 +169,6 @@ internal abstract class UnsignedProgressionType(
     }
 }
 
-@ExperimentalUnsignedTypes
 internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
     UnsignedProgressionType(
         symbols,
@@ -186,7 +186,6 @@ internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
 
-@ExperimentalUnsignedTypes
 internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>) :
     UnsignedProgressionType(
         symbols,

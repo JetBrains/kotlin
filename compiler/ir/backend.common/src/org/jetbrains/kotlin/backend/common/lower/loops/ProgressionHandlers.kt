@@ -85,7 +85,6 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
         parameter(0) { it.type in progressionElementTypes }
     }
 
-    @ExperimentalUnsignedTypes
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             with(data) {
@@ -583,10 +582,8 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
 
     private val symbols = context.ir.symbols
 
-    @ExperimentalUnsignedTypes
     override fun matchIterable(expression: IrExpression) = ProgressionType.fromIrType(expression.type, symbols) != null
 
-    @ExperimentalUnsignedTypes
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Directly use the `first/last/step` properties of the progression.

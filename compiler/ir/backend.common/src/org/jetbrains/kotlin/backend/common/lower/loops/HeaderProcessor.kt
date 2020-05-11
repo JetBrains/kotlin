@@ -270,7 +270,6 @@ internal class ProgressionLoopHeader(
 
     private var loopVariable: IrVariable? = null
 
-    @ExperimentalUnsignedTypes
     override fun initializeIteration(
         loopVariable: IrVariable?,
         loopVariableComponents: Map<Int, IrVariable>,
@@ -301,7 +300,6 @@ internal class ProgressionLoopHeader(
             listOfNotNull(loopVariable, incrementInductionVariable(this))
         }
 
-    @ExperimentalUnsignedTypes
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?) =
         with(builder) {
             val newLoop = if (headerInfo.canOverflow) {
