@@ -8,6 +8,7 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk
@@ -32,25 +33,43 @@ class UnknownSdkInspectionCommandLineConfigurator : CommandLineInspectionProject
 
   override fun configureProject(project: Project,
                                 logger: CommandLineInspectionProgressReporter
-  ) {
-    runBlocking {
+  ) = runBlocking {
+    require(!ApplicationManager.getApplication().isWriteThread) { "The code below uses the same GUI thread to complete operations." +
+                                                                  "Running from EDT would deadlock" }
+
+    val indicator = ProgressManager.getInstance().progressIndicator ?: ProgressIndicatorBase()
+    indicator.pushState()
+    try {
       resolveUnknownSdks(project, ProgressIndicatorBase())
+    } finally {
+      indicator.popState()
     }
   }
 
   private suspend fun resolveUnknownSdks(project: Project, indicator: ProgressIndicator) {
+    indicator.text = "Scanning for unknown SDKs..."
     val problems = suspendCancellableCoroutine<List<UnknownSdk>> { cont ->
       UnknownSdkCollector(project).collectSdksPromise(java.util.function.Consumer { (_, resolvableSdks) ->
         cont.resume(resolvableSdks)
       })
     }
+    if (problems.isEmpty()) return
 
+    indicator.text = "Building SDK resolvers..."
     val resolvers = UnknownSdkResolver.EP_NAME.extensions.mapNotNull {
       it.createResolver(project, indicator)
     }
 
-    for (problem in problems) {
-      resolveUnknownSdk(resolvers, problem, indicator, project)
+    indicator.isIndeterminate = false
+    for ((i, problem) in problems.withIndex()) {
+      indicator.fraction = i.toDouble() / problems.size
+      indicator.text = "Configuring SDKs " + problem.sdkName + "..."
+      indicator.pushState()
+      try {
+        resolveUnknownSdk(resolvers, problem, indicator, project)
+      } finally {
+        indicator.popState()
+      }
     }
   }
 
