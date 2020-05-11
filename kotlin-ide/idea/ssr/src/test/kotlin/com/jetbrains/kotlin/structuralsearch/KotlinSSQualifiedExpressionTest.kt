@@ -8,5 +8,4 @@ class KotlinSSQualifiedExpressionTest : KotlinSSTest() {
     fun testDotOptionalReference() { doTest("'_?.'_") }
 
     fun testSafeAccess() { doTest("\$e1\$?.'_") }
-
 }
