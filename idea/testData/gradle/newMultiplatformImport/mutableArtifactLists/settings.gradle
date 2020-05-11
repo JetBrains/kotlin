@@ -1,0 +1,9 @@
+pluginManagement {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+}
+rootProject.name = 'KT38037'
+
+include ':mpp-bottom-actual', ':mpp-mid-actual'
+enableFeaturePreview('GRADLE_METADATA')
