@@ -16,7 +16,7 @@
 
 package samples.collections
 
-import samples.Sample
+import samples.*
 import java.util.*
 
 class Iterators {
