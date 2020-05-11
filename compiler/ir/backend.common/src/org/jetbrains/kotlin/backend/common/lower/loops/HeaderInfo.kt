@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalUnsignedTypes::class)
+
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
@@ -71,7 +73,6 @@ internal class ProgressionHeaderInfo(
     additionalNotEmptyCondition = additionalNotEmptyCondition
 ) {
 
-    @ExperimentalUnsignedTypes
     val canOverflow: Boolean by lazy {
         if (canOverflow != null) return@lazy canOverflow
 
@@ -268,7 +269,6 @@ internal abstract class HeaderInfoBuilder(context: CommonBackendContext, private
     override fun visitElement(element: IrElement, data: IrCall?): HeaderInfo? = null
 
     /** Builds a [HeaderInfo] for iterable expressions that are calls (e.g., `.reversed()`, `.indices`. */
-    @ExperimentalUnsignedTypes
     override fun visitCall(iterable: IrCall, iteratorCall: IrCall?): HeaderInfo? {
         // Return the HeaderInfo from the first successful match.
         // First, try to match a `reversed()` or `withIndex()` call.
