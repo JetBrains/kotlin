@@ -88,10 +88,7 @@ abstract class BasicIrBoxTest(
         isMainModule: Boolean,
         skipDceDriven: Boolean
     ) {
-        val filesToCompile = units
-            .map { (it as TranslationUnit.SourceFile).file }
-            // TODO: split input files to some parts (global common, local common, test)
-            .filterNot { it.virtualFilePath.contains(COMMON_FILES_DIR_PATH) }
+        val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
         val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
 

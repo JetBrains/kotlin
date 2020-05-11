@@ -8,6 +8,6 @@ package kotlin.js
 /**
  * @param CT is return type of calling constructor (uses in DCE)
  */
-fun <CT> construct(constructorType: dynamic, resultType: dynamic, vararg args: Any?): Any {
+internal fun <CT> construct(constructorType: dynamic, resultType: dynamic, vararg args: Any?): Any {
     return js("Reflect").construct(constructorType, args, resultType)
 }
