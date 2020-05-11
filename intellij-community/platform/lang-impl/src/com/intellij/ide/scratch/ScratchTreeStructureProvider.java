@@ -177,6 +177,14 @@ public class ScratchTreeStructureProvider implements TreeStructureProvider, Dumb
     return list;
   }
 
+  /**
+   * @deprecated Use modify method instead
+   */
+  @Deprecated
+  public static AbstractTreeNode<?> createRootNode(@NotNull Project project, ViewSettings settings) {
+    return new MyProjectNode(project, settings);
+  }
+
   @Override
   public @Nullable Object getData(@NotNull Collection<AbstractTreeNode<?>> selected, @NotNull String dataId) {
     if (LangDataKeys.PASTE_TARGET_PSI_ELEMENT.is(dataId)) {
