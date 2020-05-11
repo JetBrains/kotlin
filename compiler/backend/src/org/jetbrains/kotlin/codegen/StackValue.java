@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -1534,6 +1535,7 @@ public abstract class StackValue {
 
             CollectionElementReceiver collectionElementReceiver = (CollectionElementReceiver) receiver;
             boolean callDefault = false;
+            boolean properSetterCalls = codegen.getState().getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperArrayConventionSetterWithDefaultCalls);
             if (collectionElementReceiver.isGetter) {
                 //Convention setter/getter could have default parameters at the end of parameter list (in case of setter before last parameter)
                 //We should remove default parameters of getter from stack if they don't match setter ones and regenerate mask for setter
@@ -1561,28 +1563,34 @@ public abstract class StackValue {
                         }
                     }
 
-                    DefaultCallArgs defaultArgs = new DefaultCallArgs(
-                            CodegenUtilKt.unwrapFrontendVersion(resolvedSetCall.getResultingDescriptor()).getValueParameters().size());
-                    if (!setterDefaults.isEmpty()) {
-                        ArgumentGenerator setterArgumentGenerator =  new CallBasedArgumentGenerator(
-                                codegen,
-                                callGenerator,
-                                resolvedSetCall.getResultingDescriptor().getValueParameters(), setter.getValueParameterTypes()
-                        );
+                    if (properSetterCalls) {
+                        DefaultCallArgs defaultArgs = new DefaultCallArgs(
+                                CodegenUtilKt.unwrapFrontendVersion(resolvedSetCall.getResultingDescriptor()).getValueParameters().size());
+                        if (!setterDefaults.isEmpty()) {
+                            ArgumentGenerator setterArgumentGenerator = new CallBasedArgumentGenerator(
+                                    codegen,
+                                    callGenerator,
+                                    resolvedSetCall.getResultingDescriptor().getValueParameters(), setter.getValueParameterTypes()
+                            );
 
-                        int defaultIndex = CollectionsKt.getLastIndex(setterArguments) - 1/*rhs value*/ - setterDefaults.size();
-                        for (ResolvedValueArgument aDefault : setterDefaults) {
-                            defaultArgs.mark(++defaultIndex);
-                            setterArgumentGenerator.generateDefault(defaultIndex, (DefaultValueArgument)aDefault);
+                            int defaultIndex = CollectionsKt.getLastIndex(setterArguments) - 1/*rhs value*/ - setterDefaults.size();
+                            for (ResolvedValueArgument aDefault : setterDefaults) {
+                                defaultArgs.mark(++defaultIndex);
+                                setterArgumentGenerator.generateDefault(defaultIndex, (DefaultValueArgument) aDefault);
+                            }
+                            callDefault = true;
                         }
-                        callDefault = true;
+                        rhsValue.put(v);
+                        codegen.myFrameMap.leaveTemp(lastParameterType);
+                        defaultArgs.generateOnStackIfNeeded(callGenerator, false);
                     }
-                    rhsValue.put(v);
-                    codegen.myFrameMap.leaveTemp(lastParameterType);
-                    defaultArgs.generateOnStackIfNeeded(callGenerator, false);
+                    else {
+                        rhsValue.put(v);
+                        codegen.myFrameMap.leaveTemp(lastParameterType);
+                    }
                 }
             } else {
-                callDefault = genDefaultMaskIfPresent(callGenerator);
+                callDefault = properSetterCalls && genDefaultMaskIfPresent(callGenerator);
             }
 
             callGenerator.genCall(setter, resolvedSetCall, callDefault, codegen);
