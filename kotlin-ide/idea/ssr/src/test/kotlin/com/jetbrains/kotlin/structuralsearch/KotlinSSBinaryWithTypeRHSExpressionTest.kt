@@ -5,7 +5,6 @@ class KotlinSSBinaryWithTypeRHSExpressionTest : KotlinSSTest() {
 
     fun testAs() { doTest("'_ as '_") }
 
-    fun testAsFqType() { doTest("'_ as kotlin.Int") }
+    fun testAsSafe() { doTest("'_ as? '_") }
 
-    fun testAsNonFqType() { doTest("'_ as Int") }
 }

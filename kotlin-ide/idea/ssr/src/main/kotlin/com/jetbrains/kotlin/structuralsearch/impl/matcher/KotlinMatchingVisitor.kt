@@ -135,10 +135,19 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitUserType(type: KtUserType) {
         val other = myMatchingVisitor.element
         myMatchingVisitor.result = when (other) {
-            is KtUserType -> myMatchingVisitor.matchSons(type, other)
-            is KtFunctionType -> matchTextOrVariable(type.referenceExpression, other)
+            is KtUserType -> myMatchingVisitor.matchSonsInAnyOrder(type, other)
+            is KtTypeElement -> matchTextOrVariable(type.referenceExpression, other)
             else -> false
         }
+    }
+
+    override fun visitNullableType(nullableType: KtNullableType) {
+        val other = getTreeElement<KtNullableType>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSons(nullableType, other)
+    }
+
+    override fun visitDynamicType(type: KtDynamicType) {
+        myMatchingVisitor.result = myMatchingVisitor.element is KtDynamicType
     }
 
     override fun visitTypeReference(typeReference: KtTypeReference) {
