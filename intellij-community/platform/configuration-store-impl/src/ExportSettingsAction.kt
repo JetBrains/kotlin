@@ -8,6 +8,7 @@ import com.intellij.configurationStore.schemeManager.SchemeManagerFactoryBase
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.ImportSettingsFilenameFilter
 import com.intellij.ide.actions.RevealFileAction
+import com.intellij.ide.plugins.DisabledPluginsState
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.actionSystem.AnAction
