@@ -199,6 +199,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     private fun matchValueArgumentList(queryArgs: List<KtValueArgument>?, codeArgs: List<KtValueArgument>?): Boolean {
+        println("Match value args")
         if (queryArgs == null || codeArgs == null) return queryArgs == codeArgs
         var queryIndex = 0
         var codeIndex = 0
@@ -206,11 +207,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             val queryArg = queryArgs[queryIndex]
             val codeArg = codeArgs.getOrElse(codeIndex) { return false }
             val handler = myMatchingVisitor.matchContext.pattern.getHandler(queryArg)
-            if (handler is SubstitutionHandler && handler.minOccurs != handler.maxOccurs) {
-                for (i in handler.minOccurs..handler.maxOccurs) {
-                    if (!myMatchingVisitor.match(queryArg, codeArgs[codeIndex++])) return false
-                    if (codeIndex == codeArgs.size) return true
-                }
+            if (handler is SubstitutionHandler) {
+                return myMatchingVisitor.matchSequentially(
+                    queryArgs.subList(queryIndex, queryArgs.lastIndex + 1),
+                    codeArgs.subList(codeIndex, codeArgs.lastIndex + 1)
+                )
             }
 
             // varargs declared in call matching with one-to-one argument passing
@@ -240,9 +241,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             // normal argument matching
             if (!myMatchingVisitor.match(queryArg, codeArg)) {
                 return if (queryArg.isNamed() || codeArg.isNamed()) { // start comparing for out of order arguments
-                    val sortQueryArgs = queryArgs.subList(queryIndex, queryArgs.lastIndex + 1)
-                    val sortCodeArgs = codeArgs.subList(codeIndex, codeArgs.lastIndex + 1)
-                    myMatchingVisitor.matchInAnyOrder(sortQueryArgs, sortCodeArgs)
+                    myMatchingVisitor.matchInAnyOrder(
+                        queryArgs.subList(queryIndex, queryArgs.lastIndex + 1),
+                        codeArgs.subList(codeIndex, codeArgs.lastIndex + 1)
+                    )
                 } else false
             }
             queryIndex++

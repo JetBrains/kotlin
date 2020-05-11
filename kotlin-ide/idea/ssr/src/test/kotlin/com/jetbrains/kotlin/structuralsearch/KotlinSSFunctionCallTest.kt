@@ -9,6 +9,8 @@ class KotlinSSFunctionCallTest : KotlinSSTest() {
 
     fun testFunArgCallCountFilter() { doTest("listOf('_+)") }
 
+    fun testFunArgCallBoundedCountFilter() { doTest("listOf('_{4,4})") }
+
     fun testFunCall() { doTest("a()") }
 
     fun testFunExtensionCall() { doTest("0.a()") }
