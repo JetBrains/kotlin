@@ -728,10 +728,6 @@
           <module name="intellij.platform.remoteServers" />
           <module name="intellij.platform.tasks" />
           <module name="intellij.platform.usageView" />
-          <module name="intellij.platform.vcs.core" />
-          <module name="intellij.platform.vcs" />
-          <module name="intellij.platform.vcs.log" />
-          <module name="intellij.platform.vcs.log.graph" />
           <module name="intellij.platform.debugger" />
           <module name="intellij.xml.analysis" />
           <module name="intellij.xml" />
@@ -762,9 +758,6 @@
           <module name="intellij.platform.structureView.impl" />
           <module name="intellij.platform.tasks.impl" />
           <module name="intellij.platform.testRunner" />
-          <module name="intellij.platform.vcs.impl" />
-          <module name="intellij.platform.vcs.log.graph.impl" />
-          <module name="intellij.platform.vcs.log.impl" />
           <module name="intellij.platform.debugger.impl" />
           <module name="intellij.xml.analysis.impl" />
           <module name="intellij.xml.psi.impl" />
@@ -936,6 +929,15 @@
         <modules-set>
           <module name="intellij.xml.duplicates" />
           <module name="intellij.xml.duplicates.analysis" />
+        </modules-set>
+        <modules-set>
+          <module name="intellij.platform.vcs" />
+          <module name="intellij.platform.vcs.core" />
+          <module name="intellij.platform.vcs.log" />
+          <module name="intellij.platform.vcs.log.graph" />
+          <module name="intellij.platform.vcs.impl" />
+          <module name="intellij.platform.vcs.log.graph.impl" />
+          <module name="intellij.platform.vcs.log.impl" />
         </modules-set>
       </option>
     </inspection_tool>
