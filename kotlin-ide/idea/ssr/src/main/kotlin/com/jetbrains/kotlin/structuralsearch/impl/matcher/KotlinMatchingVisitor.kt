@@ -275,14 +275,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitTypeParameterList(list: KtTypeParameterList) {
         val other = getTreeElement<KtTypeParameterList>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(
-            list.parameters, other.parameters
-        )
+        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(list.parameters, other.parameters)
     }
 
     override fun visitParameterList(list: KtParameterList) {
         val other = getTreeElement<KtParameterList>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(list.parameters, other.parameters)
+        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(list.parameters, other.parameters)
     }
 
     override fun visitConstructorDelegationCall(call: KtConstructorDelegationCall) {
