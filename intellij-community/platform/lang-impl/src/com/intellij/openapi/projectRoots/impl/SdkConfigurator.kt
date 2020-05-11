@@ -4,6 +4,7 @@ package com.intellij.openapi.projectRoots.impl
 import com.intellij.analysis.AnalysisScope
 import com.intellij.ide.CommandLineInspectionProgressReporter
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
@@ -12,7 +13,7 @@ import java.nio.file.Path
 
 class SdkConfigurator : CommandLineInspectionProjectConfigurator {
   override fun isApplicable(projectPath: Path, logger: CommandLineInspectionProgressReporter): Boolean {
-    return true
+    return !ApplicationManager.getApplication().isUnitTestMode
   }
 
   override fun configureEnvironment(projectPath: Path, logger: CommandLineInspectionProgressReporter) {
