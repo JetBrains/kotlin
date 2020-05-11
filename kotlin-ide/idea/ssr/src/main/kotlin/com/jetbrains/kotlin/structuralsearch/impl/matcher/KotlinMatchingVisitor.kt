@@ -133,8 +133,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitUserType(type: KtUserType) {
-        val other = getTreeElement<KtUserType>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchSons(type, other)
+        val other = myMatchingVisitor.element
+        myMatchingVisitor.result = when (other) {
+            is KtUserType -> myMatchingVisitor.matchSons(type, other)
+            is KtFunctionType -> matchTextOrVariable(type.referenceExpression, other)
+            else -> false
+        }
     }
 
     override fun visitTypeReference(typeReference: KtTypeReference) {

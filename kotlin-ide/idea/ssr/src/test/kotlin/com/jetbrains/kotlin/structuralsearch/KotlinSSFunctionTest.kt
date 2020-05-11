@@ -3,11 +3,13 @@ package com.jetbrains.kotlin.structuralsearch
 class KotlinSSFunctionTest : KotlinSSTest() {
     override fun getBasePath() = "function"
 
-    fun testFun() { doTest("fun a() { }") }
+    fun testFun() { doTest("fun a() { '_* }") }
 
-    fun testFunLocal() { doTest("fun b() { }") }
+    fun testFunLocal() { doTest("fun b() { '_* }") }
 
-    fun testFunParam() { doTest("fun '_(b: Int, c: String) { }") }
+    fun testFunParam() { doTest("fun '_(b: Int, c: String) { '_* }") }
+
+    fun testFunSingleParam() { doTest("fun '_('_ : '_) { '_* }") }
 
     fun testFunTypeParam() { doTest("fun<T, R> '_(a: T, b: R, c: T) { '_* }") }
 
