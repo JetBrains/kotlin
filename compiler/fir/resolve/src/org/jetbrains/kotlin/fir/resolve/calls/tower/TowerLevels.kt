@@ -82,7 +82,7 @@ class MemberScopeTowerLevel(
 ) : SessionBasedTowerLevel(session) {
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
-        forInnerConstructors: Boolean = false,
+        forInnerConstructorDelegationCalls: Boolean = false,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessorAction {
         var empty = true
@@ -93,10 +93,8 @@ class MemberScopeTowerLevel(
                 (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
             ) {
                 val fir = candidate.fir
-                if (forInnerConstructors) {
-                    if (candidate !is FirConstructorSymbol || !candidate.fir.isInner) {
-                        return@processScopeMembers
-                    }
+                if (forInnerConstructorDelegationCalls && candidate !is FirConstructorSymbol) {
+                    return@processScopeMembers
                 } else if ((fir as? FirCallableMemberDeclaration<*>)?.isStatic == true || (fir as? FirConstructor)?.isInner == false) {
                     return@processScopeMembers
                 }
@@ -119,7 +117,7 @@ class MemberScopeTowerLevel(
             }
         }
 
-        if (!forInnerConstructors) {
+        if (!forInnerConstructorDelegationCalls) {
             val withSynthetic = FirSyntheticPropertiesScope(session, scope)
             withSynthetic.processScopeMembers { symbol ->
                 empty = false
@@ -149,7 +147,7 @@ class MemberScopeTowerLevel(
             TowerScopeLevel.Token.Functions -> processMembers(processor) { consumer ->
                 this.processFunctionsAndConstructorsByName(
                     name, session, bodyResolveComponents,
-                    noInnerConstructors = false,
+                    includeInnerConstructors = true,
                     processor = {
                         // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
                         @Suppress("UNCHECKED_CAST")
@@ -164,11 +162,11 @@ class MemberScopeTowerLevel(
                     consumer(it as T)
                 }
             }
-            TowerScopeLevel.Token.Constructors -> processMembers(processor, forInnerConstructors = true) { consumer ->
+            TowerScopeLevel.Token.Constructors -> processMembers(processor, forInnerConstructorDelegationCalls = true) { consumer ->
                 this.processConstructorsByName(
                     name, session, bodyResolveComponents,
-                    noSyntheticConstructors = true,
-                    noInnerConstructors = false,
+                    includeSyntheticConstructors = false,
+                    includeInnerConstructors = true,
                     processor = {
                         @Suppress("UNCHECKED_CAST")
                         consumer(it as T)
@@ -198,7 +196,7 @@ class ScopeTowerLevel(
     val scope: FirScope,
     val extensionReceiver: ReceiverValue?,
     private val extensionsOnly: Boolean,
-    private val noInnerConstructors: Boolean
+    private val includeInnerConstructors: Boolean
 ) : SessionBasedTowerLevel(session) {
     private fun FirCallableSymbol<*>.hasConsistentReceivers(extensionReceiver: Receiver?): Boolean =
         when {
@@ -261,7 +259,7 @@ class ScopeTowerLevel(
                 name,
                 session,
                 bodyResolveComponents,
-                noInnerConstructors = noInnerConstructors
+                includeInnerConstructors = includeInnerConstructors
             ) { candidate ->
                 empty = false
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
@@ -302,6 +300,7 @@ class ConstructorScopeTowerLevel(
                 // NB: here we cannot resolve inner constructors, because they should have dispatch receiver
                 if (!candidate.fir.isInner) {
                     empty = false
+                    @Suppress("UNCHECKED_CAST")
                     processor.consumeCandidate(
                         candidate as T,
                         dispatchReceiverValue = null,

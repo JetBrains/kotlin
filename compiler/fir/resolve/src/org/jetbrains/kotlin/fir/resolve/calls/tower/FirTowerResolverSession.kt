@@ -127,10 +127,10 @@ class FirTowerResolverSession internal constructor(
     private fun FirScope.toScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
         extensionsOnly: Boolean = false,
-        noInnerConstructors: Boolean = false
+        includeInnerConstructors: Boolean = true
     ): ScopeTowerLevel = ScopeTowerLevel(
         session, components, this,
-        extensionReceiver, extensionsOnly, noInnerConstructors
+        extensionReceiver, extensionsOnly, includeInnerConstructors
     )
 
     private fun FirScope.toConstructorScopeTowerLevel(): ConstructorScopeTowerLevel =
@@ -151,7 +151,7 @@ class FirTowerResolverSession internal constructor(
         if (qualifierReceiver == null) return
         for ((depth, qualifierScope) in qualifierReceiver.callableScopes().withIndex()) {
             processLevel(
-                qualifierScope.toScopeTowerLevel(noInnerConstructors = true),
+                qualifierScope.toScopeTowerLevel(includeInnerConstructors = false),
                 info.noStubReceiver(), TowerGroup.Qualifier(depth),
                 useParentGroupForInvokes = true,
             )
@@ -169,7 +169,7 @@ class FirTowerResolverSession internal constructor(
         val scope = qualifierReceiver.classifierScope() ?: return
         val group = if (prioritized) TowerGroup.ClassifierPrioritized else TowerGroup.Classifier
         processLevel(
-            scope.toScopeTowerLevel(noInnerConstructors = true), info.noStubReceiver(),
+            scope.toScopeTowerLevel(includeInnerConstructors = false), info.noStubReceiver(),
             group,
             useParentGroupForInvokes = true,
         )
