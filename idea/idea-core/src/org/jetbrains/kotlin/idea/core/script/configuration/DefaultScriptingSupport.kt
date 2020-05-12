@@ -522,7 +522,7 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
 
         // own builder for saving to storage
         val rootsStorage = ScriptClassRootsStorage.getInstance(project)
-        val ownBuilder = ScriptClassRootsBuilder.fromStorage(rootsStorage)
+        val ownBuilder = ScriptClassRootsBuilder.fromStorage(project, rootsStorage)
         cache.allApplied().forEach { (vFile, configuration) -> ownBuilder.add(vFile, configuration) }
         ownBuilder.toStorage(rootsStorage)
 

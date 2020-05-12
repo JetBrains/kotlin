@@ -340,7 +340,11 @@ class GradleBuildRootsManager(val project: Project) : ScriptingSupport() {
 
     private fun add(newRoot: GradleBuildRoot.Linked) {
         val old = roots.add(newRoot)
-        if (old is GradleBuildRoot.Imported) removeData(old.pathPrefix)
+
+        if (old is GradleBuildRoot.Imported && newRoot !is GradleBuildRoot.Imported) {
+            removeData(old.pathPrefix)
+        }
+
         if (old is GradleBuildRoot.Imported || newRoot is GradleBuildRoot.Imported) {
             updater.invalidateAndCommit()
         }
