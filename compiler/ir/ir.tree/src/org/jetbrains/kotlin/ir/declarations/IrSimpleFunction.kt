@@ -13,9 +13,9 @@ interface IrSimpleFunction :
     IrFunction,
     IrSymbolDeclaration<IrSimpleFunctionSymbol>,
     IrOverridableDeclaration<IrSimpleFunctionSymbol>,
+    IrOverridableMember,
     IrAttributeContainer {
 
-    val modality: Modality
     val isTailrec: Boolean
     val isSuspend: Boolean
     val isFakeOverride: Boolean

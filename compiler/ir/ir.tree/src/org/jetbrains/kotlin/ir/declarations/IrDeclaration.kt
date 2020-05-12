@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.OverridableMember
 
 interface IrSymbolOwner : IrElement {
     val symbol: IrSymbol
@@ -60,3 +61,4 @@ interface IrDeclarationWithName : IrDeclaration {
     val name: Name
 }
 
+interface IrOverridableMember: OverridableMember, IrDeclarationWithVisibility, IrDeclarationWithName, IrSymbolOwner
