@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
+import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -516,7 +516,7 @@ fun serializeModuleIntoKlib(
         irVersion = KlibIrVersion.INSTANCE.toString()
     )
 
-    buildKoltinLibrary(
+    buildKotlinLibrary(
         linkDependencies = dependencies,
         ir = fullSerializedIr,
         metadata = serializedMetadata,

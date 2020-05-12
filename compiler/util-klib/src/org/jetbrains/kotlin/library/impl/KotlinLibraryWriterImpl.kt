@@ -85,7 +85,7 @@ open class BaseWriterImpl(
 /**
  * Requires non-null [target].
  */
-class KoltinLibraryWriterImpl(
+class KotlinLibraryWriterImpl(
     libDir: File,
     moduleName: String,
     versions: KotlinLibraryVersioning,
@@ -103,7 +103,7 @@ class KoltinLibraryWriterImpl(
 
 ) : BaseWriter by base, MetadataWriter by metadata, IrWriter by ir, KotlinLibraryWriter
 
-fun buildKoltinLibrary(
+fun buildKotlinLibrary(
     linkDependencies: List<KotlinLibrary>,
     metadata: SerializedMetadata,
     ir: SerializedIrModule?,
@@ -117,7 +117,7 @@ fun buildKoltinLibrary(
     nativeTargets: List<String> = emptyList()
 ): KotlinLibraryLayout {
 
-    val library = KoltinLibraryWriterImpl(File(output), moduleName, versions, builtInsPlatform, nativeTargets, nopack)
+    val library = KotlinLibraryWriterImpl(File(output), moduleName, versions, builtInsPlatform, nativeTargets, nopack)
 
     library.addMetadata(metadata)
 

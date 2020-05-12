@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
+import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -83,7 +83,7 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
             irVersion = null
         )
 
-        buildKoltinLibrary(
+        buildKotlinLibrary(
             emptyList(),
             serializedMetadata,
             null,
