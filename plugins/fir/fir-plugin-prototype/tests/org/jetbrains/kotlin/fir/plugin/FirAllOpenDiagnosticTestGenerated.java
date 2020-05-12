@@ -28,6 +28,24 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir/fir-plugin-prototype/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("plugins/fir/fir-plugin-prototype/testData/checkers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Checkers extends AbstractFirAllOpenDiagnosticTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCheckers() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir/fir-plugin-prototype/testData/checkers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/checkers/simple.kt");
+        }
+    }
+
     @TestMetadata("plugins/fir/fir-plugin-prototype/testData/classGen")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

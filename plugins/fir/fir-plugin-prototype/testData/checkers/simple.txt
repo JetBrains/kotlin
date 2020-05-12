@@ -1,0 +1,21 @@
+FILE: simple.kt
+    public final fun dummy(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun dummy(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val dummy: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+    }

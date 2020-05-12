@@ -7,6 +7,7 @@ dependencies {
     compile(project(":compiler:fir:cones"))
     compile(project(":compiler:fir:tree"))
     compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:frontend"))
 
     compileOnly(project(":kotlin-reflect-api"))
