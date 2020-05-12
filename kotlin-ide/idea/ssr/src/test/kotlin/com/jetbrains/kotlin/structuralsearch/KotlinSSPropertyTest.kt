@@ -11,6 +11,8 @@ class KotlinSSPropertyTest : KotlinSSTest() {
 
     fun testValFqType() { doTest("val '_ : Foo.Int") }
 
+    fun testValComplexFqType() { doTest("val '_ : '_<'_<'_, (Foo.Int) -> Int>>") }
+
     fun testValInitializer() { doTest("val '_ = 1") }
 
     fun testValReceiverType() { doTest("val '_ : ('_T) -> '_U = '_") }
