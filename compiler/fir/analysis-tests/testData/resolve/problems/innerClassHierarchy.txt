@@ -24,12 +24,12 @@ FILE: innerClassHierarchy.kt
 
             public final inner class VeryInner : R|Base.Inner| {
                 public constructor(): R|Derived.InnerDerived.VeryInner| {
-                    super<R|Base.Inner|>()
+                    this@R|/Derived|.super<R|Base.Inner|>()
                 }
 
                 public final inner class VeryVeryInner : R|Base.Inner| {
                     public constructor(): R|Derived.InnerDerived.VeryInner.VeryVeryInner| {
-                        super<R|Base.Inner|>()
+                        this@R|/Derived|.super<R|Base.Inner|>()
                     }
 
                 }

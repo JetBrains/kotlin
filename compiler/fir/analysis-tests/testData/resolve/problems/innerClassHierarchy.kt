@@ -4,8 +4,8 @@ open class Base {
 
 class Derived : Base() {
     inner class InnerDerived : Inner() {
-        inner class VeryInner : <!UNRESOLVED_REFERENCE!>Inner<!>() {
-            inner class VeryVeryInner : <!UNRESOLVED_REFERENCE!>Inner<!>()
+        inner class VeryInner : Inner() {
+            inner class VeryVeryInner : Inner()
         }
     }
 }

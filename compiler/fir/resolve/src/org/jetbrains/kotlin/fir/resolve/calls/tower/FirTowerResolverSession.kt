@@ -208,11 +208,10 @@ class FirTowerResolverSession internal constructor(
         val scope = constructorClassSymbol.fir.unsubstitutedScope(session, components.scopeSession)
         if (constructorClassSymbol is FirRegularClassSymbol && constructorClassSymbol.fir.isInner) {
             // Search for inner constructors only
-            // 1 because we search for inner constructor in outer class
-            implicitReceiversUsableAsValues.getOrNull(1)?.let { (implicitReceiverValue) ->
+            for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues.drop(1)) {
                 processLevel(
                     implicitReceiverValue.toMemberScopeTowerLevel(),
-                    info.copy(name = constructorClassSymbol.fir.name), TowerGroup.Member
+                    info.copy(name = constructorClassSymbol.fir.name), TowerGroup.Implicit(depth)
                 )
             }
         } else {
