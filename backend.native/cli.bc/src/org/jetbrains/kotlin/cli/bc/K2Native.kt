@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
@@ -263,8 +264,17 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
         @JvmStatic fun mainNoExit(args: Array<String>) {
             profile("Total compiler main()") {
-                if (CLITool.doMainNoExit(K2Native(), args) != ExitCode.OK)
+                if (doMainNoExit(K2Native(), args) != ExitCode.OK) {
                     throw KonanCompilationException("Compilation finished with errors")
+                }
+            }
+        }
+
+        @JvmStatic fun mainNoExitWithGradleRenderer(args: Array<String>) {
+            profile("Total compiler main()") {
+                if (doMainNoExit(K2Native(), args, MessageRenderer.GRADLE_STYLE) != ExitCode.OK) {
+                    throw KonanCompilationException("Compilation finished with errors")
+                }
             }
         }
     }
@@ -413,4 +423,4 @@ private fun parseShortModuleName(
 }
 
 fun main(args: Array<String>) = K2Native.main(args)
-fun mainNoExit(args: Array<String>) = K2Native.mainNoExit(args)
+fun mainNoExitWithGradleRenderer(args: Array<String>) = K2Native.mainNoExitWithGradleRenderer(args)
