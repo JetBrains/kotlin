@@ -2566,7 +2566,19 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return intrinsic.toCallable(fd, superCall, resolvedCall, this);
         }
 
-        return typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(fd), superCall, null, resolvedCall);
+        fd = SamCodegenUtil.resolveSamAdapter(fd);
+
+        if (ArgumentGeneratorKt.shouldInvokeDefaultArgumentsStub(resolvedCall)) {
+            // When we invoke a function with some arguments mapped as defaults,
+            // we later reroute this call to an overridden function in a base class that processes the default arguments.
+            // If the base class is generic, this overridden function can have a different Kotlin signature
+            // (see KT-38681 and related issues).
+            // Here we replace a function with a corresponding overridden function,
+            // and the rest is figured out by argument generation and type mapper.
+            fd = ArgumentGeneratorKt.getFunctionWithDefaultArguments(fd);
+        }
+
+        return typeMapper.mapToCallableMethod(fd, superCall, null, resolvedCall);
     }
 
     public void invokeMethodWithArguments(

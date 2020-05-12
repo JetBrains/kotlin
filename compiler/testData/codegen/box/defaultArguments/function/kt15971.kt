@@ -1,5 +1,4 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JVM
 interface Q {
     fun foo(a: Double): Double
 }
