@@ -434,11 +434,6 @@ internal object CheckVisibility : CheckerStage() {
         val containingDeclarations = callInfo.containingDeclarations
         val session = callInfo.session
         val provider = session.firProvider
-        val candidateFile = when (symbol) {
-            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
-            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
-            else -> null
-        }
         val ownerId = symbol.getOwnerId()
         val visible = when (declaration.visibility) {
             JavaVisibilities.PACKAGE_VISIBILITY -> {
@@ -450,6 +445,11 @@ internal object CheckVisibility : CheckerStage() {
             Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
                 if (declaration.session == callInfo.session) {
                     if (ownerId == null || declaration is FirConstructor && declaration.isFromSealedClass) {
+                        val candidateFile = when (symbol) {
+                            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
+                            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
+                            else -> null
+                        }
                         // Top-level: visible in file
                         candidateFile == useSiteFile
                     } else {
