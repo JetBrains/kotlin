@@ -9,6 +9,7 @@ import com.intellij.analysis.AnalysisScope
 import com.intellij.ide.projectView.TreeStructureProvider
 import com.intellij.ide.util.treeView.AbstractTreeStructureBase
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.slicer.DuplicateMap
 import com.intellij.slicer.SliceAnalysisParams
 import com.intellij.slicer.SliceNode
@@ -63,7 +64,7 @@ internal fun buildTreeRepresentation(rootNode: SliceNode): String {
 
                 else -> {
                     val chunks = usage.text
-                    if (!projectScope.contains(usage.element)) {
+                    if (!PsiSearchScopeUtil.isInScope(projectScope, usage.element!!)) {
                         append("LIB ")
                     } else {
                         append(chunks.first().render() + " ")
