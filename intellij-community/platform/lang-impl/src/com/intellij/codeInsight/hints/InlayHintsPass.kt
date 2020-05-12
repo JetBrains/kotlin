@@ -34,6 +34,7 @@ class InlayHintsPass(
 
   override fun doCollectInformation(progress: ProgressIndicator) {
     if (!HighlightingLevelManager.getInstance(myFile.project).shouldHighlight(myFile)) return
+    if (enabledCollectors.isEmpty()) return
     val buffers = ConcurrentLinkedQueue<HintsBuffer>()
     JobLauncher.getInstance().invokeConcurrentlyUnderProgress(
       enabledCollectors,
