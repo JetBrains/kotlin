@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisitor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.isPropertyField
@@ -20,6 +21,17 @@ internal class AnnotationGenerator(private val visitor: Fir2IrVisitor) {
         irContainer.annotations = firContainer.annotations.mapNotNull {
             it.accept(visitor, null) as? IrConstructorCall
         }
+    }
+
+    fun generate(irValueParameter: IrValueParameter, firValueParameter: FirValueParameter, isInConstructor: Boolean) {
+        irValueParameter.annotations +=
+            firValueParameter.annotations
+                .filter {
+                    it.useSiteTarget == null || !isInConstructor || it.useSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+                }
+                .mapNotNull {
+                    it.accept(visitor, null) as? IrConstructorCall
+                }
     }
 
     fun generate(irProperty: IrProperty, property: FirProperty) {
