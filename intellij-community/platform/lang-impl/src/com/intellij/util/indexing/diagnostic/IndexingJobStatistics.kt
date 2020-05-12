@@ -6,15 +6,15 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 class IndexingJobStatistics {
-  val timesPerIndexer: ConcurrentMap<String, PerThreadTime> = ConcurrentHashMap()
-  val timesPerFileType: ConcurrentMap<String, PerThreadTime> = ConcurrentHashMap()
-  val numberOfFilesPerFileType: ConcurrentMap<String, Int> = ConcurrentHashMap()
+  val timesPerIndexer: ConcurrentMap<String /* ID.name() */, PerThreadTime> = ConcurrentHashMap()
+  val timesPerFileType: ConcurrentMap<String /* File type name */, PerThreadTime> = ConcurrentHashMap()
+  val numberOfFilesPerFileType: ConcurrentMap<String /* File type name */, Int> = ConcurrentHashMap()
   val contentLoadingTime = PerThreadTime()
   val indexingTime = PerThreadTime()
 
   fun addFileStatistics(fileStatistics: FileIndexingStatistics, fileType: FileType) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
-      timesPerFileType.computeIfAbsent(indexId.name) { PerThreadTime() }
+      timesPerIndexer.computeIfAbsent(indexId.name) { PerThreadTime() }
         .addTimeSpentInCurrentThread(time)
     }
     val fileTypeName = fileType.name
