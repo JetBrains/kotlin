@@ -45,7 +45,8 @@ class UnindexedFilesFinder implements VirtualFileFilter {
   @Override
   public boolean accept(VirtualFile file) {
     return ReadAction.compute(() -> {
-      if (!file.isValid()
+      if (myProject.isDisposed()
+          || !file.isValid()
           || file instanceof VirtualFileSystemEntry && ((VirtualFileSystemEntry)file).isFileIndexed()
           || !(file instanceof VirtualFileWithId)
       ) {
