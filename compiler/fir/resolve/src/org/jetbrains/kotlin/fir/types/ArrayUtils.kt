@@ -6,16 +6,10 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.invoke
 
 
-fun ConeTypeProjection.createArrayOf(session: FirSession, nullable: Boolean = false): ConeKotlinType {
-    val symbolProvider: FirSymbolProvider = session.firSymbolProvider
-
+fun ConeTypeProjection.createArrayOf(nullable: Boolean = false): ConeKotlinType {
     if (this is ConeKotlinTypeProjection) {
         val type = type.lowerBoundIfFlexible()
         if (type is ConeClassLikeType) {
@@ -23,12 +17,12 @@ fun ConeTypeProjection.createArrayOf(session: FirSession, nullable: Boolean = fa
             val primitiveArrayId =
                 StandardClassIds.primitiveArrayTypeByElementType[classId] ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
             if (primitiveArrayId != null) {
-                return primitiveArrayId.invoke(symbolProvider).constructType(emptyArray(), nullable)
+                return primitiveArrayId.constructClassLikeType(emptyArray(), nullable)
             }
         }
     }
 
-    return StandardClassIds.Array.invoke(symbolProvider).constructType(arrayOf(this), nullable)
+    return StandardClassIds.Array.constructClassLikeType(arrayOf(this), nullable)
 }
 
 
@@ -40,7 +34,7 @@ fun ConeKotlinType.arrayElementType(session: FirSession): ConeKotlinType? {
         return (type.typeArguments.first() as ConeKotlinTypeProjection).type
     val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: StandardClassIds.elementTypeByUnsignedArrayType[classId]
     if (elementType != null) {
-        return elementType.invoke(session.firSymbolProvider).constructType(emptyArray(), isNullable = false)
+        return elementType.constructClassLikeType(emptyArray(), isNullable = false)
     }
 
     return null

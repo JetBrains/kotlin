@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
@@ -187,6 +189,13 @@ fun ConeClassLikeLookupTag.constructClassType(
     isNullable: Boolean,
 ): ConeClassLikeType {
     return ConeClassLikeTypeImpl(this, typeArguments, isNullable)
+}
+
+fun ClassId.constructClassLikeType(
+    typeArguments: Array<out ConeTypeProjection>,
+    isNullable: Boolean,
+): ConeClassLikeType {
+    return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this), typeArguments, isNullable)
 }
 
 fun ConeClassifierLookupTag.constructType(typeArguments: Array<out ConeTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {

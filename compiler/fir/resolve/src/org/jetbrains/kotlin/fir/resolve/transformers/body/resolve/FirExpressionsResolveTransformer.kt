@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.visitors.*
@@ -484,7 +483,6 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformGetClassCall(getClassCall: FirGetClassCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         val transformedGetClassCall = transformExpression(getClassCall, data).single as FirGetClassCall
-        val kClassSymbol = ClassId.fromString("kotlin/reflect/KClass")(session.firSymbolProvider)
 
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {
@@ -514,7 +512,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
         transformedGetClassCall.resultType =
             buildResolvedTypeRef {
-                type = kClassSymbol.constructType(arrayOf(typeOfExpression), false)
+                type = ClassId.fromString("kotlin/reflect/KClass").constructClassLikeType(arrayOf(typeOfExpression), false)
             }
         return transformedGetClassCall.compose()
     }
