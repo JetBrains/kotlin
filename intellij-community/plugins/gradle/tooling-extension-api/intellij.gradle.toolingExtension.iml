@@ -14,7 +14,7 @@
     <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
     <orderEntry type="library" exported="" name="Slf4j" level="project" />
     <orderEntry type="library" exported="" name="Gradle" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Groovy" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="org.codehaus.groovy:groovy" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="org.codehaus.groovy:groovy-ant" level="project" />
   </component>
 </module>

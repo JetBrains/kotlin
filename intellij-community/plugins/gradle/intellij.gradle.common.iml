@@ -19,7 +19,7 @@
     <orderEntry type="module" module-name="intellij.platform.smRunner" exported="" />
     <orderEntry type="library" exported="" name="Slf4j" level="project" />
     <orderEntry type="library" exported="" name="Gradle" level="project" />
-    <orderEntry type="library" name="Groovy" level="project" />
+    <orderEntry type="library" name="org.codehaus.groovy:groovy" level="project" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
     <orderEntry type="module" module-name="intellij.gradle.toolingLoaderRt" />
