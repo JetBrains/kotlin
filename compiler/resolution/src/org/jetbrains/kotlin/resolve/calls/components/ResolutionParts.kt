@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
@@ -24,14 +21,11 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
-import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
-import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -482,13 +476,23 @@ private fun KotlinResolutionCandidate.checkUnsafeImplicitInvokeAfterSafeCall(arg
 
 private fun KotlinResolutionCandidate.prepareExpectedType(
     argument: KotlinCallArgument,
-    candidateParameter: ParameterDescriptor
+    parameter: ParameterDescriptor
 ): UnwrappedType {
-    val argumentType =
-        getExpectedTypeWithSAMConversion(argument, candidateParameter)
-            ?: getExpectedTypeWithSuspendConversion(argument, candidateParameter)
-            ?: argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
-    val resultType = knownTypeParametersResultingSubstitutor?.substitute(argumentType) ?: argumentType
+    val expectedType =
+        performExpectedTypeConversion(argument, parameter)
+            ?: argument.getExpectedType(parameter, callComponents.languageVersionSettings)
+    return prepareExpectedType(expectedType)
+}
+
+private fun KotlinResolutionCandidate.performExpectedTypeConversion(
+    argument: KotlinCallArgument,
+    parameter: ParameterDescriptor
+): UnwrappedType? {
+    return getExpectedTypeWithSAMConversion(argument, parameter) ?: getExpectedTypeWithSuspendConversion(argument, parameter)
+}
+
+private fun KotlinResolutionCandidate.prepareExpectedType(expectedType: UnwrappedType): UnwrappedType {
+    val resultType = knownTypeParametersResultingSubstitutor?.substitute(expectedType) ?: expectedType
     return resolvedCall.freshVariablesSubstitutor.safeSubstitute(resultType)
 }
 
