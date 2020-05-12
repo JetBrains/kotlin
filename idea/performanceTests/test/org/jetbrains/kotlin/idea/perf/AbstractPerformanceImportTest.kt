@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.perf
 import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.codeStyle.PackageEntry
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.descriptors.ClassDescriptor

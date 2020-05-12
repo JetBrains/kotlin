@@ -24,8 +24,6 @@ class KotlinPackageEntry(
     }
 
     fun matchesPackageName(otherPackageName: String): Boolean {
-        if (isSpecial) return true
-
         if (otherPackageName.startsWith(packageName)) {
             if (otherPackageName.length == packageName.length) return true
             if (withSubpackages) {
@@ -33,20 +31,6 @@ class KotlinPackageEntry(
             }
         }
         return false
-    }
-
-    fun isBetterMatchForPackageThan(entry: KotlinPackageEntry?, path: ImportPath): Boolean {
-        if (!matchesPackageName(path.pathStr)) return false
-        if (entry == null) return true
-
-        if (this == ALL_OTHER_ALIAS_IMPORTS_ENTRY && path.hasAlias()) return true
-        if (entry == ALL_OTHER_ALIAS_IMPORTS_ENTRY && path.hasAlias()) return false
-
-        if (entry == ALL_OTHER_IMPORTS_ENTRY && this != ALL_OTHER_ALIAS_IMPORTS_ENTRY) return true
-        if (this == ALL_OTHER_IMPORTS_ENTRY && entry != ALL_OTHER_ALIAS_IMPORTS_ENTRY) return false
-        if (entry.withSubpackages != withSubpackages) return !withSubpackages
-
-        return entry.packageName.count { it == '.' } < packageName.count { it == '.' }
     }
 
     val isSpecial: Boolean get() = this == ALL_OTHER_IMPORTS_ENTRY || this == ALL_OTHER_ALIAS_IMPORTS_ENTRY
