@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdaterImpl;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -55,6 +56,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
   private final PushedFilePropertiesUpdater myPusher;
 
   public UnindexedFilesUpdater(@NotNull Project project, boolean startSuspended) {
+    super(getEquivalenceObject(project));
     myProject = project;
     myStartSuspended = startSuspended;
     myPusher = PushedFilePropertiesUpdater.getInstance(myProject);
@@ -295,5 +297,10 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
       return DEFAULT_MAX_INDEXER_THREADS;
     }
     return threadsCount;
+  }
+
+  @NotNull
+  private static Object getEquivalenceObject(@NotNull Project project) {
+    return Pair.create(project, UnindexedFilesUpdater.class);
   }
 }
