@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.project.libraryToSourceAnalysisEnabled
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
 
 @State(name = "KotlinIdeAnchorService", storages = [Storage("anchors.xml")])
@@ -36,7 +37,8 @@ class KotlinIdeResolutionAnchorService(
     var myState: State = State()
 
     private fun buildMapping(): Map<ModuleInfo, ModuleInfo> {
-        val modulesByNames = getModuleInfosFromIdeaModel(project).associateBy { moduleInfo -> 
+        val modulesByNames = getModuleInfosFromIdeaModel(project).associateBy { moduleInfo ->
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             when (moduleInfo) {
                 is LibraryInfo -> moduleInfo.library.name
                 is ModuleSourceInfo -> moduleInfo.module.name
