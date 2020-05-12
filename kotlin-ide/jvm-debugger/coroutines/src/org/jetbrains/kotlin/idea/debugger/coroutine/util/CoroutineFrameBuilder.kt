@@ -133,7 +133,13 @@ class CoroutineFrameBuilder {
 
                 val continuationHolder = ContinuationHolder.instance(context)
                 val coroutineInfo = continuationHolder.extractCoroutineInfoData(continuation) ?: return null
-                return preflight(frame, theFollowingFrames, coroutineInfo, mode)
+                val descriptor = StackFrameDescriptorImpl(frame, MethodsTracker())
+                return CoroutinePreflightStackFrame(
+                    coroutineInfo,
+                    descriptor,
+                    theFollowingFrames,
+                    mode
+                )
             }
             return null
         }
@@ -146,21 +152,6 @@ class CoroutineFrameBuilder {
                 }
             }
             return null
-        }
-
-        private fun preflight(
-            frame: StackFrameProxyImpl,
-            framesLeft: List<StackFrameProxyImpl>,
-            coroutineInfoData: CoroutineInfoData,
-            mode: SuspendExitMode
-        ): CoroutinePreflightStackFrame? {
-            val descriptor = StackFrameDescriptorImpl(frame, MethodsTracker())
-            return CoroutinePreflightStackFrame(
-                coroutineInfoData,
-                descriptor,
-                framesLeft,
-                mode
-            )
         }
 
         private fun getLVTContinuation(frame: StackFrameProxyImpl?) =

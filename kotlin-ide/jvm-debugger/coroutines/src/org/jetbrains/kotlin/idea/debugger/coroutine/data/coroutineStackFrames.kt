@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.data
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JVMStackFrameInfoProvider
+import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.memory.utils.StackFrameItem
@@ -33,18 +34,16 @@ class CoroutinePreflightStackFrame(
     private val firstFrameVariables: List<XNamedValue> = coroutineInfoData.topFrameVariables()
 ) : KotlinStackFrame(stackFrameDescriptorImpl), JVMStackFrameInfoProvider {
 
-    override fun computeChildren(node: XCompositeNode) {
-        val childrenList = XValueChildrenList()
-        firstFrameVariables.forEach {
-            childrenList.add(it)
+    override fun buildVariablesThreadAction(debuggerContext: DebuggerContextImpl?, children: XValueChildrenList?, node: XCompositeNode?) {
+        super.buildVariablesThreadAction(debuggerContext, children, node)
+        // add vars from first restored frame if no local vars found
+        children?.let {
+            val varNames = (0 until children.size()).map { children.getName(it) }.toSet()
+            firstFrameVariables.forEach {
+                if (!varNames.contains(it.name))
+                    children.add(it)
+            }
         }
-        node.addChildren(childrenList, false)
-        super.computeChildren(node)
-    }
-
-    override fun getVisibleVariables(): List<LocalVariableProxyImpl> {
-        // skip restored variables
-        return super.getVisibleVariables().filter { v -> !firstFrameVariables.any { it.name == v.name() } }
     }
 
     override fun isInLibraryContent() = false
