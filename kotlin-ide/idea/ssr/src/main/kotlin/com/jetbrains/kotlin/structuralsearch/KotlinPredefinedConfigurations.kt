@@ -5,6 +5,7 @@ import com.intellij.structuralsearch.plugin.ui.Configuration
 import org.jetbrains.kotlin.idea.KotlinFileType
 
 object KotlinPredefinedConfigurations {
+    private val CLASS_TYPE = KSSRBundle.message("class.category")
     private val EXPRESSION_TYPE = KSSRBundle.message("expressions.category")
     private val OPERATOR_TYPE = KSSRBundle.message("operators.category")
 
@@ -12,6 +13,27 @@ object KotlinPredefinedConfigurations {
         createSearchTemplateInfo(name, pattern, category, KotlinFileType.INSTANCE)
 
     fun createPredefinedTemplates(): Array<Configuration> = arrayOf(
+        // Classes
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.all.fields.of.the.class"),
+            """
+                class '_Class {  
+                    var 'Field+:* = '_Init?;
+                }
+            """.trimIndent(),
+            CLASS_TYPE
+        ),
+
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.all.methods.of.the.class"),
+            """
+                class '_Class {  
+                    fun 'Method+:* ('_Parameter* : '_ParameterType): '_ReturnType
+                }
+            """.trimIndent(),
+            CLASS_TYPE
+        ),
+
         // Expressions
         searchTemplate(KSSRBundle.message("predefined.configuration.assignments"), "'_Inst = '_Expr", EXPRESSION_TYPE),
         searchTemplate(
