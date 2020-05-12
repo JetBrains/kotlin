@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
@@ -18,27 +16,19 @@ import org.jetbrains.kotlin.psi.KtFile
  * 1. It is out of date when essential [sections] are changed
  * @see getGradleScriptInputsStamp
  * 2. When some related file is changed (other gradle script, gradle.properties file)
- * @see GradleBuildRoot.Linked.areRelatedFilesChangedBefore
+ * @see GradleScriptInputsWatcher.areRelatedFilesUpToDate
  *
- * [lastModifiedTs] is needed to check if some related file was changed since last update
+ * [inputsTS] is needed to check if some related file was changed since last update
  */
 data class GradleKotlinScriptConfigurationInputs(
     val sections: String,
-    val lastModifiedTs: Long,
-    val buildRoot: String? = null
+    val inputsTS: Long
 ) : CachedConfigurationInputs {
     override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean {
-        try {
-            val actualStamp = getGradleScriptInputsStamp(project, file, ktFile) ?: return false
+        val actualStamp = getGradleScriptInputsStamp(project, file, ktFile) ?: return false
 
-            if (actualStamp.sections != this.sections) return false
+        if (actualStamp.sections != this.sections) return false
 
-            return buildRoot == null ||
-                    GradleBuildRootsManager.getInstance(project)
-                        .getBuildRoot(buildRoot)
-                        ?.areRelatedFilesChangedBefore(file, lastModifiedTs) ?: false
-        } catch (cancel: ProcessCanceledException) {
-            return false
-        }
+        return project.service<GradleScriptInputsWatcher>().areRelatedFilesUpToDate(file, inputsTS)
     }
 }

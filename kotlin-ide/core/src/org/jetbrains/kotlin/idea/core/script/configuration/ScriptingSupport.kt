@@ -6,38 +6,76 @@
 package org.jetbrains.kotlin.idea.core.script.configuration
 
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsCache
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
-import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsBuilder
+import com.intellij.psi.PsiElementFinder
+import org.jetbrains.kotlin.idea.core.script.KotlinScriptDependenciesClassFinder
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
+import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
-/**
- * Extension point for overriding default Kotlin scripting support.
- *
- * Implementation should store script configuration internally (in memory and/or fs),
- * and provide it inside [collectConfigurations] using the [ScriptClassRootsCache.LightScriptInfo].
- * Custom data can be attached to [ScriptClassRootsCache.LightScriptInfo] and retrieved
- * by calling [ScriptClassRootsCache.getLightScriptInfo].
- *
- * [ScriptChangeListener] can be used to listen script changes.
- * [CompositeScriptConfigurationManager.updater] should be used to schedule configuration reloading.
- *
- * [isApplicable] should return true for files that is covered by that support.
- *
- * [isConfigurationLoadingInProgress] is used to pause analyzing.
- *
- * Long read: [idea/idea-gradle/src/org/jetbrains/kotlin/idea/scripting/gradle/README.md].
- *
- * @sample GradleBuildRootsManager
- */
 abstract class ScriptingSupport {
-    abstract fun isApplicable(file: VirtualFile): Boolean
-    abstract fun isConfigurationLoadingInProgress(file: KtFile): Boolean
-    abstract fun collectConfigurations(builder: ScriptClassRootsBuilder)
+    abstract class Provider {
+        abstract val all: Collection<ScriptingSupport>
 
-    companion object {
-        val EPN: ExtensionPointName<ScriptingSupport> =
-            ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.scriptingSupport")
+        abstract fun getSupport(file: VirtualFile): ScriptingSupport?
+
+        companion object {
+            val EPN: ExtensionPointName<Provider> =
+                ExtensionPointName.create("org.jetbrains.kotlin.scripting.idea.scriptingSupportProvider")
+        }
+    }
+
+    abstract fun clearCaches()
+    abstract fun hasCachedConfiguration(file: KtFile): Boolean
+    abstract fun isConfigurationLoadingInProgress(file: KtFile): Boolean
+    abstract fun getOrLoadConfiguration(virtualFile: VirtualFile, preloadedKtFile: KtFile? = null): ScriptCompilationConfigurationWrapper?
+
+    abstract val updater: ScriptConfigurationUpdater
+
+    private val classpathRootsLock = ReentrantLock()
+
+    @Volatile
+    private var _classpathRoots: ScriptClassRootsCache? = null
+    val classpathRoots: ScriptClassRootsCache
+        get() {
+            val value1 = _classpathRoots
+            if (value1 != null) return value1
+
+            classpathRootsLock.withLock {
+                val value2 = _classpathRoots
+                if (value2 != null) return value2
+
+                val value3 = recreateRootsCache()
+                value3.saveClassRootsToStorage()
+                _classpathRoots = value3
+                return value3
+            }
+        }
+
+    protected abstract fun recreateRootsCache(): ScriptClassRootsCache
+
+    fun clearClassRootsCaches(project: Project) {
+        debug { "class roots caches cleared" }
+
+        classpathRootsLock.withLock {
+            _classpathRoots = null
+        }
+
+        val kotlinScriptDependenciesClassFinder =
+            Extensions.getArea(project)
+                .getExtensionPoint(PsiElementFinder.EP_NAME).extensions
+                .filterIsInstance<KotlinScriptDependenciesClassFinder>()
+                .single()
+
+        kotlinScriptDependenciesClassFinder.clearCache()
+
+        ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
     }
 }

@@ -41,11 +41,11 @@ open class ScriptConfigurationMemoryCache(
 
     @Synchronized
     @Suppress("UNCHECKED_CAST")
-    override fun allApplied(): List<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>> {
-        val result = mutableListOf<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>()
+    override fun allApplied(): Map<VirtualFile, ScriptCompilationConfigurationWrapper> {
+        val result = hashMapOf<VirtualFile, ScriptCompilationConfigurationWrapper>()
         for ((file, configuration) in memoryCache.entrySet()) {
             if (configuration.applied?.configuration != null) {
-                result.add(Pair(file, configuration.applied.configuration))
+                result[file] = configuration.applied.configuration
             }
         }
         return result

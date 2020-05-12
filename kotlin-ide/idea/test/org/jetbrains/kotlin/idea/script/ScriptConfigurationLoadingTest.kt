@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.idea.script
 
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 
-@RunWith(JUnit3RunnerWithInners::class)
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class ScriptConfigurationLoadingTest : AbstractScriptConfigurationLoadingTest() {
     fun testSimple() {
         assertAndLoadInitialConfiguration()
@@ -163,10 +163,10 @@ class ScriptConfigurationLoadingTest : AbstractScriptConfigurationLoadingTest() 
 
     fun testLoadingForUsagesSearch() {
         assertAndLoadInitialConfiguration()
-        assertTrue(scriptConfigurationManager.default.ensureLoadedFromCache(listOf(myFile as KtFile)))
+        assertTrue(scriptConfigurationManager.updater.ensureConfigurationUpToDate(listOf(myFile as KtFile)))
 
         changeContents("A")
-        assertTrue(scriptConfigurationManager.default.ensureLoadedFromCache(listOf(myFile as KtFile)))
+        assertFalse(scriptConfigurationManager.updater.ensureConfigurationUpToDate(listOf(myFile as KtFile)))
     }
 
     fun testReportsOnAutoApply() {

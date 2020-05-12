@@ -20,12 +20,11 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions.LOADER
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.*
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptOutsiderFileConfigurationLoader
-import org.jetbrains.kotlin.idea.core.script.uсache.ScriptClassRootsBuilder
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.*
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
@@ -38,73 +37,21 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.script.experimental.api.ScriptDiagnostic
 
-/**
- * Standard implementation of scripts configuration loading and caching.
- *
- * ## Loading initiation
- *
- * [getOrLoadConfiguration] will be called when we need to show or analyze some script file.
- *
- * As described in [DefaultScriptingSupportBase], configuration may be loaded from [cache]
- * or [reloadOutOfDateConfiguration] will be called on [cache] miss.
- *
- * There are 2 tiers [cache]: memory and FS. For now FS cache implemented by [ScriptConfigurationLoader]
- * because we are not storing classpath roots yet. As a workaround cache.all() will return only memory
- * cached configurations.  So, for now we are indexing roots that loaded from FS with
- * default [reloadOutOfDateConfiguration] mechanics.
- *
- * Also, [ensureLoadedFromCache] may be called from [UnusedSymbolInspection]
- * to ensure that configuration of all scripts containing some symbol are up-to-date or try load it in sync.
- *
- * ## Loading
- *
- * When requested, configuration will be loaded using first applicable [loaders].
- * It can work synchronously or asynchronously.
- *
- * Synchronous loader will be called just immediately. Despite this, its result may not be applied immediately,
- * see next section for details.
- *
- * Asynchronous loader will be called in background thread (by [BackgroundExecutor]).
- *
- * ## Applying
- *
- * By default loaded configuration will *not* be applied immediately. Instead, we show in editor notification
- * that suggests user to apply changed configuration. This was done to avoid sporadically starting indexing of new roots,
- * which may happens regularly for large Gradle projects.
- *
- * Notification will be displayed when configuration is going to be updated. First configuration will be loaded
- * without notification.
- *
- * This behavior may be disabled by enabling "auto reload" in project settings.
- * When enabled, all loaded configurations will be applied immediately, without any notification.
- *
- * ## Concurrency
- *
- * Each files may be in on of this state:
- * - scriptDefinition is not ready
- * - not loaded
- * - up-to-date
- * - invalid, in queue (in [BackgroundExecutor] queue)
- * - invalid, loading
- * - invalid, waiting for apply
- *
- * [reloadOutOfDateConfiguration] guard this states. See it's docs for more details.
- */
-class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : DefaultScriptingSupportBase(manager) {
+class DefaultScriptingSupport(project: Project) : DefaultScriptingSupportBase(project) {
     // TODO public for tests
     val backgroundExecutor: BackgroundExecutor =
-        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(manager)
-        else DefaultBackgroundExecutor(project, manager)
+        if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(rootsIndexer)
+        else DefaultBackgroundExecutor(project, rootsIndexer)
 
     private val outsiderLoader = ScriptOutsiderFileConfigurationLoader(project)
     private val fileAttributeCache = ScriptConfigurationFileAttributeCache(project)
     private val defaultLoader = DefaultScriptConfigurationLoader(project)
-    private val loaders: List<ScriptConfigurationLoader>
-        get() = mutableListOf<ScriptConfigurationLoader>().apply {
-            add(outsiderLoader)
-            add(fileAttributeCache)
-            addAll(LOADER.getPoint(project).extensionList)
-            add(defaultLoader)
+    private val loaders: Sequence<ScriptConfigurationLoader>
+        get() = sequence {
+            yield(outsiderLoader)
+            yield(fileAttributeCache)
+            yieldAll(LOADER.getPoint(project).extensionList)
+            yield(defaultLoader)
         }
 
     private val saveLock = ReentrantLock()
@@ -123,7 +70,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
      *
      * Each files may be in on of the states described below:
      * - scriptDefinition is not ready. `ScriptDefinitionsManager.getInstance(project).isReady() == false`.
-     * [updateScriptDefinitionsReferences] will be called when [ScriptDefinitionsManager] will be ready
+     * [clearConfigurationCachesAndRehighlight] will be called when [ScriptDefinitionsManager] will be ready
      * which will call [reloadOutOfDateConfiguration] for opened editors.
      * - unknown. When [isFirstLoad] true (`cache[file] == null`).
      * - up-to-date. `cache[file]?.upToDate == true`.
@@ -157,39 +104,36 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
     override fun reloadOutOfDateConfiguration(
         file: KtFile,
         isFirstLoad: Boolean,
+        loadEvenWillNotBeApplied: Boolean,
         forceSync: Boolean,
-        isPostponedLoad: Boolean,
-        fromCacheOnly: Boolean
-    ): Boolean {
-        val virtualFile = file.originalFile.virtualFile ?: return false
+        isPostponedLoad: Boolean
+    ) {
+        val virtualFile = file.originalFile.virtualFile ?: return
 
-        if (!ScriptDefinitionsManager.getInstance(project).isReady()) return false
-        val scriptDefinition = file.findScriptDefinition() ?: return false
+        val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
+        val shouldLoad = isFirstLoad || loadEvenWillNotBeApplied || autoReloadEnabled
+        if (!shouldLoad) return
+
+        val postponeLoading = isPostponedLoad && !autoReloadEnabled && !isFirstLoad
+
+        if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
+        val scriptDefinition = file.findScriptDefinition() ?: return
 
         val (async, sync) = loaders.partition { it.shouldRunInBackground(scriptDefinition) }
 
         val syncLoader = sync.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
         if (syncLoader == null) {
-            if (!fromCacheOnly) {
-                if (forceSync) {
-                    loaders.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
-                } else {
-                    val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
-                    val postponeLoading = isPostponedLoad && !autoReloadEnabled
-
-                    if (postponeLoading) {
-                        LoadScriptConfigurationNotificationFactory.showNotification(virtualFile, project) {
-                            runAsyncLoaders(file, virtualFile, scriptDefinition, async, isLoadingPostponed = true)
-                        }
-                    } else {
-                        runAsyncLoaders(file, virtualFile, scriptDefinition, async, isLoadingPostponed = false)
+            if (forceSync) {
+                loaders.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
+            } else {
+                if (postponeLoading) {
+                    LoadScriptConfigurationNotificationFactory.showNotification(virtualFile, project) {
+                        runAsyncLoaders(file, virtualFile, scriptDefinition, async, isLoadingPostponed = true)
                     }
+                } else {
+                    runAsyncLoaders(file, virtualFile, scriptDefinition, async, isLoadingPostponed = false)
                 }
             }
-
-            return false
-        } else {
-            return true
         }
     }
 
@@ -206,7 +150,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
             val applied = cached?.applied
             if (applied != null && applied.inputs.isUpToDate(project, virtualFile)) {
                 // in case user reverted to applied configuration
-                suggestOrSaveConfiguration(virtualFile, applied, skipNotification = isLoadingPostponed)
+                suggestOrSaveConfiguration(virtualFile, applied, isLoadingPostponed)
             } else if (cached == null || !cached.isUpToDate(project, virtualFile)) {
                 // don't start loading if nothing was changed
                 // (in case we checking for up-to-date and loading concurrently)
@@ -222,7 +166,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return null
         val scriptDefinition = file.findScriptDefinition() ?: return null
 
-        manager.updater.update {
+        rootsIndexer.transaction {
             if (!loader.shouldRunInBackground(scriptDefinition)) {
                 loader.loadDependencies(false, file, scriptDefinition, loadingContext)
             } else {
@@ -236,16 +180,8 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
     }
 
     private val loadingContext = object : ScriptConfigurationLoadingContext {
-        /**
-         * Used from [ScriptOutsiderFileConfigurationLoader] only.
-         */
         override fun getCachedConfiguration(file: VirtualFile): ScriptConfigurationSnapshot? =
-            getAppliedConfiguration(file) ?: getFromGlobalCache(file)
-
-        private fun getFromGlobalCache(file: VirtualFile): ScriptConfigurationSnapshot? {
-            val info = manager.getLightScriptInfo(file.path) ?: return null
-            return ScriptConfigurationSnapshot(CachedConfigurationInputs.UpToDate, listOf(), info.buildConfiguration())
-        }
+            getAppliedConfiguration(file)
 
         override fun suggestNewConfiguration(file: VirtualFile, newResult: ScriptConfigurationSnapshot) {
             suggestOrSaveConfiguration(file, newResult, false)
@@ -288,7 +224,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                             file.removeScriptDependenciesNotificationPanel(project)
                         }
                         saveReports(file, newResult.reports)
-                        setAppliedConfiguration(file, newResult, syncUpdate = true)
+                        setAppliedConfiguration(file, newResult)
                     } else {
                         debug(file) {
                             "configuration changed, notification is shown: old = $oldConfiguration, new = $newConfiguration"
@@ -304,7 +240,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                             onClick = {
                                 saveReports(file, newResult.reports)
                                 file.removeScriptDependenciesNotificationPanel(project)
-                                manager.updater.update {
+                                rootsIndexer.transaction {
                                     setAppliedConfiguration(file, newResult)
                                 }
                             }
@@ -336,28 +272,10 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
             }
         }
     }
-
-    companion object {
-        fun getInstance(project: Project) =
-            (ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager).default
-    }
 }
 
-/**
- * Abstraction for [DefaultScriptingSupportBase] based [cache] and [reloadOutOfDateConfiguration].
- * Among this two methods concrete implementation should provide script changes listening.
- *
- * Basically all requests routed to [cache]. If there is no entry in [cache] or it is considered out-of-date,
- * then [reloadOutOfDateConfiguration] will be called, which, in turn, should call [setAppliedConfiguration]
- * immediately or in some future  (e.g. after user will click "apply context" or/and configuration will
- * be calculated by some background thread).
- *
- * [ScriptClassRootsCache] will be calculated based on [cache]d configurations.
- * Every change in [cache] will invalidate [ScriptClassRootsCache] cache.
- */
-abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigurationManager) {
-    val project: Project
-        get() = manager.project
+abstract class DefaultScriptingSupportBase(val project: Project) : ScriptingSupport() {
+    protected val rootsIndexer = ScriptClassRootsIndexer(project)
 
     @Suppress("LeakingThis")
     protected val cache: ScriptConfigurationCache = createCache()
@@ -371,18 +289,19 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
      * (e.g. after user will click "apply context" or/and configuration will be calculated by some background thread).
      *
      * @param isFirstLoad may be set explicitly for optimization reasons (to avoid expensive fs cache access)
+     * @param loadEvenWillNotBeApplied may should be set to false only on requests from particular editor, when
+     * user can see potential notification and accept new configuration. In other cases this should be `false` since
+     * loaded configuration will be just leaved in hidden user notification and cannot be used in any way.
      * @param forceSync should be used in tests only
      * @param isPostponedLoad is used to postspone loading: show a notification for out of date script and start loading when user request
-     * @param fromCacheOnly load only when builtin fast synchronous loaders are available
-     * @return true, if configuration loaded in sync
      */
     protected abstract fun reloadOutOfDateConfiguration(
         file: KtFile,
         isFirstLoad: Boolean = getAppliedConfiguration(file.originalFile.virtualFile) == null,
+        loadEvenWillNotBeApplied: Boolean = false,
         forceSync: Boolean = false,
-        isPostponedLoad: Boolean = false,
-        fromCacheOnly: Boolean = false
-    ): Boolean
+        isPostponedLoad: Boolean = false
+    )
 
     fun getCachedConfigurationState(file: VirtualFile?): ScriptConfigurationState? {
         if (file == null) return null
@@ -392,14 +311,14 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
     fun getAppliedConfiguration(file: VirtualFile?): ScriptConfigurationSnapshot? =
         getCachedConfigurationState(file)?.applied
 
-    private fun hasCachedConfiguration(file: KtFile): Boolean =
+    override fun hasCachedConfiguration(file: KtFile): Boolean =
         getAppliedConfiguration(file.originalFile.virtualFile) != null
 
-    fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
+    override fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
         return !hasCachedConfiguration(file) && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
     }
 
-    fun getOrLoadConfiguration(
+    override fun getOrLoadConfiguration(
         virtualFile: VirtualFile,
         preloadedKtFile: KtFile?
     ): ScriptCompilationConfigurationWrapper? {
@@ -407,86 +326,73 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         if (cached != null) return cached.configuration
 
         val ktFile = project.getKtFile(virtualFile, preloadedKtFile) ?: return null
-        manager.updater.update {
+        rootsIndexer.transaction {
             reloadOutOfDateConfiguration(ktFile, isFirstLoad = true)
         }
 
         return getAppliedConfiguration(virtualFile)?.configuration
     }
 
-    /**
-     * Load new configuration and suggest to apply it (only if it is changed)
-     */
-    fun ensureUpToDatedConfigurationSuggested(file: KtFile) {
-        reloadIfOutOfDate(file)
-    }
+    override val updater: ScriptConfigurationUpdater = object : ScriptConfigurationUpdater {
+        override fun ensureUpToDatedConfigurationSuggested(file: KtFile) {
+            reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = false)
+        }
 
-    /**
-     * Show notification about changed script configuration with action to start loading it
-     */
-    fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
-        reloadIfOutOfDate(file, isPostponedLoad = true)
-    }
+        override fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean {
+            return reloadIfOutOfDate(files, loadEvenWillNotBeApplied = false, isPostponedLoad = false)
+        }
 
-    private fun reloadIfOutOfDate(file: KtFile, isPostponedLoad: Boolean = false) {
-        if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
-
-        manager.updater.update {
-            val virtualFile = file.originalFile.virtualFile
-            if (virtualFile != null) {
-                val state = cache[virtualFile]
-                if (state == null || !state.isUpToDate(project, virtualFile, file)) {
-                    reloadOutOfDateConfiguration(
-                        file,
-                        isFirstLoad = state == null,
-                        isPostponedLoad = isPostponedLoad
-                    )
-                }
-            }
+        override fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
+            reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = true)
         }
     }
 
-    /**
-     * Ensure that any configuration for [files] is loaded from cache
-     */
-    fun ensureLoadedFromCache(files: List<KtFile>): Boolean {
+    private fun reloadIfOutOfDate(files: List<KtFile>, loadEvenWillNotBeApplied: Boolean, isPostponedLoad: Boolean): Boolean {
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return false
 
-        var allLoaded = true
-        manager.updater.update {
+        var upToDate = true
+        rootsIndexer.transaction {
             files.forEach { file ->
                 val virtualFile = file.originalFile.virtualFile
                 if (virtualFile != null) {
                     val state = cache[virtualFile]
-                    if (state == null) {
-                        if (!reloadOutOfDateConfiguration(
-                                file,
-                                isFirstLoad = true,
-                                fromCacheOnly = true
-                            )
-                        ) {
-                            allLoaded = false
-                        }
+                    if (state == null || !state.isUpToDate(project, virtualFile, file)) {
+                        upToDate = false
+                        reloadOutOfDateConfiguration(
+                            file,
+                            isFirstLoad = state == null,
+                            loadEvenWillNotBeApplied = loadEvenWillNotBeApplied,
+                            isPostponedLoad = isPostponedLoad
+                        )
                     }
                 }
             }
         }
 
-        return allLoaded
+        return upToDate
     }
 
     protected open fun setAppliedConfiguration(
         file: VirtualFile,
-        newConfigurationSnapshot: ScriptConfigurationSnapshot?,
-        syncUpdate: Boolean = false
+        newConfigurationSnapshot: ScriptConfigurationSnapshot?
     ) {
-        manager.updater.checkInTransaction()
+        rootsIndexer.checkInTransaction()
         val newConfiguration = newConfigurationSnapshot?.configuration
         debug(file) { "configuration changed = $newConfiguration" }
 
         if (newConfiguration != null) {
+            if (hasNotCachedRoots(newConfiguration)) {
+                debug(file) { "new class roots found: $newConfiguration" }
+                rootsIndexer.markNewRoot()
+            }
+
             cache.setApplied(file, newConfigurationSnapshot)
-            manager.updater.invalidate(file, synchronous = syncUpdate)
+
+            clearClassRootsCaches(project)
+        }
+
+        ScriptingSupportHelper.updateHighlighting(project) {
+            it == file
         }
     }
 
@@ -495,6 +401,10 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         configurationSnapshot: ScriptConfigurationSnapshot
     ) {
         cache.setLoaded(file, configurationSnapshot)
+    }
+
+    private fun hasNotCachedRoots(configuration: ScriptCompilationConfigurationWrapper): Boolean {
+        return classpathRoots.hasNotCachedRoots(DefaultClassRootsCache.extractRoots(project, configuration))
     }
 
     @TestOnly
@@ -506,27 +416,20 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         val virtualFile = file.virtualFile
         if (cache[virtualFile]?.isUpToDate(project, virtualFile, file) == true) return
 
-        manager.updater.update {
-            reloadOutOfDateConfiguration(file, forceSync = true)
+        rootsIndexer.transaction {
+            reloadOutOfDateConfiguration(file, forceSync = true, loadEvenWillNotBeApplied = true)
         }
     }
 
-    fun updateScriptDefinitionsReferences() {
+    override fun clearCaches() {
         cache.clear()
     }
 
-    fun collectConfigurations(builder: ScriptClassRootsBuilder) {
-        // todo: drop the hell below
-        // keep this one only:
-        // cache.allApplied().forEach { (vFile, configuration) -> builder.add(vFile, configuration) }
-
-        // own builder for saving to storage
-        val rootsStorage = ScriptClassRootsStorage.getInstance(project)
-        val ownBuilder = ScriptClassRootsBuilder.fromStorage(project, rootsStorage)
-        cache.allApplied().forEach { (vFile, configuration) -> ownBuilder.add(vFile, configuration) }
-        ownBuilder.toStorage(rootsStorage)
-
-        builder.add(ownBuilder)
+    override fun recreateRootsCache(): ScriptClassRootsCache {
+        return DefaultClassRootsCache(
+            project,
+            cache.allApplied()
+        )
     }
 }
 

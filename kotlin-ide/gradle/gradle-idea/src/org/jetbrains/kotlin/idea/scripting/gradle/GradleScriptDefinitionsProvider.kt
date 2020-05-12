@@ -11,7 +11,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.util.EnvironmentUtil
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
-import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
@@ -41,21 +40,6 @@ import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class GradleScriptDefinitionsContributor(private val project: Project) : ScriptDefinitionSourceAsContributor {
-    companion object {
-        fun getDefinitions(project: Project) =
-            ScriptDefinitionContributor.EP_NAME.getExtensions(project)
-                .filterIsInstance<GradleScriptDefinitionsContributor>()
-                .single().definitions.toList()
-
-        fun getDefinitionsTemplateClasspath(project: Project): MutableSet<String> =
-            mutableSetOf<String>().also { result ->
-                getDefinitions(project).forEach { definition ->
-                    definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()
-                        ?.templateClasspath
-                        ?.mapNotNullTo(result) { it.path }
-                }
-            }
-    }
 
     override val id: String = "Gradle Kotlin DSL"
     private val failedToLoad = AtomicBoolean(false)
@@ -144,8 +128,8 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     private fun kotlinStdlibAndCompiler(gradleLibDir: File): List<File> {
         // additionally need compiler jar to load gradle resolver
         return gradleLibDir.listFiles { file ->
-            file.name.startsWith("kotlin-compiler-embeddable") || file.name.startsWith("kotlin-stdlib")
-        }
+                file.name.startsWith("kotlin-compiler-embeddable") || file.name.startsWith("kotlin-stdlib")
+            }
             .firstOrNull()?.let(::listOf).orEmpty()
     }
 

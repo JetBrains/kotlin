@@ -27,6 +27,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
@@ -67,6 +69,12 @@ interface ScriptConfigurationManager {
      */
     fun getConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper?
 
+    /**
+     * Reload the configuration for [file] even it is already loaded.
+     * [loader] is used to load configuration. Other loaders aren't taken into account.
+     */
+    fun forceReloadConfiguration(file: VirtualFile, loader: ScriptConfigurationLoader): ScriptCompilationConfigurationWrapper?
+
     @Deprecated("Use getScriptClasspath(KtFile) instead")
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile>
 
@@ -90,9 +98,14 @@ interface ScriptConfigurationManager {
     fun isConfigurationLoadingInProgress(file: KtFile): Boolean
 
     /**
-     * Update caches that depends on script definitions and do update if necessary
+     * See [ScriptConfigurationUpdater].
      */
-    fun updateScriptDefinitionReferences()
+    val updater: ScriptConfigurationUpdater
+
+    /**
+     * Clear all caches and re-highlighting opened scripts
+     */
+    fun clearConfigurationCachesAndRehighlight()
 
     ///////////////
     // classpath roots info:
@@ -113,14 +126,14 @@ interface ScriptConfigurationManager {
             ServiceManager.getService(project, ScriptConfigurationManager::class.java)
 
         fun toVfsRoots(roots: Iterable<File>): List<VirtualFile> {
-            return roots.mapNotNull { classpathEntryToVfs(it) }
+            return roots.mapNotNull { it.classpathEntryToVfs() }
         }
 
-        fun classpathEntryToVfs(file: File): VirtualFile? {
+        private fun File.classpathEntryToVfs(): VirtualFile? {
             val res = when {
-                !file.exists() -> null
-                file.isDirectory -> StandardFileSystems.local()?.findFileByPath(file.canonicalPath)
-                file.isFile -> StandardFileSystems.jar()?.findFileByPath(file.canonicalPath + URLUtil.JAR_SEPARATOR)
+                !exists() -> null
+                isDirectory -> StandardFileSystems.local()?.findFileByPath(this.canonicalPath)
+                isFile -> StandardFileSystems.jar()?.findFileByPath(this.canonicalPath + URLUtil.JAR_SEPARATOR)
                 else -> null
             }
             // TODO: report this somewhere, but do not throw: assert(res != null, { "Invalid classpath entry '$this': exists: ${exists()}, is directory: $isDirectory, is file: $isFile" })
@@ -137,7 +150,7 @@ interface ScriptConfigurationManager {
         @TestOnly
         fun clearCaches(project: Project) {
             (getInstance(project) as CompositeScriptConfigurationManager).default
-                .updateScriptDefinitionsReferences()
+                .clearCaches()
         }
 
         fun clearManualConfigurationLoadingIfNeeded(file: VirtualFile) {
