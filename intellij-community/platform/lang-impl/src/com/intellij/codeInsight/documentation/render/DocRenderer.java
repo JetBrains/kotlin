@@ -52,9 +52,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.ImageObserver;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.List;
+import java.util.*;
 
 class DocRenderer implements EditorCustomElementRenderer {
   private static final int MIN_WIDTH = 350;
@@ -193,6 +192,7 @@ class DocRenderer implements EditorCustomElementRenderer {
     EditorEx editor = (EditorEx)inlay.getEditor();
     if (myPane == null || myContentUpdateNeeded) {
       newInstance = true;
+      clearCachedComponent();
       myPane = new EditorPane();
       myPane.setEditable(false);
       myPane.putClientProperty("caretWidth", 0); // do not reserve space for caret (making content one pixel narrower than component)
@@ -215,23 +215,30 @@ class DocRenderer implements EditorCustomElementRenderer {
           activateLink(e);
         }
       });
+      myPane.getDocument().putProperty("imageCache", DocRenderImageMemoryManager.IMAGE_SUPPLIER);
       myContentUpdateNeeded = false;
     }
     AppUIUtil.targetToDevice(myPane, editor.getContentComponent());
     myPane.setSize(width, 10_000_000 /* Arbitrary large value, that doesn't lead to overflows and precision loss */);
     if (newInstance) {
-      trackImageUpdates(inlay, myPane);
+      myPane.getPreferredSize(); // trigger internal layout, so that image elements are created
+                                 // this is done after 'targetToDevice' call to take correct graphics context into account
+      myPane.startImageTracking();
     }
     DocRendererMemoryManager.onRendererComponentUsage(this);
     return myPane;
   }
 
   void clearCachedComponent() {
-    myPane = null;
+    if (myPane != null) {
+      myPane.dispose();
+      myPane = null;
+    }
   }
 
   void dispose() {
     DocRendererMemoryManager.stopTracking(this);
+    clearCachedComponent();
   }
 
   private static @NotNull Color getTextColor(@NotNull EditorColorsScheme scheme) {
@@ -320,34 +327,6 @@ class DocRenderer implements EditorCustomElementRenderer {
     }
   }
 
-  private static void trackImageUpdates(Inlay inlay, JEditorPane editorPane) {
-    editorPane.getPreferredSize(); // trigger internal layout
-    ImageObserver observer = (img, infoflags, x, y, width, height) -> {
-      SwingUtilities.invokeLater(() -> {
-        if (inlay.isValid()) inlay.update();
-      });
-      return true;
-    };
-    if (trackImageUpdates(editorPane.getUI().getRootView(editorPane), observer)) {
-      observer.imageUpdate(null, 0, 0, 0, 0, 0);
-    }
-  }
-
-  private static boolean trackImageUpdates(View view, ImageObserver observer) {
-    boolean result = false;
-    if (view instanceof ImageView) {
-      Image image = ((ImageView)view).getImage();
-      if (image != null) {
-        result = image.getWidth(observer) >= 0 || image.getHeight(observer) >= 0;
-      }
-    }
-    int childCount = view.getViewCount();
-    for (int i = 0; i < childCount; i++) {
-      result |= trackImageUpdates(view.getView(i), observer);
-    }
-    return result;
-  }
-
   private static JBHtmlEditorKit createEditorKit(@NotNull Editor editor) {
     JBHtmlEditorKit editorKit = new JBHtmlEditorKit();
     editorKit.getStyleSheet().addStyleSheet(getStyleSheet(editor));
@@ -388,6 +367,7 @@ class DocRenderer implements EditorCustomElementRenderer {
   }
 
   class EditorPane extends JEditorPane {
+    private final List<Image> myImages = new ArrayList<>();
     private boolean myRepaintRequested;
 
     @Override
@@ -404,8 +384,62 @@ class DocRenderer implements EditorCustomElementRenderer {
       }
     }
 
+    @Override
+    public void paint(Graphics g) {
+      for (Image image : myImages) {
+        DocRenderImageMemoryManager.notifyPainted(image);
+      }
+      super.paint(g);
+    }
+
     Editor getEditor() {
       return myItem.editor;
+    }
+
+    void startImageTracking() {
+      collectImages(getUI().getRootView(this));
+      ImageObserver observer = (img, infoflags, x, y, width, height) -> {
+        boolean needsUpdate = (infoflags & (ImageObserver.WIDTH | ImageObserver.HEIGHT)) != 0;
+        boolean needsRepaint = (infoflags & ImageObserver.ALLBITS) != 0;
+        if (needsRepaint || needsUpdate) {
+          SwingUtilities.invokeLater(() -> {
+            Inlay<DocRenderer> inlay = myItem.inlay;
+            if (this == myPane && inlay != null) {
+              if (needsUpdate) {
+                DocRenderItemUpdater.getInstance().updateInlays(Collections.singleton(inlay));
+              }
+              else {
+                inlay.repaint();
+              }
+            }
+          });
+        }
+        return true;
+      };
+      boolean update = false;
+      for (Image image : myImages) {
+        update |= image.getWidth(observer) >= 0 || image.getHeight(observer) >= 0;
+      }
+      if (update) {
+        observer.imageUpdate(null, 0, 0, 0, 0, 0);
+      }
+    }
+
+    private void collectImages(View view) {
+      if (view instanceof ImageView) {
+        Image image = ((ImageView)view).getImage();
+        if (image != null) {
+          myImages.add(image);
+        }
+      }
+      int childCount = view.getViewCount();
+      for (int i = 0; i < childCount; i++) {
+        collectImages(view.getView(i));
+      }
+    }
+
+    void dispose() {
+      myImages.forEach(DocRenderImageMemoryManager::dispose);
     }
   }
 }
