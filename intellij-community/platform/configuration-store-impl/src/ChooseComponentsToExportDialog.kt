@@ -75,7 +75,7 @@ fun chooseSettingsFile(oldPath: String?, parent: Component?, title: String, desc
   chooserDescriptor.title = title
   chooserDescriptor.withFileFilter {
     ConfigImportHelper.isSettingsFile(it) ||
-    it.toPathOrNull()?.let { p -> ConfigImportHelper.isConfigDirectory(p) } == true
+    it.fileSystem.getNioPath(it)?.let { p -> ConfigImportHelper.isConfigDirectory(p) } == true
   }
 
   var initialDir: VirtualFile?
