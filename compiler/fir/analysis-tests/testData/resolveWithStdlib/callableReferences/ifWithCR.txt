@@ -1,11 +1,11 @@
 FILE: ifWithCR.kt
     private final var R|kotlin/Int|.readOnlyWrapper: R|kotlin/CharSequence?|
-        public get(): R|kotlin/CharSequence?| {
+        private get(): R|kotlin/CharSequence?| {
             ^ Null(null)
         }
         private set(value: R|kotlin/CharSequence?|): R|kotlin/Unit|
     private final var R|kotlin/Int|.mutableWrapper: R|kotlin/CharSequence?|
-        public get(): R|kotlin/CharSequence?| {
+        private get(): R|kotlin/CharSequence?| {
             ^ Null(null)
         }
         private set(value: R|kotlin/CharSequence?|): R|kotlin/Unit|

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.Context
@@ -664,7 +665,11 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      * primaryConstructor branch
      */
-    private fun convertPrimaryConstructor(primaryConstructor: LighterASTNode?, classWrapper: ClassWrapper, delegatedConstructorSource: FirLightSourceElement?): PrimaryConstructor? {
+    private fun convertPrimaryConstructor(
+        primaryConstructor: LighterASTNode?,
+        classWrapper: ClassWrapper,
+        delegatedConstructorSource: FirLightSourceElement?
+    ): PrimaryConstructor? {
         if (primaryConstructor == null && !classWrapper.isEnumEntry() && classWrapper.hasSecondaryConstructor) return null
         if (classWrapper.isInterface()) return null
 
@@ -939,7 +944,8 @@ class DeclarationsConverter(
                         }
                     }
 
-                    status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality()).apply {
+                    val propertyVisibility = modifiers.getVisibility()
+                    status = FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality()).apply {
                         isExpect = modifiers.hasExpect()
                         isActual = modifiers.hasActual()
                         isOverride = modifiers.hasOverride()
@@ -948,13 +954,13 @@ class DeclarationsConverter(
                     }
 
 
-                    val convertedAccessors = accessors.map { convertGetterOrSetter(it, returnType) }
+                    val convertedAccessors = accessors.map { convertGetterOrSetter(it, returnType, propertyVisibility) }
                     this.getter = convertedAccessors.find { it.isGetter }
-                        ?: FirDefaultPropertyGetter(null, session, FirDeclarationOrigin.Source, returnType, modifiers.getVisibility())
+                        ?: FirDefaultPropertyGetter(null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility)
                     this.setter =
                         if (isVar) {
                             convertedAccessors.find { it.isSetter }
-                                ?: FirDefaultPropertySetter(null, session, FirDeclarationOrigin.Source, returnType, modifiers.getVisibility())
+                                ?: FirDefaultPropertySetter(null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility)
                         } else null
 
                     val receiver = delegateExpression?.let {
@@ -1027,7 +1033,11 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyGetterOrSetter
      */
-    private fun convertGetterOrSetter(getterOrSetter: LighterASTNode, propertyTypeRef: FirTypeRef): FirPropertyAccessor {
+    private fun convertGetterOrSetter(
+        getterOrSetter: LighterASTNode,
+        propertyTypeRef: FirTypeRef,
+        propertyVisibility: Visibility
+    ): FirPropertyAccessor {
         var modifiers = Modifier()
         var isGetter = true
         var returnType: FirTypeRef? = null
@@ -1051,10 +1061,21 @@ class DeclarationsConverter(
             }
         }
 
+        var accessorVisibility = modifiers.getVisibility()
+        if (accessorVisibility == Visibilities.UNKNOWN) {
+            accessorVisibility = propertyVisibility
+        }
         val sourceElement = getterOrSetter.toFirSourceElement()
         if (block == null && expression == null) {
             return FirDefaultPropertyAccessor
-                .createGetterOrSetter(sourceElement, baseSession, FirDeclarationOrigin.Source, propertyTypeRef, modifiers.getVisibility(), isGetter)
+                .createGetterOrSetter(
+                    sourceElement,
+                    baseSession,
+                    FirDeclarationOrigin.Source,
+                    propertyTypeRef,
+                    accessorVisibility,
+                    isGetter
+                )
                 .also {
                     it.annotations += modifiers.annotations
                 }
@@ -1067,7 +1088,7 @@ class DeclarationsConverter(
             returnTypeRef = returnType ?: if (isGetter) propertyTypeRef else implicitUnitType
             symbol = FirPropertyAccessorSymbol()
             this.isGetter = isGetter
-            status = FirDeclarationStatusImpl(modifiers.getVisibility(), Modality.FINAL)
+            status = FirDeclarationStatusImpl(accessorVisibility, Modality.FINAL)
             context.firFunctionTargets += target
             annotations += modifiers.annotations
 
