@@ -975,6 +975,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("returnValueOfArrayConstructor.kt")
+        public void testReturnValueOfArrayConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/returnValueOfArrayConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("sharedSlotsWithCapturedVars.kt")
         public void testSharedSlotsWithCapturedVars() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");
