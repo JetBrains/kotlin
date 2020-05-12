@@ -267,11 +267,19 @@ class RawFirBuilder(
             propertyTypeRef: FirTypeRef,
             isGetter: Boolean,
         ): FirPropertyAccessor {
+            val accessorVisibility =
+                if (this?.visibility != null && this.visibility != Visibilities.UNKNOWN) this.visibility else property.visibility
             if (this == null || !hasBody()) {
                 val propertySource = property.toFirSourceElement()
-                val accessorVisibility = this?.visibility ?: property.visibility
                 return FirDefaultPropertyAccessor
-                    .createGetterOrSetter(propertySource, baseSession, FirDeclarationOrigin.Source, propertyTypeRef, accessorVisibility, isGetter)
+                    .createGetterOrSetter(
+                        propertySource,
+                        baseSession,
+                        FirDeclarationOrigin.Source,
+                        propertyTypeRef,
+                        accessorVisibility,
+                        isGetter
+                    )
                     .also {
                         if (this != null) {
                             it.extractAnnotationsFrom(this)
@@ -290,7 +298,7 @@ class RawFirBuilder(
                     returnTypeReference.toFirOrUnitType()
                 }
                 this.isGetter = isGetter
-                status = FirDeclarationStatusImpl(visibility, Modality.FINAL)
+                status = FirDeclarationStatusImpl(accessorVisibility, Modality.FINAL)
                 extractAnnotationsTo(this)
                 this@RawFirBuilder.context.firFunctionTargets += accessorTarget
                 extractValueParametersTo(this, propertyTypeRef)
@@ -374,7 +382,13 @@ class RawFirBuilder(
                 isLocal = false
                 this.status = status
                 getter = FirDefaultPropertyGetter(propertySource, baseSession, FirDeclarationOrigin.Source, type, visibility)
-                setter = if (isMutable) FirDefaultPropertySetter(propertySource, baseSession, FirDeclarationOrigin.Source, type, visibility) else null
+                setter = if (isMutable) FirDefaultPropertySetter(
+                    propertySource,
+                    baseSession,
+                    FirDeclarationOrigin.Source,
+                    type,
+                    visibility
+                ) else null
                 extractAnnotationsTo(this)
             }
         }
