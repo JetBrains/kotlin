@@ -166,7 +166,7 @@ class ControlFlowGraphBuilder {
             if (postponedExitNode != null) {
                 requireNotNull(postponedEnterNode)
                 val kind = if (postponedEnterNode.isDead) EdgeKind.Dead else EdgeKind.Cfg
-                CFGNode.addEdge(postponedEnterNode, postponedExitNode, kind, propagateDeadness = true)
+                CFGNode.addJustKindEdge(postponedEnterNode, postponedExitNode, kind, propagateDeadness = true)
             }
             lexicalScopes.pop()
         }

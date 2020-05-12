@@ -310,14 +310,14 @@ digraph flowFromInplaceLambda_kt {
         106 [label="Exit function test_4" style="filled" fillcolor=red];
     }
     105 -> {107};
-    107 -> {108 108} [color=green];
+    107 -> {108} [color=green];
     107 -> {126} [color=red];
     108 -> {109};
     109 -> {110};
     110 -> {111};
     111 -> {112};
     112 -> {113};
-    113 -> {114 114} [color=green];
+    113 -> {114} [color=green];
     113 -> {132} [color=red];
     114 -> {115};
     115 -> {116};
@@ -419,7 +419,7 @@ digraph flowFromInplaceLambda_kt {
         159 [label="Exit function test_6" style="filled" fillcolor=red];
     }
     158 -> {160};
-    160 -> {161 161} [color=green];
+    160 -> {161} [color=green];
     160 -> {165} [color=red];
     161 -> {162};
     162 -> {163};

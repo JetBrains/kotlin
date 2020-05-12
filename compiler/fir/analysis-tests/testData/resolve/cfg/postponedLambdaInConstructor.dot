@@ -54,7 +54,7 @@ digraph postponedLambdaInConstructor_kt {
     13 -> {15};
     14 -> {9} [color=green];
     14 -> {12} [color=red];
-    15 -> {16 16} [color=green];
+    15 -> {16} [color=green];
     15 -> {17} [color=red];
     16 -> {14};
     17 -> {19};

@@ -163,14 +163,14 @@ digraph delegateWithAnonymousObject_kt {
     66 -> {54} [color=green];
     54 -> {56};
     55 -> {67} [color=green];
-    56 -> {57 57} [color=green];
+    56 -> {57} [color=green];
     57 -> {58};
     58 -> {59};
     59 -> {60};
     60 -> {61};
     61 -> {62};
     62 -> {63};
-    63 -> {64 64} [color=green];
+    63 -> {64} [color=green];
     63 -> {21} [color=red];
     64 -> {65};
     65 -> {55};

@@ -68,6 +68,10 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         internal fun addEdge(from: CFGNode<*>, to: CFGNode<*>, kind: EdgeKind, propagateDeadness: Boolean) {
             from._followingNodes += to
             to._previousNodes += from
+            addJustKindEdge(from, to, kind, propagateDeadness)
+        }
+
+        internal fun addJustKindEdge(from: CFGNode<*>, to: CFGNode<*>, kind: EdgeKind, propagateDeadness: Boolean) {
             if (kind != EdgeKind.Simple) {
                 from._outgoingEdges[to] = kind
                 to._incomingEdges[from] = kind
