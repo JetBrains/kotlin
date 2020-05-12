@@ -30,8 +30,7 @@ import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Holder for [ScriptClassRootsCache].
@@ -62,9 +61,13 @@ class ScriptClassRootsUpdater(
         return builder.build()
     }
 
-    @Volatile
-    var classpathRoots: ScriptClassRootsCache = recreateRootsCache()
-        private set
+    /**
+     * Wee need CAS due to concurrent unblocking sync update in [checkInvalidSdks]
+     */
+    private val cache: AtomicReference<ScriptClassRootsCache> = AtomicReference(recreateRootsCache())
+
+    val classpathRoots: ScriptClassRootsCache
+        get() = cache.get()
 
     /**
      * @param synchronous Used from legacy FS cache only, don't use
@@ -130,7 +133,6 @@ class ScriptClassRootsUpdater(
         }
     }
 
-    private val syncLock = ReentrantLock()
     private var scheduledUpdate: ProgressIndicator? = null
 
     @Suppress("IncorrectParentDisposable")
@@ -152,61 +154,61 @@ class ScriptClassRootsUpdater(
         doUpdate(false)
     }
 
-    internal fun checkInvalidSdks(remove: Sdk? = null) {
-        // sdks should be updated synchronously to avoid disposed roots usage
-        syncLock.withLock {
-            val current = classpathRoots
-            val actualSdks = current.sdks.rebuild(remove = remove)
-            if (actualSdks != current.sdks) {
-                // don't call invalidateAndCommit as it may be synchronous
-                // let's update sdks immediately and schedule cache rebuilding
-                classpathRoots = current.withUpdatedSdks(actualSdks)
-                ensureUpdateScheduled()
-            }
-        }
-    }
-
     private fun doUpdate(underProgressManager: Boolean = true) {
-        syncLock.withLock {
-            try {
-                val updates = recreateRootsCacheAndDiff()
+        try {
+            val updates = recreateRootsCacheAndDiff()
 
-                if (!updates.changed) return
+            if (!updates.changed) return
 
-                if (underProgressManager) {
-                    ProgressManager.checkCanceled()
+            if (underProgressManager) {
+                ProgressManager.checkCanceled()
+            }
+
+            if (project.isDisposed) return
+
+            if (updates.hasNewRoots) {
+                notifyRootsChanged()
+            }
+
+            PsiElementFinder.EP.findExtensionOrFail(KotlinScriptDependenciesClassFinder::class.java, project)
+                .clearCache()
+
+            ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
+
+            if (updates.hasUpdatedScripts) {
+                updateHighlighting(project) {
+                    updates.isScriptChanged(it.path)
                 }
+            }
 
-                if (project.isDisposed) return
-
-                if (updates.hasNewRoots) {
-                    notifyRootsChanged()
-                }
-
-                PsiElementFinder.EP.findExtensionOrFail(KotlinScriptDependenciesClassFinder::class.java, project)
-                    .clearCache()
-
-                ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
-
-                if (updates.hasUpdatedScripts) {
-                    updateHighlighting(project) {
-                        updates.isScriptChanged(it.path)
-                    }
-                }
-
-                lastSeen = updates.cache
-            } finally {
-                synchronized(this) {
-                    scheduledUpdate = null
-                }
+            lastSeen = updates.cache
+        } finally {
+            synchronized(this) {
+                scheduledUpdate = null
             }
         }
     }
 
     private fun recreateRootsCacheAndDiff(): ScriptClassRootsCache.Updates {
-        val new = recreateRootsCache()
-        classpathRoots = new
-        return new.diff(lastSeen)
+        while (true) {
+            val old = cache.get()
+            val new = recreateRootsCache()
+            if (cache.compareAndSet(old, new)) {
+                return new.diff(lastSeen)
+            }
+        }
+    }
+
+    internal fun checkInvalidSdks(remove: Sdk? = null) {
+        // sdks should be updated synchronously to avoid disposed roots usage
+        do {
+            val old = cache.get()
+            val actualSdks = old.sdks.rebuild(remove = remove)
+            if (actualSdks == old.sdks) return
+            val new = old.withUpdatedSdks(actualSdks)
+        } while (!cache.compareAndSet(old, new))
+
+        ensureUpdateScheduled()
     }
 
     private fun notifyRootsChanged() {
