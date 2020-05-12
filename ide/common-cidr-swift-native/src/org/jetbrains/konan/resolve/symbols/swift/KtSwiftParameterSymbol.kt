@@ -46,7 +46,7 @@ class KtSwiftParameterSymbol : KtSwiftImmediateSymbol, SwiftParameterSymbol {
     //todo [medvedev]???
     override fun isVariadic(): Boolean = false
 
-    override fun getTypeInfo(): SwiftVariableTypeInfo = TypeAnnotationInfo(swiftType)
+    override val typeInfo: SwiftVariableTypeInfo get() = TypeAnnotationInfo(swiftType)
 
     override val swiftAttributes: SwiftAttributesInfo
         get() = super<KtSwiftImmediateSymbol>.swiftAttributes

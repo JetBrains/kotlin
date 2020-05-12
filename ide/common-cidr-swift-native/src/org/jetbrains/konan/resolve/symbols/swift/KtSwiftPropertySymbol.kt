@@ -45,7 +45,7 @@ class KtSwiftPropertySymbol : KtSwiftMemberSymbol, SwiftPropertySymbol {
     override fun getStaticness(): SwiftCanBeStatic.Staticness =
         if (isClassProperty) SwiftCanBeStatic.Staticness.CLASS else SwiftCanBeStatic.Staticness.NOT_STATIC
 
-    override fun getTypeInfo(): SwiftVariableTypeInfo = TypeAnnotationInfo(swiftType)
+    override val typeInfo: SwiftVariableTypeInfo get() = TypeAnnotationInfo(swiftType)
 
     override val modifiers: SwiftModifierInfo //todo [medvedev]???
         get() = SwiftModifierInfo.EMPTY
