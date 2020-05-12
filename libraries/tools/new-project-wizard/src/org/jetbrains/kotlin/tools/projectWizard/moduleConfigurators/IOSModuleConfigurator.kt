@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
@@ -29,6 +30,13 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, M
 
     override val needCreateBuildFile: Boolean = false
     override val requiresRootBuildFile: Boolean = true
+
+    override fun Writer.runArbitraryTask(
+        configurationData: ModulesToIrConversionData,
+        module: Module,
+        modulePath: Path
+    ): TaskResult<Unit> =
+        GradlePlugin::gradleProperties.addValues("xcodeproj" to "./${module.name}")
 
     override fun Reader.createTemplates(
         configurationData: ModulesToIrConversionData,
