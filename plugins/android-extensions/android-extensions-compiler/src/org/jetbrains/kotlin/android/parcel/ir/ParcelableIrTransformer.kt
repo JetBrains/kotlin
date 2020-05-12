@@ -301,7 +301,7 @@ class ParcelableIrTransformer(private val context: CommonBackendContext, private
                 val property = properties.first { it.name == parameter.name }
                 val localScope = property.getParcelerScope(toplevelScope)
                 ParcelableProperty(property.backingField!!) {
-                    serializerFactory.get(parameter.type, parcelizeType = defaultType, strict = true, scope = localScope)
+                    serializerFactory.get(parameter.type, parcelizeType = defaultType, scope = localScope)
                 }
             }
         }
