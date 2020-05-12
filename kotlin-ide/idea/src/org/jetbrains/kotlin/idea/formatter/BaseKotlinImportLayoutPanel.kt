@@ -15,6 +15,7 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.table.JBTable
 import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.formatter.KotlinPackageEntry
 import org.jetbrains.kotlin.idea.core.formatter.KotlinPackageEntryTable
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors
@@ -171,8 +172,8 @@ class KotlinStarImportLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBundl
             .setAddAction { addPackage() }
             .setRemoveAction { removePackage() }
             .setButtonComparator(
-                ApplicationBundle.message("button.add.package"),
-                ApplicationBundle.message("button.remove"),
+                "Add",
+                "Remove"
             ).setPreferredSize(Dimension(-1, 100))
             .createPanel()
 
@@ -182,7 +183,7 @@ class KotlinStarImportLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBundl
 }
 
 class KotlinImportOrderLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBundle.message("title.import.layout")) {
-    private val cbImportAliasesSeparately = JBCheckBox("Import aliases separately")
+    private val cbImportAliasesSeparately = JBCheckBox(KotlinBundle.message("codestyle.layout.import.aliases.separately"))
 
     init {
         add(cbImportAliasesSeparately, BorderLayout.NORTH)
@@ -208,17 +209,17 @@ class KotlinImportOrderLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBund
 
                 entry?.isSpecial == false
             }.setButtonComparator(
-                ApplicationBundle.message("button.add.package"),
-                ApplicationBundle.message("button.remove"),
-                ApplicationBundle.message("button.move.up"),
-                ApplicationBundle.message("button.move.down")
+                "Add Package",
+                "Remove",
+                "Up",
+                "Down"
             ).setPreferredSize(Dimension(-1, 100))
             .createPanel()
 
         add(importLayoutPanel, BorderLayout.CENTER)
         resizeColumns()
 
-        cbImportAliasesSeparately.addItemListener { _ ->
+        cbImportAliasesSeparately.addItemListener {
             if (areImportAliasesEnabled()) {
                 if (KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY !in packageTable.getEntries()) {
                     packageTable.addEntry(KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY)

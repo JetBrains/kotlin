@@ -79,13 +79,15 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
             PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("java.util", false));
             PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("kotlinx.android.synthetic", true));
-
-            PACKAGES_IMPORT_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_IMPORTS_ENTRY);
-            PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("java", true));
-            PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("javax", true));
-            PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("kotlin", true));
-            PACKAGES_IMPORT_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY);
         }
+
+        // Many of test data actually depend on this order of imports,
+        // that is why we put it here even for test mode
+        PACKAGES_IMPORT_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_IMPORTS_ENTRY);
+        PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("java", true));
+        PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("javax", true));
+        PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("kotlin", true));
+        PACKAGES_IMPORT_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY);
     }
 
     public static KotlinCodeStyleSettings getInstance(Project project) {
