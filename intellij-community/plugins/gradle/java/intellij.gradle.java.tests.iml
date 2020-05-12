@@ -24,5 +24,6 @@
     <orderEntry type="module" module-name="intellij.groovy" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
     <orderEntry type="module" module-name="intellij.platform.objectSerializer" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="org.codehaus.groovy:groovy-json" level="project" />
   </component>
 </module>
