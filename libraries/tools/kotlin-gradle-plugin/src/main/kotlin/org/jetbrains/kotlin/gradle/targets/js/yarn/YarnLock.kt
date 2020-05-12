@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
@@ -68,15 +68,36 @@ data class YarnLock(val entries: List<Entry>) {
                         } else line
 
                         if (line1.isNotEmpty()) {
-                            val values = line1.substring(indentPos).split(" ").map { value ->
-                                val value1 = value.removeSuffix(",")
-                                if (value1.startsWith("\""))
-                                    try {
-                                        JsonReader(StringReader(value1)).nextString()
-                                    } catch (e: Throwable) {
-                                        value1.removePrefix("\"").removeSuffix("\"")
+                            var line2: String = line1
+                            val quotedValues = QUOTED_VALUE.findAll(line1)
+                                .flatMap { it.groupValues.drop(1).asSequence() }
+                                .toList()
+                                .apply {
+                                    forEachIndexed { index, item ->
+                                        line2 = line2.replace(
+                                            """
+                                                "$item"
+                                            """.trimIndent(),
+                                            """
+                                                "$$index"
+                                            """.trimIndent()
+                                        )
                                     }
-                                else value1
+                                }
+
+                            val values = line2.substring(indentPos).split(" ").map { value ->
+                                val value1 = value.removeSuffix(",")
+                                if (value1.startsWith("\"")) {
+                                    val (index) = QUOTED_PLACEHOLDER.find(value1)!!.destructured
+                                    val value2 = """
+                                        "${quotedValues[index.toInt()]}"
+                                        """.trimIndent()
+                                    try {
+                                        JsonReader(StringReader(value2)).nextString()
+                                    } catch (e: Throwable) {
+                                        value2.removePrefix("\"").removeSuffix("\"")
+                                    }
+                                } else value1
                             }
 
                             if (onNewLevel) {
@@ -106,3 +127,6 @@ data class YarnLock(val entries: List<Entry>) {
         }
     }
 }
+
+private val QUOTED_VALUE = """"(.+?)"""".toRegex()
+private val QUOTED_PLACEHOLDER = """\$(\d+)""".toRegex()
