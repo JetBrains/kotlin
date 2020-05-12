@@ -77,7 +77,7 @@ class NewConstraintSystemImpl(
     override val diagnostics: List<KotlinCallDiagnostic>
         get() = storage.errors
 
-    override fun getBuilder() = apply { checkState(State.BUILDING, State.COMPLETION) }
+    override fun getBuilder() = apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }
 
     override fun asReadOnlyStorage(): ConstraintStorage {
         checkState(State.BUILDING, State.FREEZED)
@@ -145,27 +145,28 @@ class NewConstraintSystemImpl(
         typeVariablesTransaction.add(variable)
     }
 
-    private fun closeTransaction(beforeState: State) {
+    private fun closeTransaction(beforeState: State, beforeTypeVariables: Int) {
         checkState(State.TRANSACTION)
-        typeVariablesTransaction.clear()
+        typeVariablesTransaction.trimToSize(beforeTypeVariables)
         state = beforeState
     }
 
     override fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         val beforeState = state
         val beforeInitialConstraintCount = storage.initialConstraints.size
         val beforeErrorsCount = storage.errors.size
         val beforeMaxTypeDepthFromInitialConstraints = storage.maxTypeDepthFromInitialConstraints
+        val beforeTypeVariablesTransactionSize = typeVariablesTransaction.size
 
         state = State.TRANSACTION
         // typeVariablesTransaction is clear
         if (runOperations()) {
-            closeTransaction(beforeState)
+            closeTransaction(beforeState, beforeTypeVariablesTransactionSize)
             return true
         }
 
-        for (addedTypeVariable in typeVariablesTransaction) {
+        for (addedTypeVariable in typeVariablesTransaction.subList(beforeTypeVariablesTransactionSize, typeVariablesTransaction.size)) {
             storage.allTypeVariables.remove(addedTypeVariable.freshTypeConstructor())
             storage.notFixedTypeVariables.remove(addedTypeVariable.freshTypeConstructor())
         }
@@ -181,7 +182,7 @@ class NewConstraintSystemImpl(
         }
 
         addedInitialConstraints.clear() // remove constraint from storage.initialConstraints
-        closeTransaction(beforeState)
+        closeTransaction(beforeState, beforeTypeVariablesTransactionSize)
         return false
     }
 
@@ -350,17 +351,17 @@ class NewConstraintSystemImpl(
 
     // PostponedArgumentsAnalyzer.Context
     override fun buildCurrentSubstitutor(): TypeSubstitutorMarker {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return buildCurrentSubstitutor(emptyMap())
     }
 
     override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>): TypeSubstitutorMarker {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return storage.buildCurrentSubstitutor(this, additionalBindings)
     }
 
     override fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return storage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(this)
     }
 
@@ -377,7 +378,7 @@ class NewConstraintSystemImpl(
     }
 
     override fun currentStorage(): ConstraintStorage {
-        checkState(State.BUILDING, State.COMPLETION)
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         return storage
     }
 
