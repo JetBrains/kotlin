@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.gradle.BrokenKotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher
+import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptingSupportProvider
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
@@ -90,19 +92,18 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
 
         // todo(KT-34440): take inputs snapshot before starting import
         KotlinDslScriptModel(
-            toSystemIndependentName(file.absolutePath),
-            getGradleScriptInputsStamp(project, virtualFile)!!, // TODO: NPE
-            model.classPath.map { toSystemIndependentName(it.absolutePath) },
-            model.sourcePath.map { toSystemIndependentName(it.absolutePath) },
+            file.absolutePath,
+            // TODO: NPE
+            getGradleScriptInputsStamp(project, virtualFile)!!,
+            model.classPath.map { it.absolutePath },
+            model.sourcePath.map { it.absolutePath },
             model.implicitImports,
             messages
         )
     }
 
 class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSystemTaskId) {
-    val projectRoots = mutableSetOf<String>()
     val models = mutableListOf<KotlinDslScriptModel>()
-    var failed = false
 }
 
 fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {
@@ -112,8 +113,11 @@ fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {
         errorReporter.reportError(File(model.file), model)
     }
 
-    // todo: use real info about projects
-    build.projectRoots.addAll(build.models.map { toSystemIndependentName(File(it.file).parent) })
+    project.service<GradleScriptInputsWatcher>().saveGradleProjectRootsAfterImport(
+        build.models.map { FileUtil.toSystemIndependentName(File(it.file).parent) }.toSet()
+    )
 
-    GradleBuildRootsManager.getInstance(project).update(build)
+    GradleScriptingSupportProvider.getInstance(project).update(build)
+
+    project.service<GradleScriptInputsWatcher>().clearState()
 }

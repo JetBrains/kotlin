@@ -9,14 +9,14 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.scripting.definitions.isNonScript
 
 open class DefaultScriptChangeListener(project: Project) : ScriptChangeListener(project) {
-    override fun editorActivated(vFile: VirtualFile) {
+    override fun editorActivated(vFile: VirtualFile, updater: ScriptConfigurationUpdater) {
         val file = getAnalyzableKtFileForScript(vFile) ?: return
-        default.ensureUpToDatedConfigurationSuggested(file)
+        updater.ensureUpToDatedConfigurationSuggested(file)
     }
 
-    override fun documentChanged(vFile: VirtualFile) {
+    override fun documentChanged(vFile: VirtualFile, updater: ScriptConfigurationUpdater) {
         val file = getAnalyzableKtFileForScript(vFile) ?: return
-        default.ensureUpToDatedConfigurationSuggested(file)
+        updater.ensureUpToDatedConfigurationSuggested(file)
     }
 
     override fun isApplicable(vFile: VirtualFile): Boolean {

@@ -6,39 +6,25 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.externalSystem.autoimport.AsyncFileChangeListenerBase
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 
-fun addVfsListener(
-    watcher: GradleScriptListener,
-    buildRootsManager: GradleBuildRootsManager
-) {
+fun addVfsListener(watcher: GradleScriptInputsWatcher) {
     VirtualFileManager.getInstance().addAsyncFileListener(
         object : AsyncFileChangeListenerBase() {
-            val changedFiles = mutableListOf<String>()
-
-            override fun init() {
-                changedFiles.clear()
-            }
-
             override fun isRelevant(path: String): Boolean {
-                return buildRootsManager.maybeAffectedGradleProjectFile(path)
+                return isInAffectedGradleProjectFiles(watcher.project, path)
             }
 
             override fun updateFile(file: VirtualFile, event: VFileEvent) {
-                changedFiles.add(event.path)
+                watcher.fileChanged(event.path, file.timeStamp)
             }
 
-            override fun apply() {
-                changedFiles.forEach {
-                    LocalFileSystem.getInstance().findFileByPath(it)?.let { f ->
-                        watcher.fileChanged(f.path, f.timeStamp)
-                    }
-                }
-            }
+            // do nothing
+            override fun apply() {}
+            override fun init() {}
+
         },
         watcher.project
     )

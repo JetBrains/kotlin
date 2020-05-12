@@ -226,10 +226,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
         runWriteAction {
             val jdk = PluginTestCaseBase.jdk(jdkKind)
-            val projectJdkTable = getProjectJdkTableSafe()
-            if (jdk !in projectJdkTable.allJdks) {
-                projectJdkTable.addJdk(jdk, testRootDisposable)
-            }
+            getProjectJdkTableSafe().addJdk(jdk, testRootDisposable)
             env["javaHome"] = File(jdk.homePath)
         }
 

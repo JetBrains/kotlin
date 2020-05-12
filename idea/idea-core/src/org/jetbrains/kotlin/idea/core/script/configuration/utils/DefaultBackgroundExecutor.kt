@@ -12,11 +12,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.containers.HashSetQueue
-import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import java.util.*
-import javax.swing.SwingUtilities
 
 /**
  * Sequentially loads script configuration in background.
@@ -34,14 +32,13 @@ import javax.swing.SwingUtilities
  */
 internal class DefaultBackgroundExecutor(
     val project: Project,
-    val manager: CompositeScriptConfigurationManager
+    val rootsManager: ScriptClassRootsIndexer
 ) : BackgroundExecutor {
     companion object {
         const val PROGRESS_INDICATOR_DELAY = 1000
         const val PROGRESS_INDICATOR_MIN_QUEUE = 3
     }
 
-    val rootsManager get() = manager.updater
     private val work = Any()
     private val queue: Queue<LoadTask> = HashSetQueue()
 
@@ -140,7 +137,7 @@ internal class DefaultBackgroundExecutor(
     private fun ensureInTransaction() {
         if (inTransaction) return
         inTransaction = true
-        rootsManager.beginUpdating()
+        rootsManager.startTransaction()
     }
 
     @Synchronized
@@ -230,12 +227,9 @@ internal class DefaultBackgroundExecutor(
         override fun start() {
             super.start()
 
-            // executeOnPooledThread requires read lock, and we may fail to acquire it
-            SwingUtilities.invokeLater {
-                BackgroundTaskUtil.executeOnPooledThread(project, {
-                    run()
-                })
-            }
+            BackgroundTaskUtil.executeOnPooledThread(project, Runnable {
+                run()
+            })
         }
 
         override fun close() {

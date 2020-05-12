@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.idea.core.script.configuration.utils
 import com.intellij.openapi.application.impl.LaterInvocator
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.HashSetQueue
-import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 
 class TestingBackgroundExecutor internal constructor(
-    private val manager: CompositeScriptConfigurationManager
+    private val rootsManager: ScriptClassRootsIndexer
 ) : BackgroundExecutor {
-    val rootsManager get() = manager.updater
     val backgroundQueue = HashSetQueue<BackgroundTask>()
 
     class BackgroundTask(val file: VirtualFile, val actions: () -> Unit) {
@@ -44,7 +42,7 @@ class TestingBackgroundExecutor internal constructor(
 
         actions()
 
-        rootsManager.update {
+        rootsManager.transaction {
             copy.forEach {
                 it.actions()
             }
