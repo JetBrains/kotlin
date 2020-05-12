@@ -463,6 +463,29 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
+    fun testPureJavaProject() {
+        initProject(JVM_FULL_RUNTIME)
+
+        fun build() {
+            var someFilesCompiled = false
+
+            buildCustom(CanceledStatus.NULL, TestProjectBuilderLogger(), BuildResult()) {
+                project.setTestingContext(TestingContext(LookupTracker.DO_NOTHING, object : TestingBuildLogger {
+                    override fun compilingFiles(files: Collection<File>, allRemovedFilesFiles: Collection<File>) {
+                        someFilesCompiled = true
+                    }
+                }))
+            }
+
+            assertFalse("Kotlin builder should return early if there are no Kotlin files", someFilesCompiled)
+        }
+
+        build()
+
+        rename("${workDir}/src/Test.java", "${workDir}/src/Test1.java")
+        build()
+    }
+
     fun testKotlinJavaProject() {
         doTestWithRuntime()
     }

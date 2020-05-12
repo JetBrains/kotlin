@@ -73,13 +73,16 @@ class KotlinDirtySourceFilesHolder(
         val byTarget = mutableMapOf<ModuleBuildTarget, TargetFiles>()
 
         chunk.targets.forEach { target ->
-            val removedFiles = delegate.getRemovedFiles(target).map { File(it) }
+            val removedFiles = delegate.getRemovedFiles(target)
+                .map { File(it) }
+                .filter { it.isKotlinSourceFile }
+
             byTarget[target] = TargetFiles(target, removedFiles)
         }
 
         delegate.processDirtyFiles { target, file, root ->
             val targetInfo = byTarget[target]
-                    ?: error("processDirtyFiles should callback only on chunk `$chunk` targets (`$target` is not)")
+                ?: error("processDirtyFiles should callback only on chunk `$chunk` targets (`$target` is not)")
 
             if (file.isKotlinSourceFile) {
                 targetInfo._markDirty(file, root)
