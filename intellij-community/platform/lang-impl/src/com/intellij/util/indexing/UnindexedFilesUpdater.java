@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
 import com.intellij.ProjectTopics;
@@ -16,7 +16,6 @@ import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdaterImpl;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -56,7 +55,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
   private final PushedFilePropertiesUpdater myPusher;
 
   public UnindexedFilesUpdater(@NotNull Project project, boolean startSuspended) {
-    super(getEquivalenceObject(project));
+    super(project);
     myProject = project;
     myStartSuspended = startSuspended;
     myPusher = PushedFilePropertiesUpdater.getInstance(myProject);
@@ -297,10 +296,5 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
       return DEFAULT_MAX_INDEXER_THREADS;
     }
     return threadsCount;
-  }
-
-  @NotNull
-  private static Object getEquivalenceObject(@NotNull Project project) {
-    return Pair.create(project, UnindexedFilesUpdater.class);
   }
 }

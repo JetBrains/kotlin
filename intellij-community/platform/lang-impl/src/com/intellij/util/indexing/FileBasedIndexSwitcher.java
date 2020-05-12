@@ -41,7 +41,7 @@ public final class FileBasedIndexSwitcher {
       for (Project project : ProjectUtil.getOpenProjects()) {
         DumbService dumbService = DumbService.getInstance(project);
         dumbService.cancelAllTasksAndWait();
-        dumbService.queueTask(new DumbModeTask() {
+        dumbService.queueTask(new DumbModeTask(myDumbModeSemaphore) {
           @Override
           public void performInDumbMode(@NotNull ProgressIndicator indicator) {
             indicator.setText(IndexingBundle.message("indexes.reloading"));
