@@ -13,36 +13,20 @@ import java.time.format.DateTimeFormatter
 
 private fun TimeNano.toMillis(): TimeMillis = this / 1_000_000
 
-data class JsonPerThreadTimeStats(
+data class JsonTimeStats(
   val minTime: TimeMillis,
   val maxTime: TimeMillis,
   val meanTime: TimeMillis,
   val medianTime: TimeMillis
 )
 
-fun PerThreadTime.toJsonPerThreadTime(): JsonPerThreadTimeStats {
-  val timeBuckets = threadIdToTimeBucket.values
-  if (timeBuckets.isEmpty()) {
-    return JsonPerThreadTimeStats(-1, -1, -1, -1)
-  }
-
-  val median = getMedianOfArray(timeBuckets.flatMap { it.maxNTimes })
-  val min = timeBuckets.map { it.minTime }.min()!!
-  val max = timeBuckets.map { it.maxTime }.max()!!
-  val mean = getMeanOfArray(timeBuckets.map { it.meanTime })
-
-  return JsonPerThreadTimeStats(
-    min.toMillis(),
-    max.toMillis(),
-    mean.toLong().toMillis(),
-    median.toLong().toMillis()
+fun MaxNTimeBucket.toTimeStats(): JsonTimeStats =
+  JsonTimeStats(
+    minTime,
+    maxTime,
+    meanTime.toLong().toMillis(),
+    getMedianOfArray(maxNTimes).toLong().toMillis()
   )
-}
-
-private fun <N : Number> getMeanOfArray(elements: Collection<N>): Double {
-  require(elements.isNotEmpty())
-  return elements.map { it.toDouble() }.sum() / elements.size
-}
 
 private fun <N : Number> getMedianOfArray(elements: Collection<N>): Double {
   require(elements.isNotEmpty())
@@ -59,15 +43,15 @@ data class JsonFileProviderIndexStatistics(
   val providerName: String,
   // <total time> = <content loading time> + <indexing time> + <time spent on waiting for other indexing tasks to complete>
   val totalTime: TimeMillis,
-  val indexingTimePerFile: JsonPerThreadTimeStats,
-  val contentLoadingTimePerFile: JsonPerThreadTimeStats,
+  val indexingTimePerFile: JsonTimeStats,
+  val contentLoadingTimePerFile: JsonTimeStats,
   val numberOfFilesPerFileType: List<FilesNumberPerFileType>,
   val timesPerFileType: List<TimePerFileType>,
   val timesPerIndexer: List<TimePerIndexer>
 ) {
 
-  data class TimePerIndexer(val indexId: String, val time: JsonPerThreadTimeStats)
-  data class TimePerFileType(val fileType: String, val time: JsonPerThreadTimeStats)
+  data class TimePerIndexer(val indexId: String, val time: JsonTimeStats)
+  data class TimePerFileType(val fileType: String, val time: JsonTimeStats)
   data class FilesNumberPerFileType(val fileType: String, val filesNumber: Int)
 }
 
@@ -75,18 +59,18 @@ fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics
   JsonFileProviderIndexStatistics(
     providerDebugName,
     totalTime.toMillis(),
-    indexingStatistics.indexingTime.toJsonPerThreadTime(),
-    indexingStatistics.contentLoadingTime.toJsonPerThreadTime(),
+    (indexingStatistics.indexingTime.get() ?: MaxNTimeBucket(0, 0)).toTimeStats(),
+    (indexingStatistics.contentLoadingTime.get() ?: MaxNTimeBucket(0, 0)).toTimeStats(),
     indexingStatistics.numberOfFilesPerFileType
       .map { JsonFileProviderIndexStatistics.FilesNumberPerFileType(it.key, it.value) }
       .sortedByDescending { it.filesNumber }
     ,
     indexingStatistics.timesPerFileType
-      .map { JsonFileProviderIndexStatistics.TimePerFileType(it.key, it.value.toJsonPerThreadTime()) }
+      .map { JsonFileProviderIndexStatistics.TimePerFileType(it.key, it.value.toTimeStats()) }
       .sortedByDescending { it.time.meanTime }
     ,
     indexingStatistics.timesPerIndexer
-      .map { JsonFileProviderIndexStatistics.TimePerIndexer(it.key, it.value.toJsonPerThreadTime()) }
+      .map { JsonFileProviderIndexStatistics.TimePerIndexer(it.key, it.value.toTimeStats()) }
       .sortedByDescending { it.time.meanTime }
   )
 

@@ -4,31 +4,31 @@ package com.intellij.util.indexing.diagnostic
 import com.intellij.openapi.fileTypes.FileType
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.atomic.AtomicReference
 
 class IndexingJobStatistics {
-  val timesPerIndexer: ConcurrentMap<String /* ID.name() */, PerThreadTime> = ConcurrentHashMap()
-  val timesPerFileType: ConcurrentMap<String /* File type name */, PerThreadTime> = ConcurrentHashMap()
+  private val timeBucketSize = 1024
+
+  val timesPerIndexer: ConcurrentMap<String /* ID.name() */, MaxNTimeBucket> = ConcurrentHashMap()
+  val timesPerFileType: ConcurrentMap<String /* File type name */, MaxNTimeBucket> = ConcurrentHashMap()
   val numberOfFilesPerFileType: ConcurrentMap<String /* File type name */, Int> = ConcurrentHashMap()
-  val contentLoadingTime = PerThreadTime()
-  val indexingTime = PerThreadTime()
+  val contentLoadingTime = AtomicReference<MaxNTimeBucket>()
+  val indexingTime = AtomicReference<MaxNTimeBucket>()
 
   fun addFileStatistics(fileStatistics: FileIndexingStatistics, fileType: FileType) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
-      timesPerIndexer.computeIfAbsent(indexId.name) { PerThreadTime() }
-        .addTimeSpentInCurrentThread(time)
+      timesPerIndexer.computeIfAbsent(indexId.name) { MaxNTimeBucket(timeBucketSize, time) }.addTime(time)
     }
     val fileTypeName = fileType.name
     numberOfFilesPerFileType.compute(fileTypeName) { _, currentNumber -> (currentNumber ?: 0) + 1 }
-    timesPerFileType
-      .computeIfAbsent(fileTypeName) { PerThreadTime() }
-      .addTimeSpentInCurrentThread(fileStatistics.totalTime)
+    timesPerFileType.computeIfAbsent(fileTypeName) { MaxNTimeBucket(timeBucketSize, fileStatistics.totalTime) }.addTime(fileStatistics.totalTime)
   }
 
   fun addIndexingTime(nanoTime: TimeNano) {
-    indexingTime.addTimeSpentInCurrentThread(nanoTime)
+    indexingTime.updateAndGet { bucket -> bucket ?: MaxNTimeBucket(timeBucketSize, nanoTime) }.addTime(nanoTime)
   }
 
   fun addContentLoadingTime(nanoTime: TimeNano) {
-    contentLoadingTime.addTimeSpentInCurrentThread(nanoTime)
+    contentLoadingTime.updateAndGet { bucket -> bucket ?: MaxNTimeBucket(timeBucketSize, nanoTime) }.addTime(nanoTime)
   }
 }

@@ -4,8 +4,10 @@ package com.intellij.util.indexing.diagnostic
 import java.util.*
 
 /**
- * Bucket of times with size of at most [sizeLimit], where the first add time is [firstTime]
- * Maintains min, max, mean of all added times.
+ * Bucket of times with size of at most [sizeLimit].
+ * The first added time is `firstTime`.
+ * Maintains exact min, max, mean of all added times.
+ * Maintains median of [sizeLimit] max times.
  */
 class MaxNTimeBucket(private val sizeLimit: Int, firstTime: TimeNano) {
 
