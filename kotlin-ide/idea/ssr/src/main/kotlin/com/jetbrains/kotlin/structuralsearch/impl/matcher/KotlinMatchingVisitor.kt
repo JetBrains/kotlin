@@ -7,12 +7,8 @@ import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.KotlinType
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
-    /**
-     * Casts the current code element to [T], sets [myMatchingVisitor].result to false else.
-     */
     private inline fun <reified T> getTreeElement(): T? = when (myMatchingVisitor.element) {
         is T -> myMatchingVisitor.element as T
         else -> {
@@ -26,7 +22,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     private fun GlobalMatchingVisitor.matchInAnyOrder(elements: List<PsiElement?>, elements2: List<PsiElement?>) =
         matchInAnyOrder(elements.toTypedArray(), elements2.toTypedArray())
-
 
     private fun matchTextOrVariable(el1: PsiElement?, el2: PsiElement?): Boolean {
         if (el1 == null || el2 == null) return el1 == el2
@@ -150,6 +145,13 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.element is KtDynamicType
     }
 
+    private fun matchTypeReference(typeReference: KtTypeReference?, other: KtDeclaration): Boolean {
+        val type = other.type()
+        val factory = KtPsiFactory(other, false)
+        return myMatchingVisitor.match(typeReference, factory.createTypeIfPossible(type.toString()))
+                || myMatchingVisitor.match(typeReference, factory.createTypeIfPossible(type?.fqName.toString()))
+    }
+
     override fun visitTypeReference(typeReference: KtTypeReference) {
         val other = getTreeElement<KtTypeReference>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSons(typeReference, other)
@@ -208,7 +210,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     private fun matchValueArgumentList(queryArgs: List<KtValueArgument>?, codeArgs: List<KtValueArgument>?): Boolean {
-        println("Match value args")
         if (queryArgs == null || codeArgs == null) return queryArgs == codeArgs
         var queryIndex = 0
         var codeIndex = 0
@@ -468,7 +469,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitProperty(property: KtProperty) {
         val other = getTreeElement<KtProperty>() ?: return
-        myMatchingVisitor.result = matchTypeReference(property.typeReference, other.type(), KtPsiFactory(other, false))
+        myMatchingVisitor.result = matchTypeReference(property.typeReference, other)
                 && myMatchingVisitor.match(property.modifierList, other.modifierList)
                 && property.isVar == other.isVar
                 && matchTextOrVariable(property.nameIdentifier, other.nameIdentifier)
@@ -529,16 +530,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitDestructuringDeclarationEntry(multiDeclarationEntry: KtDestructuringDeclarationEntry) {
         val other = getTreeElement<KtDestructuringDeclarationEntry>() ?: return
-        myMatchingVisitor.result =
-            matchTypeReference(multiDeclarationEntry.typeReference, other.type(), KtPsiFactory(other, false))
-                    && myMatchingVisitor.match(multiDeclarationEntry.modifierList, other.modifierList)
-                    && multiDeclarationEntry.isVar == other.isVar
-                    && matchTextOrVariable(multiDeclarationEntry.nameIdentifier, other.nameIdentifier)
+        myMatchingVisitor.result = matchTypeReference(multiDeclarationEntry.typeReference, other)
+                && myMatchingVisitor.match(multiDeclarationEntry.modifierList, other.modifierList)
+                && multiDeclarationEntry.isVar == other.isVar
+                && matchTextOrVariable(multiDeclarationEntry.nameIdentifier, other.nameIdentifier)
     }
-
-    private fun matchTypeReference(typeReference: KtTypeReference?, type: KotlinType?, ktPsiFactory: KtPsiFactory): Boolean {
-        return myMatchingVisitor.match(typeReference, ktPsiFactory.createTypeIfPossible(type.toString()))
-                || myMatchingVisitor.match(typeReference, ktPsiFactory.createTypeIfPossible(type?.fqName.toString()))
-    }
-
 }

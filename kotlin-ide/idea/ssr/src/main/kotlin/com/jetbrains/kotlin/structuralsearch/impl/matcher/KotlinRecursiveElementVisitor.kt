@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
 abstract class KotlinRecursiveElementVisitor : KtVisitorVoid(), PsiRecursiveVisitor {
-
     private val myRefsExprsInVisit = Stack<KtReferenceExpression>()
 
     override fun visitElement(element: PsiElement) {
@@ -27,5 +26,4 @@ abstract class KotlinRecursiveElementVisitor : KtVisitorVoid(), PsiRecursiveVisi
             myRefsExprsInVisit.pop()
         }
     }
-
 }

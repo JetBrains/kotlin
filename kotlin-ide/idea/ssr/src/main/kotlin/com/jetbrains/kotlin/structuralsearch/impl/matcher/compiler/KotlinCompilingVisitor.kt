@@ -1,7 +1,6 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiIdentifier
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
 import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
@@ -11,7 +10,6 @@ import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElement
 import org.jetbrains.kotlin.psi.*
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
-
     fun compile(topLevelElements: Array<out PsiElement>?) {
         val optimizer = KotlinWordOptimizer()
         val pattern = myCompilingVisitor.context.pattern
@@ -33,9 +31,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
         super.visitDotQualifiedExpression(expression)
-
-        val pattern = myCompilingVisitor.context.pattern
-        pattern.getHandler(expression).setFilter {
+        myCompilingVisitor.context.pattern.getHandler(expression).setFilter {
             it is KtDotQualifiedExpression || it is KtReferenceExpression
         }
     }
@@ -47,11 +43,8 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         visitElement(expression)
-        val pattern = myCompilingVisitor.context.pattern
-        val handler = pattern.getHandler(expression)
-
-        if (handler is SubstitutionHandler) {
-            handler.setFilter { true }
+        myCompilingVisitor.context.pattern.getHandler(expression).let { handler ->
+            if (handler is SubstitutionHandler) handler.setFilter { true }
         }
     }
 
@@ -62,7 +55,13 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         val exprHandler = pattern.getHandler(expression)
 
         if (exprHandler is SubstitutionHandler) {
-            val newHandler = SubstitutionHandler("${exprHandler.name}_parent", false, exprHandler.minOccurs, exprHandler.maxOccurs, true).apply {
+            val newHandler = SubstitutionHandler(
+                "${exprHandler.name}_parent",
+                false,
+                exprHandler.minOccurs,
+                exprHandler.maxOccurs,
+                true
+            ).apply {
                 setFilter { it is KtStringTemplateEntry }
                 val exprPredicate = exprHandler.predicate
                 if (exprPredicate != null) predicate = exprPredicate

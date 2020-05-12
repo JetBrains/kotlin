@@ -4,7 +4,6 @@ import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.strategies.KotlinMatchingStrategy
 
 class KotlinCompiledPattern : CompiledPattern() {
-
     init {
         strategy = KotlinMatchingStrategy
     }
@@ -27,5 +26,4 @@ class KotlinCompiledPattern : CompiledPattern() {
     companion object {
         const val TYPED_VAR_PREFIX = "_____"
     }
-
 }

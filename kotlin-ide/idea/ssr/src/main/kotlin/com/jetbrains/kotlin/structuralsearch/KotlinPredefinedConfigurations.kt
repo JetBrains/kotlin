@@ -5,7 +5,6 @@ import com.intellij.structuralsearch.plugin.ui.Configuration
 import org.jetbrains.kotlin.idea.KotlinFileType
 
 object KotlinPredefinedConfigurations {
-
     private val EXPRESSION_TYPE = KSSRBundle.message("expressions.category")
     private val OPERATOR_TYPE = KSSRBundle.message("operators.category")
 
@@ -13,7 +12,6 @@ object KotlinPredefinedConfigurations {
         createSearchTemplateInfo(name, pattern, category, KotlinFileType.INSTANCE)
 
     fun createPredefinedTemplates(): Array<Configuration> = arrayOf(
-
         // Expressions
         searchTemplate(KSSRBundle.message("predefined.configuration.assignments"), "'_Inst = '_Expr", EXPRESSION_TYPE),
         searchTemplate(
@@ -111,7 +109,5 @@ object KotlinPredefinedConfigurations {
             """.trimIndent(),
             OPERATOR_TYPE
         )
-
     )
-
 }

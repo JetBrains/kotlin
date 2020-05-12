@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
 abstract class KotlinRecursiveElementWalkingVisitor : KtVisitorVoid(), PsiRecursiveVisitor {
-
     private val myWalkingState: PsiWalkingState = object : PsiWalkingState(this) {
         override fun elementFinished(element: PsiElement) {
             this@KotlinRecursiveElementWalkingVisitor.elementFinished(element)
@@ -18,7 +17,7 @@ abstract class KotlinRecursiveElementWalkingVisitor : KtVisitorVoid(), PsiRecurs
         myWalkingState.elementStarted(element)
     }
 
-    protected fun elementFinished(element: PsiElement) { }
+    protected fun elementFinished(element: PsiElement) {}
 
     override fun visitReferenceExpression(expression: KtReferenceExpression) {
         visitExpression(expression)
@@ -28,5 +27,4 @@ abstract class KotlinRecursiveElementWalkingVisitor : KtVisitorVoid(), PsiRecurs
     fun stopWalking() {
         myWalkingState.stopWalking()
     }
-
 }
