@@ -21,19 +21,21 @@ interface BaseNpmDependencyExtension {
     operator fun invoke(name: String, version: String): NpmDependency
 }
 
-interface NpmDirectoryDependencyExtension {
+interface NpmDirectoryDependencyExtension : BaseNpmDependencyExtension {
     operator fun invoke(name: String, directory: File): NpmDependency
 
     operator fun invoke(directory: File): NpmDependency
 }
 
-interface NpmDependencyWithExternalsExtension {
+interface NpmDependencyWithExternalsExtension : BaseNpmDependencyExtension {
     operator fun invoke(
         name: String,
         version: String,
         generateKotlinExternals: Boolean
     ): NpmDependency
+}
 
+interface NpmDirectoryDependencyWithExternalsExtension : NpmDirectoryDependencyExtension {
     operator fun invoke(
         name: String,
         directory: File,
@@ -48,8 +50,9 @@ interface NpmDependencyWithExternalsExtension {
 
 interface NpmDependencyExtension :
     BaseNpmDependencyExtension,
+    NpmDependencyWithExternalsExtension,
     NpmDirectoryDependencyExtension,
-    NpmDependencyWithExternalsExtension
+    NpmDirectoryDependencyWithExternalsExtension
 
 interface DevNpmDependencyExtension :
     BaseNpmDependencyExtension,
