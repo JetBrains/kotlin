@@ -61,44 +61,10 @@ data class YarnLock(val entries: List<Entry>) {
                         val indentPos = i
                         val indent = line.substring(0, indentPos)
 
-                        var key = false
-                        val line1: String = if (line.endsWith(":")) {
-                            key = true
-                            line.removeSuffix(":")
-                        } else line
+                        val key = line.endsWith(":")
 
-                        if (line1.isNotEmpty()) {
-                            var line2: String = line1
-                            val quotedValues = QUOTED_VALUE.findAll(line1)
-                                .flatMap { it.groupValues.drop(1).asSequence() }
-                                .toList()
-                                .apply {
-                                    forEachIndexed { index, item ->
-                                        line2 = line2.replace(
-                                            """
-                                                "$item"
-                                            """.trimIndent(),
-                                            """
-                                                "$$index"
-                                            """.trimIndent()
-                                        )
-                                    }
-                                }
-
-                            val values = line2.substring(indentPos).split(" ").map { value ->
-                                val value1 = value.removeSuffix(",")
-                                if (value1.startsWith("\"")) {
-                                    val (index) = QUOTED_PLACEHOLDER.find(value1)!!.destructured
-                                    val value2 = """
-                                        "${quotedValues[index.toInt()]}"
-                                        """.trimIndent()
-                                    try {
-                                        JsonReader(StringReader(value2)).nextString()
-                                    } catch (e: Throwable) {
-                                        value2.removePrefix("\"").removeSuffix("\"")
-                                    }
-                                } else value1
-                            }
+                        if (line.isNotEmpty()) {
+                            val values = parseLine(line, indentPos)
 
                             if (onNewLevel) {
                                 parent.indent = indent
@@ -125,7 +91,63 @@ data class YarnLock(val entries: List<Entry>) {
             }
             return root
         }
+
+        private fun parseLine(line: String, indentPos: Int): List<String> {
+            val quotedLineResult = replaceQuoted(line.removeSuffix(":"))
+
+            return quotedLineResult
+                .parse(indentPos)
+        }
+
+        private fun replaceQuoted(line: String): QuotedLineResult {
+            var result: String = line
+            val quotedValues = QUOTED_VALUE.findAll(line)
+                .flatMap { it.groupValues.drop(1).asSequence() }
+                .toList()
+
+            quotedValues.forEachIndexed { index, item ->
+                result = result.replace(
+                    """
+                        "$item"
+                    """.trimIndent(),
+                    """
+                        "$$index"
+                    """.trimIndent()
+                )
+            }
+
+            return QuotedLineResult(
+                result,
+                quotedValues
+            )
+        }
     }
+}
+
+private data class QuotedLineResult(
+    val value: String,
+    val quotedValues: List<String>
+)
+
+private fun QuotedLineResult.parse(indentPos: Int): List<String> {
+    return value
+        .substring(indentPos)
+        .split(" ")
+        .map { value ->
+            val withoutComma = value.removeSuffix(",")
+            if (withoutComma.startsWith("\"")) {
+                val (index) = QUOTED_PLACEHOLDER.find(withoutComma)!!.destructured
+                val restoredValue = """
+                    "${quotedValues[index.toInt()]}"
+                """.trimIndent()
+
+                try {
+                    JsonReader(StringReader(restoredValue)).nextString()
+                } catch (e: Throwable) {
+                    restoredValue.removePrefix("\"").removeSuffix("\"")
+                }
+            } else withoutComma
+        }
 }
 
 private val QUOTED_VALUE = """"(.+?)"""".toRegex()
