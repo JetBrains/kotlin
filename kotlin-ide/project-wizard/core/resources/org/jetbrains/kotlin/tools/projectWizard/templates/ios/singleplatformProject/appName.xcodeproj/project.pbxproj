@@ -183,12 +183,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "${moduleName}" */;
 			buildPhases = (
+#if($sharedModuleName)
+				7555FFB5242A651A00829871 /* ShellScript */,
+#end
 				7555FF77242A565900829871 /* Sources */,
 				7555FF78242A565900829871 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
 #if($sharedModuleName)
 				7555FFB4242A642300829871 /* Embed Frameworks */,
-				7555FFB5242A651A00829871 /* ShellScript */,
 #end
 			);
 			buildRules = (
