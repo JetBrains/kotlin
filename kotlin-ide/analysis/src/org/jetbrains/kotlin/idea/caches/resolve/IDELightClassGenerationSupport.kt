@@ -127,9 +127,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
-        if (element.shouldNotBeVisibleAsLightClass() ||
-            element is KtEnumEntry
-        ) {
+        if (element.shouldNotBeVisibleAsLightClass()) {
             return null
         }
 
