@@ -10,17 +10,20 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirOnlyCallablesScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirOnlyClassifiersScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import java.util.ArrayDeque
+import java.util.*
 
 
 fun FirClassLikeDeclaration<*>.fullyExpandedClass(useSiteSession: FirSession): FirRegularClass? {
@@ -61,6 +64,9 @@ class ClassQualifierReceiver(
     val scopeSession: ScopeSession
 ) : QualifierReceiver(explicitReceiver) {
 
+    private companion object {
+        val SUPERTYPE_STATICS_SCOPE_SESSION_KEY = object : ScopeSessionKey<FirClass<*>, List<FirScope>>() {}
+    }
 
     private fun collectSuperTypeScopesComposedByDepth(
         klass: FirClass<*>,
@@ -114,7 +120,9 @@ class ClassQualifierReceiver(
         if (klassScope != null) {
             result += klassScope
             if (provider is KotlinScopeProvider) return result
-            result += collectSuperTypeScopesComposedByDepth(klass, useSiteSession, scopeSession)
+            result += scopeSession.getOrBuild(klass, SUPERTYPE_STATICS_SCOPE_SESSION_KEY) {
+                collectSuperTypeScopesComposedByDepth(klass, useSiteSession, scopeSession)
+            }
         }
         return result
     }

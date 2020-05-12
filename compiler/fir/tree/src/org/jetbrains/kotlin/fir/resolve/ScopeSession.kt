@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.fir.scopes.FirScope
-
 class ScopeSession {
-    private val scopes = hashMapOf<Any, HashMap<ScopeSessionKey<*, *>, FirScope>>()
+    private val scopes = hashMapOf<Any, HashMap<ScopeSessionKey<*, *>, Any>>()
 
     var returnTypeCalculator: Any? = null
 
     @Deprecated(level = DeprecationLevel.ERROR, message = "Only for getOrBuild")
     fun scopes() = scopes
 
-    inline fun <reified ID : Any, reified FS : FirScope> getOrBuild(id: ID, key: ScopeSessionKey<ID, FS>, build: () -> FS): FS {
+    inline fun <reified ID : Any, reified FS : Any> getOrBuild(id: ID, key: ScopeSessionKey<ID, FS>, build: () -> FS): FS {
         @Suppress("DEPRECATION_ERROR")
         return scopes().getOrPut(id) {
             hashMapOf()
@@ -25,5 +23,5 @@ class ScopeSession {
     }
 }
 
-abstract class ScopeSessionKey<ID : Any, FS : FirScope>
+abstract class ScopeSessionKey<ID : Any, FS : Any>
 
