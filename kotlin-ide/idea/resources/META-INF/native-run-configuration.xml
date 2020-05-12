@@ -1,0 +1,5 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <extensions defaultExtensionNs="com.intellij">
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.ide.konan.KotlinNativeRunConfigurationProducer"/>
+    </extensions>
+</idea-plugin>
