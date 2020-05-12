@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -189,6 +190,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformDeclaration(declaration: FirDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
         return transformElement(declaration, data)
+    }
+
+    open fun transformAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
+        return transformElement(annotatedDeclaration, data)
     }
 
     open fun transformAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): CompositeTransformResult<FirDeclaration> {
@@ -665,6 +670,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitDeclaration(declaration: FirDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
         return transformDeclaration(declaration, data)
+    }
+
+    final override fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
+        return transformAnnotatedDeclaration(annotatedDeclaration, data)
     }
 
     final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): CompositeTransformResult<FirDeclaration> {

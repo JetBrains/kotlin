@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -160,6 +161,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitExpression(expression: FirExpression, data: D): R  = visitElement(expression, data)
 
     open fun visitDeclaration(declaration: FirDeclaration, data: D): R  = visitElement(declaration, data)
+
+    open fun visitAnnotatedDeclaration(annotatedDeclaration: FirAnnotatedDeclaration, data: D): R  = visitElement(annotatedDeclaration, data)
 
     open fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): R  = visitElement(anonymousInitializer, data)
 

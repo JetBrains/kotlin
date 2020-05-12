@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirTypedDeclaration : FirDeclaration, FirAnnotationContainer {
+interface FirTypedDeclaration : FirAnnotatedDeclaration {
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase

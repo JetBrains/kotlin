@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -18,13 +17,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirFile : FirPureAbstractElement(), FirAnnotationContainer, FirDeclaration {
+abstract class FirFile : FirPureAbstractElement(), FirAnnotatedDeclaration {
     abstract override val source: FirSourceElement?
-    abstract override val annotations: List<FirAnnotationCall>
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
+    abstract override val annotations: List<FirAnnotationCall>
     abstract val imports: List<FirImport>
     abstract val declarations: List<FirDeclaration>
     abstract val name: String

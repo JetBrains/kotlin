@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.name.FqName
 @FirBuilderDsl
 class FirFileBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     val imports: MutableList<FirImport> = mutableListOf()
     val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var name: String
@@ -41,10 +41,10 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirFile {
         return FirFileImpl(
             source,
-            annotations,
             session,
             resolvePhase,
             origin,
+            annotations,
             imports,
             declarations,
             name,

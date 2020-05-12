@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -15,21 +16,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirMemberDeclaration : FirAnnotatedDeclaration {
+interface FirAnnotatedDeclaration : FirDeclaration, FirAnnotationContainer {
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
     override val origin: FirDeclarationOrigin
     override val attributes: FirDeclarationAttributes
     override val annotations: List<FirAnnotationCall>
-    val typeParameters: List<FirTypeParameterRef>
-    val status: FirDeclarationStatus
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberDeclaration(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotatedDeclaration(this, data)
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
-
-    fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotatedDeclaration
 }
