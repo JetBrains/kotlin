@@ -62,22 +62,22 @@ open class DeepCopyIrTreeWithSymbols(
         }
     }
 
-    private fun mapDeclarationOrigin(origin: IrDeclarationOrigin) = origin
-    private fun mapStatementOrigin(origin: IrStatementOrigin?) = origin
+    protected fun mapDeclarationOrigin(origin: IrDeclarationOrigin) = origin
+    protected fun mapStatementOrigin(origin: IrStatementOrigin?) = origin
 
-    private inline fun <reified T : IrElement> T.transform() =
+    protected inline fun <reified T : IrElement> T.transform() =
         transform(this@DeepCopyIrTreeWithSymbols, null) as T
 
-    private inline fun <reified T : IrElement> List<T>.transform() =
+    protected inline fun <reified T : IrElement> List<T>.transform() =
         map { it.transform() }
 
-    private inline fun <reified T : IrElement> List<T>.transformTo(destination: MutableList<T>) =
+    protected inline fun <reified T : IrElement> List<T>.transformTo(destination: MutableList<T>) =
         mapTo(destination) { it.transform() }
 
-    private fun <T : IrDeclarationContainer> T.transformDeclarationsTo(destination: T) =
+    protected fun <T : IrDeclarationContainer> T.transformDeclarationsTo(destination: T) =
         declarations.transformTo(destination.declarations)
 
-    private fun IrType.remapType() = typeRemapper.remapType(this)
+    protected fun IrType.remapType() = typeRemapper.remapType(this)
 
     override fun visitElement(element: IrElement): IrElement =
         throw IllegalArgumentException("Unsupported element type: $element")
@@ -201,7 +201,7 @@ open class DeepCopyIrTreeWithSymbols(
             }
         }
 
-    private fun IrMutableAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
+    protected fun IrMutableAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
         annotations = declaration.annotations.transform()
     }
 
@@ -322,7 +322,7 @@ open class DeepCopyIrTreeWithSymbols(
             transformAnnotations(declaration)
         }
 
-    private fun IrTypeParametersContainer.copyTypeParametersFrom(other: IrTypeParametersContainer) {
+    protected fun IrTypeParametersContainer.copyTypeParametersFrom(other: IrTypeParametersContainer) {
         this.typeParameters = other.typeParameters.map {
             copyTypeParameter(it)
         }
