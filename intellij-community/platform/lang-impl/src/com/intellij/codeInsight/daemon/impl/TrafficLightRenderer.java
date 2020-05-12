@@ -2,7 +2,6 @@
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.UtilBundle;
-import com.intellij.analysis.problemsView.inspection.ProblemsViewToolWindowFactory;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting;
@@ -61,6 +60,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.intellij.analysis.problemsView.toolWindow.ProblemsView.showCurrentFileProblems;
 
 public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   @NotNull
@@ -597,7 +598,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     @Override
     public void openProblemsView() {
-      ProblemsViewToolWindowFactory.wakeup(getProject(), true);
+      showCurrentFileProblems(getProject());
     }
   }
 
