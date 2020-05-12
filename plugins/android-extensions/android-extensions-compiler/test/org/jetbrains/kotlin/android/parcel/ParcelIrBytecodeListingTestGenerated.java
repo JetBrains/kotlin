@@ -99,6 +99,11 @@ public class ParcelIrBytecodeListingTestGenerated extends AbstractParcelIrByteco
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializable.kt");
     }
 
+    @TestMetadata("serializeValue.kt")
+    public void testSerializeValue() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializeValue.kt");
+    }
+
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/simple.kt");

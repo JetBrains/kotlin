@@ -1,0 +1,68 @@
+public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (in)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          NEW
+          DUP
+          ALOAD (1)
+          LDC (LValue;)
+          INVOKEVIRTUAL (java/lang/Class, getClassLoader, ()Ljava/lang/ClassLoader;)
+          INVOKEVIRTUAL (android/os/Parcel, readValue, (Ljava/lang/ClassLoader;)Ljava/lang/Object;)
+          CHECKCAST
+          INVOKESPECIAL (Test, <init>, (LValue;)V)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final java.lang.Object[] newArray(int size)
+}
+
+public final class Test : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final Value value
+
+    static void <clinit>() {
+          NEW
+          DUP
+          INVOKESPECIAL (Test$Creator, <init>, ()V)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          RETURN
+    }
+
+    public void <init>(Value value)
+
+    public int describeContents() {
+        LABEL (L0)
+          LDC (0)
+          IRETURN
+        LABEL (L1)
+    }
+
+    public final Value getValue()
+
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (value, LValue;)
+          INVOKEVIRTUAL (android/os/Parcel, writeValue, (Ljava/lang/Object;)V)
+          RETURN
+        LABEL (L1)
+    }
+}
+
+public final class Value : java/lang/Object {
+    private final int x
+
+    public void <init>(int x)
+
+    public final int getX()
+}
