@@ -50,7 +50,7 @@ class RecentPlacesFeatures : ElementFeatureProvider {
     }
 
     override fun recentPlaceAdded(changePlace: IdeDocumentHistoryImpl.PlaceInfo, isChanged: Boolean) {
-      if (ApplicationManager.getApplication().isUnitTestMode) return
+      if (ApplicationManager.getApplication().isUnitTestMode || !changePlace.file.isValid) return
       val provider = PsiManager.getInstance(project).findViewProvider(changePlace.file) ?: return
       val namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(provider.baseLanguage)
       val offset = changePlace.caretPosition?.startOffset ?: return
