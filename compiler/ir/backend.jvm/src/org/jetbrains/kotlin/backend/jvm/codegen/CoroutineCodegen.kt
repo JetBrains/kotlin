@@ -117,6 +117,11 @@ private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
         it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX && it.attributeOwnerId == attributeOwnerId
     }
 
+private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean =
+    this is IrAttributeContainer && origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT &&
+            parentAsClass.declarations.find { it is IrAttributeContainer && it.attributeOwnerId == attributeOwnerId && it !== this }
+                ?.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+
 internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspendOfContinuation() &&
         // These are tail-call bridges and do not require any bytecode modifications.
         origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
@@ -129,7 +134,8 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspen
         origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
         origin != IrDeclarationOrigin.DELEGATED_MEMBER &&
         !isInvokeOfSuspendCallableReference() &&
-        !isBridgeToSuspendImplMethod()
+        !isBridgeToSuspendImplMethod() &&
+        !isStaticInlineClassReplacementDelegatingCall()
 
 internal fun IrFunction.hasContinuation(): Boolean = isSuspend && shouldContainSuspendMarkers() &&
         // This is inline-only function
