@@ -38,6 +38,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         runTest("libraries/tools/kotlinp/testData/Contracts.kt");
     }
 
+    @TestMetadata("FunInterface.kt")
+    public void testFunInterface() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/FunInterface.kt");
+    }
+
     @TestMetadata("Lambda.kt")
     public void testLambda() throws Exception {
         runTest("libraries/tools/kotlinp/testData/Lambda.kt");

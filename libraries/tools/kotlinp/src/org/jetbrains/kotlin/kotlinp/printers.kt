@@ -946,6 +946,7 @@ private val CLASS_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
     Flag.Class.IS_EXTERNAL to "external",
     Flag.Class.IS_EXPECT to "expect",
     Flag.Class.IS_INLINE to "inline",
+    Flag.Class.IS_FUN to "fun",
 
     Flag.Class.IS_CLASS to "class",
     Flag.Class.IS_INTERFACE to "interface",

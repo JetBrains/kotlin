@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.kotlinp.test
 
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 
-fun main(args: Array<String>) {
+fun main() {
     System.setProperty("java.awt.headless", "true")
 
     testGroup("libraries/tools/kotlinp/test", "libraries/tools/kotlinp/testData") {

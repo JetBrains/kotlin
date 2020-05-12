@@ -1,0 +1,13 @@
+// F.class
+// ------------------------------------------
+public abstract fun interface F : kotlin/Any {
+
+  // signature: f(Ljava/lang/String;I)V
+  public abstract fun kotlin/String.f(x: kotlin/Int): kotlin/Unit
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

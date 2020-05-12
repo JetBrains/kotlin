@@ -207,6 +207,12 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
          */
         @JvmField
         val IS_INLINE = Flag(F.IS_INLINE_CLASS)
+
+        /**
+         * Signifies that the corresponding class is a functional interface, i.e. marked with the keyword `fun`.
+         */
+        @JvmField
+        val IS_FUN = Flag(F.IS_FUN_INTERFACE)
     }
 
     /**
