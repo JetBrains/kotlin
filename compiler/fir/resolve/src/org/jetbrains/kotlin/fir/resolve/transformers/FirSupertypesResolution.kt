@@ -133,9 +133,9 @@ private fun createScopesForNestedClasses(
         addIfNotNull(klass.typeParametersScope())
         val companionObjects = klass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
         for (companionObject in companionObjects) {
-            add(nestedClassifierScope(companionObject))
+            addIfNotNull(nestedClassifierScope(companionObject))
         }
-        add(nestedClassifierScope(klass))
+        addIfNotNull(nestedClassifierScope(klass))
     }
 
 fun FirRegularClass.resolveSupertypesInTheAir(session: FirSession): List<FirTypeRef> {

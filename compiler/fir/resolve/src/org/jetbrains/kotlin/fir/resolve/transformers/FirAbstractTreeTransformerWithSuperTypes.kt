@@ -48,11 +48,11 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
                 firClass.addTypeParametersScope()
                 val companionObject = firClass.companionObject
                 if (companionObject != null) {
-                    towerScope.addScope(nestedClassifierScope(companionObject))
+                    nestedClassifierScope(companionObject)?.let(towerScope::addScope)
                 }
             }
 
-            towerScope.addScope(nestedClassifierScope(firClass))
+            nestedClassifierScope(firClass)?.let(towerScope::addScope)
 
             transformElement(firClass, data)
         }

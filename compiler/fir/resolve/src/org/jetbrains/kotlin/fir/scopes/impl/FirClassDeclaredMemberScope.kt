@@ -72,5 +72,7 @@ class FirClassDeclaredMemberScope(
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
-    ) = nestedClassifierScope.processClassifiersByNameWithSubstitution(name, processor)
+    ) {
+        nestedClassifierScope?.processClassifiersByNameWithSubstitution(name, processor)
+    }
 }

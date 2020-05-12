@@ -25,6 +25,8 @@ class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope() {
         result
     }
 
+    fun isEmpty() = classIndex.isEmpty()
+
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
