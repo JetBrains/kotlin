@@ -49,6 +49,7 @@ class LibraryTest {
     assertThat(library.getFiles(OrderRootType.SOURCES)).isEmpty()
     assertThat(library.isValid(classesRoot.url, OrderRootType.CLASSES)).isTrue()
     edit(library) {
+      assertThat((it as LibraryEx).source).isSameAs(library)
       assertThat(it.isChanged).isFalse()
       it.addRoot(sourceRoot, OrderRootType.SOURCES)
       assertThat(it.isChanged).isTrue()
