@@ -71,10 +71,23 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
             addJustKindEdge(from, to, kind, propagateDeadness)
         }
 
+        private fun merge(first: EdgeKind, second: EdgeKind?): EdgeKind? {
+            return when (first) {
+                second -> first
+                EdgeKind.Cfg -> if (second == EdgeKind.Dfg) null else first
+                EdgeKind.Dfg -> if (second == EdgeKind.Cfg) null else first
+                else -> first
+            }
+        }
+
         internal fun addJustKindEdge(from: CFGNode<*>, to: CFGNode<*>, kind: EdgeKind, propagateDeadness: Boolean) {
             if (kind != EdgeKind.Simple) {
-                from._outgoingEdges[to] = kind
-                to._incomingEdges[from] = kind
+                merge(kind, from._outgoingEdges[to])?.let {
+                    from._outgoingEdges[to] = it
+                } ?: from._outgoingEdges.remove(to)
+                merge(kind, to._incomingEdges[from])?.let {
+                    to._incomingEdges[from] = it
+                } ?: to._incomingEdges.remove(from)
             }
             if (propagateDeadness && kind == EdgeKind.Dead) {
                 to.isDead = true

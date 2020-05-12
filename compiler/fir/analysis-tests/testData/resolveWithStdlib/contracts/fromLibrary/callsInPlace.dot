@@ -274,7 +274,7 @@ digraph callsInPlace_kt {
         93 [label="Exit function test_8" style="filled" fillcolor=red];
     }
     92 -> {94};
-    94 -> {95} [color=green];
+    94 -> {95};
     94 -> {97} [color=red];
     95 -> {96};
     96 -> {93};

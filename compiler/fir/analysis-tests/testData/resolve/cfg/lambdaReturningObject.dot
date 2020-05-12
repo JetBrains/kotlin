@@ -72,7 +72,7 @@ digraph lambdaReturningObject_kt {
         18 [label="Exit function foo" style="filled" fillcolor=red];
     }
     17 -> {19};
-    19 -> {20} [color=green];
+    19 -> {20};
     19 -> {23} [color=red];
     20 -> {21};
     21 -> {22};

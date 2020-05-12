@@ -39,7 +39,7 @@ digraph lambdaAsReturnOfLambda_kt {
         11 [label="Exit property" style="filled" fillcolor=red];
     }
     10 -> {12};
-    12 -> {13} [color=green];
+    12 -> {13};
     12 -> {0} [color=red];
     13 -> {14};
     14 -> {15};
