@@ -141,7 +141,7 @@ public class ArtifactImpl extends UserDataHolderBase implements ModifiableArtifa
   }
 
   @Override
-  public void setProperties(ArtifactPropertiesProvider provider, ArtifactProperties<?> properties) {
+  public void setProperties(@NotNull ArtifactPropertiesProvider provider, @Nullable ArtifactProperties<?> properties) {
     if (properties != null) {
       myProperties.put(provider, properties);
     }
