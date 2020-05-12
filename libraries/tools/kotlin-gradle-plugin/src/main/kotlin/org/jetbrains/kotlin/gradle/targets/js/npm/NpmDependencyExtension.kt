@@ -273,7 +273,7 @@ private class DefaultDevNpmDependencyExtension(
     private val delegate = defaultNpmDependencyDelegate(
         project,
         DEV,
-        false
+        null
     )
 
     override fun invoke(name: String): NpmDependency =
@@ -369,7 +369,7 @@ private class DefaultPeerNpmDependencyExtension(
     private val delegate: NpmDependencyExtensionDelegate = object : NpmDependencyExtensionDelegate(
         project,
         PEER,
-        false
+        null
     ) {
         override fun invoke(
             name: String,
