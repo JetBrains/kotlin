@@ -72,11 +72,15 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         }
 
         private fun merge(first: EdgeKind, second: EdgeKind?): EdgeKind? {
-            return when (first) {
-                second -> first
-                EdgeKind.Cfg -> if (second == EdgeKind.Dfg) null else first
-                EdgeKind.Dfg -> if (second == EdgeKind.Cfg) null else first
-                else -> first
+            return when (second) {
+                null, EdgeKind.Simple, first -> first
+                EdgeKind.Dead -> second
+                // Note: first can be only Cfg, Dfg, or Dead
+                else -> when (first) {
+                    EdgeKind.Cfg -> if (second == EdgeKind.Dfg) null else first
+                    EdgeKind.Dfg -> if (second == EdgeKind.Cfg) null else first
+                    else -> first
+                }
             }
         }
 
