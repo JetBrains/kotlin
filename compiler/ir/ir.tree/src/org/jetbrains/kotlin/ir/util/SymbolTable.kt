@@ -18,13 +18,13 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
+import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptorWithContainerSource
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
@@ -35,10 +35,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Descriptor
 
 interface IrProvider {
     fun getDeclaration(symbol: IrSymbol): IrDeclaration?
-}
-
-interface IrExtensionGenerator {
-    fun declare(symbol: IrSymbol): IrDeclaration? = null
 }
 
 interface IrDeserializer : IrProvider {
@@ -950,9 +946,9 @@ inline fun <T, D : DeclarationDescriptor> ReferenceSymbolTable.withReferenceScop
     return result
 }
 
-val SymbolTable.allUnbound: List<IrSymbol>
+val SymbolTable.allUnbound: Set<IrSymbol>
     get() {
-        val r = mutableListOf<IrSymbol>()
+        val r = mutableSetOf<IrSymbol>()
         r.addAll(unboundClasses)
         r.addAll(unboundConstructors)
         r.addAll(unboundEnumEntries)
@@ -961,5 +957,15 @@ val SymbolTable.allUnbound: List<IrSymbol>
         r.addAll(unboundProperties)
         r.addAll(unboundTypeAliases)
         r.addAll(unboundTypeParameters)
-        return r.filter { !it.isBound }
+        return r.filter { !it.isBound }.toSet()
     }
+
+fun SymbolTable.noUnboundLeft(message: String) {
+    val unbound = this.allUnbound
+    assert(unbound.isEmpty()) {
+        "$message\n" +
+                unbound.map {
+                    "$it ${if (it.isPublicApi) it.signature.toString() else "NON-PUBLIC API $it"}"
+                }.joinToString("\n")
+    }
+}

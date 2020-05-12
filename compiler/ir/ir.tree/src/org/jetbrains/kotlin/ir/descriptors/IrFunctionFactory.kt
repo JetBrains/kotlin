@@ -333,6 +333,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
             declarations += fDeclaration
         }
 
+        // TODO: eventualy delegate it to fakeOverrideBuilder
         addFakeOverrides()
     }
 
@@ -454,10 +455,10 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
             buildSimpleType()
         })
 
-        klass.createMembers(isK, isSuspend, n, klass.name.identifier, descriptorFactory)
-
         klass.parent = packageFragment
         packageFragment.declarations += klass
+
+        klass.createMembers(isK, isSuspend, n, klass.name.identifier, descriptorFactory)
 
         return klass
     }

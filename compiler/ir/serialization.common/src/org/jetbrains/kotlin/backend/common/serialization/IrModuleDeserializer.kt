@@ -50,13 +50,17 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
 
     open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
 
-    open fun postProcess() {}
+    open fun postProcess(postProcessor: (IrModuleFragment) -> Unit) {
+        postProcessor(moduleFragment)
+    }
 
     abstract val moduleFragment: IrModuleFragment
 
     abstract val moduleDependencies: Collection<IrModuleDeserializer>
 
     open val strategy: DeserializationStrategy = DeserializationStrategy.ONLY_DECLARATION_HEADERS
+
+    open val isCurrent = false
 }
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
@@ -178,8 +182,8 @@ class IrModuleDeserializerWithBuiltIns(
         else delegate.declareIrSymbol(symbol)
     }
 
-    override fun postProcess() {
-        delegate.postProcess()
+    override fun postProcess(postProcessor: (IrModuleFragment) -> Unit) {
+        delegate.postProcess(postProcessor)
     }
 
     override fun init() {
@@ -198,6 +202,7 @@ class IrModuleDeserializerWithBuiltIns(
 
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
     override val moduleDependencies: Collection<IrModuleDeserializer> get() = delegate.moduleDependencies
+    override val isCurrent get() = delegate.isCurrent
 }
 
 open class CurrentModuleDeserializer(
@@ -211,4 +216,8 @@ open class CurrentModuleDeserializer(
     }
 
     override fun declareIrSymbol(symbol: IrSymbol) {}
+
+    override fun postProcess(postProcessor: (IrModuleFragment) -> Unit) {}
+
+    override val isCurrent = true
 }

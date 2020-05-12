@@ -83,11 +83,14 @@ class Psi2IrTranslator(
         expectDescriptorToSymbol?.let { referenceExpectsForUsedActuals(it, context.symbolTable, irModule) }
         postprocess(context, irModule)
 
-        irProviders.filterIsInstance<IrDeserializer>().forEach { it.init(irModule) }
+        val deserializers = irProviders.filterIsInstance<IrDeserializer>()
+        deserializers.forEach { it.init(irModule) }
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 
+        deserializers.forEach { it.postProcess() }
         assert(context.symbolTable.allUnbound.isEmpty())
+
         postprocessingSteps.forEach { it.invoke(irModule) }
 //        assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference
 

@@ -104,7 +104,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
 
-abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBuiltIns, val symbolTable: SymbolTable, protected var deserializeBodies: Boolean) {
+abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBuiltIns, val symbolTable: SymbolTable, var constructFakeOverrides: Boolean, protected var deserializeBodies: Boolean) {
 
     abstract fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature>
     abstract fun deserializeIrSymbol(code: Long): IrSymbol
@@ -1038,7 +1038,9 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
             }.usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)
 
-                proto.declarationList.mapTo(declarations) { deserializeDeclaration(it) }
+                proto.declarationList
+                    //.filterNot { isSkippableFakeOverride(it) }
+                    .mapTo(declarations) { deserializeDeclaration(it) }
 
                 thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
 
@@ -1361,6 +1363,26 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         logger.log { "### Deserialized declaration: ${declaration.descriptor} -> ${ir2string(declaration)}" }
 
         return declaration
+    }
+
+    // Depending on deserialization strategy we either deserialize public api fake overrides
+    // or reconstruct them after IR linker completes.
+    private fun isSkippableFakeOverride(proto: ProtoDeclaration): Boolean {
+        if (!constructFakeOverrides) return false
+
+        val isFakeOverride = when (proto.declaratorCase!!) {
+            IR_FUNCTION -> FunctionFlags.decode(proto.irFunction.base.base.flags).isFakeOverride
+            IR_PROPERTY -> PropertyFlags.decode(proto.irProperty.base.flags).isFakeOverride
+            // Don't consider IR_FIELDS here.
+            else -> false
+        }
+        val isPublicApi = when (proto.declaratorCase!!) {
+            IR_FUNCTION -> deserializeIrSymbol(proto.irFunction.base.base.symbol).signature.isPublic
+            IR_PROPERTY -> deserializeIrSymbol(proto.irProperty.base.symbol).signature.isPublic
+            // Don't consider IR_FIELDS here.
+            else -> false
+        }
+        return isFakeOverride && isPublicApi
     }
 
     fun deserializeDeclaration(proto: ProtoDeclaration, parent: IrDeclarationParent) =

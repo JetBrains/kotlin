@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName

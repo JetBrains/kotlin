@@ -105,8 +105,8 @@ class CurrentModuleWithICDeserializer(
         icDeserializer.deserializeReachableDeclarations()
     }
 
-    override fun postProcess() {
-        icDeserializer.postProcess()
+    override fun postProcess(postProcessor: (IrModuleFragment) -> Unit) {
+        icDeserializer.postProcess(postProcessor)
     }
 
     private fun DeclarationDescriptor.isDirtyDescriptor(): Boolean {
@@ -134,4 +134,6 @@ class CurrentModuleWithICDeserializer(
         get() = delegate.moduleFragment
     override val moduleDependencies: Collection<IrModuleDeserializer>
         get() = delegate.moduleDependencies
+    override val isCurrent: Boolean
+        get() = delegate.isCurrent
 }

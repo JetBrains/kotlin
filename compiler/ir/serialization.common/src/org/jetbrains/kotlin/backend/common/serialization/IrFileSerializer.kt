@@ -1121,7 +1121,7 @@ open class IrFileSerializer(
             .setName(serializeName(clazz.name))
 
         clazz.declarations.forEach {
-            proto.addDeclaration(serializeDeclaration(it))
+            if (memberNeedsSerialization(it)) proto.addDeclaration(serializeDeclaration(it))
         }
 
         clazz.typeParameters.forEach {
@@ -1211,6 +1211,16 @@ open class IrFileSerializer(
     open fun backendSpecificExplicitRoot(declaration: IrFunction) = false
     open fun backendSpecificExplicitRoot(declaration: IrClass) = false
     open fun keepOrderOfProperties(property: IrProperty): Boolean = !property.isConst
+    open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
+
+    fun memberNeedsSerialization(member: IrDeclaration): Boolean {
+        assert(member.parent is IrClass)
+        if (FakeOverrideControl.serializeFakeOverrides) return true
+        if (backendSpecificSerializeAllMembers(member.parent as IrClass)) return true
+        // TODO: we can, probably, maintain a privacy bit while traversing the tree
+        // instead of running the parent hierarchy for isExported every time.
+        return !(member.isFakeOverride && declarationTable.isExportedDeclaration(member))
+    }
 
     fun serializeIrFile(file: IrFile): SerializedIrFile {
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
