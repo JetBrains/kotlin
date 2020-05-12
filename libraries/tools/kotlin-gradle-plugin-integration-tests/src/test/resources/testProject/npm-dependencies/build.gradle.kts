@@ -19,6 +19,7 @@ kotlin.sourceSets {
             implementation(npm("file-dependency", projectDir.resolve("file-dependency")))
             implementation(npm(projectDir.resolve("file-dependency-2")))
             implementation(npm(projectDir.resolve("file-dependency-3")))
+            implementation(npm("react", " >= 16.4.0 < 16.9.0"))
         }
     }
 
