@@ -1,6 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
@@ -348,6 +349,15 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.matchInAnyOrder(klass.secondaryConstructors, other.secondaryConstructors)
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
+    }
+
+    override fun visitObjectDeclaration(declaration: KtObjectDeclaration) {
+        val other = getTreeElement<KtObjectDeclaration>() ?: return
+        val otherIdentifier = if(other.isCompanion()) (other.parent.parent as KtClass).nameIdentifier else other.nameIdentifier
+        myMatchingVisitor.result = matchTextOrVariable(declaration.nameIdentifier, otherIdentifier)
+                && myMatchingVisitor.match(declaration.modifierList, other.modifierList)
+                && myMatchingVisitor.match(declaration.getSuperTypeList(), other.getSuperTypeList())
+                && myMatchingVisitor.match(declaration.body, other.body)
     }
 
     override fun visitNamedFunction(function: KtNamedFunction) {
