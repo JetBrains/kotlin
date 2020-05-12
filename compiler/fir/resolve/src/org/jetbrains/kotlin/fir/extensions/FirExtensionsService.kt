@@ -98,6 +98,7 @@ class FirExtensionsService(
             require(annotation.classKind == ClassKind.ANNOTATION_CLASS)
             val fqName = annotation.symbol.classId.asSingleFqName()
             _annotations += fqName
+            userDefinedAnnotations.put(metaAnnotation, fqName)
             val extensions = extensionsWithMetaAnnotations[metaAnnotation]
             if (extensions.isEmpty()) return
             for (extension in extensions) {
@@ -127,6 +128,9 @@ class FirExtensionsService(
     private val _metaAnnotations: MutableSet<AnnotationFqn> = mutableSetOf()
 
     private val extensionsWithMetaAnnotations: Multimap<AnnotationFqn, FirExtension> = createMultimap()
+
+    // MetaAnnotation -> Annotations
+    val userDefinedAnnotations: Multimap<AnnotationFqn, AnnotationFqn> = createMultimap()
 
     var registeredExtensionsSize: Int = 0
         private set
