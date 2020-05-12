@@ -18,7 +18,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
     name = "ScriptClassRootsStorage",
     storages = [Storage(StoragePathMacros.CACHE_FILE)]
 )
-class ScriptClassRootsStorage(val project: Project) : PersistentStateComponent<ScriptClassRootsStorage> {
+class ScriptClassRootsStorage : PersistentStateComponent<ScriptClassRootsStorage> {
     var classpath: Set<String> = hashSetOf()
     var sources: Set<String> = hashSetOf()
     var sdks: Set<String> = hashSetOf()
