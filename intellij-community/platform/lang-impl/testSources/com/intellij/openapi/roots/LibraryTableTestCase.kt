@@ -90,12 +90,24 @@ abstract class LibraryTableTestCase {
   }
 
   @Test
-  fun `dispose model`() {
+  fun `add library and dispose model`() {
+    val a = createLibrary("a")
     val model = libraryTable.modifiableModel
-    val library = createLibrary("a", model)
+    val b = createLibrary("b", model)
     Disposer.dispose(model)
-    assertThat(libraryTable.libraries).isEmpty()
-    assertThat(library.isDisposed).isTrue()
+    assertThat(libraryTable.libraries).containsExactly(a)
+    assertThat(b.isDisposed).isTrue()
+    assertThat(a.isDisposed).isFalse()
+  }
+
+  @Test
+  fun `remove library and dispose model`() {
+    val a = createLibrary("a")
+    val model = libraryTable.modifiableModel
+    model.removeLibrary(a)
+    Disposer.dispose(model)
+    assertThat(libraryTable.libraries).containsExactly(a)
+    assertThat(a.isDisposed).isFalse()
   }
 
   @Test

@@ -182,6 +182,64 @@ class ModuleDependencyInRootModelTest {
   }
 
   @Test
+  fun `rename module`() {
+    val a = projectModel.createModule("a")
+    ModuleRootModificationUtil.addDependency(mainModule, a)
+    projectModel.renameModule(a, "b")
+    val entry = dropModuleSourceEntry(ModuleRootManager.getInstance(mainModule), 1).single() as ModuleOrderEntry
+    assertThat(entry.module).isEqualTo(a)
+    assertThat(entry.moduleName).isEqualTo("b")
+  }
+
+  @Test
+  fun `rename module and commit after committing root model`() {
+    val a = projectModel.createModule("a")
+    val model = createModifiableModel(mainModule)
+    model.addModuleOrderEntry(a)
+    val moduleModel = runReadAction { projectModel.moduleManager.modifiableModel }
+    moduleModel.renameModule(a, "b")
+    val entry = dropModuleSourceEntry(model, 1).single() as ModuleOrderEntry
+    assertThat(entry.module).isEqualTo(a)
+    assertThat(entry.moduleName).isEqualTo("a")
+    val committed = commitModifiableRootModel(model)
+    val committedEntry1 = dropModuleSourceEntry(committed, 1).single() as ModuleOrderEntry
+    assertThat(committedEntry1.module).isEqualTo(a)
+    assertThat(committedEntry1.moduleName).isEqualTo("a")
+    runWriteActionAndWait { moduleModel.commit() }
+    val committedEntry2 = dropModuleSourceEntry(committed, 1).single() as ModuleOrderEntry
+    assertThat(committedEntry2.module).isEqualTo(a)
+    assertThat(committedEntry2.moduleName).isEqualTo("b")
+  }
+
+  @Test
+  fun `rename module before committing root model`() {
+    val a = projectModel.createModule("a")
+    val model = createModifiableModel(mainModule)
+    model.addModuleOrderEntry(a)
+    projectModel.renameModule(a, "b")
+    val moduleEntry = dropModuleSourceEntry(model, 1).single() as ModuleOrderEntry
+    assertThat(moduleEntry.module).isEqualTo(a)
+    assertThat(moduleEntry.moduleName).isEqualTo("b")
+    val committed = commitModifiableRootModel(model)
+    val committedEntry = dropModuleSourceEntry(committed, 1).single() as ModuleOrderEntry
+    assertThat(committedEntry.module).isEqualTo(a)
+    assertThat(committedEntry.moduleName).isEqualTo("b")
+  }
+
+  @Test
+  fun `add invalid module and rename module to that name`() {
+    val module = projectModel.createModule("foo")
+    val model = createModifiableModel(mainModule)
+    model.addInvalidModuleEntry("bar")
+    commitModifiableRootModel(model)
+
+    projectModel.renameModule(module, "bar")
+
+    val moduleEntry = dropModuleSourceEntry(ModuleRootManager.getInstance(mainModule), 1).single() as ModuleOrderEntry
+    assertThat(moduleEntry.module).isEqualTo(module)
+  }
+
+  @Test
   fun `dispose model without committing`() {
     val a = projectModel.createModule("a")
     val model = createModifiableModel(mainModule)
