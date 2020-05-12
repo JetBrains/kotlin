@@ -99,7 +99,7 @@ internal class ClassMemberGenerator(
                 }
                 for ((valueParameter, firValueParameter) in valueParameters.zip(firFunction.valueParameters)) {
                     valueParameter.setDefaultValue(firValueParameter)
-                    annotationGenerator.generate(valueParameter, firValueParameter)
+                    annotationGenerator.generate(valueParameter, firValueParameter, irFunction is IrConstructor)
                 }
                 annotationGenerator.generate(irFunction, firFunction)
             }
