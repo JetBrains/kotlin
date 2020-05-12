@@ -33,7 +33,7 @@ public class FormattingModelDumper {
   public static void dumpFormattingModel(final Block block, int indent, PrintStream stream) {
     StringBuilder builder = new StringBuilder();
     dumpFormattingModel(block, indent, builder);
-    stream.print(builder.toString());
+    stream.print(builder);
   }
 
   public static String dumpFormattingModelToString(final Block block) {

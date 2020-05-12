@@ -304,7 +304,7 @@ public class IdeModelsProviderImpl implements IdeModelsProvider {
         if (isAlreadyIncluded) continue;
 
         nameBuilder.insert(0, part + myDelimiter);
-        names.add(nameBuilder.toString() + name);
+        names.add(nameBuilder + name);
       }
 
       String namePrefix = ContainerUtil.getLastItem(names);

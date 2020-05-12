@@ -165,7 +165,7 @@ public final class RemoteExternalSystemFacadeImpl<S extends ExternalSystemExecut
         }
 
         private void doFlush() {
-          delegate.print(myBuffer.toString());
+          delegate.print(myBuffer);
           delegate.flush();
           myBuffer.setLength(0);
         }

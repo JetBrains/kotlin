@@ -170,7 +170,7 @@ public class QuickDocUtil {
       if (stop.get()) {
         Disposer.dispose(alarmDisposable);
       }
-      String newText = sb.toString() + "<br><br><br>";
+      String newText = sb + "<br><br><br>";
       String prevText = component.getText();
       if (!Objects.equals(newText, prevText)) {
         component.replaceText(newText, element);

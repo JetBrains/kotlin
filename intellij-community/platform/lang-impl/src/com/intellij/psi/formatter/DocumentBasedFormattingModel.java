@@ -200,7 +200,7 @@ public class DocumentBasedFormattingModel implements FormattingModelEx {
           else {
             createWhiteSpace(whiteSpaceLength, buffer);
           }
-          buffer.append(afterWhiteSpace.toString());
+          buffer.append(afterWhiteSpace);
           insideWhiteSpace = true;
           whiteSpaceLength = 0;
           afterWhiteSpace = new StringBuilder();
@@ -231,7 +231,7 @@ public class DocumentBasedFormattingModel implements FormattingModelEx {
     }
     if (line > 0 && afterWhiteSpace.length() > 0 ) {
       createWhiteSpace(whiteSpaceLength + shift, buffer);
-      buffer.append(afterWhiteSpace.toString());
+      buffer.append(afterWhiteSpace);
     }
     myDocument.replaceString(elementRange.getStartOffset(), elementRange.getEndOffset(), buffer.toString());
     return buffer.length();

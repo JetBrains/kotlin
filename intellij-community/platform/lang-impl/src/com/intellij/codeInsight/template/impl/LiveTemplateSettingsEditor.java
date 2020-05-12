@@ -310,7 +310,7 @@ public final class LiveTemplateSettingsEditor extends JPanel {
         sb.append(ownName);
       }
 
-      String contexts = "Applicable in " + sb.toString();
+      String contexts = "Applicable in " + sb;
       change.setText(CodeInsightBundle.message("link.change.context"));
 
       final boolean noContexts = sb.length() == 0;
