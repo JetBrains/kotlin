@@ -31,6 +31,8 @@ abstract class FirScope {
     open fun processDeclaredConstructors(
         processor: (FirConstructorSymbol) -> Unit
     ) {}
+
+    open fun mayContainName(name: Name) = true
 }
 
 enum class ProcessorAction {

@@ -36,6 +36,7 @@ class FirTowerResolverSession internal constructor(
     private val components: BodyResolveComponents,
     private val manager: TowerResolveManager,
     private val candidateFactoriesAndCollectors: CandidateFactoriesAndCollectors,
+    private val mainCallInfo: CallInfo,
 ) {
     private data class ImplicitReceiver(
         val receiver: ImplicitReceiverValue<*>,
@@ -44,7 +45,20 @@ class FirTowerResolverSession internal constructor(
 
     private val session: FirSession get() = components.session
 
-    private val localScopes: List<FirScope> = components.localScopes.asReversedFrozen()
+    private val localScopes: List<FirScope> by lazy(LazyThreadSafetyMode.NONE) {
+        val localScopesBase = components.towerDataContext.localScopes
+        val result = ArrayList<FirScope>()
+        for (i in localScopesBase.lastIndex downTo 0) {
+            val localScope = localScopesBase[i]
+            if (localScope.mayContainName(mainCallInfo.name)
+                || (mainCallInfo.callKind == CallKind.Function && localScope.mayContainName(OperatorNameConventions.INVOKE))
+            ) {
+                result.add(localScope)
+            }
+        }
+
+        result
+    }
 
     private val nonLocalTowerDataElements = components.towerDataContext.nonLocalTowerDataElements.asReversedFrozen()
 
