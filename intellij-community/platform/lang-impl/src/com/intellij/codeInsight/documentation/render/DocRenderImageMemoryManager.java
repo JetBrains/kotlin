@@ -137,7 +137,7 @@ class DocRenderImageMemoryManager {
 
     @Override
     protected ImageDecoder getDecoder() {
-      InputStream stream = CachingImageReader.getInstance().getInputStream(myURL);
+      InputStream stream = CachingDataReader.getInstance().getInputStream(myURL);
       return stream == null ? null : getDecoder(stream);
     }
   }

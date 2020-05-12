@@ -17,13 +17,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Cache for accessing remote resources (the ones fetched via FTP, HTTP and HTTPS protocols are stored on disk for further accesses).
+ * Disk cache is cleaned on IDE exit.
+ */
 @Service
-public final class CachingImageReader implements Disposable {
-  private static final Logger LOG = Logger.getInstance(CachingImageReader.class);
+public final class CachingDataReader implements Disposable {
+  private static final Logger LOG = Logger.getInstance(CachingDataReader.class);
   private static final int MAX_DATA_SIZE = 1_000_000;
 
-  public static CachingImageReader getInstance() {
-    return ApplicationManager.getApplication().getService(CachingImageReader.class);
+  public static CachingDataReader getInstance() {
+    return ApplicationManager.getApplication().getService(CachingDataReader.class);
   }
 
   private final ConcurrentMap<URL, File> myCache = new ConcurrentHashMap<>();
@@ -62,11 +66,11 @@ public final class CachingImageReader implements Disposable {
     File file = new File(folder, generateFileName());
     try {
       Files.write(file.toPath(), data);
+      myCache.putIfAbsent(url, file);
     }
     catch (IOException e) {
       LOG.warn("Error writing to " + file, e);
     }
-    myCache.putIfAbsent(url, file);
   }
 
   private static File getCacheFolder() {
