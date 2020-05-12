@@ -77,6 +77,10 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
     override val isCompanion: Boolean
         get() = error()
 
+    @SinceKotlin("1.4")
+    override val isFun: Boolean
+        get() = error()
+
     private fun error(): Nothing = throw KotlinReflectionNotSupportedError()
 
     override fun equals(other: Any?) =

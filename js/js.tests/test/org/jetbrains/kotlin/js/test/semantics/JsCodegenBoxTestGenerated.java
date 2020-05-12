@@ -21781,11 +21781,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/reflection/modifiers/classVisibility.kt");
             }
 
-            @TestMetadata("classes.kt")
-            public void testClasses() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/modifiers/classes.kt");
-            }
-
             @TestMetadata("functions.kt")
             public void testFunctions() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/modifiers/functions.kt");

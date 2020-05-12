@@ -128,6 +128,12 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
     public val isCompanion: Boolean
 
     /**
+     * `true` if this class is a Kotlin functional interface.
+     */
+    @SinceKotlin("1.4")
+    public val isFun: Boolean
+
+    /**
      * Returns `true` if this [KClass] instance represents the same Kotlin class as the class represented by [other].
      * On JVM this means that all of the following conditions are satisfied:
      *
