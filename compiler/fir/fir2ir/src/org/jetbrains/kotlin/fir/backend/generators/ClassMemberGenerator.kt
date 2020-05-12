@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -32,6 +30,8 @@ internal class ClassMemberGenerator(
     private val callGenerator: CallAndReferenceGenerator,
     fakeOverrideMode: FakeOverrideMode
 ) : Fir2IrComponents by components {
+
+    private val annotationGenerator = AnnotationGenerator(visitor)
 
     private val fakeOverrideGenerator = FakeOverrideGenerator(
         session, components.scopeSession, classifierStorage, declarationStorage, conversionScope, fakeOverrideMode
@@ -77,9 +77,7 @@ internal class ClassMemberGenerator(
                     it.accept(visitor, null)
                 }
             }
-            annotations = klass.annotations.mapNotNull {
-                it.accept(visitor, null) as? IrConstructorCall
-            }
+            annotationGenerator.generate(irClass, klass)
             if (irPrimaryConstructor != null) {
                 declarationStorage.leaveScope(irPrimaryConstructor.descriptor)
             }
@@ -101,13 +99,9 @@ internal class ClassMemberGenerator(
                 }
                 for ((valueParameter, firValueParameter) in valueParameters.zip(firFunction.valueParameters)) {
                     valueParameter.setDefaultValue(firValueParameter)
-                    valueParameter.annotations = firValueParameter.annotations.mapNotNull {
-                        it.accept(visitor, null) as? IrConstructorCall
-                    }
+                    annotationGenerator.generate(valueParameter, firValueParameter)
                 }
-                annotations = firFunction.annotations.mapNotNull {
-                    it.accept(visitor, null) as? IrConstructorCall
-                }
+                annotationGenerator.generate(irFunction, firFunction)
             }
             if (firFunction is FirConstructor && irFunction is IrConstructor && !parentAsClass.isAnnotationClass) {
                 val body = IrBlockBodyImpl(startOffset, endOffset)
@@ -173,14 +167,7 @@ internal class ClassMemberGenerator(
                 property, property.setter, irProperty, propertyType, property.setter is FirDefaultPropertySetter
             )
         }
-        irProperty.annotations +=
-            property.annotations
-                .filter {
-                    it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY
-                }
-                .mapNotNull {
-                    it.accept(visitor, null) as? IrConstructorCall
-                }
+        annotationGenerator.generate(irProperty, property)
         return irProperty
     }
 
@@ -198,13 +185,7 @@ internal class ClassMemberGenerator(
             }
             declarationStorage.leaveScope(descriptor)
         }
-        irField.annotations +=
-            property.annotations
-                .filter {
-                    it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
-                            it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
-                }
-                .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
+        annotationGenerator.generate(irField, property)
     }
 
     private fun IrFunction.setPropertyAccessorContent(
@@ -245,29 +226,7 @@ internal class ClassMemberGenerator(
                 }
             }
         }
-        if (isSetter) {
-            annotations +=
-                property.annotations
-                    .filter { it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER }
-                    .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
-            valueParameters.singleOrNull()?.annotations =
-                valueParameters.singleOrNull()?.annotations?.plus(
-                    property.annotations
-                        .filter { it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER }
-                        .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
-                )!!
-        } else {
-            annotations +=
-                property.annotations
-                    .filter { it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER }
-                    .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
-        }
-        extensionReceiverParameter?.annotations =
-            extensionReceiverParameter?.annotations?.plus(
-                property.annotations
-                    .filter { it.useSiteTarget == AnnotationUseSiteTarget.RECEIVER }
-                    .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
-            )!!
+        annotationGenerator.generate(this, property)
     }
 
     private fun IrFieldAccessExpression.setReceiver(declaration: IrDeclaration): IrFieldAccessExpression {
