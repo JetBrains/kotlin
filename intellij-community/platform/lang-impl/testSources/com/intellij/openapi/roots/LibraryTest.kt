@@ -87,9 +87,11 @@ class LibraryTest {
     assertThat(library.isValid(classesUrl, OrderRootType.CLASSES)).isFalse()
     assertThat(library.getInvalidRootUrls(OrderRootType.CLASSES)).containsExactly(classesUrl)
     edit(library) {
-      it.removeRoot(classesUrl, OrderRootType.SOURCES)
+      val removed = it.removeRoot(classesUrl, OrderRootType.SOURCES)
+      assertThat(removed).isFalse()
       assertThat(it.isChanged).isFalse()
-      it.removeRoot(classesUrl, OrderRootType.CLASSES)
+      val removed2 = it.removeRoot(classesUrl, OrderRootType.CLASSES)
+      assertThat(removed2).isTrue()
       assertThat(it.isChanged).isTrue()
     }
     assertThat(library.getUrls(OrderRootType.CLASSES)).isEmpty()
