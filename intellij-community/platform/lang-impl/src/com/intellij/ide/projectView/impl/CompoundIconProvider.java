@@ -45,10 +45,7 @@ public final class CompoundIconProvider extends IconProvider {
           LOG.warn("unexpected error in " + provider, exception);
         }
       }
-      if (element instanceof PsiDirectory) {
-        LOG.debug("add default folder icon: ", element);
-        return IconManager.getInstance().createLayeredIcon(element, AllIcons.Nodes.Folder, flags);
-      }
+      return element.getIcon(flags);
     }
     return null;
   }
