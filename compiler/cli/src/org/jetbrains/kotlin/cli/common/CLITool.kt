@@ -38,18 +38,11 @@ import kotlin.system.exitProcess
 
 abstract class CLITool<A : CommonToolArguments> {
     fun exec(errStream: PrintStream, vararg args: String): ExitCode {
-        val rendererType = System.getProperty(MessageRenderer.PROPERTY_KEY)
-
-        val messageRenderer = when (rendererType) {
-            MessageRenderer.XML.name -> MessageRenderer.XML
-            MessageRenderer.GRADLE_STYLE.name -> MessageRenderer.GRADLE_STYLE
-            MessageRenderer.WITHOUT_PATHS.name -> MessageRenderer.WITHOUT_PATHS
-            MessageRenderer.PLAIN_FULL_PATHS.name -> MessageRenderer.PLAIN_FULL_PATHS
-            else -> MessageRenderer.PLAIN_RELATIVE_PATHS
-        }
-
-        return exec(errStream, Services.EMPTY, messageRenderer, args)
+        return exec(errStream, Services.EMPTY, defaultMessageRenderer(), args)
     }
+
+    fun exec(errStream: PrintStream,  messageRenderer: MessageRenderer, vararg args: String): ExitCode
+        = exec(errStream, Services.EMPTY, messageRenderer, args)
 
     protected fun exec(
         errStream: PrintStream,
@@ -192,6 +185,16 @@ abstract class CLITool<A : CommonToolArguments> {
     abstract fun executableScriptFileName(): String
 
     companion object {
+
+        private fun defaultMessageRenderer(): MessageRenderer =
+                when (System.getProperty(MessageRenderer.PROPERTY_KEY)) {
+                    MessageRenderer.XML.name -> MessageRenderer.XML
+                    MessageRenderer.GRADLE_STYLE.name -> MessageRenderer.GRADLE_STYLE
+                    MessageRenderer.WITHOUT_PATHS.name -> MessageRenderer.WITHOUT_PATHS
+                    MessageRenderer.PLAIN_FULL_PATHS.name -> MessageRenderer.PLAIN_FULL_PATHS
+                    else -> MessageRenderer.PLAIN_RELATIVE_PATHS
+                }
+
         /**
          * Useful main for derived command line tools
          */
@@ -215,8 +218,13 @@ abstract class CLITool<A : CommonToolArguments> {
         }
 
         @JvmStatic
-        fun doMainNoExit(compiler: CLITool<*>, args: Array<String>): ExitCode = try {
-            compiler.exec(System.err, *args)
+        @JvmOverloads
+        fun doMainNoExit(
+                compiler: CLITool<*>,
+                args: Array<String>,
+                messageRenderer: MessageRenderer = defaultMessageRenderer()
+        ): ExitCode = try {
+            compiler.exec(System.err, messageRenderer, *args)
         } catch (e: CompileEnvironmentException) {
             System.err.println(e.message)
             ExitCode.INTERNAL_ERROR
