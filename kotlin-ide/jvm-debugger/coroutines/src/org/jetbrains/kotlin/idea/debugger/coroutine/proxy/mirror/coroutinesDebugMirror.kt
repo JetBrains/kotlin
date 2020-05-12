@@ -42,7 +42,7 @@ class DebugProbesImpl private constructor(context: DefaultExecutionContext) :
 
     fun dumpCoroutinesInfo(context: DefaultExecutionContext): List<MirrorOfCoroutineInfo> {
         instance ?: return emptyList()
-        val coroutinesInfoReference = objectValue(instance, dumpMethod, context)
+        val coroutinesInfoReference = context.keepReference(objectValue(instance, dumpMethod, context))
         val referenceList = javaLangListMirror.mirror(coroutinesInfoReference, context) ?: return emptyList()
         return referenceList.values.mapNotNull { coroutineInfo.mirror(it, context) }
     }

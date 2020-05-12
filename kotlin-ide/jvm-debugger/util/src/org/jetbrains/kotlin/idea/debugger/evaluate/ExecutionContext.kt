@@ -42,6 +42,13 @@ class DefaultExecutionContext(evaluationContext: EvaluationContextImpl) : BaseEx
     val frameProxy: StackFrameProxyImpl?
         get() =
             evaluationContext.frameProxy
+
+    fun keepReference(ref: ObjectReference?): ObjectReference? {
+        ref?.let {
+            super.keepReference(ref)
+        }
+        return ref
+    }
 }
 
 sealed class BaseExecutionContext(val evaluationContext: EvaluationContextImpl) {
