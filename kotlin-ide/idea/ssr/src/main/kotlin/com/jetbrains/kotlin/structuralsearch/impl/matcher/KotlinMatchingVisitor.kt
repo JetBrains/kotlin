@@ -355,7 +355,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(function.modifierList, other.modifierList)
                 && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)
-                && myMatchingVisitor.match(function.typeReference, other.typeReference)
+                && matchTypeReference(function.typeReference, other)
                 && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
                 && myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
     }

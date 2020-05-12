@@ -31,13 +31,15 @@ class KotlinSSFunctionTest : KotlinSSTest() {
 
     fun testFunPrivateModifier() { doTest("private fun '_() { }") }
 
-    fun testMethod() { doTest("fun a() { }") }
-
-    fun testMethodProtectedModifier() { doTest("protected fun '_() { }") }
+    fun testFunTypeVarRef() { doTest("fun '_(): '_") }
 
     fun testFunReceiverType() {
         doTest(
             "fun <'_T, '_E, '_R> '_name('_f : '_T.('_E) -> '_R) : ('_T, '_E) -> '_R = { '_t, '_e -> '_t.'_f('_e) }"
         )
     }
+
+    fun testMethod() { doTest("fun a() { }") }
+
+    fun testMethodProtectedModifier() { doTest("protected fun '_() { }") }
 }
