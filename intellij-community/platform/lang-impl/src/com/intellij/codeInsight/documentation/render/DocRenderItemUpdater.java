@@ -20,11 +20,11 @@ public final class DocRenderItemUpdater implements Runnable {
     return ApplicationManager.getApplication().getService(DocRenderItemUpdater.class);
   }
 
-  boolean updateInlays(@NotNull Collection<Inlay<DocRenderer>> inlays) {
-    if (inlays.isEmpty()) return false;
+  void updateInlays(@NotNull Collection<Inlay<DocRenderer>> inlays) {
+    if (inlays.isEmpty()) return;
     boolean wasEmpty = myQueue.isEmpty();
     myQueue.addAll(0, inlays);
-    return wasEmpty && processChunk();
+    if (wasEmpty) processChunk();
   }
 
   @Override
@@ -32,7 +32,7 @@ public final class DocRenderItemUpdater implements Runnable {
     processChunk();
   }
 
-  private boolean processChunk() {
+  private void processChunk() {
     long deadline = System.currentTimeMillis() + MAX_UPDATE_DURATION_MS;
     Map<Editor, EditorScrollingPositionKeeper> keepers = new HashMap<>();
     // This is a heuristic to lessen visual 'jumping' on editor opening. We'd like inlays visible at target opening location to be updated
@@ -55,6 +55,5 @@ public final class DocRenderItemUpdater implements Runnable {
     while (!myQueue.isEmpty() && System.currentTimeMillis() < deadline);
     keepers.values().forEach(k -> k.restorePosition(false));
     if (!myQueue.isEmpty()) SwingUtilities.invokeLater(this);
-    return !keepers.isEmpty();
   }
 }
