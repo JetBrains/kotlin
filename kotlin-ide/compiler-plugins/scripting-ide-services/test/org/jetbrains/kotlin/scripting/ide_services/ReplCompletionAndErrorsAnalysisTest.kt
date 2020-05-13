@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.scripting.ide_services
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.ide_services.compiler.KJvmReplCompilerWithIdeServices
+import org.jetbrains.kotlin.scripting.ide_services.compiler.completion
+import org.jetbrains.kotlin.scripting.ide_services.compiler.filterOutShadowedDescriptors
+import org.jetbrains.kotlin.scripting.ide_services.compiler.nameFilter
 import org.jetbrains.kotlin.scripting.ide_services.test_util.SourceCodeTestImpl
 import org.jetbrains.kotlin.scripting.ide_services.test_util.simpleScriptCompilationConfiguration
 import org.jetbrains.kotlin.scripting.ide_services.test_util.toList
@@ -45,7 +48,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             code = "v.mema."
             cursor = 7
             expect {
-                completions.mode(ComparisonType.INCLUDES)
+                completions.mode = ComparisonType.INCLUDES
                 addCompletion("memx", "memx", "Int", "property")
                 addCompletion("memy", "memy", "String", "property")
             }
@@ -71,7 +74,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             code = testCode
             cursor = testCursor ?: testCode.length
             expect {
-                completions.mode(ComparisonType.EQUALS)
+                completions.mode = ComparisonType.EQUALS
             }
         }
 
@@ -99,7 +102,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             cursor = 17
             code = "import java.lang."
             expect {
-                completions.mode(ComparisonType.INCLUDES)
+                completions.mode = ComparisonType.INCLUDES
                 addCompletion("Process", "Process", " (java.lang)", "class")
             }
         }
@@ -175,7 +178,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
                 val v = BClass("KKK", AClass(5, "25"))
             """.trimIndent()
             expect {
-                errors.mode(ComparisonType.EQUALS)
+                errors.mode = ComparisonType.EQUALS
             }
         }
 
@@ -224,10 +227,67 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
                 foo
             """.trimIndent()
             expect {
-                errors.mode(ComparisonType.EQUALS)
+                errors.mode = ComparisonType.EQUALS
                 resultType = "Int"
             }
         }
+    }
+
+    @Test
+    fun testNameFilter() = test {
+        run {
+            code = """
+                val xxxyyy = 42
+                val yyyxxx = 43
+            """.trimIndent()
+            doCompile
+        }
+
+        run {
+            code = "xxx"
+            cursor = 3
+            expect {
+                addCompletion("xxxyyy", "xxxyyy", "Int", "property")
+            }
+        }
+
+        run {
+            code = "xxx"
+            cursor = 3
+            compilationConfiguration = ScriptCompilationConfiguration {
+                completion {
+                    nameFilter { name, namePart -> name.endsWith(namePart) }
+                }
+            }
+            expect {
+                addCompletion("yyyxxx", "yyyxxx", "Int", "property")
+            }
+        }
+    }
+
+    @Test
+    fun testShadowedDescriptors() = test {
+        for (i in 1..2)
+            run {
+                code = """
+                    val xxxyyy = 42
+                """.trimIndent()
+                doCompile
+            }
+
+        for ((flag, expectedSize) in listOf(true to 1, false to 2))
+            run {
+                code = "xxx"
+                cursor = 3
+                compilationConfiguration = ScriptCompilationConfiguration {
+                    completion {
+                        filterOutShadowedDescriptors(flag)
+                    }
+                }
+                expect {
+                    completions.size = expectedSize
+                }
+            }
     }
 
     class TestConf {
@@ -261,6 +321,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
                 }
 
             var cursor: Int? = null
+            var compilationConfiguration: ScriptCompilationConfiguration? = null
             var code: String = ""
             private var _expected: Expected = Expected(this)
 
@@ -270,7 +331,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             }
 
             fun collect(): Pair<RunRequest, ExpectedResult> {
-                return RunRequest(cursor, code, _doCompile, _doComplete, _doErrorCheck) to _expected.collect()
+                return RunRequest(cursor, code, _doCompile, _doComplete, _doErrorCheck, compilationConfiguration) to _expected.collect()
             }
 
             class Expected(private val run: Run) {
@@ -310,7 +371,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     }
 
     enum class ComparisonType {
-        INCLUDES, EQUALS, DONT_CHECK
+        COMPARE_SIZE, INCLUDES, EQUALS, DONT_CHECK
     }
 
     data class RunRequest(
@@ -319,20 +380,29 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         val doCompile: Boolean,
         val doComplete: Boolean,
         val doErrorCheck: Boolean,
+        val compilationConfiguration: ScriptCompilationConfiguration?
     )
 
-    class ExpectedList<T>(private val runProperty: KProperty0<Unit>) {
+    interface ExpectedOptions {
+        val mode: ComparisonType
+        val size: Int
+    }
+
+    class ExpectedList<T>(private val runProperty: KProperty0<Unit>) : ExpectedOptions {
         val list = mutableListOf<T>()
 
-        private var _compMode = ComparisonType.DONT_CHECK
-        fun mode() = _compMode
-        fun mode(mode: ComparisonType) {
-            _compMode = mode
-        }
+        override var mode = ComparisonType.DONT_CHECK
+        override var size = 0
+            set(value) {
+                if (mode == ComparisonType.DONT_CHECK)
+                    mode = ComparisonType.COMPARE_SIZE
+                runProperty.get()
+                field = value
+            }
 
         fun add(elem: T) {
-            if (_compMode == ComparisonType.DONT_CHECK)
-                _compMode = ComparisonType.EQUALS
+            if (mode == ComparisonType.DONT_CHECK)
+                mode = ComparisonType.EQUALS
             runProperty.get()
             list.add(elem)
         }
@@ -373,37 +443,43 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         snippets: List<RunRequest>
     ): List<ResultWithDiagnostics<ActualResult>> {
         val compiler = KJvmReplCompilerWithIdeServices()
-        return snippets.map { (cursor, snippetText, doCompile, doComplete, doErrorCheck) ->
-            val pos = SourceCode.Position(0, 0, cursor)
-            val codeLine = nextCodeLine(snippetText)
-            val completionRes = if (doComplete && cursor != null) {
-                val res = compiler.complete(codeLine, pos, compilationConfiguration)
-                res.toList().filter { it.tail != "keyword" }
-            } else {
-                emptyList()
+        return snippets.map { runRequest ->
+            with(runRequest) {
+                val newCompilationConfiguration = this.compilationConfiguration?.let {
+                    ScriptCompilationConfiguration(compilationConfiguration, it)
+                } ?: compilationConfiguration
+
+                val pos = SourceCode.Position(0, 0, cursor)
+                val codeLine = nextCodeLine(code)
+                val completionRes = if (doComplete && cursor != null) {
+                    val res = compiler.complete(codeLine, pos, newCompilationConfiguration)
+                    res.toList().filter { it.tail != "keyword" }
+                } else {
+                    emptyList()
+                }
+
+                val analysisResult = if (doErrorCheck) {
+                    val codeLineForErrorCheck = nextCodeLine(code)
+                    compiler.analyze(codeLineForErrorCheck, SourceCode.Position(0, 0), newCompilationConfiguration).valueOrNull()
+                } else {
+                    null
+                } ?: ReplAnalyzerResult()
+
+                val errorsSequence = analysisResult[ReplAnalyzerResult.analysisDiagnostics]!!
+                val resultType = analysisResult[ReplAnalyzerResult.renderedResultType]
+
+                if (doCompile) {
+                    val codeLineForCompilation = nextCodeLine(code)
+                    compiler.compile(codeLineForCompilation, newCompilationConfiguration)
+                }
+
+                ActualResult(completionRes, errorsSequence.toList(), resultType).asSuccess()
             }
-
-            val analysisResult = if (doErrorCheck) {
-                val codeLineForErrorCheck = nextCodeLine(snippetText)
-                compiler.analyze(codeLineForErrorCheck, SourceCode.Position(0, 0), compilationConfiguration).valueOrNull()
-            } else {
-                null
-            }?: ReplAnalyzerResult()
-
-            val errorsSequence = analysisResult[ReplAnalyzerResult.analysisDiagnostics]!!
-            val resultType = analysisResult[ReplAnalyzerResult.renderedResultType]
-
-            if (doCompile) {
-                val codeLineForCompilation = nextCodeLine(snippetText)
-                compiler.compile(codeLineForCompilation, compilationConfiguration)
-            }
-
-            ActualResult(completionRes, errorsSequence.toList(), resultType).asSuccess()
         }
     }
 
-    private fun <T> checkLists(index: Int, checkName: String, expected: List<T>, actual: List<T>, compType: ComparisonType) {
-        when (compType) {
+    private fun <T> checkLists(index: Int, checkName: String, expected: List<T>, actual: List<T>, options: ExpectedOptions) {
+        when (options.mode) {
             ComparisonType.EQUALS -> Assert.assertEquals(
                 "#$index ($checkName): Expected $expected, got $actual",
                 expected,
@@ -412,6 +488,11 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             ComparisonType.INCLUDES -> Assert.assertTrue(
                 "#$index ($checkName): Expected $actual to include $expected",
                 actual.containsAll(expected)
+            )
+            ComparisonType.COMPARE_SIZE -> Assert.assertEquals(
+                "#$index ($checkName): Expected list size to be equal to ${options.size}, but was ${actual.size}",
+                options.size,
+                actual.size
             )
             ComparisonType.DONT_CHECK -> {
             }
@@ -431,11 +512,11 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
                     val (expectedCompletions, expectedErrors, expectedResultType) = expectedIter.next()
                     val (completionsRes, errorsRes, resultType) = res.value
 
-                    checkLists(index, "completions", expectedCompletions.list, completionsRes, expectedCompletions.mode())
+                    checkLists(index, "completions", expectedCompletions.list, completionsRes, expectedCompletions)
                     val expectedErrorsWithPath = expectedErrors.list.map {
                         it.copy(sourcePath = errorsRes.firstOrNull()?.sourcePath)
                     }
-                    checkLists(index, "errors", expectedErrorsWithPath, errorsRes, expectedErrors.mode())
+                    checkLists(index, "errors", expectedErrorsWithPath, errorsRes, expectedErrors)
                     assertEquals("Analysis result types are different", expectedResultType, resultType)
                 }
             }

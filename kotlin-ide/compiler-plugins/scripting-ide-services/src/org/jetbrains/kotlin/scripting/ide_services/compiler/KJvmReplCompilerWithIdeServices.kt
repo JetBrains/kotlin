@@ -54,7 +54,8 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
                     bindingContext,
                     resolutionFacade,
                     moduleDescriptor,
-                    cursorAbs
+                    cursorAbs,
+                    configuration
                 ).asSuccess(messageCollector.diagnostics)
             }
         }
