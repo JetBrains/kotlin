@@ -9,10 +9,9 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ScalableIcon;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.util.ui.JBUI;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,20 +35,13 @@ public class IdeConsoleRootType extends ConsoleRootType {
   public Icon substituteIcon(@NotNull Project project, @NotNull VirtualFile file) {
     if (file.isDirectory()) return null;
     FileType fileType = FileTypeManager.getInstance().getFileTypeByFileName(file.getNameSequence());
-    if (fileType == UnknownFileType.INSTANCE || fileType == PlainTextFileType.INSTANCE) {
-      return AllIcons.Debugger.Console;
-    }
-    Icon icon = fileType.getIcon();
-    Icon subscript = ((ScalableIcon)AllIcons.Debugger.Console).scale(.5f);
-    LayeredIcon icons = new LayeredIcon(2);
-    icons.setIcon(icon, 0);
-    icons.setIcon(subscript, 1, 8, 8);
-    return JBUI.scale(icons);
+    Icon icon = fileType == UnknownFileType.INSTANCE || fileType == PlainTextFileType.INSTANCE ?
+                AllIcons.Debugger.Console : ObjectUtils.notNull(fileType.getIcon(), AllIcons.Debugger.Console);
+    return LayeredIcon.create(icon, AllIcons.Nodes.RunnableMark);
   }
 
   @Override
   public void fileOpened(@NotNull VirtualFile file, @NotNull FileEditorManager source) {
     RunIdeConsoleAction.configureConsole(file, source);
   }
-
 }
