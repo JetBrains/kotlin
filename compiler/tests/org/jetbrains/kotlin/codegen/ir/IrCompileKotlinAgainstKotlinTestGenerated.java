@@ -263,6 +263,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/nestedClass.kt");
     }
 
+    @TestMetadata("nestedClassInAnnotationArgument.kt")
+    public void testNestedClassInAnnotationArgument() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/nestedClassInAnnotationArgument.kt");
+    }
+
     @TestMetadata("nestedEnum.kt")
     public void testNestedEnum() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/nestedEnum.kt");

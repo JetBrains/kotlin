@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
@@ -432,8 +433,13 @@ public abstract class AnnotationCodegen {
 
             @Override
             public Void visitEnumValue(EnumValue value, Void data) {
-                String enumClassInternalName = AsmUtil.asmTypeByClassId(value.getEnumClassId()).getDescriptor();
+                ClassId enumClassId = value.getEnumClassId();
+                String enumClassInternalName = AsmUtil.asmTypeByClassId(enumClassId).getDescriptor();
                 String enumEntryName = value.getEnumEntryName().asString();
+                ClassDescriptor descriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(state.getModule(), enumClassId);
+                if (descriptor != null) {
+                    innerClassConsumer.addInnerClassInfoFromAnnotation(descriptor);
+                }
                 annotationVisitor.visitEnum(name, enumClassInternalName, enumEntryName);
                 return null;
             }
@@ -450,8 +456,9 @@ public abstract class AnnotationCodegen {
 
             @Override
             public Void visitAnnotationValue(AnnotationValue value, Void data) {
-                String internalAnnName = typeMapper.mapType(value.getValue().getType()).getDescriptor();
-                AnnotationVisitor visitor = annotationVisitor.visitAnnotation(name, internalAnnName);
+                KotlinType classType = value.getValue().getType();
+                innerClassConsumer.addInnerClassInfoFromAnnotation(DescriptorUtils.getClassDescriptorForType(classType));
+                AnnotationVisitor visitor = annotationVisitor.visitAnnotation(name, typeMapper.mapType(classType).getDescriptor());
                 genAnnotationArguments(value.getValue(), visitor);
                 visitor.visitEnd();
                 return null;
@@ -459,7 +466,9 @@ public abstract class AnnotationCodegen {
 
             @Override
             public Void visitKClassValue(KClassValue value, Void data) {
-                annotationVisitor.visit(name, typeMapper.mapType(value.getArgumentType(module)));
+                KotlinType classType = value.getArgumentType(module);
+                innerClassConsumer.addInnerClassInfoFromAnnotation(DescriptorUtils.getClassDescriptorForType(classType));
+                annotationVisitor.visit(name, typeMapper.mapType(classType));
                 return null;
             }
 
