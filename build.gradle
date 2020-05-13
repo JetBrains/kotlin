@@ -328,6 +328,8 @@ task shadowJar(type: ShadowJar) {
     mergeServiceFiles()
     destinationDirectory.set(file("$distDir/konan/lib"))
     archiveBaseName.set("kotlin-native")
+    // Exclude trove4j because of license agreement.
+    exclude "*trove4j*"
     configurations = [project.configurations.distPack]
     archiveClassifier.set(null)
     transform(CollisionTransformer.class) {
@@ -342,6 +344,10 @@ task distCompiler(type: Copy) {
 
     from(project(':backend.native').file("build/nativelibs/$hostName")) {
         into('konan/nativelib')
+    }
+
+    from(project(':backend.native').file('build/external_jars/trove4j.jar')) {
+        into('konan/lib')
     }
 
     from(project(':Interop').file('Indexer/build/nativelibs')) {
