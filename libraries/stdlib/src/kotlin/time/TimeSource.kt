@@ -94,6 +94,7 @@ public abstract class TimeMark {
     "Subtracting one TimeMark from another is not a well defined operation because these time marks could have been obtained from the different time sources.",
     level = DeprecationLevel.ERROR
 )
+@Suppress("UNUSED_PARAMETER")
 public inline operator fun TimeMark.minus(other: TimeMark): Duration = throw Error("Operation is disallowed.")
 
 @ExperimentalTime
@@ -103,6 +104,7 @@ public inline operator fun TimeMark.minus(other: TimeMark): Duration = throw Err
     "Comparing one TimeMark to another is not a well defined operation because these time marks could have been obtained from the different time sources.",
     level = DeprecationLevel.ERROR
 )
+@Suppress("UNUSED_PARAMETER")
 public inline operator fun TimeMark.compareTo(other: TimeMark): Int = throw Error("Operation is disallowed.")
 
 

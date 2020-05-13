@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -89,7 +89,7 @@ class ArrayDequeTest {
     }
 
     @Test
-    fun clear() = testArrayDeque { bufferSize: Int, dequeSize: Int, head: Int, tail: Int ->
+    fun clear() = testArrayDeque { bufferSize: Int, _: Int, head: Int, tail: Int ->
         val deque = generateArrayDeque(head, tail, bufferSize).apply { clear() }
         assertTrue(deque.isEmpty())
     }
@@ -543,7 +543,7 @@ class ArrayDequeTest {
     }
 
     @Test
-    fun removeAll() = testArrayDeque { bufferSize: Int, dequeSize: Int, head: Int, tail: Int ->
+    fun removeAll() = testArrayDeque { bufferSize: Int, _: Int, head: Int, tail: Int ->
         generateArrayDeque(head, tail, bufferSize).let { deque ->
             deque.removeAll(emptyList())
             assertEquals((head until tail).toList(), deque)
@@ -565,7 +565,7 @@ class ArrayDequeTest {
     }
 
     @Test
-    fun retainAll() = testArrayDeque { bufferSize: Int, dequeSize: Int, head: Int, tail: Int ->
+    fun retainAll() = testArrayDeque { bufferSize: Int, _: Int, head: Int, tail: Int ->
         val listToRetain = (head..tail).filter { Random.nextBoolean() }
 
         val elements = (head until tail).toMutableList().apply { retainAll(listToRetain) }
