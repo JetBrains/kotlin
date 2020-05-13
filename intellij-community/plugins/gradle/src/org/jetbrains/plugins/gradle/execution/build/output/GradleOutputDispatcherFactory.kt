@@ -24,17 +24,21 @@ import java.util.concurrent.CompletableFuture
 class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
   override val externalSystemId: Any? = GradleConstants.SYSTEM_ID
 
-  override fun create(buildId: Any,
-                      buildProgressListener: BuildProgressListener,
-                      appendOutputToMainConsole: Boolean,
-                      parsers: List<BuildOutputParser>): ExternalSystemOutputMessageDispatcher {
+  override fun create(
+    buildId: Any,
+    buildProgressListener: BuildProgressListener,
+    appendOutputToMainConsole: Boolean,
+    parsers: List<BuildOutputParser>
+  ): ExternalSystemOutputMessageDispatcher {
     return GradleOutputMessageDispatcher(buildId, buildProgressListener, appendOutputToMainConsole, parsers)
   }
 
-  private class GradleOutputMessageDispatcher(private val buildId: Any,
-                                              private val myBuildProgressListener: BuildProgressListener,
-                                              private val appendOutputToMainConsole: Boolean,
-                                              private val parsers: List<BuildOutputParser>) : AbstractOutputMessageDispatcher(
+  private class GradleOutputMessageDispatcher(
+    private val buildId: Any,
+    private val myBuildProgressListener: BuildProgressListener,
+    private val appendOutputToMainConsole: Boolean,
+    private val parsers: List<BuildOutputParser>
+  ) : AbstractOutputMessageDispatcher(
     myBuildProgressListener) {
     override var stdOut: Boolean = true
     private val lineProcessor: LineProcessor
@@ -158,17 +162,19 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
         if (!list[2].endsWith(']')) return line
       }
 
-      try {
-        LogLevel.valueOf(list[1].drop(1).dropLast(1))
+      val logLevel = list[1].drop(1).dropLast(1)
+      return if (enumValues<LogLevel>().none { it.name == logLevel }) {
+        line
       }
-      catch (e: Exception) {
-        return line
+      else {
+        line.drop(list.sumBy { it.length } + 2).trimStart()
       }
-      return line.drop(list.sumBy { it.length } + 2).trimStart()
     }
 
-    private class BuildEventInvocationHandler(private val buildEvent: BuildEvent,
-                                              private val parentEventId: Any) : InvocationHandler {
+    private class BuildEventInvocationHandler(
+      private val buildEvent: BuildEvent,
+      private val parentEventId: Any
+    ) : InvocationHandler {
       override fun invoke(proxy: Any?, method: Method?, args: Array<out Any>?): Any? {
         if (method?.name.equals("getParentId")) return parentEventId
         return method?.invoke(buildEvent, *args ?: arrayOfNulls<Any>(0))
