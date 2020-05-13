@@ -2,8 +2,6 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // IGNORE_BACKEND_FIR: JVM_IR
-// TARGET_BACKEND: JVM
-// ^ this test hangs on JS_IR (even if it's IGNOREd)
 // IGNORE_BACKEND: JVM_IR
 
 import helpers.*

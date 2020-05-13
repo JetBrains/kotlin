@@ -122,7 +122,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 visibility = Visibilities.LOCAL
                 // A callable reference results in a synthetic class, while a lambda is not synthetic.
                 // We don't produce GENERATED_SAM_IMPLEMENTATION, which is always synthetic.
-                origin = if (isKReference) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
+                origin = if (isKReference || !isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
                 name = SpecialNames.NO_NAME_PROVIDED
             }.apply {
                 superTypes = listOf(superClass, reference.type)
