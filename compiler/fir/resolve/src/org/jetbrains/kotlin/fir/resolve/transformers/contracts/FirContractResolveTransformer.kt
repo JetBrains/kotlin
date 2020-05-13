@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -117,8 +116,7 @@ class FirContractResolveTransformer(
             val contractDescription = owner.contractDescription
             require(contractDescription is FirRawContractDescription)
             val valueParameters = owner.valueParameters
-            val contractCall = withLocalScopeCleanup {
-                addLocalScope(FirLocalScope())
+            val contractCall = withNewLocalScope {
                 for (valueParameter in valueParameters) {
                     context.storeVariable(valueParameter)
                 }

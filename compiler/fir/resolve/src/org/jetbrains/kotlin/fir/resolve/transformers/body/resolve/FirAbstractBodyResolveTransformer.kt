@@ -48,11 +48,21 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         return context.withTowerDataCleanup(l)
     }
 
+    protected inline fun <T> withNewLocalScope(crossinline l: () -> T): T {
+        return context.withTowerDataCleanup {
+            addNewLocalScope()
+            l()
+        }
+    }
+
+    protected fun addNewLocalScope() {
+        context.addLocalScope(FirLocalScope())
+    }
+
     protected fun addLocalScope(localScope: FirLocalScope?) {
         if (localScope == null) return
         context.addLocalScope(localScope)
     }
-
 
     @OptIn(PrivateForInline::class)
     internal inline fun <T> withFullBodyResolve(crossinline l: () -> T): T {

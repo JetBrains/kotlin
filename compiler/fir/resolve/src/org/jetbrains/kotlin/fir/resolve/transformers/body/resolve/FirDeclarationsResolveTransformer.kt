@@ -488,8 +488,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         function: FirFunction<F>,
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
-        return withLocalScopeCleanup {
-            addLocalScope(FirLocalScope())
+        return withNewLocalScope {
             val functionIsNotAnalyzed = transformerPhase != function.resolvePhase
             if (functionIsNotAnalyzed) {
                 dataFlowAnalyzer.enterFunction(function)
@@ -519,7 +518,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return withLocalScopeCleanup {
             dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
             addLocalScope(context.getPrimaryConstructorParametersScope())
-            addLocalScope(FirLocalScope())
+            addNewLocalScope()
             val result =
                 transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent).single as FirAnonymousInitializer
             val graph = dataFlowAnalyzer.exitInitBlock(result)

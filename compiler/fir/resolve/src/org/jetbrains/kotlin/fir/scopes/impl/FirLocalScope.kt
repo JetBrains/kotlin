@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
-class FirLocalScope(
+class FirLocalScope private constructor(
     properties: PersistentMap<Name, FirVariableSymbol<*>>,
     functions: PersistentMultimap<Name, FirFunctionSymbol<*>>,
     classes: PersistentMap<Name, FirRegularClassSymbol>

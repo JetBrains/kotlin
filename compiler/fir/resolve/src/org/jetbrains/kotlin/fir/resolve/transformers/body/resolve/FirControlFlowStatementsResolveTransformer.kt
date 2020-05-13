@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirTargetElement
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
-import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -57,7 +56,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         dataFlowAnalyzer.enterWhenExpression(whenExpression)
         return withLocalScopeCleanup with@{
             if (whenExpression.subjectVariable != null) {
-                addLocalScope(FirLocalScope())
+                addNewLocalScope()
             }
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
@@ -169,8 +168,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     override fun transformCatch(catch: FirCatch, data: ResolutionMode): CompositeTransformResult<FirCatch> {
         dataFlowAnalyzer.enterCatchClause(catch)
         catch.parameter.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-        return withLocalScopeCleanup {
-            addLocalScope(FirLocalScope())
+        return withNewLocalScope {
             catch.transformParameter(transformer, ResolutionMode.ContextIndependent)
             catch.transformBlock(transformer, ResolutionMode.ContextDependent)
         }.also { dataFlowAnalyzer.exitCatchClause(it) }.compose()
