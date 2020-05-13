@@ -207,7 +207,7 @@ open class CurrentModuleDeserializer(
     override fun contains(idSig: IdSignature): Boolean = false // TODO:
 
     override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        error("Unreachable execution: there could not be back-links")
+        error("Unreachable execution: there could not be back-links (sig: $idSig)")
     }
 
     override fun declareIrSymbol(symbol: IrSymbol) {}

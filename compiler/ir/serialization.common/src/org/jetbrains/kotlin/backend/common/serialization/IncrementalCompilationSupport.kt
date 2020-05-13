@@ -114,7 +114,7 @@ class CurrentModuleWithICDeserializer(
         return this !is DeserializedDescriptor
     }
 
-    override fun init() {
+    override fun init(delegate: IrModuleDeserializer) {
         val knownBuiltIns = irBuiltIns.knownBuiltins.map { (it as IrSymbolOwner).symbol }.toSet()
         symbolTable.forEachPublicSymbol {
             if (it.descriptor.isDirtyDescriptor()) { // public && non-deserialized should be dirty symbol
@@ -124,7 +124,7 @@ class CurrentModuleWithICDeserializer(
             }
         }
 
-        icDeserializer.init(this)
+        icDeserializer.init(delegate)
     }
 
     override val klib: IrLibrary
