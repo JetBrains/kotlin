@@ -83,6 +83,7 @@ UFile (package = org.jetbrains.uast.kotlin)
                     UIdentifier (Identifier (bar))
                     USimpleNameReferenceExpression (identifier = bar, resolvesTo = null)
                     ULambdaExpression
+                        UParameter (name = it)
                         UBlockExpression
                             UIfExpression
                                 UBinaryExpression (operator = >)

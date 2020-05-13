@@ -50,6 +50,7 @@ UFile (package = )
                                 UIdentifier (Identifier (map))
                                 USimpleNameReferenceExpression (identifier = map, resolvesTo = null)
                                 ULambdaExpression
+                                    UParameter (name = it)
                                     UBlockExpression
                                         UReturnExpression
                                             UQualifiedReferenceExpression

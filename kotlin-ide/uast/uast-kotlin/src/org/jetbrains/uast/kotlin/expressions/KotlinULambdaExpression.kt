@@ -18,11 +18,13 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
+import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameterBase
 
 class KotlinULambdaExpression(
         override val sourcePsi: KtLambdaExpression,
@@ -58,8 +60,22 @@ class KotlinULambdaExpression(
     }
 
     override val valueParameters by lz {
-        sourcePsi.valueParameters.mapIndexed { i, p ->
+
+        val explicitParameters = sourcePsi.valueParameters.mapIndexed { i, p ->
             KotlinUParameter(UastKotlinPsiParameter.create(p, sourcePsi, this, i), p, this)
+        }
+        if (explicitParameters.isNotEmpty()) return@lz explicitParameters
+
+        val functionDescriptor = sourcePsi.analyze()[FUNCTION, sourcePsi.functionLiteral] ?: return@lz emptyList()
+        functionDescriptor.valueParameters.mapIndexed { i, p ->
+            KotlinUParameter(
+                UastKotlinPsiParameterBase(
+                    p.name.asString(),
+                    p.type.toPsiType(this, sourcePsi, false),
+                    sourcePsi, sourcePsi, sourcePsi.language, p.isVararg, null
+                ),
+                null, this
+            )
         }
     }
     
