@@ -46,9 +46,6 @@ val jsMainSources by task<Sync> {
         "core/builtins/src/kotlin/",
         "libraries/stdlib/js/src/",
         "libraries/stdlib/js/runtime/",
-        "libraries/stdlib/js-ir/builtins/",
-        "libraries/stdlib/js-ir/src/",
-        "libraries/stdlib/js-ir/runtime/",
 
         // TODO get rid - move to test module
         "js/js.translator/testData/_commonFiles/"
@@ -109,6 +106,9 @@ kotlin {
         }
         val jsMain by getting {
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
+            kotlin.srcDir("builtins")
+            kotlin.srcDir("runtime")
+            kotlin.srcDir("src")
         }
         val commonTest by getting {
             dependencies {

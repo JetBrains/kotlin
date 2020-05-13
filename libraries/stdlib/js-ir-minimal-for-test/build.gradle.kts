@@ -57,9 +57,6 @@ val jsMainSources by task<Sync> {
         val fullJsMainSources = tasks.getByPath(":kotlin-stdlib-js-ir:jsMainSources")
         exclude(
             listOf(
-                "libraries/stdlib/js-ir/runtime/collectionsHacks.kt",
-                "libraries/stdlib/js-ir/src/generated/**",
-                "libraries/stdlib/js-ir/src/kotlin/text/**",
                 "libraries/stdlib/js/src/jquery/**",
                 "libraries/stdlib/js/src/org.w3c/**",
                 "libraries/stdlib/js/src/kotlin/char.kt",
@@ -85,6 +82,19 @@ val jsMainSources by task<Sync> {
             )
         )
         fullJsMainSources.outputs.files.singleFile
+    }
+
+    for (jsIrSrcDir in listOf("builtins", "runtime", "src")) {
+        from("$rootDir/libraries/stdlib/js-ir/$jsIrSrcDir") {
+            exclude(
+                listOf(
+                    "collectionsHacks.kt",
+                    "generated/**",
+                    "kotlin/text/**"
+                )
+            )
+            into("libraries/stdlib/js-ir/$jsIrSrcDir")
+        }
     }
 
     from("$rootDir/libraries/stdlib/js-ir-minimal-for-test/src")
