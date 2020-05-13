@@ -77,13 +77,26 @@ class IntegerLiteralTypeApproximationTransformer(
         // e.g. Byte doesn't have `and` in member scope. It's an extension
         if (resultSymbol == null) return functionCall.compose()
         functionCall.resultType = data?.let { functionCall.resultType.resolvedTypeFromPrototype(it) } ?: resultSymbol.fir.returnTypeRef
+        // If the original call has argument mapping, values in that mapping refer to value parameters in that original symbol. We should
+        // map those original value parameters back to indices, and then renew the argument mapping with new value parameters in the result
+        // symbol. Otherwise, while putting the value argument to the converted IR call, it will encounter an unknown value parameter,
+        // resulting in an out-of-bound error.
+        val newArgumentMapping =
+            functionCall.argumentMapping?.mapValues { (_, oldValueParameter) ->
+                val index = operator.valueParameters.indexOf(oldValueParameter)
+                if (index != -1) resultSymbol.fir.valueParameters[index] else oldValueParameter
+            }
         return functionCall.transformCalleeReference(
             StoreCalleeReference,
             buildResolvedNamedReference {
                 name = operator.name
                 resolvedSymbol = resultSymbol!!
             }
-        ).compose()
+        ).apply {
+            newArgumentMapping?.let {
+                replaceArgumentList(buildResolvedArgumentList(it))
+            }
+        }.compose()
     }
 
     override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ConeKotlinType?): CompositeTransformResult<FirStatement> {
