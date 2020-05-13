@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
@@ -455,7 +453,7 @@ class Fir2IrDeclarationStorage(
                 created.overriddenSymbols += getIrFunctionSymbol(it) as IrSimpleFunctionSymbol
             }
         }
-        if (!created.isFakeOverride && simpleFunction?.isOverride == true && thisReceiverOwner != null) {
+        if (!created.isFakeOverride && thisReceiverOwner != null) {
             created.populateOverriddenSymbols(thisReceiverOwner)
         }
         functionCache[function] = created
@@ -573,12 +571,7 @@ class Fir2IrDeclarationStorage(
                     parent = irParent
                 }
                 correspondingPropertySymbol = correspondingProperty.symbol
-                val isOverride = when (propertyAccessor) {
-                    is FirDefaultPropertyAccessor -> property.isOverride
-                    is FirPropertyAccessorImpl -> propertyAccessor.status.isOverride
-                    else -> false
-                }
-                if (!isFakeOverride && isOverride && thisReceiverOwner != null) {
+                if (!isFakeOverride && thisReceiverOwner != null) {
                     populateOverriddenSymbols(thisReceiverOwner)
                 }
             }
@@ -608,7 +601,7 @@ class Fir2IrDeclarationStorage(
                 isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
             ).also {
                 it.correspondingPropertySymbol = this@createBackingField.symbol
-                if (!isFakeOverride && property.isOverride && thisReceiverOwner != null) {
+                if (!isFakeOverride && thisReceiverOwner != null) {
                     it.populateOverriddenSymbols(thisReceiverOwner)
                 }
             }

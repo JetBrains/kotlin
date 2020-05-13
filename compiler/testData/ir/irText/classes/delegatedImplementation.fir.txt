@@ -155,6 +155,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
             PROPERTY name:z1 visibility:public modality:FINAL [val]
               FUN name:<get-z1> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:kotlin.Int
                 correspondingProperty: PROPERTY name:z1 visibility:public modality:FINAL [val]
+                overridden:
+                  public abstract fun <get-z1> (): kotlin.Int declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte
                 BLOCK_BODY
@@ -163,6 +165,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
             PROPERTY name:z2 visibility:public modality:FINAL [var]
               FUN name:<get-z2> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte) returnType:kotlin.Int
                 correspondingProperty: PROPERTY name:z2 visibility:public modality:FINAL [var]
+                overridden:
+                  public abstract fun <get-z2> (): kotlin.Int declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte
                 BLOCK_BODY
@@ -170,6 +174,8 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                     CONST Int type=kotlin.Int value=2
               FUN name:<set-z2> visibility:public modality:FINAL <> ($this:<root>.otherImpl.<no name provided>, $receiver:kotlin.Byte, value:kotlin.Int) returnType:kotlin.Unit
                 correspondingProperty: PROPERTY name:z2 visibility:public modality:FINAL [var]
+                overridden:
+                  public abstract fun <set-z2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IOther
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte
                 VALUE_PARAMETER name:value index:0 type:kotlin.Int

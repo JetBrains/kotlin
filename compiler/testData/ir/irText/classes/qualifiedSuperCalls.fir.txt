@@ -68,6 +68,9 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
     PROPERTY name:bar visibility:public modality:FINAL [val]
       FUN name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.CBoth) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [val]
+        overridden:
+          public open fun <get-bar> (): kotlin.Int declared in <root>.ILeft
+          public open fun <get-bar> (): kotlin.Int declared in <root>.IRight
         $this: VALUE_PARAMETER name:<this> type:<root>.CBoth
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.Int declared in <root>.CBoth'

@@ -50,6 +50,8 @@ FILE fqName:<root> fileName:/superCalls.kt
     PROPERTY name:bar visibility:public modality:FINAL [val]
       FUN name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.String
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [val]
+        overridden:
+          public open fun <get-bar> (): kotlin.String declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.String declared in <root>.Derived'
