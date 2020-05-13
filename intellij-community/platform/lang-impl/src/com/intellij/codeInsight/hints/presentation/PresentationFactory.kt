@@ -91,7 +91,7 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
 
   @Contract(pure = true)
   override fun text(text: String): InlayPresentation {
-    val font = editor.colorsScheme.getFont(EditorFontType.PLAIN)
+    val font = UIUtil.getFontWithFallbackIfNeeded(editor.colorsScheme.getFont(EditorFontType.PLAIN), text)
     val width = editor.contentComponent.getFontMetrics(font).stringWidth(text)
     val ascent = editor.ascent
     val descent = editor.descent
