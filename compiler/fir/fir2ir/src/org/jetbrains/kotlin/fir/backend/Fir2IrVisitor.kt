@@ -258,7 +258,9 @@ class Fir2IrVisitor(
                             varargArgumentsExpression.varargElementType.toIrType(),
                             varargArgumentsExpression.arguments.map { arg ->
                                 convertToIrExpression(arg).run {
-                                    if (arg is FirSpreadArgumentExpression) IrSpreadElementImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this)
+                                    if (arg is FirSpreadArgumentExpression || arg is FirNamedArgumentExpression && arg.isSpread) {
+                                        IrSpreadElementImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this)
+                                    }
                                     else this
                                 }
                             })

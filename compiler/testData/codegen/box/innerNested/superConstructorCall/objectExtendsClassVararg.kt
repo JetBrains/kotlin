@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class SomeClass(val some: Double, val other: Int, vararg val args: String) {
     fun result() = args[1]
 }
