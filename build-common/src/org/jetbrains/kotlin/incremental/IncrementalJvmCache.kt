@@ -500,13 +500,13 @@ open class IncrementalJvmCache(
                     exceptions: Array<out String>?
                 ): MethodVisitor? {
                     val dummyClassWriter = ClassWriter(0)
+                    dummyClassWriter.visit(dummyVersion, 0, "dummy", null, AsmTypes.OBJECT_TYPE.internalName, null)
 
                     return object : MethodVisitor(Opcodes.API_VERSION, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
                         override fun visitEnd() {
                             val jvmName = name + desc
                             if (jvmName !in inlineFunctions) return
 
-                            dummyClassWriter.visit(dummyVersion, 0, "dummy", null, AsmTypes.OBJECT_TYPE.internalName, null)
                             val dummyBytes = dummyClassWriter.toByteArray()!!
 
                             val hash = dummyBytes.md5()
