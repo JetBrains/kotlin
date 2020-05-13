@@ -1203,6 +1203,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/python/localization/intellij.gnuGetText.iml" filepath="$PROJECT_DIR$/intellij/python/localization/intellij.gnuGetText.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.iml" group="intellij.go" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-features-trainer/intellij.go.featuresTrainer.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-features-trainer/intellij.go.featuresTrainer.iml" group="intellij.go" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-grazie/intellij.go.grazie.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-grazie/intellij.go.grazie.iml" group="intellij.go" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/ide/intellij.go.ide.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/ide/intellij.go.ide.iml" group="intellij.go" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/plan9/intellij.go.plan9.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/plan9/intellij.go.plan9.iml" group="intellij.go" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" group="intellij.go" />

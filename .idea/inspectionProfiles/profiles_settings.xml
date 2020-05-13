@@ -4,7 +4,7 @@
     <version value="1.0" />
     <info color="eb9904">
       <option name="FOREGROUND" value="0" />
-      <option name="BACKGROUND" value="eb9904" />
+      <option name="BACKGROUND" value="f6ebbc" />
       <option name="ERROR_STRIPE_COLOR" value="eb9904" />
       <option name="myName" value="Strong Warning" />
       <option name="myVal" value="50" />
@@ -13,5 +13,15 @@
         <option name="ERROR_STRIPE_COLOR" value="eb9904" />
       </option>
     </info>
+    <list size="8">
+      <item index="0" class="java.lang.String" itemvalue="INFORMATION" />
+      <item index="1" class="java.lang.String" itemvalue="TYPO" />
+      <item index="2" class="java.lang.String" itemvalue="SERVER PROBLEM" />
+      <item index="3" class="java.lang.String" itemvalue="WEAK WARNING" />
+      <item index="4" class="java.lang.String" itemvalue="INFO" />
+      <item index="5" class="java.lang.String" itemvalue="WARNING" />
+      <item index="6" class="java.lang.String" itemvalue="Strong Warning" />
+      <item index="7" class="java.lang.String" itemvalue="ERROR" />
+    </list>
   </settings>
 </component>

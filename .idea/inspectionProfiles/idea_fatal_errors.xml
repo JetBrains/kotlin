@@ -4016,7 +4016,9 @@
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="UnnecessaryStaticInjection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="UnnecessaryStringEscape" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="UnnecessaryStringEscape" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="UnnecessarySuperConstructor" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnnecessarySuperQualifier" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnnecessaryTemporaryOnConversionFromString" enabled="false" level="WARNING" enabled_by_default="false" />

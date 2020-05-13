@@ -5,16 +5,8 @@
       <inspection_tool class="BodyLimit" enabled="false" level="WARNING" enabled_by_default="false">
         <option name="RIGHT_MARGIN" value="120" />
       </inspection_tool>
-      <inspection_tool class="BodyLimit" enabled="false" level="WARNING" enabled_by_default="false">
-        <option name="RIGHT_MARGIN" value="120" />
-      </inspection_tool>
-      <inspection_tool class="GraziCommit" enabled="true" level="TYPO" enabled_by_default="true" />
       <inspection_tool class="GrazieCommit" enabled="true" level="TYPO" enabled_by_default="true" />
       <inspection_tool class="SubjectBodySeparation" enabled="true" level="WARNING" enabled_by_default="true" />
-      <inspection_tool class="SubjectBodySeparation" enabled="true" level="WARNING" enabled_by_default="true" />
-      <inspection_tool class="SubjectLimit" enabled="true" level="WARNING" enabled_by_default="true">
-        <option name="RIGHT_MARGIN" value="120" />
-      </inspection_tool>
       <inspection_tool class="SubjectLimit" enabled="true" level="WARNING" enabled_by_default="true">
         <option name="RIGHT_MARGIN" value="120" />
       </inspection_tool>
@@ -63,12 +55,16 @@
           <option name="issueRegexp" value="IDEA-COMMUNITY-CR-\d+" />
           <option name="linkRegexp" value="https://upsource.jetbrains.com/idea-community/review/$0" />
         </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="JDK\-\d+" />
+          <option name="linkRegexp" value="https://bugs.openjdk.java.net/browse/$0" />
+        </IssueNavigationLink>
       </list>
     </option>
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/intellij" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="VcsDirectoryRenames">
     <rename root="$PROJECT_DIR$/intellij" parentPath="." childPath="community">
