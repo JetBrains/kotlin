@@ -117,7 +117,7 @@ public class DocRenderItem {
       }
       editor.getFoldingModel().runBatchFoldingOperation(() -> foldingTasks.forEach(Runnable::run), true, false);
       newRenderItems.forEach(DocRenderItem::cleanup);
-      updateInlays(itemsToUpdateInlays);
+      updateInlays(itemsToUpdateInlays, true);
       items.addAll(newRenderItems);
       return updated;
     });
@@ -135,7 +135,7 @@ public class DocRenderItem {
     else {
       if (editor.getUserData(LISTENERS_DISPOSABLE) == null) {
         MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
-        connection.setDefaultHandler((event, params) -> updateInlays(editor));
+        connection.setDefaultHandler((event, params) -> updateInlays(editor, true));
         connection.subscribe(EditorColorsManager.TOPIC);
         connection.subscribe(LafManagerListener.TOPIC);
         EditorFactory.getInstance().addEditorFactoryListener(new EditorFactoryListener() {
@@ -207,16 +207,13 @@ public class DocRenderItem {
     boolean globalSetting = EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled();
     keepScrollingPositionWhile(editor, () -> {
       List<Runnable> foldingTasks = new ArrayList<>();
-      List<DocRenderItem> itemsToUpdateInlays = new ArrayList<>();
       boolean updated = false;
       for (DocRenderItem item : items) {
         if (item.isValid() && (item.inlay == null) == globalSetting) {
           updated |= item.toggle(foldingTasks);
-          itemsToUpdateInlays.add(item);
         }
       }
       editor.getFoldingModel().runBatchFoldingOperation(() -> foldingTasks.forEach(Runnable::run), true, false);
-      updateInlays(itemsToUpdateInlays);
       return updated;
     });
   }
@@ -353,13 +350,13 @@ public class DocRenderItem {
     return null;
   }
 
-  private static void updateInlays(@NotNull Collection<DocRenderItem> items) {
-    DocRenderItemUpdater.getInstance().updateInlays(ContainerUtil.mapNotNull(items, i -> i.inlay));
+  private static void updateInlays(@NotNull Collection<DocRenderItem> items, boolean recreateContent) {
+    DocRenderItemUpdater.getInstance().updateInlays(ContainerUtil.mapNotNull(items, i -> i.inlay), recreateContent);
   }
 
-  private static void updateInlays(@NotNull Editor editor) {
+  private static void updateInlays(@NotNull Editor editor, boolean recreateContent) {
     Collection<DocRenderItem> items = editor.getUserData(OUR_ITEMS);
-    if (items != null) updateInlays(items);
+    if (items != null) updateInlays(items, recreateContent);
   }
 
   private void updateIcon() {
@@ -470,7 +467,7 @@ public class DocRenderItem {
       if (newWidth != lastWidth || !Objects.equals(transform, lastFrcTransform)) {
         lastWidth = newWidth;
         lastFrcTransform = transform;
-        updateInlays(editor);
+        updateInlays(editor, false);
       }
     }
   }
@@ -575,7 +572,7 @@ public class DocRenderItem {
     public void actionPerformed(@NotNull AnActionEvent e) {
       Editor editor = e.getData(CommonDataKeys.EDITOR);
       if (editor != null) {
-        DocFontSizePopup.show(() -> updateInlays(editor), editor.getContentComponent());
+        DocFontSizePopup.show(() -> updateInlays(editor, true), editor.getContentComponent());
       }
     }
   }

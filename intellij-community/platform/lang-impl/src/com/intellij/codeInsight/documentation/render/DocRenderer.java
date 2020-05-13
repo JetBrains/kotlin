@@ -406,7 +406,7 @@ class DocRenderer implements EditorCustomElementRenderer {
             Inlay<DocRenderer> inlay = myItem.inlay;
             if (this == myPane && inlay != null) {
               if (needsUpdate) {
-                DocRenderItemUpdater.getInstance().updateInlays(Collections.singleton(inlay));
+                DocRenderItemUpdater.getInstance().updateInlays(Collections.singleton(inlay), false);
               }
               else {
                 inlay.repaint();
