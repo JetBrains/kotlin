@@ -16,7 +16,7 @@ public final class Sealed$Inner {
     inner class Sealed$Inner
     public synthetic @Ann method <init>(p0: Sealed, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: Sealed, p1: int, p2: int, p3: java.lang.String): void
-    public final method getZ2(): int
+    public final method getZ2-a_XrcN0(): int
 }
 
 @kotlin.Metadata
@@ -26,7 +26,7 @@ public abstract class Sealed {
     inner class Sealed$Inner
     private @Ann method <init>(@Ann p0: int): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final method getZ(): int
+    public final method getZ-a_XrcN0(): int
 }
 
 @kotlin.Metadata
@@ -36,7 +36,7 @@ public final class Test$Inner {
     inner class Test$Inner
     public synthetic @Ann method <init>(p0: Test, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: Test, p1: int, p2: int, p3: java.lang.String): void
-    public final method getZ2(): int
+    public final method getZ2-a_XrcN0(): int
 }
 
 @kotlin.Metadata
@@ -48,7 +48,7 @@ public final class Test {
     public synthetic @Ann method <init>(p0: int, @Ann p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     private @Ann method <init>(p0: int, @Ann p1: java.lang.String): void
     private method <init>(p0: int, p1: int): void
-    public final method getZ(): int
+    public final method getZ-a_XrcN0(): int
 }
 
 @kotlin.Metadata

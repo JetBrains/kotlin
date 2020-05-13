@@ -1,4 +1,6 @@
 // WITH_RUNTIME
+// IGNORE_BACKEND: JVM
+// ^ TODO support new mangling rules in optimizer
 
 fun testUIntRangeForEach() {
     var s = 0

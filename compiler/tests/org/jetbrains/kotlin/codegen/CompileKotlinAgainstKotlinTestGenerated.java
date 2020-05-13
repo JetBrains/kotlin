@@ -303,6 +303,16 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/platformTypes.kt");
     }
 
+    @TestMetadata("privateCompanionObjectValInDifferentModule.kt")
+    public void testPrivateCompanionObjectValInDifferentModule() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/privateCompanionObjectValInDifferentModule.kt");
+    }
+
+    @TestMetadata("privateTopLevelValInDifferentModule.kt")
+    public void testPrivateTopLevelValInDifferentModule() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/privateTopLevelValInDifferentModule.kt");
+    }
+
     @TestMetadata("propertyReference.kt")
     public void testPropertyReference() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/propertyReference.kt");

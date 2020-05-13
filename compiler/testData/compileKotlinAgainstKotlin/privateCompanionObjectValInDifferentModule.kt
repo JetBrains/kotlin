@@ -2,15 +2,8 @@
 // IGNORE_BACKEND: JS_IR, JS, NATIVE
 // WITH_REFLECT
 
-// MODULE: main(lib)
-// FILE: privateCompanionObjectValInDifferentModule.kt
-import lib.*
-
-fun box() = Host.ref.call().s
-
-// MODULE: lib
-// FILE: lib.kt
-package lib
+// FILE: A.kt
+package a
 
 import kotlin.reflect.jvm.isAccessible
 
@@ -22,3 +15,8 @@ class Host {
         val ref = ::ok.apply { isAccessible = true }
     }
 }
+
+// FILE: B.kt
+import a.*
+
+fun box() = Host.ref.call().s

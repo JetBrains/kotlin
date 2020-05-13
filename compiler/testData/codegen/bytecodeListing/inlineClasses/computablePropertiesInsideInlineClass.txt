@@ -7,7 +7,7 @@ public final class Foo {
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int): boolean
-    public final static method getAsThis-impl(p0: int): int
+    public final static method getAsThis-qUNOhfQ(p0: int): int
     public final static method getProp-impl(p0: int): int
     public final method getX(): int
     public method hashCode(): int

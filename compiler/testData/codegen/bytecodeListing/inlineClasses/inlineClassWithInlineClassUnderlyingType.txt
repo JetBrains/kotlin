@@ -28,10 +28,10 @@ public final class Z2 {
     public final static method equals-impl0(p0: int, p1: int): boolean
     public final static method foo-E2ud15U(p0: int, p1: int): void
     public final static method foo-cYvoCnY(p0: int, p1: int): void
-    public final method getZ(): int
+    public final method getZ-dqwzy2Y(): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int): int
-    public final static method qux-impl(p0: int): int
+    public final static method qux-dqwzy2Y(p0: int): int
     public method toString(): java.lang.String
     public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
     public synthetic final method unbox-impl(): int

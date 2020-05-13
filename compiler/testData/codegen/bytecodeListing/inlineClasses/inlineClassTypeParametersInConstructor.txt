@@ -17,7 +17,7 @@ public class TestBasic {
     private method <init>(p0: int, p1: PublicMarker): void
     public synthetic method <init>(p0: int, p1: PublicMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final method getZ(): int
+    public final method getZ-a_XrcN0(): int
 }
 
 @kotlin.Metadata
@@ -27,7 +27,7 @@ public final enum class TestEnum {
     private final field z: int
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int, p2: int): void
-    public final method getZ(): int
+    public final method getZ-a_XrcN0(): int
     public static method valueOf(p0: java.lang.String): TestEnum
     public static method values(): TestEnum[]
 }
@@ -39,7 +39,7 @@ public final class TestInner$Inner {
     inner class TestInner$Inner
     private method <init>(p0: TestInner, p1: int): void
     public synthetic method <init>(p0: TestInner, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final method getZ(): int
+    public final method getZ-a_XrcN0(): int
 }
 
 @kotlin.Metadata
@@ -61,7 +61,7 @@ public abstract class TestSealed {
     inner class TestSealed$Case
     private method <init>(p0: int): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final method getZ(): int
+    public final method getZ-a_XrcN0(): int
 }
 
 @kotlin.Metadata
