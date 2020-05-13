@@ -53,12 +53,13 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         project: Project,
         physical: Boolean
     ): Array<PsiElement> {
-        val fragment = KtPsiFactory(project, false).createBlockCodeFragment(text, null)
-        val result = getNonWhitespaceChildren(fragment)
-        if (result.isEmpty()) return PsiElement.EMPTY_ARRAY
-        val blockContent = result.first().children // Remove the first block element
-        for (element in blockContent) print(DebugUtil.psiToString(element, false))
-        return blockContent
+        val fragment = KtPsiFactory(project, false).createBlockCodeFragment("Unit\n$text", null)
+        val elements = getNonWhitespaceChildren(fragment.firstChild).drop(1)
+        for (element in elements) print(DebugUtil.psiToString(element, false))
+
+        if (elements.isEmpty()) return PsiElement.EMPTY_ARRAY
+
+        return elements.toTypedArray()
     }
 
     override fun checkSearchPattern(pattern: CompiledPattern) {

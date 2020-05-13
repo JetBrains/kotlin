@@ -1,12 +1,12 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher
 
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
@@ -66,7 +66,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitParenthesizedExpression(expression: KtParenthesizedExpression) {
         val other = getTreeElement<KtParenthesizedExpression>() ?: return
-        if(!myMatchingVisitor.setResult(expression.countParenthesize() == other.countParenthesize())) return
+        if (!myMatchingVisitor.setResult(expression.countParenthesize() == other.countParenthesize())) return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.deparenthesize(), other.deparenthesize())
     }
 
@@ -365,6 +365,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.matchInAnyOrder(klass.secondaryConstructors, other.secondaryConstructors)
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
+                && myMatchingVisitor.match(klass.docComment, other.docComment)
         if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(klass.nameIdentifier)) {
             myMatchingVisitor.result = myMatchingVisitor.handleTypedElement(klass.identifyingElement, other.identifyingElement)
         }
@@ -398,9 +399,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitElement(element: PsiElement) {
-        if (element is LeafPsiElement) {
-            val other = getTreeElement<LeafPsiElement>() ?: return
-            myMatchingVisitor.result = element.elementType.index == other.elementType.index
+        when (element) {
+            is LeafPsiElement -> {
+                val other = getTreeElement<LeafPsiElement>() ?: return
+                myMatchingVisitor.result = element.elementType.index == other.elementType.index
+            }
         }
     }
 
@@ -513,6 +516,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.match(
             property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
         ))
+                && myMatchingVisitor.match(property.docComment, other.docComment)
         if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(property.nameIdentifier)) {
             myMatchingVisitor.result = myMatchingVisitor.handleTypedElement(property.identifyingElement, other.identifyingElement)
         }
@@ -521,7 +525,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
         val other = getTreeElement<KtExpression>() ?: return
         val deparenthesized = other.deparenthesize()
-        if(deparenthesized is KtStringTemplateExpression) {
+        if (deparenthesized is KtStringTemplateExpression) {
             myMatchingVisitor.result = myMatchingVisitor.matchSequentially(expression.entries, deparenthesized.entries)
         } else myMatchingVisitor.result = false
     }
@@ -578,4 +582,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && multiDeclarationEntry.isVar == other.isVar
                 && matchTextOrVariable(multiDeclarationEntry.nameIdentifier, other.nameIdentifier)
     }
+
+    override fun visitComment(comment: PsiComment) {
+        val other = getTreeElement<PsiComment>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchText(comment, other)
+    }
+
 }
