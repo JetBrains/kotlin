@@ -10,7 +10,7 @@ import com.intellij.openapi.editor.impl.event.MarkupModelListener
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.tree.LeafState
 
-internal class HighlightingFileRoot(panel: ProblemsViewPanel, file: VirtualFile)
+internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualFile)
   : Root(panel), LeafState.Supplier, MarkupModelListener, Disposable {
 
   private val myProblems = FileProblems()
@@ -19,9 +19,6 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, file: VirtualFile)
   init {
     refreshChildren()
   }
-
-  val file: VirtualFile
-    get() = myFileNode.file
 
   override fun getChildren(): Collection<Node> {
     return listOf(myFileNode)
@@ -37,7 +34,7 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, file: VirtualFile)
   }
 
   private fun refreshChildren() {
-    val document = ProblemsView.getDocument(project, myFileNode.file) ?: return
+    val document = ProblemsView.getDocument(project, file) ?: return
     val model = DocumentMarkupModel.forDocument(document, project, true) as? MarkupModelEx ?: return
     model.addMarkupModelListener(this, this)
     model.processRangeHighlightersOverlappingWith(0, document.textLength) { highlighter: RangeHighlighterEx ->
@@ -72,7 +69,7 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, file: VirtualFile)
   }
 
   private fun getProblem(info: HighlightInfo?): Problem? {
-    return if (info == null || null == info.description) null else HighlightingProblem(info)
+    return if (info?.description == null) null else HighlightingProblem(info)
   }
 
   override fun getProblemsCount() = synchronized(myProblems) { myProblems.count() }
