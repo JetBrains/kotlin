@@ -28,7 +28,7 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, file: VirtualFile)
   }
 
   override fun getChildren(file: VirtualFile): Collection<Node> {
-    return myProblems.getNodes(myFileNode)
+    return synchronized(myProblems) { myProblems.getNodes(myFileNode).toList() }
   }
 
   fun findProblemNode(info: HighlightInfo?): ProblemNode? {
