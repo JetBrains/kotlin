@@ -298,7 +298,7 @@ public final class IndexUpdateRunner {
   }
 
   @NotNull
-  private static String getPresentableLocationBeingIndexed(@NotNull Project project, @NotNull VirtualFile file) {
+  public static String getPresentableLocationBeingIndexed(@NotNull Project project, @NotNull VirtualFile file) {
     VirtualFile actualFile;
     if (file.getFileSystem() instanceof ArchiveFileSystem) {
       actualFile = VfsUtil.getLocalFile(file);
