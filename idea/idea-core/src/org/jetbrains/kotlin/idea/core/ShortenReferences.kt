@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*

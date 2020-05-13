@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
-import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex
@@ -220,22 +219,6 @@ fun AbstractKtReference<out KtExpression>.renameImplicitConventionalCall(newName
     newNameElement.mainReference.handleElementRename(newName)
     return newExpression
 }
-
-val KtSimpleNameExpression.mainReference: KtSimpleNameReferenceDescriptorsImpl
-    get() = references.firstIsInstance()
-
-val KtReferenceExpression.mainReference: KtDescriptorsBasedReference
-    get() = if (this is KtSimpleNameExpression) mainReference else references.firstIsInstance<KtDescriptorsBasedReference>()
-
-val KDocName.mainReference: KDocReference
-    get() = references.firstIsInstance()
-
-val KtElement.mainReference: KtDescriptorsBasedReference?
-    get() = when (this) {
-        is KtReferenceExpression -> mainReference
-        is KDocName -> mainReference
-        else -> references.firstIsInstanceOrNull<KtDescriptorsBasedReference>()
-    }
 
 fun KtElement.resolveMainReferenceToDescriptors(): Collection<DeclarationDescriptor> {
     val bindingContext = analyze(BodyResolveMode.PARTIAL)

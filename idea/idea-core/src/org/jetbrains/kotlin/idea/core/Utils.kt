@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
