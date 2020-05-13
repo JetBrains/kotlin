@@ -289,12 +289,13 @@ internal tailrec fun FirCallableSymbol<*>.deepestMatchingOverriddenSymbol(root: 
 internal fun IrClass.findMatchingOverriddenSymbolsFromSupertypes(
     irBuiltIns: IrBuiltIns,
     target: IrDeclaration,
-    result: MutableList<IrSymbol> = mutableListOf()
+    result: MutableList<IrSymbol> = mutableListOf(),
+    visited: MutableSet<IrClass> = mutableSetOf()
 ): List<IrSymbol> {
     for (superType in superTypes) {
         val superTypeClass = superType.classOrNull
         if (superTypeClass is IrClassSymbolImpl) {
-            superTypeClass.owner.findMatchingOverriddenSymbolsFromThisAndSupertypes(irBuiltIns, target, result)
+            superTypeClass.owner.findMatchingOverriddenSymbolsFromThisAndSupertypes(irBuiltIns, target, result, visited)
         }
     }
     return result
@@ -303,8 +304,13 @@ internal fun IrClass.findMatchingOverriddenSymbolsFromSupertypes(
 private fun IrClass.findMatchingOverriddenSymbolsFromThisAndSupertypes(
     irBuiltIns: IrBuiltIns,
     target: IrDeclaration,
-    result: MutableList<IrSymbol>
+    result: MutableList<IrSymbol>,
+    visited: MutableSet<IrClass>
 ): List<IrSymbol> {
+    if (this in visited) {
+        return result
+    }
+    visited += this
     val targetIsPropertyAccessor = target is IrFunction && target.isPropertyAccessor
     for (declaration in declarations) {
         if (declaration.isFakeOverride || declaration is IrConstructor) {
@@ -355,7 +361,7 @@ private fun IrClass.findMatchingOverriddenSymbolsFromThisAndSupertypes(
     if (result.isNotEmpty()) {
         return result
     }
-    return findMatchingOverriddenSymbolsFromSupertypes(irBuiltIns, target, result)
+    return findMatchingOverriddenSymbolsFromSupertypes(irBuiltIns, target, result, visited)
 }
 
 fun isOverriding(
