@@ -185,46 +185,72 @@ class Fir2IrDeclarationStorage(
             // due to BE optimizations (for lowering) that use their first / last / step members
             // TODO: think how to refactor this piece of code and/or merge it with similar Fir2IrVisitor fragment
             val processedNames = mutableSetOf<Name>()
+            // NB: it's necessary to take all callables from scope,
+            // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
+            val scope = regularClass.buildUseSiteMemberScope(session, scopeSession)!!
+            scope.processDeclaredConstructors {
+                irClass.declarations += createIrConstructor(it.fir, irClass)
+            }
             for (declaration in regularClass.declarations) {
-                irClass.declarations += when (declaration) {
+                when (declaration) {
                     is FirSimpleFunction -> {
-                        processedNames += declaration.name
-                        createIrFunction(declaration, irClass)
+                        if (declaration.name !in processedNames) {
+                            processedNames += declaration.name
+                            scope.processFunctionsByName(declaration.name) {
+                                if (it is FirNamedFunctionSymbol) {
+                                    if (!it.isFakeOverride) {
+                                        irClass.declarations += createIrFunction(it.fir, irClass)
+                                    } else {
+                                        val fakeOverrideSymbol =
+                                            FirClassSubstitutionScope.createFakeOverrideFunction(session, it.fir, it)
+                                        classifierStorage.preCacheTypeParameters(it.fir)
+                                        irClass.declarations += createIrFunction(fakeOverrideSymbol.fir, irClass)
+                                    }
+                                }
+                            }
+                        }
                     }
                     is FirProperty -> {
-                        processedNames += declaration.name
-                        createIrProperty(declaration, irClass)
-                    }
-                    is FirConstructor -> {
-                        createIrConstructor(declaration, irClass)
+                        if (declaration.name !in processedNames) {
+                            processedNames += declaration.name
+                            scope.processPropertiesByName(declaration.name) {
+                                if (it is FirPropertySymbol) {
+                                    if (!it.isFakeOverride) {
+                                        irClass.declarations += createIrProperty(it.fir, irClass)
+                                    } else {
+                                        val fakeOverrideSymbol =
+                                            FirClassSubstitutionScope.createFakeOverrideProperty(session, it.fir, it)
+                                        classifierStorage.preCacheTypeParameters(it.fir)
+                                        irClass.declarations += createIrProperty(fakeOverrideSymbol.fir, irClass)
+                                    }
+                                }
+                            }
+                        }
                     }
                     is FirRegularClass -> {
-                        classifierStorage.createIrClass(declaration, irClass)
+                        irClass.declarations += classifierStorage.createIrClass(declaration, irClass)
                     }
                     else -> continue
                 }
             }
             val allNames = regularClass.collectCallableNamesFromSupertypes(session)
-            val scope = regularClass.buildUseSiteMemberScope(session, scopeSession)
-            if (scope != null) {
-                for (name in allNames) {
-                    if (name in processedNames) continue
-                    processedNames += name
-                    scope.processFunctionsByName(name) { functionSymbol ->
-                        if (functionSymbol is FirNamedFunctionSymbol) {
-                            val fakeOverrideSymbol =
-                                FirClassSubstitutionScope.createFakeOverrideFunction(session, functionSymbol.fir, functionSymbol)
-                            classifierStorage.preCacheTypeParameters(functionSymbol.fir)
-                            irClass.declarations += createIrFunction(fakeOverrideSymbol.fir, irClass)
-                        }
+            for (name in allNames) {
+                if (name in processedNames) continue
+                processedNames += name
+                scope.processFunctionsByName(name) { functionSymbol ->
+                    if (functionSymbol is FirNamedFunctionSymbol) {
+                        val fakeOverrideSymbol =
+                            FirClassSubstitutionScope.createFakeOverrideFunction(session, functionSymbol.fir, functionSymbol)
+                        classifierStorage.preCacheTypeParameters(functionSymbol.fir)
+                        irClass.declarations += createIrFunction(fakeOverrideSymbol.fir, irClass)
                     }
-                    scope.processPropertiesByName(name) { propertySymbol ->
-                        if (propertySymbol is FirPropertySymbol) {
-                            val fakeOverrideSymbol =
-                                FirClassSubstitutionScope.createFakeOverrideProperty(session, propertySymbol.fir, propertySymbol)
-                            classifierStorage.preCacheTypeParameters(propertySymbol.fir)
-                            irClass.declarations += createIrProperty(fakeOverrideSymbol.fir, irClass)
-                        }
+                }
+                scope.processPropertiesByName(name) { propertySymbol ->
+                    if (propertySymbol is FirPropertySymbol) {
+                        val fakeOverrideSymbol =
+                            FirClassSubstitutionScope.createFakeOverrideProperty(session, propertySymbol.fir, propertySymbol)
+                        classifierStorage.preCacheTypeParameters(propertySymbol.fir)
+                        irClass.declarations += createIrProperty(fakeOverrideSymbol.fir, irClass)
                     }
                 }
             }
