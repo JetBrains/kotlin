@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorChecks
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 
 fun KtContainerNode.description(): String? {
     when (node.elementType) {

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import org.jetbrains.kotlin.idea.kdoc.KDocReference
+import org.jetbrains.kotlin.idea.kdoc.KDocReferenceDescriptorsImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
@@ -51,7 +51,7 @@ class KotlinReferenceContributor : KotlinReferenceProviderContributor {
 
             registerProvider(factory = ::KtDestructuringDeclarationReferenceDescriptorsImpl)
 
-            registerProvider(factory = ::KDocReference)
+            registerProvider(factory = ::KDocReferenceDescriptorsImpl)
 
             registerProvider(KotlinDefaultAnnotationMethodImplicitReferenceProvider)
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.idea.kdoc.*
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocContent
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocSections
 import org.jetbrains.kotlin.idea.kdoc.KDocTemplate.DescriptionBodyTemplate
+import org.jetbrains.kotlin.idea.references.KtDescriptorsBasedReference
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
