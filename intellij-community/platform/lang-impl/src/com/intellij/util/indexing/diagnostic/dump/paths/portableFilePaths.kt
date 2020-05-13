@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem
 import com.intellij.util.indexing.diagnostic.dump.paths.providers.*
 import com.intellij.util.indexing.diagnostic.dump.paths.resolvers.*
+import java.io.PrintWriter
 
 object PortableFilePaths {
 
@@ -90,13 +91,17 @@ class PortableFilesDumpCollector(private val project: Project) {
     files = snapshot(myExistingFiles)
   )
 
+  fun writeTo(printWriter: PrintWriter, indent: String) {
+    val snapshot = snapshot()
+    snapshot.broken.forEach { printWriter.append("${indent}BROKEN: ").append(it).appendln() }
+    snapshot.files.forEach { printWriter.append("${indent}$it").appendln() }
+  }
+
   fun serializeToText() : String {
-    /// we need to keep this format unchanged, it is used in integration tests to compare actual and expected rootd
-    val NL = "\n"
     val snapshot = snapshot()
     return buildString {
-      snapshot.broken.forEach { append("BROKEN: ").append(it).append(NL) }
-      snapshot.files.forEach { append(it).append(NL) }
+      snapshot.broken.forEach { append("BROKEN: ").append(it).appendln() }
+      snapshot.files.forEach { append(it).appendln() }
     }
   }
 }
