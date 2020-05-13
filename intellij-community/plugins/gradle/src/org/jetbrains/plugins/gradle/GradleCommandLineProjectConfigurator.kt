@@ -1,9 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle
 
-import com.intellij.analysis.AnalysisScope
-import com.intellij.ide.CommandLineInspectionProgressReporter
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
+import com.intellij.ide.CommandLineInspectionProjectConfigurator.ConfiguratorContext
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.MODAL_SYNC
@@ -17,25 +16,16 @@ import org.jetbrains.plugins.gradle.settings.GradleImportHintService
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
-import java.nio.file.Path
 
 class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigurator {
   private val LOG = Logger.getInstance(GradleManager::class.java)
 
-  private var wasAlreadyImported = false
-
-  override fun isApplicable(projectPath: Path, logger: CommandLineInspectionProgressReporter): Boolean {
-    return true
-  }
-
-  override fun configureEnvironment(projectPath: Path, logger: CommandLineInspectionProgressReporter) {
-    wasAlreadyImported = projectPath.resolve(".idea").exists()
+  override fun configureEnvironment(context: ConfiguratorContext) = context.run {
     Registry.get("external.system.auto.import.disabled").setValue(true)
   }
 
-  override fun configureProject(project: Project, logger: CommandLineInspectionProgressReporter) {
+  override fun configureProject(project: Project, context: ConfiguratorContext) {
     val basePath = project.basePath ?: return
-
     val state = GradleImportHintService.getInstance(project).state
 
     if (state.skip) return
@@ -50,6 +40,8 @@ class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigu
       }
       return
     }
+
+    val wasAlreadyImported = context.projectPath.resolve(".idea").exists()
     if (wasAlreadyImported && !GradleSettings.getInstance(project).linkedProjectsSettings.isEmpty()) {
       refreshProjects(ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).use(MODAL_SYNC))
       return

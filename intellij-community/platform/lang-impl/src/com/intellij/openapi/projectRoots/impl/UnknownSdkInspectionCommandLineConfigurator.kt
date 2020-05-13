@@ -1,15 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl
 
-import com.intellij.ide.CommandLineInspectionProgressReporter
 import com.intellij.ide.CommandLineInspectionProjectConfigurator
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver
@@ -17,33 +14,23 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Consumer
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
-import java.nio.file.Path
 import kotlin.coroutines.resume
 
 class UnknownSdkInspectionCommandLineConfigurator : CommandLineInspectionProjectConfigurator {
   private val LOG: Logger = logger<UnknownSdkInspectionCommandLineConfigurator>()
 
-  override fun isApplicable(projectPath: Path, logger: CommandLineInspectionProgressReporter): Boolean {
+  override fun isApplicable(context: CommandLineInspectionProjectConfigurator.ConfiguratorContext): Boolean {
     return !ApplicationManager.getApplication().isUnitTestMode
   }
 
-  override fun configureEnvironment(projectPath: Path, logger: CommandLineInspectionProgressReporter) {
-    Registry.get("unknown.sdk").setValue(false) //forbid UnknownSdkTracker post startup activity
+  override fun configureEnvironment(context: CommandLineInspectionProjectConfigurator.ConfiguratorContext) {
+    Registry.get("unknown.sdk").setValue(false) // forbid UnknownSdkTracker post startup activity as we run it here
   }
 
-  override fun configureProject(project: Project,
-                                logger: CommandLineInspectionProgressReporter
-  ) = runBlocking {
+  override fun configureProject(project: Project, context: CommandLineInspectionProjectConfigurator.ConfiguratorContext) = runBlocking {
     require(!ApplicationManager.getApplication().isWriteThread) { "The code below uses the same GUI thread to complete operations." +
                                                                   "Running from EDT would deadlock" }
-
-    val indicator = ProgressManager.getInstance().progressIndicator ?: ProgressIndicatorBase()
-    indicator.pushState()
-    try {
-      resolveUnknownSdks(project, ProgressIndicatorBase())
-    } finally {
-      indicator.popState()
-    }
+    resolveUnknownSdks(project, context.progressIndicator)
   }
 
   private suspend fun resolveUnknownSdks(project: Project, indicator: ProgressIndicator) {
