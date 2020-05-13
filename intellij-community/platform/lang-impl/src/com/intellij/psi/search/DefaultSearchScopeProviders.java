@@ -49,7 +49,7 @@ public class DefaultSearchScopeProviders {
           @NotNull
           @Override
           public String getDisplayName() {
-            return "Favorite \'" + favorite + "\'";
+            return "Favorite '" + favorite + "'";
           }
 
           @Override

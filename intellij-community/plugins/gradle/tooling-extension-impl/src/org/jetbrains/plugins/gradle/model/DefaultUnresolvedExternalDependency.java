@@ -44,6 +44,6 @@ public class DefaultUnresolvedExternalDependency extends AbstractExternalDepende
 
   @Override
   public String toString() {
-    return "Unresolved dependency '" + getId() + "\':" + failureMessage;
+    return "Unresolved dependency '" + getId() + "':" + failureMessage;
   }
 }

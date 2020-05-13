@@ -142,7 +142,7 @@ public final class CommentByLineCommentHandler extends MultiCaretCodeInsightActi
     }
     if (context.textContains('\'') || context.textContains('\"') || context.textContains('/')) {
       final String s = context.getText();
-      return StringUtil.startsWith(s, "\"") || StringUtil.startsWith(s, "\'") || StringUtil.startsWith(s, "/");
+      return StringUtil.startsWith(s, "\"") || StringUtil.startsWith(s, "'") || StringUtil.startsWith(s, "/");
     }
     return false;
   }

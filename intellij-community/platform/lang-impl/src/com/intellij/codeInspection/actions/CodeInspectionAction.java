@@ -214,7 +214,7 @@ public class CodeInspectionAction extends BaseAnalysisAction {
         final InspectionProfileImpl profile = appProfileManager.getProfile(lastSelectedProfileName, false);
         if (profile != null) return profile;
       } else {
-        LOG.assertTrue(type == 'p', "Unexpected last selected profile: \'" + lastSelectedProfile + "\'");
+        LOG.assertTrue(type == 'p', "Unexpected last selected profile: '" + lastSelectedProfile + "'");
         final InspectionProfileImpl profile = projectProfileManager.getProfile(lastSelectedProfileName, false);
         if (profile != null && profile.isProjectLevel()) return profile;
       }

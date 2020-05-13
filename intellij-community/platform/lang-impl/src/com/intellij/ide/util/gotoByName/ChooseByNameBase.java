@@ -1532,7 +1532,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
 
       final UsageViewPresentation presentation = new UsageViewPresentation();
       final String text = getTrimmedText();
-      final String prefixPattern = myFindUsagesTitle + " \'" + text + "\'";
+      final String prefixPattern = myFindUsagesTitle + " '" + text + "'";
       presentation.setCodeUsagesString(prefixPattern);
       presentation.setUsagesInGeneratedCodeString(prefixPattern + " in generated code");
       presentation.setTabName(prefixPattern);

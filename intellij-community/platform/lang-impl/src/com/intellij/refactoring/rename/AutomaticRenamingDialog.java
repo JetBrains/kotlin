@@ -407,7 +407,7 @@ public class AutomaticRenamingDialog extends DialogWrapper {
         public String getErrorText(String inputString) {
           final int selectedRow = myTable.getSelectedRow();
           if (!isValidName(inputString, selectedRow)) {
-            return "Identifier \'" + inputString + "\' is invalid";
+            return "Identifier '" + inputString + "' is invalid";
           }
           return null;
         }

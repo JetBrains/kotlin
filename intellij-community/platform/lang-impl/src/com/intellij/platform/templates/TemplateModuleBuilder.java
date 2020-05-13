@@ -267,7 +267,7 @@ public class TemplateModuleBuilder extends ModuleBuilder {
           for (Trinity<String, String, VelocityException> failure : myFailures) {
             reportBuilder.append("File: ").append(failure.getFirst()).append("\n");
             reportBuilder.append("Exception:\n").append(ExceptionUtil.getThrowableText(failure.getThird())).append("\n");
-            reportBuilder.append("File content:\n\'").append(failure.getSecond()).append("\'\n");
+            reportBuilder.append("File content:\n'").append(failure.getSecond()).append("'\n");
             reportBuilder.append("\n===========================================\n");
           }
 
