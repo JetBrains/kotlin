@@ -110,6 +110,7 @@ class AndroidComponentRegistrar : ComponentRegistrar {
             )
             SyntheticResolveExtension.registerExtension(project, ParcelableResolveExtension())
             ClassBuilderInterceptorExtension.registerExtension(project, ParcelableClinitClassBuilderInterceptorExtension())
+            StorageComponentContainerContributor.registerExtension(project, ParcelizeDeclarationCheckerComponentContainerContributor())
         }
 
         private fun parseVariant(s: String): AndroidVariant? {
@@ -171,10 +172,19 @@ class AndroidExtensionPropertiesComponentContainerContributor : StorageComponent
     override fun registerModuleComponents(
         container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
     ) {
-        if (!platform.isJvm()) return
+        if (platform.isJvm()) {
+            container.useInstance(AndroidExtensionPropertiesCallChecker())
+        }
+    }
+}
 
-        container.useInstance(AndroidExtensionPropertiesCallChecker())
-        container.useInstance(ParcelableDeclarationChecker())
-        container.useInstance(ParcelableAnnotationChecker())
+class ParcelizeDeclarationCheckerComponentContainerContributor : StorageComponentContainerContributor {
+    override fun registerModuleComponents(
+        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+    ) {
+        if (platform.isJvm()) {
+            container.useInstance(ParcelableDeclarationChecker())
+            container.useInstance(ParcelableAnnotationChecker())
+        }
     }
 }
