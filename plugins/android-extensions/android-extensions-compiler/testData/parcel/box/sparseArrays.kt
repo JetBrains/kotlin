@@ -25,6 +25,7 @@ fun box() = parcelTest { parcel ->
 
     val bytes = parcel.marshall()
     parcel.unmarshall(bytes, 0, bytes.size)
+    parcel.setDataPosition(0)
 
     val user2 = readFromParcel<User>(parcel)
 
