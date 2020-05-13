@@ -30,6 +30,12 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
+/**
+ * A generator that generates synthetic members of data class as well as part of inline class.
+ *
+ * This one uses [DataClassMethodGenerator] to determine which members are needed to generate; uses [DataClassMembersGenerator] to generate
+ * function bodies; and provides ways to declare functions or parameters based on descriptors and binding context.
+ */
 class DataClassMembersGenerator(
     declarationGenerator: DeclarationGenerator
 ) : DeclarationGeneratorExtension(declarationGenerator) {
