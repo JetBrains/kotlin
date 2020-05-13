@@ -98,7 +98,7 @@ class ReaderModeSettings : PersistentStateComponent<ReaderModeSettings.State> {
     var showRenderedDocs: Boolean = true,
     var showInlayHints: Boolean = true,
     var hideWarnings: Boolean = true,
-    var enabled: Boolean = true,
+    var enabled: Boolean = false,
     var mode: ReaderMode = READ_ONLY_FILES
   )
 
