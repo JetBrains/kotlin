@@ -1,7 +1,6 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
@@ -352,6 +351,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.matchInAnyOrder(klass.secondaryConstructors, other.secondaryConstructors)
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
+    }
+
+    override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
+        val other = getTreeElement<KtObjectLiteralExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.objectDeclaration, other.objectDeclaration)
     }
 
     override fun visitObjectDeclaration(declaration: KtObjectDeclaration) {
