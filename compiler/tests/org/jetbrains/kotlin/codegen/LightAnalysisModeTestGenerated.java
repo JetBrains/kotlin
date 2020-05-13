@@ -23644,27 +23644,27 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class NullableLoopParameter extends AbstractLightAnalysisModeTest {
+                @TestMetadata("progressionExpression.kt")
+                public void ignoreProgressionExpression() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter/progressionExpression.kt");
+                }
+
+                @TestMetadata("rangeExpression.kt")
+                public void ignoreRangeExpression() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter/rangeExpression.kt");
+                }
+
+                @TestMetadata("rangeLiteral.kt")
+                public void ignoreRangeLiteral() throws Exception {
+                    runTest("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter/rangeLiteral.kt");
+                }
+
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInNullableLoopParameter() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                }
-
-                @TestMetadata("progressionExpression.kt")
-                public void testProgressionExpression() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter/progressionExpression.kt");
-                }
-
-                @TestMetadata("rangeExpression.kt")
-                public void testRangeExpression() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter/rangeExpression.kt");
-                }
-
-                @TestMetadata("rangeLiteral.kt")
-                public void testRangeLiteral() throws Exception {
-                    runTest("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter/rangeLiteral.kt");
                 }
             }
         }
