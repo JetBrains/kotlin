@@ -1806,6 +1806,12 @@ task coroutines_functionReference_lambdaAsSuspendLambda(type: KonanLocalTest) {
     source = "codegen/coroutines/functionReference_lambdaAsSuspendLambda.kt"
 }
 
+standaloneTest('coroutines_suspendConversion') {
+    goldValue = ""
+    source = "codegen/coroutines/suspendConversion.kt"
+    flags = ['-XXLanguage:+SuspendConversion']
+}
+
 task AbstractMutableCollection(type: KonanLocalTest) {
     expectedExitStatus = 0
     source = "runtime/collections/AbstractMutableCollection.kt"
