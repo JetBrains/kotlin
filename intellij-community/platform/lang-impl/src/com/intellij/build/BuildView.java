@@ -65,7 +65,7 @@ public class BuildView extends CompositeView<ExecutionConsole>
   private final @NotNull ViewManager myViewManager;
   private final AtomicBoolean isBuildStartEventProcessed = new AtomicBoolean();
   private final List<BuildEvent> myAfterStartEvents = ContainerUtil.createConcurrentList();
-  private volatile @NotNull DefaultBuildDescriptor myBuildDescriptor;
+  private final @NotNull DefaultBuildDescriptor myBuildDescriptor;
   private volatile @Nullable ExecutionConsole myExecutionConsole;
   private volatile BuildViewSettingsProvider myViewSettingsProvider;
 
@@ -129,11 +129,6 @@ public class BuildView extends CompositeView<ExecutionConsole>
   }
 
   private void onStartBuild(@NotNull Object buildId, @NotNull StartBuildEvent startBuildEvent) {
-    BuildDescriptor descriptor = startBuildEvent.getBuildDescriptor();
-    if (myBuildDescriptor != descriptor) {
-      myBuildDescriptor =
-        descriptor instanceof DefaultBuildDescriptor ? (DefaultBuildDescriptor)descriptor : new DefaultBuildDescriptor(descriptor);
-    }
     if (startBuildEvent instanceof StartBuildEventImpl) {
       myViewSettingsProvider = ((StartBuildEventImpl)startBuildEvent).getBuildViewSettingsProvider();
     }
@@ -250,14 +245,14 @@ public class BuildView extends CompositeView<ExecutionConsole>
   }
 
   @Override
-  public void setOutputPaused(boolean value) {
-    delegateToConsoleView(view -> view.setOutputPaused(value));
-  }
-
-  @Override
   public boolean isOutputPaused() {
     Boolean result = getConsoleViewValue(ConsoleView::isOutputPaused);
     return result != null && result;
+  }
+
+  @Override
+  public void setOutputPaused(boolean value) {
+    delegateToConsoleView(view -> view.setOutputPaused(value));
   }
 
   @Override
