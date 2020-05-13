@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.navigation.impl
 
 import com.intellij.codeInsight.navigation.CtrlMouseInfo
+import com.intellij.model.psi.PsiSymbolService
 import com.intellij.model.psi.impl.TargetData
 import com.intellij.model.psi.impl.declaredReferencedData
 import com.intellij.navigation.NavigationTarget
@@ -67,7 +68,16 @@ private class TargetGTDActionData(private val project: Project, private val targ
   override fun ctrlMouseInfo(): CtrlMouseInfo = targetData.ctrlMouseInfo()
 
   override fun result(): GTDActionResult? {
+    //old behaviour: use gtd target provider if element has only a single target
+    targetData.targets.singleOrNull()
+      ?.let(PsiSymbolService.getInstance()::extractElementFromSymbol)
+      ?.let { el ->
+        val nav = gtdTargetNavigatable(el) ?: return@let
+        if (nav != el) return GTDActionResult.SingleTarget(nav)
+      }
+
     val result = SmartList<Pair<Navigatable, NavigationTarget>>()
+
     for (symbol in targetData.targets) {
       for (navigationTarget in SymbolNavigationService.getInstance().getNavigationTargets(project, symbol)) {
         val navigatable = navigationTarget.navigatable ?: continue
