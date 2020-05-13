@@ -59,7 +59,7 @@ class KotlinULambdaExpression(
 
     override val valueParameters by lz {
         sourcePsi.valueParameters.mapIndexed { i, p ->
-            KotlinUParameter(UastKotlinPsiParameter.create(p, sourcePsi, this, i), sourcePsi, this)
+            KotlinUParameter(UastKotlinPsiParameter.create(p, sourcePsi, this, i), p, this)
         }
     }
     
