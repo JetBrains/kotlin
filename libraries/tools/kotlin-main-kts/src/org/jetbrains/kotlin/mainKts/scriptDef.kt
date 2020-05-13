@@ -35,7 +35,8 @@ import kotlin.script.experimental.jvmhost.jsr223.jsr223
 @KotlinScript(
     fileExtension = "main.kts",
     compilationConfiguration = MainKtsScriptDefinition::class,
-    evaluationConfiguration = MainKtsEvaluationConfiguration::class
+    evaluationConfiguration = MainKtsEvaluationConfiguration::class,
+    hostConfiguration = MainKtsHostConfiguration::class
 )
 abstract class MainKtsScript(val args: Array<String>)
 
@@ -58,32 +59,36 @@ class MainKtsScriptDefinition : ScriptCompilationConfiguration(
         jsr223 {
             importAllBindings(true)
         }
-        hostConfiguration(ScriptingHostConfiguration {
-            jvm {
-                val cacheExtSetting = System.getProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY)
-                    ?: System.getenv(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR)
-                val cacheBaseDir = when {
-                    cacheExtSetting == null -> System.getProperty("java.io.tmpdir")
-                        ?.let(::File)?.takeIf { it.exists() && it.isDirectory }
-                        ?.let { File(it, "main.kts.compiled.cache").apply { mkdir() } }
-                    cacheExtSetting.isBlank() -> null
-                    else -> File(cacheExtSetting)
-                }?.takeIf { it.exists() && it.isDirectory }
-                if (cacheBaseDir != null)
-                    compilationCache(
-                        CompiledScriptJarsCache { script, scriptCompilationConfiguration ->
-                            File(cacheBaseDir, compiledScriptUniqueName(script, scriptCompilationConfiguration) + ".jar")
-                        }
-                    )
-            }
-        })
-    })
+    }
+)
 
 object MainKtsEvaluationConfiguration : ScriptEvaluationConfiguration(
     {
         scriptsInstancesSharing(true)
         refineConfigurationBeforeEvaluate(::configureProvidedPropertiesFromJsr223Context)
         refineConfigurationBeforeEvaluate(::configureConstructorArgsFromMainArgs)
+    }
+)
+
+class MainKtsHostConfiguration : ScriptingHostConfiguration(
+    {
+        jvm {
+            val cacheExtSetting = System.getProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY)
+                ?: System.getenv(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR)
+            val cacheBaseDir = when {
+                cacheExtSetting == null -> System.getProperty("java.io.tmpdir")
+                    ?.let(::File)?.takeIf { it.exists() && it.isDirectory }
+                    ?.let { File(it, "main.kts.compiled.cache").apply { mkdir() } }
+                cacheExtSetting.isBlank() -> null
+                else -> File(cacheExtSetting)
+            }?.takeIf { it.exists() && it.isDirectory }
+            if (cacheBaseDir != null)
+                compilationCache(
+                    CompiledScriptJarsCache { script, scriptCompilationConfiguration ->
+                        File(cacheBaseDir, compiledScriptUniqueName(script, scriptCompilationConfiguration) + ".jar")
+                    }
+                )
+        }
     }
 )
 

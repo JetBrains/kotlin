@@ -54,12 +54,11 @@ class ScriptingHostTest : TestCase() {
         val greeting = "Hello from script!"
         val output = captureOut {
             val basicJvmScriptingHost = BasicJvmScriptingHost()
-            basicJvmScriptingHost.eval(
+            basicJvmScriptingHost.evalWithTemplate<SimpleScript>(
                 "println(\"$greeting\")".toScriptSource("name"),
-                createJvmCompilationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration) {
+                compilation = {
                     updateClasspath(classpathFromClass<SimpleScript>())
-                },
-                createJvmEvaluationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration)
+                }
             ).throwOnFailure()
         }
         Assert.assertEquals(greeting, output)
@@ -206,15 +205,19 @@ class ScriptingHostTest : TestCase() {
     fun testSimpleImportWithImplicitReceiver() {
         val greeting = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
         val script = "println(\"Hello from imported \$helloScriptName script!\")"
-        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
-            makeSimpleConfigurationWithTestImport()
-            implicitReceivers(String::class)
-        }
-        val evaluationConfiguration = createJvmEvaluationConfigurationFromTemplate<SimpleScriptTemplate> {
-            implicitReceivers("abc")
-        }
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                makeSimpleConfigurationWithTestImport()
+                implicitReceivers(String::class)
+            },
+            evaluation = {
+                implicitReceivers("abc")
+            }
+        )
         val output = captureOut {
-            BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, evaluationConfiguration).throwOnFailure()
+            BasicJvmScriptingHost().eval(
+                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
+            ).throwOnFailure()
         }.lines()
         Assert.assertEquals(greeting, output)
     }

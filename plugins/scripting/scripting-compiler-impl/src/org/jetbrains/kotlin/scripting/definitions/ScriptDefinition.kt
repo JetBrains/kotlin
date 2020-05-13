@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotate
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
-import kotlin.script.experimental.host.createEvaluationConfigurationFromTemplate
+import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 
@@ -181,14 +179,19 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     ) : FromConfigurationsBase()
 
     open class FromTemplate(
-        hostConfiguration: ScriptingHostConfiguration,
+        private val baseHostConfiguration: ScriptingHostConfiguration,
         template: KClass<*>,
         contextClass: KClass<*> = ScriptCompilationConfiguration::class
-    ) : FromConfigurations(
-        hostConfiguration,
-        createCompilationConfigurationFromTemplate(KotlinType(template), hostConfiguration, contextClass),
-        createEvaluationConfigurationFromTemplate(KotlinType(template), hostConfiguration, contextClass)
-    )
+    ) : FromConfigurationsBase() {
+
+        private val definition = createScriptDefinitionFromTemplate(KotlinType(template), baseHostConfiguration, contextClass)
+
+        override val hostConfiguration: ScriptingHostConfiguration
+            get() = definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: baseHostConfiguration
+
+        override val compilationConfiguration: ScriptCompilationConfiguration get() = definition.compilationConfiguration
+        override val evaluationConfiguration: ScriptEvaluationConfiguration get() = definition.evaluationConfiguration
+    }
 
     companion object {
         fun getDefault(hostConfiguration: ScriptingHostConfiguration) =

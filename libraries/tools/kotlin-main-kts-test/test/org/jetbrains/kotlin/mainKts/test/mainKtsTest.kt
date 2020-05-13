@@ -15,21 +15,23 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
+import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
 fun evalFile(scriptFile: File, cacheDir: File? = null): ResultWithDiagnostics<EvaluationResult> =
     withProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY, cacheDir?.absolutePath ?: "") {
-        val scriptDefinition = createJvmCompilationConfigurationFromTemplate<MainKtsScript>()
-
-        val evaluationEnv = ScriptEvaluationConfiguration {
-            jvm {
-                baseClassLoader(null)
+        val scriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>(
+            evaluation = {
+                jvm {
+                    baseClassLoader(null)
+                }
+                constructorArgs(emptyArray<String>())
+                enableScriptsInstancesSharing()
             }
-            constructorArgs(emptyArray<String>())
-            enableScriptsInstancesSharing()
-        }
+        )
 
-        BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), scriptDefinition, evaluationEnv)
+        BasicJvmScriptingHost().eval(
+            scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration
+        )
     }
 
 

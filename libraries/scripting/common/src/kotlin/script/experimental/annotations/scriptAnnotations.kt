@@ -10,6 +10,7 @@ package kotlin.script.experimental.annotations
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 /**
  * The annotation for declaring a script definition (template)
@@ -52,6 +53,7 @@ annotation class KotlinScript(
     val fileExtension: String = "kts",
     val filePathPattern: String = "",
     val compilationConfiguration: KClass<out ScriptCompilationConfiguration> = ScriptCompilationConfiguration.Default::class,
-    val evaluationConfiguration: KClass<out ScriptEvaluationConfiguration> = ScriptEvaluationConfiguration.Default::class
+    val evaluationConfiguration: KClass<out ScriptEvaluationConfiguration> = ScriptEvaluationConfiguration.Default::class,
+    val hostConfiguration: KClass<out ScriptingHostConfiguration> = ScriptingHostConfiguration::class
 )
 

@@ -17,7 +17,7 @@ interface ScriptingHostConfigurationKeys
  * The container for script evaluation configuration
  * For usages see actual code examples
  */
-class ScriptingHostConfiguration(baseScriptingConfigurations: Iterable<ScriptingHostConfiguration>, body: Builder.() -> Unit) :
+open class ScriptingHostConfiguration(baseScriptingConfigurations: Iterable<ScriptingHostConfiguration>, body: Builder.() -> Unit) :
     PropertiesCollection(Builder(baseScriptingConfigurations).apply(body).data) {
 
     constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
