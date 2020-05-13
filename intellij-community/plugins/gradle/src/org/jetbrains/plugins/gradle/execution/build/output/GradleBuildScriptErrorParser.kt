@@ -10,8 +10,8 @@ import com.intellij.build.events.impl.FileMessageEventImpl
 import com.intellij.build.events.impl.MessageEventImpl
 import com.intellij.build.output.BuildOutputInstantReader
 import com.intellij.build.output.BuildOutputParser
-import com.intellij.util.text.nullize
 import org.jetbrains.plugins.gradle.execution.GradleConsoleFilter
+import org.jetbrains.plugins.gradle.issue.GradleIssueChecker
 import org.jetbrains.plugins.gradle.issue.UnresolvedDependencyBuildIssue
 import java.io.File
 import java.util.function.Consumer
@@ -72,14 +72,13 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
     var exception: StringBuilder? = null
     while (true) {
       val nextLine = reader.readLine() ?: break
+      if (nextLine == "BUILD FAILED" || nextLine == "* Get more help at https://help.gradle.org") break
       if (nextLine == "* Exception is:")  {
-        exception = StringBuilder(nextLine).appendln()
+        exception = StringBuilder()
       } else {
         exception?.appendln(nextLine)
       }
-      if (nextLine == "BUILD FAILED") break
     }
-    exception?.also { description.appendln().append(it) }
 
     // compilation errors should be added by the respective compiler output parser
     if (reason.startsWith("Compilation failed") ||
@@ -87,56 +86,39 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
         reason == "Script compilation error:" ||
         reason.contains("compiler failed")) return false
 
-    // JDK compatibility issues should be handled by org.jetbrains.plugins.gradle.issue.IncompatibleGradleJdkIssueChecker
-    if (reason.startsWith("Could not create service of type ") && reason.contains(" using BuildScopeServices.")) return false
+    val filePosition: FilePosition?
+    if (filter != null) {
+      filePosition = FilePosition(File(filter.filteredFileName), filter.filteredLineNumber - 1, 0)
+    } else {
+      filePosition = null
+    }
 
-    // Build cancellation errors should be handled by org.jetbrains.plugins.gradle.issue.GradleBuildCancelledIssueChecker
-    if (reason.contains("Build cancelled.")) return false
+    val errorText = description.toString()
+    for (issueChecker in GradleIssueChecker.getKnownIssuesCheckList()) {
+      if (issueChecker.consumeBuildOutputFailureMessage(errorText, reason, exception.toString(), filePosition,parentId, messageConsumer)) {
+        return true
+      }
+    }
 
-    if (location != null && filter != null) {
-      val errorText = description.toString()
-      val reasonAndFilePosition = getReasonAndFilePosition(reason, errorText, filter)
-      reason = reasonAndFilePosition.first
-      val filePosition = reasonAndFilePosition.second
+    if (filePosition != null) {
       messageConsumer.accept(object : FileMessageEventImpl(
         parentId, MessageEvent.Kind.ERROR, null, reason, errorText, filePosition), DuplicateMessageAware {}
       )
     }
     else {
-      val unresolvedMessageEvent = checkUnresolvedDependencyError(reason, description, parentId)
+      val unresolvedMessageEvent = checkUnresolvedDependencyError(reason, errorText, parentId)
       if (unresolvedMessageEvent != null) {
         messageConsumer.accept(unresolvedMessageEvent)
       }
       else {
         messageConsumer.accept(object : MessageEventImpl(parentId, MessageEvent.Kind.ERROR, null, reason,
-                                                         description.toString()), DuplicateMessageAware {})
+                                                         errorText), DuplicateMessageAware {})
       }
     }
     return true
   }
 
-  private fun getReasonAndFilePosition(reason: String, errorText: String, filter: GradleConsoleFilter): Pair<String, FilePosition> {
-    if (reason == "startup failed:") {
-      val startupError = getStartupErrorReasonAndFilePosition(errorText, filter)
-      if (startupError != null) return startupError
-    }
-
-    return Pair(reason, FilePosition(File(filter.filteredFileName), filter.filteredLineNumber - 1, 0))
-  }
-
-  private fun getStartupErrorReasonAndFilePosition(errorText: String, filter: GradleConsoleFilter): Pair<String, FilePosition>? {
-    val locationLine = errorText.substringAfter("> startup failed:", "").nullize()?.trimStart()?.substringBefore("\n") ?: return null
-    val failedStartupReason = locationLine.substringAfter("'${filter.filteredFileName}': ${filter.filteredLineNumber}: ", "")
-                                .nullize()?.substringBeforeLast(" @ ") ?: return null
-    val locationPart = locationLine.substringAfterLast(" @ ")
-    val matchResult = GradleConsoleFilter.LINE_AND_COLUMN_PATTERN.toRegex().matchEntire(locationPart)
-    val values = matchResult?.groupValues?.drop(1)?.map { it.toInt() } ?: listOf(filter.filteredLineNumber, 0)
-    val line = values[0] - 1
-    val column = values[1]
-    return Pair(failedStartupReason, FilePosition(File(filter.filteredFileName), line, column))
-  }
-
-  private fun checkUnresolvedDependencyError(reason: String, description: StringBuilder, parentId: Any): BuildEvent? {
+  private fun checkUnresolvedDependencyError(reason: String, description: String, parentId: Any): BuildEvent? {
     val noCachedVersionPrefix = "No cached version of "
     val couldNotFindPrefix = "Could not find "
     val cannotResolvePrefix = "Cannot resolve external dependency "
@@ -150,7 +132,7 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
                  } ?: return null
     val indexOfSuffix = reason.indexOf(" available for offline mode")
     val dependencyName = if (indexOfSuffix > 0) reason.substring(prefix.length, indexOfSuffix) else reason.substring(prefix.length)
-    val unresolvedDependencyIssue = UnresolvedDependencyBuildIssue(dependencyName, description.toString(), indexOfSuffix > 0)
+    val unresolvedDependencyIssue = UnresolvedDependencyBuildIssue(dependencyName, description, indexOfSuffix > 0)
     return BuildIssueEventImpl(parentId, unresolvedDependencyIssue, MessageEvent.Kind.ERROR)
   }
 }

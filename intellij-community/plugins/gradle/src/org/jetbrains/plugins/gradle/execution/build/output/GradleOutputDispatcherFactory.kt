@@ -84,7 +84,6 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
             isBuildException = false
             myCurrentReader = myRootReader
           }
-          if (cleanLine == "* Exception is:") isBuildException = true
           if (isBuildException && myCurrentReader == myRootReader) return
 
           myCurrentReader.appendln(cleanLine)

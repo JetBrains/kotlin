@@ -2,6 +2,8 @@
 package org.jetbrains.plugins.gradle.issue
 
 import com.intellij.build.BuildConsoleUtils.getMessageTitle
+import com.intellij.build.FilePosition
+import com.intellij.build.events.BuildEvent
 import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.openapi.application.ApplicationNamesInfo
@@ -22,6 +24,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleUtil
 import java.util.*
 import java.util.function.BiPredicate
+import java.util.function.Consumer
 
 /**
  * This issue checker provides quick fixes for known compatibility issues with Gradle and Java:
@@ -130,6 +133,17 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
       override val quickFixes = quickFixes
       override fun getNavigatable(project: Project): Navigatable? = null
     }
+  }
+
+  override fun consumeBuildOutputFailureMessage(message: String,
+                                                failureCause: String,
+                                                stacktrace: String?,
+                                                location: FilePosition?,
+                                                parentEventId: Any,
+                                                messageConsumer: Consumer<in BuildEvent>): Boolean {
+    // JDK compatibility issues should be handled by IncompatibleGradleJdkIssueChecker.check method based on exceptions come from Gradle TAPI
+    if (failureCause.startsWith("Could not create service of type ") && failureCause.contains(" using BuildScopeServices.")) return true
+    return false
   }
 
   companion object {

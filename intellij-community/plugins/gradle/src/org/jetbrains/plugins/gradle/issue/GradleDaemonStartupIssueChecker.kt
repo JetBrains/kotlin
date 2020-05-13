@@ -2,6 +2,11 @@
 package org.jetbrains.plugins.gradle.issue
 
 import com.intellij.build.BuildConsoleUtils.getMessageTitle
+import com.intellij.build.FilePosition
+import com.intellij.build.events.BuildEvent
+import com.intellij.build.events.DuplicateMessageAware
+import com.intellij.build.events.MessageEvent
+import com.intellij.build.events.impl.FileMessageEventImpl
 import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.build.issue.quickfix.OpenFileQuickFix
@@ -9,8 +14,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.pom.Navigatable
 import com.intellij.util.PlatformUtils
 import com.intellij.util.io.isFile
+import com.intellij.util.text.nullize
 import org.gradle.initialization.BuildLayoutParameters
 import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.plugins.gradle.execution.GradleConsoleFilter
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleSettingsQuickFix
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionErrorHandler.getRootCauseAndLocation
 import org.jetbrains.plugins.gradle.settings.GradleSystemSettings
@@ -18,6 +25,7 @@ import org.jetbrains.plugins.gradle.util.GradleBundle
 import java.nio.file.Paths
 import java.util.*
 import java.util.function.BiPredicate
+import java.util.function.Consumer
 
 /**
  * This issue checker provides quick fixes to deal with known startup issues of the Gradle daemon.
@@ -82,5 +90,33 @@ class GradleDaemonStartupIssueChecker : GradleIssueChecker {
       override val quickFixes = quickFixes
       override fun getNavigatable(project: Project): Navigatable? = null
     }
+  }
+
+  override fun consumeBuildOutputFailureMessage(message: String,
+                                                failureCause: String,
+                                                stacktrace: String?,
+                                                location: FilePosition?,
+                                                parentEventId: Any,
+                                                messageConsumer: Consumer<in BuildEvent>): Boolean {
+    if (location == null) return false
+
+    if (failureCause == "startup failed:") {
+      val locationLine = message.substringAfter("> startup failed:", "").nullize()?.trimStart()?.substringBefore("\n") ?: return false
+      val failedStartupReason = locationLine.substringAfter("'${location.file.path}': ${location.startLine + 1}: ", "")
+                                  .nullize()?.substringBeforeLast(" @ ") ?: return false
+      val locationPart = locationLine.substringAfterLast(" @ ")
+      val matchResult = GradleConsoleFilter.LINE_AND_COLUMN_PATTERN.toRegex().matchEntire(locationPart)
+      val values = matchResult?.groupValues?.drop(1)?.map { it.toInt() } ?: listOf(location.startLine + 1, 0)
+      val line = values[0] - 1
+      val column = values[1]
+
+      messageConsumer.accept(object : FileMessageEventImpl(
+        parentEventId, MessageEvent.Kind.ERROR, null, failedStartupReason, message,
+        FilePosition(location.file, line, column)), DuplicateMessageAware {}
+      )
+      return true
+    }
+
+    return false
   }
 }
