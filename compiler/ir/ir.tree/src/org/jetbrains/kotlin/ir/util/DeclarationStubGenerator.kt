@@ -54,7 +54,6 @@ class DeclarationStubGenerator(
 
     fun setIrProviders(value: List<IrProvider>) {
         irProviders_ = value
-        irProviders_.filterIsInstance<LazyIrProvider>().forEach { it.declarationStubGenerator = this }
     }
 
     val typeTranslator =

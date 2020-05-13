@@ -37,14 +37,8 @@ interface IrProvider {
     fun getDeclaration(symbol: IrSymbol): IrDeclaration?
 }
 
-/**
- * Extension of [IrProvider] which always produces inheritors of [IrLazyDeclarationBase].
- * Thus, it needs [declarationStubGenerator] to be able to produce IR declarations.
- */
-interface LazyIrProvider : IrProvider {
-    var declarationStubGenerator: DeclarationStubGenerator
-
-    override fun getDeclaration(symbol: IrSymbol): IrLazyDeclarationBase?
+interface IrExtensionGenerator {
+    fun declare(symbol: IrSymbol): IrDeclaration? = null
 }
 
 interface IrDeserializer : IrProvider {
