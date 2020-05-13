@@ -933,11 +933,12 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun IrSimpleFunction.populateOverriddenSymbols(thisReceiverOwner: IrClass) {
-        thisReceiverOwner.findMatchingOverriddenSymbolsFromSupertypes(components.irBuiltIns, this).forEach {
-            if (it is IrSimpleFunctionSymbol) {
-                overriddenSymbols += it
+        thisReceiverOwner.findMatchingOverriddenSymbolsFromSupertypes(components.irBuiltIns, this)
+            .filterIsInstance<IrSimpleFunctionSymbol>().let {
+                if (it.isNotEmpty()) {
+                    overriddenSymbols = it
+                }
             }
-        }
     }
 
     private fun IrField.populateOverriddenSymbols(thisReceiverOwner: IrClass) {
