@@ -144,7 +144,7 @@ class KotlinCallResolver(
             candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
         ) {
             val candidatesWithAnnotation =
-                candidates.filterTo(mutableSetOf()) { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION) }
+                candidates.filter { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION) }
             if (candidatesWithAnnotation.isNotEmpty()) {
                 val newCandidates = kotlinCallCompleter.chooseCandidateRegardingFactoryPatternResolution(maximallySpecificCandidates, resolutionCallbacks)
                 maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
@@ -154,7 +154,7 @@ class KotlinCallResolver(
                 )
 
                 if (maximallySpecificCandidates.size > 1) {
-                    maximallySpecificCandidates = candidatesWithAnnotation
+                    maximallySpecificCandidates = candidates.toMutableSet().apply { removeAll(candidatesWithAnnotation) }
                 }
             }
         }
