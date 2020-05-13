@@ -141,11 +141,18 @@ fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
         val ideaPluginForCidrDir: String by rootProject.extra
         val ideaPluginJars = fileTree(ideaPluginForCidrDir) {
             exclude(excludesListFromIdeaPlugin)
+            exclude(
+                    "lib/kotlin-stdlib*.jar",
+                    "lib/kotlin-reflect*.jar",
+                    "lib/kotlin-coroutines*.jar",
+                    "lib/kotlinx-coroutines*.jar",
+                    "lib/kotlin-script*.jar"
+            )
         }
         add("implementation", ideaPluginJars)
 
+        // CIDR modules
         val version = rootProject.extra[if (isStandaloneBuild) "cidrVersion" else "versions.intellijSdk"] as String
-
         add("implementation", "com.jetbrains.intellij.platform:debugger-impl:$version")
         add("implementation", "com.jetbrains.intellij.platform:indexing-impl:$version")
         add("implementation", "com.jetbrains.intellij.platform:ide-impl:$version")
@@ -156,6 +163,14 @@ fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
         add("implementation", "com.jetbrains.intellij.java:java-debugger-impl:$version")
         add("implementation", "com.jetbrains.intellij.java:java-psi-impl:$version")
         add("implementation", "com.jetbrains.intellij.java:java-compiler-impl:$version")
+
+        // use bootstrap version of Kotlin stdlib
+        val bootstrapKotlinVersion: String by rootProject
+        constraints {
+            add("implementation", "org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion")
+            add("implementation", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$bootstrapKotlinVersion")
+            add("implementation", "org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion")
+        }
     }
 }
 
