@@ -354,16 +354,15 @@ class Fir2IrClassifierStorage(
         val firClass = firClassSymbol.fir
         getCachedIrClass(firClass)?.let { return symbolTable.referenceClass(it.descriptor) }
         // TODO: remove all this code and change to unbound symbol creation
-        val irClass = createIrClass(firClass)
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.LOCAL) {
+            val irClass = createIrClass(firClass)
             return symbolTable.referenceClass(irClass.descriptor)
         }
         val classId = firClassSymbol.classId
         val parentId = classId.outerClassId
         val irParent = declarationStorage.findIrParent(classId.packageFqName, parentId, firClassSymbol)
-        if (irParent != null) {
-            irClass.parent = irParent
-        }
+        val irClass = createIrClass(firClass, irParent)
+
         if (irParent is IrExternalPackageFragment) {
             declarationStorage.addDeclarationsToExternalClass(firClass as FirRegularClass, irClass)
         }
