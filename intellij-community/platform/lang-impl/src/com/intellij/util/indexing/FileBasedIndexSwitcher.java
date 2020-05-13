@@ -47,6 +47,11 @@ public final class FileBasedIndexSwitcher {
             indicator.setText(IndexingBundle.message("indexes.reloading"));
             myDumbModeSemaphore.waitFor();
           }
+
+          @Override
+          public String toString() {
+            return "Plugin loading/unloading";
+          }
         });
       }
     }
