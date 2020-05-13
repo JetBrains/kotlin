@@ -53,8 +53,12 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
     }
 
     private fun shouldRemoveTopLevelDeclaration(declaration: IrDeclaration): Boolean {
-        val descriptor = declaration.descriptor
-        return doRemove && descriptor is MemberDescriptor && descriptor.isExpect
+        return doRemove && when (declaration) {
+            is IrClass -> declaration.isExpect
+            is IrProperty -> declaration.isExpect
+            is IrFunction -> declaration.isExpect
+            else -> false
+        }
     }
 
     private fun tryCopyDefaultArguments(declaration: IrValueParameter) {
