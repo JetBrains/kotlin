@@ -6,8 +6,7 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.data
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JVMStackFrameInfoProvider
-import com.intellij.debugger.impl.DebuggerContextImpl
-import com.intellij.debugger.jdi.LocalVariableProxyImpl
+import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
@@ -34,10 +33,9 @@ class CoroutinePreflightStackFrame(
     private val firstFrameVariables: List<XNamedValue> = coroutineInfoData.topFrameVariables()
 ) : KotlinStackFrame(stackFrameDescriptorImpl), JVMStackFrameInfoProvider {
 
-    override fun buildVariablesThreadAction(debuggerContext: DebuggerContextImpl?, children: XValueChildrenList?, node: XCompositeNode?) {
-        super.buildVariablesThreadAction(debuggerContext, children, node)
-        // add vars from first restored frame if no local vars found
-        children?.let {
+    override fun superBuildVariables(evaluationContext: EvaluationContextImpl, children: XValueChildrenList) {
+        super.superBuildVariables(evaluationContext, children)
+        children.let {
             val varNames = (0 until children.size()).map { children.getName(it) }.toSet()
             firstFrameVariables.forEach {
                 if (!varNames.contains(it.name))
