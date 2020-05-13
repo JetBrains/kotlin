@@ -872,16 +872,16 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         importProject(true)
         checkProjectStructure(true, false, false) {
             module("KotlinMPPL") {}
-            module("com.example.KotlinMPPL.commonMain") {
+            module("KotlinMPPL.commonMain") {
                 platform(CommonPlatforms.defaultCommonPlatform)
             }
-            module("com.example.KotlinMPPL.commonTest") {
+            module("KotlinMPPL.commonTest") {
                 platform(CommonPlatforms.defaultCommonPlatform)
             }
-            module("com.example.KotlinMPPL.jsMain") {
+            module("KotlinMPPL.jsMain") {
                 platform(JsPlatforms.defaultJsPlatform)
             }
-            module("com.example.KotlinMPPL.jsTest") {
+            module("KotlinMPPL.jsTest") {
                 platform(JsPlatforms.defaultJsPlatform)
             }
         }
