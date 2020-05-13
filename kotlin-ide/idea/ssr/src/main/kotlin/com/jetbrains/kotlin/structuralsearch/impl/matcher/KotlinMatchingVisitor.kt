@@ -283,8 +283,14 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitParameter(parameter: KtParameter) {
         val other = getTreeElement<KtParameter>() ?: return
-        myMatchingVisitor.result = matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
-                && myMatchingVisitor.match(parameter.typeReference, other.typeReference)
+
+        val typeMatched = when (other.parent.parent) {
+            is KtFunctionType, is KtCatchClause -> myMatchingVisitor.match(parameter.typeReference, other.typeReference)
+            else -> matchTypeReferenceWithDeclaration(parameter.typeReference, other)
+        }
+
+        myMatchingVisitor.result = typeMatched
+                && matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(parameter.defaultValue, other.defaultValue)
     }
 
@@ -360,7 +366,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitObjectDeclaration(declaration: KtObjectDeclaration) {
         val other = getTreeElement<KtObjectDeclaration>() ?: return
-        val otherIdentifier = if(other.isCompanion()) (other.parent.parent as KtClass).nameIdentifier else other.nameIdentifier
+        val otherIdentifier = if (other.isCompanion()) (other.parent.parent as KtClass).nameIdentifier else other.nameIdentifier
         myMatchingVisitor.result = matchTextOrVariable(declaration.nameIdentifier, otherIdentifier)
                 && myMatchingVisitor.match(declaration.modifierList, other.modifierList)
                 && myMatchingVisitor.match(declaration.getSuperTypeList(), other.getSuperTypeList())
