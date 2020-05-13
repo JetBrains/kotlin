@@ -10,6 +10,7 @@ import java.nio.file.Paths
 import java.util.regex.Pattern
 
 private const val MODULE_DELIMITER = ",\\s*"
+// This pattern is a copy from the kotlin/compiler/tests-common/tests/org/jetbrains/kotlin/test/TestFiles.java
 private val FILE_OR_MODULE_PATTERN: Pattern = Pattern.compile("(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" +
         "$MODULE_DELIMITER[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:$MODULE_DELIMITER[^()]+)*)\\))?\\s*)?//\\s*FILE:\\s*(.*)$",
         Pattern.MULTILINE)
