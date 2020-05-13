@@ -68,6 +68,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/companionLoad.kt");
     }
 
+    @TestMetadata("complexPostponedCfg.kt")
+    public void testComplexPostponedCfg() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/complexPostponedCfg.kt");
+    }
+
     @TestMetadata("components.kt")
     public void testComponents() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/components.kt");

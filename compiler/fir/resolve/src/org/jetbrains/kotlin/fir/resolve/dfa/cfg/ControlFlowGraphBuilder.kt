@@ -758,11 +758,12 @@ class ControlFlowGraphBuilder {
         var hasPostponedLambdas = false
 
         val iterator = exitsFromCompletedPostponedAnonymousFunctions.iterator()
+        val lastPostponedLambdaExitNode = lastNode
         while (iterator.hasNext()) {
             val exitNode = iterator.next()
             if (node.level >= exitNode.level) continue
             hasPostponedLambdas = true
-            if (exitNode == lastNode) {
+            if (exitNode == lastPostponedLambdaExitNode) {
                 addEdge(lastNodes.pop(), node, preferredKind = EdgeKind.Cfg)
                 kind = EdgeKind.Dfg
                 hasDirectPreviousNode = true
