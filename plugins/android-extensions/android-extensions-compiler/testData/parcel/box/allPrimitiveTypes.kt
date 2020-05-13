@@ -51,6 +51,7 @@ fun box() = parcelTest { parcel ->
 
     val bytes = parcel.marshall()
     parcel.unmarshall(bytes, 0, bytes.size)
+    parcel.setDataPosition(0)
 
     val first2 = readFromParcel<PrimitiveTypes>(parcel)
     val second2 = readFromParcel<PrimitiveTypes>(parcel)
