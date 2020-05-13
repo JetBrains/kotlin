@@ -105,22 +105,22 @@ val jsTestSources by task<Sync> {
 kotlin {
     sourceSets {
         val commonMain by getting {
-            kotlin.srcDir(commonMainSources.get().destinationDir)
+            kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
         }
         val jsMain by getting {
-            kotlin.srcDir(jsMainSources.get().destinationDir)
+            kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
         }
         val commonTest by getting {
             dependencies {
                 api(project(":kotlin-test:kotlin-test-js-ir"))
             }
-            kotlin.srcDir(commonTestSources.get().destinationDir)
+            kotlin.srcDir(files(commonTestSources.map { it.destinationDir }))
         }
         val jsTest by getting {
             dependencies {
                 api(project(":kotlin-test:kotlin-test-js-ir"))
             }
-            kotlin.srcDir(jsTestSources.get().destinationDir)
+            kotlin.srcDir(files(jsTestSources.map { it.destinationDir }))
         }
     }
 }
@@ -139,19 +139,12 @@ tasks.withType<KotlinCompile<*>>().configureEach {
     )
 }
 
-tasks.named("compileKotlinJs") {
-    (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
-    dependsOn(commonMainSources)
-    dependsOn(jsMainSources)
-}
-
-tasks.named("compileTestKotlinJs") {
-    dependsOn(commonTestSources)
-    dependsOn(jsTestSources)
+val compileKotlinJs by tasks.existing(KotlinCompile::class) {
+    kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
 }
 
 val packFullRuntimeKLib by tasks.registering(Jar::class) {
-    dependsOn(tasks.named("compileKotlinJs"))
+    dependsOn(compileKotlinJs)
     from(buildDir.resolve("classes/kotlin/js/main"))
     destinationDirectory.set(rootProject.buildDir.resolve("js-ir-runtime"))
     archiveFileName.set("full-runtime.klib")

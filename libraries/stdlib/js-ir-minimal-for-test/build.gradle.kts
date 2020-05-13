@@ -94,15 +94,15 @@ val jsMainSources by task<Sync> {
 kotlin {
     sourceSets {
         val commonMain by getting {
-            kotlin.srcDir(commonMainSources.get().destinationDir)
+            kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
         }
         val jsMain by getting {
-           kotlin.srcDir(jsMainSources.get().destinationDir)
+            kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
         }
     }
 }
 
-tasks.withType<KotlinCompile<*>>().configureEach {
+tasks.withType<KotlinCompile<*>> {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-Xallow-result-return-type",
@@ -116,8 +116,12 @@ tasks.withType<KotlinCompile<*>>().configureEach {
     )
 }
 
-tasks.named("compileKotlinJs") {
-    (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
-    dependsOn(commonMainSources)
-    dependsOn(jsMainSources)
+tasks {
+    compileKotlinMetadata {
+        enabled = false
+    }
+
+    named("compileKotlinJs", KotlinCompile::class) {
+        kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
+    }
 }
