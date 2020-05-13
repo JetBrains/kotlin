@@ -18,4 +18,5 @@ ij_java_spaces_within_braces = false
 ij_java_static_field_name_prefix = ""
 
 [{*.kt,*.kts}]
+ij_continuation_indent_size = 4
 ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
