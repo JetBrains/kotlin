@@ -57,6 +57,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 class DocRenderer implements EditorCustomElementRenderer {
+  private static final DocRendererMemoryManager MEMORY_MANAGER = new DocRendererMemoryManager();
+  private static final DocRenderImageManager IMAGE_MANAGER = new DocRenderImageManager();
+
   private static final int MIN_WIDTH = 350;
   private static final int MAX_WIDTH = 680;
   private static final int LEFT_INSET = 14;
@@ -216,7 +219,7 @@ class DocRenderer implements EditorCustomElementRenderer {
           activateLink(e);
         }
       });
-      myPane.getDocument().putProperty("imageCache", DocRenderImageManager.IMAGE_SUPPLIER);
+      myPane.getDocument().putProperty("imageCache", IMAGE_MANAGER.getImageProvider());
       myContentUpdateNeeded = false;
     }
     AppUIUtil.targetToDevice(myPane, editor.getContentComponent());
@@ -226,7 +229,6 @@ class DocRenderer implements EditorCustomElementRenderer {
                                  // this is done after 'targetToDevice' call to take correct graphics context into account
       myPane.startImageTracking();
     }
-    DocRendererMemoryManager.onRendererComponentUsage(this);
     return myPane;
   }
 
@@ -238,7 +240,6 @@ class DocRenderer implements EditorCustomElementRenderer {
   }
 
   void dispose() {
-    DocRendererMemoryManager.stopTracking(this);
     clearCachedComponent();
   }
 
@@ -383,6 +384,10 @@ class DocRenderer implements EditorCustomElementRenderer {
     };
     private boolean myRepaintRequested;
 
+    EditorPane() {
+      MEMORY_MANAGER.register(DocRenderer.this, 50 /* rough size estimation */);
+    }
+
     @Override
     public void repaint(long tm, int x, int y, int width, int height) {
       myRepaintRequested = true;
@@ -401,8 +406,9 @@ class DocRenderer implements EditorCustomElementRenderer {
 
     @Override
     public void paint(Graphics g) {
+      MEMORY_MANAGER.notifyPainted(DocRenderer.this);
       for (Image image : myImages) {
-        DocRenderImageManager.notifyPainted(image);
+        IMAGE_MANAGER.notifyPainted(image);
       }
       super.paint(g);
     }
@@ -439,7 +445,7 @@ class DocRenderer implements EditorCustomElementRenderer {
       collectImages(getUI().getRootView(this));
       boolean update = false;
       for (Image image : myImages) {
-        DocRenderImageManager.setCompletionListener(image, this::scheduleRepaint);
+        IMAGE_MANAGER.setCompletionListener(image, this::scheduleRepaint);
         update |= image.getWidth(myImageObserver) >= 0 || image.getHeight(myImageObserver) >= 0;
       }
       if (update) {
@@ -461,7 +467,8 @@ class DocRenderer implements EditorCustomElementRenderer {
     }
 
     void dispose() {
-      myImages.forEach(DocRenderImageManager::dispose);
+      MEMORY_MANAGER.unregister(DocRenderer.this);
+      myImages.forEach(image -> IMAGE_MANAGER.dispose(image));
     }
   }
 }

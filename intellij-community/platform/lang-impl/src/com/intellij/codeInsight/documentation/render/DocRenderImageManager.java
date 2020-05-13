@@ -1,11 +1,10 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.documentation.render;
 
-import com.intellij.diagnostic.VMOptions;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
-import sun.awt.image.*;
+import sun.awt.image.FileImageSource;
+import sun.awt.image.ImageDecoder;
+import sun.awt.image.ToolkitImage;
 
 import java.awt.*;
 import java.awt.image.ColorModel;
@@ -15,77 +14,29 @@ import java.net.URL;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 
-class DocRenderImageManager {
-  private static final Logger LOG = Logger.getInstance(DocRenderImageManager.class);
-
-  private static final LinkedHashMap<Image, Integer> CACHE_NON_PAINTED = new LinkedHashMap<>();
-  private static final LinkedHashMap<Image, Integer> CACHE_PAINTED = new LinkedHashMap<>();
-  private static final int CACHE_SIZE_LIMIT_KB;
-  private static int TOTAL_SIZE;
-
-  static {
-    int memorySizeMb = 750; // default value, if something goes wrong
-    try {
-      memorySizeMb = VMOptions.readOption(VMOptions.MemoryKind.HEAP, true);
-    }
-    catch (Throwable e) {
-      LOG.error("Failed to get Xmx", e);
-    }
-    int cacheSize = 1000; // default value, if something goes wrong
-    try {
-      cacheSize = Math.max(cacheSize, (int) (memorySizeMb * 1024 * Registry.get("doc.render.image.cache.size").asDouble()));
-    }
-    catch (Throwable e) {
-      LOG.error("Error calculating cache size limit", e);
-    }
-    CACHE_SIZE_LIMIT_KB = cacheSize;
-    LOG.debug("Cache size: " + CACHE_SIZE_LIMIT_KB + "kB");
+class DocRenderImageManager extends AbstractDocRenderMemoryManager<Image> {
+  DocRenderImageManager() {
+    super("doc.render.image.cache.size");
   }
 
-  private synchronized static void register(@NotNull Image image, int size) {
-    unregister(image);
-    CACHE_NON_PAINTED.put(image, size);
-    TOTAL_SIZE += size;
-
-    // trim the cache
-    while (CACHE_NON_PAINTED.size() > 1 /* don't remove just registered image */ && TOTAL_SIZE > CACHE_SIZE_LIMIT_KB) {
-      Image toRemove = CACHE_NON_PAINTED.keySet().iterator().next();
-      toRemove.flush();
-    }
-    while (!CACHE_PAINTED.isEmpty() && TOTAL_SIZE > CACHE_SIZE_LIMIT_KB) {
-      Image toRemove = CACHE_PAINTED.keySet().iterator().next();
-      toRemove.flush();
-    }
+  @Override
+  void destroy(@NotNull Image image) {
+    image.flush();
   }
 
-  private synchronized static void unregister(@NotNull Image image) {
-    Integer oldSize = CACHE_NON_PAINTED.remove(image);
-    if (oldSize != null) TOTAL_SIZE -= oldSize;
-    oldSize = CACHE_PAINTED.remove(image);
-    if (oldSize != null) TOTAL_SIZE -= oldSize;
-  }
-
-  synchronized static void notifyPainted(@NotNull Image image) {
-    Integer size = CACHE_NON_PAINTED.remove(image);
-    if (size != null) {
-      CACHE_PAINTED.put(image, size);
-    }
-  }
-
-  static void setCompletionListener(@NotNull Image image, @NotNull Runnable runnable) {
+  void setCompletionListener(@NotNull Image image, @NotNull Runnable runnable) {
     if (image instanceof ManagedImage) {
       ((ManagedImage)image).completionRunnable = runnable;
     }
   }
 
-  static void dispose(@NotNull Image image) {
+  void dispose(@NotNull Image image) {
     if (image instanceof ManagedImage) ((ManagedImage)image).dispose();
     image.flush();
   }
 
-  private static class ManagedImage extends ToolkitImage implements ImageConsumer {
+  private class ManagedImage extends ToolkitImage implements ImageConsumer {
     private int myWidth;
     private int myHeight;
     private volatile Runnable completionRunnable;
@@ -172,7 +123,11 @@ class DocRenderImageManager {
     }
   }
 
-  static final Dictionary<URL, Image> IMAGE_SUPPLIER = new Dictionary<URL, Image>() {
+  Dictionary<URL, Image> getImageProvider() {
+    return myImageProvider;
+  }
+
+  private final Dictionary<URL, Image> myImageProvider = new Dictionary<URL, Image>() {
     @Override
     public Image get(Object key) {
       if (!(key instanceof URL)) return null;
