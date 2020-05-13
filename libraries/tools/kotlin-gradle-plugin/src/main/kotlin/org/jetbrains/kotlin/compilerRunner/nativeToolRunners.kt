@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -43,8 +44,7 @@ internal abstract class KotlinNativeToolRunner(
     final override val daemonEntryPoint get() = "daemonMain"
 
     // We need to unset some environment variables which are set by XCode and may potentially affect the tool executed.
-    override val environment = mapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
-    final override val environmentBlacklist: Set<String> by lazy {
+    final override val execEnvironmentBlacklist: Set<String> by lazy {
         HashSet<String>().also { collector ->
             KotlinNativeToolRunner::class.java.getResourceAsStream("/env_blacklist")?.let { stream ->
                 stream.reader().use { r -> r.forEachLine { collector.add(it) } }
@@ -52,11 +52,17 @@ internal abstract class KotlinNativeToolRunner(
         }
     }
 
-    final override val systemProperties by lazy {
-        mapOf(
-            "konan.home" to project.konanHome,
-            MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name
-        )
+    final override val execSystemProperties by lazy {
+        // Still set konan.home for versions prior to 1.4-M3.
+        val konanHomeRequired = project.konanVersion.let {
+            !it.isAtLeast(1, 4, 0) ||
+                    it.toString(showMeta = false, showBuild = false) in listOf("1.4-M1", "1.4-M2")
+        }
+
+        listOfNotNull(
+                if (konanHomeRequired) "konan.home" to project.konanHome else null,
+                MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name
+        ).toMap()
     }
 
     final override val classpath by lazy {
@@ -127,12 +133,12 @@ internal abstract class KotlinNativeToolRunner(
 internal abstract class AbstractKotlinNativeCInteropRunner(toolName: String, project: Project) : KotlinNativeToolRunner(toolName, project) {
     override val mustRunViaExec get() = true
 
-    override val environment by lazy {
+    override val execEnvironment by lazy {
         val llvmExecutablesPath = llvmExecutablesPath
         if (llvmExecutablesPath != null)
-            super.environment + ("PATH" to "$llvmExecutablesPath;${System.getenv("PATH")}")
+            super.execEnvironment + ("PATH" to "$llvmExecutablesPath;${System.getenv("PATH")}")
         else
-            super.environment
+            super.execEnvironment
     }
 
     private val llvmExecutablesPath: String? by lazy {

@@ -21,11 +21,11 @@ internal abstract class KotlinToolRunner(
     abstract val mainClass: String
     open val daemonEntryPoint: String get() = "main"
 
-    open val environment: Map<String, String> = emptyMap()
-    open val environmentBlacklist: Set<String> = emptySet()
+    open val execEnvironment: Map<String, String> = emptyMap()
+    open val execEnvironmentBlacklist: Set<String> = emptySet()
 
-    open val systemProperties: Map<String, String> = emptyMap()
-    open val systemPropertiesBlacklist: Set<String> = setOf("java.endorsed.dirs")
+    open val execSystemProperties: Map<String, String> = emptyMap()
+    open val execSystemPropertiesBlacklist: Set<String> = setOf("java.endorsed.dirs")
 
     abstract val classpath: Set<File>
     open fun checkClasspath(): Unit = check(classpath.isNotEmpty()) { "Classpath of the tool is empty: $displayName" }
@@ -79,21 +79,19 @@ internal abstract class KotlinToolRunner(
             spec.systemProperties(
                 System.getProperties().asSequence()
                     .map { (k, v) -> k.toString() to v.toString() }
-                    .filter { (k, _) -> k !in systemPropertiesBlacklist }
+                    .filter { (k, _) -> k !in execSystemPropertiesBlacklist }
                     .escapeQuotesForWindows()
                     .toMap()
             )
-            spec.systemProperties(systemProperties)
-            environmentBlacklist.forEach { spec.environment.remove(it) }
-            spec.environment(environment)
+            spec.systemProperties(execSystemProperties)
+            execEnvironmentBlacklist.forEach { spec.environment.remove(it) }
+            spec.environment(execEnvironment)
             spec.args(transformArgs(args))
         }
     }
 
     // TODO: Make it private again once KT-37550 is fixed.
     protected open fun runInProcess(args: List<String>) {
-        val oldProperties = setUpSystemProperties()
-
         try {
             val mainClass = getIsolatedClassLoader().loadClass(mainClass)
             val entryPoint = mainClass.methods.single { it.name == daemonEntryPoint }
@@ -101,32 +99,6 @@ internal abstract class KotlinToolRunner(
             entryPoint.invoke(null, transformArgs(args).toTypedArray())
         } catch (t: InvocationTargetException) {
             throw t.targetException
-        } finally {
-            restoreSystemProperties(oldProperties)
-        }
-    }
-
-    private fun setUpSystemProperties(): Map<String, String?> {
-        val oldProperties = mutableMapOf<String, String?>()
-
-        systemProperties.forEach { (k, v) -> oldProperties[k] = System.getProperty(v) }
-
-        System.getProperties().toList()
-            .map { (k, v) -> k.toString() to v.toString() }
-            .filter { (k, _) -> k in systemPropertiesBlacklist }
-            .forEach { (k, v) ->
-                oldProperties[k] = v
-                System.clearProperty(k)
-            }
-
-        systemProperties.forEach { (k, v) -> System.setProperty(k, v) }
-
-        return oldProperties
-    }
-
-    private fun restoreSystemProperties(oldProperties: Map<String, String?>) {
-        oldProperties.forEach { (k, v) ->
-            if (v == null) System.clearProperty(k) else System.setProperty(k, v)
         }
     }
 
