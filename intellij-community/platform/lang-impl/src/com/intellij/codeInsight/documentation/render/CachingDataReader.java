@@ -66,7 +66,7 @@ public final class CachingDataReader implements Disposable {
     File file = new File(folder, generateFileName());
     try {
       Files.write(file.toPath(), data);
-      myCache.putIfAbsent(url, file);
+      myCache.put(url, file);
     }
     catch (IOException e) {
       LOG.warn("Error writing to " + file, e);
