@@ -225,7 +225,7 @@ class ModuleInfo(
     fun sourceFolder(pathInProject: String, rootType: JpsModuleSourceRootType<*>, packagePrefix: String? = ANY_PACKAGE_PREFIX) {
         val sourceFolder = sourceFolderByPath[pathInProject]
         if (sourceFolder == null) {
-            projectInfo.messageCollector.report("Module '${module.name}': No source folder found: '$pathInProject'")
+            projectInfo.messageCollector.report("Module '${module.name}': No source folder found: '$pathInProject' among $sourceFolderByPath")
             return
         }
         if (packagePrefix != ANY_PACKAGE_PREFIX && sourceFolder.packagePrefix != packagePrefix) {

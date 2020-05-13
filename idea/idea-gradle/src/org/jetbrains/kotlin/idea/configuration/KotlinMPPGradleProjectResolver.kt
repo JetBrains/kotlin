@@ -33,7 +33,10 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.ExternalSystemNativeMainRunTask
+import org.jetbrains.kotlin.config.ExternalSystemRunTask
+import org.jetbrains.kotlin.config.ExternalSystemTestRunTask
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibrariesDependencySubstitutor
@@ -55,6 +58,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.lang.reflect.Proxy
 import java.util.*
+import java.util.stream.Collectors
 import kotlin.collections.HashMap
 
 @Order(ExternalSystemConstants.UNORDERED + 1)
@@ -861,6 +865,16 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
         private fun getExternalModuleName(gradleModule: IdeaModule, kotlinModule: KotlinModule) =
             gradleModule.name + ":" + kotlinModule.fullName()
 
+        private fun gradlePathToQualifiedName(
+            rootName: String,
+            gradlePath: String
+        ): String? {
+            return ((if (gradlePath.startsWith(":")) "$rootName." else "")
+                    + Arrays.stream(gradlePath.split(":".toRegex()).toTypedArray())
+                .filter { s: String -> s.isNotEmpty() }
+                .collect(Collectors.joining(".")))
+        }
+
         private fun getInternalModuleName(
             gradleModule: IdeaModule,
             externalProject: ExternalProject,
@@ -870,14 +884,24 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
         ): String {
             val delimiter: String
             val moduleName = StringBuilder()
+
+            val buildSrcGroup = resolverCtx.buildSrcGroup
             if (resolverCtx.isUseQualifiedModuleNames) {
                 delimiter = "."
-                if (StringUtil.isNotEmpty(externalProject.group)) {
-                    moduleName.append(externalProject.group).append(delimiter)
+                if (StringUtil.isNotEmpty(buildSrcGroup)) {
+                    moduleName.append(buildSrcGroup).append(delimiter)
                 }
-                moduleName.append(externalProject.name)
+                moduleName.append(
+                    gradlePathToQualifiedName(
+                        gradleModule.project.name,
+                        externalProject.qName
+                    )
+                )
             } else {
                 delimiter = "_"
+                if (StringUtil.isNotEmpty(buildSrcGroup)) {
+                    moduleName.append(buildSrcGroup).append(delimiter)
+                }
                 moduleName.append(gradleModule.name)
             }
             moduleName.append(delimiter)
