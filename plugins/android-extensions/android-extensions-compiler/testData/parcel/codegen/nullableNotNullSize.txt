@@ -10,7 +10,7 @@ public final class TestNotNull$Creator : java/lang/Object, android/os/Parcelable
     public java.lang.Object[] newArray(int p0)
 }
 
-public final class TestNotNull : java/lang/Object {
+public final class TestNotNull : java/lang/Object, android/os/Parcelable {
     public final static android.os.Parcelable$Creator CREATOR
 
     private final android.util.Size a
@@ -49,7 +49,7 @@ public final class TestNullable$Creator : java/lang/Object, android/os/Parcelabl
     public java.lang.Object[] newArray(int p0)
 }
 
-public final class TestNullable : java/lang/Object {
+public final class TestNullable : java/lang/Object, android/os/Parcelable {
     public final static android.os.Parcelable$Creator CREATOR
 
     private final android.util.Size a

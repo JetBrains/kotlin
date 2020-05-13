@@ -31,7 +31,7 @@ data class Test(
         @TypeParceler<Long, Parceler2> val c: Long,
         @TypeParceler<Int, Parceler1> val d: List<Int>,
         @TypeParceler<Long, Parceler2> val e: LongArray
-)
+) : Parcelable
 
 fun box() = parcelTest { parcel ->
     val test = Test(5, 5, 50L, listOf(1, 2, 3), longArrayOf(3, 2, 1))
