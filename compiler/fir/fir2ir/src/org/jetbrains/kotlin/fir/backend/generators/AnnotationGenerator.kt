@@ -15,6 +15,14 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.isPropertyField
 import org.jetbrains.kotlin.ir.util.isSetter
 
+/**
+ * A generator that converts annotations in [FirAnnotationContainer] to annotations in [IrMutableAnnotationContainer].
+ *
+ * In general, annotations are bound to the target in the beginning, i.e., clearly targeted at source level. But, there are some cases that
+ * need special handling: [AnnotationUseSiteTarget]. In particular, [FirProperty] contains all annotations associated with that property,
+ * whose targets may vary. After all the necessary pieces of IR elements, e.g., backing field, are ready, this generator splits those
+ * annotations to the specified targets.
+ */
 internal class AnnotationGenerator(private val visitor: Fir2IrVisitor) {
 
     fun generate(irContainer: IrMutableAnnotationContainer, firContainer: FirAnnotationContainer) {

@@ -27,6 +27,12 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 
+/**
+ * A platform-, frontend-independent logic for generating synthetic members of data class: equals, hashCode, toString, componentN, and copy.
+ * Different front-ends may need to define how to declare functions, parameters, etc., or simply provide predefined ones.
+ *
+ * Generating synthetic members of inline class can use this as well, in particular, members from Any: equals, hashCode, and toString.
+ */
 abstract class DataClassMembersGenerator(
     val context: IrGeneratorContext,
     val symbolTable: SymbolTable,
