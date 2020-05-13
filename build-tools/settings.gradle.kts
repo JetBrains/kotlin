@@ -16,9 +16,6 @@ pluginManagement {
             if (requested.id.id == "kotlin") {
                 useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
             }
-            if (requested.id.id == "kotlinx-serialization") {
-                useModule("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
-            }
         }
     }
 }
