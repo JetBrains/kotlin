@@ -2,7 +2,8 @@ import java.util.stream.Stream
 
 public final class LambdasKt {
     public static final fun foo() : void {
-        Stream.empty().filter({
+        Stream.empty().filter({ var it: java.lang.String ->
+
             return it.isEmpty()
         })
     }
