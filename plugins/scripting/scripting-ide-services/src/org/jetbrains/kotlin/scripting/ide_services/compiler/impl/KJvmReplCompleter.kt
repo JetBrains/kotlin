@@ -30,11 +30,15 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
+import org.jetbrains.kotlin.scripting.ide_services.compiler.completion
+import org.jetbrains.kotlin.scripting.ide_services.compiler.filterOutShadowedDescriptors
+import org.jetbrains.kotlin.scripting.ide_services.compiler.nameFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible
 import java.io.File
 import java.util.*
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCodeCompletionVariant
 
 fun getKJvmCompletion(
@@ -42,8 +46,16 @@ fun getKJvmCompletion(
     bindingContext: BindingContext,
     resolutionFacade: KotlinResolutionFacadeForRepl,
     moduleDescriptor: ModuleDescriptor,
-    cursor: Int
-) = KJvmReplCompleter(ktScript, bindingContext, resolutionFacade, moduleDescriptor, cursor).getCompletion()
+    cursor: Int,
+    configuration: ScriptCompilationConfiguration
+) = KJvmReplCompleter(
+    ktScript,
+    bindingContext,
+    resolutionFacade,
+    moduleDescriptor,
+    cursor,
+    configuration
+).getCompletion()
 
 // Insert a constant string right after a cursor position to make this identifiable as a simple reference
 // For example, code line
@@ -60,7 +72,8 @@ private class KJvmReplCompleter(
     private val bindingContext: BindingContext,
     private val resolutionFacade: KotlinResolutionFacadeForRepl,
     private val moduleDescriptor: ModuleDescriptor,
-    private val cursor: Int
+    private val cursor: Int,
+    private val configuration: ScriptCompilationConfiguration
 ) {
 
     private fun getElementAt(cursorPos: Int): PsiElement? {
@@ -72,6 +85,9 @@ private class KJvmReplCompleter(
     }
 
     fun getCompletion() = sequence<SourceCodeCompletionVariant> gen@{
+        val filterOutShadowedDescriptors = configuration[ScriptCompilationConfiguration.completion.filterOutShadowedDescriptors]!!
+        val nameFilter = configuration[ScriptCompilationConfiguration.completion.nameFilter]!!
+
         val element = getElementAt(cursor)
 
         var descriptors: Collection<DeclarationDescriptor>? = null
@@ -109,9 +125,9 @@ private class KJvmReplCompleter(
             ).getReferenceVariants(
                 simpleExpression,
                 DescriptorKindFilter.ALL,
-                { name: Name -> !name.isSpecial && name.identifier.startsWith(prefix) },
+                { name: Name -> !name.isSpecial && nameFilter(name.identifier, prefix) },
                 filterOutJavaGettersAndSetters = true,
-                filterOutShadowed = false, // setting to true makes it slower up to 4 times
+                filterOutShadowed = filterOutShadowedDescriptors, // setting to true makes it slower up to 4 times
                 excludeNonInitializedVariable = true,
                 useReceiverType = null
             )
@@ -177,7 +193,8 @@ private class KJvmReplCompleter(
                         receiverExpression,
                         CallTypeAndReceiver.DOT(receiverExpression),
                         DescriptorKindFilter.ALL,
-                        ALL_NAME_FILTER
+                        ALL_NAME_FILTER,
+                        filterOutShadowed = filterOutShadowedDescriptors,
                     )
                 }
             } else {
@@ -223,7 +240,7 @@ private class KJvmReplCompleter(
                 .forEach {
                     val descriptor = it.first
                     val (rawName, presentableText, tailText, completionText) = it.second
-                    if (rawName.startsWith(prefix)) {
+                    if (nameFilter(rawName, prefix)) {
                         val fullName: String =
                             formatName(
                                 presentableText
