@@ -68,9 +68,9 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
     dependencies {
         // Gradle projects with Kotlin/Native-specific logic
         // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
-        add("compile", project(":idea:idea-native"))
-        add("compile", project(":idea:idea-gradle-native"))
-        add("compile", project(":idea:kotlin-gradle-tooling"))
+        add("implementation", project(":idea:idea-native"))
+        add("implementation", project(":idea:idea-gradle-native"))
+        add("implementation", project(":idea:kotlin-gradle-tooling"))
         add("implementation", project(":idea:jvm-debugger:jvm-debugger-core")) { isTransitive = false }
 
         val (ideName, ideVersion) = guessIDEParams()
@@ -78,7 +78,7 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
         val ideBranch = ijProductBranch(ideVersion)
         val javaModuleName = if (ideBranch >= 192) "java" else ideName
 
-        add("compile", "kotlin.build:$javaModuleName:$ideVersion") {
+        add("implementation", "kotlin.build:$javaModuleName:$ideVersion") {
             javaApiArtifacts.forEach { jarName ->
                 artifact {
                     name = jarName
@@ -120,7 +120,7 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
             )
         }
 
-        add("compile", "kotlin.build:$ideName:$ideVersion") {
+        add("implementation", "kotlin.build:$ideName:$ideVersion") {
             ijPlatformDependencies.forEach { jarName ->
                 artifact {
                     name = jarName
@@ -131,7 +131,7 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
             isTransitive = false
         }
 
-        add("compile", "kotlin.build:gradle:$ideVersion")
+        add("implementation", "kotlin.build:gradle:$ideVersion")
     }
 }
 
@@ -142,20 +142,20 @@ fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
         val ideaPluginJars = fileTree(ideaPluginForCidrDir) {
             exclude(excludesListFromIdeaPlugin)
         }
-        add("compile", ideaPluginJars)
+        add("implementation", ideaPluginJars)
 
         val version = rootProject.extra[if (isStandaloneBuild) "cidrVersion" else "versions.intellijSdk"] as String
 
-        add("compile", "com.jetbrains.intellij.platform:debugger-impl:$version")
-        add("compile", "com.jetbrains.intellij.platform:indexing-impl:$version")
-        add("compile", "com.jetbrains.intellij.platform:ide-impl:$version")
-        add("compile", "com.jetbrains.intellij.platform:lang-impl:$version")
-        add("compile", "com.jetbrains.intellij.platform:external-system:$version")
-        add("compile", "com.jetbrains.intellij.platform:external-system-impl:$version")
-        add("compile", "com.jetbrains.intellij.gradle:gradle-common:$version")
-        add("compile", "com.jetbrains.intellij.java:java-debugger-impl:$version")
-        add("compile", "com.jetbrains.intellij.java:java-psi-impl:$version")
-        add("compile", "com.jetbrains.intellij.java:java-compiler-impl:$version")
+        add("implementation", "com.jetbrains.intellij.platform:debugger-impl:$version")
+        add("implementation", "com.jetbrains.intellij.platform:indexing-impl:$version")
+        add("implementation", "com.jetbrains.intellij.platform:ide-impl:$version")
+        add("implementation", "com.jetbrains.intellij.platform:lang-impl:$version")
+        add("implementation", "com.jetbrains.intellij.platform:external-system:$version")
+        add("implementation", "com.jetbrains.intellij.platform:external-system-impl:$version")
+        add("implementation", "com.jetbrains.intellij.gradle:gradle-common:$version")
+        add("implementation", "com.jetbrains.intellij.java:java-debugger-impl:$version")
+        add("implementation", "com.jetbrains.intellij.java:java-psi-impl:$version")
+        add("implementation", "com.jetbrains.intellij.java:java-compiler-impl:$version")
     }
 }
 
@@ -164,9 +164,9 @@ fun addIdeaNativeModuleDeps(project: Project) {
     with(project) {
         proprietaryRepositories(project)
         dependencies {
-            add("compile", "com.jetbrains.intellij.c:c:$cidrVersion") { isTransitive = isStandaloneBuild }
-            add("compile", "com.jetbrains.intellij.cidr:cidr-common:$cidrVersion") { isTransitive = isStandaloneBuild }
-            add("compile", "com.jetbrains.intellij.cidr:cidr-debugger:$cidrVersion") { isTransitive = isStandaloneBuild }
+            add("implementation", "com.jetbrains.intellij.c:c:$cidrVersion") { isTransitive = isStandaloneBuild }
+            add("implementation", "com.jetbrains.intellij.cidr:cidr-common:$cidrVersion") { isTransitive = isStandaloneBuild }
+            add("implementation", "com.jetbrains.intellij.cidr:cidr-debugger:$cidrVersion") { isTransitive = isStandaloneBuild }
         }
     }
     if (isStandaloneBuild) addIdeaNativeModuleDepsStandalone(project) else addIdeaNativeModuleDepsComposite(project)
