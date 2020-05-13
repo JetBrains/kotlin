@@ -54,6 +54,7 @@ import java.awt.font.TextAttribute;
 import java.awt.image.ImageObserver;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 class DocRenderer implements EditorCustomElementRenderer {
   private static final int MIN_WIDTH = 350;
@@ -215,7 +216,7 @@ class DocRenderer implements EditorCustomElementRenderer {
           activateLink(e);
         }
       });
-      myPane.getDocument().putProperty("imageCache", DocRenderImageMemoryManager.IMAGE_SUPPLIER);
+      myPane.getDocument().putProperty("imageCache", DocRenderImageManager.IMAGE_SUPPLIER);
       myContentUpdateNeeded = false;
     }
     AppUIUtil.targetToDevice(myPane, editor.getContentComponent());
@@ -368,6 +369,18 @@ class DocRenderer implements EditorCustomElementRenderer {
 
   class EditorPane extends JEditorPane {
     private final List<Image> myImages = new ArrayList<>();
+    private final AtomicBoolean myUpdateScheduled = new AtomicBoolean();
+    private final AtomicBoolean myRepaintScheduled = new AtomicBoolean();
+    private final ImageObserver myImageObserver = new ImageObserver() {
+      @Override
+      public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+        if ((infoflags & (ImageObserver.WIDTH | ImageObserver.HEIGHT)) != 0) {
+          scheduleUpdate();
+          return false;
+        }
+        return true;
+      }
+    };
     private boolean myRepaintRequested;
 
     @Override
@@ -378,16 +391,18 @@ class DocRenderer implements EditorCustomElementRenderer {
     void doWithRepaintTracking(Runnable task) {
       myRepaintRequested = false;
       task.run();
+      if (myRepaintRequested) repaintInlay();
+    }
+
+    private void repaintInlay() {
       Inlay<DocRenderer> inlay = myItem.inlay;
-      if (myRepaintRequested && inlay != null) {
-        inlay.repaint();
-      }
+      if (inlay != null) inlay.repaint();
     }
 
     @Override
     public void paint(Graphics g) {
       for (Image image : myImages) {
-        DocRenderImageMemoryManager.notifyPainted(image);
+        DocRenderImageManager.notifyPainted(image);
       }
       super.paint(g);
     }
@@ -396,32 +411,39 @@ class DocRenderer implements EditorCustomElementRenderer {
       return myItem.editor;
     }
 
+    private void scheduleUpdate() {
+      if (myUpdateScheduled.compareAndSet(false, true)) {
+        SwingUtilities.invokeLater(() -> {
+          myRepaintScheduled.set(false);
+          myUpdateScheduled.set(false);
+          Inlay<DocRenderer> inlay = myItem.inlay;
+          if (this == myPane && inlay != null) {
+            DocRenderItemUpdater.getInstance().updateInlays(Collections.singleton(inlay), false);
+          }
+        });
+      }
+    }
+
+    private void scheduleRepaint() {
+      if (!myUpdateScheduled.get() && myRepaintScheduled.compareAndSet(false, true)) {
+        SwingUtilities.invokeLater(() -> {
+          myRepaintScheduled.set(false);
+          if (this == myPane) {
+            repaintInlay();
+          }
+        });
+      }
+    }
+
     void startImageTracking() {
       collectImages(getUI().getRootView(this));
-      ImageObserver observer = (img, infoflags, x, y, width, height) -> {
-        boolean needsUpdate = (infoflags & (ImageObserver.WIDTH | ImageObserver.HEIGHT)) != 0;
-        boolean needsRepaint = (infoflags & ImageObserver.ALLBITS) != 0;
-        if (needsRepaint || needsUpdate) {
-          SwingUtilities.invokeLater(() -> {
-            Inlay<DocRenderer> inlay = myItem.inlay;
-            if (this == myPane && inlay != null) {
-              if (needsUpdate) {
-                DocRenderItemUpdater.getInstance().updateInlays(Collections.singleton(inlay), false);
-              }
-              else {
-                inlay.repaint();
-              }
-            }
-          });
-        }
-        return true;
-      };
       boolean update = false;
       for (Image image : myImages) {
-        update |= image.getWidth(observer) >= 0 || image.getHeight(observer) >= 0;
+        DocRenderImageManager.setCompletionListener(image, this::scheduleRepaint);
+        update |= image.getWidth(myImageObserver) >= 0 || image.getHeight(myImageObserver) >= 0;
       }
       if (update) {
-        observer.imageUpdate(null, 0, 0, 0, 0, 0);
+        myImageObserver.imageUpdate(null, ImageObserver.WIDTH | ImageObserver.HEIGHT, 0, 0, 0, 0);
       }
     }
 
@@ -439,7 +461,7 @@ class DocRenderer implements EditorCustomElementRenderer {
     }
 
     void dispose() {
-      myImages.forEach(DocRenderImageMemoryManager::dispose);
+      myImages.forEach(DocRenderImageManager::dispose);
     }
   }
 }

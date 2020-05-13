@@ -17,8 +17,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 
-class DocRenderImageMemoryManager {
-  private static final Logger LOG = Logger.getInstance(DocRenderImageMemoryManager.class);
+class DocRenderImageManager {
+  private static final Logger LOG = Logger.getInstance(DocRenderImageManager.class);
 
   private static final LinkedHashMap<Image, Integer> CACHE_NON_PAINTED = new LinkedHashMap<>();
   private static final LinkedHashMap<Image, Integer> CACHE_PAINTED = new LinkedHashMap<>();
@@ -74,6 +74,12 @@ class DocRenderImageMemoryManager {
     }
   }
 
+  static void setCompletionListener(@NotNull Image image, @NotNull Runnable runnable) {
+    if (image instanceof ManagedImage) {
+      ((ManagedImage)image).completionRunnable = runnable;
+    }
+  }
+
   static void dispose(@NotNull Image image) {
     if (image instanceof ManagedImage) ((ManagedImage)image).dispose();
     image.flush();
@@ -82,14 +88,15 @@ class DocRenderImageMemoryManager {
   private static class ManagedImage extends ToolkitImage implements ImageConsumer {
     private int myWidth;
     private int myHeight;
+    private volatile Runnable completionRunnable;
 
     private ManagedImage(URL url) {
       super(new CachingImageSource(url));
-      getSource().addConsumer(this);
+      ((CachingImageSource)getSource()).setPermanentConsumer(this);
     }
 
     private void dispose() {
-      getSource().removeConsumer(this);
+      ((CachingImageSource)getSource()).setPermanentConsumer(null);
     }
 
     @Override
@@ -102,6 +109,12 @@ class DocRenderImageMemoryManager {
     public void imageComplete(int status) {
       if (myWidth > 0 && myHeight > 0) {
         register(this, myWidth * myHeight >>> 8 /* assuming 4 bytes per pixel */);
+
+        myWidth = 0;  // InputStreamImageSource (probably due to a bug) reports IMAGEERROR status after reporting STATICIMAGEDONE
+        myHeight = 0; // We want to ignore that
+
+        Runnable runnable = completionRunnable;
+        if (runnable != null) runnable.run();
       }
     }
 
@@ -129,16 +142,33 @@ class DocRenderImageMemoryManager {
 
   private static class CachingImageSource extends FileImageSource {
     private final URL myURL;
+    private ImageConsumer myPermanentConsumer;
 
     private CachingImageSource(URL url) {
       super(null);
       myURL = url;
     }
 
+    private synchronized void setPermanentConsumer(ImageConsumer consumer) {
+      if (myPermanentConsumer != null) removeConsumer(myPermanentConsumer);
+      myPermanentConsumer = consumer;
+    }
+
+    private synchronized void addPermanentConsumer() {
+      ImageConsumer consumer = myPermanentConsumer;
+      if (consumer != null) addConsumer(consumer);
+    }
+
     @Override
     protected ImageDecoder getDecoder() {
       InputStream stream = CachingDataReader.getInstance().getInputStream(myURL);
       return stream == null ? null : getDecoder(stream);
+    }
+
+    @Override
+    public void doFetch() {
+      addPermanentConsumer();
+      super.doFetch();
     }
   }
 
