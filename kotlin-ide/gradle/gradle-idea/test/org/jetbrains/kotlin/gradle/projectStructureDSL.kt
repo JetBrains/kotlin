@@ -59,7 +59,7 @@ class ProjectInfo(
     fun module(name: String, body: ModuleInfo.() -> Unit = {}) {
         val module = moduleManager.findModuleByName(name)
         if (module == null) {
-            messageCollector.report("No module found: '$name'")
+            messageCollector.report("No module found: '$name' in ${moduleManager.modules.map { it.name }}")
             return
         }
         val moduleInfo = ModuleInfo(module, this)
