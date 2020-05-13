@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.StructuralSearchProfile
+import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
@@ -15,6 +16,7 @@ import com.intellij.structuralsearch.plugin.ui.Configuration
 import com.intellij.util.SmartList
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinCompiledPattern
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinMatchingVisitor
+import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinValidationVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompilingVisitor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -55,6 +57,16 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val blockContent = result.first().children // Remove the first block element
         for (element in blockContent) print(DebugUtil.psiToString(element, false))
         return blockContent
+    }
+
+    override fun checkSearchPattern(pattern: CompiledPattern) {
+        val visitor = KotlinValidationVisitor()
+        val nodes = pattern.nodes
+        while (nodes.hasNext()) {
+            nodes.current().accept(visitor)
+            nodes.advance()
+        }
+        nodes.reset()
     }
 
     companion object {
