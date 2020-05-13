@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -468,6 +468,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     }
 
     @Test
+    @Suppress("DEPRECATION")
     fun scanReduce() {
         val accumulators = data.scanReduce { acc, e -> acc + e }
         assertEquals(2, accumulators.size)
@@ -476,6 +477,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     }
 
     @Test
+    @Suppress("DEPRECATION")
     fun scanReduceIndexed() {
         val accumulators = data.scanReduceIndexed { i, acc, e -> acc + i + e }
         assertEquals(2, accumulators.size)

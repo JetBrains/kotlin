@@ -33,6 +33,7 @@ internal open class PlatformImplementations {
     }
 
     public open fun getSuppressed(exception: Throwable): List<Throwable> {
+        @Suppress("UNCHECKED_CAST")
         return ReflectThrowable.getSuppressed?.invoke(exception)?.let { (it as Array<Throwable>).asList() }
             ?: emptyList()
     }
