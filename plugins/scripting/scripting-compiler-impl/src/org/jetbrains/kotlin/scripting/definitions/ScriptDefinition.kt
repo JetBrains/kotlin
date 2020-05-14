@@ -178,20 +178,25 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         override val evaluationConfiguration: ScriptEvaluationConfiguration?
     ) : FromConfigurationsBase()
 
-    open class FromTemplate(
+    open class FromNewDefinition(
         private val baseHostConfiguration: ScriptingHostConfiguration,
-        template: KClass<*>,
-        contextClass: KClass<*> = ScriptCompilationConfiguration::class
+        private val definition: kotlin.script.experimental.host.ScriptDefinition
     ) : FromConfigurationsBase() {
-
-        private val definition = createScriptDefinitionFromTemplate(KotlinType(template), baseHostConfiguration, contextClass)
-
         override val hostConfiguration: ScriptingHostConfiguration
             get() = definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: baseHostConfiguration
 
         override val compilationConfiguration: ScriptCompilationConfiguration get() = definition.compilationConfiguration
         override val evaluationConfiguration: ScriptEvaluationConfiguration get() = definition.evaluationConfiguration
     }
+
+    open class FromTemplate(
+        baseHostConfiguration: ScriptingHostConfiguration,
+        template: KClass<*>,
+        contextClass: KClass<*> = ScriptCompilationConfiguration::class
+    ) : FromNewDefinition(
+        baseHostConfiguration,
+        createScriptDefinitionFromTemplate(KotlinType(template), baseHostConfiguration, contextClass)
+    )
 
     companion object {
         fun getDefault(hostConfiguration: ScriptingHostConfiguration) =
