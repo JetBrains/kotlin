@@ -299,6 +299,15 @@ public class GradleExecutionHelper {
                                      @NotNull GradleExecutionSettings settings,
                                      @NotNull ExternalSystemTaskNotificationListener listener,
                                      @NotNull CancellationToken cancellationToken) {
+    ensureInstalledWrapper(id, projectPath, settings, GradleVersion.current(), listener, cancellationToken);
+  }
+
+  public void ensureInstalledWrapper(@NotNull ExternalSystemTaskId id,
+                                     @NotNull String projectPath,
+                                     @NotNull GradleExecutionSettings settings,
+                                     @NotNull GradleVersion gradleVersion,
+                                     @NotNull ExternalSystemTaskNotificationListener listener,
+                                     @NotNull CancellationToken cancellationToken) {
 
     if (!settings.getDistributionType().isWrapped()) return;
 
@@ -329,6 +338,7 @@ public class GradleExecutionHelper {
           "      wrapper.jarFile = new File('" + StringUtil.escapeBackSlashes(jarFile.getCanonicalPath()) + "')",
           "      wrapper.scriptFile = new File('" + StringUtil.escapeBackSlashes(scriptFile.getCanonicalPath()) + "')",
           "    }",
+          "    wrapper.gradleVersion = '" + gradleVersion.getVersion() + "'",
           "    wrapper.doLast {",
           "      new File('" + StringUtil.escapeBackSlashes(pathToProperties.getCanonicalPath()) + "').write wrapper.propertiesFile.getCanonicalPath()",
           "    }",

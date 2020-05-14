@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.nullize
+import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -37,9 +38,10 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
 
   override fun linkAndRefreshProject(projectDirectory: String, project: Project) {
     val gradleProjectSettings = GradleProjectSettings()
-    setupGradleSettings(gradleProjectSettings, projectDirectory, project)
+    val gradleVersion = gradleProjectSettings.resolveGradleVersion()
+    setupGradleSettings(project, gradleProjectSettings, projectDirectory, gradleVersion)
     attachGradleProjectAndRefresh(gradleProjectSettings, project)
-    validateJavaHome(project, projectDirectory, gradleProjectSettings.resolveGradleVersion())
+    validateJavaHome(project, projectDirectory, gradleVersion)
   }
 
   override fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
@@ -65,10 +67,10 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
                                         .callback(createFinalImportCallback(project, externalProjectPath)))
   }
 
-  fun setupGradleSettings(settings: GradleProjectSettings, projectDirectory: String, project: Project) {
+  fun setupGradleSettings(project: Project, settings: GradleProjectSettings, projectDirectory: String, gradleVersion: GradleVersion) {
     GradleSettings.getInstance(project).setupGradleSettings()
     settings.setupGradleProjectSettings(projectDirectory)
-    setupGradleJvm(project, settings, projectDirectory)
+    setupGradleJvm(project, settings, projectDirectory, gradleVersion)
   }
 
   private fun GradleSettings.setupGradleSettings() {
