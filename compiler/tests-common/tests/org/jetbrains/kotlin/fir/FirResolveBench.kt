@@ -5,6 +5,9 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.io.File
 import java.io.PrintStream
+import java.text.DecimalFormat
 import kotlin.math.max
 import kotlin.reflect.KClass
 import kotlin.system.measureNanoTime
@@ -47,6 +51,7 @@ class FirResolveBench(val withProgress: Boolean) {
         val errorFunctionCallTypes: Int,
         val errorQualifiedAccessTypes: Int,
         val fileCount: Int,
+        val totalLines: Int,
         val errorTypesReports: Map<String, ErrorTypeReport>,
         val timePerTransformer: Map<String, Measure>
     ) {
@@ -86,6 +91,7 @@ class FirResolveBench(val withProgress: Boolean) {
     var implicitTypes = 0
     var fileCount = 0
     var totalTime = 0L
+    var totalLines = 0
 
 
     private val fails = mutableListOf<FailureInfo>()
@@ -107,6 +113,7 @@ class FirResolveBench(val withProgress: Boolean) {
             val after = vmStateSnapshot()
             val diff = after - before
             recordTime(builder::class, diff, time)
+            totalLines += StringUtil.countNewLines(file.text)
             firFile
         }.also {
             totalTime = timePerTransformer.values.sumByLong { it.time }
@@ -120,13 +127,16 @@ class FirResolveBench(val withProgress: Boolean) {
         return files.map { file ->
             val before = vmStateSnapshot()
             val firFile: FirFile
+            val code: String
             val time = measureNanoTime {
-                firFile = builder.buildFirFile(file)
+                code = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
+                firFile = builder.buildFirFile(code, file.name)
                 (builder.session.firProvider as FirProviderImpl).recordFile(firFile)
             }
             val after = vmStateSnapshot()
             val diff = after - before
             recordTime(builder::class, diff, time)
+            totalLines += StringUtil.countNewLines(code)
             firFile
         }.also {
             totalTime = timePerTransformer.values.sumByLong { it.time }
@@ -309,6 +319,7 @@ class FirResolveBench(val withProgress: Boolean) {
         errorFunctionCallTypes,
         errorQualifiedAccessTypes,
         fileCount,
+        totalLines,
         errorTypesReports,
         timePerTransformer.mapKeys { (klass, _) -> klass.simpleName!!.toString() }
     )
@@ -388,7 +399,7 @@ fun FirResolveBench.TotalStatistics.report(stream: PrintStream, header: String) 
         printTable(stream) {
             row {
                 cell("Stage", LEFT)
-                cells("Time", "Time per file", "Files: OK/E/T", "CPU", "User", "GC", "GC count")
+                cells("Time", "Time per file", "Files: OK/E/T", "CPU", "User", "GC", "GC count", "L/S")
             }
             separator()
             timePerTransformer.forEach { (transformer, measure) ->
@@ -415,6 +426,15 @@ private fun RTableContext.printMeasureAsTable(measure: FirResolveBench.Measure, 
         timeCell(measure.user)
         timeCell(measure.gcTime, inputUnit = TableTimeUnit.MS)
         cell(measure.gcCollections.toString())
+
+        run {
+            val linePerSec = statistics.totalLines / TableTimeUnit.S.convert(time, TableTimeUnit.NS)
+            val df = DecimalFormat().apply {
+                maximumFractionDigits = 1
+                isGroupingUsed = true
+            }
+            cell(df.format(linePerSec))
+        }
     }
 }
 
