@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.name.FqName
@@ -55,7 +54,6 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         val irProviders = generateTypicalIrProviderList(
             irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable, extensions = extensions
         )
-        ExternalDependenciesGenerator(symbolTable, irProviders, state.languageVersionSettings).generateUnboundSymbolsAsDependencies()
 
         val stubGenerator = irProviders.filterIsInstance<DeclarationStubGenerator>().first()
         for (descriptor in symbolTable.wrappedTopLevelCallableDescriptors()) {
