@@ -139,6 +139,15 @@ fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile, withLocalDeclarations: Boo
                     }
                 }
             }
+
+            override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
+                ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
+                if (withLocalDeclarations) {
+                    declaration.statements.forEach { it.accept(this, null) }
+                }
+                declaration.thisReceiver.accept(this, declaration)
+            }
+
         }, null)
     }
 }
@@ -238,6 +247,17 @@ fun DeclarationTransformer.runPostfix(withLocalDeclarations: Boolean = false): D
                     ArrayList(declaration.declarations).forEach { it.accept(this, null) }
 
                     declaration.declarations.transformFlat(this@runPostfix::transformFlatRestricted)
+                }
+
+                override fun visitScript(declaration: IrScript) {
+                    ArrayList(declaration.declarations).forEach { it.accept(this, null) }
+                    declaration.declarations.transformFlat(this@runPostfix::transformFlatRestricted)
+
+                    if (withLocalDeclarations) {
+                        declaration.statements.forEach { it.accept(this, null) }
+                    }
+
+                    declaration.thisReceiver.accept(this, null)
                 }
             })
 
