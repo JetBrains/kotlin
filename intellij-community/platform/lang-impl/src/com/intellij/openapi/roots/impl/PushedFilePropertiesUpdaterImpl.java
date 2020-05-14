@@ -32,10 +32,7 @@ import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManagerImpl;
 import com.intellij.ui.GuiUtils;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileBasedIndexProjectHandler;
-import com.intellij.util.indexing.IndexingBundle;
-import com.intellij.util.indexing.UnindexedFilesUpdater;
+import com.intellij.util.indexing.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -388,7 +385,7 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
   @Override
   public void filePropertiesChanged(@NotNull final VirtualFile file) {
     ApplicationManager.getApplication().assertReadAccessAllowed();
-    FileBasedIndex.getInstance().requestReindex(file);
+    ((FileBasedIndexImpl)FileBasedIndex.getInstance()).requestReindex(file, false);
     for (final Project project : ProjectManager.getInstance().getOpenProjects()) {
       reloadPsi(file, project);
     }
