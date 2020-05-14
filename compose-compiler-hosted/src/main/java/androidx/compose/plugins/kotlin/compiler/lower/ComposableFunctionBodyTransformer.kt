@@ -2333,7 +2333,7 @@ class ComposableFunctionBodyTransformer(
                     // immutable operations so the overall result is static if the operands are
                     // also static
                     symbol.descriptor.fqNameSafe.topLevelName() == "kotlin" &&
-                    dispatchReceiver?.isStatic() == true
+                    dispatchReceiver?.isStatic() == true &&
                     getValueArgument(0)?.isStatic() == true
                 }
                 else -> false

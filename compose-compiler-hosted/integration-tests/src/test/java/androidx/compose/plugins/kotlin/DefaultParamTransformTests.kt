@@ -216,22 +216,25 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
               %composer.startRestartGroup(%key)
               val %dirty = %changed
               val a = if (%default and 0b0001 !== 0) 0 else a
-              val b = if (%default and 0b0010 !== 0) {
-                a + 1
-              } else {
-                b
-              }
+              val b = b
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%default and 0b0010 !== 0) {
-                %dirty = %dirty or 0b00011000
-              } else if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(b)) 0b00010000 else 0b1000
+              if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(b)) 0b00010000 else 0b1000
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
+                  %composer.startDefaults()
+                  if (%default and 0b0010 !== 0) {
+                    b = a + 1
+                  }
+                  %composer.endDefaults()
+                } else {
+                  %composer.skipCurrentGroup()
+                }
                 print(a)
                 print(b)
               } else {

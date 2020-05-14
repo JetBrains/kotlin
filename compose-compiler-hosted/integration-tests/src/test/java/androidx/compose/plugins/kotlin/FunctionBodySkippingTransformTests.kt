@@ -1210,6 +1210,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
+            // all of these should result in 0b0110
             @Composable fun A() {
                 val x = 123
                 C(normInt)
@@ -1221,6 +1222,11 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 C(123 + 345)
                 C(x)
                 C(x * 123)
+            }
+            // all of these should result in 0b0000
+            @Composable fun B() {
+                C(Math.random())
+                C(Math.random() / 100f)
             }
         """,
         """
@@ -1243,6 +1249,19 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
                 A(%composer, %key, %changed or 0b0001)
+              }
+            }
+            @Composable
+            fun B(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startRestartGroup(%key)
+              if (%changed !== 0 || !%composer.skipping) {
+                C(random(), %composer, <>, 0)
+                C(random() / 100.0f, %composer, <>, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
+                B(%composer, %key, %changed or 0b0001)
               }
             }
         """
@@ -1476,7 +1495,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
               if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
-                X(x + 1, %composer, <>, 0b0110)
+                X(x + 1, %composer, <>, 0)
                 X(x, %composer, <>, 0b0110 and %dirty)
               } else {
                 %composer.skipToGroupEnd()
@@ -1518,7 +1537,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
               if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
-                B(x, x + 1, 123, fooGlobal, %composer, <>, 0b000111111000 or 0b0110 and %dirty)
+                B(x, x + 1, 123, fooGlobal, %composer, <>, 0b000111100000 or 0b0110 and %dirty)
               } else {
                 %composer.skipToGroupEnd()
               }
