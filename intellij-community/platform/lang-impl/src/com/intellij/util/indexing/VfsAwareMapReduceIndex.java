@@ -96,7 +96,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
     }
     if (isCompositeIndexer(myIndexer)) {
       try {
-        //noinspection unchecked,rawtypes,ConstantConditions
+        // noinspection unchecked,rawtypes
         mySubIndexerRetriever = new PersistentSubIndexerRetriever((ID)myIndexId,
                                                                   extension.getVersion(),
                                                                   (CompositeDataIndexer) myIndexer);
@@ -116,6 +116,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
     installMemoryModeListener();
   }
 
+  @Override
   public void dumpStatistics() {
     if (mySnapshotInputMappings instanceof SnapshotInputMappings<?, ?>) {
       ((SnapshotInputMappings<?, ?>) mySnapshotInputMappings).dumpStatistics();
