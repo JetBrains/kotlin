@@ -2080,7 +2080,6 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/fir/kotlin.fir.iml" filepath="$PROJECT_DIR$/kotlin/fir/kotlin.fir.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/formatter/kotlin.formatter.iml" filepath="$PROJECT_DIR$/kotlin/formatter/kotlin.formatter.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/generators/kotlin.generators.iml" filepath="$PROJECT_DIR$/kotlin/generators/kotlin.generators.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kotlin/generators/test-generator/kotlin.generators.test-generator.iml" filepath="$PROJECT_DIR$/kotlin/generators/test-generator/kotlin.generators.test-generator.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/git/kotlin.git.iml" filepath="$PROJECT_DIR$/kotlin/git/kotlin.git.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/gradle/gradle-idea/kotlin.gradle.gradle-idea.iml" filepath="$PROJECT_DIR$/kotlin/gradle/gradle-idea/kotlin.gradle.gradle-idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/gradle/gradle-native/kotlin.gradle.gradle-native.iml" filepath="$PROJECT_DIR$/kotlin/gradle/gradle-native/kotlin.gradle.gradle-native.iml" />
