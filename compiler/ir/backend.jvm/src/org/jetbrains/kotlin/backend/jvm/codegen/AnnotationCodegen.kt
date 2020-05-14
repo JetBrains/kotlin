@@ -241,8 +241,10 @@ abstract class AnnotationCodegen(
                 val callee = value.symbol.owner
                 when {
                     callee.parentAsClass.isAnnotationClass -> {
-                        val internalAnnName = typeMapper.mapType(callee.returnType).descriptor
+                        val annotationClassType = callee.returnType
+                        val internalAnnName = typeMapper.mapType(annotationClassType).descriptor
                         val visitor = annotationVisitor.visitAnnotation(name, internalAnnName)
+                        annotationClassType.classOrNull?.owner?.let(innerClassConsumer::addInnerClassInfoFromAnnotation)
                         genAnnotationArguments(value, visitor)
                         visitor.visitEnd()
                     }
@@ -250,9 +252,10 @@ abstract class AnnotationCodegen(
                 }
             }
             is IrGetEnumValue -> {
-                val enumClassInternalName = typeMapper.mapClass(value.symbol.owner.parentAsClass).descriptor
-                val enumEntryName = value.symbol.owner.name
-                annotationVisitor.visitEnum(name, enumClassInternalName, enumEntryName.asString())
+                val enumEntry = value.symbol.owner
+                val enumClass = enumEntry.parentAsClass
+                innerClassConsumer.addInnerClassInfoFromAnnotation(enumClass)
+                annotationVisitor.visitEnum(name, typeMapper.mapClass(enumClass).descriptor, enumEntry.name.asString())
             }
             is IrVararg -> { // array constructor
                 val visitor = annotationVisitor.visitArray(name)
@@ -262,7 +265,9 @@ abstract class AnnotationCodegen(
                 visitor.visitEnd()
             }
             is IrClassReference -> {
-                annotationVisitor.visit(name, typeMapper.mapType(value.classType))
+                val classType = value.classType
+                classType.classOrNull?.owner?.let(innerClassConsumer::addInnerClassInfoFromAnnotation)
+                annotationVisitor.visit(name, typeMapper.mapType(classType))
             }
             is IrErrorExpression -> error("Don't know how to compile annotation value ${ir2string(value)}")
             else -> error("Unsupported compile-time value ${ir2string(value)}")

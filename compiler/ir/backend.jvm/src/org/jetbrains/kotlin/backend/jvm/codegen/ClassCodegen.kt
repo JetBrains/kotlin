@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
@@ -93,6 +93,8 @@ abstract class ClassCodegen protected constructor(
         )
     }
 
+    private val innerClasses = linkedSetOf<IrClass>()
+
     private var regeneratedObjectNameGenerators = mutableMapOf<String, NameGenerator>()
 
     fun getRegeneratedObjectNameGenerator(function: IrFunction): NameGenerator {
@@ -155,6 +157,9 @@ abstract class ClassCodegen protected constructor(
 
         visitor.done()
         jvmSignatureClashDetector.reportErrors(classOrigin)
+
+        generateInnerClasses()
+
         return reifiedTypeParametersUsages
     }
 
@@ -335,8 +340,14 @@ abstract class ClassCodegen protected constructor(
         // See FileBasedKotlinClass.convertAnnotationVisitor
         generateSequence<IrDeclaration>(innerClass) { it.parent as? IrDeclaration }.takeWhile { !it.isTopLevelDeclaration }.forEach {
             if (it is IrClass) {
-                writeInnerClass(it, typeMapper, context, visitor)
+                innerClasses.add(it)
             }
+        }
+    }
+
+    private fun generateInnerClasses() {
+        for (klass in innerClasses) {
+            writeInnerClass(klass, typeMapper, context, visitor)
         }
     }
 }
