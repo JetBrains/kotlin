@@ -91,9 +91,8 @@ class KotlinUsagesInSwiftAndObjCRenameProcessor : ForeignUsagesRenameProcessor()
         val moduleNode = CachedModuleDataFinder().findMainModuleData(nativeModule) ?: return null
         val framework =
             KonanConsumer.getAllReferencedKonanTargets(element.project).firstOrNull { it.moduleId == moduleNode.data.id } ?: return null
-        val nativeModuleDescriptor = nativeModule.toDescriptor() ?: return null
-        val exportedDependencies = element.module?.toDescriptor()?.let { listOf(it) } ?: return null
-        return createNamer(nativeModuleDescriptor, exportedDependencies, abbreviate(framework.productModuleName))
+        val moduleDescriptor = element.module?.toDescriptor() ?: return null
+        return createNamer(moduleDescriptor, abbreviate(framework.productModuleName))
     }
 
     private fun KtClassOrObject.renamedDescriptor(name: Name): ClassDescriptor {
