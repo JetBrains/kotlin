@@ -120,6 +120,8 @@ private fun compileImpl(
         messageCollector
     )
 
+    if (sourceDependencies.any { it.sourceDependencies is ResultWithDiagnostics.Failure }) return failure(messageCollector)
+
     val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
     val getScriptConfiguration = { ktFile: KtFile ->
         (dependenciesProvider?.getScriptConfiguration(ktFile)?.configuration ?: context.baseScriptCompilationConfiguration)
