@@ -60,7 +60,7 @@ class IrBuiltIns(
             operatorDescriptor.addValueParameter(valueParameterDescriptor)
         }
 
-        val symbol = symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, operatorDescriptor) {
+        val symbol = symbolTable.declareSimpleFunctionIfNotExists(operatorDescriptor) {
             val operator = IrBuiltInOperator(it, Name.identifier(name), returnType)
             operator.parent = packageFragment
             packageFragment.declarations += operator
@@ -134,7 +134,7 @@ class IrBuiltIns(
             buildSimpleType()
         }
 
-        return symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, operatorDescriptor) {
+        return symbolTable.declareSimpleFunctionIfNotExists(operatorDescriptor) {
             val operator = IrBuiltInOperator(it, name, returnIrType)
             operator.parent = packageFragment
             packageFragment.declarations += operator
