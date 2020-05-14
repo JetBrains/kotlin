@@ -380,7 +380,7 @@ class DefaultParameterCleaner(
     }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrValueParameter && !context.scriptMode && declaration.defaultValue != null) {
+        if (declaration is IrValueParameter && declaration.defaultValue != null) {
             if (replaceDefaultValuesWithStubs) {
                 if (context.mapping.defaultArgumentsOriginalFunction[declaration.parent as IrFunction] == null) {
                     declaration.defaultValue =
