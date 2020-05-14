@@ -33,5 +33,7 @@ sourceSets {
 }
 
 projectTest(parallel = true) {
+    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+    systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
     workingDir = rootDir
 }

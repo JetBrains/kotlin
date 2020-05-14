@@ -63,9 +63,10 @@ abstract class AbstractJsReplTest : Closeable {
         configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, collector)
         configuration.put(CommonConfigurationKeys.MODULE_NAME, "repl.kts")
+        val stdlibPath = System.getProperty("kotlin.js.full.stdlib.path")
         val scriptConfiguration = ScriptCompilationConfiguration {
             baseClass("kotlin.Any")
-            dependencies.append(JsDependency("libraries/stdlib/js-ir/build/classes/kotlin/js/main/"))
+            dependencies.append(JsDependency(stdlibPath))
             platform.put("JS")
         }
         configuration.add(
