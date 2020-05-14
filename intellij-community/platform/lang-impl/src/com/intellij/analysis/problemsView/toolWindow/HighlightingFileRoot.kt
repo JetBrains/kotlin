@@ -13,24 +13,23 @@ import com.intellij.ui.tree.LeafState
 internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualFile)
   : Root(panel), LeafState.Supplier, MarkupModelListener, Disposable {
 
-  private val myProblems = FileProblems()
-  private val myFileNode = FileNode(this, file)
+  private val problems = FileProblems(file)
 
   init {
     refreshChildren()
   }
 
   override fun getChildren(): Collection<Node> {
-    return listOf(myFileNode)
+    return synchronized(problems) { listOf(problems.getFileNode(this)) }
   }
 
   override fun getChildren(file: VirtualFile): Collection<Node> {
-    return synchronized(myProblems) { myProblems.getNodes(myFileNode).toList() }
+    return synchronized(problems) { problems.getProblemNodes() }
   }
 
   fun findProblemNode(info: HighlightInfo?): ProblemNode? {
     val problem = getProblem(info) ?: return null
-    return synchronized(myProblems) { myProblems.findNode(problem) }
+    return synchronized(problems) { problems.findProblemNode(problem) }
   }
 
   private fun refreshChildren() {
@@ -45,13 +44,13 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualF
 
   override fun afterAdded(highlighter: RangeHighlighterEx) {
     val problem = getProblem(highlighter) ?: return
-    synchronized(myProblems) { myProblems.add(problem) }
+    synchronized(problems) { problems.add(problem) }
     structureChanged()
   }
 
   override fun beforeRemoved(highlighter: RangeHighlighterEx) {
     val problem = getProblem(highlighter) ?: return
-    synchronized(myProblems) { myProblems.remove(problem) }
+    synchronized(problems) { problems.remove(problem) }
     structureChanged()
   }
 
@@ -72,7 +71,7 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualF
     return if (info?.description == null) null else HighlightingProblem(info)
   }
 
-  override fun getProblemsCount() = synchronized(myProblems) { myProblems.count() }
+  override fun getProblemsCount() = synchronized(problems) { problems.count() }
 
-  override fun getProblemsCount(file: VirtualFile, severity: Severity) = synchronized(myProblems) { myProblems.count(severity) }
+  override fun getProblemsCount(file: VirtualFile, severity: Severity) = synchronized(problems) { problems.count(severity) }
 }
