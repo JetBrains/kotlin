@@ -42,10 +42,14 @@ abstract class AbstractDocRenderMemoryManager<T> {
 
     // trim the cache
     while (myNotPaintedCache.size() > 1 /* don't remove just registered object */ && myTotalSize > myCacheSizeLimitKb) {
-      destroy(myNotPaintedCache.keySet().iterator().next());
+      T toRemove = myNotPaintedCache.keySet().iterator().next();
+      destroy(toRemove);
+      assert !myNotPaintedCache.containsKey(toRemove); // 'destroy' is supposed to call 'unregister'
     }
     while (!myPaintedCache.isEmpty() && myTotalSize > myCacheSizeLimitKb) {
-      destroy(myPaintedCache.keySet().iterator().next());
+      T toRemove = myPaintedCache.keySet().iterator().next();
+      destroy(toRemove);
+      assert !myPaintedCache.containsKey(toRemove); // 'destroy' is supposed to call 'unregister'
     }
   }
 
