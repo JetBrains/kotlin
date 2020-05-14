@@ -191,6 +191,14 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
     }
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        withNewLocalScope {
+            transformBlockInCurrentScope(block, data)
+        }
+
+        return block.compose()
+    }
+
+    internal fun transformBlockInCurrentScope(block: FirBlock, data: ResolutionMode) {
         dataFlowAnalyzer.enterBlock(block)
         val numberOfStatements = block.statements.size
 
@@ -220,8 +228,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 diagnostic = ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)
             }
         }
+
         dataFlowAnalyzer.exitBlock(block)
-        return block.compose()
     }
 
     override fun transformThisReceiverExpression(

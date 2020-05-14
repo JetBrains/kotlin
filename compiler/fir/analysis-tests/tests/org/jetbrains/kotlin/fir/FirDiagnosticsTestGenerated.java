@@ -909,6 +909,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/baseQualifier.kt");
         }
 
+        @TestMetadata("blockLocalScopes.kt")
+        public void testBlockLocalScopes() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/blockLocalScopes.kt");
+        }
+
         @TestMetadata("CallBasedInExpressionGenerator.kt")
         public void testCallBasedInExpressionGenerator() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/CallBasedInExpressionGenerator.kt");

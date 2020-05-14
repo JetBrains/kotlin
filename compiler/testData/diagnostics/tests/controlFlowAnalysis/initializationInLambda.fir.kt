@@ -70,7 +70,7 @@ class Your {
 val z = if (true) {
     val xx: Int
     exec {
-        <!UNRESOLVED_REFERENCE!>xx<!> = 24
+        xx = 24
     }
     42
 }

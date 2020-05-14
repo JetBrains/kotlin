@@ -40,10 +40,17 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     }
 
     override fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        return doWhileLoop.also(dataFlowAnalyzer::enterDoWhileLoop)
-            .transformBlock(transformer, data).also(dataFlowAnalyzer::enterDoWhileLoopCondition)
-            .transformCondition(transformer, data).also(dataFlowAnalyzer::exitDoWhileLoop)
-            .transformOtherChildren(transformer, data).compose()
+        // Do-while has a specific scope structure (its block and condition effectively share the scope)
+        return withNewLocalScope {
+            doWhileLoop.also(dataFlowAnalyzer::enterDoWhileLoop)
+                .apply {
+                    transformer.expressionsTransformer.transformBlockInCurrentScope(block, data)
+                    dataFlowAnalyzer
+                }
+                .also(dataFlowAnalyzer::enterDoWhileLoopCondition).transformCondition(transformer, data)
+                .also(dataFlowAnalyzer::exitDoWhileLoop)
+                .transformOtherChildren(transformer, data).compose()
+        }
     }
 
     // ------------------------------- When expressions -------------------------------
