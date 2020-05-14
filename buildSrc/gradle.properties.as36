@@ -1,8 +1,0 @@
-org.gradle.jvmargs=-Duser.country=US -Dkotlin.daemon.jvm.options=-Xmx1600m -Dfile.encoding=UTF-8
-
-cacheRedirectorEnabled=true
-
-#buildSrc.kotlin.repo=https://jcenter.bintray.com
-#buildSrc.kotlin.version=1.1.50
-
-intellijUltimateEnabled=false
