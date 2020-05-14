@@ -24,6 +24,7 @@ import com.jetbrains.mobile.isApple
 import com.jetbrains.mobile.isMobileAppMain
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.plugins.gradle.util.GradleUtil
 import java.io.File
 
 abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
@@ -48,9 +49,12 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
     open fun getProductBundle(environment: ExecutionEnvironment): File {
         val moduleRoot = ExternalSystemApiUtil.getExternalProjectPath(module!!)?.let { File(it) }
             ?: throw IllegalStateException()
+        val binaryName = GradleUtil.findGradleModuleData(module!!)?.data?.externalName
+            ?: throw IllegalStateException()
+
         return when (val device = environment.executionTarget) {
             is AndroidDevice -> {
-                File(moduleRoot, FileUtil.join("build", "outputs", "apk", "debug", "${moduleRoot.name}-debug.apk"))
+                File(moduleRoot, FileUtil.join("build", "outputs", "apk", "debug", "$binaryName-debug.apk"))
             }
             is AppleDevice -> {
                 @Suppress("SpellCheckingInspection")
@@ -59,7 +63,7 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
                     is AppleSimulator -> "iphonesimulator"
                     else -> throw IllegalStateException()
                 }
-                File(moduleRoot, FileUtil.join("build", "bin", "iosAppMain", "Debug-$deviceType", "${moduleRoot.name}.app"))
+                File(moduleRoot, FileUtil.join("build", "bin", "iosAppMain", "Debug-$deviceType", "$binaryName.app"))
             }
             else -> throw IllegalStateException()
         }
