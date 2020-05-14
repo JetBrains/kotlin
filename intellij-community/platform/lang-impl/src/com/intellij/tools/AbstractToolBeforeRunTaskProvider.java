@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public abstract class AbstractToolBeforeRunTaskProvider<T extends AbstractToolBeforeRunTask> extends BeforeRunTaskProvider<T> {
+public abstract class AbstractToolBeforeRunTaskProvider<T extends AbstractToolBeforeRunTask<?, ?>> extends BeforeRunTaskProvider<T> {
   protected static final Logger LOG = Logger.getInstance(ToolBeforeRunTaskProvider.class);
 
   @Override

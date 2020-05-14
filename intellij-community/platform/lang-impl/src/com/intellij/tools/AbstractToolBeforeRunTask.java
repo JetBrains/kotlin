@@ -18,11 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class AbstractToolBeforeRunTask<ToolBeforeRunTask extends AbstractToolBeforeRunTask, T extends Tool>
+public abstract class AbstractToolBeforeRunTask<ToolBeforeRunTask extends AbstractToolBeforeRunTask<?, ?>, T extends Tool>
   extends BeforeRunTask<ToolBeforeRunTask> {
   @NonNls private final static String ACTION_ID_ATTRIBUTE = "actionId";
   private static final Logger LOG = Logger.getInstance(AbstractToolBeforeRunTask.class);
-  protected String myToolActionId;
+  private String myToolActionId;
 
   public AbstractToolBeforeRunTask(Key<ToolBeforeRunTask> providerId) {
     super(providerId);
