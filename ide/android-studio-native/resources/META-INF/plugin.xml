@@ -7,6 +7,7 @@
   <vendor url="http://jetbrains.com">JetBrains</vendor>
 
   <depends>org.jetbrains.kotlin</depends>
+  <depends>org.jetbrains.android</depends>
 
   <description>Provides functionality for development of Kotlin MPP applications for mobile targets.</description>
   <idea-version since-build="192.0"/>
@@ -40,5 +41,9 @@
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
     <taskManager implementation="com.jetbrains.mpp.execution.BinaryGradleTaskManager"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.android.tools.idea.wizard.template">
+    <wizardTemplateProvider implementation="com.jetbrains.kmm.wizard.KmmTemplateProvider" />
   </extensions>
 </idea-plugin>

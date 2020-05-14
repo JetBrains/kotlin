@@ -28,7 +28,10 @@ dependencies {
         "platform-ide-util-io",
         "util"
     ) }
-    compileOnly(intellijPluginDep("android")) { includeJars("sdk-tools") }
+    compileOnly(intellijPluginDep("android")) { includeJars(
+        "sdk-tools",
+        "wizard-template"
+    ) }
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijPluginDep("java")) { includeJars(
         "java-api",
@@ -38,6 +41,8 @@ dependencies {
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
+
+    api(project(":libraries:tools:new-project-wizard")) { isTransitive = false }
     api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     api(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
 
@@ -59,16 +64,15 @@ the<JavaPluginConvention>().sourceSets["main"].apply {
 val jarTask = (tasks.findByName("jar") as Jar? ?: task<Jar>("jar")).apply {
     val classes = files(Callable {
         val result = files()
+        val wizardLib = project(":libraries:tools:new-project-wizard").tasks.getByName("jar")
         val commonNative = project(":kotlin-ultimate:ide:common-native").tasks.getByName("jar")
         val noncidrNative = project(":kotlin-ultimate:ide:common-noncidr-native").tasks.getByName("jar")
 
-        result.from(zipTree(
-            commonNative.outputs.files.singleFile
-        ))
-
-        result.from(zipTree(
-            noncidrNative.outputs.files.singleFile
-        ))
+        for (jar in listOf(wizardLib, commonNative, noncidrNative)) {
+            result.from(zipTree(
+                jar.outputs.files.singleFile
+            ))
+        }
 
         result.builtBy(noncidrNative)
     })
