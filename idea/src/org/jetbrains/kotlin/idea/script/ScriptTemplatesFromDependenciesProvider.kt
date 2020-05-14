@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.script
 import com.intellij.ProjectTopics
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
@@ -32,6 +33,8 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 
 class ScriptTemplatesFromDependenciesProvider(private val project: Project) : ScriptDefinitionSourceAsContributor {
+    private val logger = Logger.getInstance(ScriptTemplatesFromDependenciesProvider::class.java)
+
     override val id = "ScriptTemplatesFromDependenciesProvider"
 
     override fun isReady(): Boolean = _definitions != null
@@ -99,6 +102,10 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
             return onEarlyEnd()
         }
 
+        if (logger.isDebugEnabled) {
+            logger.debug("async script definitions update started")
+        }
+
         val templates = LinkedHashSet<String>()
         val classpath = LinkedHashSet<File>()
 
@@ -118,6 +125,10 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
             .onSuccess { roots ->
                 val jarFS = JarFileSystem.getInstance()
                 roots.forEach { root ->
+                    if (logger.isDebugEnabled) {
+                        logger.debug("root matching SCRIPT_DEFINITION_MARKERS_PATH found: ${root.path}")
+                    }
+
                     root.findFileByRelativePath(SCRIPT_DEFINITION_MARKERS_PATH)?.children?.forEach { resourceFile ->
                         if (resourceFile.isValid && !resourceFile.isDirectory) {
                             templates.add(resourceFile.name.removeSuffix(SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT))
@@ -151,6 +162,10 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
                     return@onProcessed
                 }
 
+                if (logger.isDebugEnabled) {
+                    logger.debug("script templates found: $newTemplates")
+                }
+
                 oldTemplates = newTemplates
 
                 val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
@@ -166,6 +181,10 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
                     templateClasspath = newTemplates.classpath,
                     baseHostConfiguration = hostConfiguration,
                 )
+
+                if (logger.isDebugEnabled) {
+                    logger.debug("script definitions found: ${newDefinitions.joinToString()}")
+                }
 
                 val needReload = definitionsLock.withLock {
                     if (newDefinitions != _definitions) {
