@@ -27,8 +27,8 @@ class ContextSimilarityFeatures : ElementFeatureProvider {
     val similarityScorer = contextFeatures.getUserData(key)
     if (similarityScorer != null) {
       val similarity = similarityScorer.score(lookupString)
-      addFeature("${baseName}_mean", similarity.maxSimilarity())
-      addFeature("${baseName}_max", similarity.meanSimilarity())
+      addFeature("${baseName}_mean", similarity.meanSimilarity())
+      addFeature("${baseName}_max", similarity.maxSimilarity())
       addFeature("${baseName}_full", similarity.fullSimilarity())
     }
   }
