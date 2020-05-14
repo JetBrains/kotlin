@@ -501,7 +501,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     if (descriptor instanceof ProblemDescriptorWithReporterName) {
       String reportingToolName = ((ProblemDescriptorWithReporterName)descriptor).getReportingToolName();
       final InspectionToolWrapper<?, ?> reportingTool = myProfileWrapper.getInspectionTool(reportingToolName, element);
-      assert reportingTool instanceof LocalInspectionToolWrapper;
+      LOG.assertTrue(reportingTool instanceof LocalInspectionToolWrapper, reportingToolName);
       toolWrapper = (LocalInspectionToolWrapper)reportingTool;
       severity = myProfileWrapper.getErrorLevel(HighlightDisplayKey.find(reportingToolName), file).getSeverity();
     }
