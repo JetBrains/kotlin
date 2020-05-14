@@ -78,11 +78,7 @@ public class SliceManager implements PersistentStateComponent<SliceManager.Store
   public void createToolWindow(@NotNull PsiElement element, @NotNull SliceAnalysisParams params) {
     SliceRootNode rootNode = new SliceRootNode(myProject, new DuplicateMap(),
                                                LanguageSlicing.getProvider(element).createRootUsage(element, params));
-    String suffix = null;
-    if (params.valueFilter != null) {
-      suffix = " " + StringUtil.escapeXmlEntities(LangBundle.message("slice.analysis.title.filter", params.valueFilter));
-    }
-    createToolWindow(params.dataFlowToThis, rootNode, false, getElementDescription(null, element, suffix));
+    createToolWindow(params.dataFlowToThis, rootNode, false, getElementDescription(null, element, null));
   }
 
   public void createToolWindow(boolean dataFlowToThis, @NotNull SliceRootNode rootNode, boolean splitByLeafExpressions, @NotNull String displayName) {
