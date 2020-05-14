@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.script.util
+package org.jetbrains.kotlin.mainKts
 
-@Deprecated("Use annotations an processing code from the kotlin-scripting-dependencies library")
-@Target(AnnotationTarget.FILE)
-@Repeatable
-@Retention(AnnotationRetention.SOURCE)
-annotation class DependsOn(val value: String = "", val groupId: String = "", val artifactId: String = "", val version: String = "")
-
-@Deprecated("Use annotations an processing code from the kotlin-scripting-dependencies library")
-@Target(AnnotationTarget.FILE)
-@Repeatable
-@Retention(AnnotationRetention.SOURCE)
-annotation class Repository(val value: String = "", val id: String = "", val url: String = "")
-
-@Deprecated("Use your own annotations, this will be removed soon")
+/**
+ * Import other script(s)
+ */
 @Target(AnnotationTarget.FILE)
 @Repeatable
 @Retention(AnnotationRetention.SOURCE)
 annotation class Import(vararg val paths: String)
 
-@Deprecated("Use your own annotations, this will be removed soon")
+/**
+ * Compiler options that will be applied on script compilation
+ *
+ * @see [kotlin.script.experimental.api.compilerOptions]
+ */
 @Target(AnnotationTarget.FILE)
 @Repeatable
 @Retention(AnnotationRetention.SOURCE)

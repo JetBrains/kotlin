@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.script.util.resolvers.toRepositoryUrlOrNull
 import java.io.File
 import java.net.URL
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies")
 interface GenericArtifactCoordinates {
     val string: String
 }
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies")
 interface GenericRepositoryCoordinates {
     val string: String
     val name: String? get() = null
@@ -24,6 +26,7 @@ interface GenericRepositoryCoordinates {
     val file: File? get() = (url?.takeIf { it.protocol == "file" }?.path ?: string).toRepositoryFileOrNull()
 }
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies")
 interface GenericResolver {
     fun tryResolve(artifactCoordinates: GenericArtifactCoordinates): Iterable<File>?
     fun tryAddRepository(repositoryCoordinates: GenericRepositoryCoordinates): Boolean
@@ -34,10 +37,13 @@ interface GenericResolver {
         tryAddRepository(BasicRepositoryCoordinates(repositoryCoordinates, id))
 }
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies")
 open class BasicArtifactCoordinates(override val string: String) : GenericArtifactCoordinates
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies")
 open class BasicRepositoryCoordinates(override val string: String, override val name: String? = null) : GenericRepositoryCoordinates
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies")
 interface GenericRepositoryWithBridge : GenericResolver, Resolver {
     override fun tryResolve(dependsOn: DependsOn): Iterable<File>? =
         tryResolve(
@@ -55,6 +61,7 @@ interface GenericRepositoryWithBridge : GenericResolver, Resolver {
         }
 }
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies")
 open class MavenArtifactCoordinates(
     val value: String?,
     val groupId: String?,

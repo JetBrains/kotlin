@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.script.examples.jvm.resolve.maven
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.script.util.DependsOn
-import org.jetbrains.kotlin.script.util.Repository
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.dependencies.CompoundDependenciesResolver
-import kotlin.script.experimental.dependencies.FileSystemDependenciesResolver
+import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
-import kotlin.script.experimental.dependencies.tryAddRepository
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
@@ -30,7 +26,7 @@ object ScriptWithMavenDepsConfiguration : ScriptCompilationConfiguration(
         jvm {
             dependenciesFromCurrentContext(
                 "scripting-jvm-maven-deps", // script library jar name
-                "kotlin-script-util" // DependsOn annotation is taken from script-util
+                "kotlin-scripting-dependencies" // DependsOn annotation is taken from script-util
             )
         }
         refineConfiguration {
@@ -44,24 +40,8 @@ private val resolver = CompoundDependenciesResolver(FileSystemDependenciesResolv
 fun configureMavenDepsOnAnnotations(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
     val annotations = context.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
         ?: return context.compilationConfiguration.asSuccess()
-    annotations.forEach { annotation ->
-        when (annotation) {
-            is Repository -> {
-                val repositoryCoordinates = with(annotation) { value.takeIf { it.isNotBlank() } ?: url }
-                if (!resolver.tryAddRepository(repositoryCoordinates))
-                    return makeFailureResult("Unrecognized repository coordinates: $repositoryCoordinates")
-            }
-            is DependsOn -> {}
-            else -> return makeFailureResult("Unknown annotation ${annotation.javaClass}")
-        }
-    }
-    return annotations.filterIsInstance(DependsOn::class.java).flatMapSuccess { dep ->
-        val artifactCoordinates =
-            if (dep.value.isNotBlank()) dep.value
-            else listOf(dep.groupId, dep.artifactId, dep.version).filter { it.isNotBlank() }.joinToString(":")
-        runBlocking {
-            resolver.resolve(artifactCoordinates)
-        }
+    return runBlocking {
+        resolver.resolveFromAnnotations(annotations)
     }.onSuccess {
         context.compilationConfiguration.with {
             dependencies.append(JvmDependency(it))

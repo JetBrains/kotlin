@@ -30,6 +30,7 @@ import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.dependencies.asFuture
 import kotlin.script.templates.AcceptedAnnotations
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies and kotlin-scripting-dependencies-maven")
 open class KotlinAnnotatedScriptDependenciesResolver(val baseClassPath: List<File>, resolvers: Iterable<Resolver>)
     : ScriptDependenciesResolver
 {
@@ -75,9 +76,11 @@ open class KotlinAnnotatedScriptDependenciesResolver(val baseClassPath: List<Fil
     }
 }
 
+@Deprecated("Use FileSystemDependenciesResolver from kotlin-scripting-dependencies instead")
 class LocalFilesResolver :
         KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver()))
 
+@Deprecated("Use CompoundDependenciesResolver and MavenDependenciesResolver from kotlin-scripting-dependencies and kotlin-scripting-dependencies-maven")
 class FilesAndMavenResolver :
         KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver(), MavenResolver()))
 

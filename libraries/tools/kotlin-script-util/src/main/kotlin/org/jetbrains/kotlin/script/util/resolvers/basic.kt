@@ -22,6 +22,7 @@ import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies")
 class DirectResolver : GenericRepositoryWithBridge {
     override fun tryResolve(artifactCoordinates: GenericArtifactCoordinates): Iterable<File>? =
         artifactCoordinates.string.takeUnless(String::isBlank)
@@ -30,6 +31,7 @@ class DirectResolver : GenericRepositoryWithBridge {
     override fun tryAddRepository(repositoryCoordinates: GenericRepositoryCoordinates): Boolean = false
 }
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies")
 class FlatLibDirectoryResolver(vararg paths: File) : GenericRepositoryWithBridge {
 
     private val localRepos = arrayListOf<File>()

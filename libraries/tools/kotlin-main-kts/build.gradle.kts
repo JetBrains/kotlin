@@ -29,7 +29,6 @@ dependencies {
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-scripting-jvm-host"))
     compileOnly(project(":kotlin-scripting-dependencies"))
-    compileOnly(project(":kotlin-script-util"))
     runtime(project(":kotlin-compiler-embeddable"))
     runtime(project(":kotlin-scripting-compiler-embeddable"))
     runtime(project(":kotlin-scripting-jvm-host-embeddable"))
@@ -38,7 +37,6 @@ dependencies {
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm-host")) { isTransitive = false }
     embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
-    embedded(project(":kotlin-script-util")) { isTransitive = false }
     embedded("org.apache.ivy:ivy:2.5.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     embedded(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { 

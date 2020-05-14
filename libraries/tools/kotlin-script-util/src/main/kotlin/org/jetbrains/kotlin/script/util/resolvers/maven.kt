@@ -31,8 +31,10 @@ import org.sonatype.aether.util.artifact.JavaScopes
 import java.io.File
 import java.util.*
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies and kotlin-scripting-dependencies-maven")
 val mavenCentral = RemoteRepository("maven-central", "default", "https://repo.maven.apache.org/maven2/")
 
+@Deprecated("Use kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver from kotlin-scripting-dependencies-maven")
 class MavenResolver(val reportError: ((String) -> Unit)? = null): GenericRepositoryWithBridge {
 
     // TODO: make robust

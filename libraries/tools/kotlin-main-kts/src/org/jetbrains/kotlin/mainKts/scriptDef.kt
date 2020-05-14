@@ -7,19 +7,13 @@ package org.jetbrains.kotlin.mainKts
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.mainKts.impl.IvyResolver
-import org.jetbrains.kotlin.mainKts.impl.resolveFromAnnotations
-import org.jetbrains.kotlin.script.util.CompilerOptions
-import org.jetbrains.kotlin.script.util.DependsOn
-import org.jetbrains.kotlin.script.util.Import
-import org.jetbrains.kotlin.script.util.Repository
 import java.io.File
 import java.security.MessageDigest
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.dependencies.CompoundDependenciesResolver
-import kotlin.script.experimental.dependencies.FileSystemDependenciesResolver
+import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -138,7 +132,7 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
 
         val resolveResult = try {
             runBlocking {
-                resolveFromAnnotations(resolver, annotations.filter { it is DependsOn || it is Repository })
+                resolver.resolveFromAnnotations( annotations.filter { it is DependsOn || it is Repository })
             }
         } catch (e: Throwable) {
             ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics(path = context.script.locationId))
