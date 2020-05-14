@@ -58,6 +58,11 @@ public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionF
         runTest("idea/testData/debugger/exceptionFilter/inlineFunCallSiteInRegeneratedObject/");
     }
 
+    @TestMetadata("inlineFunCallSiteNewSmapSyntax")
+    public void testInlineFunCallSiteNewSmapSyntax() throws Exception {
+        runTest("idea/testData/debugger/exceptionFilter/inlineFunCallSiteNewSmapSyntax/");
+    }
+
     @TestMetadata("inlineFunFromLibrary")
     public void testInlineFunFromLibrary() throws Exception {
         runTest("idea/testData/debugger/exceptionFilter/inlineFunFromLibrary/");
