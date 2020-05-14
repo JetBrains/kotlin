@@ -156,6 +156,7 @@ fun IrSimpleFunction.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boo
     assert(!isFakeOverride && parentAsClass.isInterface && modality != Modality.ABSTRACT) {
         "`isCompiledToJvmDefault` should be called on non-fakeoverrides and non-abstract methods from interfaces ${ir2string(this)}"
     }
+    if (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return false
     if (hasJvmDefault()) return true
     val parentDescriptor = propertyIfAccessor.parentAsClass.descriptor
     if (parentDescriptor !is DeserializedClassDescriptor) return jvmDefaultMode.forAllMethodsWithBody

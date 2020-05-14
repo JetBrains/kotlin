@@ -171,19 +171,21 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
     }
 }
 
-private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode: JvmDefaultMode): Boolean {
-    if (resolveFakeOverride()?.run {
-            origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB || isCompiledToJvmDefault(
-                jvmDefaultMode
-            )
-        } != false) return true
-
-    return origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+internal fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod(
+    jvmDefaultMode: JvmDefaultMode,
+    implementation: IrSimpleFunction? = resolveFakeOverride()
+): Boolean =
+    implementation == null ||
+            implementation.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
+            implementation.isCompiledToJvmDefault(jvmDefaultMode) ||
+            origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
             hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME) ||
-            (name.asString() == "clone" &&
-                    parent.safeAs<IrClass>()?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
-                    valueParameters.isEmpty())
-}
+            isCloneableClone()
+
+private fun IrSimpleFunction.isCloneableClone(): Boolean =
+    name.asString() == "clone" &&
+            parent.safeAs<IrClass>()?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
+            valueParameters.isEmpty()
 
 internal val interfaceObjectCallsPhase = makeIrFilePhase(
     lowering = ::InterfaceObjectCallsLowering,

@@ -105,18 +105,17 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                     when {
                         Visibilities.isPrivate(implementation.visibility) || implementation.isMethodOfAny() ->
                             continue@loop
-                        !implementation.isCompiledToJvmDefault(jvmDefaultMode) -> {
+                        !function.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode, implementation) -> {
                             val defaultImpl = createDefaultImpl(function)
                             val superImpl = firstSuperMethodFromKotlin(function, implementation)
                             context.declarationFactory.getDefaultImplsFunction(superImpl.owner).also {
                                 defaultImpl.bridgeToStatic(it)
                             }
                         }
-                        jvmDefaultMode.isCompatibility -> {
+                        jvmDefaultMode.isCompatibility && implementation.isCompiledToJvmDefault(jvmDefaultMode) -> {
                             val defaultImpl = createDefaultImpl(function)
                             defaultImpl.bridgeViaAccessorTo(function)
                         }
-                        // else -> Do nothing.
                     }
                 }
 
