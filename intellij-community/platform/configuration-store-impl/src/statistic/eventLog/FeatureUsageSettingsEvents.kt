@@ -4,7 +4,9 @@ package com.intellij.configurationStore.statistic.eventLog
 import com.intellij.configurationStore.jdomSerializer
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
+import com.intellij.internal.statistic.utils.PluginInfo
 import com.intellij.internal.statistic.utils.StatisticsUtil
+import com.intellij.internal.statistic.utils.addPluginInfoTo
 import com.intellij.internal.statistic.utils.getPluginInfo
 import com.intellij.openapi.components.ReportValue
 import com.intellij.openapi.diagnostic.Logger
@@ -92,22 +94,22 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
     for (accessor in accessors) {
       val type = accessor.genericType
       if (type === Boolean::class.javaPrimitiveType) {
-        logConfigValue(accessor, state, "bool", eventId, isDefaultProject, true, hash, componentName)
+        logConfigValue(accessor, state, "bool", eventId, isDefaultProject, true, hash, componentName, pluginInfo)
       }
       else if (type === Int::class.javaPrimitiveType || type === Long::class.javaPrimitiveType) {
-        logConfigValue(accessor, state, "int", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName)
+        logConfigValue(accessor, state, "int", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName, pluginInfo)
       }
       else if (type === Float::class.javaPrimitiveType || type === Double::class.javaPrimitiveType) {
-        logConfigValue(accessor, state, "float", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName)
+        logConfigValue(accessor, state, "float", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName, pluginInfo)
       }
       else if (type is Class<*> && type.isEnum) {
-        logConfigValue(accessor, state, "enum", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName) {
+        logConfigValue(accessor, state, "enum", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName, pluginInfo) {
           (it as? Enum<*>)?.name
         }
       }
       else if (type == String::class.java) {
         val annotation = accessor.getAnnotation(ReportValue::class.java)
-        logConfigValue(accessor, state, "string", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName) {
+        logConfigValue(accessor, state, "string", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName, pluginInfo) {
           if (it in annotation.possibleValues) it else null
         }
       }
@@ -128,6 +130,7 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
                              reportValue: Boolean,
                              hash: String?,
                              componentName: String,
+                             pluginInfo: PluginInfo,
                              transformValue: ((Any?) -> Any?)? = null) {
     val isDefault = !jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
     if (!isDefault || recordDefault) {
@@ -147,6 +150,7 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
         content["default"] = isDefault
       }
       addProjectOptions(content, isDefaultProject, hash)
+      addPluginInfoTo(pluginInfo, content)
       logConfig(GROUP, eventId, content)
     }
   }

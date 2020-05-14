@@ -431,6 +431,9 @@ class FeatureUsageSettingsEventsTest {
     if (withDefaultRecorded) size++
     if (withProject) size++
     if (defaultProject) size++
+    if (event.data.containsKey("plugin_type")) size++
+    if (event.data.containsKey("plugin_version")) size++
+    if (event.data.containsKey("plugin")) size++
 
     assertThat(event.data).hasSize(size)
     assertThat(event.data["component"]).isEqualTo("MyTestComponent")
@@ -448,6 +451,7 @@ class FeatureUsageSettingsEventsTest {
     if (defaultProject) {
       assertThat(event.data["default_project"]).isEqualTo(true)
     }
+    assertThat(event.data["plugin_type"]).isNotNull
   }
 
   private fun assertDefaultState(printer: TestFeatureUsageSettingsEventsPrinter, withProject: Boolean, defaultProject: Boolean) {
@@ -468,6 +472,9 @@ class FeatureUsageSettingsEventsTest {
     var size = 5
     if (withProject) size++
     if (defaultProject) size++
+    if (event.data.containsKey("plugin_type")) size++
+    if (event.data.containsKey("plugin_version")) size++
+    if (event.data.containsKey("plugin")) size++
 
     assertThat(event.data).hasSize(size)
     assertThat(event.data["component"]).isEqualTo("MyTestComponent")
@@ -475,6 +482,7 @@ class FeatureUsageSettingsEventsTest {
     assertThat(event.data["name"]).isEqualTo(name)
     assertThat(event.data["value"]).isEqualTo(value)
     assertThat(event.data["default"]).isEqualTo(true)
+    assertThat(event.data["plugin_type"]).isNotNull
     if (withProject) {
       assertThat(event.data).containsKey("project")
     }
