@@ -183,6 +183,10 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
     override fun visitElement(element: IrElement, data: Boolean) = error("unexpected element ${element.render()}")
 
+    override fun visitScript(declaration: IrScript, data: Boolean) {
+        declaration.parent.accept(this, data)
+    }
+
     override fun visitClass(declaration: IrClass, data: Boolean) {
         isRealExpect = isRealExpect or declaration.isExpect
         typeParameterContainer.add(declaration)
