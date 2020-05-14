@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
@@ -141,4 +142,12 @@ class RootsIndex<T : Any> {
 
     @Synchronized
     fun remove(prefix: String) = tree.remove(prefix)
+}
+
+private val logger = Logger.getInstance("#org.jetbrains.kotlin.idea.scripting.gradle")
+
+fun scriptingDebugLog(message: () -> String) {
+    if (logger.isDebugEnabled) {
+        logger.debug("[KOTLIN_GRADLE_DSL] ${message()}")
+    }
 }
