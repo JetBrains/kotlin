@@ -2,7 +2,6 @@
 package com.intellij.analysis.problemsView.toolWindow
 
 import com.intellij.ide.projectView.PresentationData
-import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES
 import com.intellij.ui.tree.LeafState
@@ -11,9 +10,6 @@ import com.intellij.util.DocumentUtil.isValidOffset
 internal class ProblemNode(parent: FileNode, val problem: Problem) : Node(parent) {
 
   val file = parent.file
-
-  val descriptor
-    get() = OpenFileDescriptor(project!!, file, problem.offset)
 
   override fun getLeafState() = LeafState.ALWAYS
 
