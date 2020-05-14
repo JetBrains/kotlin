@@ -11,6 +11,7 @@ import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -885,6 +886,61 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
         }
     }
+
+    @Test
+    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.60+")
+    fun testIgnoreIncompatibleNativeTestTasks() {
+        configureByFiles()
+        importProject()
+
+        checkProjectStructure(exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false, exhaustiveTestsList = true) {
+            module("project")
+            module("project_commonMain") {
+
+            }
+            module("project_commonTest") {
+                externalSystemTestTask("jsBrowserTest", "project:jsTest", "js")
+                externalSystemTestTask("jsNodeTest", "project:jsTest", "js")
+                externalSystemTestTask("jvmTest", "project:jvmTest", "jvm")
+
+                when {
+                    HostManager.hostIsMac -> externalSystemTestTask("macosTest", "project:macosTest", "macos")
+                    HostManager.hostIsMingw -> externalSystemTestTask("winTest", "project:winTest", "win")
+                    HostManager.hostIsLinux -> externalSystemTestTask("linuxTest", "project:linuxTest", "linux")
+                }
+            }
+
+            module("project_jsMain")
+            module("project_jsTest") {
+                externalSystemTestTask("jsBrowserTest", "project:jsTest", "js")
+                externalSystemTestTask("jsNodeTest", "project:jsTest", "js")
+            }
+
+            module("project_jvmMain")
+            module("project_jvmTest") {
+                externalSystemTestTask("jvmTest", "project:jvmTest", "jvm")
+            }
+
+            module("project_macosMain") {
+            }
+            module("project_macosTest") {
+                if (HostManager.hostIsMac) externalSystemTestTask("macosTest", "project:macosTest", "macos")
+            }
+
+            module("project_winMain") {
+            }
+            module("project_winTest") {
+                if (HostManager.hostIsMingw) externalSystemTestTask("winTest", "project:winTest", "win")
+            }
+
+            module("project_linuxMain") {
+            }
+            module("project_linuxTest") {
+                if (HostManager.hostIsLinux) externalSystemTestTask("linuxTest", "project:linuxTest", "linux")
+            }
+        }
+    }
+
 
     private fun checkProjectStructure(
         exhaustiveModuleList: Boolean = true,
