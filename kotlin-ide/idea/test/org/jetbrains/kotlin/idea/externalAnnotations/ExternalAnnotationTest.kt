@@ -27,20 +27,20 @@ class ExternalAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
     fun testNotNullMethod() {
-        KotlinTestUtils.runTest(::doTest, TargetBackend.ANY, "idea/testData/externalAnnotations/notNullMethod.kt")
+        KotlinTestUtils.runTest(::doTest, this, TargetBackend.ANY, "idea/testData/externalAnnotations/notNullMethod.kt")
     }
 
     fun testNullableMethod() {
-        KotlinTestUtils.runTest(::doTest, TargetBackend.ANY, "idea/testData/externalAnnotations/nullableMethod.kt")
+        KotlinTestUtils.runTest(::doTest, this, TargetBackend.ANY, "idea/testData/externalAnnotations/nullableMethod.kt")
     }
 
 
     fun testNullableField() {
-        KotlinTestUtils.runTest(::doTest, TargetBackend.ANY, "idea/testData/externalAnnotations/nullableField.kt")
+        KotlinTestUtils.runTest(::doTest, this, TargetBackend.ANY, "idea/testData/externalAnnotations/nullableField.kt")
     }
 
     fun testNullableMethodParameter() {
-        KotlinTestUtils.runTest(::doTest, TargetBackend.ANY, "idea/testData/externalAnnotations/nullableMethodParameter.kt")
+        KotlinTestUtils.runTest(::doTest, this, TargetBackend.ANY, "idea/testData/externalAnnotations/nullableMethodParameter.kt")
     }
 
     override fun setUp() {

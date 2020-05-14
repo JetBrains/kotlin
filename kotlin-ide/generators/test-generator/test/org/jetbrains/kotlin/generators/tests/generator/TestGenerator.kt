@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tests.generator
 
-import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.testGenerator.model.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.Test
 import org.junit.runner.RunWith

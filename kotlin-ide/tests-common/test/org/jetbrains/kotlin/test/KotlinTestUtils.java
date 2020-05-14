@@ -743,12 +743,8 @@ public class KotlinTestUtils {
 
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
     // So only file paths passed to this parameter will be used in navigation actions, like "Navigate to testdata" and "Related Symbol..."
-    public static void runTest(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile) throws Exception {
-        runTest0(test, targetBackend, testDataFile);
-    }
-
-    public static void runTestWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile, String ignoreDirective) throws Exception {
-        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), null, testDataFile);
+    public static void runTest(DoTest test, TestCase testCase, TargetBackend targetBackend, @TestDataFile String testDataFile) throws Exception {
+        runTest0(test, testCase, targetBackend, testDataFile);
     }
 
     // In this test runner version, NONE of the parameters are annotated by `TestDataFile`.
@@ -759,31 +755,29 @@ public class KotlinTestUtils {
     // Cons:
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
-    public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
-        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), null, testDataFilePath);
+    public static void runTest0(DoTest test, TestCase testCase, TargetBackend targetBackend, String testDataFilePath) throws Exception {
+        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFilePath);
     }
 
-    private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
-        String absoluteTestDataFilePath = KotlinTestUtils.getHomeDirectory() + "/" + testDataFilePath;
-        if (testCase != null) {
-            Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
-                try {
-                    test.invoke(absoluteTestDataFilePath);
-                }
-                catch (Exception e) {
-                    throw new IllegalStateException(e);
-                }
-                return null;
-            });
-            if (wrapWithMuteInDatabase != null) {
-                wrapWithMuteInDatabase.invoke();
-                return;
+    private static void runTestImpl(@NotNull DoTest test, @NotNull TestCase testCase, String testDataFilePath) throws Exception {
+        String absoluteTestDataFilePath = new File(TestMetadataUtil.getTestRoot(testCase.getClass()), testDataFilePath).getAbsolutePath();
+
+        Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
+            try {
+                test.invoke(absoluteTestDataFilePath);
             }
+            catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+            return null;
+        });
+
+        if (wrapWithMuteInDatabase != null) {
+            wrapWithMuteInDatabase.invoke();
+            return;
         }
 
-        DoTest wrappedTest = testCase != null ?
-                             MuteWithFileKt.testWithMuteInFile(test, testCase) :
-                             MuteWithFileKt.testWithMuteInFile(test, "");
+        DoTest wrappedTest = MuteWithFileKt.testWithMuteInFile(test, testCase);
         wrappedTest.invoke(absoluteTestDataFilePath);
     }
 
