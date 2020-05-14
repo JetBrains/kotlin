@@ -276,7 +276,7 @@ public final class kotlin/UByteArray : java/util/Collection, kotlin/jvm/internal
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl ([BLjava/lang/Object;)Z
 	public static final fun equals-impl0 ([B[B)Z
-	public static final fun get-impl ([BI)B
+	public static final fun get-w2LRezQ ([BI)B
 	public fun getSize ()I
 	public static fun getSize-impl ([B)I
 	public fun hashCode ()I
@@ -336,7 +336,7 @@ public final class kotlin/UIntArray : java/util/Collection, kotlin/jvm/internal/
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl ([ILjava/lang/Object;)Z
 	public static final fun equals-impl0 ([I[I)Z
-	public static final fun get-impl ([II)I
+	public static final fun get-pVg5ArA ([II)I
 	public fun getSize ()I
 	public static fun getSize-impl ([I)I
 	public fun hashCode ()I
@@ -396,7 +396,7 @@ public final class kotlin/ULongArray : java/util/Collection, kotlin/jvm/internal
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl ([JLjava/lang/Object;)Z
 	public static final fun equals-impl0 ([J[J)Z
-	public static final fun get-impl ([JI)J
+	public static final fun get-s-VKNKU ([JI)J
 	public fun getSize ()I
 	public static fun getSize-impl ([J)I
 	public fun hashCode ()I
@@ -456,7 +456,7 @@ public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/interna
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl ([SLjava/lang/Object;)Z
 	public static final fun equals-impl0 ([S[S)Z
-	public static final fun get-impl ([SI)S
+	public static final fun get-Mh2AYeg ([SI)S
 	public fun getSize ()I
 	public static fun getSize-impl ([S)I
 	public fun hashCode ()I
@@ -2465,8 +2465,8 @@ public abstract class kotlin/collections/ShortIterator : java/util/Iterator, kot
 public abstract class kotlin/collections/UByteIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
 	public fun <init> ()V
 	public synthetic fun next ()Ljava/lang/Object;
-	public final fun next ()Lkotlin/UByte;
-	public abstract fun nextUByte ()B
+	public final fun next-w2LRezQ ()B
+	public abstract fun nextUByte-w2LRezQ ()B
 	public fun remove ()V
 }
 
@@ -2484,24 +2484,24 @@ public final class kotlin/collections/UCollectionsKt {
 public abstract class kotlin/collections/UIntIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
 	public fun <init> ()V
 	public synthetic fun next ()Ljava/lang/Object;
-	public final fun next ()Lkotlin/UInt;
-	public abstract fun nextUInt ()I
+	public final fun next-pVg5ArA ()I
+	public abstract fun nextUInt-pVg5ArA ()I
 	public fun remove ()V
 }
 
 public abstract class kotlin/collections/ULongIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
 	public fun <init> ()V
 	public synthetic fun next ()Ljava/lang/Object;
-	public final fun next ()Lkotlin/ULong;
-	public abstract fun nextULong ()J
+	public final fun next-s-VKNKU ()J
+	public abstract fun nextULong-s-VKNKU ()J
 	public fun remove ()V
 }
 
 public abstract class kotlin/collections/UShortIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
 	public fun <init> ()V
 	public synthetic fun next ()Ljava/lang/Object;
-	public final fun next ()Lkotlin/UShort;
-	public abstract fun nextUShort ()S
+	public final fun next-Mh2AYeg ()S
+	public abstract fun nextUShort-Mh2AYeg ()S
 	public fun remove ()V
 }
 
@@ -4451,8 +4451,8 @@ public final class kotlin/ranges/RangesKt {
 public class kotlin/ranges/UIntProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/UIntProgression$Companion;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFirst ()I
-	public final fun getLast ()I
+	public final fun getFirst-pVg5ArA ()I
+	public final fun getLast-pVg5ArA ()I
 	public final fun getStep ()I
 	public fun hashCode ()I
 	public fun isEmpty ()Z
@@ -4472,9 +4472,9 @@ public final class kotlin/ranges/UIntRange : kotlin/ranges/UIntProgression, kotl
 	public fun contains-WZ4Q5Ns (I)Z
 	public fun equals (Ljava/lang/Object;)Z
 	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
-	public fun getEndInclusive ()Lkotlin/UInt;
+	public fun getEndInclusive-pVg5ArA ()I
 	public synthetic fun getStart ()Ljava/lang/Comparable;
-	public fun getStart ()Lkotlin/UInt;
+	public fun getStart-pVg5ArA ()I
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public fun toString ()Ljava/lang/String;
@@ -4487,8 +4487,8 @@ public final class kotlin/ranges/UIntRange$Companion {
 public class kotlin/ranges/ULongProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/ULongProgression$Companion;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getFirst ()J
-	public final fun getLast ()J
+	public final fun getFirst-s-VKNKU ()J
+	public final fun getLast-s-VKNKU ()J
 	public final fun getStep ()J
 	public fun hashCode ()I
 	public fun isEmpty ()Z
@@ -4508,9 +4508,9 @@ public final class kotlin/ranges/ULongRange : kotlin/ranges/ULongProgression, ko
 	public fun contains-VKZWuLQ (J)Z
 	public fun equals (Ljava/lang/Object;)Z
 	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
-	public fun getEndInclusive ()Lkotlin/ULong;
+	public fun getEndInclusive-s-VKNKU ()J
 	public synthetic fun getStart ()Ljava/lang/Comparable;
-	public fun getStart ()Lkotlin/ULong;
+	public fun getStart-s-VKNKU ()J
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public fun toString ()Ljava/lang/String;
@@ -5546,12 +5546,12 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public fun compareTo-LRDsOJo (D)I
 	public static fun compareTo-LRDsOJo (DD)I
 	public static final fun div-LRDsOJo (DD)D
-	public static final fun div-impl (DD)D
-	public static final fun div-impl (DI)D
+	public static final fun div-UwyO8pc (DD)D
+	public static final fun div-UwyO8pc (DI)D
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (DLjava/lang/Object;)Z
 	public static final fun equals-impl0 (DD)Z
-	public static final fun getAbsoluteValue-impl (D)D
+	public static final fun getAbsoluteValue-UwyO8pc (D)D
 	public static final fun getInDays-impl (D)D
 	public static final fun getInHours-impl (D)D
 	public static final fun getInMicroseconds-impl (D)D
@@ -5567,8 +5567,8 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final fun isPositive-impl (D)Z
 	public static final fun minus-LRDsOJo (DD)D
 	public static final fun plus-LRDsOJo (DD)D
-	public static final fun times-impl (DD)D
-	public static final fun times-impl (DI)D
+	public static final fun times-UwyO8pc (DD)D
+	public static final fun times-UwyO8pc (DI)D
 	public static final fun toComponents-impl (DLkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun toComponents-impl (DLkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 	public static final fun toComponents-impl (DLkotlin/jvm/functions/Function4;)Ljava/lang/Object;
@@ -5583,14 +5583,14 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static fun toString-impl (D)Ljava/lang/String;
 	public static final fun toString-impl (DLjava/util/concurrent/TimeUnit;I)Ljava/lang/String;
 	public static synthetic fun toString-impl$default (DLjava/util/concurrent/TimeUnit;IILjava/lang/Object;)Ljava/lang/String;
-	public static final fun unaryMinus-impl (D)D
+	public static final fun unaryMinus-UwyO8pc (D)D
 	public final synthetic fun unbox-impl ()D
 }
 
 public final class kotlin/time/Duration$Companion {
 	public final fun convert (DLjava/util/concurrent/TimeUnit;Ljava/util/concurrent/TimeUnit;)D
-	public final fun getINFINITE ()D
-	public final fun getZERO ()D
+	public final fun getINFINITE-UwyO8pc ()D
+	public final fun getZERO-UwyO8pc ()D
 }
 
 public final class kotlin/time/DurationKt {
@@ -5637,7 +5637,7 @@ public final class kotlin/time/TestTimeSource : kotlin/time/AbstractLongTimeSour
 
 public abstract class kotlin/time/TimeMark {
 	public fun <init> ()V
-	public abstract fun elapsedNow ()D
+	public abstract fun elapsedNow-UwyO8pc ()D
 	public final fun hasNotPassedNow ()Z
 	public final fun hasPassedNow ()Z
 	public fun minus-LRDsOJo (D)Lkotlin/time/TimeMark;
@@ -5661,11 +5661,11 @@ public final class kotlin/time/TimeSource$Monotonic : kotlin/time/TimeSource {
 public final class kotlin/time/TimedValue {
 	public synthetic fun <init> (Ljava/lang/Object;DLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/Object;
-	public final fun component2 ()D
+	public final fun component2-UwyO8pc ()D
 	public final fun copy-RFiDyg4 (Ljava/lang/Object;D)Lkotlin/time/TimedValue;
 	public static synthetic fun copy-RFiDyg4$default (Lkotlin/time/TimedValue;Ljava/lang/Object;DILjava/lang/Object;)Lkotlin/time/TimedValue;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getDuration ()D
+	public final fun getDuration-UwyO8pc ()D
 	public final fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
