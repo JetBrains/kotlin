@@ -48,7 +48,7 @@
         </action>
 
         <action id="LoadConfigurationAction" class="org.jetbrains.kotlin.idea.scripting.gradle.LoadConfigurationAction">
-            <add-to-group group-id="ProjectRefreshActionGroup" anchor="first"/>
+            <add-to-group group-id="ExternalSystem.ProjectRefreshActionGroup" anchor="first"/>
         </action>
     </actions>
 </idea-plugin>
