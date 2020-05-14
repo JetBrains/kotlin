@@ -240,8 +240,8 @@ class TowerResolver {
 
         private fun ReceiverValueWithSmartCastInfo.mayFitForName(name: Name): Boolean {
             if (receiverValue.type.mayFitForName(name)) return true
-            if (possibleTypes.isEmpty()) return false
-            return possibleTypes.any { it.mayFitForName(name) }
+            if (!hasTypesFromSmartCasts()) return false
+            return typesFromSmartCasts.any { it.mayFitForName(name) }
         }
 
         private fun KotlinType.mayFitForName(name: Name) =

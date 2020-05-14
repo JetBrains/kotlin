@@ -471,7 +471,7 @@ class PSICallResolver(
         private fun createReceiverCallArgument(variable: KotlinResolutionCandidate): SimpleKotlinCallArgument {
             variable.forceResolution()
             val variableReceiver = createReceiverValueWithSmartCastInfo(variable)
-            if (variableReceiver.possibleTypes.isNotEmpty()) {
+            if (variableReceiver.hasTypesFromSmartCasts()) {
                 return ReceiverExpressionKotlinCallArgument(
                     createReceiverValueWithSmartCastInfo(variable),
                     isForImplicitInvoke = true

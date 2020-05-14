@@ -97,7 +97,7 @@ internal class MemberScopeTowerLevel(
         val unstableError = if (dispatchReceiver.isStable) null else UnstableSmartCastDiagnostic
         val unstableCandidates = if (unstableError != null) ArrayList<CandidateWithBoundDispatchReceiver>(0) else null
 
-        for (possibleType in dispatchReceiver.possibleTypes) {
+        for (possibleType in dispatchReceiver.typesFromSmartCasts) {
             possibleType.memberScope.getMembers(possibleType).mapTo(unstableCandidates ?: result) {
                 createCandidateDescriptor(
                     it,
@@ -107,7 +107,7 @@ internal class MemberScopeTowerLevel(
             }
         }
 
-        if (dispatchReceiver.possibleTypes.isNotEmpty()) {
+        if (dispatchReceiver.hasTypesFromSmartCasts()) {
             if (unstableCandidates == null) {
                 result.retainAll(result.selectMostSpecificInEachOverridableGroup { descriptor.approximateCapturedTypes(typeApproximator) })
             } else {
@@ -156,7 +156,7 @@ internal class MemberScopeTowerLevel(
         if (receiverValue !is ImplicitClassReceiver) return this
 
         val newReceiverValue = CastImplicitClassReceiver(receiverValue.classDescriptor, targetType)
-        return ReceiverValueWithSmartCastInfo(newReceiverValue, possibleTypes, isStable)
+        return ReceiverValueWithSmartCastInfo(newReceiverValue, typesFromSmartCasts, isStable)
     }
 
     override fun getVariables(
@@ -184,9 +184,8 @@ internal class MemberScopeTowerLevel(
     }
 
     override fun recordLookup(name: Name) {
-        dispatchReceiver.receiverValue.type.memberScope.recordLookup(name, location)
-        dispatchReceiver.possibleTypes.forEach {
-            it.memberScope.recordLookup(name, location)
+        for (type in dispatchReceiver.allOriginalTypes) {
+            type.memberScope.recordLookup(name, location)
         }
     }
 }
@@ -292,16 +291,13 @@ internal class SyntheticScopeBasedTowerLevel(
     scopeTower: ImplicitScopeTower,
     private val syntheticScopes: SyntheticScopes
 ) : AbstractScopeTowerLevel(scopeTower) {
-    private val ReceiverValueWithSmartCastInfo.allTypes: Set<KotlinType>
-        get() = possibleTypes + receiverValue.type
-
     override fun getVariables(
         name: Name,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<CandidateWithBoundDispatchReceiver> {
         if (extensionReceiver == null) return emptyList()
 
-        return syntheticScopes.collectSyntheticExtensionProperties(extensionReceiver.allTypes, name, location).map {
+        return syntheticScopes.collectSyntheticExtensionProperties(extensionReceiver.allOriginalTypes, name, location).map {
             createCandidateDescriptor(it, dispatchReceiver = null)
         }
     }

@@ -303,6 +303,7 @@ object AbstractTypeChecker {
 
                 if (!anyNonOutParameter && isSubtypeForSameConstructor(newArguments, superType)) return true
 
+                // TODO: rethink this; now components order in intersection type affects semantic due to run subtyping (which can add constraints) only until the first successful candidate
                 return supertypesWithSameConstructor.any { isSubtypeForSameConstructor(it.asArgumentList(), superType) }
             }
         }

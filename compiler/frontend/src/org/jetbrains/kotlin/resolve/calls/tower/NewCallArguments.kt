@@ -72,7 +72,7 @@ class ParseErrorKotlinCallArgument(
 ) : ExpressionKotlinCallArgument, SimplePSIKotlinCallArgument() {
     override val receiver = ReceiverValueWithSmartCastInfo(
         TransientReceiver(ErrorUtils.createErrorType("Error type for ParseError-argument $valueArgument")),
-        possibleTypes = emptySet(),
+        typesFromSmartCasts = emptySet(),
         isStable = true
     )
 
