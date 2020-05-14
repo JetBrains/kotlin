@@ -1,15 +1,11 @@
 package org.jetbrains.kotlin.testGenerator.generator
 
 import com.intellij.testFramework.TestDataPath
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.testGenerator.model.*
 import org.junit.runner.RunWith
 import java.io.File
 import java.util.*
-import java.util.regex.Pattern
 
 object TestGenerator {
     private val commonImports = importsListOf(
@@ -17,10 +13,9 @@ object TestGenerator {
         JUnit3RunnerWithInners::class,
         KotlinTestUtils::class,
         TestMetadata::class,
+        TestRoot::class,
         RunWith::class
     )
-
-    private val jdkImports = importsListOf(File::class, Pattern::class)
 
     fun write(workspace: TWorkspace) {
         for (group in workspace.groups) {
@@ -42,9 +37,8 @@ object TestGenerator {
             newLine()
 
             appendImports(getImports(suite))
-            appendImports(jdkImports)
-
             appendGeneratedComment()
+            appendAnnotation(TAnnotation<TestRoot>(group.modulePath))
             appendAnnotation(TAnnotation<SuppressWarnings>("all"))
 
             val singleModel = suite.models.singleOrNull()

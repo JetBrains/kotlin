@@ -4,7 +4,6 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testGenerator.generator.methods.RunTestMethod
-import org.jetbrains.kotlin.testGenerator.generator.methods.TestAllFilesPresentMethod
 import org.jetbrains.kotlin.testGenerator.generator.methods.TestCaseMethod
 import org.jetbrains.kotlin.testGenerator.model.*
 import org.junit.runner.RunWith
@@ -53,14 +52,12 @@ class SuiteElement private constructor(
                 val match = model.pattern.matchEntire(file.name) ?: continue
                 assert(match.groupValues.size >= 2) { "Invalid pattern, test method name group should be defined" }
                 val methodNameBase = getTestMethodNameBase(match.groupValues[1])
-                val path = file.toRelativeString(group.kotlinRoot)
+                val path = file.toRelativeString(group.moduleRoot)
                 methods += TestCaseMethod(methodNameBase, if (file.isDirectory) "$path/" else path, file.toRelativeString(rootFile))
             }
 
             if (methods.isNotEmpty()) {
-                val testDataPath = File(group.testDataRoot, model.path).toRelativeString(group.kotlinRoot)
                 methods += RunTestMethod(model)
-                methods += TestAllFilesPresentMethod(model, isNested, testDataPath)
             }
 
             return SuiteElement(group, suite, model, className, isNested, methods, nestedSuites)
@@ -82,10 +79,10 @@ class SuiteElement private constructor(
     }
 
     override fun Code.render() {
-        val testDataPath = File(group.testDataRoot, model.path).toRelativeString(group.kotlinRoot)
+        val testDataPath = File(group.testDataRoot, model.path).toRelativeString(group.moduleRoot)
 
         appendAnnotation(TAnnotation<TestMetadata>(testDataPath))
-        appendAnnotation(TAnnotation<TestDataPath>("\$PROJECT_ROOT"))
+        appendAnnotation(TAnnotation<TestDataPath>("\$CONTENT_ROOT"))
         suite.annotations.forEach { appendAnnotation(it) }
         appendAnnotation(TAnnotation<RunWith>(JUnit3RunnerWithInners::class.java))
 
