@@ -54,7 +54,7 @@ public class ConsoleExecutionEditor implements Disposable {
 
     myBusConnection = getProject().getMessageBus().connect();
     // action shortcuts are not yet registered
-    ApplicationManager.getApplication().invokeLater(() -> installEditorFactoryListener(), getProject().getDisposed());
+    ApplicationManager.getApplication().invokeLater(() -> installEditorFactoryListener(), o -> Disposer.isDisposed(myBusConnection));
   }
 
   private final FocusChangeListener myFocusListener = new FocusChangeListener() {
