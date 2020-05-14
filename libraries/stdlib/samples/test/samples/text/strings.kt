@@ -80,6 +80,24 @@ class Strings {
     }
 
     @Sample
+    fun filter() {
+        val text = "a1b2c3d4e5"
+
+        val textWithOnlyDigits = text.filter { it.isDigit() }
+
+        assertPrints(textWithOnlyDigits, "12345")
+    }
+
+    @Sample
+    fun filterNot() {
+        val text = "a1b2c3d4e5"
+
+        val textWithoutDigits = text.filterNot { it.isDigit() }
+
+        assertPrints(textWithoutDigits, "abcde")
+    }
+
+    @Sample
     fun zip() {
         val stringA = "abcd"
         val stringB = "zyx"
