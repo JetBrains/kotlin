@@ -210,7 +210,7 @@ public class WhiteSpace {
     // last line feed and new end offset.
     int newLineFeedsNumber = getLineFeeds() - lineFeedsNumberAtRemovedText;
     assert newLineFeedsNumber >= 0;
-    newLineFeedsNumber = newLineFeedsNumber < 0 ? 0 : newLineFeedsNumber; // Never expect the defense to be triggered.
+    newLineFeedsNumber = Math.max(newLineFeedsNumber, 0); // Never expect the defense to be triggered.
     setLineFeeds(newLineFeedsNumber);
     int startOffset = CharArrayUtil.shiftForwardUntil(oldText, newEndOffset - 1, "\n") + 1;
     WhiteSpaceInfo info = parse(oldText, startOffset, newEndOffset, 0, tabSize);

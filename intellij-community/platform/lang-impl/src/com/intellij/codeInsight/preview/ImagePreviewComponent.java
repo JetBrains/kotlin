@@ -195,7 +195,7 @@ public class ImagePreviewComponent extends JPanel implements PreviewHintComponen
       final int width = myImage.getWidth();
       final int height = myImage.getHeight();
 
-      UIUtil.drawImage(g, myImage, new Rectangle(0, 0, r.width > width ? width : r.width, r.height > height ? height : r.height), null, this);
+      UIUtil.drawImage(g, myImage, new Rectangle(0, 0, Math.min(r.width, width), Math.min(r.height, height)), null, this);
     }
 
     @Override

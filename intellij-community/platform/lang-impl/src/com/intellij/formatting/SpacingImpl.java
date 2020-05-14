@@ -139,6 +139,6 @@ public class SpacingImpl extends Spacing {
   }
 
   public int getPrefLineFeeds() {
-    return myPrefLineFeeds >= myMinLineFeeds ? myPrefLineFeeds : myMinLineFeeds;
+    return Math.max(myPrefLineFeeds, myMinLineFeeds);
   }
 }

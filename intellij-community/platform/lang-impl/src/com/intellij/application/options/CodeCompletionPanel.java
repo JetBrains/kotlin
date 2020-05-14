@@ -240,7 +240,7 @@ public class CodeCompletionPanel {
 
   private static int getIntegerValue(String s) {
     int value = StringUtilRt.parseInt(s, 0);
-    return value < 0 ? 0 : value;
+    return Math.max(value, 0);
   }
 
   @MagicConstant(intValues = {CodeInsightSettings.ALL, CodeInsightSettings.NONE, CodeInsightSettings.FIRST_LETTER})
