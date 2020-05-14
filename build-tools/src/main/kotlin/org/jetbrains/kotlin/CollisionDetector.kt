@@ -43,6 +43,7 @@ open class CollisionDetector : DefaultTask() {
                     zip.entries().asSequence().filterNot {
                         it.isDirectory ||
                         it.name.equals("META-INF/MANIFEST.MF", ignoreCase = true) ||
+                        it.name.equals("META-INF/versions/9/module-info.class", ignoreCase = true) ||
                         it.name.startsWith("META-INF/services/", ignoreCase = true)
                     }.forEach {
                         val outputPath = it.name

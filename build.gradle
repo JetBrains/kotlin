@@ -332,6 +332,7 @@ task shadowJar(type: ShadowJar) {
     archiveBaseName.set("kotlin-native")
     // Exclude trove4j because of license agreement.
     exclude "*trove4j*"
+    exclude("META-INF/versions/9/module-info.class")
     configurations = [project.configurations.distPack]
     archiveClassifier.set(null)
     transform(CollisionTransformer.class) {
