@@ -386,6 +386,22 @@ class FeatureUsageSettingsEventsTest {
     assertNotDefaultState(printer.getOptionByName("absStringOption"), "absStringOption", null, "string", false, withProject, defaultProject)
   }
 
+  @Test
+  fun `not record string field without possible values`() {
+    val component = TestComponent()
+    component.loadState(ComponentStateWithString(absStringOptWithoutPossibleValues = "notPredefined"))
+    val recordDefault = false
+    val printer = TestFeatureUsageSettingsEventsPrinter(recordDefault)
+    printer.logConfigurationState(getStateSpec(component).name, component.state, null)
+
+    val withProject = false
+    val defaultProject = false
+    Assert.assertEquals(2, printer.result.size)
+    assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
+    assertNotDefaultState(printer.getOptionByName("absStringOptionWithoutPossibleValues"), "absStringOptionWithoutPossibleValues", null,
+                          "string", recordDefault, withProject, defaultProject)
+  }
+
   private fun assertDefaultWithoutDefaultRecording(printer: TestFeatureUsageSettingsEventsPrinter,
                                                    withProject: Boolean,
                                                    defaultProject: Boolean) {
@@ -599,12 +615,17 @@ class FeatureUsageSettingsEventsTest {
   }
 
   private class ComponentStateWithString(stringOpt: String = "test",
-                                         absStringOpt: String = "test") : ComponentState() {
+                                         absStringOpt: String = "test",
+                                         absStringOptWithoutPossibleValues: String = "test") : ComponentState() {
     @Attribute("string-option")
     val stringOption: String = stringOpt
 
     @Attribute("abs-string-option")
     @field:ReportValue(possibleValues = ["predefined"])
     val absStringOption: String = absStringOpt
+
+    @Attribute("abs-string-option-without-possible-values")
+    @field:ReportValue
+    val absStringOptionWithoutPossibleValues: String = absStringOptWithoutPossibleValues
   }
 }
