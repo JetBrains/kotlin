@@ -511,6 +511,8 @@ public final class ExternalSystemUtil {
               }
             }
           };
+
+          LOG.info("External project [" + externalProjectPath + "] resolution task started");
           final long startTS = System.currentTimeMillis();
           resolveProjectTask
             .execute(indicator, ArrayUtil.prepend(taskListener, ExternalSystemTaskNotificationListener.EP_NAME.getExtensions()));

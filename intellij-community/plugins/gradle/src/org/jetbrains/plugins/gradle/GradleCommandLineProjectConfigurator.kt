@@ -5,7 +5,11 @@ import com.intellij.ide.CommandLineInspectionProjectConfigurator
 import com.intellij.ide.CommandLineInspectionProjectConfigurator.ConfiguratorContext
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
+import com.intellij.openapi.externalSystem.model.DataNode
+import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.MODAL_SYNC
+import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil.refreshProject
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil.refreshProjects
 import com.intellij.openapi.project.Project
@@ -17,8 +21,9 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 
+private val LOG = Logger.getInstance(GradleManager::class.java)
+
 class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigurator {
-  private val LOG = Logger.getInstance(GradleManager::class.java)
 
   override fun configureEnvironment(context: ConfiguratorContext) = context.run {
     Registry.get("external.system.auto.import.disabled").setValue(true)
@@ -33,8 +38,9 @@ class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigu
       for (projectPath in state.projectsToImport) {
         val buildFile = File(basePath).toPath().resolve(projectPath).toFile()
         if (buildFile.exists()) {
-          refreshProject(buildFile.absolutePath, ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).use(MODAL_SYNC))
-        } else {
+          refreshProject(buildFile.absolutePath, getImportSpecBuilder(project))
+        }
+        else {
           LOG.warn("File for importing gradle project doesn't exist: " + buildFile.absolutePath)
         }
       }
@@ -43,7 +49,7 @@ class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigu
 
     val wasAlreadyImported = context.projectPath.resolve(".idea").exists()
     if (wasAlreadyImported && !GradleSettings.getInstance(project).linkedProjectsSettings.isEmpty()) {
-      refreshProjects(ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).use(MODAL_SYNC))
+      refreshProjects(getImportSpecBuilder(project))
       return
     }
 
@@ -51,6 +57,22 @@ class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigu
     val kotlinDslGradleFile = basePath + "/" + GradleConstants.KOTLIN_DSL_SCRIPT_NAME
     if (FileUtil.findFirstThatExist(gradleGroovyDslFile, kotlinDslGradleFile) == null) return
 
-    refreshProject(basePath, ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).use(MODAL_SYNC))
+    refreshProject(basePath, getImportSpecBuilder(project))
+  }
+
+  private fun getImportSpecBuilder(project: Project): ImportSpecBuilder =
+    ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
+      .use(MODAL_SYNC)
+      .callback(Callback())
+
+  private class Callback : ExternalProjectRefreshCallback {
+
+    override fun onSuccess(externalTaskId: ExternalSystemTaskId, externalProject: DataNode<ProjectData>?) {
+      LOG.info("External task execution successful $externalTaskId")
+    }
+
+    override fun onFailure(externalTaskId: ExternalSystemTaskId, errorMessage: String, errorDetails: String?) {
+      LOG.error("External task execution failed $externalTaskId. $errorMessage $errorDetails")
+    }
   }
 }
