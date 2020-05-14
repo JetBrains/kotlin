@@ -146,7 +146,7 @@ object GenerationUtils {
                 configuration.languageVersionSettings,
                 signaturer = IdSignatureDescriptor(JvmManglerDesc()),
                 // TODO: differentiate JVM resolve from other targets, such as JS resolve.
-                generatorExtensions = JvmGeneratorExtensions(generateFacades = false)
+                generatorExtensions = JvmGeneratorExtensions()
             )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 

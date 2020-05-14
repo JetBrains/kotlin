@@ -350,7 +350,7 @@ object KotlinToJVMBytecodeCompiler {
                 Fir2IrConverter.createModuleFragment(
                     session, resolveTransformer.scopeSession, firFiles,
                     moduleConfiguration.languageVersionSettings, signaturer = signaturer,
-                    generatorExtensions = JvmGeneratorExtensions(generateFacades = false)
+                    generatorExtensions = JvmGeneratorExtensions()
                 )
             val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
