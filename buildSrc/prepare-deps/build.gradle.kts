@@ -24,7 +24,7 @@ val androidStudioRelease = rootProject.findProperty("versions.androidStudioRelea
 val androidStudioBuild = rootProject.findProperty("versions.androidStudioBuild") as String?
 val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
-val installIntellijUltimate = intellijUltimateEnabled
+val installIntellijUltimate = intellijUltimateEnabled && androidStudioRelease == null
 
 val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
 if (intellijVersionDelimiterIndex == -1) {
