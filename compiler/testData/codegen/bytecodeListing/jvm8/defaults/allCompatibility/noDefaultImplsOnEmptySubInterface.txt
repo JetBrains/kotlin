@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public interface K
+
+@kotlin.Metadata
+public interface MyList
+
+@kotlin.Metadata
+public interface MyMap
+
+@kotlin.Metadata
+public interface MyMap2
+
+@kotlin.Metadata
+public interface MySet
