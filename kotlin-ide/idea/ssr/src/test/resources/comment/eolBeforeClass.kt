@@ -5,11 +5,11 @@ class Foo
 
 class Bar1
 
-//
-class Bar2
+<warning descr="SSR">//
+class Bar2</warning>
 
-<warning descr="SSR">/**/
-class Bar3</warning>
+/**/
+class Bar3
 
 class Bar4 {
 
