@@ -180,7 +180,17 @@ class Fir2IrDeclarationStorage(
     }
 
     internal fun addDeclarationsToExternalClass(regularClass: FirRegularClass, irClass: IrClass) {
-        if (regularClass.symbol.classId.packageFqName.startsWith(Name.identifier("kotlin"))) {
+        if (regularClass.origin == FirDeclarationOrigin.Java) {
+            val sam = regularClass.getSamIfAny()
+            if (sam != null) {
+                val scope = regularClass.buildUseSiteMemberScope(session, scopeSession)!!
+                scope.processFunctionsByName(sam.name) {
+                    if (it is FirNamedFunctionSymbol && !it.isFakeOverride) {
+                        irClass.declarations += createIrFunction(it.fir, irClass)
+                    }
+                }
+            }
+        } else if (regularClass.symbol.classId.packageFqName.startsWith(Name.identifier("kotlin"))) {
             // Note: yet this is necessary only for *Range / *Progression classes
             // due to BE optimizations (for lowering) that use their first / last / step members
             // TODO: think how to refactor this piece of code and/or merge it with similar Fir2IrVisitor fragment
