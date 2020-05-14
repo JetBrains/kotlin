@@ -520,7 +520,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
         transformedGetClassCall.resultType =
             buildResolvedTypeRef {
-                type = ClassId.fromString("kotlin/reflect/KClass").constructClassLikeType(arrayOf(typeOfExpression), false)
+                type = StandardClassIds.KClass.constructClassLikeType(arrayOf(typeOfExpression), false)
             }
         return transformedGetClassCall.compose()
     }
