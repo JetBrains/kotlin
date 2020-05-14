@@ -7,6 +7,7 @@ inline fun foo() {
     null!!
 }
 
+// !LANGUAGE: +CorrectSourceMappingSyntax
 // NAVIGATE_TO_CALL_SITE
-// FILE: inlineFunCallSite.kt
+// FILE: inlineFunCallSiteNewSmapSyntax.kt
 // LINE: 2
