@@ -12,6 +12,8 @@
     <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinOCUsageSearcher"/>
     <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinInitializerSwiftUsageSearcher"/>
     <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinSwiftUsageSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinFileClassSwiftUsageSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinFileClassOCUsageSearcher"/>
 
     <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
     <automaticRenamerFactory implementation="org.jetbrains.konan.refactoring.rename.AdditionalKotlinReferencesInSwiftAndObjCRenamer"/>

@@ -13,6 +13,7 @@ import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.ReferencesSearch.SearchParameters
 import com.intellij.util.Processor
 import com.jetbrains.cidr.lang.symbols.OCSymbol
+import com.jetbrains.cidr.lang.symbols.OCSymbolHolderBase
 import org.jetbrains.konan.resolve.symbols.KtSymbolPsiWrapper
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
@@ -21,16 +22,17 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.collectAllExpectAndActualDeclaration
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 
-abstract class KotlinUsageSearcher<T : OCSymbol, E : KtDeclaration> : QueryExecutorBase<PsiReference, SearchParameters>(true) {
+abstract class KotlinUsageSearcher<T : OCSymbol, E : KtElement> : QueryExecutorBase<PsiReference, SearchParameters>(true) {
     final override fun processQuery(parameters: SearchParameters, consumer: Processor<in PsiReference>) {
         val target = parameters.getTarget() ?: return
 
-        val isMPP = (target.descriptor as? MemberDescriptor)?.let { it.isExpect || it.isActual } ?: false
+        val isMPP = ((target as? KtDeclaration)?.descriptor as? MemberDescriptor)?.let { it.isExpect || it.isActual } ?: false
         val symbols = if (!isMPP) {
             target.toLightSymbols()
         } else {
-            target.collectAllExpectAndActualDeclaration().filter { it.platform.isNative() }.flatMap {
+            (target as KtDeclaration).collectAllExpectAndActualDeclaration().filter { it.platform.isNative() }.flatMap {
                 @Suppress("UNCHECKED_CAST")
                 (it as E).toLightSymbols()
             }

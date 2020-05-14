@@ -2,6 +2,7 @@ package org.jetbrains.konan.resolve
 
 import com.intellij.psi.ResolveState
 import com.intellij.util.CommonProcessors
+import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCLanguageKind
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
 import com.jetbrains.cidr.lang.symbols.OCSymbol
@@ -14,8 +15,16 @@ import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import org.jetbrains.konan.resolve.konan.KonanConsumer
 import org.jetbrains.konan.resolve.konan.KonanTarget.Companion.PRODUCT_MODULE_NAME_KEY
+import org.jetbrains.konan.resolve.symbols.objc.KtOCClassSymbol
+import org.jetbrains.konan.resolve.symbols.swift.KtSwiftClassSymbol
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
+import org.jetbrains.kotlin.backend.konan.objcexport.abbreviate
+import org.jetbrains.kotlin.backend.konan.objcexport.createNamer
+import org.jetbrains.kotlin.idea.caches.project.toDescriptor
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 
 fun KtNamedDeclaration.findSymbols(kind: OCLanguageKind): List<OCSymbol> {
     val containingFile = containingKtFile
@@ -33,18 +42,28 @@ fun KtNamedDeclaration.findSymbols(kind: OCLanguageKind): List<OCSymbol> {
     if (kind == SwiftLanguageKind || this !is KtClassOrObject || this is KtEnumEntry) {
         containingClassOrObject?.findMemberSymbols(offset, kind)?.let { return it }
     }
-    return findGlobalSymbols(containingFile, offset, kind)
+
+    if (parent is KtFile && this !is KtClassOrObject) {
+        return (parent as KtFile).findFileClassMemberSymbols(offset, kind)
+    }
+
+    return findGlobalSymbols(containingFile, kind) { symbols, _ ->
+        symbols.filter { it.offset == offset }
+    }
 }
 
+private fun KtFile.findFileClassMemberSymbols(startOffset: Int, kind: OCLanguageKind): List<OCSymbol> =
+    findFileClassSymbols(kind).flatMap { it.findMemberSymbols(startOffset) }
+
 private fun KtClassOrObject.findMemberSymbols(startOffset: Int, kind: OCLanguageKind): List<OCSymbol> =
-    findSymbols(kind)
-        .flatMap { classSymbol ->
-            when (classSymbol) {
-                is OCMembersContainer<*> -> classSymbol.findMemberSymbols(startOffset)
-                is SwiftTypeSymbol -> classSymbol.findMemberSymbols(startOffset)
-                else -> emptyList()
-            }
-        }
+    findSymbols(kind).flatMap { it.findMemberSymbols(startOffset) }
+
+private fun OCSymbol.findMemberSymbols(startOffset: Int): Collection<OCSymbol> =
+    when (this) {
+        is OCMembersContainer<*> -> findMemberSymbols(offset = startOffset)
+        is SwiftTypeSymbol -> findMemberSymbols(startOffset)
+        else -> emptyList()
+    }
 
 private fun OCMembersContainer<*>.findMemberSymbols(offset: Int): Collection<OCSymbol> =
     object : CommonProcessors.CollectProcessor<OCSymbol>() {
@@ -56,7 +75,24 @@ private fun SwiftTypeSymbol.findMemberSymbols(offset: Int): List<SwiftSymbol> =
         it.offset == offset
     }.also { processMembers(it, ResolveState.initial()) }.collectedSymbols
 
-private fun findGlobalSymbols(containingFile: KtFile, offset: Int, kind: OCLanguageKind): List<OCSymbol> {
+internal fun KtFile.findFileClassSymbols(kind: OCLanguageKind): List<OCSymbol> {
+    val descriptor = module?.toDescriptor() ?: return emptyList()
+    return findGlobalSymbols(this, kind) { symbols, productModuleName ->
+        val namer = createNamer(descriptor, abbreviate(productModuleName))
+        val fileClassName = namer.getFileClassName(PsiSourceFile(this))
+        val name = when (kind) {
+            is SwiftLanguageKind -> fileClassName.swiftName
+            else -> fileClassName.objCName
+        }
+        return@findGlobalSymbols listOf(symbols.first { it.name == name })
+    }
+}
+
+private fun findGlobalSymbols(
+    containingFile: KtFile,
+    kind: OCLanguageKind,
+    matcher: (List<OCSymbol>, String) -> List<OCSymbol>
+): List<OCSymbol> {
     val tables = hashSetOf<FileSymbolTable>()
     val symbols = hashSetOf<OCSymbol>()
     val results = mutableListOf<OCSymbol>()
@@ -66,9 +102,7 @@ private fun findGlobalSymbols(containingFile: KtFile, offset: Int, kind: OCLangu
         context.define(PRODUCT_MODULE_NAME_KEY, konanTarget.productModuleName)
 
         val tableContents = FileSymbolTable.forFile(containingFile, context)?.takeIf { tables.add(it) }?.contents ?: emptyList()
-        for (symbol in tableContents) {
-            if (symbol.offset == offset && symbols.add(symbol)) results.add(symbol)
-        }
+        matcher(tableContents, konanTarget.productModuleName).filter { symbols.add(it) }.forEach { results.add(it) }
     }
     return results
 }
