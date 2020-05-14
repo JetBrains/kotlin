@@ -1082,7 +1082,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       ProjectFileIndex fileIndex = ProjectRootManager.getInstance(element.getProject()).getFileIndex();
       Module module = fileIndex.getModuleForFile(vfile);
 
-      if (module != null) {
+      if (module != null && !ModuleType.isInternal(module)) {
         if (ModuleManager.getInstance(element.getProject()).getModules().length == 1) return null;
         return "<icon src='" + ModuleType.get(module).getId() + "'>&nbsp;" + module.getName().replace("<", "&lt;");
       }
