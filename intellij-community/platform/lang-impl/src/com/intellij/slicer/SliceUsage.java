@@ -39,10 +39,13 @@ public abstract class SliceUsage extends UsageInfo2UsageAdapter {
   public final SliceAnalysisParams params;
 
   public SliceUsage(@NotNull PsiElement element, @NotNull SliceUsage parent) {
+    this(element, parent, parent.params);
+  }
+
+  protected SliceUsage(@NotNull PsiElement element, @NotNull SliceUsage parent, @NotNull SliceAnalysisParams params) {
     super(new UsageInfo(element));
     myParent = parent;
-    params = parent.params;
-    assert params != null;
+    this.params = params;
   }
 
   // root usage

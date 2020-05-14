@@ -16,6 +16,7 @@
 package com.intellij.slicer;
 
 import com.intellij.analysis.AnalysisScope;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SliceAnalysisParams {
@@ -34,5 +35,12 @@ public class SliceAnalysisParams {
   public @Nullable SliceValueFilter valueFilter;
 
   public SliceAnalysisParams() {
+  }
+
+  public SliceAnalysisParams(@NotNull SliceAnalysisParams params) {
+    this.dataFlowToThis = params.dataFlowToThis;
+    this.showInstanceDereferences = params.showInstanceDereferences;
+    this.scope = params.scope;
+    this.valueFilter = params.valueFilter;
   }
 }
