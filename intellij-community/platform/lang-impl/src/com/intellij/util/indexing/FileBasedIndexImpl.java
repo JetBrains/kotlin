@@ -292,7 +292,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     //myChangedFilesCollector.invalidateIndicesRecursively(file, false);
     //myChangedFilesCollector.buildIndicesForFileRecursively(file, false);
     ChangedFilesCollector changedFilesCollector = getChangedFilesCollector();
-    changedFilesCollector.invalidateIndicesRecursively(file, true, changedFilesCollector.getEventMerger());
+    changedFilesCollector.invalidateIndicesRecursively(file, true, true, changedFilesCollector.getEventMerger());
     if (myRegisteredIndexes.isInitialized()) {
       changedFilesCollector.ensureUpToDateAsync();
     }
@@ -1251,6 +1251,8 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         }
       }
     });
+
+    file.putUserData(IndexingDataKeys.REBUILD_REQUESTED, null);
     return Pair.create(setIndexedStatus.get(), perIndexerTimes);
   }
 

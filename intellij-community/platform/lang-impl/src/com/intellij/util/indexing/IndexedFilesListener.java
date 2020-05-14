@@ -46,9 +46,15 @@ abstract class IndexedFilesListener implements AsyncFileListener {
     }
   }
 
-  private static boolean invalidateIndicesForFile(@NotNull VirtualFile file, boolean contentChange, @NotNull VfsEventsMerger eventMerger) {
+  private static boolean invalidateIndicesForFile(@NotNull VirtualFile file,
+                                                  boolean contentChange,
+                                                  boolean forceRebuildRequested,
+                                                  @NotNull VfsEventsMerger eventMerger) {
     if (isUnderConfigOrSystem(file)) {
       return false;
+    }
+    if (forceRebuildRequested) {
+      file.putUserData(IndexingDataKeys.REBUILD_REQUESTED, Boolean.TRUE);
     }
     ProgressManager.checkCanceled();
     eventMerger.recordBeforeFileEvent(file, contentChange);
@@ -57,11 +63,14 @@ abstract class IndexedFilesListener implements AsyncFileListener {
 
   protected abstract void iterateIndexableFiles(@NotNull VirtualFile file, @NotNull ContentIterator iterator);
 
-  void invalidateIndicesRecursively(@NotNull VirtualFile file, boolean contentChange, @NotNull VfsEventsMerger eventMerger) {
+  void invalidateIndicesRecursively(@NotNull VirtualFile file,
+                                    boolean contentChange,
+                                    boolean forceRebuildRequested,
+                                    @NotNull VfsEventsMerger eventMerger) {
     VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor<Void>() {
       @Override
       public boolean visitFile(@NotNull VirtualFile file) {
-        return invalidateIndicesForFile(file, contentChange, eventMerger);
+        return invalidateIndicesForFile(file, contentChange, forceRebuildRequested, eventMerger);
       }
 
       @Override
@@ -77,10 +86,10 @@ abstract class IndexedFilesListener implements AsyncFileListener {
     VfsEventsMerger tempMerger = new VfsEventsMerger();
     for (VFileEvent event : events) {
       if (event instanceof VFileContentChangeEvent) {
-        invalidateIndicesRecursively(((VFileContentChangeEvent)event).getFile(), true, tempMerger);
+        invalidateIndicesRecursively(((VFileContentChangeEvent)event).getFile(), true, false, tempMerger);
       }
       else if (event instanceof VFileDeleteEvent) {
-        invalidateIndicesRecursively(((VFileDeleteEvent)event).getFile(), false, tempMerger);
+        invalidateIndicesRecursively(((VFileDeleteEvent)event).getFile(), false, false, tempMerger);
       }
       else if (event instanceof VFilePropertyChangeEvent) {
         final VFilePropertyChangeEvent pce = (VFilePropertyChangeEvent)event;
@@ -89,10 +98,10 @@ abstract class IndexedFilesListener implements AsyncFileListener {
           // indexes may depend on file name
           // name change may lead to filetype change so the file might become not indexable
           // in general case have to 'unindex' the file and index it again if needed after the name has been changed
-          invalidateIndicesRecursively(pce.getFile(), false, tempMerger);
+          invalidateIndicesRecursively(pce.getFile(), false, false, tempMerger);
         }
         else if (propertyName.equals(VirtualFile.PROP_ENCODING)) {
-          invalidateIndicesRecursively(pce.getFile(), true, tempMerger);
+          invalidateIndicesRecursively(pce.getFile(), true, false, tempMerger);
         }
       }
     }
