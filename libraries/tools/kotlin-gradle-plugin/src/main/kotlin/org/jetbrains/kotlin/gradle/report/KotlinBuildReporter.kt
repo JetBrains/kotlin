@@ -115,7 +115,7 @@ internal class KotlinBuildReporter(
         val logger = result.gradle?.rootProject?.logger
         try {
             perfReportFile.writeText(buildInfo(result) + taskOverview() + tasksSb.toString())
-            logger?.lifecycle("Kotlin build report is written to ${perfReportFile.canonicalPath}")
+            logger?.lifecycle("Kotlin build report is written to file://${perfReportFile.canonicalPath}")
         } catch (e: Throwable) {
             logger?.error("Could not write Kotlin build report to ${perfReportFile.canonicalPath}", e)
         }
