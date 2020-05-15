@@ -79,7 +79,7 @@ public final class IndexUpdateRunner {
       LimitedCachedFileContentQueue.createNonAppendableForFiles(files, LOAD_LIMITER_FOR_USUAL_FILES, contentLoader);
     LimitedCachedFileContentQueue queueOfLargeFiles =
       LimitedCachedFileContentQueue.createEmptyAppendable(LOAD_LIMITER_FOR_LARGE_FILES, contentLoader);
-    IndexingJob indexingJob = new IndexingJob(project, queue, queueOfLargeFiles, indicator, new AtomicInteger(), files.size());
+    IndexingJob indexingJob = new IndexingJob(project, queue, queueOfLargeFiles, indicator, files.size());
     ourIndexingJobs.add(indexingJob);
 
     try {
@@ -330,7 +330,7 @@ public final class IndexUpdateRunner {
     final CachedFileContentQueue myFileContentQueue;
     final LimitedCachedFileContentQueue myQueueOfLargeFiles;
     final ProgressIndicator myIndicator;
-    final AtomicInteger myNumberOfFilesProcessed;
+    final AtomicInteger myNumberOfFilesProcessed = new AtomicInteger();
     final int myTotalFiles;
     final AtomicBoolean myIsFinished = new AtomicBoolean();
     final IndexingJobStatistics myStatistics = new IndexingJobStatistics();
@@ -339,12 +339,10 @@ public final class IndexUpdateRunner {
                 @NotNull CachedFileContentQueue queue,
                 @NotNull LimitedCachedFileContentQueue queueOfLargeFiles,
                 @NotNull ProgressIndicator indicator,
-                @NotNull AtomicInteger numberOfFilesProcessed,
                 int totalFiles) {
       myProject = project;
       myFileContentQueue = queue;
       myIndicator = indicator;
-      myNumberOfFilesProcessed = numberOfFilesProcessed;
       myTotalFiles = totalFiles;
       myQueueOfLargeFiles = queueOfLargeFiles;
     }
