@@ -92,13 +92,13 @@ class CoroutineTransformerMethodVisitor(
         )
 
         FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
-        RedundantLocalsEliminationMethodTransformer(languageVersionSettings).transform(containingClassInternalName, methodNode)
+        val suspensionPoints = collectSuspensionPoints(methodNode)
+        RedundantLocalsEliminationMethodTransformer(languageVersionSettings, suspensionPoints)
+            .transform(containingClassInternalName, methodNode)
         if (languageVersionSettings.isReleaseCoroutines()) {
             ChangeBoxingMethodTransformer.transform(containingClassInternalName, methodNode)
         }
         updateMaxStack(methodNode)
-
-        val suspensionPoints = collectSuspensionPoints(methodNode)
 
         checkForSuspensionPointInsideMonitor(methodNode, suspensionPoints)
 
@@ -1169,13 +1169,20 @@ private fun Type.normalize() =
  * ICONST_1
  * INVOKESTATIC InlineMarker.mark()
  */
-private class SuspensionPoint(
+internal class SuspensionPoint(
     // ICONST_0
     val suspensionCallBegin: AbstractInsnNode,
     // INVOKESTATIC InlineMarker.mark()
     val suspensionCallEnd: AbstractInsnNode
 ) {
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
+
+    operator fun contains(insn: AbstractInsnNode): Boolean {
+        for (i in InsnSequence(suspensionCallBegin, suspensionCallEnd.next)) {
+            if (i == insn) return true
+        }
+        return false
+    }
 }
 
 internal fun getLastParameterIndex(desc: String, access: Int) =

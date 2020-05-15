@@ -5,93 +5,112 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.codegen.inline.insnOpcodeText
+import org.jetbrains.kotlin.codegen.inline.nodeText
 import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
-import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
-import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.removeAll
+import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
+import java.util.*
+
+private class PossibleSpilledValue(val source: AbstractInsnNode, type: Type?) : BasicValue(type) {
+    val usages = mutableSetOf<AbstractInsnNode>()
+
+    override fun toString(): String = source.insnOpcodeText
+}
+
+private object ConstructedValue : BasicValue(AsmTypes.OBJECT_TYPE)
+
+private class RedundantSpillingInterpreter(
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val methodNode: MethodNode
+) :
+    BasicInterpreter(Opcodes.API_VERSION) {
+    val possibleSpilledValues = mutableSetOf<PossibleSpilledValue>()
+
+    override fun newOperation(insn: AbstractInsnNode): BasicValue? {
+        if (insn.opcode == Opcodes.NEW) return ConstructedValue
+        val basicValue = super.newOperation(insn)
+        return if (insn.isUnitInstance())
+            // Unit instances come from inlining suspend functions returning Unit.
+            // They can be spilled before they are eventually popped.
+            // Track them.
+            PossibleSpilledValue(insn, basicValue.type).also { possibleSpilledValues += it }
+        else basicValue
+    }
+
+    override fun copyOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
+        when (value) {
+            is ConstructedValue -> value
+            is PossibleSpilledValue -> {
+                value.usages += insn
+                if (insn.opcode == Opcodes.ALOAD || insn.opcode == Opcodes.ASTORE) value
+                else super.newValue(value.type)
+            }
+            else -> value
+        }
+
+    override fun naryOperation(insn: AbstractInsnNode, values: MutableList<out BasicValue?>): BasicValue? {
+        for (value in values.filterIsInstance<PossibleSpilledValue>()) {
+            value.usages += insn
+        }
+        return super.naryOperation(insn, values)
+    }
+
+    override fun merge(v: BasicValue?, w: BasicValue?): BasicValue? =
+        if (v is PossibleSpilledValue && w is PossibleSpilledValue && v.source == w.source) v else super.newValue(v?.type)
+}
 
 // Inliner emits a lot of locals during inlining.
 // Remove all of them since these locals are
 //  1) going to be spilled into continuation object
 //  2) breaking tail-call elimination
-class RedundantLocalsEliminationMethodTransformer(private val languageVersionSettings: LanguageVersionSettings) : MethodTransformer() {
-    lateinit var internalClassName: String
+internal class RedundantLocalsEliminationMethodTransformer(
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val suspensionPoints: List<SuspensionPoint>
+) : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        this.internalClassName = internalClassName
-        do {
-            var changed = false
-            changed = simpleRemove(methodNode) || changed
-            changed = removeWithReplacement(methodNode) || changed
-            changed = removeAloadCheckcastContinuationAstore(methodNode, languageVersionSettings) || changed
-        } while (changed)
-    }
+        val interpreter = RedundantSpillingInterpreter(languageVersionSettings, methodNode)
+        val frames = MethodAnalyzer<BasicValue>(internalClassName, methodNode, interpreter).analyze()
 
-    // Replace
-    //  GETSTATIC kotlin/Unit.INSTANCE
-    //  ASTORE N
-    //  ...
-    //  ALOAD N
-    // with
-    //  ...
-    //  GETSTATIC kotlin/Unit.INSTANCE
-    // or
-    //  ACONST_NULL
-    //  ASTORE N
-    //  ...
-    //  ALOAD N
-    // with
-    //  ...
-    //  ACONST_NULL
-    // or
-    //  ALOAD K
-    //  ASTORE N
-    //  ...
-    //  ALOAD N
-    // with
-    //  ...
-    //  ALOAD K
-    //
-    // But do not remove several at a time, since the same local (for example, ALOAD 0) might be loaded and stored multiple times in
-    // sequence, like
-    //  ALOAD 0
-    //  ASTORE 1
-    //  ALOAD 1
-    //  ASTORE 2
-    //  ALOAD 3
-    // Here, it is unsafe to replace ALOAD 3 with ALOAD 1, and then already removed ALOAD 1 with ALOAD 0.
-    private fun removeWithReplacement(
-        methodNode: MethodNode
-    ): Boolean {
-        val cfg = ControlFlowGraph.build(methodNode)
-        val insns = findSafeAstorePredecessors(methodNode, cfg, ignoreLocalVariableTable = false) {
-            it.isUnitInstance() || it.opcode == Opcodes.ACONST_NULL || it.opcode == Opcodes.ALOAD
+        val toDelete = mutableSetOf<AbstractInsnNode>()
+        for (spilledValue in interpreter.possibleSpilledValues.filter { it.usages.isNotEmpty() }) {
+            @Suppress("UNCHECKED_CAST")
+            val aloads = spilledValue.usages.filter { it.opcode == Opcodes.ALOAD } as List<VarInsnNode>
+
+            if (aloads.isEmpty()) continue
+
+            val slot = aloads.first().`var`
+
+            if (aloads.any { it.`var` != slot }) continue
+            for (aload in aloads) {
+                methodNode.instructions.set(aload, spilledValue.source.clone())
+            }
+
+            toDelete.addAll(spilledValue.usages.filter { it.opcode == Opcodes.ASTORE })
+            toDelete.add(spilledValue.source)
         }
-        for ((pred, astore) in insns) {
-            val aload = findSingleLoadFromAstore(astore, cfg, methodNode) ?: continue
 
-            methodNode.instructions.removeAll(listOf(pred, astore))
-            methodNode.instructions.set(aload, pred.clone())
-            return true
+        for (pop in methodNode.instructions.asSequence().filter { it.opcode == Opcodes.POP }) {
+            val value = (frames[methodNode.instructions.indexOf(pop)]?.top() as? PossibleSpilledValue) ?: continue
+            if (value.usages.isEmpty() && suspensionPoints.none { value.source in it }) {
+                toDelete.add(pop)
+                toDelete.add(value.source)
+            }
         }
-        return false
-    }
 
-    private fun findSingleLoadFromAstore(
-        astore: AbstractInsnNode,
-        cfg: ControlFlowGraph,
-        methodNode: MethodNode
-    ): AbstractInsnNode? {
-        val aload = methodNode.instructions.asSequence()
-            .singleOrNull { it.opcode == Opcodes.ALOAD && it.localIndex() == astore.localIndex() } ?: return null
-        val succ = findImmediateSuccessors(astore, cfg, methodNode).singleOrNull() ?: return null
-        return if (aload == succ) aload else null
+        methodNode.instructions.removeAll(toDelete)
     }
 
     private fun AbstractInsnNode.clone() = when (this) {
@@ -101,145 +120,41 @@ class RedundantLocalsEliminationMethodTransformer(private val languageVersionSet
         is TypeInsnNode -> TypeInsnNode(opcode, desc)
         else -> error("clone of $this is not implemented yet")
     }
-
-    // Remove
-    //  ALOAD N
-    //  POP
-    // or
-    //  ACONST_NULL
-    //  POP
-    // or
-    //  GETSTATIC kotlin/Unit.INSTANCE
-    //  POP
-    private fun simpleRemove(methodNode: MethodNode): Boolean {
-        val insns =
-            findPopPredecessors(methodNode) { it.isUnitInstance() || it.opcode == Opcodes.ACONST_NULL || it.opcode == Opcodes.ALOAD }
-        for ((pred, pop) in insns) {
-            methodNode.instructions.insertBefore(pred, InsnNode(Opcodes.NOP))
-            methodNode.instructions.removeAll(listOf(pred, pop))
-        }
-        return insns.isNotEmpty()
-    }
-
-    private fun findPopPredecessors(
-        methodNode: MethodNode,
-        predicate: (AbstractInsnNode) -> Boolean
-    ): Map<AbstractInsnNode, AbstractInsnNode> {
-        val insns = methodNode.instructions.asSequence().filter { predicate(it) }.toList()
-
-        val cfg = ControlFlowGraph.build(methodNode)
-
-        val res = hashMapOf<AbstractInsnNode, AbstractInsnNode>()
-        for (insn in insns) {
-            val succ = findImmediateSuccessors(insn, cfg, methodNode).singleOrNull() ?: continue
-            if (succ.opcode != Opcodes.POP) continue
-            if (insn.opcode == Opcodes.ALOAD && methodNode.localVariables.firstOrNull { it.index == insn.localIndex() } != null) continue
-            val sources = findSourceInstructions(internalClassName, methodNode, listOf(succ), ignoreCopy = false).values.flatten()
-            if (sources.size != 1) continue
-            res[insn] = succ
-        }
-        return res
-    }
-
-    // Replace
-    //  ALOAD K
-    //  CHECKCAST Continuation
-    //  ASTORE N
-    //  ...
-    //  ALOAD N
-    // with
-    //  ...
-    //  ALOAD K
-    //  CHECKCAST Continuation
-    private fun removeAloadCheckcastContinuationAstore(methodNode: MethodNode, languageVersionSettings: LanguageVersionSettings): Boolean {
-        // Here we ignore the duplicates of continuation in local variable table,
-        // Since it increases performance greatly.
-        val cfg = ControlFlowGraph.build(methodNode)
-        val insns = findSafeAstorePredecessors(methodNode, cfg, ignoreLocalVariableTable = true) {
-            it.opcode == Opcodes.CHECKCAST &&
-                    (it as TypeInsnNode).desc == languageVersionSettings.continuationAsmType().internalName &&
-                    it.previous?.opcode == Opcodes.ALOAD
-        }
-
-        var changed = false
-
-        for ((checkcast, astore) in insns) {
-            val aloadk = checkcast.previous
-            val aloadn = findSingleLoadFromAstore(astore, cfg, methodNode) ?: continue
-
-            methodNode.instructions.removeAll(listOf(aloadk, checkcast, astore))
-            methodNode.instructions.insertBefore(aloadn, aloadk.clone())
-            methodNode.instructions.set(aloadn, checkcast.clone())
-            changed = true
-        }
-        return changed
-    }
-
-    private fun findSafeAstorePredecessors(
-        methodNode: MethodNode,
-        cfg: ControlFlowGraph,
-        ignoreLocalVariableTable: Boolean,
-        predicate: (AbstractInsnNode) -> Boolean
-    ): Map<AbstractInsnNode, AbstractInsnNode> {
-        val insns = methodNode.instructions.asSequence().filter { predicate(it) }.toList()
-        val res = hashMapOf<AbstractInsnNode, AbstractInsnNode>()
-
-        for (insn in insns) {
-            val succ = findImmediateSuccessors(insn, cfg, methodNode).singleOrNull() ?: continue
-            if (succ.opcode != Opcodes.ASTORE) continue
-            if (methodNode.instructions.asSequence().count {
-                    it.opcode == Opcodes.ASTORE && it.localIndex() == succ.localIndex()
-                } != 1) continue
-            if (!ignoreLocalVariableTable && methodNode.localVariables.firstOrNull { it.index == succ.localIndex() } != null) continue
-            val sources = findSourceInstructions(internalClassName, methodNode, listOf(succ), ignoreCopy = false).values.flatten()
-            if (sources.size > 1) continue
-            res[insn] = succ
-        }
-
-        return res
-    }
-
-    // Find all meaningful successors of insn
-    private fun findImmediateSuccessors(
-        insn: AbstractInsnNode,
-        cfg: ControlFlowGraph,
-        methodNode: MethodNode
-    ): Collection<AbstractInsnNode> {
-        val visited = hashSetOf<AbstractInsnNode>()
-
-        fun dfs(current: AbstractInsnNode): Collection<AbstractInsnNode> {
-            if (!visited.add(current)) return emptySet()
-
-            return cfg.getSuccessorsIndices(current).flatMap {
-                val succ = methodNode.instructions[it]
-                if (!succ.isMeaningful || succ is JumpInsnNode || succ.opcode == Opcodes.NOP) dfs(succ)
-                else setOf(succ)
-            }
-        }
-
-        return dfs(insn)
-    }
-
-    private fun AbstractInsnNode.localIndex(): Int {
-        assert(this is VarInsnNode)
-        return (this as VarInsnNode).`var`
-    }
 }
 
-private fun findSourceInstructions(
-    internalClassName: String,
-    methodNode: MethodNode,
-    insns: Collection<AbstractInsnNode>,
-    ignoreCopy: Boolean
-): Map<AbstractInsnNode, Collection<AbstractInsnNode>> {
-    val frames = MethodTransformer.analyze(
-        internalClassName,
-        methodNode,
-        if (ignoreCopy) IgnoringCopyOperationSourceInterpreter() else SourceInterpreter()
-    )
-    return insns.keysToMap {
-        val index = methodNode.instructions.indexOf(it)
-        if (isUnreachable(index, frames)) return@keysToMap emptySet<AbstractInsnNode>()
-        frames[index].getStack(0).insns
+// Handy debugging routing
+@Suppress("unused")
+fun MethodNode.nodeTextWithFrames(frames: Array<*>): String {
+    var insns = nodeText.split("\n")
+    val first = insns.indexOfLast { it.trim().startsWith("@") } + 1
+    var last = insns.indexOfFirst { it.trim().startsWith("LOCALVARIABLE") }
+    if (last < 0) last = insns.size
+    val prefix = insns.subList(0, first).joinToString(separator = "\n")
+    val postfix = insns.subList(last, insns.size).joinToString(separator = "\n")
+    insns = insns.subList(first, last)
+    if (insns.any { it.contains("TABLESWITCH") }) {
+        var insideTableSwitch = false
+        var buffer = ""
+        val res = arrayListOf<String>()
+        for (insn in insns) {
+            if (insn.contains("TABLESWITCH")) {
+                insideTableSwitch = true
+            }
+            if (insideTableSwitch) {
+                buffer += insn
+                if (insn.contains("default")) {
+                    insideTableSwitch = false
+                    res += buffer
+                    buffer = ""
+                    continue
+                }
+            } else {
+                res += insn
+            }
+        }
+        insns = res
     }
+    return prefix + "\n" + insns.withIndex().joinToString(separator = "\n") { (index, insn) ->
+        if (index >= frames.size) "N/A\t$insn" else "${frames[index]}\t$insn"
+    } + "\n" + postfix
 }
