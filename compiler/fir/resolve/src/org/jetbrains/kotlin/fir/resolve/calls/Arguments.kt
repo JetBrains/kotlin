@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-
 fun Candidate.resolveArgumentExpression(
     /*
     csBuilder: ConstraintSystemBuilder,
@@ -310,11 +309,7 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     val firFunction = symbol.fir as? FirFunction<*> ?: return null
     if (!samResolver.shouldRunSamConversionForFunction(firFunction)) return null
 
-    val argumentIsFunctional = when ((argument as? FirWrappedArgumentExpression)?.expression ?: argument) {
-        is FirAnonymousFunction, is FirCallableReferenceAccess -> true
-        else -> argument.typeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
-    }
-    if (!argumentIsFunctional) return null
+    if (!argument.isFunctional(session)) return null
 
     // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
@@ -322,6 +317,12 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
         usesSAM = true
     } ?: return null
 }
+
+fun FirExpression.isFunctional(session: FirSession): Boolean =
+    when ((this as? FirWrappedArgumentExpression)?.expression ?: this) {
+        is FirAnonymousFunction, is FirCallableReferenceAccess -> true
+        else -> typeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
+    }
 
 internal fun FirExpression.getExpectedType(
     session: FirSession,
@@ -339,7 +340,6 @@ internal fun FirExpression.getExpectedType(
         parameter.returnTypeRef.coneTypeUnsafe()
     }
 }
-
 
 fun ConeKotlinType.varargElementType(session: FirSession): ConeKotlinType {
     return this.arrayElementType(session) ?: error("Failed to extract! ${this.render()}!")
