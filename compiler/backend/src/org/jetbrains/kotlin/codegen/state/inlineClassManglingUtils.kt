@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameMangling
+import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
+import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import java.security.MessageDigest
@@ -23,7 +24,7 @@ fun getManglingSuffixBasedOnKotlinSignature(descriptor: CallableMemberDescriptor
 
     // If a function accepts inline class parameters, mangle its name.
     val actualValueParameterTypes = listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type }
-    if (requiresFunctionNameMangling(actualValueParameterTypes)) {
+    if (requiresFunctionNameManglingForParameterTypes(actualValueParameterTypes)) {
         return "-" + md5base64(collectSignatureForMangling(actualValueParameterTypes))
     }
 
@@ -32,8 +33,7 @@ fun getManglingSuffixBasedOnKotlinSignature(descriptor: CallableMemberDescriptor
     // should unwrap it and take original return type instead.
     if (descriptor.containingDeclaration is ClassDescriptor) {
         val returnType = descriptor.unwrapInitialDescriptorForSuspendFunction().returnType!!
-        // NB functions returning all inline classes (including our special 'kotlin.Result') should be mangled.
-        if (returnType.isInlineClassType()) {
+        if (requiresFunctionNameManglingForReturnType(returnType)) {
             return "-" + md5base64(":" + getSignatureElementForMangling(returnType))
         }
     }

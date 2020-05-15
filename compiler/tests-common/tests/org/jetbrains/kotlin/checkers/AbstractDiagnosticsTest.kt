@@ -272,7 +272,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     private fun checkOriginalAndFirTestdataIdentity(testDataFile: File, firTestDataFile: File) {
         val originalTestData = loadTestDataWithoutDiagnostics(testDataFile)
         val firTestData = loadTestDataWithoutDiagnostics(firTestDataFile)
-        val message = "Original and fir test data doesn't identical. Please, add changes from ${testDataFile.name} to ${firTestDataFile.name}"
+        val message = "Original and fir test data aren't identical. " +
+                "Please, add changes from ${testDataFile.name} to ${firTestDataFile.name}"
         TestCase.assertEquals(message, originalTestData, firTestData)
     }
 
