@@ -170,6 +170,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 it.value?.let { project ->
                     lastProject = project
                     openAction.postOpenProject(openProject = openProject, project = project)
+                    openAction.initDefaultProfile(project)
 
                     logMessage { "project '$name' successfully opened" }
 
