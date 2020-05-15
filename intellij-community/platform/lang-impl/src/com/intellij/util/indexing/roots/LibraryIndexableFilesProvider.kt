@@ -9,7 +9,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.IndexingBundle
 
-internal class LibraryIndexableFilesProvider(val library: Library) : IndexableFilesProvider {
+class LibraryIndexableFilesProvider(val library: Library) : IndexableFilesProvider {
   override fun getDebugName() = library.name.takeUnless { it.isNullOrEmpty() }?.let { "Library '$it'" } ?: library.toString()
 
   override fun getIndexingProgressText(): String? {
