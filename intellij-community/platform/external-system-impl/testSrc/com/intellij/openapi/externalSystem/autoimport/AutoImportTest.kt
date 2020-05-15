@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.Modification
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.util.Parallel.Companion.parallel
+import junit.framework.TestCase
 import org.junit.Test
 import java.io.File
 
@@ -712,6 +713,25 @@ class AutoImportTest : AutoImportTestCase() {
         modifySettingsFile(INTERNAL)
         assertState(refresh = 4, notified = false, autoReloadType = ALL, event = "auto-reload inside reload ($collisionPassType)")
       }
+    }
+  }
+
+  @Test
+  fun `test providing explicit reload`() {
+    simpleModificationTest {
+      onceDuringRefresh {
+        assertFalse("implicit reload after external modification", it.isExplicitReload)
+      }
+      modifySettingsFile(EXTERNAL)
+      assertState(refresh = 1, notified = false, event = "external modification")
+
+      modifySettingsFile(INTERNAL)
+      assertState(refresh = 1, notified = true, event = "internal modification")
+      onceDuringRefresh {
+        assertTrue("explicit reload after explicit scheduling of project reload", it.isExplicitReload)
+      }
+      refreshProject()
+      assertState(refresh = 2, notified = false, event = "project reload")
     }
   }
 }

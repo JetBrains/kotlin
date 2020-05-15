@@ -34,45 +34,45 @@ class MockProjectAware(override val projectId: ExternalSystemProjectId) : Extern
     Disposer.register(parentDisposable, Disposable { unsubscribeCounter.incrementAndGet() })
   }
 
-  override fun refreshProject() {
+  override fun reloadProject(context: ExternalSystemProjectReloadContext) {
     when (refreshCollisionPassType.get()!!) {
       DUPLICATE -> {
-        doRefreshProject()
+        doRefreshProject(context)
       }
       CANCEL -> {
-        val task = once { doRefreshProject() }
+        val task = once { doRefreshProject(context) }
         refresh.afterOperation { task.run() }
         if (refresh.isOperationCompleted()) task.run()
       }
       IGNORE -> {
         if (refresh.isOperationCompleted()) {
-          doRefreshProject()
+          doRefreshProject(context)
         }
       }
     }
   }
 
-  private fun doRefreshProject() {
+  private fun doRefreshProject(context: ExternalSystemProjectReloadContext) {
     val refreshStatus = refreshStatus.get()
     eventDispatcher.multicaster.beforeProjectRefresh()
     refresh.task {
       refreshCounter.incrementAndGet()
-      eventDispatcher.multicaster.insideProjectRefresh()
+      eventDispatcher.multicaster.insideProjectRefresh(context)
     }
     eventDispatcher.multicaster.afterProjectRefresh(refreshStatus)
   }
 
-  fun onceDuringRefresh(action: () -> Unit) {
+  fun onceDuringRefresh(action: (ExternalSystemProjectReloadContext) -> Unit) {
     val disposable = Disposer.newDisposable()
     duringRefresh(disposable) {
       Disposer.dispose(disposable)
-      action()
+      action(it)
     }
   }
 
-  fun duringRefresh(parentDisposable: Disposable, action: () -> Unit) {
+  fun duringRefresh(parentDisposable: Disposable, action: (ExternalSystemProjectReloadContext) -> Unit) {
     eventDispatcher.addListener(object : Listener {
-      override fun insideProjectRefresh() = action()
+      override fun insideProjectRefresh(context: ExternalSystemProjectReloadContext) = action(context)
     }, parentDisposable)
   }
 
@@ -90,7 +90,7 @@ class MockProjectAware(override val projectId: ExternalSystemProjectId) : Extern
 
   interface Listener : ExternalSystemProjectRefreshListener, EventListener {
     @JvmDefault
-    fun insideProjectRefresh() {
+    fun insideProjectRefresh(context: ExternalSystemProjectReloadContext) {
     }
   }
 

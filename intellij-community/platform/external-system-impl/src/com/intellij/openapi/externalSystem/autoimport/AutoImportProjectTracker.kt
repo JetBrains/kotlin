@@ -141,7 +141,8 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
       if (isAllowAutoReload && !projectData.isUpToDate()) {
         isSkippedProjectRefresh = false
         LOG.debug("$projectId: Project refresh")
-        projectData.projectAware.refreshProject()
+        val context = ProjectReloadContext(!smart)
+        projectData.projectAware.reloadProject(context)
       }
       else {
         LOG.debug("$projectId: Skip project refresh")
@@ -322,6 +323,8 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
       var settingsTracker: ProjectSettingsTracker.State? = null
     )
   }
+
+  private data class ProjectReloadContext(override val isExplicitReload: Boolean) : ExternalSystemProjectReloadContext
 
   companion object {
     @TestOnly

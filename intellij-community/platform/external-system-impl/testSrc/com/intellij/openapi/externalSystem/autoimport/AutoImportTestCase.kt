@@ -340,7 +340,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
 
     fun registerSettingsFile(relativePath: String) = projectAware.settingsFiles.add(getPath(relativePath))
 
-    fun onceDuringRefresh(action: () -> Unit) = projectAware.onceDuringRefresh(action)
+    fun onceDuringRefresh(action: (ExternalSystemProjectReloadContext) -> Unit) = projectAware.onceDuringRefresh(action)
 
     fun setRefreshStatus(status: ExternalSystemRefreshStatus) = projectAware.refreshStatus.set(status)
 

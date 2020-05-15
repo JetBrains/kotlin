@@ -3,10 +3,7 @@ package com.intellij.openapi.externalSystem.service.project.autoimport
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware
-import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectAware
-import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectId
-import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectRefreshListener
-import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus
+import com.intellij.openapi.externalSystem.autoimport.*
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
@@ -43,8 +40,11 @@ class ProjectAware(
     })
   }
 
-  override fun refreshProject() {
-    val importSpec = ImportSpecBuilder(project, systemId).dontReportRefreshErrors()
+  override fun reloadProject(context: ExternalSystemProjectReloadContext) {
+    val importSpec = ImportSpecBuilder(project, systemId)
+    if (!context.isExplicitReload) {
+      importSpec.dontReportRefreshErrors()
+    }
     ExternalSystemUtil.refreshProject(projectPath, importSpec)
   }
 
