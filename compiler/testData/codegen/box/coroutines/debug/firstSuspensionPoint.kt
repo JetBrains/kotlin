@@ -4,6 +4,7 @@
 // WITH_RUNTIME
 // FULL_JDK
 // WITH_COROUTINES
+// IGNORE_BACKEND: JVM_IR
 package test
 
 import helpers.*

@@ -1,5 +1,7 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_REFLECT
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun prefixDecrementUByteLocal(): Any? {
     var a: UByte = 0u

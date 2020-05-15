@@ -70,11 +70,17 @@ public class GenerateRangesCodegenTestData {
     private static final Map<String, String> ELEMENT_TYPE_KNOWN_SUBSTRINGS = new HashMap<>();
     private static final Map<String, String> MIN_MAX_CONSTANTS = new LinkedHashMap<>();
 
-    private static final List<String> FIR_FAILING_UNSIGNED_TESTS =
-            Arrays.asList("inexactDownToMinValue", "inexactToMaxValue", "maxValueMinusTwoToMaxValue", "maxValueToMaxValue",
-                          "maxValueToMinValue", "overflowZeroDownToMaxValue", "overflowZeroToMinValue", "progressionDownToMinValue",
-                          "progressionMaxValueMinusTwoToMaxValue", "progressionMaxValueToMaxValue", "progressionMaxValueToMinValue",
-                          "progressionMinValueToMinValue");
+    private static final List<String> FIR_PASSING_UNSIGNED_LITERAL_TESTS = Collections.emptyList();
+
+    private static final List<String> FIR_PASSING_UNSIGNED_EXPRESSION_TESTS = Collections.emptyList();
+
+    private static final List<String> JVM_IR_PASSING_UNSIGNED_LITERAL_TESTS =
+            Arrays.asList(
+                    "simpleRange",
+                    "overflowZeroToMinValue", "overflowZeroDownToMaxValue", "overflowZeroDownToMinValue",
+                    "maxValueToMaxValue", "maxValueToMinValue",
+                    "progressionMaxValueToMaxValue", "maxValueMinusTwoToMaxValue", "progressionMaxValueToMinValue"
+            );
 
     static {
         for (String integerType : INTEGER_PRIMITIVES) {
@@ -140,7 +146,7 @@ public class GenerateRangesCodegenTestData {
         out.printf("// IGNORE_BACKEND: %s%n%n", backendName);
     }
 
-    private static void writeToFile(File file, String generatedBody, boolean isForUnsigned, boolean ignoreFrontendIR) {
+    private static void writeToFile(File file, String generatedBody, boolean isForUnsigned, boolean ignoreFrontendIR, boolean ignoreJvmIR) {
         PrintWriter out;
         try {
             //noinspection IOResourceOpenedButNotSafelyClosed
@@ -150,6 +156,9 @@ public class GenerateRangesCodegenTestData {
             throw new AssertionError(e);
         }
 
+        if (ignoreJvmIR) {
+            out.println("// IGNORE_BACKEND: JVM_IR");
+        }
         if (ignoreFrontendIR) {
             out.println("// IGNORE_BACKEND_FIR: JVM_IR");
         }
@@ -232,13 +241,14 @@ public class GenerateRangesCodegenTestData {
                     }
 
                     String fileName = testFunName + ".kt";
-                    boolean isFirFailingUnsignedTest = FIR_FAILING_UNSIGNED_TESTS.contains(testFunName);
-                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, false);
-                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, false);
+                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, false, false);
+                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, false, false);
                     writeToFile(new File(UNSIGNED_AS_LITERAL_DIR, fileName), unsignedAsLiteralBody.toString(), true,
-                                isFirFailingUnsignedTest);
+                                !FIR_PASSING_UNSIGNED_LITERAL_TESTS.contains(testFunName),
+                                !JVM_IR_PASSING_UNSIGNED_LITERAL_TESTS.contains(testFunName));
                     writeToFile(new File(UNSIGNED_AS_EXPRESSION_DIR, fileName), unsignedAsExpressionBody.toString(), true,
-                                isFirFailingUnsignedTest);
+                                !FIR_PASSING_UNSIGNED_EXPRESSION_TESTS.contains(testFunName),
+                                true);
                 }
             }
         }
