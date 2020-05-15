@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.ToggleOptionAction.Option
 import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.ui.tree.TreeUtil.promiseExpand
+import com.intellij.util.ui.tree.TreeUtil.promiseSelectFirstLeaf
 
 internal class HighlightingPanel(project: Project, state: ProblemsViewState) : ProblemsViewPanel(project, state) {
 
@@ -46,8 +46,8 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState) : P
     else {
       if (root != null && root.file == file) return
       treeModel.root = HighlightingFileRoot(this, file)
+      promiseSelectFirstLeaf(tree)
     }
-    promiseExpand(tree, 2) // TODO: expand node without root handle automatically
     updateDisplayName()
   }
 
