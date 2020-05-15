@@ -190,7 +190,8 @@ actual class HashMap<K, V> private constructor(
         return newValuesArray
     }
 
-    private fun hash(key: K) = (key.hashCode() * MAGIC) ushr hashShift
+    // Null-check for escaping extra boxing for non-nullable keys.
+    private fun hash(key: K) = if (key == null) 0 else (key.hashCode() * MAGIC) ushr hashShift
 
     private fun compact() {
         var i = 0
