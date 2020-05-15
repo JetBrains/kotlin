@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.highlighting;
 
@@ -93,30 +93,30 @@ public class BraceMatchingUtil {
 
     if (editor.getSettings().isBlockCursor()) {
       if (isBeforeLeftBrace && matchBrace(text, fileType, iterator, true)) {
-        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getStart());
+        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getStart(), false);
       }
       else if (isBeforeRightBrace && matchBrace(text, fileType, iterator, false)) {
-        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getStart());
+        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getStart(), false);
       }
       else if (isAfterRightBrace && matchBrace(text, preOffsetFileType, preOffsetIterator, false)) {
-        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getStart());
+        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getStart(), true);
       }
       else if (isAfterLeftBrace && matchBrace(text, preOffsetFileType, preOffsetIterator, true)) {
-        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getStart());
+        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getStart(), true);
       }
     }
     else {
       if (isAfterRightBrace && matchBrace(text, preOffsetFileType, preOffsetIterator, false)) {
-        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getStart());
+        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getStart(), true);
       }
       else if (isBeforeLeftBrace && matchBrace(text, fileType, iterator, true)) {
-        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getEnd());
+        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getEnd(), false);
       }
       else if (isAfterLeftBrace && matchBrace(text, preOffsetFileType, preOffsetIterator, true)) {
-        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getEnd());
+        return new BraceHighlightingAndNavigationContext(preOffsetTokenStart, preOffsetIterator.getEnd(), true);
       }
       else if (isBeforeRightBrace && matchBrace(text, fileType, iterator, false)) {
-        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getStart());
+        return new BraceHighlightingAndNavigationContext(offsetTokenStart, iterator.getStart(), false);
       }
     }
     return null;
@@ -541,10 +541,12 @@ public class BraceMatchingUtil {
   public static final class BraceHighlightingAndNavigationContext {
     public final int currentBraceOffset;
     public final int navigationOffset;
+    public final boolean isCaretAfterBrace;
 
-    public BraceHighlightingAndNavigationContext(int currentBraceOffset, int navigationOffset) {
+    public BraceHighlightingAndNavigationContext(int currentBraceOffset, int navigationOffset, boolean isCaretAfterBrace) {
       this.currentBraceOffset = currentBraceOffset;
       this.navigationOffset = navigationOffset;
+      this.isCaretAfterBrace = isCaretAfterBrace;
     }
   }
 }

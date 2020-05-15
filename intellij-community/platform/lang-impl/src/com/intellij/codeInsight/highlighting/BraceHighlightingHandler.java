@@ -185,7 +185,7 @@ public class BraceHighlightingHandler {
 
     BraceHighlightingAndNavigationContext context = BraceMatchingUtil.computeHighlightingAndNavigationContext(myEditor, myPsiFile);
     if (context != null) {
-      doHighlight(context.currentBraceOffset, false);
+      doHighlight(context.currentBraceOffset, context.isCaretAfterBrace);
       offset = context.currentBraceOffset;
     }
     else if (offset > 0 && offset < chars.length()) {

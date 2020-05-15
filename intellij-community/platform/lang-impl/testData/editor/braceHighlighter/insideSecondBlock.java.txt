@@ -1,0 +1,1 @@
+int[   ]<brace>[<caret></brace>   <brace>]</brace>;
