@@ -22,6 +22,8 @@ private class AutoMute(
     val issue: String
 )
 
+private val SKIP_MUTED_TESTS = java.lang.Boolean.getBoolean("org.jetbrains.kotlin.skip.muted.tests")
+
 private val DO_AUTO_MUTE: AutoMute? by lazy {
     val autoMuteFile = File("tests/automute")
     if (autoMuteFile.exists()) {
@@ -162,7 +164,15 @@ internal fun isMutedInDatabase(testCase: TestCase): Boolean {
 
 fun isMutedInDatabase(testClass: Class<*>, methodKey: String): Boolean {
     val mutedTest = mutedSet.mutedTest(testClass, methodKey)
-    return mutedTest != null && !mutedTest.hasFailFile
+    return mutedTest != null && (if (SKIP_MUTED_TESTS) !mutedTest.hasFailFile else mutedTest.isFlaky)
+}
+
+private fun getMutedTestOrNull(testCase: TestCase): MutedTest? {
+    return getMutedTestOrNull(testCase.javaClass, testCase.name)
+}
+
+private fun getMutedTestOrNull(testClass: Class<*>, methodKey: String): MutedTest? {
+    return mutedSet.mutedTest(testClass, methodKey)
 }
 
 internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): (() -> Unit)? {
@@ -172,16 +182,36 @@ internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): (() -> U
         }
     }
 
-    val doAutoMute = DO_AUTO_MUTE ?: return null
+    val mutedTest = getMutedTestOrNull(testCase)
 
-    return {
-        try {
-            f()
-        } catch (e: Throwable) {
-            doAutoMute.muteTest(testKey(testCase))
-            throw e
+    if (mutedTest != null && !mutedTest.hasFailFile) {
+        val testKey = testKey(testCase)
+        return {
+            var isTestGreen = true
+            try {
+                f()
+            } catch (e: Throwable) {
+                println("MUTED TEST STILL FAILS: $testKey")
+                isTestGreen = false
+            }
+            if (isTestGreen) {
+                System.err.println("SUCCESS RESULT OF MUTED TEST: $testKey")
+                throw Exception("Muted non-flaky test $testKey finished successfully. Please remove it from csv file")
+            }
+        }
+    } else {
+        val doAutoMute = DO_AUTO_MUTE ?: return null
+        return {
+            try {
+                f()
+            } catch (e: Throwable) {
+                doAutoMute.muteTest(testKey(testCase))
+                throw e
+            }
         }
     }
+
+
 }
 
 private fun mutedMessage(key: String) = "MUTED TEST: $key"
