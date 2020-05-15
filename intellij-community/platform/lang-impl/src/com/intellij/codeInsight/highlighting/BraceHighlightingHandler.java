@@ -185,7 +185,7 @@ public class BraceHighlightingHandler {
 
     BraceHighlightingAndNavigationContext context = BraceMatchingUtil.computeHighlightingAndNavigationContext(myEditor, myPsiFile);
     if (context != null) {
-      doHighlight(context.currentBraceOffset);
+      doHighlight(context.currentBraceOffset, false);
       offset = context.currentBraceOffset;
     }
     else if (offset > 0 && offset < chars.length()) {
@@ -202,7 +202,7 @@ public class BraceHighlightingHandler {
       if (backwardNonSpaceEndOffset > 0 && backwardNonSpaceEndOffset < offset) {
         context = BraceMatchingUtil.computeHighlightingAndNavigationContext(myEditor, myPsiFile, backwardNonSpaceEndOffset);
         if (context != null) {
-          doHighlight(context.currentBraceOffset);
+          doHighlight(context.currentBraceOffset, true);
           offset = context.currentBraceOffset;
           searchForward = false;
         }
@@ -214,7 +214,7 @@ public class BraceHighlightingHandler {
         if (nextNonSpaceCharOffset > offset) {
           context = BraceMatchingUtil.computeHighlightingAndNavigationContext(myEditor, myPsiFile, nextNonSpaceCharOffset);
           if (context != null) {
-            doHighlight(context.currentBraceOffset);
+            doHighlight(context.currentBraceOffset, true);
             offset = context.currentBraceOffset;
           }
         }
@@ -253,7 +253,12 @@ public class BraceHighlightingHandler {
     }
   }
 
-  private void doHighlight(int offset) {
+  /**
+   * Highlighting braces at {@code offset}
+   *
+   * @param isAdjustedPosition true mean s that {@code offset} been adjusted, e.g. spaces been skipped before or after caret position
+   */
+  private void doHighlight(int offset, boolean isAdjustedPosition) {
     if (myEditor.getFoldingModel().isOffsetCollapsed(offset)) return;
 
     HighlighterIterator iterator = getEditorHighlighter().createIterator(offset);
@@ -264,7 +269,7 @@ public class BraceHighlightingHandler {
     if (BraceMatchingUtil.isLBraceToken(iterator, chars, fileType)) {
       highlightLeftBrace(iterator, false, fileType);
 
-      if (offset > 0 && !myEditor.getSettings().isBlockCursor()) {
+      if (offset > 0 && !isAdjustedPosition && !myEditor.getSettings().isBlockCursor()) {
         iterator = getEditorHighlighter().createIterator(offset - 1);
         if (BraceMatchingUtil.isRBraceToken(iterator, chars, fileType)) {
           highlightRightBrace(iterator, fileType);
