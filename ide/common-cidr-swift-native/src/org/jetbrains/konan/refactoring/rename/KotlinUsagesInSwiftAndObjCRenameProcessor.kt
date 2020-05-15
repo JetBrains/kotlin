@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.createNamer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.idea.caches.project.toDescriptor
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.refactoring.rename.ForeignUsagesRenameProcessor
@@ -83,6 +84,10 @@ class KotlinUsagesInSwiftAndObjCRenameProcessor : ForeignUsagesRenameProcessor()
         is KtNamedFunction -> {
             val descriptor = element.renamedDescriptor(newName)
             if (language == SwiftLanguage.INSTANCE) getSwiftName(descriptor).split('(').first() else getSelector(descriptor)
+        }
+        is KtFile -> {
+            val objcAndSwiftName = getFileClassName(SourceFile { newName.asString() })
+            if (language == SwiftLanguage.INSTANCE) objcAndSwiftName.swiftName else objcAndSwiftName.objCName
         }
         else -> null
     }
