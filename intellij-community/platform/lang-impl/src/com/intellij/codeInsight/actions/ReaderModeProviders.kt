@@ -48,7 +48,6 @@ class LigaturesReaderModeProvider : ReaderModeProvider {
         preferences.copyTo(ligaturesFontPreferences)
         ligaturesFontPreferences.setUseLigatures(useLigatures)
         scheme.fontPreferences = ligaturesFontPreferences
-        (scheme.fontPreferences as FontPreferencesImpl).setUseLigatures(true)
       }
     }
   }
