@@ -68,8 +68,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         private const val INVALID_PROJECT_NAME_MESSAGE = "Invalid project name"
     }
 
-    override fun isAvailable(): Boolean =
-        ExperimentalFeatures.NewWizard.isEnabled && isCreatingNewProject()
+    override fun isAvailable(): Boolean = isCreatingNewProject()
 
     private var wizardContext: WizardContext? = null
     private var finishButtonClicked: Boolean = false
