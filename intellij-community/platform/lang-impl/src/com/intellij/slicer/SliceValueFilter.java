@@ -11,9 +11,10 @@ public interface SliceValueFilter {
    * @return true if this element passes the filter
    */
   boolean allowed(@NotNull PsiElement element);
-  
+
   /**
+   * @param element to which the filter is applied
    * @return String representation
    */
-  @NotNull @Nls String toString();
+  @NotNull @Nls String getPresentationText(@NotNull PsiElement element);
 }
