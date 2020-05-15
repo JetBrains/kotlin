@@ -2,7 +2,6 @@
 package com.intellij.codeInsight.documentation.render;
 
 import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.documentation.DocFontSizePopup;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.HelpTooltip;
@@ -16,7 +15,6 @@ import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.editor.ex.FoldingModelEx;
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
 import com.intellij.openapi.editor.impl.EditorImpl;
@@ -28,7 +26,6 @@ import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
@@ -50,8 +47,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 
 public class DocRenderItem {
@@ -201,39 +198,21 @@ public class DocRenderItem {
     }).findFirst().orElse(null);
   }
 
-  private static void resetToDefaultState(@NotNull Editor editor) {
+  static void resetToDefaultState(@NotNull Editor editor) {
     Collection<DocRenderItem> items = editor.getUserData(OUR_ITEMS);
     if (items == null) return;
-    boolean globalSetting = EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled();
+    boolean editorSetting = DocRenderManager.isDocRenderingEnabled(editor);
     keepScrollingPositionWhile(editor, () -> {
       List<Runnable> foldingTasks = new ArrayList<>();
       boolean updated = false;
       for (DocRenderItem item : items) {
-        if (item.isValid() && (item.inlay == null) == globalSetting) {
+        if (item.isValid() && (item.inlay == null) == editorSetting) {
           updated |= item.toggle(foldingTasks);
         }
       }
       editor.getFoldingModel().runBatchFoldingOperation(() -> foldingTasks.forEach(Runnable::run), true, false);
       return updated;
     });
-  }
-
-  public static void resetToDefaultEditorState(@NotNull Editor editor) {
-    resetToDefaultState(editor);
-    DocRenderPassFactory.forceRefreshOnNextPass(editor);
-    for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-      DaemonCodeAnalyzer.getInstance(project).restart();
-    }
-  }
-
-  public static void resetAllToDefaultState() {
-    for (Editor editor : EditorFactory.getInstance().getAllEditors()) {
-      resetToDefaultState(editor);
-      DocRenderPassFactory.forceRefreshOnNextPass(editor);
-    }
-    for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-      DaemonCodeAnalyzer.getInstance(project).restart();
-    }
   }
 
   public static EditorCustomElementRenderer createDemoRenderer(@NotNull Editor editor) {
@@ -320,7 +299,7 @@ public class DocRenderItem {
       }
       Disposer.dispose(inlay);
       inlay = null;
-      if (!EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled()) {
+      if (!DocRenderManager.isDocRenderingEnabled(editor)) {
         // the value won't be updated by DocRenderPass on document modification, so we shouldn't cache the value
         textToRender = null;
       }

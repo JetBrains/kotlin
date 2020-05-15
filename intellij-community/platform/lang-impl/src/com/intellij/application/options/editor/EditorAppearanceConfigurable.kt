@@ -2,7 +2,7 @@
 package com.intellij.application.options.editor
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
-import com.intellij.codeInsight.documentation.render.DocRenderItem
+import com.intellij.codeInsight.documentation.render.DocRenderManager
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.UISettings
@@ -121,7 +121,7 @@ class EditorAppearanceConfigurable : BoundCompositeSearchableConfigurable<Unname
       uiSettings.fireUISettingsChanged()
     }
     if (docRenderingEnabled != EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled) {
-      DocRenderItem.resetAllToDefaultState()
+      DocRenderManager.resetAllEditorsToDefaultState()
     }
 
     EditorOptionsPanel.restartDaemons()

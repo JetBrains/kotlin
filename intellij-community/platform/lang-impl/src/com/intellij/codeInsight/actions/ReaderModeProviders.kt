@@ -3,7 +3,7 @@ package com.intellij.codeInsight.actions
 
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightLevelUtil
-import com.intellij.codeInsight.documentation.render.DocRenderItem
+import com.intellij.codeInsight.documentation.render.DocRenderManager
 import com.intellij.codeInsight.hints.InlayHintsPassFactory
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -70,16 +70,8 @@ class FontReaderModeProvider : ReaderModeProvider {
 
 class DocsRenderingReaderModeProvider : ReaderModeProvider {
   override fun applyModeChanged(project: Project, editor: Editor, readerMode: Boolean) {
-    if (readerMode) {
-      if (ReaderModeSettings.instance(project).showRenderedDocs) {
-        EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled = true
-      }
-    }
-    else {
-      EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled = false
-    }
+    DocRenderManager.setDocRenderingEnabled(editor, if (readerMode) ReaderModeSettings.instance(project).showRenderedDocs else null)
 
-    DocRenderItem.resetToDefaultEditorState(editor)
   }
 }
 

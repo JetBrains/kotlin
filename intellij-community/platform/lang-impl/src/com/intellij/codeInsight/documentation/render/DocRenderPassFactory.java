@@ -8,7 +8,6 @@ import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.IndexNotReadyException;
@@ -61,7 +60,7 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
 
     @Override
     public void doCollectInformation(@NotNull ProgressIndicator progress) {
-      items = calculateItemsToRender(myDocument, myFile);
+      items = calculateItemsToRender(myEditor, myFile);
     }
 
     @Override
@@ -71,8 +70,9 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
   }
 
   @NotNull
-  public static Items calculateItemsToRender(@NotNull Document document, @NotNull PsiFile psiFile) {
-    boolean enabled = EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled();
+  public static Items calculateItemsToRender(@NotNull Editor editor, @NotNull PsiFile psiFile) {
+    boolean enabled = DocRenderManager.isDocRenderingEnabled(editor);
+    Document document = editor.getDocument();
     Items items = new Items();
     DocumentationManager.getProviderFromElement(psiFile).collectDocComments(psiFile, comment -> {
       TextRange range = comment.getTextRange();

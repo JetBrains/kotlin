@@ -16,6 +16,6 @@ public class ToggleRenderAllDocs extends ToggleAction implements DumbAware {
   @Override
   public void setSelected(@NotNull AnActionEvent e, boolean state) {
     EditorSettingsExternalizable.getInstance().setDocCommentRenderingEnabled(state);
-    DocRenderItem.resetAllToDefaultState();
+    DocRenderManager.resetAllEditorsToDefaultState();
   }
 }
