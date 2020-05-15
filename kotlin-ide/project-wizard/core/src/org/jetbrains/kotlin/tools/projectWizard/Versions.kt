@@ -24,9 +24,9 @@ object Versions {
     }
 
     object JS_WRAPPERS {
-        val KOTLIN_REACT = version("16.13.0-pre.93-kotlin-1.4-M1")
+        val KOTLIN_REACT: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("16.13.0-pre.93-kotlin-$kotlinVersion") }
         val KOTLIN_REACT_DOM = KOTLIN_REACT
-        val KOTLIN_STYLED = version("1.0.0-pre.93-kotlin-1.4-M1")
+        val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.0.0-pre.93-kotlin-$kotlinVersion") }
     }
 
     object NPM {
