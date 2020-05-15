@@ -237,5 +237,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this)
     }
 
-    protected fun getTestDirectoryPath(): String = javaClass.getAnnotation(TestMetadata::class.java).value
+    protected fun getTestDirectoryPath(): String {
+        return "${KotlinTestUtils.getHomeDirectory()}/${javaClass.getAnnotation(TestMetadata::class.java).value}"
+    }
 }

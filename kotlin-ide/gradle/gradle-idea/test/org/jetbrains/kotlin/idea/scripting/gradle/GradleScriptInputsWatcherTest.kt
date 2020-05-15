@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.runner.RunWith
 import java.io.File
@@ -35,7 +36,7 @@ open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTes
     }
 
     override fun setUpTestProject() {
-        val rootDir = "idea/testData/script/definition/loading/gradle/"
+        val rootDir = "${KotlinTestUtils.getHomeDirectory()}/idea/testData/script/definition/loading/gradle/"
 
         val settings: KtFile = addFileToProject(rootDir + GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
         val prop: PsiFile = addFileToProject(rootDir + "gradle.properties")
