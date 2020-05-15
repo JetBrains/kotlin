@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.ApiStatus
 
 @State(name = "AutoImportSettings", storages = [Storage(WORKSPACE_FILE)])
-class ProjectTrackerSettings : ExternalSystemProjectTrackerSettings, PersistentStateComponent<ProjectTrackerSettings.State> {
+class AutoImportProjectTrackerSettings : ExternalSystemProjectTrackerSettings, PersistentStateComponent<AutoImportProjectTrackerSettings.State> {
 
   internal val autoReloadTypeProperty = AtomicLazyProperty { AutoReloadType.SELECTIVE }
 
@@ -28,8 +28,8 @@ class ProjectTrackerSettings : ExternalSystemProjectTrackerSettings, PersistentS
   companion object {
     @JvmStatic
     @ApiStatus.Internal
-    fun getInstance(project: Project): ProjectTrackerSettings {
-      return ExternalSystemProjectTrackerSettings.getInstance(project) as ProjectTrackerSettings
+    fun getInstance(project: Project): AutoImportProjectTrackerSettings {
+      return ExternalSystemProjectTrackerSettings.getInstance(project) as AutoImportProjectTrackerSettings
     }
   }
 }

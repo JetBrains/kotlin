@@ -21,7 +21,6 @@ import com.intellij.openapi.observable.operations.AnonymousParallelOperationTrac
 import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
 import com.intellij.openapi.observable.properties.BooleanProperty
-import com.intellij.openapi.observable.properties.PropertyView
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
@@ -33,18 +32,15 @@ import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.streams.asStream
 
-private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
-
 @State(name = "ExternalSystemProjectTracker", storages = [Storage(CACHE_FILE)])
 class AutoImportProjectTracker(private val project: Project) : ExternalSystemProjectTracker, PersistentStateComponent<AutoImportProjectTracker.State> {
   @Suppress("unused")
   private val debugThrowable = Throwable("Initialized with project=(${project.isDisposed}, ${Disposer.isDisposed(project)}, $project)")
 
-  private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
   private val AUTO_REPARSE_DELAY = DaemonCodeAnalyzerSettings.getInstance().autoReparseDelay
   private val AUTO_RELOAD_DELAY = 2000
 
-  private val settings get() = ProjectTrackerSettings.getInstance(project)
+  private val settings get() = AutoImportProjectTrackerSettings.getInstance(project)
   private val projectStates = ConcurrentHashMap<State.Id, State.Project>()
   private val projectDataMap = ConcurrentHashMap<ExternalSystemProjectId, ProjectData>()
   private val isDisabled = AtomicBooleanProperty(ApplicationManager.getApplication().isUnitTestMode)
@@ -54,12 +50,6 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   private val dispatcher = MergingUpdateQueue("AutoImportProjectTracker.dispatcher", AUTO_REPARSE_DELAY, false, null, project)
   private val delayDispatcher = MergingUpdateQueue("AutoImportProjectTracker.delayDispatcher", AUTO_RELOAD_DELAY, false, null, project)
   private val backgroundExecutor = AppExecutorUtil.createBoundedApplicationPoolExecutor("AutoImportProjectTracker.backgroundExecutor", 1)
-
-  override var isAutoReloadExternalChanges by PropertyView(
-    settings.autoReloadTypeProperty,
-    { it == AutoReloadType.SELECTIVE },
-    { if (it) AutoReloadType.SELECTIVE else AutoReloadType.NONE }
-  )
 
   var isAsyncChangesProcessing by asyncChangesProcessingProperty
 
@@ -174,22 +164,23 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
       .orElse(null)
   }
 
-  override fun register(projectAware: ExternalSystemProjectAware, parentDisposable: Disposable) {
+  override fun register(projectAware: ExternalSystemProjectAware) {
     val projectId = projectAware.projectId
     val activationProperty = AtomicBooleanProperty(false)
     val projectStatus = ProjectStatus(debugName = projectId.readableName)
+    val parentDisposable = Disposer.newDisposable(projectId.readableName)
     val settingsTracker = ProjectSettingsTracker(project, this, backgroundExecutor, projectAware, parentDisposable)
     val projectData = ProjectData(projectStatus, activationProperty, projectAware, settingsTracker, parentDisposable)
     val notificationAware = ProjectNotificationAware.getInstance(project)
 
     projectDataMap[projectId] = projectData
-    Disposer.register(parentDisposable, Disposable { remove(projectId) })
 
     val id = "ProjectSettingsTracker: ${projectData.projectAware.projectId.readableName}"
     settingsTracker.beforeApplyChanges { projectRefreshOperation.startTask(id) }
     settingsTracker.afterApplyChanges { projectRefreshOperation.finishTask(id) }
     activationProperty.afterSet({ scheduleChangeProcessing() }, parentDisposable)
 
+    Disposer.register(project, parentDisposable)
     projectAware.subscribe(createProjectRefreshListener(projectData), parentDisposable)
     Disposer.register(parentDisposable, Disposable { notificationAware.notificationExpire(projectId) })
 
@@ -327,6 +318,8 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   private data class ProjectReloadContext(override val isExplicitReload: Boolean) : ExternalSystemProjectReloadContext
 
   companion object {
+    private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
+
     @TestOnly
     @JvmStatic
     fun getInstance(project: Project): AutoImportProjectTracker {

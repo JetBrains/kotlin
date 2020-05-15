@@ -39,8 +39,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   private lateinit var testDisposable: Disposable
   private val notificationAware get() = ProjectNotificationAware.getInstance(myProject)
   private val projectTracker get() = AutoImportProjectTracker.getInstance(myProject).also { it.enableAutoImportInTests() }
-  private val projectTrackerSettings get() = ProjectTrackerSettings.getInstance(myProject)
-  private val projectTrackerDisposables = mutableMapOf<ExternalSystemProjectId, Disposable>()
+  private val projectTrackerSettings get() = AutoImportProjectTrackerSettings.getInstance(myProject)
 
   private fun ensureExistsParentDirectory(relativePath: String): VirtualFile {
     return relativePath.split("/").dropLast(1)
@@ -179,10 +178,13 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
       replaceString(startOffset, endOffset, new)
     }
 
-  protected fun register(projectAware: ExternalSystemProjectAware, activate: Boolean = true) {
-    val disposable = Disposer.newDisposable()
-    projectTrackerDisposables[projectAware.projectId] = disposable
-    projectTracker.register(projectAware, disposable)
+  protected fun register(projectAware: ExternalSystemProjectAware, activate: Boolean = true, parentDisposable: Disposable? = null) {
+    if (parentDisposable != null) {
+      projectTracker.register(projectAware, parentDisposable)
+    }
+    else {
+      projectTracker.register(projectAware)
+    }
     if (activate) activate(projectAware.projectId)
   }
 
@@ -190,9 +192,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
     projectTracker.activate(projectId)
   }
 
-  protected fun remove(projectId: ExternalSystemProjectId) {
-    Disposer.dispose(projectTrackerDisposables[projectId]!!)
-  }
+  protected fun remove(projectId: ExternalSystemProjectId) = projectTracker.remove(projectId)
 
   protected fun refreshProject() = projectTracker.scheduleProjectRefresh()
 
@@ -213,7 +213,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
 
   protected fun getState() = projectTracker.state to projectTrackerSettings.state
 
-  private fun loadState(state: Pair<AutoImportProjectTracker.State, ProjectTrackerSettings.State>) {
+  private fun loadState(state: Pair<AutoImportProjectTracker.State, AutoImportProjectTrackerSettings.State>) {
     projectTracker.loadState(state.first)
     projectTrackerSettings.loadState(state.second)
   }
@@ -278,7 +278,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   override fun setUp() {
     super.setUp()
     testDisposable = Disposer.newDisposable()
-    myProject.replaceService(ExternalSystemProjectTrackerSettings::class.java, ProjectTrackerSettings(), testDisposable)
+    myProject.replaceService(ExternalSystemProjectTrackerSettings::class.java, AutoImportProjectTrackerSettings(), testDisposable)
     myProject.replaceService(ExternalSystemProjectTracker::class.java, AutoImportProjectTracker(myProject), testDisposable)
   }
 
@@ -305,11 +305,11 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   protected fun simpleTest(
     fileRelativePath: String,
     content: String? = null,
-    state: Pair<AutoImportProjectTracker.State, ProjectTrackerSettings.State> =
-      AutoImportProjectTracker.State() to ProjectTrackerSettings.State(),
+    state: Pair<AutoImportProjectTracker.State, AutoImportProjectTrackerSettings.State> =
+      AutoImportProjectTracker.State() to AutoImportProjectTrackerSettings.State(),
     test: SimpleTestBench.(VirtualFile) -> Unit
-  ): Pair<AutoImportProjectTracker.State, ProjectTrackerSettings.State> {
-    return myProject.replaceService(ExternalSystemProjectTrackerSettings::class.java, ProjectTrackerSettings()) {
+  ): Pair<AutoImportProjectTracker.State, AutoImportProjectTrackerSettings.State> {
+    return myProject.replaceService(ExternalSystemProjectTrackerSettings::class.java, AutoImportProjectTrackerSettings()) {
       myProject.replaceService(ExternalSystemProjectTracker::class.java, AutoImportProjectTracker(myProject)) {
         val systemId = ProjectSystemId("External System")
         val projectId = ExternalSystemProjectId(systemId, projectPath)
@@ -319,11 +319,11 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
         val file = findOrCreateVirtualFile(fileRelativePath)
         content?.let { file.replaceContent(it) }
         projectAware.settingsFiles.add(file.path)
-        register(projectAware)
-        SimpleTestBench(projectAware).test(file)
-        val newState = getState()
-        remove(projectAware.projectId)
-        newState
+        Disposer.newDisposable().use {
+          register(projectAware, parentDisposable = it)
+          SimpleTestBench(projectAware).test(file)
+          getState()
+        }
       }
     }
   }
@@ -355,11 +355,12 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
     fun withLinkedProject(fileRelativePath: String, test: SimpleTestBench.(VirtualFile) -> Unit) {
       val projectId = ExternalSystemProjectId(projectAware.projectId.systemId, "$projectPath/$name")
       val projectAware = MockProjectAware(projectId)
-      register(projectAware)
-      val file = findOrCreateVirtualFile("$name/$fileRelativePath")
-      projectAware.settingsFiles.add(file.path)
-      SimpleTestBench(projectAware).test(file)
-      remove(projectId)
+      Disposer.newDisposable().use {
+        register(projectAware, parentDisposable = it)
+        val file = findOrCreateVirtualFile("$name/$fileRelativePath")
+        projectAware.settingsFiles.add(file.path)
+        SimpleTestBench(projectAware).test(file)
+      }
     }
 
     fun assertState(refresh: Int? = null,
