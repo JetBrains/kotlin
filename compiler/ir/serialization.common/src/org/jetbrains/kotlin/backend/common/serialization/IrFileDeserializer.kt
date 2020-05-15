@@ -919,7 +919,9 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
     }
 
     private fun eraseDelegatedSymbol(symbol: IrSymbol) {
-        delegatedSymbolMap.remove(symbol)
+        if (symbol is IrDelegatingSymbol<*, *, *>) {
+            delegatedSymbolMap.remove(symbol)
+        }
     }
 
     private inline fun <T : IrDeclarationParent> T.usingParent(block: T.() -> Unit): T =

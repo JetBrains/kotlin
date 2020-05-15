@@ -1233,7 +1233,7 @@ open class IrFileSerializer(
 
             // TODO: keep order similar
             val sigIndex = protoIdSignatureMap[idSig] ?: error("Not found ID for $idSig (${it.render()})")
-            topLevelDeclarations.add(TopLevelDeclaration(sigIndex, it.descriptor.toString(), byteArray))
+            topLevelDeclarations.add(TopLevelDeclaration(sigIndex, idSig.toString(), byteArray))
             proto.addDeclarationId(sigIndex)
         }
 
