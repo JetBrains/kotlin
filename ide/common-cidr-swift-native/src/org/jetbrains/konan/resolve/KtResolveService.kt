@@ -84,7 +84,7 @@ internal fun KtFile.findFileClassSymbols(kind: OCLanguageKind): List<OCSymbol> {
             is SwiftLanguageKind -> fileClassName.swiftName
             else -> fileClassName.objCName
         }
-        return@findGlobalSymbols listOf(symbols.first { it.name == name })
+        return@findGlobalSymbols listOfNotNull(symbols.firstOrNull { it.name == name })
     }
 }
 
