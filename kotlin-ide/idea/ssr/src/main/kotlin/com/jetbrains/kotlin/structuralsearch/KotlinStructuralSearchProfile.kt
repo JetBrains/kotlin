@@ -7,11 +7,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.DebugUtil
+import com.intellij.structuralsearch.DocumentBasedReplaceHandler
 import com.intellij.structuralsearch.StructuralSearchProfile
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
+import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.ui.Configuration
 import com.intellij.util.SmartList
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinCompiledPattern
@@ -68,6 +70,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         }
         nodes.reset()
     }
+
+    override fun getReplaceHandler(project: Project, replaceOptions: ReplaceOptions) = DocumentBasedReplaceHandler(project)
 
     companion object {
         fun getNonWhitespaceChildren(fragment: PsiElement): List<PsiElement> {

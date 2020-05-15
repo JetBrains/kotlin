@@ -91,8 +91,8 @@ class KotlinSSClassTest : KotlinSSTest() {
     fun testClassProperty() {
         doTest(
             """
-            class '_a {
-                lateinit var 'b
+            class '_ {
+                lateinit var 'a
             }
             """
         )

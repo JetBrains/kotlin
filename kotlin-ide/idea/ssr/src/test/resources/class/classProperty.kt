@@ -1,9 +1,9 @@
 import java.util.*
 
-<warning descr="SSR">class Foo {
-    var foo1 = 1
-    lateinit var foo2: Random
-}</warning>
+class Foo {
+    lateinit var <warning descr="SSR">foo2</warning>: Random
+    var bar1 = 1
+}
 
 class Bar {
     var bar1 = 1

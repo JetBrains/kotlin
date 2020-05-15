@@ -15,9 +15,7 @@ class KotlinCompiledPattern : CompiledPattern() {
     override fun isTypedVar(str: String): Boolean {
         if (str.isEmpty()) return false
         return if (str[0] == '@') {
-            str.regionMatches(
-                1, TYPED_VAR_PREFIX, 0, TYPED_VAR_PREFIX.length
-            )
+            str.regionMatches(1, TYPED_VAR_PREFIX, 0, TYPED_VAR_PREFIX.length)
         } else {
             str.startsWith(TYPED_VAR_PREFIX)
         }
