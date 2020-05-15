@@ -44,6 +44,11 @@ internal class FileProblems(val file: VirtualFile) {
     return true
   }
 
+  fun update(collection: Collection<Problem>) {
+    problems.filter { !collection.contains(it) }.forEach { remove(it) }
+    problems += collection
+  }
+
   fun clear() {
     problems.clear()
     nodes.clear()

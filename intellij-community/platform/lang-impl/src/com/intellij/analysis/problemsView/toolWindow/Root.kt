@@ -24,4 +24,10 @@ internal abstract class Root(val panel: ProblemsViewPanel) : Node(panel.project)
   open fun getProblemsCount() = 0
 
   open fun getProblemsCount(file: VirtualFile, severity: Severity) = 0
+
+  open fun addProblem(file: VirtualFile, problem: Problem) = Unit
+
+  open fun removeProblem(file: VirtualFile, problem: Problem) = Unit
+
+  open fun updateProblems(file: VirtualFile, collection: Collection<Problem>) = Unit
 }

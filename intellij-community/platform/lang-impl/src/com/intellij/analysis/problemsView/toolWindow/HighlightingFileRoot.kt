@@ -2,21 +2,16 @@
 package com.intellij.analysis.problemsView.toolWindow
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.editor.ex.MarkupModelEx
-import com.intellij.openapi.editor.ex.RangeHighlighterEx
-import com.intellij.openapi.editor.impl.DocumentMarkupModel
-import com.intellij.openapi.editor.impl.event.MarkupModelListener
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.tree.LeafState
 
-internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualFile)
-  : Root(panel), LeafState.Supplier, MarkupModelListener, Disposable {
+internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualFile) : Root(panel) {
 
   private val problems = FileProblems(file)
+  private val watcher = HighlightingWatcher(this, file, 0)
 
   init {
-    refreshChildren()
+    Disposer.register(this, watcher)
   }
 
   override fun getChildren(): Collection<Node> {
@@ -28,29 +23,26 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualF
   }
 
   fun findProblemNode(info: HighlightInfo?): ProblemNode? {
-    val problem = getProblem(info) ?: return null
+    val problem = watcher.getProblem(info) ?: return null
     return synchronized(problems) { problems.findProblemNode(problem) }
   }
 
-  private fun refreshChildren() {
-    val document = ProblemsView.getDocument(project, file) ?: return
-    val model = DocumentMarkupModel.forDocument(document, project, true) as? MarkupModelEx ?: return
-    model.addMarkupModelListener(this, this)
-    model.processRangeHighlightersOverlappingWith(0, document.textLength) { highlighter: RangeHighlighterEx ->
-      afterAdded(highlighter)
-      true
-    }
-  }
+  override fun getProblemsCount() = synchronized(problems) { problems.count() }
 
-  override fun afterAdded(highlighter: RangeHighlighterEx) {
-    val problem = getProblem(highlighter) ?: return
+  override fun getProblemsCount(file: VirtualFile, severity: Severity) = synchronized(problems) { problems.count(severity) }
+
+  override fun addProblem(file: VirtualFile, problem: Problem) {
     synchronized(problems) { problems.add(problem) }
     structureChanged()
   }
 
-  override fun beforeRemoved(highlighter: RangeHighlighterEx) {
-    val problem = getProblem(highlighter) ?: return
+  override fun removeProblem(file: VirtualFile, problem: Problem) {
     synchronized(problems) { problems.remove(problem) }
+    structureChanged()
+  }
+
+  override fun updateProblems(file: VirtualFile, collection: Collection<Problem>) {
+    synchronized(problems) { problems.update(collection) }
     structureChanged()
   }
 
@@ -61,17 +53,4 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualF
       panel.updateDisplayName()
     }
   }
-
-  private fun getProblem(highlighter: RangeHighlighterEx): Problem? {
-    val info = highlighter.errorStripeTooltip as? HighlightInfo ?: return null
-    return getProblem(info)
-  }
-
-  private fun getProblem(info: HighlightInfo?): Problem? {
-    return if (info?.description == null) null else HighlightingProblem(info)
-  }
-
-  override fun getProblemsCount() = synchronized(problems) { problems.count() }
-
-  override fun getProblemsCount(file: VirtualFile, severity: Severity) = synchronized(problems) { problems.count(severity) }
 }
