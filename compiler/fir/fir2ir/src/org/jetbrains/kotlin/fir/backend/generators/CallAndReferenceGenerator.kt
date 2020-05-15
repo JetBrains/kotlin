@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.calls.isExtensionFunctionType
+import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -27,10 +29,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -417,15 +416,22 @@ internal class CallAndReferenceGenerator(
         argument: FirExpression,
         parameter: FirValueParameter?
     ): IrExpression {
-        if (parameter == null ||
-            parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
-        ) return this
-        if (argument !is FirLambdaArgumentExpression) return this
-        if (argument.expression !is FirAnonymousFunction) return this
-        if (argument.expression.typeRef == parameter.returnTypeRef) return this
+        if (parameter == null || !needSamConversion(argument, parameter)) {
+            return this
+        }
         val samType = parameter.returnTypeRef.toIrType()
+        // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
         if (!samType.isSamType) return this
         return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType, this)
+    }
+
+    private fun needSamConversion(argument: FirExpression, parameter: FirValueParameter): Boolean {
+        // If the expected type is a built-in functional type, we don't need SAM conversion.
+        if (parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true) {
+            return false
+        }
+        // On the other hand, the actual type should be a functional type.
+        return argument.isFunctional(session)
     }
 
     private fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {
