@@ -170,7 +170,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
                 IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(element)
 
             override fun getResult(element: KotlinType): String {
-                val renderType = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
+                val renderType = IdeDescriptorRenderers.FQ_NAMES_IN_TYPES_WITH_NORMALIZER.renderType(element)
                 val descriptor = element.constructor.declarationDescriptor
                 if (descriptor?.name?.asString() == renderType) {
                     val className = (DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtClass)?.nameIdentifier?.text

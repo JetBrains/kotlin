@@ -17,7 +17,12 @@
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
-import org.jetbrains.kotlin.renderer.*
+import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
+import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRenderer.Companion.FQ_NAMES_IN_TYPES
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
+import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -59,6 +64,11 @@ object IdeDescriptorRenderers {
     @JvmField
     val SOURCE_CODE: DescriptorRenderer = BASE.withOptions {
         classifierNamePolicy = ClassifierNamePolicy.SOURCE_CODE_QUALIFIED
+        typeNormalizer = { APPROXIMATE_FLEXIBLE_TYPES(unwrapAnonymousType(it)) }
+    }
+
+    @JvmField
+    val FQ_NAMES_IN_TYPES_WITH_NORMALIZER: DescriptorRenderer = FQ_NAMES_IN_TYPES.withOptions {
         typeNormalizer = { APPROXIMATE_FLEXIBLE_TYPES(unwrapAnonymousType(it)) }
     }
 

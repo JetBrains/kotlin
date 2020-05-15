@@ -140,4 +140,9 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
     public void testObjectLiteralToLambda_ObjectLiteralToLambda() throws Exception {
         runTest("testData/multiFileIntentions/objectLiteralToLambda/objectLiteralToLambda.test");
     }
+
+    @TestMetadata("specifyTypeExplicitly/specifyTypeExplicitly.test")
+    public void testSpecifyTypeExplicitly_SpecifyTypeExplicitly() throws Exception {
+        runTest("testData/multiFileIntentions/specifyTypeExplicitly/specifyTypeExplicitly.test");
+    }
 }
