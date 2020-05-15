@@ -19,6 +19,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.ui.treeStructure.Tree;
+import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -36,7 +37,6 @@ import static com.intellij.ui.ColorUtil.toHtmlColor;
 import static com.intellij.ui.ScrollPaneFactory.createScrollPane;
 import static com.intellij.ui.scale.JBUIScale.scale;
 import static com.intellij.util.OpenSourceUtil.navigate;
-import static com.intellij.util.ui.UIUtil.getInactiveTextColor;
 import static javax.swing.tree.TreeSelectionModel.SINGLE_TREE_SELECTION;
 
 abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable {
@@ -170,6 +170,9 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable 
     myPanel.add(BorderLayout.CENTER, createScrollPane(myTree, true));
     myPanel.add(BorderLayout.WEST, myToolbar.getComponent());
     setFirstComponent(myPanel);
+
+    putClientProperty(UIUtil.NOT_IN_HIERARCHY_COMPONENTS, (Iterable<ProblemsViewPreview>)()
+      -> JBIterable.of(myPreview).filter(component -> null == component.getParent()).iterator());
   }
 
   @Override
@@ -190,7 +193,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable 
     int count = root == null ? 0 : root.getProblemsCount();
     if (count > 0) {
       //noinspection HardCodedStringLiteral
-      name = "<html><body>" + name + " <font color='" + toHtmlColor(getInactiveTextColor()) + "'>" + count + "</font></body></html>";
+      name = "<html><body>" + name + " <font color='" + toHtmlColor(UIUtil.getInactiveTextColor()) + "'>" + count + "</font></body></html>";
     }
     content.setDisplayName(name);
   }
