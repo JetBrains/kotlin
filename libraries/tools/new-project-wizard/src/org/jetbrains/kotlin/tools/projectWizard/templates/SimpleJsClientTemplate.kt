@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.Templa
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 
 class SimpleJsClientTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.js.simple.title")
@@ -75,14 +76,15 @@ class SimpleJsClientTemplate : Template() {
                 DependencyType.MAIN
             )
 
+            val kotlinVersion = KotlinPlugin::version.propertyValue
             if (renderEngine.reference.settingValue != RenderEngine.KOTLINX_HTML) {
-                +Dependencies.KOTLIN_REACT
-                +Dependencies.KOTLIN_REACT_DOM
+                +Dependencies.KOTLIN_REACT(kotlinVersion)
+                +Dependencies.KOTLIN_REACT_DOM(kotlinVersion)
                 +Dependencies.NPM_REACT
                 +Dependencies.NPM_REACT_DOM
                 if (renderEngine.reference.settingValue == RenderEngine.REACT_WITH_STYLED) {
                     +Dependencies.NPM_REACT_IS
-                    +Dependencies.KOTLIN_STYLED
+                    +Dependencies.KOTLIN_STYLED(kotlinVersion)
                     +Dependencies.NPM_STYLED_COMPONENTS
                     +Dependencies.NPM_INLINE_STYLE_PREFIXER
                 }
@@ -245,21 +247,27 @@ class SimpleJsClientTemplate : Template() {
     }
 
     private object Dependencies {
-        val KOTLIN_REACT = ArtifactBasedLibraryDependencyIR(
-            MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", "kotlin-react"),
-            Versions.JS_WRAPPERS.KOTLIN_REACT,
-            DependencyType.MAIN
-        )
-        val KOTLIN_REACT_DOM = ArtifactBasedLibraryDependencyIR(
-            MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", "kotlin-react-dom"),
-            Versions.JS_WRAPPERS.KOTLIN_REACT_DOM,
-            DependencyType.MAIN
-        )
-        val KOTLIN_STYLED = ArtifactBasedLibraryDependencyIR(
-            MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", "kotlin-styled"),
-            Versions.JS_WRAPPERS.KOTLIN_STYLED,
-            DependencyType.MAIN
-        )
+        val KOTLIN_REACT = { kotlinVersion: Version ->
+            ArtifactBasedLibraryDependencyIR(
+                MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", "kotlin-react"),
+                Versions.JS_WRAPPERS.KOTLIN_REACT(kotlinVersion),
+                DependencyType.MAIN
+            )
+        }
+        val KOTLIN_REACT_DOM = { kotlinVersion: Version ->
+            ArtifactBasedLibraryDependencyIR(
+                MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", "kotlin-react-dom"),
+                Versions.JS_WRAPPERS.KOTLIN_REACT_DOM(kotlinVersion),
+                DependencyType.MAIN
+            )
+        }
+        val KOTLIN_STYLED = { kotlinVersion: Version ->
+            ArtifactBasedLibraryDependencyIR(
+                MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", "kotlin-styled"),
+                Versions.JS_WRAPPERS.KOTLIN_STYLED(kotlinVersion),
+                DependencyType.MAIN
+            )
+        }
 
         val NPM_REACT = ArtifactBasedLibraryDependencyIR(
             NpmArtifact("react"),
