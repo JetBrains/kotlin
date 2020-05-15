@@ -18,7 +18,7 @@ object KotlinPredefinedConfigurations {
             KSSRBundle.message("predefined.configuration.all.fields.of.the.class"),
             """
                 class '_Class {  
-                    var 'Field+:* = '_Init?;
+                    var 'Field+:* = '_Init?
                 }
             """.trimIndent(),
             CLASS_TYPE

@@ -71,6 +71,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         nodes.reset()
     }
 
+    override fun checkReplacementPattern(project: Project, options: ReplaceOptions) { }
+
     override fun getReplaceHandler(project: Project, replaceOptions: ReplaceOptions) = DocumentBasedReplaceHandler(project)
 
     companion object {

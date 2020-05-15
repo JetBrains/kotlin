@@ -349,9 +349,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitClass(klass: KtClass) {
         val other = getTreeElement<KtClass>() ?: return
-        if (myMatchingVisitor.matchContext.pattern.isTypedVar(klass.nameIdentifier)
-            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(klass.nameIdentifier, other.nameIdentifier))
-        ) return
         myMatchingVisitor.result = myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
                 && matchTextOrVariable(klass.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
@@ -360,6 +357,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.matchInAnyOrder(klass.secondaryConstructors, other.secondaryConstructors)
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
+        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(klass.nameIdentifier)
+            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(klass.nameIdentifier, other.nameIdentifier))
+        ) return
     }
 
     override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
@@ -378,15 +378,15 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitNamedFunction(function: KtNamedFunction) {
         val other = getTreeElement<KtNamedFunction>() ?: return
-        if (myMatchingVisitor.matchContext.pattern.isTypedVar(function.nameIdentifier)
-            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(function.nameIdentifier, other.nameIdentifier))
-        ) return
         myMatchingVisitor.result = matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(function.modifierList, other.modifierList)
                 && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)
                 && matchTypeReferenceWithDeclaration(function.typeReference, other)
                 && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
                 && myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
+        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(function.nameIdentifier)
+            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(function.nameIdentifier, other.nameIdentifier))
+        ) return
     }
 
     override fun visitElement(element: PsiElement) {
@@ -498,9 +498,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitProperty(property: KtProperty) {
         val other = getTreeElement<KtProperty>() ?: return
-        if (myMatchingVisitor.matchContext.pattern.isTypedVar(property.nameIdentifier)
-            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(property.nameIdentifier, other.nameIdentifier))
-        ) return
         myMatchingVisitor.result = matchTypeReferenceWithDeclaration(property.typeReference, other)
                 && myMatchingVisitor.match(property.modifierList, other.modifierList)
                 && property.isVar == other.isVar
@@ -508,7 +505,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.match(
             property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
         ))
-        println("Matching ${property.text} ${other.text}        Result: ${myMatchingVisitor.result}")
+        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(property.nameIdentifier)
+            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(property.nameIdentifier, other.nameIdentifier))
+        ) return
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {

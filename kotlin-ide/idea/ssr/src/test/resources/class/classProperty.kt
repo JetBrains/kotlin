@@ -1,8 +1,8 @@
 import java.util.*
 
 class Foo {
-    lateinit var <warning descr="SSR">foo2</warning>: Random
     var bar1 = 1
+    lateinit var <warning descr="SSR">foo2</warning>: Random
 }
 
 class Bar {
