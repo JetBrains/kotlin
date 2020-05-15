@@ -23,7 +23,7 @@ public class BraceHighlightingHandlerBlockCaretTest extends LightPlatformCodeIns
       configureByFile(myFileSuffix);
       Editor editor = getEditor();
       editor.getSettings().setBlockCursor(true);
-      String result = BraceHighlightingHandlerTest.getTextEditorWithHighlightedBraces(getEditor(), getFile());
+      String result = BraceHighlightingHandlerTest.getEditorTextWithHighlightedBraces(getEditor(), getFile());
       UsefulTestCase.assertSameLinesWithFile(getAnswerFilePath(), result);
     });
   }

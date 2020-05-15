@@ -34,7 +34,7 @@ public class BraceHighlightingHandlerTest extends LightPlatformCodeInsightTestCa
   public void testAction() {
     runInEdtAndWait(() -> {
       configureByFile(myFileSuffix);
-      String result = getTextEditorWithHighlightedBraces(getEditor(), getFile());
+      String result = getEditorTextWithHighlightedBraces(getEditor(), getFile());
       UsefulTestCase.assertSameLinesWithFile(getAnswerFilePath(), result);
     });
   }
@@ -53,7 +53,7 @@ public class BraceHighlightingHandlerTest extends LightPlatformCodeInsightTestCa
   /**
    * @return a text from passed editor with highlighted braces wrapped in {@code <brace></brace>} tags. And {@link <caret>} marker
    */
-  public static String getTextEditorWithHighlightedBraces(@NotNull Editor editor, @NotNull PsiFile psiFile) {
+  public static String getEditorTextWithHighlightedBraces(@NotNull Editor editor, @NotNull PsiFile psiFile) {
     Editor hostEditor = editor instanceof EditorWindow ? ((EditorWindow)editor).getDelegate() : editor;
     List<Pair<Integer, String>> markers = new ArrayList<>();
     Alarm alarm = new Alarm();
