@@ -231,19 +231,15 @@ class FirTowerResolverSession internal constructor(
         info: CallInfo
     ) {
         processExtensionsThatHideMembers(info, explicitReceiverValue = null)
-        val nonEmptyLocalScopes = mutableListOf<FirScope>()
 
         val emptyTopLevelScopes = mutableSetOf<FirScope>()
         val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
 
         enumerateTowerLevels(
             onLocalScope = { index, scope ->
-                val result = processLevel(
+                processLevel(
                     scope.toScopeTowerLevel(), info, TowerGroup.Local(index)
                 )
-                if (result != ProcessorAction.NONE) {
-                    nonEmptyLocalScopes += scope
-                }
             },
             onNonLocalScope = l@{ index, scope ->
                 // NB: this check does not work for variables
@@ -260,7 +256,6 @@ class FirTowerResolverSession internal constructor(
                     info,
                     TowerGroup.Implicit(index),
                     implicitReceiverValuesWithEmptyScopes,
-                    nonEmptyLocalScopes,
                     emptyTopLevelScopes
                 )
             }
@@ -315,7 +310,6 @@ class FirTowerResolverSession internal constructor(
         info: CallInfo,
         parentGroup: TowerGroup,
         implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>>,
-        nonEmptyLocalScopes: List<FirScope>,
         emptyTopLevelScopes: MutableSet<FirScope>
     ) {
         val implicitResult = processLevel(
@@ -327,7 +321,6 @@ class FirTowerResolverSession internal constructor(
         }
 
         enumerateTowerLevels(
-            localScopesToUse = nonEmptyLocalScopes,
             onLocalScope = { index, scope ->
                 processLevel(
                     scope.toScopeTowerLevel(extensionReceiver = receiver),
@@ -377,19 +370,14 @@ class FirTowerResolverSession internal constructor(
             return
         }
 
-        val nonEmptyLocalScopes = mutableListOf<FirScope>()
-
         enumerateTowerLevels(
             onLocalScope = { index, scope ->
-                if (processScopeForExplicitReceiver(
-                        scope,
-                        explicitReceiverValue,
-                        info,
-                        TowerGroup.Local(index)
-                    ) != ProcessorAction.NONE
-                ) {
-                    nonEmptyLocalScopes += scope
-                }
+                processScopeForExplicitReceiver(
+                    scope,
+                    explicitReceiverValue,
+                    info,
+                    TowerGroup.Local(index)
+                )
             },
             onNonLocalScope = { index, scope ->
                 processScopeForExplicitReceiver(
@@ -400,7 +388,7 @@ class FirTowerResolverSession internal constructor(
                 )
             },
             onImplicitReceiver = { index, implicitReceiverValue ->
-                processCombinationOfReceivers(implicitReceiverValue, explicitReceiverValue, info, index, nonEmptyLocalScopes)
+                processCombinationOfReceivers(implicitReceiverValue, explicitReceiverValue, info, index)
             }
         )
     }
@@ -408,10 +396,9 @@ class FirTowerResolverSession internal constructor(
     private inline fun enumerateTowerLevels(
         onLocalScope: (Int, FirScope) -> Unit,
         onNonLocalScope: (Int, FirScope) -> Unit,
-        onImplicitReceiver: (Int, ImplicitReceiverValue<*>) -> Unit,
-        localScopesToUse: List<FirScope> = localScopes
+        onImplicitReceiver: (Int, ImplicitReceiverValue<*>) -> Unit
     ) {
-        for ((index, localScope) in localScopesToUse.withIndex()) {
+        for ((index, localScope) in localScopes.withIndex()) {
             onLocalScope(index, localScope)
         }
 
@@ -448,8 +435,7 @@ class FirTowerResolverSession internal constructor(
         implicitReceiverValue: ImplicitReceiverValue<*>,
         explicitReceiverValue: ExpressionReceiverValue,
         info: CallInfo,
-        depth: Int,
-        nonEmptyLocalScopes: MutableList<FirScope>
+        depth: Int
     ) {
         // NB: companions are processed via implicitReceiverValues!
         val parentGroup = TowerGroup.Implicit(depth)
@@ -465,7 +451,6 @@ class FirTowerResolverSession internal constructor(
         )
 
         enumerateTowerLevels(
-            localScopesToUse = nonEmptyLocalScopes,
             onLocalScope = { index, scope ->
                 processLevelForPropertyWithInvoke(
                     scope.toScopeTowerLevel(extensionReceiver = implicitReceiverValue),
