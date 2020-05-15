@@ -11,13 +11,16 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.KtFile
+import java.util.ArrayList
 
 class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
     class FileRenamingPsiClassWrapper(
@@ -53,5 +56,15 @@ class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
                 allRenames[FileRenamingPsiClassWrapper(facadeClass, jetFile)] = PackagePartClassUtils.getFilePartShortName(newName)
             }
         }
+    }
+
+    override fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
+        val kotlinUsages = ArrayList<UsageInfo>(usages.size)
+
+        ForeignUsagesRenameProcessor.processAll(element, newName, usages, fallbackHandler = {
+            kotlinUsages += it
+        })
+
+        super.renameElement(element, newName, kotlinUsages.toTypedArray(), listener)
     }
 }
