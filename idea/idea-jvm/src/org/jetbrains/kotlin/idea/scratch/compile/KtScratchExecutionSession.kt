@@ -145,7 +145,7 @@ class KtScratchExecutionSession(
         val resolutionFacade = psiFile.getResolutionFacade()
         val (bindingContext, files) = DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, psiFile, false)
 
-        LOG.printDebugMessage("Analyzed files: \n${files.joinToString("\n") { it.virtualFilePath.toString() }}")
+        LOG.printDebugMessage("Analyzed files: \n${files.joinToString("\n") { it.virtualFilePath }}")
 
         val generateClassFilter = object : GenerationState.GenerateClassFilter() {
             override fun shouldGeneratePackagePart(ktFile: KtFile) = ktFile == psiFile

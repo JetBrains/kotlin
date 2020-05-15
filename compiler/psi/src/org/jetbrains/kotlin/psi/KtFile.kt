@@ -111,11 +111,11 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
             return result
         }
 
-    val virtualFilePath: String?
-        get() {
+    val virtualFilePath
+        get(): String {
             pathCached?.let { return it }
 
-            return virtualFile?.path?.also {
+            return virtualFile.path.also {
                 pathCached = it
             }
         }
