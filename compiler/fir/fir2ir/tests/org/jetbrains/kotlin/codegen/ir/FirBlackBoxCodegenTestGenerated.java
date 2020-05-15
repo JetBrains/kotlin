@@ -7869,9 +7869,19 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendConversion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("intersectionTypeToSubtypeConversion.kt")
+            public void testIntersectionTypeToSubtypeConversion() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendConversion/intersectionTypeToSubtypeConversion.kt");
+            }
+
             @TestMetadata("onArgument.kt")
             public void testOnArgument() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/suspendConversion/onArgument.kt");
+            }
+
+            @TestMetadata("subtypeOfFunctionalTypeToSuspendConversion.kt")
+            public void testSubtypeOfFunctionalTypeToSuspendConversion() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendConversion/subtypeOfFunctionalTypeToSuspendConversion.kt");
             }
         }
 
@@ -11170,6 +11180,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/funInterface/inlinedSamWrapper.kt");
         }
 
+        @TestMetadata("intersectionTypeToFunInterfaceConversion.kt")
+        public void testIntersectionTypeToFunInterfaceConversion() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/intersectionTypeToFunInterfaceConversion.kt");
+        }
+
         @TestMetadata("multimodule.kt")
         public void testMultimodule() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/multimodule.kt");
@@ -11198,6 +11213,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("samConstructorExplicitInvocation.kt")
         public void testSamConstructorExplicitInvocation() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/samConstructorExplicitInvocation.kt");
+        }
+
+        @TestMetadata("subtypeOfFunctionalTypeToFunInterfaceConversion.kt")
+        public void testSubtypeOfFunctionalTypeToFunInterfaceConversion() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/subtypeOfFunctionalTypeToFunInterfaceConversion.kt");
         }
 
         @TestMetadata("suspendFunInterfaceConversionCodegen.kt")
@@ -28071,6 +28091,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("partialSamKT.kt")
         public void testPartialSamKT() throws Exception {
             runTest("compiler/testData/codegen/box/sam/partialSamKT.kt");
+        }
+
+        @TestMetadata("passSubtypeOfFunctionSamConversion.kt")
+        public void testPassSubtypeOfFunctionSamConversion() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/passSubtypeOfFunctionSamConversion.kt");
         }
 
         @TestMetadata("predicateSamWrapper.kt")

@@ -23249,6 +23249,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionDisabled.kt");
             }
 
+            @TestMetadata("suspendConversionOnVarargElements.kt")
+            public void testSuspendConversionOnVarargElements() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionOnVarargElements.kt");
+            }
+
             @TestMetadata("suspendConversionWithFunInterfaces.kt")
             public void testSuspendConversionWithFunInterfaces() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionWithFunInterfaces.kt");

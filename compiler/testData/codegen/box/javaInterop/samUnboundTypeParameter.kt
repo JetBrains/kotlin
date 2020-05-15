@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// !LANGUAGE: -NewInference
 // WITH_RUNTIME
 // FILE: Base.java
 import java.lang.Runnable;

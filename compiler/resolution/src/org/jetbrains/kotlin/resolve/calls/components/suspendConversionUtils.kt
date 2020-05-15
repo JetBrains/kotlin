@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
 
-object SuspendTypeConversions {
-    fun conversionDefinitelyNotNeeded(
+object SuspendTypeConversions : ParameterTypeConversion {
+    override fun conversionDefinitelyNotNeeded(
         candidate: KotlinResolutionCandidate,
         argument: KotlinCallArgument,
-        candidateParameter: ParameterDescriptor
+        expectedParameterType: UnwrappedType
     ): Boolean {
         if (!candidate.callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SuspendConversion)) return true
 
@@ -25,34 +25,33 @@ object SuspendTypeConversions {
         if (!argumentType.isFunctionType) return true
         if (argumentType.isSuspendFunctionType) return true
 
-        if (!candidateParameter.type.isSuspendFunctionType) return true
+        if (!expectedParameterType.isSuspendFunctionType) return true
 
         return false
     }
 
-    fun KotlinResolutionCandidate.conversionMightBeNeededBeforeSubtypingCheck(): Boolean = true
-    fun KotlinResolutionCandidate.conversionMightBeNeededAfterSubtypingCheck(): Boolean = false
-}
+    override fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean = true
+    override fun conversionIsNeededAfterSubtypingCheck(argument: KotlinCallArgument): Boolean =
+        argument is SimpleKotlinCallArgument && argument.receiver.stableType.isFunctionTypeOrSubtype
 
+    override fun convertParameterType(
+        candidate: KotlinResolutionCandidate,
+        argument: KotlinCallArgument,
+        parameter: ParameterDescriptor,
+        expectedParameterType: UnwrappedType
+    ): UnwrappedType? {
+        val nonSuspendParameterType = createFunctionType(
+            candidate.callComponents.builtIns,
+            expectedParameterType.annotations,
+            expectedParameterType.getReceiverTypeFromFunctionType(),
+            expectedParameterType.getValueParameterTypesFromFunctionType().map { it.type },
+            parameterNames = null,
+            expectedParameterType.getReturnTypeFromFunctionType(),
+            suspendFunction = false
+        )
 
-fun KotlinResolutionCandidate.getExpectedTypeWithSuspendConversion(
-    argument: KotlinCallArgument,
-    candidateParameter: ParameterDescriptor
-): UnwrappedType? {
-    if (SuspendTypeConversions.conversionDefinitelyNotNeeded(this, argument, candidateParameter)) return null
+        candidate.resolvedCall.registerArgumentWithSuspendConversion(argument, nonSuspendParameterType)
 
-    val parameterType = candidateParameter.type
-    val nonSuspendParameterType = createFunctionType(
-        callComponents.builtIns,
-        parameterType.annotations,
-        parameterType.getReceiverTypeFromFunctionType(),
-        parameterType.getValueParameterTypesFromFunctionType().map { it.type },
-        parameterNames = null,
-        parameterType.getReturnTypeFromFunctionType(),
-        suspendFunction = false
-    )
-
-    resolvedCall.registerArgumentWithSuspendConversion(argument, nonSuspendParameterType)
-
-    return nonSuspendParameterType
+        return nonSuspendParameterType
+    }
 }

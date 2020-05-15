@@ -17,23 +17,11 @@ import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 
-object SamTypeConversions {
-    fun conversionMightBeNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean {
-        return when (argument) {
-            is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
-            is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
-            else -> false
-        }
-    }
-
-    fun conversionMightBeNeededAfterSubtypingCheck(argument: KotlinCallArgument): Boolean {
-        return argument is SimpleKotlinCallArgument && argument.receiver.stableType.isFunctionTypeOrSubtype
-    }
-
-
-    fun conversionDefinitelyNotNeeded(
+object SamTypeConversions : ParameterTypeConversion {
+    override fun conversionDefinitelyNotNeeded(
         candidate: KotlinResolutionCandidate,
-        candidateParameter: ParameterDescriptor
+        argument: KotlinCallArgument,
+        expectedParameterType: UnwrappedType
     ): Boolean {
         val callComponents = candidate.callComponents
         val generatingAdditionalSamCandidateIsEnabled =
@@ -41,7 +29,7 @@ object SamTypeConversions {
                     !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
 
         if (generatingAdditionalSamCandidateIsEnabled) return true
-        if (candidateParameter.type.isNothing()) return true
+        if (expectedParameterType.isNothing()) return true
 
         val samConversionOracle = callComponents.samConversionOracle
         if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) {
@@ -50,48 +38,56 @@ object SamTypeConversions {
 
         return false
     }
-}
 
-fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
-    argument: KotlinCallArgument,
-    candidateParameter: ParameterDescriptor
-): UnwrappedType? {
-    if (SamTypeConversions.conversionDefinitelyNotNeeded(this, candidateParameter)) return null
-
-    val argumentIsFunctional = when (argument) {
-        is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
-        is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
-        else -> false
+    override fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean {
+        return when (argument) {
+            is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
+            is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
+            else -> false
+        }
     }
-    if (!argumentIsFunctional) return null
 
-    val originalExpectedType = argument.getExpectedType(candidateParameter.original, callComponents.languageVersionSettings)
+    override fun conversionIsNeededAfterSubtypingCheck(argument: KotlinCallArgument): Boolean {
+        return argument is SimpleKotlinCallArgument && argument.receiver.stableType.isFunctionTypeOrSubtype
+    }
 
-    val convertedTypeByOriginal =
-        callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(
-            originalExpectedType,
-            callComponents.samConversionOracle
-        ) ?: return null
+    override fun convertParameterType(
+        candidate: KotlinResolutionCandidate,
+        argument: KotlinCallArgument,
+        parameter: ParameterDescriptor,
+        expectedParameterType: UnwrappedType
+    ): UnwrappedType? {
+        val callComponents = candidate.callComponents
+        val originalExpectedType = argument.getExpectedType(parameter.original, callComponents.languageVersionSettings)
 
-    val candidateExpectedType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
-    val convertedTypeByCandidate =
-        callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(
-            candidateExpectedType,
-            callComponents.samConversionOracle
+        val convertedTypeByOriginal =
+            callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(
+                originalExpectedType,
+                callComponents.samConversionOracle
+            ) ?: return null
+
+        val convertedTypeByCandidate =
+            callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(
+                expectedParameterType,
+                callComponents.samConversionOracle
+            )
+
+        assert(expectedParameterType.constructor == originalExpectedType.constructor && convertedTypeByCandidate != null) {
+            "If original type is SAM type, then candidate should have same type constructor and corresponding function type\n" +
+                    "originalExpectType: $originalExpectedType, candidateExpectType: $expectedParameterType\n" +
+                    "functionTypeByOriginal: $convertedTypeByOriginal, functionTypeByCandidate: $convertedTypeByCandidate"
+        }
+
+        candidate.resolvedCall.registerArgumentWithSamConversion(
+            argument,
+            SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!)
         )
 
-    assert(candidateExpectedType.constructor == originalExpectedType.constructor && convertedTypeByCandidate != null) {
-        "If original type is SAM type, then candidate should have same type constructor and corresponding function type\n" +
-                "originalExpectType: $originalExpectedType, candidateExpectType: $candidateExpectedType\n" +
-                "functionTypeByOriginal: $convertedTypeByOriginal, functionTypeByCandidate: $convertedTypeByCandidate"
+        val samDescriptor = originalExpectedType.constructor.declarationDescriptor
+        if (samDescriptor is ClassDescriptor) {
+            callComponents.lookupTracker.record(candidate.scopeTower.location, samDescriptor, SAM_LOOKUP_NAME)
+        }
+
+        return convertedTypeByCandidate
     }
-
-    resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
-
-    val samDescriptor = originalExpectedType.constructor.declarationDescriptor
-    if (samDescriptor is ClassDescriptor) {
-        callComponents.lookupTracker.record(scopeTower.location, samDescriptor, SAM_LOOKUP_NAME)
-    }
-
-    return convertedTypeByCandidate
 }
