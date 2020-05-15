@@ -139,7 +139,7 @@ public class UnwrapHandler implements CodeInsightActionHandler {
 
   /**
    * @deprecated operate with
-   * @see EditorColors#SEARCH_RESULT_ATTRIBUTES directly
+   * {@link EditorColors#SEARCH_RESULT_ATTRIBUTES} directly
    */
   @Deprecated
   public static TextAttributes getTestAttributesForExtract() {

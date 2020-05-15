@@ -34,7 +34,6 @@ import com.intellij.openapi.editor.actionSystem.TypedActionHandler;
 import com.intellij.openapi.editor.actions.ScrollToTheEndToolbarAction;
 import com.intellij.openapi.editor.actions.ToggleUseSoftWrapsToolbarAction;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.ex.EditorEx;
@@ -217,7 +216,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
       MarkupModel model = DocumentMarkupModel.forDocument(myEditor.getDocument(), project, false);
       for (RangeHighlighter tokenMarker : model.getAllHighlighters()) {
         ConsoleViewContentType contentType = tokenMarker.getUserData(CONTENT_TYPE);
-        if (contentType != null && contentType.getForcedAttributes() != null && tokenMarker instanceof RangeHighlighterEx) {
+        if (contentType != null && contentType.getAttributesKey() == null && tokenMarker instanceof RangeHighlighterEx) {
           ((RangeHighlighterEx)tokenMarker).setTextAttributes(contentType.getAttributes());
         }
       }
@@ -815,16 +814,14 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
                                            int startOffset,
                                            int endOffset) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    TextAttributesKey attributesKey = contentType.getAttributesKey();
     MarkupModelEx model = (MarkupModelEx)DocumentMarkupModel.forDocument(myEditor.getDocument(), getProject(), true);
     int layer = HighlighterLayer.SYNTAX + 1; // make custom filters able to draw their text attributes over the default ones
     model.addRangeHighlighterAndChangeAttributes(
-      attributesKey, startOffset, endOffset, layer, HighlighterTargetArea.EXACT_RANGE, false,
+      contentType.getAttributesKey(), startOffset, endOffset, layer, HighlighterTargetArea.EXACT_RANGE, false,
       ex -> {
         // fallback for contentTypes which provide only attributes
-        TextAttributes attributes = contentType.getForcedAttributes();
-        if (attributes != null) {
-          ex.setTextAttributes(attributes);
+        if (ex.getTextAttributesKey() == null) {
+          ex.setTextAttributes(contentType.getAttributes());
         }
         ex.putUserData(CONTENT_TYPE, contentType);
       });

@@ -37,8 +37,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.io.PrintStream;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class LivePreview implements SearchResults.SearchResultsListener, SelectionListener, DocumentListener, EditorColorsListener {
   private static final Key<RangeHighlighter> IN_SELECTION_KEY = Key.create("LivePreview.IN_SELECTION_KEY");
@@ -296,7 +296,7 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
     markupModel.processRangeHighlightersOverlappingWith(startOffset, startOffset, highlighter -> {
       if (highlighter.getUserData(SEARCH_MARKER) != null &&
           highlighter.getStartOffset() == startOffset && highlighter.getEndOffset() == endOffset &&
-          Objects.equals(highlighter.getTextAttributes(null), attributes)) {
+          Objects.equals(highlighter.getTextAttributes(mySearchResults.getEditor().getColorsScheme()), attributes)) {
         existing[0] = highlighter;
         return false;
       }
