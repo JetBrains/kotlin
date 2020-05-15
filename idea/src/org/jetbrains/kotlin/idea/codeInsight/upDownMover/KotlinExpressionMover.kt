@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.formatter.isComma
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.function.Predicate
 
@@ -30,7 +31,7 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
         sibling: PsiElement,
         down: Boolean
     ): LineRange? {
-        val next = if (sibling.node.elementType === KtTokens.COMMA) {
+        val next = if (sibling.node.elementType === KtTokens.COMMA || sibling is PsiComment) {
             firstNonWhiteSibling(sibling, down)
         } else {
             sibling
@@ -531,7 +532,17 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
             down: Boolean
         ): PsiElement? {
             val element = if (down) sourceRange.lastElement else sourceRange.firstElement
-            var sibling = if (down) element.nextSibling else element.prevSibling
+            var sibling = if (down) {
+                val elementToCheck = sourceRange.firstElement
+                if (element is PsiComment && (elementToCheck is KtParameter || elementToCheck is KtValueArgument)) {
+                    element.getPrevSiblingIgnoringWhitespaceAndComments()
+                } else {
+                    element.nextSibling
+                }
+            } else {
+                element.prevSibling
+            }
+
             val whiteSpaceTestSubject = sibling ?: kotlin.run {
                 val parent = element.parent
                 if (parent == null || !isBracelessBlock(parent)) return@run null
@@ -576,8 +587,9 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
             if (willBeLast && comma != null && !withTrailingComma) {
                 comma.delete()
             } else if (!willBeLast && comma == null) {
-                val parent = element.parent
-                parent.addAfter(KtPsiFactory(parent.project).createComma(), element)
+                element.children.lastOrNull()?.let {
+                    element.addAfter(KtPsiFactory(element.project).createComma(), it)
+                }
             }
         }
 
