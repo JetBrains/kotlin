@@ -6,6 +6,7 @@ import com.intellij.codeInsight.daemon.impl.LineMarkersPass;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.markup.SeparatorPlacement;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.MathUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ class FileSeparatorProvider {
 
   static int getDisplayLine(@NotNull LineMarkerInfo<?> lineMarkerInfo, @NotNull Document document) {
     int offset = lineMarkerInfo.separatorPlacement == SeparatorPlacement.TOP ? lineMarkerInfo.startOffset : lineMarkerInfo.endOffset;
-    return document.getLineNumber(Math.min(document.getTextLength(), Math.max(0, offset))) +
+    return document.getLineNumber(MathUtil.clamp(offset, 0, document.getTextLength())) +
            (lineMarkerInfo.separatorPlacement == SeparatorPlacement.TOP ? 0 : 1);
   }
 }

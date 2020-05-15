@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.formatter.FormattingDocumentModelImpl;
 import com.intellij.psi.impl.DebugUtil;
+import com.intellij.util.MathUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -19,8 +20,8 @@ class RangesAssert {
   public void assertInvalidRanges(final int startOffset, final int newEndOffset, FormattingDocumentModel model, String message) {
     final StringBuilder buffer = new StringBuilder();
 
-    int minOffset = Math.max(Math.min(startOffset, newEndOffset), 0);
-    int maxOffset = Math.min(Math.max(startOffset, newEndOffset), model.getTextLength());
+    int minOffset = MathUtil.clamp(newEndOffset, 0, startOffset);
+    int maxOffset = MathUtil.clamp(newEndOffset, startOffset, model.getTextLength());
 
     final StringBuilder messageBuffer =  new StringBuilder();
     messageBuffer.append(message);

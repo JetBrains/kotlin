@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.util.ExceptionUtil;
+import com.intellij.util.MathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,7 +93,7 @@ public class LookupOffsets implements DocumentListener {
     }
 
     int start = getPivotOffset() - minPrefixLength - myAdditionalPrefix.length() + myRemovedPrefix;
-    start = Math.max(Math.min(start, myEditor.getDocument().getTextLength()), 0);
+    start = MathUtil.clamp(start, 0, myEditor.getDocument().getTextLength());
     if (myLookupStartMarker.isValid() && myLookupStartMarker.getStartOffset() == start && myLookupStartMarker.getEndOffset() == start) {
       return;
     }

@@ -66,10 +66,7 @@ import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupPositionManager;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.scale.ScaleContext;
-import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.ImageLoader;
-import com.intellij.util.Url;
-import com.intellij.util.Urls;
+import com.intellij.util.*;
 import com.intellij.util.ui.*;
 import com.intellij.util.ui.accessibility.ScreenReader;
 import org.jetbrains.annotations.NonNls;
@@ -101,6 +98,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 public class DocumentationComponent extends JPanel implements Disposable, DataProvider, WidthBasedLayout {
@@ -846,7 +844,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       width = Math.max(width, myEditorPane.getMinimumSize().width);
     }
     Insets insets = getInsets();
-    return Math.min(maxWidth, Math.max(minWidth, width)) + insets.left + insets.right;
+    return MathUtil.clamp(width, minWidth, maxWidth) + insets.left + insets.right;
   }
 
   @Override
@@ -859,7 +857,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     JScrollBar scrollBar = myScrollPane.getHorizontalScrollBar();
     int reservedForScrollBar = width < preferredSize.width && scrollBar.isOpaque() ? scrollBar.getPreferredSize().height : 0;
     Insets insets = getInsets();
-    return Math.min(MAX_DEFAULT.height, Math.max(MIN_DEFAULT.height, height)) + insets.top + insets.bottom + reservedForScrollBar;
+    return MathUtil.clamp(height, MIN_DEFAULT.height, MAX_DEFAULT.height) + insets.top + insets.bottom + reservedForScrollBar;
   }
 
   private Component getPopupAnchor() {

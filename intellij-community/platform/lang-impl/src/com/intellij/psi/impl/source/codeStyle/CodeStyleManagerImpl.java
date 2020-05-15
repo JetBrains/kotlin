@@ -32,6 +32,7 @@ import com.intellij.psi.util.PsiEditorUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.CharTable;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.MathUtil;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NonNls;
@@ -868,7 +869,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
 
     private int getCaretOffset() {
       int caretOffset = myCaretModel.getOffset();
-      caretOffset = Math.max(Math.min(caretOffset, myDocument.getTextLength() - 1), 0);
+      caretOffset = MathUtil.clamp(caretOffset, 0, myDocument.getTextLength() - 1);
       return caretOffset;
     }
 

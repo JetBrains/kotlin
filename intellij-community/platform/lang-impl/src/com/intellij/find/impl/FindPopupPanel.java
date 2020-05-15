@@ -466,7 +466,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
         Dimension size = super.getPreferredSize();
         Insets insets = getInsets();
         width += insets.left + insets.right;
-        size.width = Math.min(JBUIScale.scale(500), Math.max(JBUIScale.scale(80), width));
+        size.width = MathUtil.clamp(width, JBUIScale.scale(80), JBUIScale.scale(500));
         return size;
       }
     };

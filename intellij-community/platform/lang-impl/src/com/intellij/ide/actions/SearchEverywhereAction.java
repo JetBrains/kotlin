@@ -2241,7 +2241,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
         final JBScrollPane pane = new JBScrollPane();
         final int extraWidth = pane.getVerticalScrollBar().getWidth() + 1;
         final int extraHeight = pane.getHorizontalScrollBar().getHeight() + 1;
-        sz = new Dimension(Math.min(getPopupMaxWidth(), Math.max(getField().getWidth(), sz.width + extraWidth)), Math.min(getPopupMaxWidth(), sz.height + extraHeight));
+        sz = new Dimension(MathUtil.clamp(sz.width + extraWidth, getField().getWidth(), getPopupMaxWidth()), Math.min(getPopupMaxWidth(), sz.height + extraHeight));
         sz.width += 20;
       }
       else {

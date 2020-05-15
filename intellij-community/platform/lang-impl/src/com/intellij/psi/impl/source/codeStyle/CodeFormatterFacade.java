@@ -38,6 +38,7 @@ import com.intellij.psi.util.PsiEditorUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.MathUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.text.TextRangeUtil;
@@ -479,8 +480,8 @@ public class CodeFormatterFacade {
   public void doWrapLongLinesIfNecessary(@NotNull final Editor editor, @NotNull final Project project, @NotNull Document document,
                                          int startOffset, int endOffset, List<? extends TextRange> enabledRanges) {
     // Normalization.
-    int startOffsetToUse = Math.min(document.getTextLength(), Math.max(0, startOffset));
-    int endOffsetToUse = Math.min(document.getTextLength(), Math.max(0, endOffset));
+    int startOffsetToUse = MathUtil.clamp(startOffset, 0, document.getTextLength());
+    int endOffsetToUse = MathUtil.clamp(endOffset, 0, document.getTextLength());
 
     LineWrapPositionStrategy strategy = LanguageLineWrapPositionStrategy.INSTANCE.forEditor(editor);
     CharSequence text = document.getCharsSequence();
