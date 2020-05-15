@@ -2,9 +2,7 @@
 package com.intellij.analysis.problemsView.toolWindow;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -13,6 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
+import com.intellij.pom.Navigatable;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.content.Content;
@@ -39,7 +38,7 @@ import static com.intellij.ui.scale.JBUIScale.scale;
 import static com.intellij.util.OpenSourceUtil.navigate;
 import static javax.swing.tree.TreeSelectionModel.SINGLE_TREE_SELECTION;
 
-abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable {
+abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable, DataProvider {
   private final Project myProject;
   private final ProblemsViewState myState;
   private final ProblemsTreeModel myTreeModel = new ProblemsTreeModel(this);
@@ -178,6 +177,19 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable 
   @Override
   public void dispose() {
     myPreview.preview(null, false);
+  }
+
+  @Override
+  public @Nullable Object getData(@NotNull String dataId) {
+    if (CommonDataKeys.PROJECT.is(dataId)) return getProject();
+    OpenFileDescriptor descriptor = getSelectedDescriptor();
+    if (descriptor != null) {
+      if (CommonDataKeys.NAVIGATABLE.is(dataId)) return descriptor;
+      if (CommonDataKeys.VIRTUAL_FILE.is(dataId)) return descriptor.getFile();
+      if (CommonDataKeys.NAVIGATABLE_ARRAY.is(dataId)) return new Navigatable[]{descriptor};
+      if (CommonDataKeys.VIRTUAL_FILE_ARRAY.is(dataId)) return new VirtualFile[]{descriptor.getFile()};
+    }
+    return null;
   }
 
   abstract @NotNull String getDisplayName();
