@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.codegen.ir.*
+import org.jetbrains.kotlin.codegen.ir.AbstractCompileKotlinAgainstKlibTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.test.TargetBackend
 
-fun main(args: Array<String>) {
+fun main() {
     System.setProperty("java.awt.headless", "true")
 
     testGroup("compiler/tests-against-klib/tests", "compiler/testData") {

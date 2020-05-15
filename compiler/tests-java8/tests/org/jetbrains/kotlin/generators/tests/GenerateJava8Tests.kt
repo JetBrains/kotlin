@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8WithPsiClassReadingTes
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJava8UsingJavacTest
 import org.jetbrains.kotlin.resolve.calls.AbstractEnhancedSignaturesResolvedCallsTest
 
-fun main(args: Array<String>) {
+fun main() {
     System.setProperty("java.awt.headless", "true")
 
     testGroup("compiler/tests-java8/tests", "compiler/testData") {

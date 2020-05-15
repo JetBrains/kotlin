@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
-import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
 import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
+import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.generators.util.KT_WITHOUT_DOTS_IN_NAME
@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizer
 import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 
-fun main(args: Array<String>) {
+fun main() {
     System.setProperty("java.awt.headless", "true")
 
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
@@ -176,10 +176,10 @@ fun main(args: Array<String>) {
             model("parseCodeFragment/block", testMethod = "doBlockCodeFragmentParsingTest", extension = "kt")
         }
 
-        GenerateRangesCodegenTestData.main(emptyArray<String>())
-        GenerateInRangeExpressionTestData.main(emptyArray<String>())
-        GenerateSteppedRangesCodegenTestData.main(emptyArray<String>())
-        GeneratePrimitiveVsObjectEqualityTestData.main(emptyArray<String>())
+        GenerateRangesCodegenTestData.main(emptyArray())
+        GenerateInRangeExpressionTestData.main(emptyArray())
+        GenerateSteppedRangesCodegenTestData.main(emptyArray())
+        GeneratePrimitiveVsObjectEqualityTestData.main(emptyArray())
 
         testClass<AbstractBlackBoxCodegenTest> {
             model("codegen/box", targetBackend = TargetBackend.JVM)

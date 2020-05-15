@@ -162,7 +162,7 @@ import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeLi
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
 
-fun main(args: Array<String>) {
+fun main() {
     System.setProperty("java.awt.headless", "true")
 
     testGroup("idea/jvm-debugger/jvm-debugger-test/test", "idea/jvm-debugger/jvm-debugger-test/testData") {
