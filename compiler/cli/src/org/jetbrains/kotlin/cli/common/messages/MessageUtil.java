@@ -35,20 +35,18 @@ public class MessageUtil {
     public static CompilerMessageLocation psiElementToMessageLocation(@Nullable PsiElement element) {
         if (element == null) return null;
         PsiFile file = element.getContainingFile();
-        return psiFileToMessageLocation(file, "<no path>", DiagnosticUtils.getLineAndColumnRangeInPsiFile(file, element.getTextRange()));
+        return psiFileToMessageLocation(file, "<no path>", DiagnosticUtils.getLineAndColumnInPsiFile(file, element.getTextRange()));
     }
 
     @Nullable
     public static CompilerMessageLocation psiFileToMessageLocation(
             @NotNull PsiFile file,
             @Nullable String defaultValue,
-            @NotNull PsiDiagnosticUtils.LineAndColumnRange range
+            @NotNull PsiDiagnosticUtils.LineAndColumn lineAndColumn
     ) {
         VirtualFile virtualFile = file.getVirtualFile();
         String path = virtualFile != null ? virtualFileToPath(virtualFile) : defaultValue;
-        PsiDiagnosticUtils.LineAndColumn start = range.getStart();
-        PsiDiagnosticUtils.LineAndColumn end = range.getEnd();
-        return CompilerMessageLocation.create(path, start.getLine(), start.getColumn(), end.getLine(), end.getColumn(), start.getLineContent());
+        return CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn(), lineAndColumn.getLineContent());
     }
 
     @NotNull

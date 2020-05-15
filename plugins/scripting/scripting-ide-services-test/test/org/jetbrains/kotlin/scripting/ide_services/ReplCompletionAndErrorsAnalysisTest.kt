@@ -186,10 +186,10 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
                 val c = foob
             """.trimIndent()
             expect {
-                addError(1, 16, 1, 20, "Type mismatch: inferred type is String but Int was expected", "ERROR")
-                addError(1, 22, 1, 26, "The floating-point literal does not conform to the expected type String", "ERROR")
-                addError(2, 14, 2, 19, "Type mismatch: inferred type is String but Int was expected", "ERROR")
-                addError(3, 9, 3, 13, "Unresolved reference: foob", "ERROR")
+                addError(1, 16, "Type mismatch: inferred type is String but Int was expected", "ERROR")
+                addError(1, 22, "The floating-point literal does not conform to the expected type String", "ERROR")
+                addError(2, 14, "Type mismatch: inferred type is String but Int was expected", "ERROR")
+                addError(3, 9, "Unresolved reference: foob", "ERROR")
             }
         }
     }
@@ -280,15 +280,14 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
                 }
 
                 val errors = ExpectedList<ScriptDiagnostic>(run::doErrorCheck)
-                fun addError(startLine: Int, startCol: Int, endLine: Int, endCol: Int, message: String, severity: String) {
+                fun addError(startLine: Int, startCol: Int, message: String, severity: String) {
                     errors.add(
                         ScriptDiagnostic(
                             ScriptDiagnostic.unspecifiedError,
                             message,
                             ScriptDiagnostic.Severity.valueOf(severity),
                             location = SourceCode.Location(
-                                SourceCode.Position(startLine, startCol),
-                                SourceCode.Position(endLine, endCol)
+                                SourceCode.Position(startLine, startCol)
                             )
                         )
                     )

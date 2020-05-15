@@ -37,20 +37,10 @@ class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: Mess
         if (mappedSeverity != null) {
             val mappedLocation = location?.let {
                 if (it.line < 0 && it.column < 0) null // special location created by CompilerMessageLocation.create
-                else if (it.lineEnd < 0 && it.columnEnd < 0) SourceCode.Location(
-                    SourceCode.Position(
-                        it.line,
-                        it.column
-                    )
-                )
                 else SourceCode.Location(
                     SourceCode.Position(
                         it.line,
                         it.column
-                    ),
-                    SourceCode.Position(
-                        it.lineEnd,
-                        it.columnEnd
                     )
                 )
             }
