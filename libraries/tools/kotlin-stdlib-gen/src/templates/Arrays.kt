@@ -53,7 +53,7 @@ object ArrayOps : TemplateGroupBase() {
             "get() = size - 1"
         }
         specialFor(ArraysOfUnsigned) {
-            // TODO: Make inlineOnly after KT-30185 is fixed.
+            // TODO: Make inlineOnly after KT-30015 is fixed.
             // InlineOnly properties currently are not inlined and may lead to IllegalAccessException
             // when accessed from an inline (or inlineOnly) method.
             // It is because the method body contains access call to inlineOnly property in nonpublic multifile part,
@@ -72,7 +72,7 @@ object ArrayOps : TemplateGroupBase() {
             "get() = IntRange(0, lastIndex)"
         }
         specialFor(ArraysOfUnsigned) {
-            // TODO: Make inlineOnly after KT-30185 is fixed.
+            // TODO: Make inlineOnly after KT-30015 is fixed.
             // InlineOnly properties currently are not inlined and may lead to IllegalAccessException
             // when accessed from an inline (or inlineOnly) method.
             // It is because the method body contains access call to inlineOnly property in nonpublic multifile part,
