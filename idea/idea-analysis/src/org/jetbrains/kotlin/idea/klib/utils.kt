@@ -62,10 +62,13 @@ private fun checkKlibComponent(componentFile: VirtualFile, requestedBuiltInsPlat
 
     if (!manifestProperties.containsKey(KLIB_PROPERTY_UNIQUE_NAME)) return false
 
-    // No builtins_platform property => either a new common klib (we don't write builtins_platform for common) or old Native klib
     val builtInsPlatformProperty = manifestProperties.getProperty(KLIB_PROPERTY_BUILTINS_PLATFORM)
-    // TODO(dsavvinov): drop additional legacy check after 1.4
-        ?: return requestedBuiltInsPlatform == BuiltInsPlatform.NATIVE && componentFile.isLegacyNativeKlibComponent
+    // No builtins_platform property => either a new common klib (we don't write builtins_platform for common) or old Native klib
+        ?: return when (requestedBuiltInsPlatform) {
+            BuiltInsPlatform.NATIVE -> componentFile.isLegacyNativeKlibComponent // TODO(dsavvinov): drop additional legacy check after 1.4
+            BuiltInsPlatform.COMMON -> !componentFile.isLegacyNativeKlibComponent
+            else -> false
+        }
 
     val builtInsPlatform = BuiltInsPlatform.parseFromString(builtInsPlatformProperty) ?: return false
 
