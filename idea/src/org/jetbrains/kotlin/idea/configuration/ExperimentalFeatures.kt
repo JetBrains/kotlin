@@ -26,20 +26,8 @@ object ExperimentalFeatures {
         enabledByDefault = true
     )
 
-    val NewWizard = object : RegistryExperimentalFeature(
-        title = KotlinBundle.message("configuration.feature.text.new.experimental.project.wizard"),
-        registryKey = "kotlin.experimental.project.wizard",
-        enabledByDefault = true
-    ) {
-        override fun shouldBeShown(): Boolean {
-            val platformVersion = PlatformVersion.getCurrent() ?: return true
-            return platformVersion.platform != PlatformVersion.Platform.ANDROID_STUDIO
-        }
-    }
-
     val allFeatures: List<ExperimentalFeature> = listOf(
         NewJ2k,
-        NewWizard
     ) + ExperimentalFeature.EP_NAME.extensionList
 }
 
