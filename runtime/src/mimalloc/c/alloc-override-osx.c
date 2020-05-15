@@ -2,9 +2,12 @@
 Copyright (c) 2018, Microsoft Research, Daan Leijen
 This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
-"LICENSE" at the root of this distribution.
+"licenses/third_party/mimalloc_LICENSE.txt" at the root of this distribution.
 -----------------------------------------------------------------------------*/
-
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
 #if !KONAN_MI_MALLOC
 #include "mimalloc.h"
 #include "mimalloc-internal.h"
