@@ -18,10 +18,6 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
         if (workingDir == null) return
 
         gradleState.isSyncInProgress = true
-
-        val project = id.findProject() ?: return
-
-        project.kotlinGradleDslSync[id] = KotlinDslGradleBuildSync(workingDir, id)
     }
 
     override fun onEnd(id: ExternalSystemTaskId) {
@@ -33,22 +29,12 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
 
         @Suppress("DEPRECATION")
         ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(project)?.reloadIfNecessary()
-
-        val sync = project.kotlinGradleDslSync.remove(id)
-        if (sync != null) {
-            // For Gradle 6.0 or higher
-            saveScriptModels(project, sync)
-        }
     }
 
     override fun onCancel(id: ExternalSystemTaskId) {
         if (!isGradleProjectImport(id)) return
 
         gradleState.isSyncInProgress = false
-
-        val project = id.findProject() ?: return
-
-        project.kotlinGradleDslSync.remove(id)
     }
 
     private fun isGradleProjectImport(id: ExternalSystemTaskId): Boolean {
