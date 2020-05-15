@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.testFramework
 
+import com.intellij.codeInspection.ex.InspectionProfileImpl
 import com.intellij.ide.highlighter.ModuleFileType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
@@ -16,15 +17,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.testFramework.PsiTestUtil
-import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.UsefulTestCase.assertTrue
 import com.intellij.util.io.exists
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
+import org.jetbrains.kotlin.idea.perf.enableAllInspectionsCompat
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import java.io.File
@@ -131,13 +135,29 @@ enum class ProjectOpenAction {
         }.get()
 
         val modules = ModuleManager.getInstance(project).modules
-        UsefulTestCase.assertTrue("project ${openProject.projectName} has to have at least one module", modules.isNotEmpty())
+        assertTrue("project ${openProject.projectName} has to have at least one module", modules.isNotEmpty())
 
         logMessage { "modules of ${openProject.projectName}: ${modules.map { m -> m.name }}" }
 
         VirtualFileManager.getInstance().syncRefresh()
 
         //runWriteAction { project.save() }
+    }
+
+    fun initDefaultProfile(project: Project) {
+        val projectInspectionProfileManager = ProjectInspectionProfileManager.getInstance(project)
+        projectInspectionProfileManager.forceLoadSchemes()
+
+        val projectProfile = projectInspectionProfileManager.projectProfile ?: error("project has to have non null profile name")
+        val profile = projectInspectionProfileManager.getProfile(projectProfile)
+        InspectionProfileImpl.INIT_INSPECTIONS = true
+        profile.initInspectionTools(project)
+        val enabledTools = profile.getAllEnabledInspectionTools(project)
+        assertTrue(
+            "project ${project.name} has to have at least one enabled inspection in profile",
+            enabledTools.isNotEmpty()
+        )
+        InspectionProfileImpl.INIT_INSPECTIONS = false
     }
 
     companion object {

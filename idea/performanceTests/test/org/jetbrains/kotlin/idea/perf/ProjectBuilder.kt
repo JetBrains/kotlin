@@ -148,6 +148,7 @@ class KotlinFileSource : AbstractSource() {
 class ProjectBuilder {
     internal var buildGradle: String? = null
     internal lateinit var name: String
+    internal var initDefaultProfile: Boolean = true
     private val kotlinFiles = mutableListOf<Pair<String, KotlinFileSource>>()
 
     fun buildGradle(buildGradle: String) {
@@ -156,6 +157,14 @@ class ProjectBuilder {
 
     fun name(name: String) {
         this.name = name
+    }
+
+    fun initDefaultProfile() {
+        this.initDefaultProfile = true
+    }
+
+    fun initDefaultProfile(initDefaultProfile: Boolean) {
+        this.initDefaultProfile = initDefaultProfile
     }
 
     fun kotlinFile(name: String, kotlinFileSource: KotlinFileSource.() -> Unit) {
@@ -223,5 +232,8 @@ fun openProject(initializer: ProjectBuilder.() -> Unit): Project {
     )
     val project = ProjectOpenAction.openProject(openProject)
     openAction.postOpenProject(project = project, openProject = openProject)
+    if (projectBuilder.initDefaultProfile) {
+        openAction.initDefaultProfile(project)
+    }
     return project
 }

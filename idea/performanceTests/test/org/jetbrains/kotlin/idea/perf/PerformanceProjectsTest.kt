@@ -269,44 +269,40 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         note: String = ""
     ) {
         val project = myProject!!
-        val disposable = Disposer.newDisposable("perfKtsFileAnalysis $fileName")
+        //val disposable = Disposer.newDisposable("perfKtsFileAnalysis $fileName")
 
-        enableAllInspectionsCompat(project, disposable)
+        //enableAllInspectionsCompat(project, disposable)
 
         replaceWithCustomHighlighter()
 
-        try {
-            highlightFile {
-                val testName = "fileAnalysis ${notePrefix(note)}${simpleFilename(fileName)}"
-                val extraStats = Stats("${stats.name} $testName")
-                val extraTimingsNs = mutableListOf<Map<String, Any>?>()
+        highlightFile {
+            val testName = "fileAnalysis ${notePrefix(note)}${simpleFilename(fileName)}"
+            val extraStats = Stats("${stats.name} $testName")
+            val extraTimingsNs = mutableListOf<Map<String, Any>?>()
 
-                val warmUpIterations = 20
-                val iterations = 30
+            val warmUpIterations = 20
+            val iterations = 30
 
-                performanceTest<Fixture, Pair<Long, List<HighlightInfo>>> {
-                    name(testName)
-                    stats(stats)
-                    warmUpIterations(30)
-                    iterations(50)
-                    setUp(perfKtsFileAnalysisSetUp(project, fileName))
-                    test(perfKtsFileAnalysisTest())
-                    tearDown(perfKtsFileAnalysisTearDown(extraTimingsNs, project))
-                    profilerEnabled(true)
-                }
-
-                extraStats.printWarmUpTimings(
-                    "annotator",
-                    extraTimingsNs.take(warmUpIterations).toTypedArray()
-                )
-
-                extraStats.appendTimings(
-                    "annotator",
-                    extraTimingsNs.drop(warmUpIterations).toTypedArray()
-                )
+            performanceTest<Fixture, Pair<Long, List<HighlightInfo>>> {
+                name(testName)
+                stats(stats)
+                warmUpIterations(30)
+                iterations(50)
+                setUp(perfKtsFileAnalysisSetUp(project, fileName))
+                test(perfKtsFileAnalysisTest())
+                tearDown(perfKtsFileAnalysisTearDown(extraTimingsNs, project))
+                profilerEnabled(true)
             }
-        } finally {
-            Disposer.dispose(disposable)
+
+            extraStats.printWarmUpTimings(
+                "annotator",
+                extraTimingsNs.take(warmUpIterations).toTypedArray()
+            )
+
+            extraStats.appendTimings(
+                "annotator",
+                extraTimingsNs.drop(warmUpIterations).toTypedArray()
+            )
         }
     }
 

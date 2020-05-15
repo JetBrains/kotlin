@@ -204,6 +204,9 @@ class Stats(
                 for ((k, v) in statInfo) {
                     if (k == TEST_KEY) continue
                     printStatValue("$n $k", v)
+                    (v as? Number)?.let {
+                        printTestMetadata(n, k, it)
+                    }
                 }
 
                 printTestFinished(n, (statInfo[TEST_KEY] as Long).nsToMs)
@@ -361,6 +364,10 @@ class Stats(
 
         fun printStatValue(name: String, value: Any) {
             println("##teamcity[buildStatisticValue key='$name' value='$value']")
+        }
+
+        fun printTestMetadata(testName: String, name: String, value: Number) {
+            println("##teamcity[testMetadata testName='$testName' name='$name' type='number' value='$value']")
         }
 
         private fun printTestFinished(testName: String) {
