@@ -99,9 +99,9 @@ class ResolvedCallableReferenceAtom(
 
 //  -------------------------- Utils --------------------------
 
-private data class InputOutputTypes(val inputTypes: List<ConeKotlinType>, val outputType: ConeKotlinType)
+internal data class InputOutputTypes(val inputTypes: List<ConeKotlinType>, val outputType: ConeKotlinType)
 
-private fun extractInputOutputTypesFromCallableReferenceExpectedType(
+internal fun extractInputOutputTypesFromCallableReferenceExpectedType(
     expectedType: ConeKotlinType?,
     session: FirSession
 ): InputOutputTypes? {

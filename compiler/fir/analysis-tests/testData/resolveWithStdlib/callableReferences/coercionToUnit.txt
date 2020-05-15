@@ -1,0 +1,17 @@
+FILE: coercionToUnit.kt
+    public final fun <T> R|T|.myAlso(block: R|(T) -> kotlin/Unit|): R|T| {
+        ^myAlso R|kotlin/TODO|()
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun add(x: R|kotlin/String|): R|kotlin/Boolean| {
+            ^add Boolean(true)
+        }
+
+    }
+    public final fun main(b: R|B|): R|kotlin/Unit| {
+        String().R|/myAlso|<R|kotlin/String|>(R|<local>/b|::R|/B.add|)
+    }

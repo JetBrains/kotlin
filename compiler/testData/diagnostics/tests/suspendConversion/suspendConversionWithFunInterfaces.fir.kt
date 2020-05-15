@@ -17,5 +17,5 @@ fun test() {
     <!INAPPLICABLE_CANDIDATE!>foo1<!>(::bar1)
     <!INAPPLICABLE_CANDIDATE!>foo1<!>(::bar2)
 
-    <!INAPPLICABLE_CANDIDATE!>foo1<!>(<!UNRESOLVED_REFERENCE!>::bar3<!>) // Should be ambiguity
+    foo1(::bar3) // Should be ambiguity
 }

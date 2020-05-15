@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.inferenceContext
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
+import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -231,10 +233,11 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         val returnTypeRef = candidate.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(fir)
 
         val resultingType: ConeKotlinType = when (fir) {
-            is FirFunction -> createKFunctionType(
+            is FirFunction -> callInfo.session.createKFunctionType(
                 fir, resultingReceiverType, returnTypeRef,
                 expectedParameterNumberWithReceiver = expectedType?.let { it.typeArguments.size - 1 },
-                isSuspend = (fir as? FirSimpleFunction)?.isSuspend == true
+                isSuspend = (fir as? FirSimpleFunction)?.isSuspend == true,
+                expectedReturnType = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, callInfo.session)?.outputType
             )
             is FirVariable<*> -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
             else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
@@ -286,13 +289,15 @@ private fun createKPropertyType(
     )
 }
 
-private fun createKFunctionType(
+private fun FirSession.createKFunctionType(
     function: FirFunction<*>,
     receiverType: ConeKotlinType?,
     returnTypeRef: FirResolvedTypeRef,
     expectedParameterNumberWithReceiver: Int?,
-    isSuspend: Boolean
+    isSuspend: Boolean,
+    expectedReturnType: ConeKotlinType?
 ): ConeKotlinType {
+    // The similar adaptations: defaults and coercion-to-unit happen at org.jetbrains.kotlin.resolve.calls.components.CallableReferencesCandidateFactory.getCallableReferenceAdaptation
     val parameterTypes = mutableListOf<ConeKotlinType>()
     val expectedParameterNumber = when {
         expectedParameterNumberWithReceiver == null -> null
@@ -306,9 +311,15 @@ private fun createKFunctionType(
         }
     }
 
+    val returnType =
+        if (expectedReturnType != null && inferenceContext.run { expectedReturnType.isUnit() })
+            expectedReturnType
+        else
+            returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $function")
+
     return createFunctionalType(
         parameterTypes, receiverType = receiverType,
-        rawReturnType = returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $function"),
+        rawReturnType = returnType,
         isKFunctionType = true,
         isSuspend = isSuspend
     )

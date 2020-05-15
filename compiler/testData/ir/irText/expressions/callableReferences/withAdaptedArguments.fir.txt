@@ -73,11 +73,11 @@ FILE fqName:<root> fileName:/withAdaptedArguments.kt
       RETURN type=kotlin.Nothing from='public final fun testVararg (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
           FUNCTION_REFERENCE 'public final fun fnWithVarargs (vararg xs: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
-  FUN name:testCoercionToUnit visibility:public modality:FINAL <> () returnType:IrErrorType
+  FUN name:testCoercionToUnit visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testCoercionToUnit (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/coerceToUnit]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.String> origin=null reflectionTarget=<same>
+      RETURN type=kotlin.Nothing from='public final fun testCoercionToUnit (): kotlin.Unit declared in <root>'
+        CALL 'public final fun coerceToUnit (fn: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          fn: FUNCTION_REFERENCE 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
   FUN name:testImportedObjectMember visibility:public modality:FINAL <> () returnType:IrErrorType
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testImportedObjectMember (): IrErrorType declared in <root>'

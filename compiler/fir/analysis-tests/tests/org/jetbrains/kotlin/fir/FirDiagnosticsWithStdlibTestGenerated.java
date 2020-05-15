@@ -300,6 +300,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/beyoundCalls.kt");
         }
 
+        @TestMetadata("coercionToUnit.kt")
+        public void testCoercionToUnit() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/coercionToUnit.kt");
+        }
+
         @TestMetadata("companions.kt")
         public void testCompanions() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/companions.kt");
