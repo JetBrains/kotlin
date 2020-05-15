@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.highlighting;
 
@@ -264,7 +264,7 @@ public class BraceHighlightingHandler {
     if (BraceMatchingUtil.isLBraceToken(iterator, chars, fileType)) {
       highlightLeftBrace(iterator, false, fileType);
 
-      if (offset > 0) {
+      if (offset > 0 && !myEditor.getSettings().isBlockCursor()) {
         iterator = getEditorHighlighter().createIterator(offset - 1);
         if (BraceMatchingUtil.isRBraceToken(iterator, chars, fileType)) {
           highlightRightBrace(iterator, fileType);
