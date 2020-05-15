@@ -1,3 +1,3 @@
-class Foo <pair>{
+class Foo {
   int field;
 <caret>}

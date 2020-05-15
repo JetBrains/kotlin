@@ -1,2 +1,2 @@
-class Foo <pair>{  <caret>
-<pair>}
+class Foo {  <caret>
+}

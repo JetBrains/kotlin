@@ -1,2 +1,2 @@
-class Foo <pair>{<caret>int field;
-<pair>}
+class Foo {<caret>int field;
+}
