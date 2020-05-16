@@ -903,7 +903,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/controller/fleet.controller.iml" filepath="$PROJECT_DIR$/intellij/fleet/controller/fleet.controller.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/ijsitter/fleet.ijsitter.iml" filepath="$PROJECT_DIR$/intellij/fleet/ijsitter/fleet.ijsitter.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" filepath="$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/langs/fleet.langs.iml" filepath="$PROJECT_DIR$/intellij/fleet/langs/fleet.langs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/le.frontend/fleet.le.frontend.iml" filepath="$PROJECT_DIR$/intellij/fleet/le.frontend/fleet.le.frontend.iml" />
@@ -988,6 +987,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/room/intellij.android.room.tests.iml" filepath="$PROJECT_DIR$/intellij/community/android/room/intellij.android.room.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/rt/intellij.android.rt.iml" filepath="$PROJECT_DIR$/intellij/community/android/rt/intellij.android.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/sdk-updates/intellij.android.sdkUpdates.iml" filepath="$PROJECT_DIR$/intellij/community/android/sdk-updates/intellij.android.sdkUpdates.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/android/sdk-updates/intellij.android.sdkUpdates.tests.iml" filepath="$PROJECT_DIR$/intellij/community/android/sdk-updates/intellij.android.sdkUpdates.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/smali/intellij.android.smali.iml" filepath="$PROJECT_DIR$/intellij/community/android/smali/intellij.android.smali.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android/intellij.android.studio.main.iml" filepath="$PROJECT_DIR$/intellij/community/android/android/intellij.android.studio.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android-test-framework/intellij.android.testFramework.iml" filepath="$PROJECT_DIR$/intellij/community/android/android-test-framework/intellij.android.testFramework.iml" />
@@ -1201,18 +1201,17 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/freemarker/core/intellij.freemarker.iml" filepath="$PROJECT_DIR$/intellij/plugins/freemarker/core/intellij.freemarker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/cucumber/intellij.gherkin.iml" filepath="$PROJECT_DIR$/intellij/contrib/cucumber/intellij.gherkin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/localization/intellij.gnuGetText.iml" filepath="$PROJECT_DIR$/intellij/python/localization/intellij.gnuGetText.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-features-trainer/intellij.go.featuresTrainer.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-features-trainer/intellij.go.featuresTrainer.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-grazie/intellij.go.grazie.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-grazie/intellij.go.grazie.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/ide/intellij.go.ide.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/ide/intellij.go.ide.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/plan9/intellij.go.plan9.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/plan9/intellij.go.plan9.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/template/intellij.go.template.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/template/intellij.go.template.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/template-integration/intellij.go.template.integration.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/template-integration/intellij.go.template.integration.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/testing/intellij.go.testing.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/testing/intellij.go.testing.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/utils/intellij.go.utils.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/utils/intellij.go.utils.iml" group="intellij.go" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/vgo/intellij.go.vgo.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/vgo/intellij.go.vgo.iml" group="intellij.go" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-features-trainer/intellij.go.featuresTrainer.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-features-trainer/intellij.go.featuresTrainer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-grazie/intellij.go.grazie.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-grazie/intellij.go.grazie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/plan9/intellij.go.plan9.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/plan9/intellij.go.plan9.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/template/intellij.go.template.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/template/intellij.go.template.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/template-integration/intellij.go.template.integration.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/template-integration/intellij.go.template.integration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/testing/intellij.go.testing.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/testing/intellij.go.testing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/utils/intellij.go.utils.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/utils/intellij.go.utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/vgo/intellij.go.vgo.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/vgo/intellij.go.vgo.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij.goland.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij.goland.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go-build/intellij.goland.build.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go-build/intellij.goland.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij.goland.main.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij.goland.main.iml" />
@@ -1299,6 +1298,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/shared-indexes/git/intellij.indexing.shared.git.iml" filepath="$PROJECT_DIR$/intellij/plugins/shared-indexes/git/intellij.indexing.shared.git.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/shared-indexes/java/intellij.indexing.shared.java.iml" filepath="$PROJECT_DIR$/intellij/plugins/shared-indexes/java/intellij.indexing.shared.java.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/shared-indexes/performanceTesting/intellij.indexing.shared.performanceTesting.iml" filepath="$PROJECT_DIR$/intellij/plugins/shared-indexes/performanceTesting/intellij.indexing.shared.performanceTesting.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/shared-indexes/startupPerformanceTests/intellij.indexing.shared.startupPerformanceTests.iml" filepath="$PROJECT_DIR$/intellij/plugins/shared-indexes/startupPerformanceTests/intellij.indexing.shared.startupPerformanceTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/shared-indexes/tests/intellij.indexing.shared.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/shared-indexes/tests/intellij.indexing.shared.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/ini4idea/intellij.ini.iml" filepath="$PROJECT_DIR$/intellij/plugins/ini4idea/intellij.ini.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/Jade/intellij.jade.iml" filepath="$PROJECT_DIR$/intellij/plugins/Jade/intellij.jade.iml" />
@@ -1819,6 +1819,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/python/jupyter/intellij.python.jupyter.iml" filepath="$PROJECT_DIR$/intellij/python/jupyter/intellij.python.jupyter.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/jupyter/frontend/intellij.python.jupyter.frontend.iml" filepath="$PROJECT_DIR$/intellij/python/jupyter/frontend/intellij.python.jupyter.frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/jupyter/pro/intellij.python.jupyter.pro.iml" filepath="$PROJECT_DIR$/intellij/python/jupyter/pro/intellij.python.jupyter.pro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/python/jupyter/psi/intellij.python.jupyter.psi.iml" filepath="$PROJECT_DIR$/intellij/python/jupyter/psi/intellij.python.jupyter.psi.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/python/IntelliLang-python/intellij.python.langInjection.iml" filepath="$PROJECT_DIR$/intellij/community/python/IntelliLang-python/intellij.python.langInjection.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/python-localization/intellij.python.localization.iml" filepath="$PROJECT_DIR$/intellij/python/python-localization/intellij.python.localization.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/intellij.python.plugin.iml" filepath="$PROJECT_DIR$/intellij/python/intellij.python.plugin.iml" />

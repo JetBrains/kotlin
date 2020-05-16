@@ -3,8 +3,12 @@
   <dictionary name="intellij-piotr.tomiak">
     <words>
       <w>angularjs</w>
+      <w>antd</w>
       <w>buefy</w>
       <w>iview</w>
+      <w>ngneat</w>
+      <w>ngxs</w>
+      <w>transloco</w>
       <w>vuelidate</w>
       <w>vuex</w>
       <w>webtypes</w>

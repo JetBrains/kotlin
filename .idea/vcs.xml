@@ -59,6 +59,10 @@
           <option name="issueRegexp" value="JDK\-\d+" />
           <option name="linkRegexp" value="https://bugs.openjdk.java.net/browse/$0" />
         </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="FLEET-T-(\d+)" />
+          <option name="linkRegexp" value="https://jetbrains.team/p/fleet/issues/$1" />
+        </IssueNavigationLink>
       </list>
     </option>
   </component>
