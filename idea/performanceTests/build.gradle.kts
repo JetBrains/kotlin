@@ -67,6 +67,8 @@ javadocJar()
 apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")
 
 projectTest(taskName = "performanceTest") {
+    exclude("**/*WholeProjectPerformanceTest*")
+
     val currentOs = org.gradle.internal.os.OperatingSystem.current()
 
     if (!currentOs.isWindows) {
@@ -108,5 +110,38 @@ projectTest(taskName = "performanceTest") {
         }
     }
 }
+
+projectTest(taskName = "wholeProjectsPerformanceTest") {
+    exclude(
+        "**/*Generated*",
+        "**/*PerformanceProjectsTest*",
+        "**/*PerformanceStressTest*",
+        "**/*PerformanceNativeProjectsTest*"
+    )
+    include("**/*WholeProjectPerformanceTest*")
+
+    workingDir = rootDir
+
+    jvmArgs?.removeAll { it.startsWith("-Xmx") }
+
+    maxHeapSize = "3g"
+    jvmArgs("-DperformanceProjects=${System.getProperty("performanceProjects")}")
+    jvmArgs("-Didea.debug.mode=true")
+    jvmArgs("-DemptyProfile=${System.getProperty("emptyProfile")}")
+    jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
+    jvmArgs(
+        "-XX:ReservedCodeCacheSize=240m",
+        "-XX:+UseCompressedOops",
+        "-XX:+UseConcMarkSweepGC"
+    )
+
+    doFirst {
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+        project.findProperty("cacheRedirectorEnabled")?.let {
+            systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
+        }
+    }
+}
+
 
 testsJar()
