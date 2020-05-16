@@ -4010,6 +4010,8 @@ public fun UShortArray.sort(): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -4026,6 +4028,8 @@ public fun UIntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -4042,6 +4046,8 @@ public fun ULongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -4058,6 +4064,8 @@ public fun UByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
