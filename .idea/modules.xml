@@ -2062,6 +2062,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/yaml/intellij.yaml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" filepath="$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" filepath="$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/kotlin.all-tests/kotlin.all-tests.iml" filepath="$PROJECT_DIR$/kotlin/kotlin.all-tests/kotlin.all-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/analysis/kotlin.analysis.iml" filepath="$PROJECT_DIR$/kotlin/analysis/kotlin.analysis.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/common/kotlin.common.iml" filepath="$PROJECT_DIR$/kotlin/common/kotlin.common.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml" />
