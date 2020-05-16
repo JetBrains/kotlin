@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isReal
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -164,7 +166,6 @@ internal interface ContextUtils : RuntimeAware {
     val IrFunction.llvmFunctionOrNull: LLVMValueRef?
         get() {
             assert(this.isReal)
-
             return if (isExternal(this)) {
                 runtime.addedLLVMExternalFunctions.getOrPut(this) { context.llvm.externalFunction(this.symbolName, getLlvmFunctionType(this),
                         origin = this.llvmSymbolOrigin) }

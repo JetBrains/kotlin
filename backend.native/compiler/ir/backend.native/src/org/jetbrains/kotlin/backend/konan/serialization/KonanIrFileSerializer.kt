@@ -23,4 +23,6 @@ class KonanIrFileSerializer(
 
     override fun backendSpecificExplicitRoot(declaration: IrClass) =
             declaration.annotations.hasAnnotation(RuntimeNames.exportTypeInfoAnnotation)
+
+    override fun backendSpecificSerializeAllMembers(irClass: IrClass) = !KonanFakeOverrideClassFilter.constructFakeOverrides(irClass)
 }
