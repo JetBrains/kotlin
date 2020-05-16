@@ -12,13 +12,13 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
+import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.service.project.open.setupGradleSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleLog
+import org.jetbrains.plugins.gradle.util.suggestGradleVersion
 import java.io.File
-import kotlin.test.assertNotNull
 
 fun refreshGradleProject(projectPath: String, project: Project) {
     _importProject(File(projectPath).absolutePath, project)
@@ -31,10 +31,9 @@ fun refreshGradleProject(projectPath: String, project: Project) {
  */
 private fun _importProject(projectPath: String, project: Project) {
     GradleLog.LOG.info("Import project at $projectPath")
-    val projectSdk = ProjectRootManager.getInstance(project).projectSdk
-    assertNotNull(projectSdk, "project SDK not found for ${project.name} at $projectPath")
     val gradleProjectSettings = GradleProjectSettings()
-    setupGradleSettings(gradleProjectSettings, projectPath, project, projectSdk)
+    val gradleVersion = suggestGradleVersion(project) ?: GradleVersion.current()
+    setupGradleSettings(project, gradleProjectSettings, projectPath, gradleVersion)
 
     _attachGradleProjectAndRefresh(gradleProjectSettings, project)
 }

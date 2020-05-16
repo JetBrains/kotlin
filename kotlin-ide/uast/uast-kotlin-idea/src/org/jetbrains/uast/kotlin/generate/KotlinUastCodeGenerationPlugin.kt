@@ -93,7 +93,12 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return KotlinStringULiteralExpression(psiFactory.createExpression(StringUtil.wrapWithDoubleQuote(text)), null)
     }
 
-    override fun createIfExpression(condition: UExpression, thenBranch: UExpression, elseBranch: UExpression?): UIfExpression? {
+    override fun createIfExpression(
+            condition: UExpression,
+            thenBranch: UExpression,
+            elseBranch: UExpression?,
+            context: PsiElement?
+    ): UIfExpression? {
         val conditionPsi = condition.sourcePsi as? KtExpression ?: return null
         val thenBranchPsi = thenBranch.sourcePsi as? KtExpression ?: return null
         val elseBranchPsi = elseBranch?.sourcePsi as? KtExpression
@@ -101,27 +106,32 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return KotlinUIfExpression(psiFactory.createIf(conditionPsi, thenBranchPsi, elseBranchPsi), null)
     }
 
-    override fun createParenthesizedExpression(expression: UExpression): UParenthesizedExpression? {
+    override fun createParenthesizedExpression(expression: UExpression, context: PsiElement?): UParenthesizedExpression? {
         val source = expression.sourcePsi ?: return null
         val parenthesized = psiFactory.createExpression("(${source.text})") as? KtParenthesizedExpression ?: return null
         return KotlinUParenthesizedExpression(parenthesized, null)
     }
 
-    override fun createSimpleReference(name: String): USimpleNameReferenceExpression? {
+    override fun createSimpleReference(name: String, context: PsiElement?): USimpleNameReferenceExpression? {
         return KotlinUSimpleReferenceExpression(psiFactory.createSimpleName(name), null)
     }
 
-    override fun createSimpleReference(variable: UVariable): USimpleNameReferenceExpression? {
-        return createSimpleReference(variable.name ?: return null)
+    override fun createSimpleReference(variable: UVariable, context: PsiElement?): USimpleNameReferenceExpression? {
+        return createSimpleReference(variable.name ?: return null, context)
     }
 
-    override fun createReturnExpresion(expression: UExpression?, inLambda: Boolean): UReturnExpression? {
+    override fun createReturnExpresion(expression: UExpression?, inLambda: Boolean, context: PsiElement?): UReturnExpression? {
         val returnExpression = psiFactory.createExpression("return") as KtReturnExpression
         expression?.sourcePsi?.let { returnExpression.add(it) }
         return KotlinUReturnExpression(returnExpression, null)
     }
 
-    override fun createBinaryExpression(leftOperand: UExpression, rightOperand: UExpression, operator: UastBinaryOperator): UBinaryExpression? {
+    override fun createBinaryExpression(
+            leftOperand: UExpression,
+            rightOperand: UExpression,
+            operator: UastBinaryOperator,
+            context: PsiElement?
+    ): UBinaryExpression? {
         val leftPsi = leftOperand.sourcePsi ?: return null
         val rightPsi = rightOperand.sourcePsi ?: return null
 
@@ -131,27 +141,42 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return KotlinUBinaryExpression(binaryExpression, null)
     }
 
-    override fun createFlatBinaryExpression(leftOperand: UExpression, rightOperand: UExpression, operator: UastBinaryOperator): UPolyadicExpression? {
-        return createBinaryExpression(leftOperand, rightOperand, operator)
+    override fun createFlatBinaryExpression(
+            leftOperand: UExpression,
+            rightOperand: UExpression,
+            operator: UastBinaryOperator,
+            context: PsiElement?
+    ): UPolyadicExpression? {
+        return createBinaryExpression(leftOperand, rightOperand, operator, context)
     }
 
-    override fun createBlockExpression(expressions: List<UExpression>): UBlockExpression? {
+    override fun createBlockExpression(expressions: List<UExpression>, context: PsiElement?): UBlockExpression? {
         if (expressions.any { it.sourcePsi == null}) return null
         val block = psiFactory.createBlock(expressions.joinToString(separator = "\n") { it.sourcePsi?.text ?: "" })
         return KotlinUBlockExpression(block, null)
     }
 
-    override fun createDeclarationExpression(declarations: List<UDeclaration>): UDeclarationsExpression? {
+    override fun createDeclarationExpression(declarations: List<UDeclaration>, context: PsiElement?): UDeclarationsExpression? {
         return object : KotlinUDeclarationsExpression(null) {
             override var declarations: List<UDeclaration> = declarations
         }
     }
 
-    override fun createLambdaExpression(parameters: List<UParameterInfo>, body: UExpression): ULambdaExpression? {
+    override fun createLambdaExpression(parameters: List<UParameterInfo>, body: UExpression, context: PsiElement?): ULambdaExpression? {
         TODO("Not yet implemented")
     }
 
-    override fun createLocalVariable(suggestedName: String?, type: PsiType?, initializer: UExpression, immutable: Boolean): ULocalVariable? {
+    override fun createLocalVariable(
+            suggestedName: String?,
+            type: PsiType?,
+            initializer: UExpression,
+            immutable: Boolean,
+            context: PsiElement?
+    ): ULocalVariable? {
+        TODO("Not yet implemented")
+    }
+
+    override fun createNullLiteral(context: PsiElement?): ULiteralExpression? {
         TODO("Not yet implemented")
     }
 }
