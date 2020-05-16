@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.isObjCClass
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
+import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
+import org.jetbrains.kotlin.backend.konan.isInlinedNative
 import org.jetbrains.kotlin.backend.konan.llvm.longName
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -38,50 +41,6 @@ internal val IrClass.implementedInterfaces: List<IrClass>
                 superInterfacesImplementedInterfaces +
                 superInterfaces).distinct()
     }
-
-
-/**
- * Implementation of given method.
- *
- * TODO: this method is actually a part of resolve and probably duplicates another one
- */
-internal fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimpleFunction {
-    if (this.isReal) {
-        return this
-    }
-
-    val visited = mutableSetOf<IrSimpleFunction>()
-    val realSupers = mutableSetOf<IrSimpleFunction>()
-
-    fun findRealSupers(function: IrSimpleFunction) {
-        if (function in visited) return
-        visited += function
-        if (function.isReal) {
-            realSupers += function
-        } else {
-            function.overriddenSymbols.forEach { findRealSupers(it.owner) }
-        }
-    }
-
-    findRealSupers(this)
-
-    if (realSupers.size > 1) {
-        visited.clear()
-
-        fun excludeOverridden(function: IrSimpleFunction) {
-            if (function in visited) return
-            visited += function
-            function.overriddenSymbols.forEach {
-                realSupers.remove(it.owner)
-                excludeOverridden(it.owner)
-            }
-        }
-
-        realSupers.toList().forEach { excludeOverridden(it) }
-    }
-
-    return realSupers.first { allowAbstract || it.modality != Modality.ABSTRACT }
-}
 
 internal val IrFunction.isTypedIntrinsic: Boolean
     get() = annotations.hasAnnotation(KonanFqNames.typedIntrinsic)
@@ -142,16 +101,6 @@ private fun IrFunction.needBridgeToAt(target: IrFunction, index: Int)
 
 internal fun IrFunction.needBridgeTo(target: IrFunction)
         = (0..this.valueParameters.size + 2).any { needBridgeToAt(target, it) }
-
-internal val IrSimpleFunction.target: IrSimpleFunction
-    get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride())
-
-internal val IrFunction.target: IrFunction
-    get() = when (this) {
-    is IrSimpleFunction -> this.target
-    is IrConstructor -> this
-    else -> error(this)
-}
 
 internal enum class BridgeDirection {
     NOT_NEEDED,

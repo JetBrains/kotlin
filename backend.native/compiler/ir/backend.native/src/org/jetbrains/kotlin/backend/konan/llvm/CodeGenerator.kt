@@ -872,7 +872,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     private fun IrSimpleFunction.findOverriddenMethodOfAny(): IrSimpleFunction? {
         if (modality == Modality.ABSTRACT) return null
-        val resolved = resolveFakeOverride()
+        val resolved = resolveFakeOverride()!!
         if ((resolved.parent as IrClass).isAny()) {
             return resolved
         }

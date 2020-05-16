@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.resolve.OverridingUtil
 
 // TODO: move me somewhere
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
  *
  * TODO: this method is actually a part of resolve and probably duplicates another one
  */
-internal fun IrSimpleFunction.resolveFakeOverrideMaybeAbstract() = this.resolveFakeOverride(allowAbstract = true)
+internal fun IrSimpleFunction.resolveFakeOverrideMaybeAbstract() = this.resolveFakeOverride(allowAbstract = true)!!
 
 internal fun IrProperty.resolveFakeOverrideMaybeAbstract() =
         this.getter!!.resolveFakeOverrideMaybeAbstract().correspondingPropertySymbol!!.owner
