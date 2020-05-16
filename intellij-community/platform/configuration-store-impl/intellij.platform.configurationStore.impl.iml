@@ -24,5 +24,6 @@
     <orderEntry type="module" module-name="intellij.platform.statistics" />
     <orderEntry type="library" name="fastutil-min" level="project" />
     <orderEntry type="module" module-name="intellij.platform.diff" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

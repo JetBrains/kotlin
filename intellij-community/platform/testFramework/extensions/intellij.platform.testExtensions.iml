@@ -14,5 +14,7 @@
     <orderEntry type="library" exported="" name="assertJ" level="project" />
     <orderEntry type="library" exported="" name="memoryfilesystem" level="project" />
     <orderEntry type="library" name="snakeyaml" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

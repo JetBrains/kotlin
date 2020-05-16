@@ -13,6 +13,7 @@
     <orderEntry type="library" name="JDOM" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util.ui" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
   <component name="copyright">
     <Base>
