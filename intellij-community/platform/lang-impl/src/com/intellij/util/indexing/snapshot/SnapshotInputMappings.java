@@ -4,6 +4,7 @@ package com.intellij.util.indexing.snapshot;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.ByteArraySequence;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.CompressionUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.ObjectUtils;
@@ -21,7 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -111,9 +114,12 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
         sameValueForSavedIndexedResultAndCurrentOne = contentData.equals(data);
       }
       if (!sameValueForSavedIndexedResultAndCurrentOne) {
-        data = contentData;
         IndexDebugAssertions.error(
-          "Unexpected difference in indexing of %s by index %s\ndiff %s\nprevious indexed info %s",
+          "Unexpected difference in indexing of" +
+          "\n%s" +
+          "\n by index %s" +
+          "\nprevious indexed info %s" +
+          "\ndiff %s",
           getContentDebugData(content),
           myIndexId,
           buildDiff(data, contentData),
@@ -156,7 +162,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   }
 
   @Override
-  public InputData<Key, Value> putData(@Nullable FileContent content, @NotNull InputData<Key, Value> data) throws IOException {
+  public InputData<Key, Value> putData(@NotNull FileContent content, @NotNull InputData<Key, Value> data) throws IOException {
     int hashId;
     InputData<Key, Value> result;
     if (data instanceof HashedInputData) {
@@ -181,9 +187,19 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   }
 
   @NotNull
-  private static String getContentDebugData(FileContent input) {
+  private String getContentDebugData(@NotNull FileContent input) {
     FileContentImpl content = (FileContentImpl) input;
-    return "[" + content.getFile().getPath() + ";" + content.getFileType().getName() + ";" + content.getCharset() + "]";
+
+    List<String> data = new ArrayList<>();
+    data.add(content.getFile().getPath());
+    data.add(content.getFileType().getName());
+    data.add(content.getCharset().name());
+    if (VfsAwareMapReduceIndex.isCompositeIndexer(myIndexer)) {
+      data.add("composite indexer: " + mySubIndexerRetriever.getVersion(content));
+
+    }
+
+    return "[" + StringUtil.join(data, ";") + "]";
   }
 
   private int getHashId(@Nullable FileContent content) throws IOException {

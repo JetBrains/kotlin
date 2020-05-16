@@ -5,10 +5,14 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.newvfs.FileAttribute;
 import com.intellij.openapi.vfs.newvfs.persistent.FSRecords;
-import com.intellij.util.indexing.*;
+import com.intellij.util.indexing.CompositeDataIndexer;
+import com.intellij.util.indexing.ID;
+import com.intellij.util.indexing.IndexInfrastructure;
+import com.intellij.util.indexing.IndexedFile;
 import com.intellij.util.io.DataInputOutputUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.*;
@@ -80,10 +84,16 @@ public class PersistentSubIndexerRetriever<SubIndexerType, SubIndexerVersion> im
   }
 
   public int getFileIndexerId(@NotNull IndexedFile file) throws IOException {
-    SubIndexerType type = myIndexer.calculateSubIndexer(file);
-    if (type == null) return -1;
-    SubIndexerVersion version = myIndexer.getSubIndexerVersion(type);
+    SubIndexerVersion version = getVersion(file);
+    if (version == null) return -1;
     return myPersistentVersionEnumerator.enumerate(version);
+  }
+
+  @Nullable
+  public SubIndexerVersion getVersion(@NotNull IndexedFile file) {
+    SubIndexerType type = myIndexer.calculateSubIndexer(file);
+    if (type == null) return null;
+    return myIndexer.getSubIndexerVersion(type);
   }
 
   private static final Map<Pair<String, Integer>, FileAttribute> ourAttributes = new THashMap<>();
