@@ -5797,6 +5797,172 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/logging")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Logging extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInLogging() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/logging"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LoggerInitializedWithForeignClass extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInLoggerInitializedWithForeignClass() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Commons extends AbstractLocalInspectionTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCommons() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+                }
+
+                @TestMetadata("canonicalName.kt")
+                public void testCanonicalName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/canonicalName.kt");
+                }
+
+                @TestMetadata("getCanonicalName.kt")
+                public void testGetCanonicalName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/getCanonicalName.kt");
+                }
+
+                @TestMetadata("getName.kt")
+                public void testGetName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/getName.kt");
+                }
+
+                @TestMetadata("getSimpleName.kt")
+                public void testGetSimpleName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/getSimpleName.kt");
+                }
+
+                @TestMetadata("kclassQualiiedName.kt")
+                public void testKclassQualiiedName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/kclassQualiiedName.kt");
+                }
+
+                @TestMetadata("kclassSimpleName.kt")
+                public void testKclassSimpleName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/kclassSimpleName.kt");
+                }
+
+                @TestMetadata("name.kt")
+                public void testName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/name.kt");
+                }
+
+                @TestMetadata("nonForeignClass.kt")
+                public void testNonForeignClass() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/nonForeignClass.kt");
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/simple.kt");
+                }
+
+                @TestMetadata("simpleName.kt")
+                public void testSimpleName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/simpleName.kt");
+                }
+            }
+
+            @TestMetadata("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/log4j")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Log4j extends AbstractLocalInspectionTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInLog4j() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/log4j"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/log4j/simple.kt");
+                }
+            }
+
+            @TestMetadata("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/log4j2")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Log4j2 extends AbstractLocalInspectionTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInLog4j2() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/log4j2"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/log4j2/simple.kt");
+                }
+            }
+
+            @TestMetadata("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/slf4j")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Slf4j extends AbstractLocalInspectionTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInSlf4j() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/slf4j"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/slf4j/simple.kt");
+                }
+            }
+
+            @TestMetadata("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/util")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Util extends AbstractLocalInspectionTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInUtil() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/util"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/util/simple.kt");
+                }
+
+                @TestMetadata("simple2.kt")
+                public void testSimple2() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/util/simple2.kt");
+                }
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
