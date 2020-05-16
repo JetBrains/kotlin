@@ -10,7 +10,7 @@ import com.intellij.util.ExceptionUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
-import com.intellij.util.indexing.impl.IndexDebugAssertions;
+import com.intellij.util.indexing.impl.IndexDebugProperties;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.AbstractMapForwardIndexAccessor;
@@ -46,7 +46,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   @NotNull
   private final PersistentMapBasedForwardIndex myContents;
   private volatile PersistentHashMap<Integer, String> myIndexingTrace;
-  private final Statistics myStatistics = IndexDebugAssertions.DEBUG ? new Statistics() : null;
+  private final Statistics myStatistics = IndexDebugProperties.DEBUG ? new Statistics() : null;
 
   private final HashIdForwardIndexAccessor<Key, Value, FileContent> myHashIdForwardIndexAccessor;
 
@@ -65,7 +65,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     myIndexer = indexExtension.getIndexer();
     myContents = createContentsIndex();
     myHashIdForwardIndexAccessor = new HashIdForwardIndexAccessor<>(this, accessor);
-    myIndexingTrace = IndexDebugAssertions.EXTRA_SANITY_CHECKS ? createIndexingTrace() : null;
+    myIndexingTrace = IndexDebugProperties.EXTRA_SANITY_CHECKS ? createIndexingTrace() : null;
 
     if (VfsAwareMapReduceIndex.isCompositeIndexer(myIndexer)) {
       myCompositeHashIdEnumerator = new CompositeHashIdEnumerator(myIndexId);
@@ -102,7 +102,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
       myStatistics.update(data == null);
     }
 
-    if (data != null && IndexDebugAssertions.EXTRA_SANITY_CHECKS) {
+    if (data != null && IndexDebugProperties.EXTRA_SANITY_CHECKS) {
       Map<Key, Value> contentData = myIndexer.map(content);
       boolean sameValueForSavedIndexedResultAndCurrentOne;
       if (myIndexer instanceof SingleEntryIndexer) {
@@ -114,17 +114,12 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
         sameValueForSavedIndexedResultAndCurrentOne = contentData.equals(data);
       }
       if (!sameValueForSavedIndexedResultAndCurrentOne) {
-        IndexDebugAssertions.error(
+        LOG.error(
           "Unexpected difference in indexing of" +
-          "\n%s" +
-          "\n by index %s" +
-          "\nprevious indexed info %s" +
-          "\ndiff %s",
-          getContentDebugData(content),
-          myIndexId,
-          buildDiff(data, contentData),
-          myIndexingTrace.get(hashId)
-        );
+          "\n" + getContentDebugData(content) +
+          "\n by index " + myIndexId +
+          "\nprevious indexed info " + myIndexingTrace.get(hashId) +
+          "\ndiff " + buildDiff(data, contentData));
       }
     }
     return data == null ? null : new HashedInputData<>(data, hashId);
@@ -173,7 +168,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
       result = hashId == 0 ? InputData.empty() : new HashedInputData<>(data.getKeyValues(), hashId);
     }
     boolean saved = savePersistentData(data.getKeyValues(), hashId);
-    if (IndexDebugAssertions.EXTRA_SANITY_CHECKS) {
+    if (IndexDebugProperties.EXTRA_SANITY_CHECKS) {
       if (saved) {
         try {
           myIndexingTrace.put(hashId, getContentDebugData(content) + "," + ExceptionUtil.getThrowableText(new Throwable()));

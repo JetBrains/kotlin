@@ -7,7 +7,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.StorageException;
 import com.intellij.util.indexing.impl.DirectInputDataDiffBuilder;
-import com.intellij.util.indexing.impl.IndexDebugAssertions;
+import com.intellij.util.indexing.impl.IndexDebugProperties;
 import com.intellij.util.indexing.impl.KeyValueUpdateProcessor;
 import com.intellij.util.indexing.impl.RemovedKeyProcessor;
 import one.util.streamex.IntStreamEx;
@@ -65,7 +65,7 @@ class StubCumulativeInputDiffBuilder extends DirectInputDataDiffBuilder<Integer,
     if (newSerializedStubTree.equals(currentTree)) {
       return true;
     }
-    if (IndexDebugAssertions.DEBUG) {
+    if (IndexDebugProperties.DEBUG) {
       reportStubTreeHashCollision(newSerializedStubTree, currentTree);
     }
     return false;
