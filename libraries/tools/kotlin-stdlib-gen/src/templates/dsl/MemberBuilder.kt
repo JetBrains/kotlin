@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,7 +45,7 @@ class MemberBuilder(
 
     var doc: String? = null; private set
 
-    val samples = mutableListOf<String>()
+    var samples = listOf<String>()
 
     val sequenceClassification = mutableListOf<SequenceClass>()
     var deprecate: Deprecation? = null; private set
@@ -134,8 +134,8 @@ class MemberBuilder(
     @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { doc(valueBuilder) }"))
     fun doc(vararg fs: Family, valueBuilder: DocExtensions.() -> String) = specialFor(*fs) { doc(valueBuilder) }
 
-    fun sample(sampleRef: String) {
-        samples += sampleRef
+    fun sample(vararg sampleRef: String) {
+        samples = sampleRef.asList()
     }
 
     fun body(valueBuilder: () -> String) {
