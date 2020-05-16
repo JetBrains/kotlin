@@ -101,7 +101,10 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         private fun KtDeclaration.hasKotlinAdditionalAnnotation() =
             this is KtNamedDeclaration && checkAnnotatedUsingPatterns(this, KOTLIN_ADDITIONAL_ANNOTATIONS)
 
-        fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
+        fun isEntryPoint(declaration: KtNamedDeclaration): Boolean =
+            isEntryPoint(declaration, isCheapEnoughToSearchUsages(declaration))
+
+        private fun isEntryPoint(declaration: KtNamedDeclaration, isCheapEnough: SearchCostResult): Boolean {
             if (declaration.hasKotlinAdditionalAnnotation()) return true
             if (declaration is KtClass && declaration.declarations.any { it.hasKotlinAdditionalAnnotation() }) return true
 
@@ -127,7 +130,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
             if (lightElement == null) return false
 
-            if (isCheapEnoughToSearchUsages(declaration) == TOO_MANY_OCCURRENCES) return false
+            if (isCheapEnough == TOO_MANY_OCCURRENCES) return false
 
             return javaInspection.isEntryPoint(lightElement)
         }
@@ -218,7 +221,10 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             // More expensive, resolve-based checks
             val descriptor = declaration.resolveToDescriptorIfAny() ?: return
             if (descriptor is FunctionDescriptor && descriptor.isOperator) return
-            if (isEntryPoint(declaration)) return
+            val isCheapEnough by lazy {
+                isCheapEnoughToSearchUsages(declaration)
+            }
+            if (isEntryPoint(declaration, isCheapEnough)) return
             if (declaration.isFinalizeMethod(descriptor)) return
             if (declaration is KtProperty && declaration.isSerializationImplicitlyUsedField()) return
             if (declaration is KtNamedFunction && declaration.isSerializationImplicitlyUsedMethod()) return
@@ -234,7 +240,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             }
 
             // Main checks: finding reference usages && text usages
-            if (hasNonTrivialUsages(declaration, descriptor)) return
+            if (hasNonTrivialUsages(declaration, isCheapEnough, descriptor)) return
             if (declaration is KtClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
             val psiElement = declaration.nameIdentifier ?: (declaration as? KtConstructor<*>)?.getConstructorKeyword() ?: return
@@ -268,12 +274,16 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun hasNonTrivialUsages(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor? = null): Boolean {
+        val isCheapEnough by lazy { isCheapEnoughToSearchUsages(declaration) }
+        return hasNonTrivialUsages(declaration, isCheapEnough, descriptor)
+    }
+
+    private fun hasNonTrivialUsages(declaration: KtNamedDeclaration, enoughToSearchUsages: SearchCostResult, descriptor: DeclarationDescriptor? = null): Boolean {
         val project = declaration.project
         val psiSearchHelper = PsiSearchHelper.getInstance(project)
 
         val useScope = psiSearchHelper.getUseScope(declaration)
         val restrictedScope = if (useScope is GlobalSearchScope) {
-            val enoughToSearchUsages = isCheapEnoughToSearchUsages(declaration)
             val zeroOccurrences = when (enoughToSearchUsages) {
                 ZERO_OCCURRENCES -> true
                 FEW_OCCURRENCES -> false
