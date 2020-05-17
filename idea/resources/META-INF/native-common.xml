@@ -6,7 +6,6 @@
                                           implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
         <filetype.stubBuilder filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
         <filetype.decompiler filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
-        <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.KotlinNativeFileTypeFactory"/>
         <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KlibMetaFileIndex"/>
         <library.type implementation="org.jetbrains.kotlin.ide.konan.NativeLibraryType"/>
         <lang.parserDefinition language="KND" implementationClass="org.jetbrains.kotlin.ide.konan.NativeDefinitionsParserDefinition"/>
