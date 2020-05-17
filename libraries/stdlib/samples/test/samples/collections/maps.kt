@@ -356,9 +356,8 @@ class Maps {
         @Sample
         fun flatMap() {
             val map = mapOf("122" to 2, "3455" to 3)
-            assertPrints(map.flatMap { entry -> entry.key.take(entry.value).toList() }, "[1, 2, 3, 4, 5]")
+            assertPrints(map.flatMap { (key, value) -> key.take(value).toList() }, "[1, 2, 3, 4, 5]")
         }
     }
-
 }
 
