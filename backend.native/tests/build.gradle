@@ -4001,6 +4001,20 @@ task library_ir_provider_mismatch(type: KonanDriverTest) {
     }
 }
 
+standaloneTest("fake_override_0") {
+    def sources = "$projectDir/link/fake_overrides"
+    def dir = buildDir.absolutePath
+    doBeforeBuild {
+        konanc("$sources/base.kt -p library -o $dir/base")
+        konanc("$sources/move.kt -p library -o $dir/move -r $dir -l base")
+        konanc("$sources/use.kt -p library -o $dir/use -r $dir -l move")
+        konanc("$sources/move2.kt -p library -o $dir/move -r $dir -l base")
+    }
+    source = "$sources/main.kt"
+    flags = ["-l", "use", "-r", "$dir"]
+    goldValue = "Moved\nMoved\nChild\nSuper\n"
+}
+
 if (isAppleTarget(project)) {
     task testObjCExport(type: FrameworkTest) {
         final String frameworkName = 'Kt'
