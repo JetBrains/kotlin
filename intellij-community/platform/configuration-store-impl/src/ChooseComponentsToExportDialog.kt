@@ -7,7 +7,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ConfigImportHelper
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.fileChooser.FileChooser
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.NlsContexts
@@ -69,14 +69,18 @@ private fun addToExistingListElement(item: ExportableItem,
 }
 
 fun chooseSettingsFile(oldPath: String?, parent: Component?, title: String, description: String): Promise<VirtualFile> {
-  val chooserDescriptor = FileChooserDescriptorFactory.createSingleLocalFileDescriptor()
+  val chooserDescriptor = object: FileChooserDescriptor(true, true, true, true, false, false) {
+    override fun isFileSelectable(file: VirtualFile?): Boolean {
+      if (file?.isDirectory == true) {
+        return file.fileSystem.getNioPath(file)?.let { path -> ConfigImportHelper.isConfigDirectory(path) } == true
+      }
+      return super.isFileSelectable(file)
+    }
+  }
   chooserDescriptor.description = description
   chooserDescriptor.isHideIgnored = false
   chooserDescriptor.title = title
-  chooserDescriptor.withFileFilter {
-    ConfigImportHelper.isSettingsFile(it) ||
-    it.fileSystem.getNioPath(it)?.let { p -> ConfigImportHelper.isConfigDirectory(p) } == true
-  }
+  chooserDescriptor.withFileFilter { ConfigImportHelper.isSettingsFile(it) }
 
   var initialDir: VirtualFile?
   if (oldPath != null) {
