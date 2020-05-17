@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.perf.profilers.async
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.idea.perf.profilers.ProfilerConfig
 import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler
 import org.jetbrains.kotlin.idea.perf.profilers.doOrThrow
 import org.jetbrains.kotlin.idea.perf.util.logMessage
@@ -47,18 +48,18 @@ internal class AsyncProfilerHandler : ProfilerHandler {
         executeMethod.invoke(asyncProfiler, command)
     }
 
-    override fun startProfiling(activityName: String, options: List<String>) {
+    override fun startProfiling(activityName: String, config: ProfilerConfig) {
         try {
-            profilingOptions = options
-            execute(AsyncProfilerCommandBuilder.buildStartCommand(options))
+            profilingOptions = config.options
+            execute(AsyncProfilerCommandBuilder.buildStartCommand(config.options))
             profilingStarted = true
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
     }
 
-    override fun stopProfiling(snapshotsPath: String, activityName: String, options: List<String>) {
-        val combinedOptions = ArrayList(options)
+    override fun stopProfiling(snapshotsPath: String, activityName: String, config: ProfilerConfig) {
+        val combinedOptions = ArrayList(config.options)
         val commandBuilder = AsyncProfilerCommandBuilder(snapshotsPath)
         val name = activityName.replace(' ', '_').replace('/', '_')
         val stopAndDumpCommands = commandBuilder.buildStopAndDumpCommands(name, combinedOptions)

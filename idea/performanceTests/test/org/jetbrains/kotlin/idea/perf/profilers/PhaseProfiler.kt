@@ -19,14 +19,17 @@ object DummyPhaseProfiler : PhaseProfiler {
 class ActualPhaseProfiler(
     private val activityName: String,
     private val profilerPath: String,
-    private val profilerHandler: ProfilerHandler
+    private val profilerHandler: ProfilerHandler,
+    private val config: ProfilerConfig = ProfilerConfig()
 ) :
     PhaseProfiler {
     override fun start() {
-        profilerHandler.startProfiling(activityName)
+        profilerHandler.startProfiling(activityName, config)
     }
 
     override fun stop() {
-        profilerHandler.stopProfiling(profilerPath, activityName)
+        profilerHandler.stopProfiling(profilerPath, activityName, config)
     }
 }
+
+data class ProfilerConfig(var tracing: Boolean = false, var options: List<String> = emptyList())

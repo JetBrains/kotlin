@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.perf.ProjectBuilder
 import org.jetbrains.kotlin.idea.perf.Stats
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
 import org.jetbrains.kotlin.idea.perf.performanceTest
+import org.jetbrains.kotlin.idea.perf.profilers.ProfilerConfig
 import org.jetbrains.kotlin.idea.perf.util.ProfileTools.Companion.disableAllInspections
 import org.jetbrains.kotlin.idea.perf.util.ProfileTools.Companion.enableAllInspections
 import org.jetbrains.kotlin.idea.perf.util.ProfileTools.Companion.enableInspections
@@ -139,6 +140,7 @@ class PerformanceSuite {
                     after?.invoke()
                 }
                 profilerEnabled(config.profile)
+                profilerConfig(config.profilerConfig)
             }
             return value
         }
@@ -178,7 +180,7 @@ class PerformanceSuite {
         }
 
         override fun close() {
-            application?.setDataProvider(null)
+            application.setDataProvider(null)
         }
 
         companion object {
@@ -214,7 +216,7 @@ class PerformanceSuite {
     }
 
 
-    class StatsScopeConfig(var name: String? = null, var warmup: Int = 2, var iterations: Int = 5, var profile: Boolean = false)
+    class StatsScopeConfig(var name: String? = null, var warmup: Int = 2, var iterations: Int = 5, var profile: Boolean = false, var profilerConfig: ProfilerConfig = ProfilerConfig())
 
     class ProjectScopeConfig(val path: String, val openWith: ProjectOpenAction, val refresh: Boolean = false) {
         val name: String = path.lastPathSegment()
@@ -329,8 +331,8 @@ class PerformanceSuite {
         override fun close() {
             RunAll(
                 ThrowableRunnable {
-                    project?.let { prj ->
-                        app.application?.closeProject(prj)
+                    project.let { prj ->
+                        app.application.closeProject(prj)
                     }
                 }).run()
         }
@@ -407,7 +409,7 @@ fun UsefulTestCase.suite(
 ) {
     PerformanceSuite.suite(
         suiteName ?: this.javaClass.name,
-        PerformanceSuite.StatsScope(config, Stats(config.name ?: suiteName ?: name), testRootDisposable),
+        PerformanceSuite.StatsScope(config, Stats(config.name ?: suiteName ?: name, config.profilerConfig), testRootDisposable),
         block
     )
 }

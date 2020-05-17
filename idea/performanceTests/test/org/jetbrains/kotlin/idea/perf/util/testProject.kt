@@ -13,6 +13,8 @@ class ExternalProject(val path: String, val openWith: ProjectOpenAction) {
 
         val KOTLIN_GRADLE = ExternalProject(KOTLIN_PROJECT_PATH, ProjectOpenAction.GRADLE_PROJECT)
         val KOTLIN_JPS = ExternalProject(KOTLIN_PROJECT_PATH, ProjectOpenAction.EXISTING_IDEA_PROJECT)
+
+        // not intended for using in unit tests, only for local verification
         val KOTLIN_AUTO = ExternalProject(KOTLIN_PROJECT_PATH, autoOpenAction(KOTLIN_PROJECT_PATH))
 
         fun autoOpenAction(path: String): ProjectOpenAction {

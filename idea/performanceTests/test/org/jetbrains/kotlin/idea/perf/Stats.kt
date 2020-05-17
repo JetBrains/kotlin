@@ -22,6 +22,7 @@ typealias StatInfos = Map<String, Any>?
 
 class Stats(
     val name: String = "",
+    private val profilerConfig: ProfilerConfig = ProfilerConfig(),
     private val header: Array<String> = arrayOf("Name", "ValueMS", "StdDev"),
     private val acceptanceStabilityLevel: Int = 25
 ) : Closeable {
@@ -266,7 +267,7 @@ class Stats(
                 testData.reset()
                 triggerGC(attempt)
 
-                val phaseProfiler = createPhaseProfiler(phaseData, phaseName, attempt)
+                val phaseProfiler = createPhaseProfiler(phaseData, phaseName, attempt, profilerConfig)
 
                 val setUpMillis = measureTimeMillis { phaseData.setUp(testData) }
                 val attemptName = "${phaseData.testName} #$attempt"
@@ -316,7 +317,8 @@ class Stats(
     private fun <K, T> createPhaseProfiler(
         phaseData: PhaseData<K, T>,
         phaseName: String,
-        attempt: Int
+        attempt: Int,
+        profilerConfig: ProfilerConfig
     ): PhaseProfiler {
         val profilerHandler = if (phaseData.profilerEnabled) ProfilerHandler.getInstance() else DummyProfilerHandler
 
@@ -325,7 +327,7 @@ class Stats(
             check(with(File(profilerPath)) { exists() || mkdirs() }) { "unable to mkdirs $profilerPath for ${phaseData.testName}" }
             val activityName = "${phaseData.testName}-${if (phaseName.isEmpty()) "" else "$phaseName-"}$attempt"
 
-            ActualPhaseProfiler(activityName, profilerPath, profilerHandler)
+            ActualPhaseProfiler(activityName, profilerPath, profilerHandler, profilerConfig)
         } else {
             DummyPhaseProfiler
         }

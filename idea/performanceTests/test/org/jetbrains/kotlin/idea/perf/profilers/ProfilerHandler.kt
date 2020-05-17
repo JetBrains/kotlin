@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.idea.perf.profilers.yk.YKProfilerHandler
 import org.jetbrains.kotlin.idea.perf.util.logMessage
 
 interface ProfilerHandler {
-    fun startProfiling(activityName: String, options: List<String> = emptyList())
+    fun startProfiling(activityName: String, config: ProfilerConfig)
 
-    fun stopProfiling(snapshotsPath: String, activityName: String, options: List<String> = emptyList())
+    fun stopProfiling(snapshotsPath: String, activityName: String, config: ProfilerConfig)
 
     companion object {
         private var instance: ProfilerHandler? = null
@@ -32,9 +32,9 @@ interface ProfilerHandler {
 }
 
 object DummyProfilerHandler : ProfilerHandler {
-    override fun startProfiling(activityName: String, options: List<String>) {}
+    override fun startProfiling(activityName: String, config: ProfilerConfig) {}
 
-    override fun stopProfiling(snapshotsPath: String, activityName: String, options: List<String>) {}
+    override fun stopProfiling(snapshotsPath: String, activityName: String, config: ProfilerConfig) {}
 }
 
 internal fun <T> doOrLog(message: String, block: () -> T?): T? {
