@@ -38,18 +38,12 @@ class LigaturesReaderModeProvider : ReaderModeProvider {
   override fun applyModeChanged(project: Project, editor: Editor, readerMode: Boolean) {
     val scheme = editor.colorsScheme
     val preferences = scheme.fontPreferences
-
-    var useLigatures: Boolean = (AppEditorFontOptions.getInstance().fontPreferences as FontPreferencesImpl).useLigatures()
-    if (readerMode) {
-      if (ReaderModeSettings.instance(project).showLigatures) {
-        useLigatures = true
-
-        val ligaturesFontPreferences = FontPreferencesImpl()
-        preferences.copyTo(ligaturesFontPreferences)
-        ligaturesFontPreferences.setUseLigatures(useLigatures)
-        scheme.fontPreferences = ligaturesFontPreferences
+    scheme.fontPreferences =
+      FontPreferencesImpl().also {
+        preferences.copyTo(it)
+        it.setUseLigatures(readerMode && ReaderModeSettings.instance(
+          project).showLigatures || (AppEditorFontOptions.getInstance().fontPreferences as FontPreferencesImpl).useLigatures())
       }
-    }
   }
 }
 

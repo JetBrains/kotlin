@@ -115,9 +115,9 @@ class ReaderModeSettings : PersistentStateComponent<ReaderModeSettings.State> {
     }
 
   var increaseLineSpacing: Boolean
-    get() = state.showLigatures
+    get() = state.increaseLineSpacing
     set(value) {
-      state.showLigatures = value
+      state.increaseLineSpacing = value
     }
 
   var showInlaysHints: Boolean
@@ -150,6 +150,8 @@ class ReaderModeSettings : PersistentStateComponent<ReaderModeSettings.State> {
       state.mode = value
     }
 
-  override fun getState(): State = run { return myState }
-  override fun loadState(state: State) = run { myState = state }
+  override fun getState(): State = myState
+  override fun loadState(state: State) {
+    myState = state
+  }
 }
