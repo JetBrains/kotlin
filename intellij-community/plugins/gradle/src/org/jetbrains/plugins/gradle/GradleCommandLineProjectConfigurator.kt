@@ -5,11 +5,7 @@ import com.intellij.ide.CommandLineInspectionProjectConfigurator
 import com.intellij.ide.CommandLineInspectionProjectConfigurator.ConfiguratorContext
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
-import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.project.ProjectData
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.MODAL_SYNC
-import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil.refreshProject
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil.refreshProjects
 import com.intellij.openapi.project.Project
@@ -63,16 +59,5 @@ class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigu
   private fun getImportSpecBuilder(project: Project): ImportSpecBuilder =
     ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
       .use(MODAL_SYNC)
-      .callback(Callback())
-
-  private class Callback : ExternalProjectRefreshCallback {
-
-    override fun onSuccess(externalTaskId: ExternalSystemTaskId, externalProject: DataNode<ProjectData>?) {
-      LOG.info("External task execution successful $externalTaskId")
-    }
-
-    override fun onFailure(externalTaskId: ExternalSystemTaskId, errorMessage: String, errorDetails: String?) {
-      LOG.error("External task execution failed $externalTaskId. $errorMessage $errorDetails")
-    }
-  }
+      //.callback(Callback()) Can't use this callback cause it has to be null for correct project structure importing
 }
