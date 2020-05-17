@@ -70,13 +70,6 @@ class DocsRenderingReaderModeProvider : ReaderModeProvider {
 
 class InlaysReaderModeProvider : ReaderModeProvider {
   override fun applyModeChanged(project: Project, editor: Editor, readerMode: Boolean) {
-    if (readerMode) {
-      if (ReaderModeSettings.instance(project).showInlaysHints) {
-        InlayHintsPassFactory.setHintsEnabled(editor, true)
-      }
-    }
-    else {
-      InlayHintsPassFactory.setHintsEnabled(editor, false)
-    }
+    InlayHintsPassFactory.setHintsEnabled(editor, readerMode && ReaderModeSettings.instance(project).showInlaysHints)
   }
 }
