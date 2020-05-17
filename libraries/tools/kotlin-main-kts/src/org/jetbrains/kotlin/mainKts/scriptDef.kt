@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.mainKts
 
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.mainKts.impl.IvyResolver
 import java.io.File
 import java.nio.ByteBuffer
@@ -72,8 +73,8 @@ class MainKtsHostConfiguration : ScriptingHostConfiguration(
             val cacheExtSetting = System.getProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY)
                 ?: System.getenv(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR)
             val cacheBaseDir = when {
-                cacheExtSetting == null -> System.getProperty("java.io.tmpdir")
-                    ?.let(::File)?.takeIf { it.exists() && it.isDirectory }
+                cacheExtSetting == null -> Directories(System.getProperties(), System.getenv()).cache
+                    ?.takeIf { it.exists() && it.isDirectory }
                     ?.let { File(it, "main.kts.compiled.cache").apply { mkdir() } }
                 cacheExtSetting.isBlank() -> null
                 else -> File(cacheExtSetting)
@@ -173,3 +174,4 @@ private fun compiledScriptUniqueName(script: SourceCode, scriptCompilationConfig
 private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
 
 private fun Int.toByteArray() = ByteBuffer.allocate(Int.SIZE_BYTES).also { it.putInt(this) }.array()
+

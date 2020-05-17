@@ -5,11 +5,13 @@
 package org.jetbrains.kotlin.mainKts.test
 
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
+import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.junit.Assert
 import org.junit.Test
 import java.io.*
 import java.net.URLClassLoader
+import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.baseClassLoader
@@ -171,6 +173,92 @@ class MainKtsTest {
             val res = evalFile(scriptFile, cacheDir)
             assertSucceeded(res)
         }.lines()
+}
+
+class CacheDirectoryDetectorTest {
+    private val temp = "/test-temp-dir"
+    private val home = "/test-home-dir"
+    private val localAppData = "C:\\test-local-app-data"
+    private val xdgCache = "/test-xdg-cache-dir"
+
+    @Test
+    fun `Windows uses local app data dir`() {
+        setOSName("Windows 10")
+        assertCacheDir(localAppData)
+    }
+
+    @Test
+    fun `Windows falls back to temp dir when no app data dir`() {
+        setOSName("Windows 10")
+        environment.remove("LOCALAPPDATA")
+        assertCacheDir(temp)
+    }
+
+    @Test
+    fun `OS X uses user cache dir`() {
+        setOSName("Mac OS X")
+        assertCacheDir("$home/Library/Caches")
+    }
+
+    @Test
+    fun `Linux uses XDG cache dir`() {
+        setOSName("Linux")
+        assertCacheDir(xdgCache)
+    }
+
+    @Test
+    fun `Linux falls back to dot cache when no XDG dir`() {
+        setOSName("Linux")
+        environment.remove("XDG_CACHE_HOME")
+        assertCacheDir("$home/.cache")
+    }
+
+    @Test
+    fun `FreeBSD uses XDG cache dir`() {
+        setOSName("FreeBSD")
+        assertCacheDir(xdgCache)
+    }
+
+    @Test
+    fun `FreeBSD falls back to dot cache when no XDG dir`() {
+        setOSName("FreeBSD")
+        environment.remove("XDG_CACHE_HOME")
+        assertCacheDir("$home/.cache")
+    }
+
+    @Test
+    fun `Unknown OS uses dot cache`() {
+        setOSName("")
+        assertCacheDir("$home/.cache")
+    }
+
+    @Test
+    fun `Unknown OS and unknown home directory gives null`() {
+        setOSName("")
+        systemProperties.setProperty("user.home", "")
+        assertCacheDir(null)
+    }
+
+    private fun setOSName(name: String?) {
+        systemProperties.setProperty("os.name", name)
+    }
+
+    private fun assertCacheDir(path: String?) {
+        val file = path?.let(::File)
+        Assert.assertEquals(file, directories.cache)
+    }
+
+    private val systemProperties = Properties().apply {
+        setProperty("java.io.tmpdir", temp)
+        setProperty("user.home", home)
+    }
+
+    private val environment = mutableMapOf(
+        "LOCALAPPDATA" to localAppData,
+        "XDG_CACHE_HOME" to xdgCache
+    )
+
+    private val directories = Directories(systemProperties, environment)
 }
 
 internal fun captureOut(body: () -> Unit): String {
