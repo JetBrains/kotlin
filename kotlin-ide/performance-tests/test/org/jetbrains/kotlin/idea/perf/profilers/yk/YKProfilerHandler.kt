@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.perf.profilers.yk
 
+import org.jetbrains.kotlin.idea.perf.profilers.ProfilerConfig
 import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler
 import org.jetbrains.kotlin.idea.perf.profilers.doOrThrow
 import org.jetbrains.kotlin.idea.perf.util.logMessage
@@ -32,15 +33,18 @@ class YKProfilerHandler : ProfilerHandler {
         }
     }
 
-    override fun startProfiling(activityName: String, options: List<String>) {
-        startCPUSamplingMethod.invoke(controller, null)
+    override fun startProfiling(activityName: String, config: ProfilerConfig) {
+        if (config.tracing)
+            startTracingMethod.invoke(controller, null)
+        else
+            startCPUSamplingMethod.invoke(controller, null)
     }
 
-    override fun stopProfiling(snapshotsPath: String, activityName: String, options: List<String>) {
+    override fun stopProfiling(snapshotsPath: String, activityName: String, config: ProfilerConfig) {
         val dumpPath = captureSnapshotMethod.invoke(controller, SNAPSHOT_WITHOUT_HEAP) as String
         stopCPUProfilingMethod.invoke(controller)
         val path = Paths.get(dumpPath)
-        val target = path.parent.resolve(snapshotsPath)
+        val target = path.parent.resolve(snapshotsPath).resolve(activityName)
         logMessage { "dump is moved to $target" }
         Files.move(path, target)
     }
@@ -57,11 +61,21 @@ class YKProfilerHandler : ProfilerHandler {
                 String::class.java
             )
         }
+        private val startTracingMethod: Method = doOrThrow("com.yourkit.api.Controller#startTracing(String) not found") {
+            ykLibClass.getMethod(
+                "startTracing",
+                String::class.java
+            )
+        }
         private val captureSnapshotMethod: Method = doOrThrow("com.yourkit.api.Controller#captureSnapshot(long) not found") {
             ykLibClass.getMethod(
                 "captureSnapshot",
                 SNAPSHOT_WITHOUT_HEAP::class.java
             )
+        }
+
+        private val capturePerformanceSnapshotMethod: Method = doOrThrow("com.yourkit.api.Controller#capturePerformanceSnapshot() not found") {
+            ykLibClass.getMethod("capturePerformanceSnapshot")
         }
 
         private val stopCPUProfilingMethod: Method = doOrThrow("com.yourkit.api.Controller#stopCPUProfiling() not found") {
