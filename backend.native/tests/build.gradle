@@ -148,7 +148,7 @@ allprojects {
 testOutputExternal.mkdirs()
 testOutputStdlib.mkdirs()
 
-def dist = project.rootProject.file(project.findProperty("org.jetbrains.kotlin.native.home") ?:
+ext.dist = project.rootProject.file(project.findProperty("org.jetbrains.kotlin.native.home") ?:
         project.findProperty("konan.home") ?: "dist")
 
 konanArtifacts {
@@ -214,6 +214,14 @@ def update_external_tests() {
             include 'kotlin-test/**'
         }
     }
+}
+
+void konanc(String[] args) {
+   def konancScript = isWindows() ? "konanc.bat" : "konanc"
+   def konanc = "$dist/bin/$konancScript"
+   def allArgs = args.join(" ")
+   println("$konanc $allArgs")
+   "$konanc $allArgs".execute().waitFor()
 }
 
 clean {
@@ -3946,12 +3954,10 @@ task library_mismatch(type: KonanDriverTest) {
     }
 
     doBeforeBuild {
-        def konancScript = isWindows() ? "konanc.bat" : "konanc"
-        def konanc = "$dist/bin/$konancScript"
-        "$konanc $lib -p library -o $dir/1.2/empty -target $currentTarget -lv 1.2".execute().waitFor()
-        "$konanc $lib -p library -o $dir/3.4/empty -target $someOtherTarget".execute().waitFor()
-        "$konanc $lib -p library -o $dir/5.6/empty -target $currentTarget -lv 5.6".execute().waitFor()
-        "$konanc $lib -p library -o $dir/7.8/empty -target $currentTarget -lv 7.8".execute().waitFor()
+        konanc("$lib -p library -o $dir/1.2/empty -target $currentTarget -lv 1.2")
+        konanc("$lib -p library -o $dir/3.4/empty -target $someOtherTarget")
+        konanc("$lib -p library -o $dir/5.6/empty -target $currentTarget -lv 5.6")
+        konanc("$lib -p library -o $dir/7.8/empty -target $currentTarget -lv 7.8")
 
     }
     source = "link/versioning/hello.kt"
@@ -3977,10 +3983,8 @@ task library_ir_provider_mismatch(type: KonanDriverTest) {
     def currentTarget = project.target.name
 
     doBeforeBuild {
-        def konancScript = isWindows() ? "konanc.bat" : "konanc"
-        def konanc = "$dist/bin/$konancScript"
-        "$konanc $lib -p library -o $dir/supported_ir_provider/empty -target $currentTarget".execute().waitFor()
-        "$konanc $lib -p library -o $dir/unsupported_ir_provider/empty -manifest $invalidManifest -target $currentTarget".execute().waitFor()
+        konanc("$lib -p library -o $dir/supported_ir_provider/empty -target $currentTarget")
+        konanc("$lib -p library -o $dir/unsupported_ir_provider/empty -manifest $invalidManifest -target $currentTarget")
 
     }
     source = "link/ir_providers/hello.kt"
