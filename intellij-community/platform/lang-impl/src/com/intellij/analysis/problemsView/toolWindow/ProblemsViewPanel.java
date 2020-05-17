@@ -16,6 +16,7 @@ import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.tree.AsyncTreeModel;
+import com.intellij.ui.tree.RestoreSelectionListener;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.containers.JBIterable;
@@ -154,6 +155,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     myTree.setRootVisible(false);
     myTree.setShowsRootHandles(false);
     myTree.getSelectionModel().setSelectionMode(SINGLE_TREE_SELECTION);
+    myTree.addTreeSelectionListener(new RestoreSelectionListener());
     myTree.addTreeSelectionListener(event -> {
       OpenFileDescriptor descriptor = getSelectedDescriptor();
       updateAutoscroll(descriptor);
@@ -256,15 +258,17 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
 
   private @Nullable OpenFileDescriptor getSelectedDescriptor() {
     Object object = TreeUtil.getLastUserObject(getTree().getSelectionPath());
-    if (object instanceof ProblemNode) {
-      ProblemNode node = (ProblemNode)object;
-      return getDescriptor(node.getFile(), node.getProblem().getOffset());
-    }
-    if (object instanceof FileNode) {
-      FileNode node = (FileNode)object;
-      return getDescriptor(node.getFile(), 0);
-    }
+    if (object instanceof FileNode) return getDescriptor((FileNode)object);
+    if (object instanceof ProblemNode) return getDescriptor((ProblemNode)object);
     return null;
+  }
+
+  private @Nullable OpenFileDescriptor getDescriptor(@NotNull FileNode node) {
+    return getDescriptor(node.getFile(), 0);
+  }
+
+  private @Nullable OpenFileDescriptor getDescriptor(@NotNull ProblemNode node) {
+    return getDescriptor(node.getFile(), node.getProblem().getOffset());
   }
 
   private @Nullable OpenFileDescriptor getDescriptor(@NotNull VirtualFile file, int offset) {
@@ -293,7 +297,6 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   private void invokeLater(@NotNull Runnable runnable) {
     getApplication().invokeLater(runnable, stateForComponent(this));
   }
-
 
   void select(@NotNull Node node) {
     TreeUtil.promiseSelect(getTree(), createVisitor(node));
