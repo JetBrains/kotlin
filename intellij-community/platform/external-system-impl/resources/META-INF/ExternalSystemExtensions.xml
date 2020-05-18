@@ -54,8 +54,6 @@
     <backgroundPostStartupActivity implementation="com.intellij.openapi.externalSystem.service.project.manage.ReprocessContentRootDataActivity"/>
 
     <externalSystemConfigurationHandler
-        implementation="com.intellij.openapi.externalSystem.service.project.settings.CodeStyleConfigurationHandler"/>
-    <externalSystemConfigurationHandler
         implementation="com.intellij.openapi.externalSystem.service.project.settings.RunConfigurationHandler"/>
     <externalSystemConfigurationHandler
         implementation="com.intellij.openapi.externalSystem.service.project.settings.FacetConfigurationHandler"/>
