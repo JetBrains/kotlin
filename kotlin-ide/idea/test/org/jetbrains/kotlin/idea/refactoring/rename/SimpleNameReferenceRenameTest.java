@@ -8,19 +8,13 @@ package org.jetbrains.kotlin.idea.refactoring.rename;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameProcessor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.TestRoot;
 
-@SuppressWarnings("deprecation")
-public class SimpleNameReferenceRenameTest extends KotlinLightCodeInsightTestCase {
-
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/refactoring/rename/simpleNameReference/";
-    }
-
+@TestRoot("idea")
+@TestMetadata("testData/refactoring/rename/simpleNameReference")
+public class SimpleNameReferenceRenameTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testRenameLabel() throws Exception {
         doTest("foo");
     }
@@ -50,12 +44,12 @@ public class SimpleNameReferenceRenameTest extends KotlinLightCodeInsightTestCas
     }
 
     private void doTest(String newName) throws Exception {
-        configureByFile(getTestName(true) + ".kt");
+        myFixture.configureByFile(getTestName(true) + ".kt");
         PsiElement element = TargetElementUtil
-                .findTargetElement(getEditor_(),
+                .findTargetElement(getEditor(),
                                    TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED);
         assertNotNull(element);
         new RenameProcessor(getProject(), element, newName, true, true).run();
-        checkResultByFile(getTestName(true) + ".kt.after");
+        myFixture.checkResultByFile(getTestName(true) + ".kt.after");
     }
 }

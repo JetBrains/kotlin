@@ -37,7 +37,7 @@ class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 
     private fun getTestDataPath() =
-            KotlinTestUtils.getHomeDirectory() + "/kotlin/maven/testData/languageFeature/" + getTestName(true).substringBefore('_')
+            KotlinTestUtils.getHomeDirectory() + "/maven/testData/languageFeature/" + getTestName(true).substringBefore('_')
 
     override fun setUpFixtures() {
         myTestFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName()).fixture

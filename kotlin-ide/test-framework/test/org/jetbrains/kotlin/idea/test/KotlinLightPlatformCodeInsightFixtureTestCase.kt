@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.intellij.ide.startup.impl.StartupManagerImpl
-import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestMetadataUtil
 import java.io.File
-import java.nio.file.Paths
-import kotlin.reflect.full.findAnnotation
 
 abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCodeInsightFixtureTestCase() {
     override fun setUp() {
@@ -40,8 +36,5 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
 
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
-    override fun getTestDataPath(): String {
-        val relativeToKotlinIdeRoot = this::class.findAnnotation<TestMetadata>()?.value ?: return super.getTestDataPath()
-        return Paths.get(KotlinTestUtils.getHomeDirectory(), relativeToKotlinIdeRoot).toString()
-    }
+    override fun getTestDataPath(): String? = TestMetadataUtil.getTestData(javaClass)?.absolutePath ?: super.getTestDataPath()
 }

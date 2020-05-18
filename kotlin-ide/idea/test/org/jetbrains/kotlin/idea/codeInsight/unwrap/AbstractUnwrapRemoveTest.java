@@ -13,14 +13,13 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
-public abstract class AbstractUnwrapRemoveTest extends KotlinLightCodeInsightTestCase {
+public abstract class AbstractUnwrapRemoveTest extends KotlinLightCodeInsightFixtureTestCase {
     public void doTestExpressionRemover(@NotNull String path) throws Exception {
         doTest(path, KotlinUnwrappers.KotlinExpressionRemover.class);
     }
@@ -70,7 +69,7 @@ public abstract class AbstractUnwrapRemoveTest extends KotlinLightCodeInsightTes
     }
 
     private void doTest(@NotNull String path, final Class<? extends Unwrapper> unwrapperClass) throws Exception {
-        configureByFile(path);
+        myFixture.configureByFile(path);
 
         String fileText = FileUtil.loadFile(new File(path), true);
 
@@ -96,7 +95,7 @@ public abstract class AbstractUnwrapRemoveTest extends KotlinLightCodeInsightTes
                 }
             });
 
-            checkResultByFile(path + ".after");
+            myFixture.checkResultByFile(path + ".after");
         } else {
             assertTrue(
                     ContainerUtil.and(unwrappersWithPsi, new Condition<Pair<PsiElement, Unwrapper>>() {

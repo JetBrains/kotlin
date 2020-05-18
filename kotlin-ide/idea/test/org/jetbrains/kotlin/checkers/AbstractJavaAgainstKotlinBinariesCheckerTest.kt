@@ -35,13 +35,15 @@ abstract class AbstractJavaAgainstKotlinBinariesCheckerTest : AbstractJavaAgains
     }
 
     fun doTest(path: String) {
-        val ktFileText = FileUtil.loadFile(File(path), true)
+        val file = File(path)
+        val ktFileText = FileUtil.loadFile(file, true)
         val allowAstForCompiledFile = InTextDirectivesUtils.isDirectiveDefined(ktFileText, AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE)
 
         if (allowAstForCompiledFile) {
             allowTreeAccessForAllFiles()
         }
 
-        doTest(true, true, path.replace(".kt", ".java"))
+        val localPath =  file.toRelativeString(File(testDataPath))
+        doTest(true, true, localPath.replace(".kt", ".java"))
     }
 }

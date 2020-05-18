@@ -9,19 +9,18 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinDocumentationProvider
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.Assert
 import org.junit.runner.RunWith
 
+@TestRoot("idea")
+@TestMetadata("testData/kdoc/inCompletion")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class QuickDocInCompletionTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/inCompletion/"
-    }
-
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun testSimple() {

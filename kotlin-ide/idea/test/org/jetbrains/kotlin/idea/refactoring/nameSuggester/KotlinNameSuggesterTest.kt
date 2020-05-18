@@ -12,14 +12,17 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.IntroduceRefactoringException
 import org.jetbrains.kotlin.idea.refactoring.selectElement
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 
+@TestRoot("idea")
+@TestMetadata("testData/refactoring/nameSuggester")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinNameSuggesterTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testArrayList() = doTest()
@@ -69,10 +72,6 @@ class KotlinNameSuggesterTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testExtensionFunction2() = doTest()
 
     fun testNoCamelNamesForBacktickedNonId() = doTest()
-
-    override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/refactoring/nameSuggester"
-    }
 
     private fun doTest() {
         try {

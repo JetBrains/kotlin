@@ -9,15 +9,16 @@ import com.intellij.codeInspection.blockingCallsDetection.BlockingMethodInNonBlo
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.jetbrains.kotlin.test.runTest
 import org.junit.runner.RunWith
 
+@TestRoot("idea")
+@TestMetadata("testData/inspections/blockingCallsDetection")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class CoroutineNonBlockingContextDetectionTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/inspections/blockingCallsDetection"
-
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     override fun setUp() {

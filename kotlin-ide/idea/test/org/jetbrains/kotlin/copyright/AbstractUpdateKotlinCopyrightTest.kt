@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.copyright
 import junit.framework.AssertionFailedError
 import org.jetbrains.kotlin.idea.copyright.UpdateKotlinCopyright
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
-import java.io.File
 
 abstract class AbstractUpdateKotlinCopyrightTest : KotlinLightCodeInsightFixtureTestCase() {
-    fun doTest(path: String) {
+    fun doTest(@Suppress("UNUSED_PARAMETER") path: String) {
         myFixture.configureByFile(fileName())
 
         val fileText = myFixture.file.text.trim()
@@ -46,6 +44,4 @@ abstract class AbstractUpdateKotlinCopyrightTest : KotlinLightCodeInsightFixture
             expectedNumberOfComments, comments.size
         )
     }
-
-    override fun getTestDataPath() = File(PluginTestCaseBase.getTestDataPathBase(), "/copyright").path + File.separator
 }

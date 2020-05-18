@@ -17,12 +17,13 @@ import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBo
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.navigation.GotoCheck;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.TestRoot;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.kotlin.test.util.ReferenceUtils.renderAsGotoImplementation;
+
+@TestRoot("idea")
+@TestMetadata("testData/resolve/builtins")
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testAny() throws Exception {
@@ -120,11 +124,6 @@ public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixture
         assertEquals(expectedTarget, renderAsGotoImplementation(resolved));
 
         GotoCheck.assertNavigationElementMatches(resolved, text);
-    }
-
-    @Override
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/resolve/builtins/";
     }
 
     @NotNull

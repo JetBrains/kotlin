@@ -15,10 +15,14 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 import java.io.File
 import kotlin.test.assertNotNull
 
+@TestRoot("idea")
+@TestMetadata("testData/decompiler/lightClassesOrder")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LightClassesClasspathSortingTest : KotlinLightCodeInsightFixtureTestCase() {
 
@@ -55,9 +59,5 @@ class LightClassesClasspathSortingTest : KotlinLightCodeInsightFixtureTestCase()
             "$testDataPath${getTestName(true)}",
             true
         )
-    }
-
-    override fun getTestDataPath(): String {
-        return "${KotlinTestUtils.getHomeDirectory()}/idea/testData/decompiler/lightClassesOrder/"
     }
 }

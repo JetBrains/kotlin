@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.runner.RunWith
 import java.io.File
 
-private val LIBRARY_SRC_PATH =
-        "${KotlinTestUtils.getHomeDirectory()}/kotlin/completion/testData/codeFragmentInLibrarySource/customLibrary/"
+private val LIBRARY_SRC_PATH = "${KotlinTestUtils.getHomeDirectory()}/completion/testData/codeFragmentInLibrarySource/customLibrary/"
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {

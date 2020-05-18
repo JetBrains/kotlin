@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.completion.test.weighers
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.idea.completion.test.RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -17,11 +16,7 @@ import org.junit.Assert
 abstract class AbstractCompletionWeigherTest(val completionType: CompletionType, val relativeTestDataPath: String) :
     KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
-        val pathPrefix = "$RELATIVE_COMPLETION_TEST_DATA_BASE_PATH/$relativeTestDataPath"
-        assert(path.startsWith(pathPrefix))
-        val relativePath = path.removePrefix(pathPrefix)
-
-        myFixture.configureWithExtraFile(relativePath, ".Data", ".Data1", ".Data2", ".Data3", ".Data4", ".Data5", ".Data6")
+        myFixture.configureWithExtraFile(getLocalPath(path), ".Data", ".Data1", ".Data2", ".Data3", ".Data4", ".Data5", ".Data6")
 
         val text = myFixture.editor.document.text
 

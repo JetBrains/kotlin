@@ -44,7 +44,7 @@ abstract class AbstractDecompiledTextBaseTest(
 
         val checkedText = textToCheck(psiFile)
 
-        KotlinTestUtils.assertEqualsToFile(File(path.substring(0, path.length - 1) + ".expected.kt"), checkedText)
+        KotlinTestUtils.assertEqualsToFile(File("$path.expected.kt"), checkedText)
 
         checkStubConsistency(fileToDecompile, checkedText)
 

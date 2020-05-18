@@ -19,9 +19,13 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 
 // see KtFileLightClassTest
+@TestRoot("idea")
+@TestMetadata("testData/asJava/fileLightClass")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
@@ -142,9 +146,5 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
         val file = KtPsiFactory(project).createFileWithLightClassSupport(fileName, text, myFixture.file)
         val classes = file.classes
         return classes
-    }
-
-    override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/asJava/fileLightClass/"
     }
 }

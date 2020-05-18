@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.KotlinDocumentationProvider
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -18,15 +17,15 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.Assert
 import org.junit.runner.RunWith
 
+@TestRoot("idea")
+@TestMetadata("testData/kdoc/navigate")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class QuickDocNavigationTest() : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/navigate/"
-    }
-
     override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 
     fun testSimple() {

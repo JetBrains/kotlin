@@ -8,15 +8,13 @@ package org.jetbrains.kotlin.idea
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.IntroduceRefactoringException
 import org.jetbrains.kotlin.idea.refactoring.selectElement
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-@Suppress("DEPRECATION")
-abstract class AbstractExpressionSelectionTest : KotlinLightCodeInsightTestCase() {
-
+abstract class AbstractExpressionSelectionTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTestExpressionSelection(path: String) {
-        configureByFile(path)
+        myFixture.configureByFile(path)
         val expectedExpression = KotlinTestUtils.getLastCommentInFile(getFile() as KtFile)
 
         try {

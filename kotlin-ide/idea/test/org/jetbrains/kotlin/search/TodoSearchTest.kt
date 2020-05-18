@@ -8,18 +8,16 @@ package org.jetbrains.kotlin.search
 import com.intellij.psi.search.PsiTodoSearchHelper
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
-import java.io.File
 
+@TestRoot("idea")
+@TestMetadata("testData/search/todo")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class TodoSearchTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
-
-    override fun getTestDataPath(): String {
-        return File(PluginTestCaseBase.getTestDataPathBase(), "/search/todo").path + File.separator
-    }
 
     fun testTodoCall() {
         val file = myFixture.configureByFile("todoCall.kt")

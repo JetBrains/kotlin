@@ -14,12 +14,6 @@ import org.junit.Assert
 import kotlin.reflect.KMutableProperty0
 
 abstract class AbstractKotlinTypeAliasByExpansionShortNameIndexTest : KotlinLightCodeInsightFixtureTestCase() {
-
-
-    override fun getTestDataPath(): String {
-        return "${KotlinTestUtils.getHomeDirectory()}/"
-    }
-
     private lateinit var scope: GlobalSearchScope
 
     override fun setUp() {

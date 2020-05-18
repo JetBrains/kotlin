@@ -18,7 +18,6 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.*;
 
 import java.io.File;
@@ -31,13 +30,6 @@ public abstract class AbstractSafeDeleteTest extends KotlinLightCodeInsightFixtu
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
-    }
-
-    @Override
-    public void setUp() {
-        super.setUp();
-        String pathBase = PluginTestCaseBase.getTestDataPathBase();
-        myFixture.setTestDataPath(pathBase.substring(0, pathBase.lastIndexOf("/idea/testData")));
     }
 
     public void doClassTest(@NotNull String path) throws Exception {

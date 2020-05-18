@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.idea.folding
 import com.intellij.codeInsight.folding.CodeFoldingManager
 import com.intellij.openapi.editor.FoldRegion
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest.doTestWithSettings
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
-import java.io.File
 
+@TestRoot("idea")
+@TestMetadata("testData/folding/afterOptimizeImports")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
     private val fixture: JavaCodeInsightTestFixture
@@ -59,8 +60,6 @@ class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
         }
         return foldingRegions[number]
     }
-
-    override fun getTestDataPath() = File(PluginTestCaseBase.getTestDataPathBase(), "/folding/afterOptimizeImports/").path + File.separator
 
     private fun findStringWithPrefixes(prefix: String) =
         InTextDirectivesUtils.findStringWithPrefixes(fileText, prefix)

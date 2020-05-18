@@ -11,6 +11,8 @@ import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementRightActi
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementDownAction
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementUpAction
 import com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover
+import com.intellij.ide.DataManager
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.actionSystem.EditorAction
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -62,13 +65,13 @@ abstract class AbstractMoveLeftRightTest : AbstractCodeMoverTest() {
 }
 
 @Suppress("DEPRECATION")
-abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
+abstract class AbstractCodeMoverTest : KotlinLightCodeInsightFixtureTestCase() {
     protected fun doTest(
         path: String,
         trailingComma: Boolean = false,
         isApplicableChecker: (isApplicableExpected: Boolean, direction: String) -> Unit
     ) {
-        configureByFile(path)
+        myFixture.configureByFile(path)
 
         val fileText = FileUtil.loadFile(File(path), true)
         val direction = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MOVE: ") ?: error("No MOVE directive found")
@@ -98,11 +101,10 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
     }
 
     private fun invokeAndCheck(path: String, action: EditorAction, isApplicableExpected: Boolean) {
-        val editor = editor_
-        val dataContext = currentEditorDataContext_
+        val editor = editor
 
         val before = editor.document.text
-        runWriteAction { action.actionPerformed(editor, dataContext) }
+        runWriteAction { action.actionPerformed(editor, DataContext.EMPTY_CONTEXT) }
 
         val after = editor.document.text
         val actionDoesNothing = after == before
@@ -110,11 +112,11 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
         TestCase.assertEquals(isApplicableExpected, !actionDoesNothing)
 
         if (isApplicableExpected) {
-            val afterFilePath = "$path.after"
+            val afterFile = File("$path.after")
             try {
-                checkResultByFile(afterFilePath)
+                myFixture.checkResultByFile(getLocalPath(afterFile.absolutePath))
             } catch (e: ComparisonFailure) {
-                KotlinTestUtils.assertEqualsToFile(File(afterFilePath), editor)
+                KotlinTestUtils.assertEqualsToFile(afterFile, editor)
             }
         }
     }

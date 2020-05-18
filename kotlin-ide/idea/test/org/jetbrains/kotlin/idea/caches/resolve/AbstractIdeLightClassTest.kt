@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.TestMetadataUtil
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.plugins.groovy.lang.psi.impl.stringValue
 import org.junit.Assert
@@ -98,14 +99,11 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
         val testName = getTestName(false)
         if (KotlinTestUtils.isAllFilesPresentTest(testName)) return
 
-        val filePathWithoutExtension = "${KotlinTestUtils.getTestsRoot(this::class.java)}/${getTestName(false)}"
-        val testFile =
-            File("$filePathWithoutExtension.kt").takeIf { it.exists() } ?: File("$filePathWithoutExtension.kts").takeIf { it.exists() }
-
-        Assert.assertNotNull("Test file not found!", testFile)
+        val testDataDir = TestMetadataUtil.getTestData(this::class.java)
+        val testFile = listOf(File(testDataDir, "$testName.kt"), File(testDataDir, "$testName.kts")).first { it.exists() }
 
         val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
-            testFile!!.canonicalPath, libName(),
+            testFile.canonicalPath, libName(),
             extraClasspath = listOf(ForTestCompileRuntime.jetbrainsAnnotationsForTests().path)
         )
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"

@@ -13,21 +13,19 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.Assert
 import org.junit.runner.RunWith
-import java.io.File
 
+@TestRoot("idea")
+@TestMetadata("testData/search/references")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class KotlinReferencesSearchTest() : AbstractSearcherTest() {
-    override fun getTestDataPath(): String {
-        return File(PluginTestCaseBase.getTestDataPathBase(), "/search/references").path + File.separator
-    }
-
+class KotlinReferencesSearchTest : AbstractSearcherTest() {
     fun testPlus() {
         val refs = doTest<KtFunction>()
         Assert.assertEquals(3, refs.size)

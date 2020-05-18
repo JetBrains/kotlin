@@ -10,21 +10,16 @@ import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameProcessor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.TestRoot;
 import org.junit.runner.RunWith;
 
-@SuppressWarnings("deprecation")
+@TestRoot("idea")
+@TestMetadata("testData/kdoc/rename")
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
-public class KdocRenameTest extends KotlinLightCodeInsightTestCase {
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/rename/";
-    }
-
+public class KdocRenameTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testParamReference() {
         doTest("bar");
     }
@@ -38,18 +33,18 @@ public class KdocRenameTest extends KotlinLightCodeInsightTestCase {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
     }
 
     private void doTest(String newName) {
-        configureByFile(getTestName(false) + ".kt");
+        myFixture.configureByFile(getTestName(false) + ".kt");
         PsiElement element = TargetElementUtil
-                .findTargetElement(getEditor_(),
+                .findTargetElement(getEditor(),
                                    TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED);
         assertNotNull(element);
         new RenameProcessor(getProject(), element, newName, true, true).run();
-        checkResultByFile(getTestName(false) + ".kt.after");
+        myFixture.checkResultByFile(getTestName(false) + ".kt.after");
     }
 }

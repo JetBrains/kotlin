@@ -7,35 +7,34 @@ package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.ide.actions.CopyReferenceAction
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 import java.util.*
 
-@Suppress("DEPRECATION")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
+class QualifiedNamesTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testClassRef() {
-        configureFromFileText_(
+        myFixture.configureByText(
             "class.kt",
             """
-                    package foo.bar
+                package foo.bar
 
-                    class Klass {
-                        class Nested
+                class Klass {
+                    class Nested
 
-                        companion object {
-                        }
+                    companion object {
                     }
+                }
 
-                    object Object {
-                    }
+                object Object {
+                }
 
-                    val anonymous = object {
-                    }
-                """
+                val anonymous = object {
+                }
+            """.trimIndent()
         )
         assertEquals(
             listOf(
@@ -51,22 +50,22 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
     }
 
     fun testFunRef() {
-        configureFromFileText_(
+        myFixture.configureByText(
             "fun.kt",
             """
-                    package foo.bar
+                package foo.bar
 
-                    class Klass {
-                        fun memberFun() {
-                        }
-
-                        val memberVal = ":)"
+                class Klass {
+                    fun memberFun() {
                     }
 
-                    fun topLevelFun()
+                    val memberVal = ":)"
+                }
 
-                    val topLevelVal = ":)"
-                """
+                fun topLevelFun()
+
+                val topLevelVal = ":)"
+            """.trimIndent()
         )
         assertEquals(
             listOf(
@@ -82,7 +81,7 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
 
     private fun getQualifiedNamesForDeclarations(): List<String?> {
         val result = ArrayList<String?>()
-        file_.accept(object : KtVisitorVoid() {
+        file.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
                 element.acceptChildren(this)
             }
@@ -94,4 +93,6 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
         })
         return result
     }
+
+    override fun getTestDataPath() = ""
 }

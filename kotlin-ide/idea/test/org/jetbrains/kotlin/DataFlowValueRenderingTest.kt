@@ -38,10 +38,6 @@ abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixture
             if (!isStable) null
             else identifierInfo.render()
 
-    override fun getTestDataPath() : String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/dataFlowValueRendering/"
-    }
-
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return LightCodeInsightFixtureTestCase.JAVA_LATEST
     }

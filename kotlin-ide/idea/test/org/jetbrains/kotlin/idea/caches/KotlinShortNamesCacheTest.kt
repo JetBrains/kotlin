@@ -24,9 +24,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 import kotlin.reflect.KMutableProperty0
 
+@TestRoot("idea")
+@TestMetadata("testData/cache")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
@@ -259,9 +263,5 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
         checkIsSingleFieldFound(scope, "B1.objectVar", true)
         checkIsSingleFieldFound(scope, "C1.classVar", false)
         checkIsSingleFieldFound(scope, "C1.companionVar", true)
-    }
-
-    override fun getTestDataPath(): String {
-        return "${KotlinTestUtils.getHomeDirectory()}/idea/testData/cache/"
     }
 }

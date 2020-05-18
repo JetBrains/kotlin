@@ -6,20 +6,20 @@
 package org.jetbrains.kotlin.completion.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.completion.test.handlers.CompletionHandlerTestBase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
-import java.io.File
 
 @Deprecated("All tests from here to be moved to the generated test")
+@TestRoot("completion/testData")
+@TestMetadata("handlers")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class BasicCompletionHandlerTest : CompletionHandlerTestBase() {
     private fun checkResult() {
         fixture.checkResultByFile(getTestName(false) + ".kt.after")
     }
-
-    override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, "/handlers").path + File.separator
 
     private fun doTest() {
         doTest(2, "*", null, null, '\n')

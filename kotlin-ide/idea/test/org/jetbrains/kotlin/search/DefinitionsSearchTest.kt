@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.search
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 import java.io.File
 
+@TestRoot("idea")
+@TestMetadata("testData/search/definitions")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class DefinitionsSearchTest : AbstractSearcherTest() {
     fun testNestedClass() {
@@ -30,10 +33,5 @@ class DefinitionsSearchTest : AbstractSearcherTest() {
 
         val origin = (psiClass as? KtLightClass)?.kotlinOrigin!!
         checkResult(getPathToFile(), DefinitionsScopedSearch.search(origin))
-    }
-
-    override fun getTestDataPath(): String {
-        return File(PluginTestCaseBase.getTestDataPathBase(), "/search/definitions").path + File.separator
-
     }
 }

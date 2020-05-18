@@ -62,12 +62,6 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
     // can be found. This pattern matches against these line comments and saves the class name in the first group
     private static final Pattern BREAKPOINT_PATTERN = Pattern.compile("^.*//\\s*(.+)\\s*$");
 
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return DEBUGGER_TESTDATA_PATH_BASE + "/positionManager";
-    }
-
     @Override
     public void setUp() {
         super.setUp();

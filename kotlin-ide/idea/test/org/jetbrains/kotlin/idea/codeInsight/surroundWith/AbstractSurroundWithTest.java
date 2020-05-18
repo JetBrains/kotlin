@@ -13,20 +13,19 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
+import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.*;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.*;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
-public abstract class AbstractSurroundWithTest extends KotlinLightCodeInsightTestCase {
-
+public abstract class AbstractSurroundWithTest extends KotlinLightCodeInsightFixtureTestCase {
     public void doTestWithIfSurrounder(String path) throws Exception {
         doTest(path, new KotlinIfSurrounder());
     }
@@ -92,7 +91,7 @@ public abstract class AbstractSurroundWithTest extends KotlinLightCodeInsightTes
     }
 
     private void doTest(String path, Surrounder surrounder) throws Exception {
-        configureByFile(path);
+        myFixture.configureByFile(path);
 
         String fileText = FileUtil.loadFile(new File(path), true);
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
@@ -117,7 +116,8 @@ public abstract class AbstractSurroundWithTest extends KotlinLightCodeInsightTes
 
         String filePath = path + ".after";
         try {
-            checkResultByFile(filePath);
+            String localPath = FilesKt.toRelativeString(new File(filePath), new File(getTestDataPath()));
+            myFixture.checkResultByFile(localPath);
         }
         catch (FileComparisonFailure fileComparisonFailure) {
             KotlinTestUtils.assertEqualsToFile(new File(filePath), getEditor());
@@ -143,10 +143,5 @@ public abstract class AbstractSurroundWithTest extends KotlinLightCodeInsightTes
         }
 
         return null;
-    }
-
-    @Override
-    protected boolean isRunInWriteAction() {
-        return true;
     }
 }

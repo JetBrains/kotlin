@@ -20,8 +20,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 
+@TestRoot("idea")
+@TestMetadata("testData/asJava/fileLightClass")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
@@ -68,10 +72,6 @@ class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
         val facadeFiles =
             KotlinAsJavaSupport.getInstance(project).findFilesForFacade(FqName("foo.FooKt"), GlobalSearchScope.allScope(project))
         assertEquals(0, facadeFiles.size)
-    }
-
-    override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/asJava/fileLightClass/"
     }
 
     fun testInjectedCode() {

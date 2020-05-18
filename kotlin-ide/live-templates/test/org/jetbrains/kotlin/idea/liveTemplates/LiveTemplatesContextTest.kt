@@ -10,13 +10,14 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType.*
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
-import java.io.File
 
+@TestRoot("live-templates")
+@TestMetadata("testData/context")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String = File(TEST_DATA_BASE_PATH, "/context").path + File.separator
-
     fun testInDocComment() {
         assertInContexts(Generic::class.java, Comment::class.java)
     }

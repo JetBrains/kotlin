@@ -9,9 +9,11 @@ import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 
-@TestMetadata("idea/testData/checker/custom")
+@TestRoot("idea")
+@TestMetadata("testData/checker/custom")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
 

@@ -33,7 +33,7 @@ abstract class AbstractNavigationTest : KotlinLightCodeInsightFixtureTestCase() 
         try {
             ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
 
-            myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
+            myFixture.testDataPath = mainFile.parent
 
             val mainFileName = mainFile.name
             val mainFileBaseName = mainFileName.substring(0, mainFileName.indexOf('.'))

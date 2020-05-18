@@ -10,17 +10,18 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.TestRoot;
 import org.junit.runner.RunWith;
 
 import java.io.File;
 
+@TestRoot("idea")
+@TestMetadata("testData/wordSelection")
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
-    private static final String TEST_RELATIVE_DIR = "wordSelection";
-
     public void testStatements() { doTest(); }
 
     public void testWhenEntries() { doTest(); }
@@ -141,7 +142,7 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     private void doTest() {
         String dirName = getTestName(false);
 
-        File dir = new File(myFixture.getTestDataPath() + dirName);
+        File dir = new File(myFixture.getTestDataPath(), dirName);
         int filesCount = dir.listFiles().length;
         String[] afterFiles = new String[filesCount - 1];
         for (int i = 1; i < filesCount; i++) {
@@ -157,10 +158,7 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
         catch (AssertionError error) {
             String message = error.getMessage();
             String path = message.substring(0, message.indexOf(":"));
-
-            String fullPath = new File(new File(PluginTestCaseBase.getTestDataPathBase(), TEST_RELATIVE_DIR), path).getPath();
-
-            wrapToFileComparisonFailure(fullPath);
+            wrapToFileComparisonFailure(path);
         }
     }
 
@@ -168,13 +166,6 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return JAVA_LATEST;
-    }
-
-    @Override
-    public void setUp() {
-        super.setUp();
-        myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), TEST_RELATIVE_DIR).getPath() +
-                                  File.separator);
     }
 
     private void wrapToFileComparisonFailure(String failedFilePath) {

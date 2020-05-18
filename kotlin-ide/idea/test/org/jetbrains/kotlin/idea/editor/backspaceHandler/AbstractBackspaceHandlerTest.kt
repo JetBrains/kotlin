@@ -8,15 +8,14 @@ package org.jetbrains.kotlin.idea.editor.backspaceHandler
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.EditorTestUtil
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import java.io.File
 
-@Suppress("DEPRECATION")
-abstract class AbstractBackspaceHandlerTest : KotlinLightCodeInsightTestCase() {
+abstract class AbstractBackspaceHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
-        configureFromFileText("a.kt", loadFile(path))
-        EditorTestUtil.executeAction(getEditor(), IdeActions.ACTION_EDITOR_BACKSPACE)
-        checkResultByText(loadFile(path + ".after"))
+        myFixture.configureByText("a.kt", loadFile(path))
+        EditorTestUtil.executeAction(editor, IdeActions.ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult(loadFile("$path.after"))
     }
 
     private fun loadFile(path: String) = FileUtil.loadFile(File(path), true)

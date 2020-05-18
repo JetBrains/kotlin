@@ -16,9 +16,13 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.jetbrains.kotlin.utils.ReportLevel
 import org.junit.runner.RunWith
 
+@TestRoot("idea")
+@TestMetadata("testData/highlighterJsr305/project")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
@@ -70,6 +74,4 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
         myFixture.configureByFile("${getTestName(false)}.kt")
         myFixture.checkHighlighting()
     }
-
-    override fun getTestDataPath() = "idea/testData/highlighterJsr305/project"
 }

@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.idea.kdoc
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 abstract class AbstractKDocTypingTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
     protected fun doTest(fileName: String) {
-        myFixture.configureByFile(fileName)
+        val file = File(fileName).relativeTo(File(testDataPath))
+        myFixture.configureByFile(file.path)
         val textToType = InTextDirectivesUtils.findStringWithPrefixes(myFixture.file.text, "// TYPE:")
         if (textToType == null) {
             throw IllegalArgumentException("Cannot find directive TYPE in input file")
         }
         myFixture.type(textToType)
-        myFixture.checkResultByFile(fileName + ".after")
+        myFixture.checkResultByFile(file.path + ".after")
     }
 }

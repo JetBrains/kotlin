@@ -760,7 +760,12 @@ public class KotlinTestUtils {
     }
 
     private static void runTestImpl(@NotNull DoTest test, @NotNull TestCase testCase, String testDataFilePath) throws Exception {
-        String absoluteTestDataFilePath = new File(TestMetadataUtil.getTestRoot(testCase.getClass()), testDataFilePath).getAbsolutePath();
+        File testRoot = TestMetadataUtil.getTestRoot(testCase.getClass());
+        if (testRoot == null) {
+            throw new IllegalStateException("@TestRoot annotation was not found on " + testCase.getName());
+        }
+
+        String absoluteTestDataFilePath = new File(testRoot, testDataFilePath).getAbsolutePath();
 
         Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
             try {

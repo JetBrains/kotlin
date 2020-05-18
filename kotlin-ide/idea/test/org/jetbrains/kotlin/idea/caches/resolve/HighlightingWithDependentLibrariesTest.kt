@@ -14,22 +14,23 @@ import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 import java.io.File
 
+@TestRoot("idea")
+@TestMetadata("testData/highlightingWithDependentLibraries")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixtureTestCase() {
-    private val TEST_DATA_PATH = PluginTestCaseBase.TEST_DATA_DIR + "/highlightingWithDependentLibraries"
-
     override fun getProjectDescriptor() = object : KotlinLightProjectDescriptor() {
         override fun configureModule(module: Module, model: ModifiableRootModel) {
             val compiledJar1 =
-                MockLibraryUtil.compileJvmLibraryToJar("$TEST_DATA_PATH/lib1", "lib1")
+                MockLibraryUtil.compileJvmLibraryToJar("$testDataPath/lib1", "lib1")
             val compiledJar2 =
-                MockLibraryUtil.compileJvmLibraryToJar("$TEST_DATA_PATH/lib2", "lib2", extraClasspath = listOf(compiledJar1.canonicalPath))
+                MockLibraryUtil.compileJvmLibraryToJar("$testDataPath/lib2", "lib2", extraClasspath = listOf(compiledJar1.canonicalPath))
 
             model.addLibraryEntry(createLibrary(module.project, compiledJar1, "baseLibrary"))
             model.addLibraryEntry(createLibrary(module.project, compiledJar2, "dependentLibrary"))
@@ -47,9 +48,5 @@ class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixtureTest
     fun testHighlightingWithDependentLibraries() {
         myFixture.configureByFile("module/usingLibs.kt")
         myFixture.checkHighlighting(false, false, false)
-    }
-
-    override fun getTestDataPath(): String {
-        return TEST_DATA_PATH
     }
 }

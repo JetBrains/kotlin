@@ -74,7 +74,9 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
-    override fun getTestDataPath(): String = TestMetadataUtil.getTestData(javaClass).absolutePath
+    protected fun getLocalPath(path: String): String = File(path).toRelativeString(File(testDataPath))
+
+    override fun getTestDataPath(): String = TestMetadataUtil.getTestData(javaClass)?.absolutePath ?: super.getTestDataPath()
 
     override fun setUp() {
         super.setUp()
@@ -159,10 +161,17 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     }
 
     private fun getProjectDescriptorFromFileDirective(): LightProjectDescriptor {
-        if (isAllFilesPresentInTest()) return KotlinLightProjectDescriptor.INSTANCE
+        if (isAllFilesPresentInTest()) {
+            return KotlinLightProjectDescriptor.INSTANCE
+        }
+
+        val file = File(testDataPath, fileName())
+        if (!file.exists()) {
+            return KotlinLightProjectDescriptor.INSTANCE
+        }
 
         try {
-            val fileText = FileUtil.loadFile(File(testDataPath, fileName()), true)
+            val fileText = FileUtil.loadFile(file, true)
 
             val withLibraryDirective = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "WITH_LIBRARY:")
             return when {

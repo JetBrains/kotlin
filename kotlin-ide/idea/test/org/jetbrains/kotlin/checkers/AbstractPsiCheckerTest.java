@@ -89,10 +89,4 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
             }
         });
     }
-
-    @Override
-    protected String getTestDataPath() {
-        return KotlinTestUtils.getTestsRoot(this.getClass());
-    }
-
 }
