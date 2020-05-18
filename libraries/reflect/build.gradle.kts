@@ -179,7 +179,7 @@ val relocateCoreSources by task<Copy> {
     outputs.cacheIf { true }
 }
 
-tasks.getByName("jar").enabled = false
+noDefaultJar()
 
 java {
     withSourcesJar()
@@ -237,7 +237,7 @@ dexMethodCount {
 }
 
 artifacts {
-    listOf(mainJar.name, "runtime", "archives").forEach { configurationName ->
+    listOf(mainJar.name, "runtime", "archives", "runtimeElements").forEach { configurationName ->
         add(configurationName, result.get().outputs.files.singleFile) {
             builtBy(result)
         }
