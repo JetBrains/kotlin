@@ -36,12 +36,12 @@ class IrFieldImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrFieldSymbol,
-    override val name: Name = symbol.descriptor.name,
+    override val name: Name,
     override val type: IrType,
-    override val visibility: Visibility = symbol.descriptor.visibility,
-    override val isFinal: Boolean = !symbol.descriptor.isVar,
-    override val isExternal: Boolean = symbol.descriptor.isEffectivelyExternal(),
-    override val isStatic: Boolean = symbol.descriptor.dispatchReceiverParameter == null,
+    override val visibility: Visibility,
+    override val isFinal: Boolean,
+    override val isExternal: Boolean,
+    override val isStatic: Boolean,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE
 ) : IrDeclarationBase<FieldCarrier>(startOffset, endOffset, origin),
     IrField,
@@ -51,27 +51,19 @@ class IrFieldImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrFieldSymbol,
-        type: IrType,
-        visibility: Visibility = symbol.descriptor.visibility
-    ) :
-            this(
-                startOffset, endOffset, origin, symbol,
-                symbol.descriptor.name, type, visibility,
-                isFinal = !symbol.descriptor.isVar,
-                isExternal = symbol.descriptor.isEffectivelyExternal(),
-                isStatic = symbol.descriptor.dispatchReceiverParameter == null,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
-            )
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
-        type: IrType
-    ) :
-            this(startOffset, endOffset, origin, IrFieldSymbolImpl(descriptor), type)
+        type: IrType,
+        name: Name = descriptor.name,
+        symbol: IrFieldSymbol = IrFieldSymbolImpl(descriptor),
+        visibility: Visibility = descriptor.visibility
+    ) : this(
+        startOffset, endOffset, origin, symbol,
+        name = name, type,
+        visibility = visibility,
+        isFinal = !descriptor.isVar,
+        isExternal = descriptor.isEffectivelyExternal(),
+        isStatic = descriptor.dispatchReceiverParameter == null
+    )
 
     init {
         symbol.bind(this)

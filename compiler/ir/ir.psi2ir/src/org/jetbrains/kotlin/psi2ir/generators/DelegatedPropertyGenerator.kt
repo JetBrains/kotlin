@@ -133,7 +133,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
             context.symbolTable.declareField(
                 startOffset, endOffset, origin, delegateDescriptor, type
             ) {
-                IrFieldImpl(startOffset, endOffset, origin, it, type).apply {
+                IrFieldImpl(startOffset, endOffset, origin, delegateDescriptor, type, symbol = it).apply {
                     metadata = MetadataSource.Property(propertyDescriptor)
                 }
             }.also { irDelegate ->

@@ -234,7 +234,7 @@ interface IrBuilderExtension {
 
         return originProperty.run {
             // TODO: type parameters
-            IrFieldImpl(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, fieldSymbol, propertyDescriptor.type.toIrType())
+            IrFieldImpl(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, propertyDescriptor, propertyDescriptor.type.toIrType(), symbol = fieldSymbol)
         }
     }
 
