@@ -31,6 +31,11 @@ public class ScriptConfigurationCompletionTestGenerated extends AbstractScriptCo
         runTest("testData/script/definition/completion/conflictingModule/");
     }
 
+    @TestMetadata("conflictingModuleCustomDef")
+    public void testConflictingModuleCustomDef() throws Exception {
+        runTest("testData/script/definition/completion/conflictingModuleCustomDef/");
+    }
+
     @TestMetadata("conflictingModuleJavaLib")
     public void testConflictingModuleJavaLib() throws Exception {
         runTest("testData/script/definition/completion/conflictingModuleJavaLib/");
