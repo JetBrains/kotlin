@@ -357,9 +357,11 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
             offset,
             offset,
             memberOrigin,
-            symbol,
-            toIrType(descriptor.type),
-            varargType?.let { toIrType(it) }).also {
+            descriptor,
+            symbol = symbol,
+            type = toIrType(descriptor.type),
+            varargElementType = varargType?.let { toIrType(it) }
+        ).also {
             it.parent = this
         }
     }
