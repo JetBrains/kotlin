@@ -209,6 +209,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/jvmField.kt");
     }
 
+    @TestMetadata("jvmStaticInternalMangling.kt")
+    public void testJvmStaticInternalMangling() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/jvmStaticInternalMangling.kt");
+    }
+
     @TestMetadata("kt10259.kt")
     public void testKt10259() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/kt10259.kt");
