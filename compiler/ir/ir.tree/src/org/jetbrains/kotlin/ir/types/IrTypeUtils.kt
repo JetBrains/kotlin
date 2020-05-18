@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.ir.types
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.buildTypeProjection
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
 
 fun IrClassifierSymbol.superTypes() = when (this) {
@@ -90,3 +96,15 @@ fun IrType.isNullable(): Boolean = DFS.ifAny(
         }
     }
 )
+
+val IrType.isBoxedArray: Boolean
+    get() = classOrNull?.owner?.fqNameWhenAvailable == KotlinBuiltIns.FQ_NAMES.array.toSafe()
+
+fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
+    if (isBoxedArray)
+        ((this as IrSimpleType).arguments.single() as IrTypeProjection).type
+    else {
+        val classifier = this.classOrNull!!
+        irBuiltIns.primitiveArrayElementTypes[classifier]
+            ?: throw AssertionError("Primitive array expected: $classifier")
+    }
