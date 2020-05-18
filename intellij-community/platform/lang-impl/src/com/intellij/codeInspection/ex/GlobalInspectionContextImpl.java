@@ -400,10 +400,11 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
     Document document = PsiDocumentManager.getInstance(getProject()).getDocument(file);
     if (document == null) return;
 
-    LocalInspectionsPass pass = new LocalInspectionsPass(file, document, range.getStartOffset(),
-                                                         range.getEndOffset(), LocalInspectionsPass.EMPTY_PRIORITY_RANGE, true,
-                                                         HighlightInfoProcessor.getEmpty(), INSPECT_INJECTED_PSI);
     try {
+      file.putUserData(InspectionProfileWrapper.CUSTOMIZATION_KEY, p -> new InspectionProfileWrapper(getCurrentProfile()));
+      LocalInspectionsPass pass = new LocalInspectionsPass(file, document, range.getStartOffset(),
+                                                           range.getEndOffset(), LocalInspectionsPass.EMPTY_PRIORITY_RANGE, true,
+                                                           HighlightInfoProcessor.getEmpty(), INSPECT_INJECTED_PSI);
       pass.doInspectInBatch(this, inspectionManager, localTools);
 
       assertUnderDaemonProgress();
@@ -428,6 +429,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
       LOG.error("In file: " + file.getViewProvider().getVirtualFile().getPath(), e);
     }
     finally {
+      file.putUserData(InspectionProfileWrapper.CUSTOMIZATION_KEY, null);
       InjectedLanguageManager.getInstance(getProject()).dropFileCaches(file);
     }
   }
@@ -804,6 +806,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
 
           if (!lTools.isEmpty()) {
             try {
+              file.putUserData(InspectionProfileWrapper.CUSTOMIZATION_KEY, p -> new InspectionProfileWrapper((InspectionProfileImpl)profile));
               LocalInspectionsPass pass = new LocalInspectionsPass(file, file.getViewProvider().getDocument(), range != null ? range.getStartOffset() : 0,
                                                                    range != null ? range.getEndOffset() : file.getTextLength(), LocalInspectionsPass.EMPTY_PRIORITY_RANGE, true,
                                                                    HighlightInfoProcessor.getEmpty(), true);
@@ -839,6 +842,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
               }
             }
             finally {
+              file.putUserData(InspectionProfileWrapper.CUSTOMIZATION_KEY, null);
               myPresentationMap.clear();
             }
           }
