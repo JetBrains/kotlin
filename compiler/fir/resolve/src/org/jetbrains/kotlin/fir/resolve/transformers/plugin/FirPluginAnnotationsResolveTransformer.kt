@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
+import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.FqName
 
@@ -32,7 +32,7 @@ class FirPluginAnnotationsResolveTransformer(
     private val annotationTransformer = FirAnnotationResolveTransformer(session, scopeSession)
     private val importTransformer = FirPartialImportResolveTransformer(session)
 
-    val extensionPointService = session.oldExtensionsService
+    val extensionService = session.extensionService
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         throw IllegalStateException("Should not be here")
@@ -40,13 +40,12 @@ class FirPluginAnnotationsResolveTransformer(
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
-        if (!extensionPointService.hasExtensions) return file.compose()
+        if (!extensionService.hasExtensions) return file.compose()
         val registeredPluginAnnotations = file.session.registeredPluginAnnotations
         file.replaceResolvePhase(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS)
-        val newAnnotations = file.resolveAnnotations(extensionPointService.annotations, extensionPointService.metaAnnotations)
+        val newAnnotations = file.resolveAnnotations(registeredPluginAnnotations.annotations, registeredPluginAnnotations.metaAnnotations)
         if (!newAnnotations.isEmpty) {
             for (metaAnnotation in newAnnotations.keySet()) {
-                extensionPointService.registerUserDefinedAnnotation(metaAnnotation, newAnnotations[metaAnnotation])
                 registeredPluginAnnotations.registerUserDefinedAnnotation(metaAnnotation, newAnnotations[metaAnnotation])
             }
             val newAnnotationsFqns = newAnnotations.values().mapTo(mutableSetOf()) { it.symbol.classId.asSingleFqName() }
