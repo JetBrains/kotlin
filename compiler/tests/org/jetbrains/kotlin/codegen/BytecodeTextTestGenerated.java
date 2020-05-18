@@ -4483,6 +4483,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("unsignedIntCompare_before.kt")
+        public void testUnsignedIntCompare_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntCompare_before.kt");
+        }
+
         @TestMetadata("unsignedIntCompare_jvm18.kt")
         public void testUnsignedIntCompare_jvm18() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntCompare_jvm18.kt");
@@ -4496,6 +4501,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("unsignedIntRemainder_jvm18.kt")
         public void testUnsignedIntRemainder_jvm18() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntRemainder_jvm18.kt");
+        }
+
+        @TestMetadata("unsignedIntSmartCasts_jvm18.kt")
+        public void testUnsignedIntSmartCasts_jvm18() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/unsignedTypes/unsignedIntSmartCasts_jvm18.kt");
         }
 
         @TestMetadata("unsignedIntToString_jvm18.kt")

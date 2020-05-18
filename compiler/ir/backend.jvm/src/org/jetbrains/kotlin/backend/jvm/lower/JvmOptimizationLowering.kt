@@ -46,7 +46,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 dispatchReceiverParameter != null
 
 
-    private fun getOperandsIfCallToEqeqOrEquals(call: IrCall): Pair<IrExpression, IrExpression>? =
+    private fun getOperandsIfCallToEQEQOrEquals(call: IrCall): Pair<IrExpression, IrExpression>? =
         when {
             call.symbol == context.irBuiltIns.eqeqSymbol -> {
                 val left = call.getValueArgument(0)!!
@@ -103,7 +103,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     return (expression.dispatchReceiver as IrCall).dispatchReceiver!!
                 }
 
-                getOperandsIfCallToEqeqOrEquals(expression)?.let { (left, right) ->
+                getOperandsIfCallToEQEQOrEquals(expression)?.let { (left, right) ->
                     return when {
                         left.isNullConst() && right.isNullConst() ->
                             IrConstImpl.constTrue(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)

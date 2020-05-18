@@ -53,7 +53,8 @@ val jvmInlineClassPhase = makeIrFilePhase(
     name = "Inline Classes",
     description = "Lower inline classes",
     // forLoopsPhase may produce UInt and ULong which are inline classes.
-    prerequisite = setOf(forLoopsPhase)
+    // standard library replacements are done on the unmangled names for UInt and ULong classes.
+    prerequisite = setOf(forLoopsPhase, jvmStandardLibraryBuiltInsPhase)
 )
 
 /**

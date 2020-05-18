@@ -616,6 +616,52 @@ class JvmSymbols(
         }
     }
 
+    private val javaLangInteger: IrClassSymbol = createClass(FqName("java.lang.Integer")) { klass ->
+        klass.addFunction("compareUnsigned", irBuiltIns.intType, isStatic = true).apply {
+            addValueParameter("x", irBuiltIns.intType)
+            addValueParameter("y", irBuiltIns.intType)
+        }
+        klass.addFunction("divideUnsigned", irBuiltIns.intType, isStatic = true).apply {
+            addValueParameter("dividend", irBuiltIns.intType)
+            addValueParameter("divisor", irBuiltIns.intType)
+        }
+        klass.addFunction("remainderUnsigned", irBuiltIns.intType, isStatic = true).apply {
+            addValueParameter("dividend", irBuiltIns.intType)
+            addValueParameter("divisor", irBuiltIns.intType)
+        }
+        klass.addFunction("toUnsignedString", irBuiltIns.stringType, isStatic = true).apply {
+            addValueParameter("i", irBuiltIns.intType)
+        }
+    }
+
+    val compareUnsignedInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("compareUnsigned")
+    val divideUnsignedInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("divideUnsigned")
+    val remainderUnsignedInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("remainderUnsigned")
+    val toUnsignedStringInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("toUnsignedString")
+
+    private val javaLangLong: IrClassSymbol = createClass(FqName("java.lang.Long")) { klass ->
+        klass.addFunction("compareUnsigned", irBuiltIns.intType, isStatic = true).apply {
+            addValueParameter("x", irBuiltIns.longType)
+            addValueParameter("y", irBuiltIns.longType)
+        }
+        klass.addFunction("divideUnsigned", irBuiltIns.longType, isStatic = true).apply {
+            addValueParameter("dividend", irBuiltIns.longType)
+            addValueParameter("divisor", irBuiltIns.longType)
+        }
+        klass.addFunction("remainderUnsigned", irBuiltIns.longType, isStatic = true).apply {
+            addValueParameter("dividend", irBuiltIns.longType)
+            addValueParameter("divisor", irBuiltIns.longType)
+        }
+        klass.addFunction("toUnsignedString", irBuiltIns.stringType, isStatic = true).apply {
+            addValueParameter("i", irBuiltIns.longType)
+        }
+    }
+
+    val compareUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("compareUnsigned")
+    val divideUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("divideUnsigned")
+    val remainderUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("remainderUnsigned")
+    val toUnsignedStringLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("toUnsignedString")
+
     val systemArraycopy: IrSimpleFunctionSymbol = systemClass.functionByName("arraycopy")
 
     val signatureStringIntrinsic: IrSimpleFunctionSymbol =
