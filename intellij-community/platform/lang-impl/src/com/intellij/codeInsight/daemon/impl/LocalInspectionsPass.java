@@ -42,7 +42,6 @@ import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Interner;
 import com.intellij.util.containers.SmartHashSet;
-import com.intellij.util.containers.WeakInterner;
 import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import gnu.trove.THashMap;
@@ -606,7 +605,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
   }
 
 
-  private static final Interner<String> tooltips = new WeakInterner<>();
+  private static final Interner<String> tooltips = Interner.createWeakInterner();
 
   private static boolean showToolDescription(@NotNull LocalInspectionToolWrapper tool) {
     String staticDescription = tool.getStaticDescription();

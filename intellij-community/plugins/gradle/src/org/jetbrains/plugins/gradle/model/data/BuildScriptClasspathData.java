@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.model.data;
 
 import com.intellij.openapi.externalSystem.model.Key;
@@ -7,7 +7,6 @@ import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.project.AbstractExternalEntityData;
 import com.intellij.serialization.PropertyMapping;
 import com.intellij.util.containers.Interner;
-import com.intellij.util.containers.WeakInterner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +64,7 @@ public final class BuildScriptClasspathData extends AbstractExternalEntityData {
 
   public static final class ClasspathEntry {
 
-    private final static Interner<ClasspathEntry> ourEntryInterner = new WeakInterner<>();
+    private final static Interner<ClasspathEntry> ourEntryInterner = Interner.createWeakInterner();
 
     @NotNull
     private final Set<String> classesFile;
