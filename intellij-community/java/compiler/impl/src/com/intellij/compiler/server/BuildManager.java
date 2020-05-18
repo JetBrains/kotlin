@@ -56,6 +56,7 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.util.*;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
+import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.io.BaseOutputReader;
 import com.intellij.util.io.PathKt;
 import com.intellij.util.io.storage.HeavyProcessLatch;
@@ -1596,7 +1597,7 @@ public final class BuildManager implements Disposable {
         }
       });
       connection.subscribe(CompilerTopics.COMPILATION_STATUS, new CompilationStatusListener() {
-        private final Set<String> myRootsToRefresh = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
+        private final Set<String> myRootsToRefresh = CollectionFactory.createFilePathSet();
 
         @Override
         public void automakeCompilationFinished(int errors, int warnings, @NotNull CompileContext compileContext) {
@@ -1614,7 +1615,7 @@ public final class BuildManager implements Disposable {
           if (project.isDisposed()) {
             return;
           }
-          final Set<String> candidates = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
+          final Set<String> candidates = CollectionFactory.createFilePathSet();
           synchronized (myRootsToRefresh) {
             candidates.addAll(myRootsToRefresh);
             myRootsToRefresh.clear();
