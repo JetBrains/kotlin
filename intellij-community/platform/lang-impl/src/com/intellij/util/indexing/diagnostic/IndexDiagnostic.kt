@@ -7,7 +7,12 @@ typealias TimeNano = Long
 data class ProjectIndexingHistory(val projectName: String) {
   val times: IndexingTimes = IndexingTimes()
 
-  val providerStatistics: MutableList<FileProviderIndexStatistics> = arrayListOf()
+  val providerStatistics: MutableList<JsonFileProviderIndexStatistics> = arrayListOf()
+
+  fun addProviderStatistics(statistics: FileProviderIndexStatistics) {
+    // Convert to Json to release memory occupied by statistic values.
+    providerStatistics += statistics.convertToJson()
+  }
 
   data class IndexingTimes(
     var startIndexing: TimeMillis = 0,

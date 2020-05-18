@@ -59,8 +59,8 @@ fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics
   JsonFileProviderIndexStatistics(
     providerDebugName,
     totalTime.toMillis(),
-    (indexingStatistics.indexingTime.get() ?: MaxNTimeBucket(0, 0)).toTimeStats(),
-    (indexingStatistics.contentLoadingTime.get() ?: MaxNTimeBucket(0, 0)).toTimeStats(),
+    indexingStatistics.indexingTime.toTimeStats(),
+    indexingStatistics.contentLoadingTime.toTimeStats(),
     indexingStatistics.numberOfFilesPerFileType
       .map { JsonFileProviderIndexStatistics.FilesNumberPerFileType(it.key, it.value) }
       .sortedByDescending { it.filesNumber }
@@ -125,9 +125,7 @@ fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory {
   return JsonProjectIndexingHistory(
     projectName,
     times.convertToJson(),
-    providerStatistics
-      .map { it.convertToJson() }
-      .sortedByDescending { it.indexingTimePerFile.meanTime }
+    providerStatistics.sortedByDescending { it.indexingTimePerFile.meanTime }
   )
 }
 

@@ -2,33 +2,48 @@
 package com.intellij.util.indexing.diagnostic
 
 import com.intellij.openapi.fileTypes.FileType
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
-import java.util.concurrent.atomic.AtomicReference
 
 class IndexingJobStatistics {
-  private val timeBucketSize = 1024
+  private val timeBucketSize = 128
 
-  val timesPerIndexer: ConcurrentMap<String /* ID.name() */, MaxNTimeBucket> = ConcurrentHashMap()
-  val timesPerFileType: ConcurrentMap<String /* File type name */, MaxNTimeBucket> = ConcurrentHashMap()
-  val numberOfFilesPerFileType: ConcurrentMap<String /* File type name */, Int> = ConcurrentHashMap()
-  val contentLoadingTime = AtomicReference<MaxNTimeBucket>()
-  val indexingTime = AtomicReference<MaxNTimeBucket>()
+  val timesPerIndexer: Map<String /* ID.name() */, MaxNTimeBucket>
+    get() = _timesPerIndexer
 
+  val timesPerFileType: Map<String /* File type name */, MaxNTimeBucket>
+    get() = _timesPerFileType
+
+  val numberOfFilesPerFileType: Map<String /* File type name */, Int>
+    get() = _numberOfFilesPerFileType
+
+  val contentLoadingTime: MaxNTimeBucket
+    get() = _contentLoadingTime
+
+  val indexingTime: MaxNTimeBucket
+    get() = _indexingTime
+
+  private val _timesPerIndexer = hashMapOf<String, MaxNTimeBucket>()
+  private val _timesPerFileType = hashMapOf<String, MaxNTimeBucket>()
+  private val _numberOfFilesPerFileType = hashMapOf<String, Int>()
+  private val _contentLoadingTime = MaxNTimeBucket(timeBucketSize, 0)
+  private val _indexingTime = MaxNTimeBucket(timeBucketSize, 0)
+
+  @Synchronized
   fun addFileStatistics(fileStatistics: FileIndexingStatistics, fileType: FileType) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
-      timesPerIndexer.computeIfAbsent(indexId.name) { MaxNTimeBucket(timeBucketSize, time) }.addTime(time)
+      _timesPerIndexer.getOrPut(indexId.name) { MaxNTimeBucket(timeBucketSize, time) }.addTime(time)
     }
     val fileTypeName = fileType.name
-    numberOfFilesPerFileType.compute(fileTypeName) { _, currentNumber -> (currentNumber ?: 0) + 1 }
-    timesPerFileType.computeIfAbsent(fileTypeName) { MaxNTimeBucket(timeBucketSize, fileStatistics.totalTime) }.addTime(fileStatistics.totalTime)
+    _numberOfFilesPerFileType.compute(fileTypeName) { _, currentNumber -> (currentNumber ?: 0) + 1 }
+    _timesPerFileType.computeIfAbsent(fileTypeName) { MaxNTimeBucket(timeBucketSize, fileStatistics.totalTime) }.addTime(fileStatistics.totalTime)
   }
 
+  @Synchronized
   fun addIndexingTime(nanoTime: TimeNano) {
-    indexingTime.updateAndGet { bucket -> bucket ?: MaxNTimeBucket(timeBucketSize, nanoTime) }.addTime(nanoTime)
+    _indexingTime.addTime(nanoTime)
   }
 
+  @Synchronized
   fun addContentLoadingTime(nanoTime: TimeNano) {
-    contentLoadingTime.updateAndGet { bucket -> bucket ?: MaxNTimeBucket(timeBucketSize, nanoTime) }.addTime(nanoTime)
+    _contentLoadingTime.addTime(nanoTime)
   }
 }
