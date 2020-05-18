@@ -1,18 +1,14 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.contentQueue;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -40,7 +36,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 @ApiStatus.Internal
 public final class IndexUpdateRunner {
@@ -123,35 +118,27 @@ public final class IndexUpdateRunner {
 
   //Does not throw PCE.
   private void indexFilesOfJobsOneByOneWhileUserIsInactive() {
-    Disposable disposable = Disposer.newDisposable();
-    ProgressIndicator writeActionIndicator = ProgressIndicatorUtils.forceWriteActionPriority(new EmptyProgressIndicator(), disposable);
-    try {
-      while (!ourIndexingJobs.isEmpty()) {
-        for (IndexingJob job : ourIndexingJobs) {
-          if (job.isOutdated()) {
-            ourIndexingJobs.remove(job);
-            return;
-          }
-          try {
-            indexOneFileOfJobIfUserIsInactive(job, writeActionIndicator);
-          }
-          catch (ProcessCanceledException e) {
-            return;
-          }
-          if (job.isOutdated()) {
-            ourIndexingJobs.remove(job);
-            return;
-          }
+    while (!ourIndexingJobs.isEmpty()) {
+      for (IndexingJob job : ourIndexingJobs) {
+        if (job.isOutdated()) {
+          ourIndexingJobs.remove(job);
+          return;
+        }
+        try {
+          indexOneFileOfJobIfUserIsInactive(job);
+        }
+        catch (ProcessCanceledException e) {
+          return;
+        }
+        if (job.isOutdated()) {
+          ourIndexingJobs.remove(job);
+          return;
         }
       }
     }
-    finally {
-      Disposer.dispose(disposable);
-    }
   }
 
-  private void indexOneFileOfJobIfUserIsInactive(@NotNull IndexingJob indexingJob,
-                                                 @NotNull ProgressIndicator writeActionIndicator) throws ProcessCanceledException {
+  private void indexOneFileOfJobIfUserIsInactive(@NotNull IndexingJob indexingJob) throws ProcessCanceledException {
     long contentLoadingStartTime = System.nanoTime();
     CachedFileContentToken token;
     try {
@@ -180,7 +167,7 @@ public final class IndexUpdateRunner {
       CachedFileContent fileContent = token.getContent();
       long indexingStartTime = System.nanoTime();
       try {
-        indexOneFileOfJobIfUserIsInactive(indexingJob, writeActionIndicator, fileContent);
+        indexOneFileOfJobIfUserIsInactive(indexingJob, fileContent);
       } finally {
         indexingJob.myStatistics.addIndexingTime(System.nanoTime() - indexingStartTime);
       }
@@ -242,32 +229,21 @@ public final class IndexUpdateRunner {
   }
 
   private void indexOneFileOfJobIfUserIsInactive(@NotNull IndexingJob indexingJob,
-                                                 @NotNull ProgressIndicator writeActionIndicator,
                                                  @NotNull CachedFileContent fileContent) throws ProcessCanceledException {
     Project project = indexingJob.myProject;
-    if (project.isDisposed() || writeActionIndicator.isCanceled() || indexingJob.myIndicator.isCanceled()) {
+    if (project.isDisposed() || indexingJob.myIndicator.isCanceled()) {
       throw new ProcessCanceledException();
     }
 
     indexingJob.setLocationBeingIndexed(fileContent.getVirtualFile());
     if (!fileContent.isDirectory() && !Boolean.TRUE.equals(fileContent.getUserData(FAILED_TO_INDEX))) {
       try {
-        AtomicReference<FileIndexingStatistics> fileStatistics = new AtomicReference<>();
-        Runnable readAction = () -> {
-          if (project.isDisposed() || writeActionIndicator.isCanceled()) {
-            throw new ProcessCanceledException();
-          }
-          FileIndexingStatistics statistics = ProgressManager.getInstance().runProcess(
-            () -> myFileBasedIndex.indexFileContent(project, fileContent), writeActionIndicator
-          );
-          fileStatistics.set(statistics);
-        };
-        if (!ApplicationManagerEx.getApplicationEx().tryRunReadAction(readAction)) {
-          throw new ProcessCanceledException();
-        }
-        if (fileStatistics.get() != null) {
-          indexingJob.myStatistics.addFileStatistics(fileStatistics.get(), getFileType(fileContent));
-        }
+        FileIndexingStatistics fileStatistics = ReadAction
+          .nonBlocking(() -> myFileBasedIndex.indexFileContent(project, fileContent))
+          .expireWith(project)
+          .wrapProgress(indexingJob.myIndicator)
+          .executeSynchronously();
+        indexingJob.myStatistics.addFileStatistics(fileStatistics, getFileType(fileContent));
       }
       catch (ProcessCanceledException e) {
         throw e;
