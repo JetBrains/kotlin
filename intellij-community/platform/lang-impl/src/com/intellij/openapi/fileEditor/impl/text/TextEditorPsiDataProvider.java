@@ -21,6 +21,7 @@ import com.intellij.ide.IdeView;
 import com.intellij.ide.util.EditorHelper;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.Language;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
@@ -55,12 +56,13 @@ public class TextEditorPsiDataProvider implements EditorDataProvider {
 
     Project project = e.getProject();
     if (dataId.equals(injectedId(EDITOR.getName()))) {
-      if (project == null || PsiDocumentManager.getInstance(project).isUncommited(e.getDocument())) {
-        return e;
-      }
-      else {
+      if (project != null &&
+          PsiDocumentManager.getInstance(project).isCommitted(e.getDocument()) &&
+          InjectedLanguageManager.getInstance(project).mightHaveInjectedFragmentAtOffset(e.getDocument(), caret.getOffset())) {
+        //noinspection deprecation
         return InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(e, caret, getPsiFile(e, file));
       }
+      return e;
     }
     if (HOST_EDITOR.is(dataId)) {
       return e instanceof EditorWindow ? ((EditorWindow)e).getDelegate() : e;
