@@ -590,7 +590,7 @@ class ExpressionCodegen(
         val index = frameMap.getIndex(irSymbol)
         if (index >= 0)
             return index
-        val dump = if (irSymbol.isBound) irSymbol.owner.dump() else irSymbol.descriptor.toString()
+        val dump = if (irSymbol.isBound) irSymbol.owner.dump() else "??? unbound symbol ???"
         throw AssertionError("Non-mapped local declaration: $dump\n in ${irFunction.dump()}")
     }
 

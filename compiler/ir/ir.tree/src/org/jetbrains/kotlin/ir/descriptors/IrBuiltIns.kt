@@ -292,10 +292,8 @@ class IrBuiltIns(
     private fun TypeConstructor.makeNullableType() = KotlinTypeFactory.simpleType(Annotations.EMPTY, this, listOf(), true)
 
     val dataClassArrayMemberHashCodeSymbol = defineOperator("dataClassArrayMemberHashCode", intType, listOf(anyType))
-    val dataClassArrayMemberHashCode = dataClassArrayMemberHashCodeSymbol.descriptor
 
     val dataClassArrayMemberToStringSymbol = defineOperator("dataClassArrayMemberToString", stringType, listOf(anyNType))
-    val dataClassArrayMemberToString = dataClassArrayMemberToStringSymbol.descriptor
 
     fun function(n: Int): IrClassSymbol = functionFactory.functionN(n).symbol
     fun suspendFunction(n: Int): IrClassSymbol = functionFactory.suspendFunctionN(n).symbol

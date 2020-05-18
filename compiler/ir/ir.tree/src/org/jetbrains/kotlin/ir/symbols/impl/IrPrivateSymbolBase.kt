@@ -48,13 +48,13 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
 
     private var _owner: B? = null
     override val owner: B
-        get() = _owner ?: throw IllegalStateException("Symbol for $descriptor is unbound")
+        get() = _owner ?: throw IllegalStateException("Symbol is unbound")
 
     override fun bind(owner: B) {
         if (_owner == null) {
             _owner = owner
         } else {
-            throw IllegalStateException("${javaClass.simpleName} for $descriptor is already bound")
+            throw IllegalStateException("${javaClass.simpleName} is already bound")
         }
     }
 

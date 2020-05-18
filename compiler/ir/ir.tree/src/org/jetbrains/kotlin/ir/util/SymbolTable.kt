@@ -165,7 +165,7 @@ open class SymbolTable(
             if (s == null) {
                 val new = orElse()
                 assert(unboundSymbols.add(new)) {
-                    "Symbol for ${new.descriptor} was already referenced"
+                    "Symbol for $new was already referenced"
                 }
                 set(d0, new)
                 return new

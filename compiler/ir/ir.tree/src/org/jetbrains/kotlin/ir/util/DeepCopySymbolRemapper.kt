@@ -157,7 +157,7 @@ open class DeepCopySymbolRemapper(
 
     private fun <T : IrSymbol> Map<T, T>.getDeclared(symbol: T) =
         getOrElse(symbol) {
-            throw IllegalArgumentException("Non-remapped symbol $symbol ${symbol.descriptor}")
+            throw IllegalArgumentException("Non-remapped symbol $symbol")
         }
 
     private fun <T : IrSymbol> Map<T, T>.getReferenced(symbol: T) =
@@ -196,14 +196,14 @@ open class DeepCopySymbolRemapper(
         when (symbol) {
             is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)
             is IrVariableSymbol -> variables.getReferenced(symbol)
-            else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
+            else -> throw IllegalArgumentException("Unexpected symbol $symbol")
         }
 
     override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol =
         when (symbol) {
             is IrSimpleFunctionSymbol -> functions.getReferenced(symbol)
             is IrConstructorSymbol -> constructors.getReferenced(symbol)
-            else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
+            else -> throw IllegalArgumentException("Unexpected symbol $symbol")
         }
 
     override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol =
@@ -213,7 +213,7 @@ open class DeepCopySymbolRemapper(
         when (symbol) {
             is IrClassSymbol -> classes.getReferenced(symbol)
             is IrTypeParameterSymbol -> typeParameters.getReferenced(symbol)
-            else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
+            else -> throw IllegalArgumentException("Unexpected symbol $symbol")
         }
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getReferenced(symbol)

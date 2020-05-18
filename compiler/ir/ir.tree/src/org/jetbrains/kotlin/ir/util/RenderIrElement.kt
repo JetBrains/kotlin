@@ -739,7 +739,7 @@ internal fun IrTypeAliasSymbol.renderTypeAliasFqn(): String =
     if (isBound)
         StringBuilder().also { owner.renderDeclarationFqn(it) }.toString()
     else
-        "<unbound $this: ${this.descriptor}>"
+        "<unbound $this>"
 
 internal fun IrClass.renderClassFqn(): String =
     StringBuilder().also { renderDeclarationFqn(it) }.toString()

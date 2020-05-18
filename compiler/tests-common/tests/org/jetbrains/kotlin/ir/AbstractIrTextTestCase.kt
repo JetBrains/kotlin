@@ -283,7 +283,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
         private fun IrSymbol.checkBinding(kind: String, irElement: IrElement) {
             if (!isBound) {
-                error("${javaClass.simpleName} $descriptor is unbound @$kind ${irElement.render()}")
+                error("${javaClass.simpleName} descriptor is unbound @$kind ${irElement.render()}")
             } else {
                 val irDeclaration = owner as? IrDeclaration
                 if (irDeclaration != null) {
@@ -297,7 +297,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
             val otherSymbol = symbolForDeclaration.getOrPut(owner) { this }
             if (this != otherSymbol) {
-                error("Multiple symbols for $descriptor @$kind ${irElement.render()}")
+                error("Multiple symbols for descriptor of @$kind ${irElement.render()}")
             }
         }
 

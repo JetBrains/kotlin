@@ -32,7 +32,7 @@ class ExternalDependenciesGenerator(
     fun generateUnboundSymbolsAsDependencies() {
         if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
             require(symbolTable.unboundTypeParameters.isEmpty()) {
-                "Unbound type parameters are forbidden: ${symbolTable.unboundTypeParameters.map { it.descriptor }}"
+                "Unbound type parameters are forbidden: ${symbolTable.unboundTypeParameters}"
             }
         }
         // There should be at most one DeclarationStubGenerator (none in closed world?)

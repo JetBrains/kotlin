@@ -250,7 +250,7 @@ open class DefaultParameterInjector(
 
         val (symbol, params) = parametersForCall(expression) ?: return expression
         for (i in 0 until expression.typeArgumentsCount) {
-            log { "${symbol.descriptor}[$i]: ${expression.getTypeArgument(i)}" }
+            log { "$symbol[$i]: ${expression.getTypeArgument(i)}" }
         }
         symbol.owner.typeParameters.forEach { log { "${symbol.owner}[${it.index}] : $it" } }
 
