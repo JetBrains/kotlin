@@ -127,6 +127,9 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     var args: MutableList<String> = mutableListOf()
 
     @Input
+    var nodeArgs: MutableList<String> = mutableListOf()
+
+    @Input
     var sourceMaps: Boolean = true
 
     @Nested
@@ -149,6 +152,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         execHandleFactory,
         bin,
         args,
+        nodeArgs,
         KotlinWebpackConfig(
             mode = mode,
             entry = entry,
