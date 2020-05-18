@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.quickfix.ReplaceSelectorOfQualifiedExpressionFix
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -15,6 +17,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -68,6 +72,11 @@ class UselessCallOnCollectionInspection : AbstractUselessCallInspection() {
             )
             holder.registerProblem(descriptor)
         } else {
+            val fix = if (resolvedCall.resultingDescriptor.returnType.isList() && !receiverType.isList()) {
+                ReplaceSelectorOfQualifiedExpressionFix("toList()")
+            } else {
+                RemoveUselessCallFix()
+            }
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
                 TextRange(
@@ -77,9 +86,11 @@ class UselessCallOnCollectionInspection : AbstractUselessCallInspection() {
                 KotlinBundle.message("useless.call.on.collection.type"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 isOnTheFly,
-                RemoveUselessCallFix()
+                fix
             )
             holder.registerProblem(descriptor)
         }
     }
+
+    private fun KotlinType?.isList() = this?.constructor?.declarationDescriptor?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.list
 }
