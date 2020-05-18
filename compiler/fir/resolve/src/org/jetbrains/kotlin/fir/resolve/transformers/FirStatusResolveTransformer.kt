@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.extensions.oldExtensionsService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -78,14 +77,12 @@ class FirStatusResolveTransformer(
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: FirDeclarationStatus?): CompositeTransformResult<FirDeclaration> {
         typeAlias.typeParameters.forEach { transformDeclaration(it, data) }
-        val status = prepareStatus(typeAlias, typeAlias.status)
-        typeAlias.transformStatus(this, typeAlias.resolveStatus(status, containingClass, isLocal = false))
+        typeAlias.transformStatus(this, typeAlias.resolveStatus(typeAlias.status, containingClass, isLocal = false))
         return transformDeclaration(typeAlias, data)
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: FirDeclarationStatus?): CompositeTransformResult<FirStatement> {
-        val status = prepareStatus(regularClass, regularClass.status)
-        regularClass.transformStatus(this, regularClass.resolveStatus(status, containingClass, isLocal = false))
+        regularClass.transformStatus(this, regularClass.resolveStatus(regularClass.status, containingClass, isLocal = false))
         @Suppress("UNCHECKED_CAST")
         return storeClass(regularClass) {
             regularClass.typeParameters.forEach { it.transformSingle(this, data) }
@@ -107,8 +104,7 @@ class FirStatusResolveTransformer(
         propertyAccessor: FirPropertyAccessor,
         data: FirDeclarationStatus?
     ): CompositeTransformResult<FirStatement> {
-        val status = prepareStatus(propertyAccessor, propertyAccessor.status)
-        propertyAccessor.transformStatus(this, propertyAccessor.resolveStatus(status, containingClass, isLocal = false))
+        propertyAccessor.transformStatus(this, propertyAccessor.resolveStatus(propertyAccessor.status, containingClass, isLocal = false))
         @Suppress("UNCHECKED_CAST")
         return transformDeclaration(propertyAccessor, data) as CompositeTransformResult<FirStatement>
     }
@@ -117,8 +113,7 @@ class FirStatusResolveTransformer(
         constructor: FirConstructor,
         data: FirDeclarationStatus?
     ): CompositeTransformResult<FirDeclaration> {
-        val status = prepareStatus(constructor, constructor.status)
-        constructor.transformStatus(this, constructor.resolveStatus(status, containingClass, isLocal = false))
+        constructor.transformStatus(this, constructor.resolveStatus(constructor.status, containingClass, isLocal = false))
         return transformDeclaration(constructor, data)
     }
 
@@ -126,8 +121,7 @@ class FirStatusResolveTransformer(
         simpleFunction: FirSimpleFunction,
         data: FirDeclarationStatus?
     ): CompositeTransformResult<FirDeclaration> {
-        val status = prepareStatus(simpleFunction, simpleFunction.status)
-        simpleFunction.transformStatus(this, simpleFunction.resolveStatus(status, containingClass, isLocal = false))
+        simpleFunction.transformStatus(this, simpleFunction.resolveStatus(simpleFunction.status, containingClass, isLocal = false))
         return transformDeclaration(simpleFunction, data)
     }
 
@@ -135,8 +129,7 @@ class FirStatusResolveTransformer(
         property: FirProperty,
         data: FirDeclarationStatus?
     ): CompositeTransformResult<FirDeclaration> {
-        val status = prepareStatus(property, property.status)
-        property.transformStatus(this, property.resolveStatus(status, containingClass, isLocal = false))
+        property.transformStatus(this, property.resolveStatus(property.status, containingClass, isLocal = false))
         return transformDeclaration(property, data)
     }
 
@@ -161,14 +154,6 @@ class FirStatusResolveTransformer(
 
     override fun transformBlock(block: FirBlock, data: FirDeclarationStatus?): CompositeTransformResult<FirStatement> {
         return block.compose()
-    }
-
-    private fun <D> prepareStatus(declaration: D, status: FirDeclarationStatus): FirDeclarationStatus where D : FirDeclaration, D : FirAnnotationContainer {
-        var result = status
-        session.oldExtensionsService.statusTransformerExtensions.forDeclaration(declaration, classes).forEach {
-            result = it.transformStatus(declaration, status)
-        }
-        return result
     }
 }
 
