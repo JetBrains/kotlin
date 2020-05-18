@@ -137,6 +137,7 @@ import org.jetbrains.kotlin.nj2k.inference.mutability.AbstractMutabilityInferenc
 import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInferenceTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
+import org.jetbrains.kotlin.idea.highlighter.AbstractFirHighlightingTest
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -854,6 +855,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
     testGroup("fir", testDataPath = "../idea/testData") {
         testClass<AbstractFirMultiModuleResolveTest> {
             model("fir/multiModule", isRecursive = false, pattern = DIRECTORY)
+        }
+
+        testClass<AbstractFirHighlightingTest> {
+            model("highlighter")
         }
 
         testClass<AbstractFirLazyResolveTest> {
