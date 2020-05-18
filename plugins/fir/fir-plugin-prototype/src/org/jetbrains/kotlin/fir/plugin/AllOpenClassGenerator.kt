@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 import org.jetbrains.kotlin.fir.extensions.FirClassGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.has
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -42,13 +44,7 @@ class AllOpenClassGenerator(session: FirSession) : FirClassGenerationExtension(s
         return listOf(GeneratedClass(klass, containingFile))
     }
 
-    override val directlyApplicableAnnotations: Set<AnnotationFqn> = setOf(FqName("org.jetbrains.kotlin.fir.plugin.WithClass"))
-
-    override val childrenApplicableAnnotations: Set<AnnotationFqn>
-        get() = emptySet()
-
-    override val metaAnnotations: Map<AnnotationFqn, MetaAnnotationMode>
-        get() = emptyMap()
+    override val predicate: DeclarationPredicate = has(FqName("org.jetbrains.kotlin.fir.plugin.WithClass"))
 
     override val key: FirPluginKey
         get() = AllOpenPluginKey

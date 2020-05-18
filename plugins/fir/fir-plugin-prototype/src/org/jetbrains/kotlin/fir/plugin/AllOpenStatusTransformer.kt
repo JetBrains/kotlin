@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
+import org.jetbrains.kotlin.fir.extensions.predicate.*
 import org.jetbrains.kotlin.fir.extensions.transform
 import org.jetbrains.kotlin.name.FqName
 
@@ -25,17 +26,7 @@ class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtens
         return status.transform(modality = Modality.OPEN)
     }
 
-    override val mode: Mode
-        get() = Mode.ANNOTATED_ELEMENT
-
-    override val directlyApplicableAnnotations: Set<AnnotationFqn>
-        get() = setOf(ALL_OPEN)
-
-    override val childrenApplicableAnnotations: Set<AnnotationFqn>
-        get() = setOf(ALL_OPEN)
-
-    override val metaAnnotations: Map<AnnotationFqn, MetaAnnotationMode>
-        get() = mapOf(ALL_OPEN to MetaAnnotationMode.ANNOTATED_AND_CHILDREN)
+    override val predicate: DeclarationPredicate = hasOrUnder(ALL_OPEN) or metaHasOrUnder(ALL_OPEN)
 
     override val key: FirPluginKey
         get() = AllOpenPluginKey

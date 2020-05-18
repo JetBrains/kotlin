@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.AbstractFirDiagnosticsTest
-import org.jetbrains.kotlin.fir.extensions.FirOldExtensionsService
+import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import java.io.File
 
 abstract class AbstractFirAllOpenDiagnosticTest : AbstractFirDiagnosticsTest() {
-    override fun registerFirExtensions(service: FirOldExtensionsService) {
+    override fun registerFirExtensions(service: FirExtensionService) {
         service.registerExtensions(FirAllOpenComponentRegistrar().configure())
     }
 
