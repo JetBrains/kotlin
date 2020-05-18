@@ -18,6 +18,7 @@ import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
+import java.util.*
 import javax.inject.Inject
 
 
@@ -147,7 +148,8 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         const val COMPILE_CONFIGURATION = "publishedCompile"
         const val RUNTIME_CONFIGURATION = "publishedRuntime"
 
+        @UseExperimental(ExperimentalStdlibApi::class)
         fun humanReadableName(project: Project) =
-            project.name.split("-").joinToString(separator = " ") { it.capitalize() }
+            project.name.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) }
     }
 }
