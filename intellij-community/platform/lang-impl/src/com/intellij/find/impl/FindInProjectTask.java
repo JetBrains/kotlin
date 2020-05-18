@@ -361,7 +361,10 @@ class FindInProjectTask {
     }
 
     for (FindInProjectSearchEngine.FindInProjectSearcher searcher : mySearchers) {
-      resultFiles.addAll(searcher.searchForOccurrences());
+      Collection<VirtualFile> virtualFiles = searcher.searchForOccurrences();
+      for (VirtualFile file : virtualFiles) {
+        if (myFileMask.value(file)) resultFiles.add(file);
+      }
     }
 
     return resultFiles;
