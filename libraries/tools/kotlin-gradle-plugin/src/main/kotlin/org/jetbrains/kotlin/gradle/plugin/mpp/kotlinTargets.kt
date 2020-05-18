@@ -113,8 +113,14 @@ abstract class AbstractKotlinTarget(
                         ?: project.configurations.create(kotlinUsageContext.name).also { configuration ->
                             configuration.isCanBeConsumed = false
                             configuration.isCanBeResolved = false
-                            configuration.dependencies.addAll(kotlinUsageContext.dependencies)
-                            configuration.dependencyConstraints.addAll(kotlinUsageContext.dependencyConstraints)
+                            // Lazily realize configuration.
+                            val dependencies = project.objects.listProperty(Dependency::class.java)
+                                .value(project.provider { configuration.incoming.dependencies })
+                            val dependencyConstraints = project.objects.listProperty(DependencyConstraint::class.java)
+                                .value(project.provider { configuration.incoming.dependencyConstraints })
+
+                            configuration.dependencies.addAllLater(dependencies)
+                            configuration.dependencyConstraints.addAllLater(dependencyConstraints)
                             configuration.artifacts.addAll(kotlinUsageContext.artifacts)
 
                             val attributes = kotlinUsageContext.attributes
