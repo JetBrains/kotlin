@@ -20,6 +20,7 @@ import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.hasDirectAnnotation
+import androidx.compose.plugins.kotlin.hasUntrackedAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
@@ -556,6 +557,9 @@ class ComposableFunctionBodyTransformer(
         if (!scope.isComposable) return super.visitFunction(declaration)
         val restartable = declaration.shouldBeRestartable()
         val isLambda = declaration.isLambda()
+        // if the lambda is untracked, we generate the body like a non-restartable function since
+        // the group/update scope is not going to be handled by the RestartableFunction class
+        val isTracked = !declaration.descriptor.hasUntrackedAnnotation()
 
         if (declaration.body == null) return declaration
 
@@ -565,12 +569,12 @@ class ComposableFunctionBodyTransformer(
         // restartable functions get extra logic and different types of groups from
         // non-restartable functions, and lambdas get no groups at all.
         return when {
-            isLambda -> visitComposableLambda(
+            isLambda && isTracked -> visitComposableLambda(
                 declaration,
                 scope,
                 changedParam
             )
-            restartable -> visitRestartableComposableFunction(
+            restartable && isTracked -> visitRestartableComposableFunction(
                 declaration,
                 scope,
                 changedParam,
@@ -855,8 +859,8 @@ class ComposableFunctionBodyTransformer(
         val realParams = declaration.valueParameters.take(scope.realValueParamCount)
 
         val thisParams = listOfNotNull(
-            declaration.dispatchReceiverParameter,
-            declaration.extensionReceiverParameter
+            declaration.extensionReceiverParameter,
+            declaration.dispatchReceiverParameter
         )
 
         val realParamsIncludingThis = realParams + thisParams
@@ -933,10 +937,10 @@ class ComposableFunctionBodyTransformer(
 
         var slotIndex = scope.realValueParamCount
 
-        if (declaration.dispatchReceiverParameter != null) {
+        if (declaration.extensionReceiverParameter != null) {
             canSkipExecution = buildStatementsForSkippingThisParameter(
-                declaration.dispatchReceiverParameter!!,
-                scope.dispatchReceiverUsed,
+                declaration.extensionReceiverParameter!!,
+                scope.extensionReceiverUsed,
                 canSkipExecution,
                 skipPreamble,
                 changedParam,
@@ -945,10 +949,10 @@ class ComposableFunctionBodyTransformer(
             )
         }
 
-        if (declaration.extensionReceiverParameter != null) {
+        if (declaration.dispatchReceiverParameter != null) {
             canSkipExecution = buildStatementsForSkippingThisParameter(
-                declaration.extensionReceiverParameter!!,
-                scope.extensionReceiverUsed,
+                declaration.dispatchReceiverParameter!!,
+                scope.dispatchReceiverUsed,
                 canSkipExecution,
                 skipPreamble,
                 changedParam,
@@ -1049,6 +1053,16 @@ class ComposableFunctionBodyTransformer(
                     )
                 ))
                 true
+            }
+            !isUsed && canSkipExecution && dirty is IrChangedBitMaskVariable -> {
+                // if the param isn't used we can safely ignore it, but if we can skip the
+                // execution of the function, then we need to make sure that we are only
+                // considering the not-ignored parameters. to do this, we set the changed slot bits
+                // to Static
+                preamble.statements.add(dirty.irOrSetBitsAtSlot(
+                    index,
+                    irConst(ParamState.Static.bitsForSlot(index))
+                ))
             }
             // nothing changes
             else -> canSkipExecution
@@ -1486,8 +1500,8 @@ class ComposableFunctionBodyTransformer(
 
                     defaultParam?.putAsValueArgumentIn(this, defaultIndex)
 
-                    dispatchReceiver = outerReceiver?.let { irGet(it) }
                     extensionReceiver = function.extensionReceiverParameter?.let { irGet(it) }
+                    dispatchReceiver = outerReceiver?.let { irGet(it) }
                     function.typeParameters.forEachIndexed { index, parameter ->
                         putTypeArgument(index, parameter.defaultType)
                     }
@@ -2209,13 +2223,13 @@ class ComposableFunctionBodyTransformer(
             paramMeta.add(meta)
         }
 
-        val dispatchMeta = expression.dispatchReceiver?.let { paramMetaOf(it, isProvided = true) }
         val extensionMeta = expression.extensionReceiver?.let { paramMetaOf(it, isProvided = true) }
+        val dispatchMeta = expression.dispatchReceiver?.let { paramMetaOf(it, isProvided = true) }
 
         val changedParams = buildChangedParamsForCall(
             paramMeta,
-            dispatchMeta,
-            extensionMeta
+            extensionMeta,
+            dispatchMeta
         )
 
         expression.putValueArgument(
@@ -2371,10 +2385,10 @@ class ComposableFunctionBodyTransformer(
 
     private fun buildChangedParamsForCall(
         valueParams: List<ParamMeta>,
-        dispatchParam: ParamMeta?,
-        extensionParam: ParamMeta?
+        extensionParam: ParamMeta?,
+        dispatchParam: ParamMeta?
     ): List<IrExpression> {
-        val thisParams = listOfNotNull(dispatchParam, extensionParam)
+        val thisParams = listOfNotNull(extensionParam, dispatchParam)
         val allParams = valueParams + thisParams
         // passing in 0 for thisParams since they should be included in the params list
         val changedCount = changedParamCount(valueParams.size, thisParams.size)
@@ -2722,11 +2736,15 @@ class ComposableFunctionBodyTransformer(
                 }
                 slotCount = realValueParamCount
                 if (function.extensionReceiverParameter != null) slotCount++
-                if (function.dispatchReceiverParameter != null) slotCount++
+                if (function.dispatchReceiverParameter != null) {
+                    slotCount++
+                } else if (function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
+                    slotCount++
+                }
                 changedParameter = if (composerParameter != null)
                     transformer.IrChangedBitMaskValueImpl(
                         changedParams,
-                        realValueParamCount
+                        slotCount
                     )
                 else
                     null

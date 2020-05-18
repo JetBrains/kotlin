@@ -252,7 +252,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
             fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
               %composer.startReplaceableGroup(%key)
               Example({ %composer: Composer<*>?, %key: Int, %changed: Int ->
-                if (%changed !== 0 || !%composer.skipping) {
+                if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
                 } else {
                   %composer.skipToGroupEnd()
