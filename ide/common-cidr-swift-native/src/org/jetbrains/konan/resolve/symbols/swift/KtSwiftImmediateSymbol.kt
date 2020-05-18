@@ -70,7 +70,7 @@ abstract class KtSwiftImmediateSymbol : KtImmediateSymbol, SwiftSymbol, SwiftCon
             swiftAttributes.hasDeclarationSpecifier(declarationSpecifier)
 
     override val swiftAttributes: SwiftAttributesInfo
-        get() = publicSwiftAttributes //todo???
+        get() = openSwiftAttributes //todo???
 
     override fun getIcon(project: Project): Icon? = getIcon(project, 0)
 

@@ -69,7 +69,7 @@ abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLe
         calculateFullIcon(this, symbolElement, project, 0)
 
     override val swiftAttributes: SwiftAttributesInfo
-        get() = publicSwiftAttributes //todo???
+        get() = openSwiftAttributes //todo???
 
     override val shortObjcName: String?
         get() = objcName //todo???

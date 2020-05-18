@@ -124,4 +124,7 @@ private fun List<String>.extractSwiftName(): String? =
         ?.let { attr -> attr.substring(12, attr.indexOfOrNull('(', 12) ?: attr.length - 2) }  //swift_name("...")
 
 internal val publicSwiftAttributes: SwiftAttributesInfo =
-    SwiftAttributesInfoImpl.create(emptyList(), EnumSet.of(SwiftDeclarationSpecifiers.PUBLIC))
+    SwiftAttributesInfoImpl.create(EnumSet.of(SwiftDeclarationSpecifiers.PUBLIC))
+
+internal val openSwiftAttributes: SwiftAttributesInfo =
+    SwiftAttributesInfoImpl.create(EnumSet.of(SwiftDeclarationSpecifiers.OPEN))
