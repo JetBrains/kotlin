@@ -5,14 +5,10 @@ plugins {
 
 dependencies {
     compileOnly(project(":compiler:psi"))
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":core:type-system"))
     compileOnly(project(":idea:idea-frontend-independent"))
-    implementation(project(":idea:idea-frontend-api"))
-    compileOnly(project(":idea:idea-core"))
-    compileOnly(project(":compiler:fir:fir2ir"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:checkers"))
-    compileOnly(project(":compiler:fir:java"))
-    compileOnly(project(":compiler:fir:jvm"))
+    compileOnly(project(":compiler:psi"))
     compileOnly(intellijCoreDep())
     compileOnly(intellijDep())
 

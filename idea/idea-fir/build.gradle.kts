@@ -25,6 +25,7 @@ dependencies {
         testRuntime(intellijPluginDep("java"))
     }
 
+    testCompile(projectTests(":idea:idea-test-framework"))
     testRuntime(intellijRuntimeAnnotations())
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":kotlin-reflect"))
@@ -48,7 +49,6 @@ dependencies {
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":plugins:lint")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))
-    testRuntime(project(":nj2k:nj2k-services")) { isTransitive = false }
 }
 
 sourceSets {

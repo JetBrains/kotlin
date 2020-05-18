@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -923,9 +923,13 @@ fun main(args: Array<String>) {
                 model("fir/multiModule", recursive = false, extension = null)
             }
 
-            testClass<AbstractFirLazyResolveTest> {
-                model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
-            }
+            testClass<AbstractFirHighlightingTest> {
+            model("highlighter")
+        }
+
+        testClass<AbstractFirLazyResolveTest> {
+            model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
+        }
 
             testClass<AbstractFirReferenceResolveTest> {
                 model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)

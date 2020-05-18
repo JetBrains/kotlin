@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.fir.firResolveState
-import org.jetbrains.kotlin.idea.fir.getOrBuildFirWithDiagnostics
+import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.fir.AnalysisSessionFirImpl
+import org.jetbrains.kotlin.idea.highlighter.visitors.FirAfterResolveHighlightingVisitor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -20,11 +21,20 @@ class KotlinFirPsiChecker : AbstractKotlinPsiChecker() {
 
     override fun annotateElement(element: PsiElement, containingFile: KtFile, holder: AnnotationHolder) {
         if (element !is KtElement) return
-        val state = containingFile.firResolveState()
-        containingFile.getOrBuildFirWithDiagnostics(state)
+        val analysisSession = AnalysisSessionFirImpl.forElement(element)
 
-        val diagnostics = state.getDiagnostics(element)
+        highlightDiagnostics(element, analysisSession, holder)
+
+        FirAfterResolveHighlightingVisitor
+            .createListOfVisitors(analysisSession, holder)
+            .forEach(element::accept)
+    }
+
+    private fun highlightDiagnostics(element: KtElement, analysisSession: FrontendAnalysisSession, holder: AnnotationHolder) {
+        val diagnostics = analysisSession.getDiagnosticsForElement(element)
         if (diagnostics.isEmpty()) return
+
+        if (diagnostics.none(Diagnostic::isValid)) return
 
         if (shouldHighlightErrors(element)) {
             highlightDiagnostics(diagnostics, holder)
