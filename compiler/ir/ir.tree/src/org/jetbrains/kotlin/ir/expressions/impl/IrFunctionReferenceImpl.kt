@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 class IrFunctionReferenceImpl(
     startOffset: Int,
@@ -59,6 +60,9 @@ class IrFunctionReferenceImpl(
         reflectionTarget,
         origin
     )
+
+    override val referencedName: Name
+        get() = symbol.owner.name
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFunctionReference(this, data)

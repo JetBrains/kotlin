@@ -231,7 +231,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                         val constructor = referenceKind.implSymbol.constructors.single { it.owner.valueParameters.size == 3 }
                         putValueArgument(0, irCall(constructor).apply {
                             putValueArgument(0, buildReflectedContainerReference(expression))
-                            putValueArgument(1, irString(expression.symbol.descriptor.name.asString()))
+                            putValueArgument(1, irString(expression.referencedName.asString()))
                             putValueArgument(2, computeSignatureString(expression))
                         })
                     }
@@ -285,7 +285,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     val getName = superClass.functions.single { it.name.asString() == "getName" }
                     val getOwner = superClass.functions.single { it.name.asString() == "getOwner" }
                     val getSignature = superClass.functions.single { it.name.asString() == "getSignature" }
-                    referenceClass.addOverride(getName) { irString(expression.symbol.descriptor.name.asString()) }
+                    referenceClass.addOverride(getName) { irString(expression.referencedName.asString()) }
                     referenceClass.addOverride(getOwner) { buildReflectedContainerReference(expression) }
                     referenceClass.addOverride(getSignature) { computeSignatureString(expression) }
                 }
@@ -392,7 +392,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                                 val callee = expression.symbol.owner as IrDeclaration
                                 val owner = buildReflectedContainerReferenceKClass(expression)
                                 putValueArgument(index++, kClassToJavaClass(owner, backendContext))
-                                putValueArgument(index++, irString(expression.symbol.descriptor.name.asString()))
+                                putValueArgument(index++, irString(expression.referencedName.asString()))
                                 putValueArgument(index++, computeSignatureString(expression))
                                 putValueArgument(index, irInt(FunctionReferenceLowering.getCallableReferenceTopLevelFlag(callee)))
                             }

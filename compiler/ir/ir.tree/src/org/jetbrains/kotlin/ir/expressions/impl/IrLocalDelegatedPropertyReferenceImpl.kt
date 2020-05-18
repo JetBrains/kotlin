@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 class IrLocalDelegatedPropertyReferenceImpl(
     startOffset: Int,
@@ -37,6 +38,9 @@ class IrLocalDelegatedPropertyReferenceImpl(
 ) :
     IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, 0, origin),
     IrLocalDelegatedPropertyReference {
+
+    override val referencedName: Name
+        get() = symbol.owner.name
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedPropertyReference(this, data)
