@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.Multimap
 import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.*
+import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 
 abstract class FirPredicateBasedProvider : FirSessionComponent {
@@ -25,6 +27,8 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
     abstract fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirAnnotatedDeclaration>
 
     abstract fun registerAnnotatedDeclaration(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>)
+
+    abstract fun matches(predicate: DeclarationPredicate, declaration: FirAnnotatedDeclaration): Boolean
 }
 
 private class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredicateBasedProvider() {
@@ -35,7 +39,7 @@ private class FirPredicateBasedProviderImpl(private val session: FirSession) : F
         val annotations = registeredPluginAnnotations.getAnnotationsForPredicate(predicate)
         if (annotations.isEmpty()) return emptyList()
         return annotations.flatMap { cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it] }.filter {
-            predicate.match(it, cache.ownersForDeclaration.getValue(it))
+            matches(predicate, it)
         }
     }
 
@@ -61,12 +65,67 @@ private class FirPredicateBasedProviderImpl(private val session: FirSession) : F
         cache.parentAnnotationsOfDeclaration.putAll(declaration, allParentDeclarations)
     }
 
+    // ---------------------------------- Matching ----------------------------------
+
+    override fun matches(predicate: DeclarationPredicate, declaration: FirAnnotatedDeclaration): Boolean {
+        return predicate.accept(matcher, declaration)
+    }
+
+    private val matcher = Matcher()
+
+    private inner class Matcher : DeclarationPredicateVisitor<Boolean, FirAnnotatedDeclaration>() {
+        override fun visitPredicate(predicate: DeclarationPredicate, data: FirAnnotatedDeclaration): Boolean {
+            throw IllegalStateException("Should not be there")
+        }
+
+        override fun visitAny(predicate: DeclarationPredicate.Any, data: FirAnnotatedDeclaration): Boolean {
+            return true
+        }
+
+        override fun visitAnd(predicate: DeclarationPredicate.And, data: FirAnnotatedDeclaration): Boolean {
+            return predicate.a.accept(this, data) && predicate.b.accept(this, data)
+        }
+
+        override fun visitOr(predicate: DeclarationPredicate.Or, data: FirAnnotatedDeclaration): Boolean {
+            return predicate.a.accept(this, data) || predicate.b.accept(this, data)
+        }
+
+        override fun visitAnnotatedWith(predicate: AnnotatedWith, data: FirAnnotatedDeclaration): Boolean {
+            return matchWith(data, predicate.annotations)
+        }
+
+        override fun visitUnderAnnotatedWith(predicate: UnderAnnotatedWith, data: FirAnnotatedDeclaration): Boolean {
+            return matchUnder(data, predicate.annotations)
+        }
+
+        override fun visitAnnotatedWithMeta(predicate: AnnotatedWithMeta, data: FirAnnotatedDeclaration): Boolean {
+            return matchWith(data, predicate.userDefinedAnnotations)
+        }
+
+        override fun visitUnderMetaAnnotated(predicate: UnderMetaAnnotated, data: FirAnnotatedDeclaration): Boolean {
+            return matchUnder(data, predicate.userDefinedAnnotations)
+        }
+
+        private val MetaAnnotated.userDefinedAnnotations: Set<AnnotationFqn>
+            get() = metaAnnotations.flatMapTo(mutableSetOf()) { registeredPluginAnnotations.getAnnotationsWithMetaAnnotation(it) }
+
+        private fun matchWith(declaration: FirAnnotatedDeclaration, annotations: Set<AnnotationFqn>): Boolean {
+            return cache.annotationsOfDeclaration[declaration].any { it in annotations }
+        }
+
+        private fun matchUnder(declaration: FirAnnotatedDeclaration, annotations: Set<AnnotationFqn>): Boolean {
+            return cache.parentAnnotationsOfDeclaration[declaration].any { it in annotations }
+        }
+    }
+
+    // ---------------------------------- Cache ----------------------------------
+
     private class Cache {
         val declarationByAnnotation: Multimap<AnnotationFqn, FirAnnotatedDeclaration> = ArrayListMultimap.create()
-        val annotationsOfDeclaration: Multimap<FirAnnotatedDeclaration, AnnotationFqn> = ArrayListMultimap.create()
+        val annotationsOfDeclaration: LinkedHashMultimap<FirAnnotatedDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
 
         val declarationsUnderAnnotated: Multimap<AnnotationFqn, FirAnnotatedDeclaration> = ArrayListMultimap.create()
-        val parentAnnotationsOfDeclaration: Multimap<FirAnnotatedDeclaration, AnnotationFqn> = ArrayListMultimap.create()
+        val parentAnnotationsOfDeclaration: LinkedHashMultimap<FirAnnotatedDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
 
         val ownersForDeclaration: MutableMap<FirAnnotatedDeclaration, PersistentList<FirAnnotatedDeclaration>> = mutableMapOf()
     }

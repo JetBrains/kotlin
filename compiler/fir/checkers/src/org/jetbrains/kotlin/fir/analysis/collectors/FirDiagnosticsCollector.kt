@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.collectors
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.oldExtensionsService
 
 object FirDiagnosticsCollector {
@@ -28,6 +29,6 @@ object FirDiagnosticsCollector {
     }
 
     private fun FirSession.registerAdditionalCheckers() {
-        oldExtensionsService.additionalCheckers.forEach(checkersComponent::register)
+        extensionService.additionalCheckers.forEach(checkersComponent::register)
     }
 }
