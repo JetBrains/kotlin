@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -33,9 +30,9 @@ fun IrType.isKSuspendFunction(): Boolean = this.isClassWithNamePrefix("KSuspendF
 
 private fun IrType.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean {
     val classifier = classifierOrNull ?: return false
-    val name = classifier.descriptor.name.asString()
+    val declaration = classifier.owner as IrDeclarationWithName
+    val name = declaration.name.asString()
     if (!name.startsWith(prefix)) return false
-    val declaration = classifier.owner as IrDeclaration
     val parent = declaration.parent as? IrPackageFragment ?: return false
 
     return parent.fqName == packageFqName
