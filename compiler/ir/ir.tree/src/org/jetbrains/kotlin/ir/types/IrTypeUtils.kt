@@ -108,3 +108,11 @@ fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
         irBuiltIns.primitiveArrayElementTypes[classifier]
             ?: throw AssertionError("Primitive array expected: $classifier")
     }
+
+fun IrType.toArrayOrPrimitiveArrayType(irBuiltIns: IrBuiltIns): IrType =
+    if (isPrimitiveType()) {
+        irBuiltIns.primitiveArrayForType[this]?.defaultType
+            ?: throw AssertionError("$this not in primitiveArrayForType")
+    } else {
+        irBuiltIns.arrayClass.typeWith(this)
+    }
