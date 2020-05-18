@@ -22,8 +22,8 @@ data class JsonTimeStats(
 
 fun MaxNTimeBucket.toTimeStats(): JsonTimeStats =
   JsonTimeStats(
-    minTime,
-    maxTime,
+    minTime.toMillis(),
+    maxTime.toMillis(),
     meanTime.toLong().toMillis(),
     getMedianOfArray(maxNTimes).toLong().toMillis()
   )
