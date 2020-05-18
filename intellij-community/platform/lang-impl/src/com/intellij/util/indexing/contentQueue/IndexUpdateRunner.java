@@ -155,7 +155,7 @@ public final class IndexUpdateRunner {
     long contentLoadingStartTime = System.nanoTime();
     CachedFileContentToken token;
     try {
-      token = loadNextContent(indexingJob, writeActionIndicator);
+      token = loadNextContent(indexingJob, indexingJob.myIndicator);
     }
     catch (TooLargeContentException e) {
       indexingJob.oneMoreFileProcessed();
@@ -200,14 +200,14 @@ public final class IndexUpdateRunner {
 
   @Nullable
   private CachedFileContentToken loadNextContent(@NotNull IndexingJob indexingJob,
-                                                 @NotNull ProgressIndicator writeActionIndicator) throws FailedToLoadContentException,
+                                                 @NotNull ProgressIndicator indicator) throws FailedToLoadContentException,
                                                                                                          TooLargeContentException,
                                                                                                          ProcessCanceledException {
-    writeActionIndicator.checkCanceled();
+    indicator.checkCanceled();
     CachedFileContentToken token;
     try {
       // Try to load content from the main queue.
-      token = indexingJob.myFileContentQueue.loadNextContent(writeActionIndicator);
+      token = indexingJob.myFileContentQueue.loadNextContent(indicator);
     }
     catch (TooLargeContentException e) {
       VirtualFile largeFile = e.getFile();
@@ -215,12 +215,12 @@ public final class IndexUpdateRunner {
         throw e;
       }
       indexingJob.myQueueOfLargeFiles.addFileToLoad(largeFile);
-      return indexingJob.myQueueOfLargeFiles.loadNextContent(writeActionIndicator);
+      return indexingJob.myQueueOfLargeFiles.loadNextContent(indicator);
     }
 
     if (token == null) {
       // All files from the main queue have been processed. There can be files in the large files queue.
-      return indexingJob.myQueueOfLargeFiles.loadNextContent(writeActionIndicator);
+      return indexingJob.myQueueOfLargeFiles.loadNextContent(indicator);
     }
     return token;
   }
