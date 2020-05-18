@@ -321,11 +321,11 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   }
 
   @Nullable Option getAutoscrollToSource() {
-    return isVertical() ? myAutoscrollToSource : null;
+    return myAutoscrollToSource;
   }
 
   @Nullable Option getShowPreview() {
-    return isVertical() ? null : myShowPreview;
+    return myShowPreview;
   }
 
   @Nullable Option getShowErrors() {
