@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
 
 class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
@@ -185,7 +186,18 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
     }
 
     fun generateProperty(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor, symbol: IrPropertySymbol): IrProperty {
-        val irProperty = IrPropertyImpl(startOffset, endOffset, origin, symbol, isDelegated = false)
+        val irProperty = IrPropertyImpl(
+            startOffset, endOffset, origin, symbol,
+            name = descriptor.name,
+            visibility = descriptor.visibility,
+            modality = descriptor.modality,
+            isVar = descriptor.isVar,
+            isConst = descriptor.isConst,
+            isLateinit = descriptor.isLateInit,
+            isDelegated = false,
+            isExternal = descriptor.isEffectivelyExternal(),
+            isExpect = descriptor.isExpect
+        )
 
         irProperty.metadata = MetadataSource.Property(descriptor)
 

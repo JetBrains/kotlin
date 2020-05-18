@@ -205,7 +205,7 @@ interface IrBuilderExtension {
         assert(irPropertySymbol.isBound || declare)
 
         if (declare) {
-            IrPropertyImpl(propertyParent.startOffset, propertyParent.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, irPropertySymbol).also {
+            IrPropertyImpl(propertyParent.startOffset, propertyParent.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, propertyDescriptor, irPropertySymbol).also {
                 it.parent = propertyParent
                 propertyParent.addMember(it)
             }

@@ -28,25 +28,47 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
-@Suppress("DEPRECATION_ERROR")
 class IrPropertyImpl(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrPropertySymbol,
-    override val name: Name = symbol.descriptor.name,
-    override val visibility: Visibility = symbol.descriptor.visibility,
-    override val modality: Modality = symbol.descriptor.modality,
-    override val isVar: Boolean = symbol.descriptor.isVar,
-    override val isConst: Boolean = symbol.descriptor.isConst,
-    override val isLateinit: Boolean = symbol.descriptor.isLateInit,
-    override val isDelegated: Boolean = @Suppress("DEPRECATION") symbol.descriptor.isDelegated,
-    override val isExternal: Boolean = symbol.descriptor.isEffectivelyExternal(),
-    override val isExpect: Boolean = symbol.descriptor.isExpect,
+    override val name: Name,
+    override val visibility: Visibility,
+    override val modality: Modality,
+    override val isVar: Boolean,
+    override val isConst: Boolean,
+    override val isLateinit: Boolean,
+    override val isDelegated: Boolean,
+    override val isExternal: Boolean,
+    override val isExpect: Boolean = false,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE
 ) : IrDeclarationBase<PropertyCarrier>(startOffset, endOffset, origin),
     IrProperty,
     PropertyCarrier {
+
+    @Deprecated(
+        "This constructor is left for native compilation purpose only. " +
+                "It takes property attributes from symbol.descriptor " +
+                "Please either provide property attributes or its descriptor explicitly"
+    )
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrPropertySymbol,
+        name: Name
+    ) : this(
+        startOffset, endOffset, origin, symbol, name,
+        visibility = symbol.descriptor.visibility,
+        modality = symbol.descriptor.modality,
+        isVar = symbol.descriptor.isVar,
+        isConst = symbol.descriptor.isConst,
+        isLateinit = symbol.descriptor.isLateInit,
+        isDelegated = symbol.descriptor.isDelegated,
+        isExternal = symbol.descriptor.isExternal,
+        isExpect = symbol.descriptor.isExpect
+    )
 
     @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
@@ -54,23 +76,25 @@ class IrPropertyImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
-        name: Name,
-        visibility: Visibility,
-        modality: Modality,
-        isVar: Boolean,
-        isConst: Boolean,
-        isLateinit: Boolean,
-        isDelegated: Boolean,
-        isExternal: Boolean
+        symbol: IrPropertySymbol = IrPropertySymbolImpl(descriptor),
+        name: Name = descriptor.name,
+        visibility: Visibility = descriptor.visibility,
+        modality: Modality = descriptor.modality,
+        isVar: Boolean = descriptor.isVar,
+        isConst: Boolean = descriptor.isConst,
+        isLateinit: Boolean = descriptor.isLateInit,
+        isDelegated: Boolean = descriptor.isDelegated,
+        isExternal: Boolean = descriptor.isExternal
     ) : this(
         startOffset, endOffset, origin,
-        IrPropertySymbolImpl(descriptor),
+        symbol,
         name, visibility, modality,
         isVar = isVar,
         isConst = isConst,
         isLateinit = isLateinit,
         isDelegated = isDelegated,
-        isExternal = isExternal
+        isExternal = isExternal,
+        isExpect = descriptor.isExpect
     )
 
     @Suppress("DEPRECATION")
@@ -83,7 +107,9 @@ class IrPropertyImpl(
         descriptor: PropertyDescriptor
     ) : this(
         startOffset, endOffset, origin, descriptor,
-        descriptor.name, descriptor.visibility, descriptor.modality,
+        name = descriptor.name,
+        visibility = descriptor.visibility,
+        modality = descriptor.modality,
         isVar = descriptor.isVar,
         isConst = descriptor.isConst,
         isLateinit = descriptor.isLateInit,

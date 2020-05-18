@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -391,7 +392,18 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
 
         fun createFakeOverrideProperty(descriptor: PropertyDescriptor): IrProperty {
             return symbolTable.declareProperty(offset, offset, memberOrigin, descriptor) {
-                IrPropertyImpl(offset, offset, memberOrigin, it, descriptor.name).apply {
+                IrPropertyImpl(
+                    offset, offset, memberOrigin, it,
+                    name = descriptor.name,
+                    visibility = descriptor.visibility,
+                    modality = descriptor.modality,
+                    isVar = descriptor.isVar,
+                    isConst = descriptor.isConst,
+                    isLateinit = descriptor.isLateInit,
+                    isDelegated = descriptor.isDelegated,
+                    isExternal = descriptor.isEffectivelyExternal(),
+                    isExpect = descriptor.isExpect
+                ).apply {
                     parent = this@addFakeOverrides
                     getter = descriptor.getter?.let { g -> createFakeOverrideFunction(g, symbol) }
                     setter = descriptor.setter?.let { s -> createFakeOverrideFunction(s, symbol) }

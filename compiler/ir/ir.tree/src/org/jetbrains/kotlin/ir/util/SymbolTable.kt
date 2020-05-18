@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
 interface IrProvider {
@@ -601,7 +602,14 @@ open class SymbolTable(
         propertyFactory: (IrPropertySymbol) -> IrProperty = { symbol ->
             IrPropertyImpl(
                 startOffset, endOffset, origin, symbol, isDelegated = isDelegated,
-                name = nameProvider.nameForDeclaration(descriptor)
+                name = nameProvider.nameForDeclaration(descriptor),
+                visibility = descriptor.visibility,
+                modality = descriptor.modality,
+                isVar = descriptor.isVar,
+                isConst = descriptor.isConst,
+                isLateinit = descriptor.isLateInit,
+                isExternal = descriptor.isEffectivelyExternal(),
+                isExpect = descriptor.isExpect
             ).apply {
                 metadata = MetadataSource.Property(symbol.descriptor)
             }
