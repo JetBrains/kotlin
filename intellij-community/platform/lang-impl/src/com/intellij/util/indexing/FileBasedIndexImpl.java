@@ -58,7 +58,7 @@ import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.indexing.snapshot.SnapshotInputMappings;
 import com.intellij.util.indexing.snapshot.SnapshotSingleValueIndexStorage;
 import com.intellij.util.io.storage.HeavyProcessLatch;
-import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.messages.SimpleMessageBusConnection;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TIntArrayList;
@@ -100,7 +100,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   private final List<IndexableFileSet> myIndexableSets = ContainerUtil.createLockFreeCopyOnWriteList();
   private final Map<IndexableFileSet, Project> myIndexableSetToProjectMap = new THashMap<>();
 
-  private final MessageBusConnection myConnection;
+  private final SimpleMessageBusConnection myConnection;
   private final FileDocumentManager myFileDocumentManager;
 
   private final Set<ID<?, ?>> myUpToDateIndicesForUnsavedOrTransactedDocuments = ContainerUtil.newConcurrentSet();
@@ -143,7 +143,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     myFileDocumentManager = FileDocumentManager.getInstance();
     myIsUnitTestMode = ApplicationManager.getApplication().isUnitTestMode();
 
-    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
+    SimpleMessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().simpleConnect();
     connection.subscribe(DynamicPluginListener.TOPIC, new FileBasedIndexPluginListener(this));
 
     connection.subscribe(PsiDocumentTransactionListener.TOPIC, new PsiDocumentTransactionListener() {
