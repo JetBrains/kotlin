@@ -35,6 +35,7 @@ import com.jetbrains.cidr.lang.workspace.compiler.CompilerInfoCache
 import com.jetbrains.cidr.lang.workspace.compiler.OCCompilerKind
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform
 import com.jetbrains.cidr.xcode.frameworks.AppleSdkManager
+import com.jetbrains.swift.codeinsight.resolve.module.SwiftModuleIOCache
 import org.jdom.Element
 import org.jetbrains.konan.gradle.forEachKonanProject
 import org.jetbrains.konan.resolve.konan.KonanTarget
@@ -64,6 +65,7 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
 
         reloadsQueue.run(object : Task.Backgroundable(project, LOADING_GRADLE_APPLE_PROJECT) {
             override fun run(indicator: ProgressIndicator) {
+                SwiftModuleIOCache.getInstance() // initialize on a pooled thread
                 updateOCWorkspace()
                 project.messageBus.syncPublisher(GradleAppleWorkspaceListener.TOPIC).workspaceUpdated()
 
