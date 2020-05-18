@@ -321,6 +321,12 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   }
 
   @Override
+  public void cleanup() {
+    super.cleanup();
+    myWizardContext = null;
+  }
+
+  @Override
   public abstract ModuleWizardStep[] createWizardSteps(@NotNull WizardContext wizardContext, @NotNull ModulesProvider modulesProvider);
 
   @Nullable
