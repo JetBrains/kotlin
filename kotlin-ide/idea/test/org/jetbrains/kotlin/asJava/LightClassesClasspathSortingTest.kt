@@ -58,6 +58,6 @@ class LightClassesClasspathSortingTest : KotlinLightCodeInsightFixtureTestCase()
     }
 
     override fun getTestDataPath(): String {
-        return "${KotlinTestUtils.getHomeDirectory()}/kotlin/idea/testData/decompiler/lightClassesOrder/"
+        return "${KotlinTestUtils.getHomeDirectory()}/idea/testData/decompiler/lightClassesOrder/"
     }
 }
