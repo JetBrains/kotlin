@@ -55,6 +55,7 @@ public final class ProblemsView implements DumbAware, ToolWindowFactory {
 
   private static void createContent(@NotNull ContentManager manager, @NotNull ProblemsViewPanel panel) {
     Content content = manager.getFactory().createContent(panel, panel.getDisplayName(), false);
+    content.setCloseable(false);
     manager.addContent(content);
   }
 
