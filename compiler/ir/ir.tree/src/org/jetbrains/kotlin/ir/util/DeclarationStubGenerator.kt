@@ -230,7 +230,7 @@ class DeclarationStubGenerator(
 
         val origin = computeOrigin(descriptor)
         return symbolTable.declareConstructor(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original
+            descriptor.original
         ) {
             IrLazyConstructor(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,

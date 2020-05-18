@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.ConstructorCarrier
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -32,13 +31,13 @@ class IrConstructorImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrConstructorSymbol,
-    name: Name = symbol.descriptor.name,
-    visibility: Visibility = symbol.descriptor.visibility,
+    name: Name,
+    visibility: Visibility,
     returnType: IrType,
-    isInline: Boolean = symbol.descriptor.isInline,
-    isExternal: Boolean = symbol.descriptor.isEffectivelyExternal(),
-    override val isPrimary: Boolean = symbol.descriptor.isPrimary,
-    isExpect: Boolean = symbol.descriptor.isExpect
+    isInline: Boolean,
+    isExternal: Boolean,
+    override val isPrimary: Boolean,
+    isExpect: Boolean
 ) :
     IrFunctionBase<ConstructorCarrier>(
         startOffset, endOffset, origin, name,
@@ -55,19 +54,17 @@ class IrConstructorImpl(
         origin: IrDeclarationOrigin,
         symbol: IrConstructorSymbol,
         returnType: IrType,
-        body: IrBody? = null
+        descriptor: ClassConstructorDescriptor,
+        name: Name = descriptor.name
     ) : this(
         startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        symbol.descriptor.visibility,
-        returnType,
-        isInline = symbol.descriptor.isInline,
-        isExternal = symbol.descriptor.isEffectivelyExternal(),
-        isPrimary = symbol.descriptor.isPrimary,
-        isExpect = symbol.descriptor.isExpect
-    ) {
-        this.body = body
-    }
+        name = name, visibility = descriptor.visibility,
+        returnType = returnType,
+        isInline = descriptor.isInline,
+        isExternal = descriptor.isEffectivelyExternal(),
+        isPrimary = descriptor.isPrimary,
+        isExpect = descriptor.isExpect
+    )
 
     init {
         symbol.bind(this)

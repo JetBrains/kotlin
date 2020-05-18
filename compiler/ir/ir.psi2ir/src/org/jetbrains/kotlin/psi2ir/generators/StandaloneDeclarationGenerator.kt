@@ -150,7 +150,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassConstructorDescriptor, symbol: IrConstructorSymbol,
         defaultArgumentFactory: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody? = { null }
     ): IrConstructor {
-        val irConstructor = IrConstructorImpl(startOffset, endOffset, origin, symbol, IrUninitializedType)
+        val irConstructor = IrConstructorImpl(startOffset, endOffset, origin, symbol, IrUninitializedType, descriptor)
         irConstructor.metadata = MetadataSource.Function(descriptor)
 
         symbolTable.withScope(descriptor) {

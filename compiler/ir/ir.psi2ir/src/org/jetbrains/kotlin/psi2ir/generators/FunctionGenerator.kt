@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
@@ -244,17 +246,27 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktParametersElement: KtPureElement,
         constructorDescriptor: ClassConstructorDescriptor,
         generateBody: BodyGenerator.() -> IrBody?
-    ): IrConstructor =
-        context.symbolTable.declareConstructor(
-            ktConstructorElement.getStartOffsetOfConstructorDeclarationKeywordOrNull() ?: ktConstructorElement.pureStartOffset,
-            ktConstructorElement.pureEndOffset,
-            IrDeclarationOrigin.DEFINED,
+    ): IrConstructor {
+        val startOffset = ktConstructorElement.getStartOffsetOfConstructorDeclarationKeywordOrNull() ?: ktConstructorElement.pureStartOffset
+        val endOffset = ktConstructorElement.pureEndOffset
+        val origin = IrDeclarationOrigin.DEFINED
+        return context.symbolTable.declareConstructor(
             constructorDescriptor
-        ).buildWithScope { irConstructor ->
+        ) {
+            IrConstructorImpl(
+                startOffset, endOffset, origin, it,
+                returnType = IrUninitializedType,
+                descriptor = constructorDescriptor,
+                name = context.symbolTable.nameProvider.nameForDeclaration(constructorDescriptor),
+            ).apply {
+                metadata = MetadataSource.Function(it.descriptor)
+            }
+        }.buildWithScope { irConstructor ->
             generateValueParameterDeclarations(irConstructor, ktParametersElement, null)
             irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody()
             irConstructor.returnType = constructorDescriptor.returnType.toIrType()
         }
+    }
 
     fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
         val descriptor = irFunction.descriptor

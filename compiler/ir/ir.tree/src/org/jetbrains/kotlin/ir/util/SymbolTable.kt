@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
 interface IrProvider {
@@ -436,19 +435,8 @@ open class SymbolTable(
     }
 
     fun declareConstructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
         descriptor: ClassConstructorDescriptor,
-        constructorFactory: (IrConstructorSymbol) -> IrConstructor = {
-            IrConstructorImpl(
-                startOffset, endOffset, origin, it,
-                nameProvider.nameForDeclaration(descriptor),
-                returnType = IrUninitializedType
-            ).apply {
-                metadata = MetadataSource.Function(it.descriptor)
-            }
-        }
+        constructorFactory: (IrConstructorSymbol) -> IrConstructor
     ): IrConstructor =
         constructorSymbolTable.declare(
             descriptor,
