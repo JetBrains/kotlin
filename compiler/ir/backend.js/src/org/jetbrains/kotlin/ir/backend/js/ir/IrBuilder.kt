@@ -32,7 +32,7 @@ object JsIrBuilder {
             UNDEFINED_OFFSET,
             type ?: target.owner.returnType,
             target,
-            target.descriptor.typeParametersCount,
+            target.owner.typeParameters.size,
             SYNTHESIZED_STATEMENT
         ).apply {
             typeArguments?.let {
