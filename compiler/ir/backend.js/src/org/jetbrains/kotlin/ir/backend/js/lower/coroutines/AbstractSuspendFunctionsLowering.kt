@@ -231,14 +231,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 nameForCoroutineClass(function),
                 ClassKind.CLASS,
                 function.visibility,
-                Modality.FINAL,
-                isCompanion = false,
-                isInner = false,
-                isData = false,
-                isExternal = false,
-                isInline = false,
-                isExpect = false,
-                isFun = false
+                Modality.FINAL
             ).apply {
                 d.bind(this)
                 parent = function.parent

@@ -88,7 +88,7 @@ interface ReferenceSymbolTable {
 
 open class SymbolTable(
     val signaturer: IdSignatureComposer,
-    private val nameProvider: NameProvider = NameProvider.DEFAULT
+    val nameProvider: NameProvider = NameProvider.DEFAULT
 ) : ReferenceSymbolTable {
 
     @Suppress("LeakingThis")
@@ -394,15 +394,8 @@ open class SymbolTable(
     }
 
     fun declareClass(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
-        modality: Modality = descriptor.modality, visibility: Visibility = descriptor.visibility,
-        classFactory: (IrClassSymbol) -> IrClass = {
-            IrClassImpl(
-                startOffset, endOffset, origin, it,
-                nameProvider.nameForDeclaration(descriptor),
-                visibility = visibility, modality = modality,
-            ).apply { metadata = MetadataSource.Class(it.descriptor) }
-        }
+        descriptor: ClassDescriptor,
+        classFactory: (IrClassSymbol) -> IrClass
     ): IrClass {
         return classSymbolTable.declare(
             descriptor,

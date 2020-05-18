@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.ClassCarrier
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -38,43 +35,65 @@ class IrClassImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrClassSymbol,
-    override val name: Name = symbol.descriptor.name,
-    override val kind: ClassKind = symbol.descriptor.kind,
-    visibility: Visibility = symbol.descriptor.visibility,
-    modality: Modality = symbol.descriptor.modality,
-    override val isCompanion: Boolean = symbol.descriptor.isCompanionObject,
-    override val isInner: Boolean = symbol.descriptor.isInner,
-    override val isData: Boolean = symbol.descriptor.isData,
-    override val isExternal: Boolean = symbol.descriptor.isEffectivelyExternal(),
-    override val isInline: Boolean = symbol.descriptor.isInline,
-    override val isExpect: Boolean = symbol.descriptor.isExpect,
-    override val isFun: Boolean = symbol.descriptor.isFun
+    override val name: Name,
+    override val kind: ClassKind,
+    visibility: Visibility,
+    modality: Modality,
+    override val isCompanion: Boolean = false,
+    override val isInner: Boolean = false,
+    override val isData: Boolean = false,
+    override val isExternal: Boolean = false,
+    override val isInline: Boolean = false,
+    override val isExpect: Boolean = false,
+    override val isFun: Boolean = false
 ) :
     IrDeclarationBase<ClassCarrier>(startOffset, endOffset, origin),
     IrClass,
     ClassCarrier {
+
+    @Deprecated(
+        "This constructor is left for native compilation purpose only. " +
+                "It takes class attributes from symbol.descriptor " +
+                "Please either provide class attributes or its descriptor explicitly"
+    )
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrClassSymbol
+    ) : this(
+        startOffset, endOffset, origin, symbol,
+        name = symbol.descriptor.name,
+        kind = symbol.descriptor.kind,
+        visibility = symbol.descriptor.visibility,
+        modality = symbol.descriptor.modality,
+        isCompanion = symbol.descriptor.isCompanionObject,
+        isInner = symbol.descriptor.isInner,
+        isData = symbol.descriptor.isData,
+        isExternal = symbol.descriptor.isExternal,
+        isInline = symbol.descriptor.isInline,
+        isExpect = symbol.descriptor.isExpect,
+        isFun = symbol.descriptor.isFun
+    )
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         symbol: IrClassSymbol,
-        modality: Modality = symbol.descriptor.modality,
-        visibility: Visibility = symbol.descriptor.visibility
-    ) :
-            this(
-                startOffset, endOffset, origin, symbol,
-                symbol.descriptor.name, symbol.descriptor.kind,
-                visibility,
-                modality = modality,
-                isCompanion = symbol.descriptor.isCompanionObject,
-                isInner = symbol.descriptor.isInner,
-                isData = symbol.descriptor.isData,
-                isExternal = symbol.descriptor.isEffectivelyExternal(),
-                isInline = symbol.descriptor.isInline,
-                isExpect = symbol.descriptor.isExpect,
-                isFun = symbol.descriptor.isFun
-            )
+        descriptor: ClassDescriptor,
+        name: Name = descriptor.name,
+        visibility: Visibility = descriptor.visibility,
+        modality: Modality = descriptor.modality
+    ) : this(
+        startOffset, endOffset, origin, symbol,
+        name, kind = descriptor.kind,
+        visibility = visibility, modality = modality,
+        isCompanion = descriptor.isCompanionObject, isInner = descriptor.isInner,
+        isData = descriptor.isData, isExternal = descriptor.isEffectivelyExternal(),
+        isInline = descriptor.isInline, isExpect = descriptor.isExpect,
+        isFun = descriptor.isFun
+    )
 
     init {
         symbol.bind(this)

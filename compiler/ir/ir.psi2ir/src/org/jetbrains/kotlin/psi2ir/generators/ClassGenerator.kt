@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
@@ -80,11 +81,16 @@ class ClassGenerator(
         val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationOrNull() ?: ktClassOrObject.pureStartOffset
         val endOffset = ktClassOrObject.pureEndOffset
         val visibility = visibility_ ?: classDescriptor.visibility
+        val modality = getEffectiveModality(ktClassOrObject, classDescriptor)
 
-        return context.symbolTable.declareClass(
-            startOffset, endOffset, IrDeclarationOrigin.DEFINED, classDescriptor,
-            getEffectiveModality(ktClassOrObject, classDescriptor), visibility
-        ).buildWithScope { irClass ->
+        return context.symbolTable.declareClass(classDescriptor) {
+            IrClassImpl(
+                startOffset, endOffset, IrDeclarationOrigin.DEFINED, it,
+                classDescriptor,
+                context.symbolTable.nameProvider.nameForDeclaration(classDescriptor),
+                visibility = visibility, modality = modality,
+            ).apply { metadata = MetadataSource.Class(it.descriptor) }
+        }.buildWithScope { irClass ->
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
 
             irClass.superTypes = classDescriptor.typeConstructor.supertypes.map {

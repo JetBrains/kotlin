@@ -125,9 +125,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
         val descriptor = WrappedClassDescriptor()
         val declaration = IrClassImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS_DECLARATION, IrClassSymbolImpl(descriptor),
-            Name.identifier(boxTypeName), ClassKind.CLASS, Visibilities.PUBLIC, Modality.FINAL,
-            isCompanion = false, isInner = false, isData = false, isExternal = false,
-            isInline = false, isExpect = false, isFun = false
+            Name.identifier(boxTypeName), ClassKind.CLASS, Visibilities.PUBLIC, Modality.FINAL
         )
 
         descriptor.bind(declaration)

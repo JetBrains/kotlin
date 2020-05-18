@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -40,7 +39,7 @@ abstract class IrAbstractFunctionFactory {
 
     fun functionN(n: Int) = functionN(n) { callback ->
         val descriptor = functionClassDescriptor(n)
-        declareClass(offset, offset, classOrigin, descriptor) { symbol ->
+        declareClass(descriptor) { symbol ->
             callback(symbol)
         }
     }
@@ -48,7 +47,7 @@ abstract class IrAbstractFunctionFactory {
     fun kFunctionN(n: Int): IrClass {
         return kFunctionN(n) { callback ->
             val descriptor = kFunctionClassDescriptor(n)
-            declareClass(offset, offset, classOrigin, descriptor) { symbol ->
+            declareClass(descriptor) { symbol ->
                 callback(symbol)
             }
         }
@@ -56,14 +55,14 @@ abstract class IrAbstractFunctionFactory {
 
     fun suspendFunctionN(n: Int): IrClass = suspendFunctionN(n) { callback ->
         val descriptor = suspendFunctionClassDescriptor(n)
-        declareClass(offset, offset, classOrigin, descriptor) { symbol ->
+        declareClass(descriptor) { symbol ->
             callback(symbol)
         }
     }
 
     fun kSuspendFunctionN(n: Int): IrClass = kSuspendFunctionN(n) { callback ->
         val descriptor = kSuspendFunctionClassDescriptor(n)
-        declareClass(offset, offset, classOrigin, descriptor) { symbol ->
+        declareClass(descriptor) { symbol ->
             callback(symbol)
         }
     }
@@ -270,7 +269,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
     private fun FunctionClassDescriptor.createFunctionClass(): IrClass {
         val s = symbolTable.referenceClass(this)
         if (s.isBound) return s.owner
-        return symbolTable.declareClass(offset, offset, classOrigin, this, modality) {
+        return symbolTable.declareClass(this) {
             val factory = FunctionDescriptorFactory.RealDescriptorFactory(this, symbolTable)
             when (functionKind) {
                 FunctionClassDescriptor.Kind.Function ->
@@ -422,14 +421,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
     ): IrClass {
         val name = functionClassName(isK, isSuspend, n)
         val klass = IrClassImpl(
-            offset, offset, classOrigin, symbol, Name.identifier(name), ClassKind.INTERFACE, Visibilities.PUBLIC, Modality.ABSTRACT,
-            isCompanion = false,
-            isInner = false,
-            isData = false,
-            isExternal = false,
-            isInline = false,
-            isExpect = false,
-            isFun = false
+            offset, offset, classOrigin, symbol, Name.identifier(name), ClassKind.INTERFACE, Visibilities.PUBLIC, Modality.ABSTRACT
         )
 
         val r = klass.createTypeParameters(n, descriptorFactory)

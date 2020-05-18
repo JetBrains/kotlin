@@ -261,14 +261,7 @@ class JvmDeclarationFactory(
                 Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
                 ClassKind.CLASS,
                 Visibilities.PUBLIC,
-                Modality.FINAL,
-                isCompanion = false,
-                isInner = false,
-                isData = false,
-                isExternal = false,
-                isInline = false,
-                isExpect = false,
-                isFun = false
+                Modality.FINAL
             ).apply {
                 descriptor.bind(this)
                 parent = interfaceClass

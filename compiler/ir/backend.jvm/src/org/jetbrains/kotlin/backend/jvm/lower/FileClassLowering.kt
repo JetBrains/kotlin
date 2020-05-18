@@ -101,14 +101,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             name = fileClassInfo.fileClassFqName.shortName(),
             kind = ClassKind.CLASS,
             visibility = if (!fileClassInfo.withJvmMultifileClass) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY,
-            modality = Modality.FINAL,
-            isCompanion = false,
-            isInner = false,
-            isData = false,
-            isExternal = false,
-            isInline = false,
-            isExpect = false,
-            isFun = false
+            modality = Modality.FINAL
         ).apply {
             descriptor.bind(this)
             superTypes += context.irBuiltIns.anyType

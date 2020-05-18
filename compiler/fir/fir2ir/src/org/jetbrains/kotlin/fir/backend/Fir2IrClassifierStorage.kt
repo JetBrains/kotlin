@@ -167,7 +167,7 @@ class Fir2IrClassifierStorage(
             regularClass.modality ?: Modality.FINAL
         }
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
+            symbolTable.declareClass(descriptor) { symbol ->
                 IrClassImpl(
                     startOffset,
                     endOffset,
@@ -211,14 +211,12 @@ class Fir2IrClassifierStorage(
         val origin = IrDeclarationOrigin.DEFINED
         val modality = Modality.FINAL
         val result = anonymousObject.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
+            symbolTable.declareClass(descriptor) { symbol ->
                 IrClassImpl(
                     startOffset, endOffset, origin, symbol, name,
                     // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
                     anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
-                    visibility, modality,
-                    isCompanion = false, isInner = false, isData = false,
-                    isExternal = false, isInline = false, isExpect = false, isFun = false
+                    visibility, modality
                 ).apply {
                     metadata = FirMetadataSource.Class(anonymousObject, descriptor)
                     descriptor.bind(this)

@@ -271,7 +271,7 @@ class DeclarationStubGenerator(
             return referenceClass.owner
         }
         val origin = computeOrigin(descriptor)
-        return symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
+        return symbolTable.declareClass(descriptor) {
             IrLazyClass(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
