@@ -22,7 +22,7 @@ import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.util.io.parentSystemIndependentPath
 import com.intellij.util.io.readText
 import com.intellij.util.io.systemIndependentPath
-import gnu.trove.TObjectIntHashMap
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.SoftAssertions
 import org.assertj.core.internal.bytebuddy.utility.RandomString
@@ -106,7 +106,7 @@ class ModuleStoreTest {
 
   @Test
   fun `one batch update session if several modules changed`() = runBlocking<Unit> {
-    val nameToCount = TObjectIntHashMap<String>()
+    val nameToCount = Object2IntOpenHashMap<String>()
     val root = tempDirManager.newPath(refreshVfs = true)
 
     suspend fun Module.addContentRoot() {
@@ -165,10 +165,10 @@ class ModuleStoreTest {
     assertChangesApplied(m1)
     assertChangesApplied(m2)
 
-    assertThat(nameToCount.size()).isEqualTo(3)
-    assertThat(nameToCount.get("p")).isEqualTo(1)
-    assertThat(nameToCount.get("m1")).isEqualTo(1)
-    assertThat(nameToCount.get("m1")).isEqualTo(1)
+    assertThat(nameToCount.size).isEqualTo(3)
+    assertThat(nameToCount.getInt("p")).isEqualTo(1)
+    assertThat(nameToCount.getInt("m1")).isEqualTo(1)
+    assertThat(nameToCount.getInt("m1")).isEqualTo(1)
   }
 
   @Test

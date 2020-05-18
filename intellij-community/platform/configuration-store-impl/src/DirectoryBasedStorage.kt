@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.LineSeparator
 import com.intellij.util.SmartList
-import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.isEmpty
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
@@ -106,7 +105,7 @@ open class DirectoryBasedStorage(private val dir: Path,
   private class MySaveSession(private val storage: DirectoryBasedStorage, private val originalStates: StateMap) : SaveSessionBase(), SaveSession, DirectoryBasedSaveSessionProducer {
     private var copiedStorageData: MutableMap<String, Any>? = null
 
-    private val dirtyFileNames = SmartHashSet<String>()
+    private val dirtyFileNames = ObjectOpenHashSet<String>()
     private var isSomeFileRemoved = false
 
     override fun setSerializedState(componentName: String, element: Element?) {
@@ -181,7 +180,7 @@ open class DirectoryBasedStorage(private val dir: Path,
         return
       }
 
-      if (!dirtyFileNames.isEmpty) {
+      if (!dirtyFileNames.isEmpty()) {
         saveStates(stateMap)
       }
       if (isSomeFileRemoved) {
