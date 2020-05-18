@@ -252,7 +252,8 @@ interface IrBuilderExtension {
                 fieldSymbol.owner.endOffset,
                 SERIALIZABLE_PLUGIN_ORIGIN,
                 symbol,
-                descriptor.returnType!!.toIrType()
+                descriptor.returnType!!.toIrType(),
+                descriptor
             ).also { f ->
                 generateOverriddenFunctionSymbols(f, compilerContext.symbolTable)
                 f.createParameterDeclarations(receiver = null)

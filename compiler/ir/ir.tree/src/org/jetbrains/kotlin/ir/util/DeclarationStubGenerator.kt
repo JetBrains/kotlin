@@ -210,11 +210,7 @@ class DeclarationStubGenerator(
             if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
                 IrDeclarationOrigin.FAKE_OVERRIDE
             else computeOrigin(descriptor)
-        return symbolTable.declareSimpleFunction(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            origin,
-            descriptor.original
-        ) {
+        return symbolTable.declareSimpleFunction(descriptor.original) {
             IrLazyFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,

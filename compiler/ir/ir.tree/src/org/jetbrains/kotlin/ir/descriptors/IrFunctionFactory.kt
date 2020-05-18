@@ -167,7 +167,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                         getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first()
                     }
                 }
-                return symbolTable.declareSimpleFunction(offset, offset, memberOrigin, descriptor, factory).symbol
+                return symbolTable.declareSimpleFunction(descriptor, factory).symbol
             }
 
             override fun FunctionDescriptor.valueParameterDescriptor(index: Int): ValueParameterDescriptor {
@@ -292,7 +292,8 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                     buildSimpleType()
                 }
 
-                IrFunctionImpl(offset, offset, memberOrigin, it, Name.identifier("invoke"), Visibilities.PUBLIC, Modality.ABSTRACT,
+                IrFunctionImpl(
+                    offset, offset, memberOrigin, it, Name.identifier("invoke"), Visibilities.PUBLIC, Modality.ABSTRACT,
                     returnType,
                     isInline = false,
                     isExternal = false,
@@ -369,7 +370,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
 
         fun createFakeOverrideFunction(descriptor: FunctionDescriptor, property: IrPropertySymbol?): IrSimpleFunction {
             val returnType = descriptor.returnType?.let { toIrType(it) } ?: error("No return type for $descriptor")
-            val newFunction = symbolTable.declareSimpleFunction(offset, offset, memberOrigin, descriptor) {
+            val newFunction = symbolTable.declareSimpleFunction(descriptor) {
                 descriptor.run {
                     IrFunctionImpl(
                         offset, offset, memberOrigin, it, name, visibility, modality, returnType,

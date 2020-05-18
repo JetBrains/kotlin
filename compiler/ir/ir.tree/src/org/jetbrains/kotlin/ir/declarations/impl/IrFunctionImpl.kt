@@ -23,21 +23,46 @@ class IrFunctionImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
-    name: Name = symbol.descriptor.name,
-    visibility: Visibility = symbol.descriptor.visibility,
-    override val modality: Modality = symbol.descriptor.modality,
+    name: Name,
+    visibility: Visibility,
+    override val modality: Modality,
     returnType: IrType,
-    isInline: Boolean = symbol.descriptor.isInline,
-    isExternal: Boolean = symbol.descriptor.isExternal,
-    override val isTailrec: Boolean = symbol.descriptor.isTailrec,
-    override val isSuspend: Boolean = symbol.descriptor.isSuspend,
-    override val isOperator: Boolean = symbol.descriptor.isOperator,
-    isExpect: Boolean = symbol.descriptor.isExpect,
+    isInline: Boolean,
+    isExternal: Boolean,
+    override val isTailrec: Boolean,
+    override val isSuspend: Boolean,
+    override val isOperator: Boolean,
+    isExpect: Boolean,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE
 ) :
     IrFunctionBase<FunctionCarrier>(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, returnType),
     IrSimpleFunction,
     FunctionCarrier {
+
+    @Deprecated(
+        "This constructor is left for native compilation purpose only. " +
+                "It takes function attributes from symbol.descriptor " +
+                "Please either provide function attributes or its descriptor explicitly"
+    )
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrSimpleFunctionSymbol,
+        returnType: IrType
+    ) : this(
+        startOffset, endOffset, origin, symbol,
+        name = symbol.descriptor.name,
+        visibility = symbol.descriptor.visibility,
+        modality = symbol.descriptor.modality,
+        returnType = returnType,
+        isInline = symbol.descriptor.isInline,
+        isExternal = symbol.descriptor.isExternal,
+        isTailrec = symbol.descriptor.isTailrec,
+        isSuspend = symbol.descriptor.isSuspend,
+        isOperator = symbol.descriptor.isOperator,
+        isExpect = symbol.descriptor.isExpect
+    )
 
     constructor(
         startOffset: Int,
@@ -45,21 +70,32 @@ class IrFunctionImpl(
         origin: IrDeclarationOrigin,
         symbol: IrSimpleFunctionSymbol,
         returnType: IrType,
-        visibility: Visibility = symbol.descriptor.visibility,
-        modality: Modality = symbol.descriptor.modality
+        descriptor: FunctionDescriptor,
+        name: Name = descriptor.name
     ) : this(
         startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        visibility,
-        modality,
-        returnType,
-        isInline = symbol.descriptor.isInline,
-        isExternal = symbol.descriptor.isExternal,
-        isTailrec = symbol.descriptor.isTailrec,
-        isSuspend = symbol.descriptor.isSuspend,
-        isExpect = symbol.descriptor.isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-        isOperator = symbol.descriptor.isOperator
+        name = name,
+        visibility = descriptor.visibility,
+        modality = descriptor.modality,
+        returnType = returnType,
+        isInline = descriptor.isInline,
+        isExternal = descriptor.isExternal,
+        isTailrec = descriptor.isTailrec,
+        isSuspend = descriptor.isSuspend,
+        isOperator = descriptor.isOperator,
+        isExpect = descriptor.isExpect
+    )
+
+    // Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: FunctionDescriptor,
+        returnType: IrType
+    ) : this(
+        startOffset, endOffset, origin,
+        IrSimpleFunctionSymbolImpl(descriptor), returnType, descriptor
     )
 
     override val descriptor: FunctionDescriptor = symbol.descriptor
@@ -93,18 +129,6 @@ class IrFunctionImpl(
                 setCarrier().correspondingPropertySymbolField = v
             }
         }
-
-    // Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: FunctionDescriptor,
-        returnType: IrType
-    ) : this(
-        startOffset, endOffset, origin,
-        IrSimpleFunctionSymbolImpl(descriptor), returnType
-    )
 
     init {
         symbol.bind(this)

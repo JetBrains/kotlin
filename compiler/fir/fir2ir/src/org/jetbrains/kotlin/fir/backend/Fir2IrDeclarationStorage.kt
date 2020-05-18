@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
@@ -41,8 +40,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
@@ -459,7 +456,7 @@ class Fir2IrDeclarationStorage(
             else simpleFunction?.isSuspend == true
         val created = function.convertWithOffsets { startOffset, endOffset ->
             enterScope(descriptor)
-            val result = symbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
+            val result = symbolTable.declareSimpleFunction(descriptor) { symbol ->
                 IrFunctionImpl(
                     startOffset, endOffset, updatedOrigin, symbol,
                     name, visibility,
@@ -562,11 +559,7 @@ class Fir2IrDeclarationStorage(
                 WrappedPropertyGetterDescriptor(Annotations.EMPTY, SourceElement.NO_SOURCE)
         }
         val prefix = if (isSetter) "set" else "get"
-        return symbolTable.declareSimpleFunction(
-            propertyAccessor?.psi?.startOffsetSkippingComments ?: startOffset,
-            propertyAccessor?.psi?.endOffset ?: endOffset,
-            origin, descriptor
-        ) { symbol ->
+        return symbolTable.declareSimpleFunction(descriptor) { symbol ->
             val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
             IrFunctionImpl(
                 startOffset, endOffset, origin, symbol,

@@ -387,8 +387,6 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
     val adapterFunctionDescriptor = WrappedSimpleFunctionDescriptor()
 
     val irAdapterFun = context.symbolTable.declareSimpleFunction(
-        startOffset, endOffset,
-        IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION,
         adapterFunctionDescriptor
     ) { irAdapterSymbol ->
         IrFunctionImpl(

@@ -215,7 +215,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
         ): IrFunction {
             val functionDescriptor = WrappedSimpleFunctionDescriptor()
             val thisReceiverDescriptor = WrappedValueParameterDescriptor()
-            return components.symbolTable.declareSimpleFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, functionDescriptor) { symbol ->
+            return components.symbolTable.declareSimpleFunction(functionDescriptor) { symbol ->
                 IrFunctionImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,

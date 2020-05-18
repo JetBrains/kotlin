@@ -340,8 +340,6 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 callableReferenceType.isKSuspendFunctionType
 
         return context.symbolTable.declareSimpleFunction(
-            startOffset, endOffset,
-            IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
             adapterFunctionDescriptor
         ) { irAdapterSymbol ->
             IrFunctionImpl(
