@@ -78,67 +78,43 @@ public final class IndexUpdateRunner {
     ourIndexingJobs.add(indexingJob);
 
     try {
-      while (!indexingJob.isOutdated()) {
-        processIndexJobsWhileUserIsInactive(indicator);
-        if (!indexingJob.isOutdated() &&
-            !ApplicationManager.getApplication().isDispatchThread()) { // damn tests with totally different threading
-          ProgressIndicatorUtils.yieldToPendingWriteActions();
+      Runnable indexingWorker = () -> {
+        while (!indexingJob.isOutdated()) {
+          // Fair alternating indexing of different projects.
+          for (IndexingJob job : ourIndexingJobs) {
+            if (job.isOutdated()) {
+              ourIndexingJobs.remove(job);
+              break;
+            }
+            try {
+              indexOneFileOfJob(job);
+            } catch (ProcessCanceledException ignored) {
+              break;
+            }
+          }
+        }
+      };
+
+      if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
+        // If the current thread has acquired the write lock, we can't grant it to worker threads, so we must do the work in the current thread.
+        indexingWorker.run();
+      } else {
+        List<Future<?>> futures = new ArrayList<>(myNumberOfIndexingThreads);
+        for (int i = 0; i < myNumberOfIndexingThreads; i++) {
+          futures.add(myIndexingExecutor.submit(indexingWorker));
+        }
+        for (Future<?> future : futures) {
+          ProgressIndicatorUtils.awaitWithCheckCanceled(future, indicator);
         }
       }
     }
     finally {
       ourIndexingJobs.remove(indexingJob);
     }
-
-    if (project.isDisposed()) {
-      indicator.cancel();
-    }
-
-    indicator.checkCanceled();
-
     return indexingJob.myStatistics;
   }
 
-  private void processIndexJobsWhileUserIsInactive(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
-    Runnable indexingWorker = () -> indexFilesOfJobsOneByOneWhileUserIsInactive();
-
-    if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
-      //If the current thread has acquired the write lock, we can't grant it to worker threads, so we must do the work in the current thread.
-      indexingWorker.run();
-    } else {
-      List<Future<?>> futures = new ArrayList<>(myNumberOfIndexingThreads);
-      for (int i = 0; i < myNumberOfIndexingThreads; i++) {
-        futures.add(myIndexingExecutor.submit(indexingWorker));
-      }
-      for (Future<?> future : futures) {
-        ProgressIndicatorUtils.awaitWithCheckCanceled(future, indicator);
-      }
-    }
-  }
-
-  //Does not throw PCE.
-  private void indexFilesOfJobsOneByOneWhileUserIsInactive() {
-    while (!ourIndexingJobs.isEmpty()) {
-      for (IndexingJob job : ourIndexingJobs) {
-        if (job.isOutdated()) {
-          ourIndexingJobs.remove(job);
-          return;
-        }
-        try {
-          indexOneFileOfJobIfUserIsInactive(job);
-        }
-        catch (ProcessCanceledException e) {
-          return;
-        }
-        if (job.isOutdated()) {
-          ourIndexingJobs.remove(job);
-          return;
-        }
-      }
-    }
-  }
-
-  private void indexOneFileOfJobIfUserIsInactive(@NotNull IndexingJob indexingJob) throws ProcessCanceledException {
+  private void indexOneFileOfJob(@NotNull IndexingJob indexingJob) throws ProcessCanceledException {
     long contentLoadingStartTime = System.nanoTime();
     CachedFileContentToken token;
     try {
@@ -167,7 +143,7 @@ public final class IndexUpdateRunner {
       CachedFileContent fileContent = token.getContent();
       long indexingStartTime = System.nanoTime();
       try {
-        indexOneFileOfJobIfUserIsInactive(indexingJob, fileContent);
+        indexOneFileOfJob(indexingJob, fileContent);
       } finally {
         indexingJob.myStatistics.addIndexingTime(System.nanoTime() - indexingStartTime);
       }
@@ -228,8 +204,8 @@ public final class IndexUpdateRunner {
     }
   }
 
-  private void indexOneFileOfJobIfUserIsInactive(@NotNull IndexingJob indexingJob,
-                                                 @NotNull CachedFileContent fileContent) throws ProcessCanceledException {
+  private void indexOneFileOfJob(@NotNull IndexingJob indexingJob,
+                                 @NotNull CachedFileContent fileContent) throws ProcessCanceledException {
     Project project = indexingJob.myProject;
     if (project.isDisposed() || indexingJob.myIndicator.isCanceled()) {
       throw new ProcessCanceledException();
