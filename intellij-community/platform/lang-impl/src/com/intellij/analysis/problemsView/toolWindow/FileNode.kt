@@ -5,6 +5,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.projectView.impl.CompoundIconProvider.findIcon
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil.getLocationRelativeToUserHome
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiUtilCore.findFileSystemItem
 import com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES
@@ -23,7 +24,7 @@ internal class FileNode(parent: Node, val file: VirtualFile) : Node(parent) {
     })
     if (parentDescriptor !is FileNode) {
       val url = file.parent?.presentableUrl ?: return
-      presentation.addText("  $url", GRAYED_ATTRIBUTES)
+      presentation.addText("  ${getLocationRelativeToUserHome(url)}", GRAYED_ATTRIBUTES)
     }
     val root = findAncestor(Root::class.java)
     if (root != null) {
