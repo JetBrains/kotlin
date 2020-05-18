@@ -11,11 +11,13 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.util.Key
 import com.intellij.util.concurrency.AppExecutorUtil
-import com.jetbrains.mpp.XCFileExtensions
+import com.jetbrains.mpp.XcFileExtensions
 import kotlinx.coroutines.*
 import java.io.File
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
-class SchemeCollector : ProcessAdapter() {
+private class SchemeCollector : ProcessAdapter() {
     enum class State { BEFORE, ACCEPTING, AFTER }
 
     private var state = State.BEFORE
@@ -43,7 +45,7 @@ class SchemeCollector : ProcessAdapter() {
     }
 }
 
-class XCProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher) {
+class XcProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher) {
 
     init {
         GlobalScope.async(coroutineDispatcher) {
@@ -57,7 +59,7 @@ class XCProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher
                 return@async
             }
 
-            _schemes = schemeCollector.schemes
+            schemes = schemeCollector.schemes
         }
     }
 
@@ -66,7 +68,7 @@ class XCProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher
     val projectName: String = file.nameWithoutExtension
 
     val selector: String
-        get() = if (absolutePath.endsWith(XCFileExtensions.workspace))
+        get() = if (absolutePath.endsWith(XcFileExtensions.workspace))
             "-workspace"
         else
             "-project"
@@ -78,11 +80,15 @@ class XCProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher
         it.addParameter("-list")
     }
 
-    private var _schemes: List<String> = emptyList()
-    val schemes: List<String>
-        get() {
-            return _schemes
+    private val schemesLock = ReentrantLock()
+    var schemes: List<String> = emptyList()
+        get() = schemesLock.withLock {
+            return field
         }
+        private set(value) = schemesLock.withLock {
+            field = value
+        }
+
 
     var schemesStatus = ""
 
@@ -90,7 +96,7 @@ class XCProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher
 
         private val DISPATCHER = AppExecutorUtil.createBoundedApplicationPoolExecutor(javaClass.simpleName, 1).asCoroutineDispatcher()
 
-        fun findXCProjectFile(location: File): XCProjectFile? {
+        fun findXcProjectFile(location: File): XcProjectFile? {
 
             val candidates = mutableListOf<File>()
 
@@ -99,13 +105,13 @@ class XCProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher
             } else if (location.isDirectory) {
                 for (file in (location.listFiles() ?: emptyArray())) {
                     when (file.extension) {
-                        XCFileExtensions.workspace -> candidates.add(0, file) // workspaces are more preferable
-                        XCFileExtensions.project -> candidates.add(file)
+                        XcFileExtensions.workspace -> candidates.add(0, file) // workspaces are more preferable
+                        XcFileExtensions.project -> candidates.add(file)
                     }
                 }
             }
 
-            return if (candidates.isEmpty()) null else XCProjectFile(candidates.first(), DISPATCHER)
+            return if (candidates.isEmpty()) null else XcProjectFile(candidates.first(), DISPATCHER)
         }
     }
 }

@@ -21,29 +21,31 @@ import com.jetbrains.mpp.execution.ApplePhysicalDevice
 import com.jetbrains.mpp.execution.Device
 import org.jdom.Element
 import java.io.File
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigurationFactory, name: String) :
     LocatableConfigurationBase<Element>(project, configurationFactory, name), RunConfigurationWithSuppressedDefaultRunAction {
 
     val workspace = ProjectWorkspace.getInstance(project)
 
-    private var _xcodeScheme: String? = null
-    var xcodeScheme: String?
-        get() {
-            if (_xcodeScheme == null) {
+    private val xcodeSchemeLock = ReentrantLock()
+    var xcodeScheme: String? = null
+        get() = xcodeSchemeLock.withLock {
+            if (field == null) {
                 // initially we pick scheme with the name of the project or first one
                 val schemes = workspace.xcProjectFile?.schemes ?: emptyList()
-                _xcodeScheme = if (workspace.xcProjectFile?.projectName in schemes) {
+                field = if (workspace.xcProjectFile?.projectName in schemes) {
                     workspace.xcProjectFile?.projectName
                 } else {
                     schemes.firstOrNull()
                 }
             }
-            return _xcodeScheme
+            return field
         }
-        set(value) {
+        set(value) = xcodeSchemeLock.withLock {
             if (value != null) {
-                _xcodeScheme = value
+                field = value
             }
         }
 
@@ -69,13 +71,13 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
         val propertyKey = KonanBundle.message("property.xcodeproj")
 
         val projectFileError = when (val status = workspace.xcProjectStatus) {
-            is XCProjectStatus.Misconfiguration ->
+            is XcProjectStatus.Misconfiguration ->
                 "Project is misconfigured: " + status.reason
-            XCProjectStatus.NotLocated ->
+            XcProjectStatus.NotLocated ->
                 "Please specify Xcode project location path relative to root in $propertyKey property of gradle.properties"
-            is XCProjectStatus.NotFound ->
+            is XcProjectStatus.NotFound ->
                 "Please check $propertyKey property of gradle.properties: " + status.reason
-            XCProjectStatus.Found -> ""
+            XcProjectStatus.Found -> ""
         }
 
         if (projectFileError.isNotEmpty()) {
@@ -83,11 +85,11 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
         }
 
         if (workspace.xcProjectFile!!.schemes.isEmpty()) {
-            throw RuntimeConfigurationError("Pleases check specified Xcode project file: " + workspace.xcProjectFile!!.schemesStatus)
+            throw RuntimeConfigurationError("Please check specified Xcode project file: " + workspace.xcProjectFile!!.schemesStatus)
         }
 
         if (xcodeScheme == null) {
-            throw RuntimeConfigurationError("Pleases select Xcode scheme")
+            throw RuntimeConfigurationError("Please select Xcode scheme")
         }
 
         if (xcodeScheme !in workspace.xcProjectFile!!.schemes) {

@@ -8,7 +8,6 @@ package com.jetbrains.mpp.execution
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.configurations.RunProfileState
-import com.intellij.execution.configurations.RuntimeConfigurationError
 import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.RunContentDescriptor
@@ -19,9 +18,8 @@ import com.intellij.xml.util.XmlStringUtil
 import com.jetbrains.cidr.execution.CidrCommandLineState
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mpp.*
-import com.jetbrains.mpp.XCFileExtensions
+import com.jetbrains.mpp.XcFileExtensions
 import com.jetbrains.mpp.debugger.KonanExternalSystemState
-import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import java.io.File
 
 internal const val ACTUAL_XC_PROJECT_FILE = "project.pbxproj"
@@ -48,9 +46,9 @@ class AppleRunner : RunnerBase() {
         val xcDir = (configuration.workspace.xcProjectFile ?: return).absolutePath
 
         // dSYMs are needed in the setting with CocoaPods, which implies that project is being governed by workspace
-        if (xcDir.endsWith(XCFileExtensions.project)) return
+        if (xcDir.endsWith(XcFileExtensions.project)) return
 
-        val xcProjectDir = (xcDir.removeSuffix(XCFileExtensions.workspace) + XCFileExtensions.project)
+        val xcProjectDir = (xcDir.removeSuffix(XcFileExtensions.workspace) + XcFileExtensions.project)
         val xcActualProjectFile = File(xcProjectDir).resolve(ACTUAL_XC_PROJECT_FILE)
 
         // do not trigger warning for nontrivial configuration

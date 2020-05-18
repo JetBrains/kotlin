@@ -24,13 +24,13 @@ import com.jetbrains.cidr.execution.build.CidrBuild
 import com.jetbrains.cidr.execution.build.CidrBuild.startProcess
 import com.jetbrains.cidr.execution.build.CidrBuildResult
 import com.jetbrains.cidr.execution.build.CidrBuildTaskType
-import com.jetbrains.kmm.XCProjectFile
+import com.jetbrains.kmm.XcProjectFile
 import java.io.File
 
 
 private val BUILD_IOS_APP_TASK_ID = Key.create<BuildIOSAppTask>(BuildIOSAppTask::class.java.name)
 
-internal object XCFileExtensions {
+internal object XcFileExtensions {
     const val project = "xcodeproj"
     const val workspace = "xcworkspace"
 }
@@ -111,7 +111,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
 
     private fun createBuildProcess(
         workDirectory: String,
-        xcProjectFile: XCProjectFile,
+        xcProjectFile: XcProjectFile,
         scheme: String,
         buildDirectory: String,
         sdk: String
