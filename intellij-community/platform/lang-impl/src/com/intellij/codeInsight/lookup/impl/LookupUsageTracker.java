@@ -22,24 +22,25 @@ class LookupUsageTracker {
   private LookupUsageTracker() {
   }
 
-  static void trackLookup(@NotNull LookupImpl lookup) {
-    lookup.addLookupListener(new MyLookupTracker(lookup));
+  static void trackLookup(long createdTimestamp, @NotNull LookupImpl lookup) {
+    lookup.addLookupListener(new MyLookupTracker(createdTimestamp, lookup));
   }
 
   private static class MyLookupTracker implements LookupListener {
     private final LookupImpl myLookup;
     private final long myCreatedTimestamp;
+    private final long myTimeToShow;
     private final boolean myIsDumbStart;
     private final Language myLanguage;
     private final MyTypingTracker myTypingTracker;
 
-    private long myShownTimestamp = -1L;
     private int mySelectionChangedCount = 0;
 
 
-    MyLookupTracker(@NotNull LookupImpl lookup) {
+    MyLookupTracker(long createdTimestamp, @NotNull LookupImpl lookup) {
       myLookup = lookup;
-      myCreatedTimestamp = System.currentTimeMillis();
+      myCreatedTimestamp = createdTimestamp;
+      myTimeToShow = System.currentTimeMillis() - createdTimestamp;
       myIsDumbStart = DumbService.isDumb(lookup.getProject());
       myLanguage = getLanguageAtCaret(lookup);
       myTypingTracker = new MyTypingTracker();
@@ -85,11 +86,6 @@ class LookupUsageTracker {
       }
     }
 
-    @Override
-    public void lookupShown(@NotNull LookupEvent event) {
-      myShownTimestamp = System.currentTimeMillis();
-    }
-
     private void triggerLookupUsed(@NotNull FinishType finishType, @Nullable LookupElement currentItem) {
       FeatureUsageData data = new FeatureUsageData();
       addCommonUsageInfo(data, finishType, currentItem);
@@ -125,7 +121,7 @@ class LookupUsageTracker {
       }
 
       // Performance
-      data.addData("time_to_show", myShownTimestamp == -1L ? -1 : myShownTimestamp - myCreatedTimestamp);
+      data.addData("time_to_show", myTimeToShow);
 
       // Indexing
       data.addData("dumb_start", myIsDumbStart);

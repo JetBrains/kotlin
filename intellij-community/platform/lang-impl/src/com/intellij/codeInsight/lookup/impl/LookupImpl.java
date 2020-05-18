@@ -100,6 +100,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   // keeping our own copy of editor's font preferences, which can be used in non-EDT threads (to avoid race conditions)
   private final FontPreferences myFontPreferences = new FontPreferencesImpl();
 
+  private final long myCreatedTimestamp;
   private long myStampShown = 0;
   private boolean myShown = false;
   private boolean myDisposed = false;
@@ -158,7 +159,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
 
     addListeners();
 
-    LookupUsageTracker.trackLookup(this);
+    myCreatedTimestamp = System.currentTimeMillis();
   }
 
   private CollectionListModel<LookupElement> getListModel() {
@@ -664,6 +665,8 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
       hideLookup(false);
       return false;
     }
+
+    LookupUsageTracker.trackLookup(myCreatedTimestamp, this);
 
     myAdComponent.showRandomText();
     if (Boolean.TRUE.equals(myEditor.getUserData(AutoPopupController.NO_ADS))) {
