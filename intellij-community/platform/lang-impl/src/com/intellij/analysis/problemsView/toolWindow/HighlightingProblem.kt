@@ -4,7 +4,7 @@ package com.intellij.analysis.problemsView.toolWindow
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler.chooseActionAndInvoke
-import com.intellij.icons.AllIcons.Actions.QuickfixBulb
+import com.intellij.icons.AllIcons.Actions.IntentionBulb
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.actionSystem.AnAction
@@ -44,7 +44,7 @@ internal class HighlightingProblem(val info: HighlightInfo) : Problem {
 }
 
 private class QuickFixAction(val action: IntentionAction, val marker: RangeMarker)
-  : AnAction(action.text, action.text, QuickfixBulb) {
+  : AnAction(action.text, action.text, IntentionBulb) {
 
   override fun update(event: AnActionEvent) {
     event.presentation.isEnabledAndVisible = getTopLevelFile(event) != null

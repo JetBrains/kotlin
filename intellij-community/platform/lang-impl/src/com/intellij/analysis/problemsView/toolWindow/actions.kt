@@ -26,7 +26,7 @@ internal class ProblemsViewQuickFixAction : AnAction() {
   override fun update(event: AnActionEvent) {
     val panel = getProblemsViewPanel(event)
     val node = panel?.tree?.selectionPath?.lastPathComponent as? ProblemNode
-    event.presentation.isEnabledAndVisible = node != null && node.problem.hasQuickFixActions()
+    event.presentation.isEnabled = node != null && node.problem.hasQuickFixActions()
   }
 
   override fun actionPerformed(event: AnActionEvent) {
