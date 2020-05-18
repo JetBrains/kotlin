@@ -25,7 +25,7 @@ class ProblemsViewState : PersistentStateComponent<ProblemsViewState> {
   var showInformation = true
 
   var sortFoldersFirst = true
-  var sortBySeverity = false
+  var sortBySeverity = true
   var sortByName = false
 
   override fun getState(): ProblemsViewState? = this
