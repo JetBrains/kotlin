@@ -1,34 +1,39 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.snapshot;
 
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.ShutDownTracker;
+import com.intellij.openapi.vfs.newvfs.persistent.FSRecords;
 import com.intellij.openapi.vfs.newvfs.persistent.FlushingDaemon;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.hash.ContentHashEnumerator;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.FileContentImpl;
 import com.intellij.util.indexing.IndexInfrastructure;
+import com.intellij.util.indexing.flavor.FileIndexingFlavorProvider;
+import com.intellij.util.indexing.flavor.HashBuilder;
 import com.intellij.util.io.DigestUtil;
 import com.intellij.util.io.IOUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 
 @ApiStatus.Internal
 public class IndexedHashesSupport {
-
-  private static final MessageDigest TEXT_CONTENT_HASH_DIGEST = DigestUtil.sha1();
+  // TODO replace with sha-256
+  private static final HashFunction INDEXED_FILE_CONTENT_HASHER = Hashing.sha1();
 
   private static volatile ContentHashEnumerator ourTextContentHashes;
 
   public static int getVersion() {
-    return 1;
+    return 2;
   }
 
   public static void initContentHashesEnumerator() throws IOException {
@@ -68,15 +73,51 @@ public class IndexedHashesSupport {
   }
 
   private static byte @NotNull [] calculateIndexedHashForFileContent(@NotNull FileContentImpl content) {
+    Hasher hasher = INDEXED_FILE_CONTENT_HASHER.newHasher();
+
     byte[] contentHash = PersistentFSImpl.getContentHashIfStored(content.getFile());
     if (contentHash == null) {
-      contentHash = DigestUtil.calculateContentHash(TEXT_CONTENT_HASH_DIGEST, ((FileContent)content).getContent());
+      contentHash = DigestUtil.calculateContentHash(FSRecords.CONTENT_HASH_DIGEST, ((FileContent)content).getContent());
       // todo store content hash in FS
     }
+    hasher.putBytes(contentHash);
 
-    boolean isBinary = content.getFileTypeWithoutSubstitution().isBinary();
-    Charset charset = isBinary ? null : content.getCharset();
-    byte[] charsetBytes = charset != null ? charset.name().getBytes(StandardCharsets.UTF_8) : ArrayUtilRt.EMPTY_BYTE_ARRAY;
-    return DigestUtil.calculateMergedHash(TEXT_CONTENT_HASH_DIGEST, new byte[][]{contentHash, charsetBytes});
+    if (!content.getFileTypeWithoutSubstitution().isBinary()) {
+      hasher.putString(content.getCharset().name(), StandardCharsets.UTF_8);
+    }
+
+    FileType fileType = content.getFileType();
+    hasher.putString(fileType.getName(), StandardCharsets.UTF_8);
+
+    @Nullable
+    FileIndexingFlavorProvider<?> provider = FileIndexingFlavorProvider.INSTANCE.forFileType(fileType);
+    if (provider != null) {
+      buildFlavorHash(content, provider, new HashBuilder() {
+        @Override
+        public @NotNull HashBuilder putInt(int val) {
+          hasher.putInt(val);
+          return this;
+        }
+
+        @Override
+        public @NotNull HashBuilder putString(@NotNull CharSequence charSequence) {
+          hasher.putString(charSequence, StandardCharsets.UTF_8);
+          return this;
+        }
+      });
+    }
+
+    return hasher.hash().asBytes();
+  }
+
+  private static <F> void buildFlavorHash(@NotNull FileContent content,
+                                          @NotNull FileIndexingFlavorProvider<F> flavorProvider,
+                                          @NotNull HashBuilder hashBuilder) {
+    F flavor = flavorProvider.getFlavor(content);
+    hashBuilder.putString(flavorProvider.getId());
+    hashBuilder.putInt(flavorProvider.getVersion());
+    if (flavor != null) {
+      flavorProvider.buildHash(flavor, hashBuilder);
+    }
   }
 }
