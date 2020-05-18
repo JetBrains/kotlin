@@ -527,7 +527,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             parentAsClass.isJvmInterface -> if (!Visibilities.isPrivate(visibility)) "\$jd" else ""
 
             // Accessor for _s_uper-qualified call
-            superQualifier != null -> "\$s" + superQualifier.descriptor.syntheticAccessorToSuperSuffix()
+            superQualifier != null -> "\$s" + superQualifier.owner.syntheticAccessorToSuperSuffix()
 
             // Access to static members that need an accessor must be because they are inherited,
             // hence accessed on a _s_upertype.
@@ -556,7 +556,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
         // Static accesses that need an accessor must be due to being inherited, hence accessed on a
         // _s_upertype
-        return "p" + if (isStatic) "\$s" + parentAsClass.descriptor.syntheticAccessorToSuperSuffix() else ""
+        return "p" + if (isStatic) "\$s" + parentAsClass.syntheticAccessorToSuperSuffix() else ""
     }
 
     private val Visibility.isPrivate
@@ -636,3 +636,9 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 private fun IrFunction.isCoroutineIntrinsic(): Boolean =
     (name.asString() == "suspendCoroutine" && getPackageFragment()?.fqName == FqName("kotlin.coroutines")) ||
             (name.asString() == "suspendCoroutineUninterceptedOrReturn" && getPackageFragment()?.fqName == FqName("kotlin.coroutines.intrinsics"))
+
+private fun IrClass.syntheticAccessorToSuperSuffix(): String =
+    // TODO: change this to `fqNameUnsafe.asString().replace(".", "_")` as soon as we're ready to break compatibility with pre-KT-21178 code
+    name.asString().hashCode().toString()
+
+
