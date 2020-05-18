@@ -430,19 +430,27 @@ public class ProjectViewDirectoryHelper {
     final List<AbstractTreeNode<?>> children = new ArrayList<>(files.size());
     final PsiManager psiManager = PsiManager.getInstance(myProject);
     for (final VirtualFile virtualFile : files) {
-      if (virtualFile.isDirectory()) {
-        PsiDirectory directory = psiManager.findDirectory(virtualFile);
-        if (directory != null) {
-          children.add(new PsiDirectoryNode(myProject, directory, viewSettings));
-        }
-      }
-      else {
-        PsiFile file = psiManager.findFile(virtualFile);
-        if (file != null) {
-          children.add(new PsiFileNode(myProject, file, viewSettings));
-        }
-      }
+      ContainerUtil.addIfNotNull(children, doCreateNode(virtualFile, psiManager, viewSettings));
     }
     return children;
+  }
+
+  @Nullable
+  protected AbstractTreeNode<?> doCreateNode(@NotNull VirtualFile virtualFile,
+                                             @NotNull PsiManager psiManager,
+                                             @Nullable ViewSettings viewSettings) {
+    if (virtualFile.isDirectory()) {
+      PsiDirectory directory = psiManager.findDirectory(virtualFile);
+      if (directory != null) {
+        return new PsiDirectoryNode(myProject, directory, viewSettings);
+      }
+    }
+    else {
+      PsiFile file = psiManager.findFile(virtualFile);
+      if (file != null) {
+        return new PsiFileNode(myProject, file, viewSettings);
+      }
+    }
+    return null;
   }
 }
