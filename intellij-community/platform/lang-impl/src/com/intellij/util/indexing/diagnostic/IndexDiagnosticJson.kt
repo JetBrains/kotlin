@@ -1,9 +1,14 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.diagnostic
 
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.JsonSerializer
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.PersistentFSConstants
 import com.intellij.util.indexing.UnindexedFilesUpdater
 import com.intellij.util.text.DateFormatUtil
@@ -13,19 +18,30 @@ import java.time.format.DateTimeFormatter
 
 private fun TimeNano.toMillis(): TimeMillis = this / 1_000_000
 
+private fun TimeMillis.toNano(): TimeNano = this * 1_000_000
+
+@JsonSerialize(using = JsonTime.Companion::class)
+data class JsonTime(val nano: Long) {
+  companion object : JsonSerializer<JsonTime>() {
+    override fun serialize(value: JsonTime, gen: JsonGenerator, serializers: SerializerProvider?) {
+      gen.writeString(StringUtil.formatDuration(value.nano.toMillis()))
+    }
+  }
+}
+
 data class JsonTimeStats(
-  val minTime: TimeMillis,
-  val maxTime: TimeMillis,
-  val meanTime: TimeMillis,
-  val medianTime: TimeMillis
+  val minTime: JsonTime,
+  val maxTime: JsonTime,
+  val meanTime: JsonTime,
+  val medianTime: JsonTime
 )
 
 fun MaxNTimeBucket.toTimeStats(): JsonTimeStats =
   JsonTimeStats(
-    minTime.toMillis(),
-    maxTime.toMillis(),
-    meanTime.toLong().toMillis(),
-    getMedianOfArray(maxNTimes).toLong().toMillis()
+    JsonTime(minTime),
+    JsonTime(maxTime),
+    JsonTime(meanTime.toLong()),
+    JsonTime(getMedianOfArray(maxNTimes).toLong())
   )
 
 private fun <N : Number> getMedianOfArray(elements: Collection<N>): Double {
@@ -42,7 +58,7 @@ private fun <N : Number> getMedianOfArray(elements: Collection<N>): Double {
 data class JsonFileProviderIndexStatistics(
   val providerName: String,
   // <total time> = <content loading time> + <indexing time> + <time spent on waiting for other indexing tasks to complete>
-  val totalTime: TimeMillis,
+  val totalTime: JsonTime,
   val indexingTimePerFile: JsonTimeStats,
   val contentLoadingTimePerFile: JsonTimeStats,
   val numberOfFilesPerFileType: List<FilesNumberPerFileType>,
@@ -58,7 +74,7 @@ data class JsonFileProviderIndexStatistics(
 fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics =
   JsonFileProviderIndexStatistics(
     providerDebugName,
-    totalTime.toMillis(),
+    JsonTime(totalTime),
     indexingStatistics.indexingTime.toTimeStats(),
     indexingStatistics.contentLoadingTime.toTimeStats(),
     indexingStatistics.numberOfFilesPerFileType
@@ -67,11 +83,11 @@ fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics
     ,
     indexingStatistics.timesPerFileType
       .map { JsonFileProviderIndexStatistics.TimePerFileType(it.key, it.value.toTimeStats()) }
-      .sortedByDescending { it.time.meanTime }
+      .sortedByDescending { it.time.meanTime.nano }
     ,
     indexingStatistics.timesPerIndexer
       .map { JsonFileProviderIndexStatistics.TimePerIndexer(it.key, it.value.toTimeStats()) }
-      .sortedByDescending { it.time.meanTime }
+      .sortedByDescending { it.time.meanTime.nano }
   )
 
 typealias PresentableTime = String
@@ -83,35 +99,35 @@ private fun TimeMillis.toPresentableTime(): PresentableTime =
 data class JsonProjectIndexingHistoryTimes(
   val startIndexing: PresentableTime,
   val endIndexing: PresentableTime,
-  val indexingTime: TimeMillis,
+  val indexingTime: JsonTime,
 
   val startPushProperties: PresentableTime,
   val endPushProperties: PresentableTime,
-  val pushPropertiesTime: TimeMillis,
+  val pushPropertiesTime: JsonTime,
 
   val startIndexExtensions: PresentableTime,
   val endIndexExtensions: PresentableTime,
-  val indexExtensionsTime: TimeMillis,
+  val indexExtensionsTime: JsonTime,
 
   val startScanFiles: PresentableTime,
   val endScanFiles: PresentableTime,
-  val scanFilesTime: TimeMillis
+  val scanFilesTime: JsonTime
 )
 
 fun ProjectIndexingHistory.IndexingTimes.convertToJson(): JsonProjectIndexingHistoryTimes {
   return JsonProjectIndexingHistoryTimes(
     startIndexing.toPresentableTime(),
     endIndexing.toPresentableTime(),
-    endIndexing - startIndexing,
+    JsonTime((endIndexing - startIndexing).toNano()),
     startPushProperties.toPresentableTime(),
     endPushProperties.toPresentableTime(),
-    endPushProperties - startPushProperties,
+    JsonTime((endPushProperties - startPushProperties).toNano()),
     startIndexExtensions.toPresentableTime(),
     endIndexExtensions.toPresentableTime(),
-    endIndexExtensions - startIndexExtensions,
+    JsonTime((endIndexExtensions - startIndexExtensions).toNano()),
     startScanFiles.toPresentableTime(),
     endScanFiles.toPresentableTime(),
-    endScanFiles - startScanFiles
+    JsonTime((endScanFiles - startScanFiles).toNano())
   )
 }
 
@@ -121,13 +137,12 @@ data class JsonProjectIndexingHistory(
   val fileProviderStatistics: List<JsonFileProviderIndexStatistics>
 )
 
-fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory {
-  return JsonProjectIndexingHistory(
+fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory =
+  JsonProjectIndexingHistory(
     projectName,
     times.convertToJson(),
-    providerStatistics.sortedByDescending { it.indexingTimePerFile.meanTime }
+    providerStatistics.sortedByDescending { it.indexingTimePerFile.meanTime.nano }
   )
-}
 
 data class JsonIndexDiagnosticAppInfo(
   val build: String,
