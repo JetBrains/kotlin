@@ -34,6 +34,20 @@ object KotlinPredefinedConfigurations {
             CLASS_TYPE
         ),
 
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.all.fields.of.the.object"),
+            """
+                object '_Object {  
+                    var 'Field+:* = '_Init?
+                }
+            """.trimIndent(),
+            CLASS_TYPE
+        ),
+
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.anonymous.class"), "fun '_Function() = object { }", CLASS_TYPE
+        ),
+
         // Expressions
         searchTemplate(KSSRBundle.message("predefined.configuration.assignments"), "'_Inst = '_Expr", EXPRESSION_TYPE),
         searchTemplate(
