@@ -73,7 +73,6 @@ rootProject.apply {
 val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
 val intellijUltimateEnabled by extra(kotlinBuildProperties.intellijUltimateEnabled)
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
-val verifyDependencyOutput by extra( getBooleanProperty("kotlin.build.dependency.output.verification") ?: isTeamcityBuild)
 
 extra["intellijReleaseType"] = when {
     extra["versions.intellijSdk"]?.toString()?.contains("-EAP-") == true -> "snapshots"

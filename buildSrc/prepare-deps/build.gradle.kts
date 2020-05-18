@@ -16,7 +16,6 @@ plugins {
     base
 }
 
-val verifyDependencyOutput: Boolean by rootProject.extra
 val intellijUltimateEnabled: Boolean by rootProject.extra
 val intellijReleaseType: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
@@ -34,7 +33,6 @@ if (intellijVersionDelimiterIndex == -1) {
 
 val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterIndex)
 
-logger.info("verifyDependencyOutput: $verifyDependencyOutput")
 logger.info("intellijUltimateEnabled: $intellijUltimateEnabled")
 logger.info("intellijVersion: $intellijVersion")
 logger.info("androidStudioRelease: $androidStudioRelease")
@@ -272,25 +270,22 @@ fun buildIvyRepositoryTaskAndRegisterCleanupTask(
         dependsOn(configuration)
         inputs.files(configuration)
 
-        if (verifyDependencyOutput) {
-            outputs.dir(
-                provider {
-                    configuration.resolvedConfiguration.resolvedArtifacts.single().moduleDirectory()
-                }
-            )
-        } else {
-            outputs.upToDateWhen {
-                configuration.resolvedConfiguration.resolvedArtifacts.single()
-                    .moduleDirectory()
-                    .exists()
-            }
+        outputs.upToDateWhen {
+            configuration.resolvedConfiguration.resolvedArtifacts.single()
+                .moduleDirectory()
+                .exists()
         }
 
         doFirst {
-            configuration.resolvedConfiguration.resolvedArtifacts.single().run {
-                val moduleDirectory = moduleDirectory()
-                val artifactsDirectory = File(moduleDirectory(), "artifacts")
+            val artifact = configuration.resolvedConfiguration.resolvedArtifacts.single()
+            val moduleDirectory = artifact.moduleDirectory()
+            if (moduleDirectory.exists()) {
+                logger.info("Path ${moduleDirectory.absolutePath} already exists, skipping unpacking.")
+                return@doFirst
+            }
 
+            with(artifact) {
+                val artifactsDirectory = File(moduleDirectory, "artifacts")
                 logger.info("Unpacking ${file.name} into ${artifactsDirectory.absolutePath}")
                 copy {
                     val fileTree = when (extension) {
