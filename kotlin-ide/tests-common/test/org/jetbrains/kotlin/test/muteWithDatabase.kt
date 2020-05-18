@@ -148,10 +148,12 @@ private fun parseMutedTest(str: String): MutedTest {
 private class ParseError(message: String, override val cause: Throwable? = null) : IllegalArgumentException(message)
 
 private val mutedSet by lazy {
+    val parent = File(KotlinTestUtils.getHomeDirectory(), "test-framework")
+
     loadMutedSet(
         listOf(
-            File("tests/mute-common.csv"),
-            File("tests/mute-platform.csv")
+            File(parent, "mute-common.csv"),
+            File(parent, "mute-platform.csv")
         )
     )
 }
