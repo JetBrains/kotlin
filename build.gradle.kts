@@ -613,6 +613,10 @@ tasks {
     register("compilerTest") {
         dependsOn("jvmCompilerTest")
         dependsOn("jsCompilerTest")
+        dependsOn("miscCompilerTest")
+    }
+
+    register("miscCompilerTest") {
         dependsOn("wasmCompilerTest")
         dependsOn("nativeCompilerTest")
         dependsOn("firCompilerTest")
