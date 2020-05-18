@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.utils
 
-sealed class ArrayMap<T : Any> {
+sealed class ArrayMap<T : Any> : Iterable<T> {
     abstract val size: Int
 
     abstract operator fun set(index: Int, value: T)
@@ -23,6 +23,14 @@ internal object EmptyArrayMap : ArrayMap<Nothing>() {
     override fun get(index: Int): Nothing? {
         return null
     }
+
+    override fun iterator(): Iterator<Nothing> {
+        return object : Iterator<Nothing> {
+            override fun hasNext(): Boolean = false
+
+            override fun next(): Nothing = throw NoSuchElementException()
+        }
+    }
 }
 
 internal class OneElementArrayMap<T : Any>(val value: T, val index: Int) : ArrayMap<T>() {
@@ -35,6 +43,25 @@ internal class OneElementArrayMap<T : Any>(val value: T, val index: Int) : Array
 
     override fun get(index: Int): T? {
         return if (index == this.index) value else null
+    }
+
+    override fun iterator(): Iterator<T> {
+        return object : Iterator<T> {
+            private var notVisited = true
+
+            override fun hasNext(): Boolean {
+                return notVisited
+            }
+
+            override fun next(): T {
+                if (notVisited) {
+                    notVisited = false
+                    return value
+                } else {
+                    throw NoSuchElementException()
+                }
+            }
+        }
     }
 }
 
@@ -65,6 +92,37 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T>() {
     override operator fun get(index: Int): T? {
         @Suppress("UNCHECKED_CAST")
         return data.getOrNull(index) as T?
+    }
+
+    override fun iterator(): Iterator<T> {
+        return object : Iterator<T> {
+            private var currentIndex = -1
+            private var nextIndex = 0
+
+            override fun hasNext(): Boolean {
+                if (nextIndex < 0) return false
+                while (nextIndex < data.size && data[nextIndex] == null) {
+                    nextIndex++
+                }
+                return if (nextIndex >= data.size) {
+                    nextIndex = -1
+                    false
+                } else {
+                    true
+                }
+            }
+
+            override fun next(): T {
+                if (!hasNext()) throw NoSuchElementException()
+                if (currentIndex < 0) {
+                    currentIndex = nextIndex
+                }
+                @Suppress("UNCHECKED_CAST")
+                val result = data[currentIndex] as T
+                currentIndex = nextIndex++
+                return result
+            }
+        }
     }
 
     fun remove(index: Int) {
