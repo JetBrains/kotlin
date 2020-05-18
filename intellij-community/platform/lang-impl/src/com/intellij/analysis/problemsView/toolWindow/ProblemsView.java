@@ -42,15 +42,23 @@ public final class ProblemsView implements DumbAware, ToolWindowFactory {
   }
 
   public static void selectHighlightInfoIfVisible(@NotNull Project project, @NotNull HighlightInfo info) {
-    ToolWindow window = getToolWindow(project);
-    if (window == null || !window.isVisible()) return;
-    HighlightingPanel panel = get(HighlightingPanel.class, window.getContentManager().getSelectedContent());
+    HighlightingPanel panel = get(HighlightingPanel.class, getSelectedContent(project));
     if (panel != null && panel.isShowing()) panel.selectHighlightInfo(info);
   }
 
   static @Nullable Document getDocument(@Nullable Project project, @NotNull VirtualFile file) {
     Object item = file.isDirectory() ? null : findFileSystemItem(project, file);
     return item instanceof PsiFile ? PsiDocumentManager.getInstance(project).getDocument((PsiFile)item) : null;
+  }
+
+  static @Nullable ProblemsViewPanel getSelectedPanel(@Nullable Project project) {
+    return get(ProblemsViewPanel.class, getSelectedContent(project));
+  }
+
+  private static @Nullable Content getSelectedContent(@Nullable Project project) {
+    ToolWindow window = project == null ? null : getToolWindow(project);
+    ContentManager manager = window == null ? null : window.getContentManagerIfCreated();
+    return manager == null ? null : manager.getSelectedContent();
   }
 
   private static void createContent(@NotNull ContentManager manager, @NotNull ProblemsViewPanel panel) {
