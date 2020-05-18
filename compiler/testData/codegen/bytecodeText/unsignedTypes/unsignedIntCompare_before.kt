@@ -1,4 +1,3 @@
-// JVM_TARGET: 1.8
 // WITH_RUNTIME
 
 val ua = 1234U
@@ -12,5 +11,5 @@ fun box(): String {
     return "OK"
 }
 
-// 0 kotlin/UnsignedKt.uintCompare
-// 1 INVOKESTATIC java/lang/Integer.compareUnsigned \(II\)I
+// 1 kotlin/UnsignedKt.uintCompare
+// 0 INVOKESTATIC java/lang/Integer.compareUnsigned \(II\)I

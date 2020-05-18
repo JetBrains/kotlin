@@ -300,6 +300,8 @@ private val jvmFilePhases =
         anonymousObjectSuperConstructorPhase then
         tailrecPhase then
 
+        jvmStandardLibraryBuiltInsPhase then
+
         forLoopsPhase then
         jvmInlineClassPhase then
 
