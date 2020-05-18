@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: JVM, JVM_IR
 // ^ TODO support new mangling rules in optimizer
 
 fun testUIntRangeForEach() {

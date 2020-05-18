@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // FILE: test.kt
 inline class A(val s: String) {

@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// IGNORE_BACKEND: JVM_IR
 // FILE: test.kt
 fun test() {
     val result = Result.success("yes!")
