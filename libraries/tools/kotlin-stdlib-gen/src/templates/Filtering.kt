@@ -557,6 +557,7 @@ object Filtering : TemplateGroupBase() {
         }
 
         specialFor(Strings, CharSequences) {
+            sample("samples.text.Strings.filter")
             returns("SELF")
             doc { "Returns a ${f.collection} containing only those characters from the original ${f.collection} that match the given [predicate]." }
             body { """return filterTo(StringBuilder(), predicate)${toResult(f)}""" }
@@ -686,6 +687,7 @@ object Filtering : TemplateGroupBase() {
         }
 
         specialFor(Strings, CharSequences) {
+            sample("samples.text.Strings.filterNot")
             returns("SELF")
             doc { "Returns a ${f.collection} containing only those characters from the original ${f.collection} that do not match the given [predicate]." }
             body { """return filterNotTo(StringBuilder(), predicate)${toResult(f)}""" }
