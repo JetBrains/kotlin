@@ -16,30 +16,25 @@
 
 package org.jetbrains.kotlin.idea.nodejs.protractor
 
-import com.intellij.execution.configuration.ConfigurationFactoryEx
 import com.intellij.execution.configurations.ConfigurationFactory
-import com.intellij.execution.configurations.ConfigurationTypeBase
 import com.intellij.execution.configurations.ConfigurationTypeUtil
+import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.configurations.SimpleConfigurationType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NotNullLazyValue
 import icons.JavaScriptLanguageIcons
 
-class KotlinProtractorConfigurationType : ConfigurationTypeBase(
-        "KotlinJavaScriptTestRunnerProtractor",
-        "Protractor (Kotlin)",
-        NAME,
-        JavaScriptLanguageIcons.Protractor.Protractor
+class KotlinProtractorConfigurationType : SimpleConfigurationType(
+    "KotlinJavaScriptTestRunnerProtractor",
+    "Protractor (Kotlin)",
+    NAME,
+    NotNullLazyValue.createValue { JavaScriptLanguageIcons.Protractor.Protractor }
 ) {
-    init {
-        addFactory(object : ConfigurationFactoryEx<KotlinProtractorRunConfiguration>(this) {
-            override fun createTemplateConfiguration(project: Project) = KotlinProtractorRunConfiguration(project, this, NAME)
+    override fun createTemplateConfiguration(project: Project): RunConfiguration = KotlinProtractorRunConfiguration(project, this, NAME)
 
-            override fun isConfigurationSingletonByDefault() = true
+    override fun isConfigurationSingletonByDefault() = true
 
-            override fun canConfigurationBeSingleton() = false
-
-            override fun onNewConfigurationCreated(configuration: KotlinProtractorRunConfiguration) = configuration.initialize()
-        })
-    }
+    override fun canConfigurationBeSingleton() = false
 
     companion object {
         private val NAME = "Protractor"

@@ -18,45 +18,46 @@ package org.jetbrains.kotlin.idea.nodejs.protractor
 
 import com.intellij.execution.configuration.EnvironmentVariablesData
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef
-import com.intellij.openapi.util.JDOMExternalizerUtil.*
+import com.intellij.openapi.util.JDOMExternalizerUtil.readCustomField
+import com.intellij.openapi.util.JDOMExternalizerUtil.writeCustomField
 import com.intellij.openapi.util.io.FileUtil
 import org.jdom.Element
 
 data class KotlinProtractorRunSettings(
-        val interpreterRef: NodeJsInterpreterRef = NodeJsInterpreterRef.createProjectRef(),
-        private val configFilePath: String = "",
-        private val testFilePath: String = "",
-        val seleniumAddress: String = "",
-        val extraOptions: String = "",
-        val envData: EnvironmentVariablesData = EnvironmentVariablesData.DEFAULT
+    val interpreterRef: NodeJsInterpreterRef = NodeJsInterpreterRef.createProjectRef(),
+    private val configFilePath: String = "",
+    private val testFilePath: String = "",
+    val seleniumAddress: String = "",
+    val extraOptions: String = "",
+    val envData: EnvironmentVariablesData = EnvironmentVariablesData.DEFAULT
 ) {
     val configFileSystemDependentPath get() = FileUtil.toSystemDependentName(configFilePath)
     val testFileSystemDependentPath get() = FileUtil.toSystemDependentName(testFilePath)
 
     fun writeToXML(element: Element) {
-        addElementWithValueAttribute(element, "config-file", FileUtil.toSystemIndependentName(configFileSystemDependentPath))
-        addElementWithValueAttribute(element, "test-file", FileUtil.toSystemIndependentName(testFileSystemDependentPath))
-        addElementWithValueAttribute(element, "selenium-address", seleniumAddress)
-        addElementWithValueAttribute(element, "extra-protractor-options", extraOptions)
-        addElementWithValueAttribute(element, "node-interpreter", interpreterRef.referenceName)
+        writeCustomField(element, "config-file", FileUtil.toSystemIndependentName(configFileSystemDependentPath))
+        writeCustomField(element, "test-file", FileUtil.toSystemIndependentName(testFileSystemDependentPath))
+        writeCustomField(element, "selenium-address", seleniumAddress)
+        writeCustomField(element, "extra-protractor-options", extraOptions)
+        writeCustomField(element, "node-interpreter", interpreterRef.referenceName)
         envData.writeExternal(element)
     }
 
     companion object {
         fun readFromXML(element: Element): KotlinProtractorRunSettings {
-            val configFilePath = getFirstChildValueAttribute(element, "config-file")
-            val testFilePath = getFirstChildValueAttribute(element, "test-file")
-            val seleniumAddress = getFirstChildValueAttribute(element, "selenium-address")
-            val extraOptions = getFirstChildValueAttribute(element, "extra-protractor-options")
-            val interpreterRefName = getFirstChildValueAttribute(element, "node-interpreter")
+            val configFilePath = readCustomField(element, "config-file")
+            val testFilePath = readCustomField(element, "test-file")
+            val seleniumAddress = readCustomField(element, "selenium-address")
+            val extraOptions = readCustomField(element, "extra-protractor-options")
+            val interpreterRefName = readCustomField(element, "node-interpreter")
             val envData = EnvironmentVariablesData.readExternal(element)
             return KotlinProtractorRunSettings(
-                    NodeJsInterpreterRef.create(interpreterRefName ?: "project"),
-                    configFilePath ?: "",
-                    testFilePath ?: "",
-                    seleniumAddress ?: "",
-                    extraOptions ?: "",
-                    envData
+                NodeJsInterpreterRef.create(interpreterRefName ?: "project"),
+                configFilePath ?: "",
+                testFilePath ?: "",
+                seleniumAddress ?: "",
+                extraOptions ?: "",
+                envData
             )
         }
     }
