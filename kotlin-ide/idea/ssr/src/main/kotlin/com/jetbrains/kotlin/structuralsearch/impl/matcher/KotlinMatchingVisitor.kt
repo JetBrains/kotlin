@@ -573,6 +573,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElement<KtDestructuringDeclaration>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSequentially(destructuringDeclaration.entries, other.entries)
                 && myMatchingVisitor.match(destructuringDeclaration.initializer, other.initializer)
+                && myMatchingVisitor.match(destructuringDeclaration.docComment, other.docComment)
     }
 
     override fun visitDestructuringDeclarationEntry(multiDeclarationEntry: KtDestructuringDeclarationEntry) {
@@ -585,7 +586,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitComment(comment: PsiComment) {
         val other = getTreeElement<PsiComment>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchText(comment, other)
+        myMatchingVisitor.result = comment.tokenType == other.tokenType
+                && myMatchingVisitor.matchText(comment, other)
     }
 
 }

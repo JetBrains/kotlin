@@ -1,12 +1,15 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler
 
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
 import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
+import com.jetbrains.kotlin.structuralsearch.impl.matcher.handlers.DeclarationHandler
 import org.jetbrains.kotlin.psi.*
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
@@ -54,6 +57,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         val pattern = myCompilingVisitor.context.pattern
         val exprHandler = pattern.getHandler(expression)
 
+        // Apply the child SubstitutionHandler to the TemplateEntry
         if (exprHandler is SubstitutionHandler) {
             val newHandler = SubstitutionHandler(
                 "${exprHandler.name}_parent",
@@ -68,5 +72,16 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
             }
             pattern.setHandler(entry, newHandler)
         }
+    }
+
+    override fun visitDeclaration(dcl: KtDeclaration) {
+        super.visitDeclaration(dcl)
+
+        val handler = DeclarationHandler()
+        handler.setFilter { it is KtDeclaration || it is PsiComment }
+        myCompilingVisitor.context.pattern.setHandler(dcl, handler)
+
+        val lastElement = PsiTreeUtil.skipWhitespacesBackward(dcl)
+        if (lastElement is PsiComment) myCompilingVisitor.context.pattern.setHandler(lastElement, handler)
     }
 }

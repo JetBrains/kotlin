@@ -57,9 +57,10 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val elements = getNonWhitespaceChildren(fragment.firstChild).drop(1)
         for (element in elements) print(DebugUtil.psiToString(element, false))
 
-        if (elements.isEmpty()) return PsiElement.EMPTY_ARRAY
-
-        return elements.toTypedArray()
+        return when {
+            elements.isEmpty() -> PsiElement.EMPTY_ARRAY
+            else -> elements.toTypedArray()
+        }
     }
 
     override fun checkSearchPattern(pattern: CompiledPattern) {
