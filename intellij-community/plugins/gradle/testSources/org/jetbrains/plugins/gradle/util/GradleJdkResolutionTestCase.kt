@@ -94,6 +94,18 @@ abstract class GradleJdkResolutionTestCase : ExternalSystemJdkUtilTestCase() {
     assertEquals(java?.homePath, getGradleJavaHome(externalProjectPath))
   }
 
+  fun assertSuggestedGradleVersionFor(gradleVersionString: String?, javaVersionString: String) {
+    val gradleVersion = gradleVersionString?.let(GradleVersion::version)
+    val testJdk = TestSdkGenerator.createNextSdk(javaVersionString)
+    withRegisteredSdk(testJdk, isProjectSdk = true) {
+      val actualGradleVersion = suggestGradleVersion(project)
+      assertEquals("Suggested incorrect grade version for $testJdk", gradleVersion, actualGradleVersion)
+      if (actualGradleVersion == null) return@withRegisteredSdk
+      val isSupported = isSupported(actualGradleVersion, javaVersionString)
+      assertTrue("Suggested incompatible gradle version $actualGradleVersion for $testJdk", isSupported)
+    }
+  }
+
   fun withServiceGradleUserHome(action: () -> Unit) {
     val systemSettings = GradleSystemSettings.getInstance()
     val serviceDirectoryPath = systemSettings.serviceDirectoryPath

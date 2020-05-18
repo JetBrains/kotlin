@@ -87,11 +87,15 @@ fun suggestGradleVersion(project: Project): GradleVersion? {
   return suggestGradleVersion(javaVersion)
 }
 
+/**
+ * @see org.jetbrains.plugins.gradle.util.isSupported
+ */
 private fun suggestGradleVersion(javaVersion: JavaVersion): GradleVersion? {
-  return when (javaVersion.feature) {
-    in 8..14 -> GradleVersion.version("6.3")
-    7 -> GradleVersion.version("4.1")
-    6 -> GradleVersion.version("3.0")
+  val version = javaVersion.feature
+  return when {
+    version >= 8 /* ..14 */ -> GradleVersion.version("6.3")
+    version == 7 -> GradleVersion.version("4.1")
+    version == 6 -> GradleVersion.version("3.0")
     else -> null
   }
 }
@@ -131,7 +135,9 @@ private fun GradleJvmResolutionContext.findGradleJvm(): String? {
 
 private fun GradleJvmResolutionContext.canUseProjectSdk(): Boolean {
   val projectJdk = resolveProjectJdk(project) ?: return false
-  return ExternalSystemJdkUtil.isValidJdk(projectJdk)
+  if (!ExternalSystemJdkUtil.isValidJdk(projectJdk)) return false
+  val versionString = projectJdk.versionString ?: return false
+  return isSupported(gradleVersion, versionString)
 }
 
 private fun resolveProjectJdk(project: Project): Sdk? {

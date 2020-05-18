@@ -53,10 +53,13 @@ fun validateGradleJavaHome(gradleVersion: GradleVersion, javaHome: String?): Jav
   return JavaHomeValidationStatus.Success(javaHome)
 }
 
+/**
+ * @see org.jetbrains.plugins.gradle.util.suggestGradleVersion
+ */
 fun isSupported(gradleVersion: GradleVersion, javaVersionString: String): Boolean {
   val version = JavaVersion.tryParse(javaVersionString) ?: return false
   return when {
-    gradleVersion >= GradleVersion.version("6.3") -> version.feature in 8..14
+    gradleVersion >= GradleVersion.version("6.3") -> version.feature >= 8 // ..14
     gradleVersion >= GradleVersion.version("6.0") -> version.feature in 8..13
     gradleVersion >= GradleVersion.version("5.4.1") -> version.feature in 8..12
     gradleVersion >= GradleVersion.version("5.0") -> version.feature in 8..11
