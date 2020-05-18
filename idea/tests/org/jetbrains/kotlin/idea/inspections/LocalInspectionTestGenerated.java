@@ -5833,9 +5833,34 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
                 }
 
+                @TestMetadata("canonicalName.kt")
+                public void testCanonicalName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/canonicalName.kt");
+                }
+
+                @TestMetadata("getCanonicalName.kt")
+                public void testGetCanonicalName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/getCanonicalName.kt");
+                }
+
                 @TestMetadata("getName.kt")
                 public void testGetName() throws Exception {
                     runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/getName.kt");
+                }
+
+                @TestMetadata("getSimpleName.kt")
+                public void testGetSimpleName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/getSimpleName.kt");
+                }
+
+                @TestMetadata("kclassQualiiedName.kt")
+                public void testKclassQualiiedName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/kclassQualiiedName.kt");
+                }
+
+                @TestMetadata("kclassSimpleName.kt")
+                public void testKclassSimpleName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/kclassSimpleName.kt");
                 }
 
                 @TestMetadata("name.kt")
@@ -5848,14 +5873,14 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                     runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/nonForeignClass.kt");
                 }
 
-                @TestMetadata("qualiiedName.kt")
-                public void testQualiiedName() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/qualiiedName.kt");
-                }
-
                 @TestMetadata("simple.kt")
                 public void testSimple() throws Exception {
                     runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/simple.kt");
+                }
+
+                @TestMetadata("simpleName.kt")
+                public void testSimpleName() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons/simpleName.kt");
                 }
             }
 
@@ -5928,6 +5953,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 @TestMetadata("simple.kt")
                 public void testSimple() throws Exception {
                     runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/util/simple.kt");
+                }
+
+                @TestMetadata("simple2.kt")
+                public void testSimple2() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/util/simple2.kt");
                 }
             }
         }

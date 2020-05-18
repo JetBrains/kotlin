@@ -91,30 +91,28 @@ class KotlinLoggerInitializedWithForeignClassInspection : AbstractKotlinInspecti
         })
     }
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = dotQualifiedExpressionVisitor(fun(dotQualified) {
-        val containingClass = dotQualified.containingClass() ?: return
-        val containingClassName = containingClass.name ?: return
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = callExpressionVisitor(fun(call) {
+        val containingClassName = call.containingClass()?.name ?: return
 
-        val call = dotQualified.callExpression ?: return
         val callee = call.calleeExpression ?: return
         val loggerMethodFqNames = loggerFactoryFqNames[callee.text] ?: return
 
         val argument = call.valueArguments.singleOrNull()?.getArgumentExpression() as? KtDotQualifiedExpression ?: return
         val argumentSelector = argument.selectorExpression ?: return
         val classLiteral = when (val argumentReceiver = argument.receiverExpression) {
-            // Foo::class.java, Foo::class.qualifiedName
+            // Foo::class.java, Foo::class.qualifiedName, Foo::class.simpleName
             is KtClassLiteralExpression -> {
                 val selectorText = argumentSelector.safeAs<KtNameReferenceExpression>()?.text
-                if (selectorText != "java" && selectorText != "qualifiedName") return
+                if (selectorText !in listOf("java", "qualifiedName", "simpleName")) return
                 argumentReceiver
             }
-            // Foo::class.java.name, Foo::class.java.getName()
+            // Foo::class.java.name, Foo::class.java.simpleName, Foo::class.java.canonicalName
             is KtDotQualifiedExpression -> {
                 val classLiteral = argumentReceiver.receiverExpression as? KtClassLiteralExpression ?: return
                 if (argumentReceiver.selectorExpression.safeAs<KtNameReferenceExpression>()?.text != "java") return
-                if (argumentSelector.safeAs<KtNameReferenceExpression>()?.text != "name" &&
-                    argumentSelector.safeAs<KtCallExpression>()?.calleeExpression?.text != "getName"
-                ) return
+                val selectorText = argumentSelector.safeAs<KtNameReferenceExpression>()?.text
+                    ?: argumentSelector.safeAs<KtCallExpression>()?.calleeExpression?.text
+                if (selectorText !in listOf("name", "simpleName", "canonicalName", "getName", "getSimpleName", "getCanonicalName")) return
                 classLiteral
             }
             else -> return
@@ -122,7 +120,7 @@ class KotlinLoggerInitializedWithForeignClassInspection : AbstractKotlinInspecti
         val classLiteralName = classLiteral.receiverExpression?.text ?: return
         if (containingClassName == classLiteralName) return
 
-        if (dotQualified.resolveToCall()?.resultingDescriptor?.fqNameOrNull() !in loggerMethodFqNames) return
+        if (call.resolveToCall()?.resultingDescriptor?.fqNameOrNull() !in loggerMethodFqNames) return
 
         holder.registerProblem(
             classLiteral,
