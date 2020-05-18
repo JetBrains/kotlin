@@ -358,7 +358,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
         if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(klass.nameIdentifier)
-            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(klass.nameIdentifier, other.nameIdentifier))
+            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(klass, other))
         ) return
     }
 
@@ -385,7 +385,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
                 && myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
         if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(function.nameIdentifier)
-            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(function.nameIdentifier, other.nameIdentifier))
+            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(function, other))
         ) return
     }
 
@@ -506,7 +506,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
         ))
         if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(property.nameIdentifier)
-            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(property.nameIdentifier, other.nameIdentifier))
+            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(property, other))
         ) return
     }
 
