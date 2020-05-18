@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformerAdapter
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTypeBodyResolveTransformerAdapter
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformerAdapter
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirFirstGenerationTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirPluginAnnotationsResolveTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
@@ -22,7 +21,7 @@ fun FirResolvePhase.createTransformerByPhase(session: FirSession, scopeSession: 
     return when (this) {
         RAW_FIR -> throw AssertionError("Raw FIR building phase does not have a transformer")
         ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveTransformer(session, scopeSession)
-        FIRST_PLUGIN_GENERATION -> FirFirstGenerationTransformer()
+//        FIRST_PLUGIN_GENERATION -> FirFirstGenerationTransformer()
         IMPORTS -> FirImportResolveTransformer(session)
         SUPER_TYPES -> FirSupertypeResolverTransformer(session, scopeSession)
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsTransformer()

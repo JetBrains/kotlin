@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 enum class FirResolvePhase {
     RAW_FIR,
     ANNOTATIONS_FOR_PLUGINS, // run only if some extensions are registered
-    FIRST_PLUGIN_GENERATION, // plugin phase
+//    FIRST_PLUGIN_GENERATION, // plugin phase
     IMPORTS,
     SUPER_TYPES,
     SEALED_CLASS_INHERITORS,
