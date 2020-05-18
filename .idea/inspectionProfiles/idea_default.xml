@@ -142,6 +142,7 @@
     <inspection_tool class="AssignmentToForLoopParameter" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_checkForeachParameters" value="false" />
     </inspection_tool>
+    <inspection_tool class="AssertWithSideEffects" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="AssignmentToStaticFieldFromInstanceMethod" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false" />
     </inspection_tool>
@@ -603,6 +604,7 @@
     <inspection_tool class="MakoArgumentListInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MalformedFormatString" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="ManualArrayToCollectionCopy" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="ManualMinMaxCalculation" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MathRandomCastToInt" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MavenDuplicateDependenciesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MavenModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />
@@ -1646,6 +1648,7 @@
       <option name="m_ignoreJavadoc" value="true" />
       <option name="ignoreInModuleStatements" value="true" />
     </inspection_tool>
+    <inspection_tool class="UnnecessaryInitCause" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryLabelJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnnecessaryLabelOnBreakStatement" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnnecessaryLabelOnBreakStatementJS" enabled="false" level="WARNING" enabled_by_default="false" />

@@ -423,7 +423,9 @@
     <inspection_tool class="AssertMessageNotString" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AssertStatement" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AssertToIf" enabled="false" level="INFORMATION" enabled_by_default="true" />
-    <inspection_tool class="AssertWithSideEffects" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="AssertWithSideEffects" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="AssertionCanBeIf" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="AssertsWithoutMessages" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AssertsWithoutMessagesTestNG" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -2115,7 +2117,9 @@
     <inspection_tool class="ManualArrayToCollectionCopy" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
-    <inspection_tool class="ManualMinMaxCalculation" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ManualMinMaxCalculation" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="MapGetWithNotNullAssertionOperator" enabled="false" level="INFO" enabled_by_default="false" />
     <inspection_tool class="MapReplaceableByEnumMap" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MarkdownUnresolvedFileReference" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -3991,7 +3995,9 @@
       <option name="ignoreInModuleStatements" value="true" />
     </inspection_tool>
     <inspection_tool class="UnnecessaryInheritDoc" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="UnnecessaryInitCause" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="UnnecessaryInitCause" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="UnnecessaryInterfaceModifier" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnnecessaryJavaDocLink" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreInlineLinkToSuper" value="false" />
