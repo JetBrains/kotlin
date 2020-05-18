@@ -79,7 +79,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 Wrap(restartableFunction(%composer, <>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
-                  if (%changed !== 0 || !%composer.skipping) {
+                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                     if (x > 0) {
                       %composer.startReplaceableGroup(<>)
                       A(x, 0, %composer, <>, 0b0110 and %dirty, 0b0010)
@@ -92,6 +92,57 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   } else {
                     %composer.skipToGroupEnd()
                   }
+                }, %composer, <>, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
+                Test(x, y, %composer, %key, %changed or 0b0001, %default)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testUntrackedLambda(): Unit = comparisonPropagation(
+        """
+            @Composable fun A(x: Int = 0, y: Int = 0) {}
+            @Composable fun Wrap(children: @Composable () -> Unit) {
+                children()
+            }
+        """,
+        """
+            import androidx.compose.Untracked
+
+            @Composable
+            fun Test(x: Int = 0, y: Int = 0) {
+                Wrap @Untracked {
+                    A(x)
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Test(x: Int, y: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
+              %composer.startRestartGroup(%key)
+              val %dirty = %changed
+              val x = if (%default and 0b0001 !== 0) 0 else x
+              val y = if (%default and 0b0010 !== 0) 0 else y
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+              }
+              if (%default and 0b0010 !== 0) {
+                %dirty = %dirty or 0b00011000
+              } else if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%composer.changed(y)) 0b00010000 else 0b1000
+              }
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                Wrap(restartableFunction(%composer, <>, false) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                  %composer.startReplaceableGroup(%key)
+                  A(x, 0, %composer, <>, 0b0110 and %dirty, 0b0010)
+                  %composer.endReplaceableGroup()
                 }, %composer, <>, 0)
               } else {
                 %composer.skipToGroupEnd()
@@ -487,7 +538,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   %composer.startDefaults()
                   if (%default and 0b0010 !== 0) {
                     children = restartableFunctionInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
-                      if (%changed !== 0 || !%composer.skipping) {
+                      if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                         Unit
                       } else {
                         %composer.skipToGroupEnd()
@@ -533,7 +584,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%changed and 0b00011000 === 0) {
                 %dirty = %dirty or if (%composer.changed(y)) 0b00010000 else 0b1000
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b00101011 xor 0b00101010 !== 0 || !%composer.skipping) {
                 A(x, %composer, <>, 0b0110 and %dirty)
                 B(y, %composer, <>, 0b0110 and %dirty shr 0b0010)
               } else {
@@ -599,7 +650,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               %composer.startRestartGroup(%key)
               if (%changed !== 0 || !%composer.skipping) {
                 SomeThing(restartableFunction(%composer, <>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
-                  if (%changed !== 0 || !%composer.skipping) {
+                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                     val id = object
                   } else {
                     %composer.skipToGroupEnd()
@@ -737,7 +788,8 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               fun A(%composer: Composer<*>?, %key: Int, %changed: Int) {
                 %composer.startRestartGroup(%key)
                 val %dirty = %changed
-                if (%dirty !== 0 || !%composer.skipping) {
+                %dirty = %dirty or 0b0110
+                if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                   print("hello world")
                 } else {
                   %composer.skipToGroupEnd()
@@ -871,7 +923,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   if (%changed and 0b0110 === 0) {
                     %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
                   }
-                  if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                     A(x, 0, %composer, <>, 0b0110 and %dirty, 0b0010)
                   } else {
                     %composer.skipToGroupEnd()
@@ -929,7 +981,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 A(x, 0, %composer, <>, 0b0110 and %dirty, 0b0010)
               } else {
                 %composer.skipToGroupEnd()
@@ -1572,7 +1624,8 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
         """
             val unstableUnused: Function4<Foo, Composer<*>, Int, Int, Unit> = restartableFunctionInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
-              if (%dirty !== 0 || !%composer.skipping) {
+              %dirty = %dirty or 0b0110
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 Unit
               } else {
                 %composer.skipToGroupEnd()
@@ -1584,7 +1637,8 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             }
             val stableUnused: Function4<StableFoo, Composer<*>, Int, Int, Unit> = restartableFunctionInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
-              if (%dirty !== 0 || !%composer.skipping) {
+              %dirty = %dirty or 0b0110
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 Unit
               } else {
                 %composer.skipToGroupEnd()
@@ -1595,7 +1649,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
               }
-              if (%dirty !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 print(x)
               } else {
                 %composer.skipToGroupEnd()
@@ -1636,13 +1690,13 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   if (%changed and 0b0110 === 0) {
                     %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
                   }
-                  if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                     Provide(restartableFunction(%composer, <>, true) { z: Int, %composer: Composer<*>?, %key: Int, %changed: Int ->
                       val %dirty = %changed
                       if (%changed and 0b0110 === 0) {
                         %dirty = %dirty or if (%composer.changed(z)) 0b0100 else 0b0010
                       }
-                      if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                      if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                         B(x, y, z, %composer, <>, 0b0110 and %dirty or 0b00011000 and %dirty shl 0b0010 or 0b01100000 and %dirty shl 0b0100, 0)
                       } else {
                         %composer.skipToGroupEnd()
