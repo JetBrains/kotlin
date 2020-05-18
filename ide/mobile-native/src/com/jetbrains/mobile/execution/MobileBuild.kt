@@ -5,15 +5,19 @@
 
 package com.jetbrains.mobile.execution
 
+import com.intellij.build.BuildContentManager
 import com.intellij.execution.executors.DefaultRunExecutor
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemTaskRunner
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.task.TaskCallback
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.util.concurrency.FutureResult
 import com.jetbrains.mobile.MobileBundle
 import com.jetbrains.mobile.execution.testing.MobileTestRunConfiguration
@@ -68,9 +72,15 @@ object MobileBuild {
             }
         }
 
+        val toolWindowId = invokeAndWaitIfNeeded {
+            BuildContentManager.getInstance(project).getOrCreateToolWindow().id
+        }
         ExternalSystemUtil.runTask(
             settings, DefaultRunExecutor.EXECUTOR_ID, project, GRADLE_SYSTEM_ID,
-            callback, ProgressExecutionMode.IN_BACKGROUND_ASYNC
+            callback, ProgressExecutionMode.IN_BACKGROUND_ASYNC, false,
+            UserDataHolderBase().also {
+                it.putUserData(ExternalSystemTaskRunner.TOOL_WINDOW_ID_KEY, toolWindowId)
+            }
         )
 
         return success.get()
