@@ -11,7 +11,7 @@ import java.util.*
  */
 class MaxNTimeBucket(private val sizeLimit: Int, firstTime: TimeNano) {
 
-  private val _maxNTimes: PriorityQueue<TimeNano> = PriorityQueue()
+  private val _maxNTimes: PriorityQueue<TimeNano> = PriorityQueue(setOf(firstTime))
   private var _count: Long = 1
   private var _minTime: TimeNano = firstTime
   private var _maxTime: TimeNano = firstTime
