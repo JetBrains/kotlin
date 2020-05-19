@@ -7,6 +7,7 @@ import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ReportValue
+import com.intellij.openapi.components.SkipReportingStatistics
 import com.intellij.openapi.components.State
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.testFramework.ProjectRule
@@ -439,6 +440,20 @@ class FeatureUsageSettingsEventsTest {
     validateChangedComponent(state, printer.result[1])
   }
 
+  @Test
+  fun `not report disabled fields`() {
+    val component = TestComponent()
+    component.loadState(ComponentStateWithDisabledField(true))
+    val recordDefault = false
+    val printer = TestFeatureUsageSettingsEventsPrinter(recordDefault)
+    printer.logConfigurationState(getStateSpec(component).name, component.state, null)
+
+    val withProject = false
+    val defaultProject = false
+    assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
+    Assert.assertEquals(1, printer.result.size)
+  }
+
   private fun assertDefaultWithoutDefaultRecording(printer: TestFeatureUsageSettingsEventsPrinter,
                                                    withProject: Boolean,
                                                    defaultProject: Boolean) {
@@ -687,4 +702,12 @@ class FeatureUsageSettingsEventsTest {
     @field:ReportValue
     val absStringOptionWithoutPossibleValues: String = absStringOptWithoutPossibleValues
   }
+
+  @Suppress("unused")
+  private class ComponentStateWithDisabledField(bool: Boolean = false) : ComponentState() {
+    @SkipReportingStatistics
+    @Attribute("disabled-option")
+    val disabledField: Boolean = bool
+  }
+
 }

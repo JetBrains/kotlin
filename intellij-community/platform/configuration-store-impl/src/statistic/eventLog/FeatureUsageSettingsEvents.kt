@@ -9,6 +9,7 @@ import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogg
 import com.intellij.internal.statistic.utils.PluginInfo
 import com.intellij.internal.statistic.utils.getPluginInfo
 import com.intellij.openapi.components.ReportValue
+import com.intellij.openapi.components.SkipReportingStatistics
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.NonUrgentExecutor
@@ -19,7 +20,7 @@ import org.jdom.Element
 import java.util.concurrent.atomic.AtomicInteger
 
 private val LOG = Logger.getInstance("com.intellij.configurationStore.statistic.eventLog.FeatureUsageSettingsEventPrinter")
-private val GROUP = EventLogGroup("settings", 6)
+private val GROUP = EventLogGroup("settings", 7)
 private const val CHANGES_GROUP = "settings.changes"
 
 private val recordedComponents: MutableSet<String> = ContainerUtil.newConcurrentSet()
@@ -161,6 +162,9 @@ internal data class ConfigurationStateExtractor(val recordDefault: Boolean) {
                                  state: Any,
                                  componentName: String,
                                  pluginInfo: PluginInfo): FeatureUsageData? {
+    if (accessor.getAnnotation(SkipReportingStatistics::class.java) != null) {
+      return null
+    }
     val isDefault = !jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
     if (!isDefault || recordDefault) {
       val data = FeatureUsageSettingsEventPrinter.createComponentData(project, componentName, pluginInfo)
