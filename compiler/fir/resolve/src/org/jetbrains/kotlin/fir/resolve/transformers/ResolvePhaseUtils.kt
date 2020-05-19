@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 fun FirResolvePhase.createTransformerByPhase(session: FirSession, scopeSession: ScopeSession): FirTransformer<Nothing?> {
     return when (this) {
         RAW_FIR -> throw AssertionError("Raw FIR building phase does not have a transformer")
-        ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveTransformer(scopeSession)
+        ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveTransformer(session, scopeSession)
         FIRST_PLUGIN_GENERATION -> FirFirstGenerationTransformer()
         IMPORTS -> FirImportResolveTransformer(session)
         SUPER_TYPES -> FirSupertypeResolverTransformer(scopeSession)
