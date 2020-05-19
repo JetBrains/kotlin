@@ -115,7 +115,7 @@ internal class RedundantLocalsEliminationMethodTransformer(private val suspensio
 
         for (pop in methodNode.instructions.asSequence().filter { it.opcode == Opcodes.POP }) {
             val value = (frames[methodNode.instructions.indexOf(pop)]?.top() as? PossibleSpilledValue) ?: continue
-            if (value.usages.isEmpty() && suspensionPoints.none { value.source in it }) {
+            if (value.usages.isEmpty() && value.source !in suspensionPoints) {
                 toDelete.add(pop)
                 toDelete.add(value.source)
             }
