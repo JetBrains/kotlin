@@ -29,7 +29,7 @@ class IntentionDescriptionTest : LightPlatformTestCase() {
         for (tool in intentionTools) {
             val className = tool.className
             val shortName = className.substringAfterLast(".").replace("$", "")
-            val directory = File("idea/resources/intentionDescriptions/$shortName")
+            val directory = File("idea/resources-en/intentionDescriptions/$shortName")
             if (!directory.exists() || !directory.isDirectory) {
                 if (tool.categories != null) {
                     errors.append("No description directory for intention '").append(className).append("'\n")
@@ -57,7 +57,7 @@ class IntentionDescriptionTest : LightPlatformTestCase() {
     private fun String.isXmlIntentionName() = startsWith("Add") && endsWith("ToManifest")
 
     private fun loadKotlinIntentions(): List<IntentionActionBean> {
-        val extensionPoint = Extensions.getArea(null).getExtensionPoint(IntentionManagerImpl.EP_INTENTION_ACTIONS)
+        val extensionPoint = Extensions.getRootArea().getExtensionPoint(IntentionManagerImpl.EP_INTENTION_ACTIONS)
         return extensionPoint.extensions.toList().filter {
             it.pluginDescriptor.pluginId == KotlinPluginUtil.KOTLIN_PLUGIN_ID
         }
