@@ -41,4 +41,15 @@ enum class E10 {
     val x = 1
 }
 
+enum class TestEnum {
+    /** A comment for the item #1. */
+    ITEM1,
+
+    /** A comment for the item #2. */
+    ITEM2,
+
+    /** A comment for the item #3. */
+    ITEM3
+}
+
 // SET_TRUE: KEEP_LINE_BREAKS
