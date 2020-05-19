@@ -281,7 +281,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   }
 
   private void updateAutoscroll(@Nullable OpenFileDescriptor descriptor) {
-    if (descriptor != null && isNotNullAndSelected(getAutoscrollToSource())) {
+    if (descriptor != null && UIUtil.isFocusAncestor(this) && isNotNullAndSelected(getAutoscrollToSource())) {
       invokeLater(() -> navigate(false, descriptor));
     }
   }
