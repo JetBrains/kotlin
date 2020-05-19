@@ -32,7 +32,9 @@ import java.util.*
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
 
     private val externalPackageFragmentSymbol = IrExternalPackageFragmentSymbolImpl(context.internalPackageFragmentDescriptor)
-    val externalPackageFragment = IrExternalPackageFragmentImpl(externalPackageFragmentSymbol)
+    val externalPackageFragment = IrExternalPackageFragmentImpl(
+        externalPackageFragmentSymbol, context.internalPackageFragmentDescriptor.fqName
+    )
 
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 

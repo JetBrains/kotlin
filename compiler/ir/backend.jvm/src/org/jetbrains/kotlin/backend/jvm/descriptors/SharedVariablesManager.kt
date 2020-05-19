@@ -32,10 +32,8 @@ class JvmSharedVariablesManager(
     val symbols: JvmSymbols,
     val irBuiltIns: IrBuiltIns
 ) : SharedVariablesManager {
-    private val jvmInternalPackage = IrExternalPackageFragmentImpl(
-        IrExternalPackageFragmentSymbolImpl(
-            EmptyPackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
-        )
+    private val jvmInternalPackage = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+        module, FqName("kotlin.jvm.internal")
     )
 
     private val refNamespaceClass = jvmInternalPackage.addClass {

@@ -60,8 +60,7 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
 
     private fun createPackage(fqName: FqName) =
         cachedPackages.getOrPut(fqName) {
-            val descriptor = EmptyPackageFragmentDescriptor(pluginContext.moduleDescriptor, fqName)
-            IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(descriptor))
+            IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(pluginContext.moduleDescriptor, fqName)
         }
 
     private fun createClass(fqName: FqName, isInterface: Boolean = false) =

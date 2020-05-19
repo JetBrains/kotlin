@@ -444,13 +444,9 @@ class AndroidSymbols(
     }.symbol
 
     private fun createPackage(packageName: String): IrPackageFragment =
-        IrExternalPackageFragmentImpl(
-            IrExternalPackageFragmentSymbolImpl(
-                EmptyPackageFragmentDescriptor(
-                    moduleFragment.descriptor,
-                    FqName(packageName)
-                )
-            )
+        IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+            moduleFragment.descriptor,
+            FqName(packageName)
         )
 
     private fun createClass(
