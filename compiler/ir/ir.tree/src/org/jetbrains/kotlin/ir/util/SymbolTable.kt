@@ -747,7 +747,7 @@ open class SymbolTable(
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            IrTypeParameterImpl(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor))
+            IrTypeParameterImpl(startOffset, endOffset, origin, descriptor, nameProvider.nameForDeclaration(descriptor), it)
         }
     ): IrTypeParameter =
         globalTypeParameterSymbolTable.declare(
@@ -771,7 +771,7 @@ open class SymbolTable(
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            IrTypeParameterImpl(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor))
+            IrTypeParameterImpl(startOffset, endOffset, origin, descriptor, nameProvider.nameForDeclaration(descriptor), it)
         }
     ): IrTypeParameter =
         scopedTypeParameterSymbolTable.declare(
