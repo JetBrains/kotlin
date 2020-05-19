@@ -26,7 +26,12 @@
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.KotlinJavaMPPSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryDataService"/>
         <externalSystemTaskNotificationListener
+            id="GradleScriptDefinitionsUpdater"
+            implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsUpdater"
+        />
+        <externalSystemTaskNotificationListener
             implementation="org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslSyncListener"
+            order="after GradleScriptDefinitionsUpdater"
         />
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.scripting.gradle.MissingGradleScriptConfigurationNotificationProvider"/>
 
