@@ -5,11 +5,9 @@
 
 package com.example.foo
 
-import com.example.thirdparty.thirdPartyFun
+import com.example.thirdparty.thirdPartyJsFun
 
-actual fun foo() = fooJvmAndJs()
-
-fun fooJvmAndJs(): String {
-    thirdPartyFun()
-    return fooCommon()
+fun fooJs(): String {
+    thirdPartyJsFun()
+    return "hello"
 }

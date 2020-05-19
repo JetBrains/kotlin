@@ -50,6 +50,9 @@ constructor(
             field = value
         }
 
+    internal val commonFakeApiElementsConfigurationName: String
+        get() = disambiguateName("commonFakeApiElements")
+
     val disambiguationClassifierInPlatform: String?
         get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
 
@@ -76,6 +79,20 @@ constructor(
         }
     }
 
+    override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
+        val usageContexts = super.createUsageContexts(producingCompilation)
+
+        if (isMpp!!) return usageContexts
+
+        return usageContexts +
+                DefaultKotlinUsageContext(
+                    compilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
+                    usage = project.usageByName("java-api-jars"),
+                    dependencyConfigurationName = commonFakeApiElementsConfigurationName,
+                    overrideConfigurationArtifacts = emptySet()
+                )
+    }
+
     override fun createKotlinVariant(
         componentName: String,
         compilation: KotlinCompilation<*>,
@@ -95,6 +112,10 @@ constructor(
             .get()
 
     var irTarget: KotlinJsIrTarget? = null
+        internal set
+
+    open var isMpp: Boolean? = null
+        internal set
 
     val testTaskName get() = testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).testTaskName
     val testTask: TaskProvider<KotlinTestReport>

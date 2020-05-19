@@ -3,13 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.example.foo
+package com.example.app
 
-import com.example.thirdparty.thirdPartyFun
+import com.example.foo.foo
 
-actual fun foo() = fooJvmAndJs()
-
-fun fooJvmAndJs(): String {
-    thirdPartyFun()
-    return fooCommon()
+fun appJs() {
+    foo()
 }

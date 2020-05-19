@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.gradle.plugin.mpp
@@ -180,8 +180,7 @@ abstract class AbstractKotlinTarget(
         return result
     }
 
-    // TODO[Ilya Goncharov] fix internal on public when we remove legacy js
-    internal fun createUsageContexts(
+    internal open fun createUsageContexts(
         producingCompilation: KotlinCompilation<*>
     ): Set<DefaultKotlinUsageContext> {
         // Here, the Java Usage values are used intentionally as Gradle needs this for
