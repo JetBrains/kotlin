@@ -34,6 +34,7 @@ abstract class FirAbstractPhaseTransformer<D>(
         }
 
     override fun transformFile(file: FirFile, data: D): CompositeTransformResult<FirFile> {
+        checkSessionConsistency(file)
         file.replaceResolvePhase(transformerPhase)
 
         @Suppress("UNCHECKED_CAST")
@@ -44,6 +45,12 @@ abstract class FirAbstractPhaseTransformer<D>(
         declaration.replaceResolvePhase(transformerPhase)
 
         return super.transformDeclaration(declaration, data)
+    }
+
+    protected fun checkSessionConsistency(file: FirFile) {
+        assert(session === file.session) {
+            "File ${file.name} and transformer ${this::class} have inconsistent sessions"
+        }
     }
 }
 

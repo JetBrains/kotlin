@@ -19,27 +19,21 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-open class FirImportResolveTransformer protected constructor(phase: FirResolvePhase) : FirAbstractTreeTransformer<Nothing?>(phase) {
-    constructor() : this(FirResolvePhase.IMPORTS)
-
+open class FirImportResolveTransformer protected constructor(
+    final override val session: FirSession,
+    phase: FirResolvePhase
+) : FirAbstractTreeTransformer<Nothing?>(phase) {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
-    private lateinit var symbolProvider: FirSymbolProvider
+    constructor(session: FirSession) : this(session, FirResolvePhase.IMPORTS)
 
-    final override lateinit var session: FirSession
-
-    constructor(session: FirSession) : this() {
-        this.session = session
-        // TODO: clarify this
-        symbolProvider = session.firSymbolProvider
-    }
+    private val symbolProvider: FirSymbolProvider = session.firSymbolProvider
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
+        checkSessionConsistency(file)
         file.replaceResolvePhase(transformerPhase)
-        session = file.session
-        symbolProvider = file.session.firSymbolProvider
         return file.also { it.transformChildren(this, null) }.compose()
     }
 

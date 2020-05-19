@@ -23,7 +23,7 @@ fun FirResolvePhase.createTransformerByPhase(session: FirSession, scopeSession: 
         RAW_FIR -> throw AssertionError("Raw FIR building phase does not have a transformer")
         ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveTransformer(scopeSession)
         FIRST_PLUGIN_GENERATION -> FirFirstGenerationTransformer()
-        IMPORTS -> FirImportResolveTransformer()
+        IMPORTS -> FirImportResolveTransformer(session)
         SUPER_TYPES -> FirSupertypeResolverTransformer(scopeSession)
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsTransformer()
         TYPES -> FirTypeResolveTransformerAdapter(scopeSession)
