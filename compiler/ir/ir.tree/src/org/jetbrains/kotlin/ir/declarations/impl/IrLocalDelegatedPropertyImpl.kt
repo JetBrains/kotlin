@@ -32,9 +32,9 @@ class IrLocalDelegatedPropertyImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrLocalDelegatedPropertySymbol,
-    override val name: Name = symbol.descriptor.name,
+    override val name: Name,
     override val type: IrType,
-    override val isVar: Boolean = symbol.descriptor.isVar
+    override val isVar: Boolean
 ) :
     IrDeclarationBase<LocalDelegatedPropertyCarrier>(startOffset, endOffset, origin),
     IrLocalDelegatedProperty,
@@ -42,63 +42,6 @@ class IrLocalDelegatedPropertyImpl(
 
     init {
         symbol.bind(this)
-    }
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrLocalDelegatedPropertySymbol,
-        type: IrType
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        type,
-        symbol.descriptor.isVar
-    )
-
-    @Deprecated("Creates unbound symbol")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptorWithAccessors,
-        name: Name,
-        type: IrType,
-        isVar: Boolean
-    ) : this(
-        startOffset, endOffset, origin,
-        IrLocalDelegatedPropertySymbolImpl(descriptor),
-        name, type, isVar
-    )
-
-    @Deprecated("Creates unbound symbol")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptorWithAccessors,
-        type: IrType
-    ) : this(
-        startOffset, endOffset, origin,
-        IrLocalDelegatedPropertySymbolImpl(descriptor),
-        descriptor.name, type, descriptor.isVar
-    )
-
-    @Deprecated("Creates unbound symbol")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptorWithAccessors,
-        type: IrType,
-        delegate: IrVariable,
-        getter: IrFunction,
-        setter: IrFunction?
-    ) : this(startOffset, endOffset, origin, descriptor, type) {
-        this.delegate = delegate
-        this.getter = getter
-        this.setter = setter
     }
 
     override val descriptor: VariableDescriptorWithAccessors

@@ -257,7 +257,9 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredLocalDelegatedProperty(declaration.symbol),
-            declaration.type.remapType()
+            declaration.name,
+            declaration.type.remapType(),
+            declaration.isVar
         ).apply {
             transformAnnotations(declaration)
             delegate = declaration.delegate.transform()

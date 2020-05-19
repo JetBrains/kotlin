@@ -875,8 +875,11 @@ open class SymbolTable(
         localDelegatedPropertySymbolTable.declareLocal(
             descriptor,
             { IrLocalDelegatedPropertySymbolImpl(descriptor) },
-            { IrLocalDelegatedPropertyImpl(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type) }
-        )
+        ) {
+            IrLocalDelegatedPropertyImpl(
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type, descriptor.isVar
+            )
+        }
 
     fun referenceLocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) =
         localDelegatedPropertySymbolTable.referenced(descriptor) {
