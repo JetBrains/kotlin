@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.folding.impl;
 
@@ -31,11 +31,11 @@ import java.util.*;
 /**
  * @author cdr
  */
-class UpdateFoldRegionsOperation implements Runnable {
+final class UpdateFoldRegionsOperation implements Runnable {
   enum ApplyDefaultStateMode { YES, EXCEPT_CARET_REGION, NO }
 
   private static final Logger LOG = Logger.getInstance(UpdateFoldRegionsOperation.class);
-  private static final Key<Boolean> CAN_BE_REMOVED_WHEN_COLLAPSED = Key.create("canBeRemovedWhenCollapsed"); 
+  private static final Key<Boolean> CAN_BE_REMOVED_WHEN_COLLAPSED = Key.create("canBeRemovedWhenCollapsed");
   static final Key<Boolean> COLLAPSED_BY_DEFAULT = Key.create("collapsedByDefault");
   static final Key<String> SIGNATURE = Key.create("signature");
   static final String NO_SIGNATURE = "no signature";
@@ -71,7 +71,7 @@ class UpdateFoldRegionsOperation implements Runnable {
     myForInjected = forInjected;
     for (FoldingUpdate.RegionInfo regionInfo : elementsToFold) {
       myElementsToFoldMap.putValue(regionInfo.element, regionInfo);
-      myRegionInfos.add(regionInfo);      
+      myRegionInfos.add(regionInfo);
       FoldingGroup group = regionInfo.descriptor.getGroup();
       if (group != null) myGroupedRegionInfos.putValue(group, regionInfo);
     }
@@ -90,7 +90,7 @@ class UpdateFoldRegionsOperation implements Runnable {
     List<FoldRegion> newRegions = addNewRegions(info, foldingModel, rangeToExpandStatusMap, shouldExpand, groupExpand);
 
     applyExpandStatus(newRegions, shouldExpand, groupExpand);
-    
+
     foldingModel.clearDocumentRangesModificationStatus();
   }
 
@@ -324,18 +324,15 @@ class UpdateFoldRegionsOperation implements Runnable {
     return caretLine >= regionStartLine && caretLine <= regionEndLine;
   }
 
-  private static class FoldingMap extends MultiMap<PsiElement, FoldingUpdate.RegionInfo> {
-    @NotNull
-    @Override
-    protected Map<PsiElement, Collection<FoldingUpdate.RegionInfo>> createMap() {
-      return new TreeMap<>(COMPARE_BY_OFFSET_REVERSED);
+  private static final class FoldingMap extends MultiMap<PsiElement, FoldingUpdate.RegionInfo> {
+    private FoldingMap() {
+      super(new TreeMap<>(COMPARE_BY_OFFSET_REVERSED));
     }
 
     @NotNull
     @Override
     protected Collection<FoldingUpdate.RegionInfo> createCollection() {
-      return new ArrayList<>(1);
+      return new ArrayList<>();
     }
   }
-
 }

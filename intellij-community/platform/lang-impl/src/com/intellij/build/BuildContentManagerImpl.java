@@ -116,7 +116,7 @@ public final class BuildContentManagerImpl implements BuildContentManager {
       }
       final Content[] existingContents = contentManager.getContents();
       if (idx != -1) {
-        final MultiMap<String, String> existingCategoriesNames = MultiMap.createSmart();
+        MultiMap<String, String> existingCategoriesNames = new MultiMap<>();
         for (Content existingContent : existingContents) {
           String tabName = existingContent.getTabName();
           existingCategoriesNames.putValue(StringUtil.trimEnd(StringUtil.split(tabName, " ").get(0), ':'), tabName);

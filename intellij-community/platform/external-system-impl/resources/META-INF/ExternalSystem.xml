@@ -2,5 +2,10 @@
   <xi:include href="ExternalSystemExtensionPoints.xml"/>
   <xi:include href="ExternalSystemExtensions.xml"/>
   <xi:include href="ExternalSystemActions.xml"/>
-  <xi:include href="ExternalSystemComponents.xml"/>
+  <project-components>
+    <component>
+      <interface-class>com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManager</interface-class>
+      <implementation-class>com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManagerImpl</implementation-class>
+    </component>
+  </project-components>
 </idea-plugin>

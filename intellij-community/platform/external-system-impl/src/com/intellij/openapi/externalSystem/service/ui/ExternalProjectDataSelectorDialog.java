@@ -57,11 +57,10 @@ import java.util.*;
 /**
  * @author Vladislav.Soroka
  */
-public class ExternalProjectDataSelectorDialog extends DialogWrapper {
-
+public final class ExternalProjectDataSelectorDialog extends DialogWrapper {
   private static final int MAX_PATH_LENGTH = 50;
   private static final Set<? extends Key<?>> DATA_KEYS = ContainerUtil.set(ProjectKeys.PROJECT, ProjectKeys.MODULE);
-  private static final com.intellij.openapi.util.Key<DataNode> MODIFIED_NODE_KEY = com.intellij.openapi.util.Key.create("modifiedData");
+  private static final com.intellij.openapi.util.Key<DataNode<?>> MODIFIED_NODE_KEY = com.intellij.openapi.util.Key.create("modifiedData");
   private static final com.intellij.openapi.util.Key<DataNodeCheckedTreeNode> CONNECTED_UI_NODE_KEY =
     com.intellij.openapi.util.Key.create("connectedUiNode");
   @NotNull
@@ -80,8 +79,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
   @Nullable
   private final Object myPreselectedNodeObject;
   private CheckboxTree myTree;
-  private final MultiMap<DataNode<Identifiable>, DataNode<Identifiable>> dependentNodeMap =
-    MultiMap.create(ContainerUtil.identityStrategy());
+  private final MultiMap<DataNode<Identifiable>, DataNode<Identifiable>> dependentNodeMap = MultiMap.createIdentity();
 
   private final SimpleModificationTracker myModificationTracker = new SimpleModificationTracker();
   private final CachedValue<SelectionState> selectionState = new CachedValueImpl<>(
@@ -440,7 +438,7 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
     return result;
   }
 
-  private class DataNodeCheckedTreeNode extends CheckedTreeNode {
+  private final class DataNodeCheckedTreeNode extends CheckedTreeNode {
     private static final int MAX_DEPENDENCIES_TO_DESCRIBE = 5;
 
     private final DataNode myDataNode;

@@ -44,7 +44,7 @@ public final class SemServiceImpl extends SemService {
   }
 
   private MultiMap<SemKey<?>, NullableFunction<PsiElement, Collection<? extends SemElement>>> collectProducers() {
-    MultiMap<SemKey<?>, NullableFunction<PsiElement, Collection<? extends SemElement>>> map = MultiMap.createSmart();
+    MultiMap<SemKey<?>, NullableFunction<PsiElement, Collection<? extends SemElement>>> map = new MultiMap<>();
 
     final SemRegistrar registrar = new SemRegistrar() {
       @Override

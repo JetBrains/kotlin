@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.manage
 
 import com.intellij.ProjectTopics
@@ -35,7 +35,6 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 
 @State(name = "sourceFolderManager",  storages = [Storage(StoragePathMacros.CACHE_FILE)])
 class SourceFolderManagerImpl(private val project: Project) : SourceFolderManager, Disposable, PersistentStateComponent<SourceFolderManagerState> {
-
   private val moduleNamesToSourceFolderState: MultiMap<String, SourceFolderModelState> = MultiMap.create()
   private var isDisposed = false
   private val mutex = Any()
@@ -206,7 +205,7 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
       if (isDisposed) {
         return
       }
-      sourceFolders =  PathPrefixTreeMap()
+      sourceFolders = PathPrefixTreeMap()
       sourceFoldersByModule = THashMap()
 
       val moduleManager = ModuleManager.getInstance(project)

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.openapi.externalSystem.model.DataNode;
@@ -35,7 +35,7 @@ import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
 /**
  * @author Vladislav.Soroka
  */
-public class GradleBuildSrcProjectsResolver {
+public final class GradleBuildSrcProjectsResolver {
   public static final String BUILD_SRC_MODULE_PROPERTY = "buildSrcModule";
   @NotNull
   private final GradleProjectResolver myProjectResolver;
@@ -87,7 +87,7 @@ public class GradleBuildSrcProjectsResolver {
       }
     }
 
-    MultiMap<String, DataNode<BuildScriptClasspathData>> buildClasspathNodesMap = MultiMap.createSmart();
+    MultiMap<String, DataNode<BuildScriptClasspathData>> buildClasspathNodesMap = new MultiMap<>();
     Map<String, ModuleData> includedModulesPaths = new HashMap<>();
     for (DataNode<ModuleData> moduleDataNode : findAll(mainBuildProjectDataNode, ProjectKeys.MODULE)) {
       String path = moduleDataNode.getData().getLinkedExternalProjectPath();

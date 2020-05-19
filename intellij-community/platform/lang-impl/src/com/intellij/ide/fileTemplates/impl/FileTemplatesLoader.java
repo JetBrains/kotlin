@@ -138,7 +138,7 @@ class FileTemplatesLoader implements Disposable {
   }
 
   private static @NotNull FileTemplateLoadResult loadDefaultTemplates(@NotNull List<String> prefixes) {
-    FileTemplateLoadResult result = new FileTemplateLoadResult(MultiMap.createSmart());
+    FileTemplateLoadResult result = new FileTemplateLoadResult(new MultiMap<>());
     Set<URL> processedUrls = new THashSet<>();
     Set<ClassLoader> processedLoaders = new HashSet<>();
     IdeaPluginDescriptor[] plugins = PluginManagerCore.getPlugins();

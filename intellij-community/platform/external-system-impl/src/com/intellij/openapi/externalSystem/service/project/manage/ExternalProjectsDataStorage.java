@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.manage;
 
 import com.intellij.concurrency.ConcurrentCollectionFactory;
@@ -59,7 +59,7 @@ import static com.intellij.openapi.externalSystem.model.ProjectKeys.PROJECT;
  * @author Vladislav.Soroka
  */
 @State(name = "ExternalProjectsData", storages = {@Storage(StoragePathMacros.WORKSPACE_FILE)})
-public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaAdapter, PersistentStateComponent<ExternalProjectsDataStorage.State> {
+public final class ExternalProjectsDataStorage implements SettingsSavingComponentJavaAdapter, PersistentStateComponent<ExternalProjectsDataStorage.State> {
   private static final Logger LOG = Logger.getInstance(ExternalProjectsDataStorage.class);
 
   // exposed for tests
@@ -96,7 +96,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
 
           Iterator<Map.Entry<Pair<ProjectSystemId, File>, InternalExternalProjectInfo>> iter =
             myExternalRootProjects.entrySet().iterator();
-          
+
           while(iter.hasNext()) {
             Map.Entry<Pair<ProjectSystemId, File>, InternalExternalProjectInfo> entry = iter.next();
             if (!existingEPs.contains(entry.getKey().first)) {
@@ -261,8 +261,8 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   synchronized void saveInclusionSettings(@Nullable DataNode<ProjectData> projectDataNode) {
     if (projectDataNode == null) return;
 
-    final MultiMap<String, String> inclusionMap = MultiMap.createSmart();
-    final MultiMap<String, String> exclusionMap = MultiMap.createSmart();
+    final MultiMap<String, String> inclusionMap = new MultiMap<>();
+    final MultiMap<String, String> exclusionMap = new MultiMap<>();
     projectDataNode.visit(dataNode -> {
       DataNode<ExternalConfigPathAware> projectNode = resolveProjectNode(dataNode);
       if (projectNode != null) {

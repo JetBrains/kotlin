@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.build.events.MessageEvent;
@@ -20,11 +20,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.LinkedMultiMap;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.containers.hash.EqualityPolicy;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.ProjectIdentifier;
@@ -55,7 +54,7 @@ import java.util.stream.Stream;
 /**
  * @author Vladislav.Soroka
  */
-public class GradleProjectResolverUtil {
+public final class GradleProjectResolverUtil {
   private static final Logger LOG = Logger.getInstance(GradleProjectResolverUtil.class);
   @NonNls public static final String BUILD_SRC_NAME = "buildSrc";
   @NonNls private static final String SOURCE_JAR_SUFFIX = "-sources.jar";
@@ -615,16 +614,9 @@ public class GradleProjectResolverUtil {
         else {
           String moduleId;
           Pair<DataNode<GradleSourceSetData>, ExternalSourceSet> projectPair;
-          MultiMap<Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>, File> projectPairs =
-            new LinkedMultiMap<Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>, File>() {
-              @Override
-              protected EqualityPolicy<Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>> getEqualityPolicy() {
-                //noinspection unchecked
-                return (EqualityPolicy<Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>>)EqualityPolicy.IDENTITY;
-              }
-            };
+          MultiMap<Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>, File> projectPairs = new MultiMap<>(new Reference2ObjectLinkedOpenHashMap<>());
 
-          for (File file: projectDependency.getProjectDependencyArtifacts()) {
+          for (File file : projectDependency.getProjectDependencyArtifacts()) {
             moduleId = artifactsMap.get(ExternalSystemApiUtil.toCanonicalPath(file.getAbsolutePath()));
             if (moduleId == null) continue;
             projectPair = sourceSetMap.get(moduleId);
