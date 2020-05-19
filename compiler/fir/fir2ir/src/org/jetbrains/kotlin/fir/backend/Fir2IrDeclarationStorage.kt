@@ -520,16 +520,12 @@ class Fir2IrDeclarationStorage(
     ): IrConstructor {
         val descriptor = WrappedClassConstructorDescriptor()
         val isPrimary = constructor.isPrimary
-        val visibility = when (irParent.modality) {
-            Modality.SEALED -> Visibilities.PRIVATE
-            else -> constructor.visibility
-        }
         classifierStorage.preCacheTypeParameters(constructor)
         val created = constructor.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareConstructor(startOffset, endOffset, origin, descriptor) { symbol ->
                 IrConstructorImpl(
                     startOffset, endOffset, origin, symbol,
-                    Name.special("<init>"), visibility,
+                    Name.special("<init>"), constructor.visibility,
                     constructor.returnTypeRef.toIrType(),
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
                 ).apply {

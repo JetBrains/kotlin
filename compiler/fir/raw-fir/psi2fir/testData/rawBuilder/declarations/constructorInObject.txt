@@ -14,7 +14,7 @@ FILE: constructorInObject.kt
         }
 
         public final static enum entry X: R|B| = object : R|B| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|B|>()
             }
 
