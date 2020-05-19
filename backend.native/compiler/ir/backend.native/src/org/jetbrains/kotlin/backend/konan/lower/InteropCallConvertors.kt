@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.konan.cgen.isCEnumType
 import org.jetbrains.kotlin.backend.konan.cgen.isVector
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.isAny
+import org.jetbrains.kotlin.backend.konan.ir.isObjCObjectType
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.ir.builders.*
@@ -48,7 +50,8 @@ private fun isBitFieldAccessor(function: IrFunction): Boolean =
 
 private class InteropCallContext(
         val symbols: KonanSymbols,
-        val builder: IrBuilderWithScope
+        val builder: IrBuilderWithScope,
+        val failCompilation: (String) -> Nothing
 ) {
     fun IrType.isCPointer(): Boolean = this.classOrNull == symbols.interopCPointer
 
@@ -56,13 +59,22 @@ private class InteropCallContext(
 
     fun IrType.isStoredInMemoryDirectly(): Boolean =
             isPrimitiveType() || isUnsigned() || isVector()
+
+    fun IrType.isSupportedReference(): Boolean = isObjCObjectType()
+            || getClass()?.isAny() == true
+            || isStringClassType()
+            || classOrNull == symbols.list
+            || classOrNull == symbols.mutableList
+            || classOrNull == symbols.set
+            || classOrNull == symbols.map
 }
 
 private inline fun <T> generateInteropCall(
         symbols: KonanSymbols,
         builder: IrBuilderWithScope,
+        noinline failCompilation: (String) -> Nothing,
         block: InteropCallContext.() -> T
-) = InteropCallContext(symbols, builder).block()
+) = InteropCallContext(symbols, builder, failCompilation).block()
 
 /**
  * Search for memory read/write function in [kotlinx.cinterop.nativeMemUtils] of a given [valueType].
@@ -216,6 +228,17 @@ private fun InteropCallContext.writePointerToMemory(
     return writeValueToMemory(nativePtr, valueToWrite, valueToWrite.type)
 }
 
+private fun InteropCallContext.writeObjCReferenceToMemory(
+        nativePtr: IrExpression,
+        value: IrExpression,
+        pointerType: IrType
+): IrExpression {
+    val valueToWrite = builder.irCall(symbols.interopObjCObjectRawValueGetter).also {
+        it.extensionReceiver = value
+    }
+    return writeValueToMemory(nativePtr, valueToWrite, valueToWrite.type)
+}
+
 private fun InteropCallContext.calculateFieldPointer(receiver: IrExpression, offset: Long): IrExpression {
     val base = builder.irCall(symbols.interopNativePointedRawPtrGetter).also {
         it.dispatchReceiver = receiver
@@ -243,6 +266,16 @@ private fun InteropCallContext.readPointed(nativePtr: IrExpression): IrExpressio
     }
 }
 
+private fun InteropCallContext.readObjectiveCReferenceFromMemory(
+        nativePtr: IrExpression,
+        type: IrType
+): IrExpression {
+    val readMemory = readValueFromMemory(nativePtr, symbols.nativePtrType)
+    return builder.irCall(symbols.interopInterpretObjCPointerOrNull, listOf(type)).apply {
+        putValueArgument(0, readMemory)
+    }
+}
+
 /** Returns non-null result if [callSite] is accessor to:
  *  1. T.value, T : CEnumVar
  *  2. T.<field-name>, T : CStructVar and accessor is annotated with
@@ -251,16 +284,17 @@ private fun InteropCallContext.readPointed(nativePtr: IrExpression): IrExpressio
 internal fun tryGenerateInteropMemberAccess(
         callSite: IrCall,
         symbols: KonanSymbols,
-        builder: IrBuilderWithScope
+        builder: IrBuilderWithScope,
+        failCompilation: (String) -> Nothing
 ): IrExpression? = when {
     isEnumVarValueAccessor(callSite.symbol.owner, symbols) ->
-        generateInteropCall(symbols, builder) { generateEnumVarValueAccess(callSite) }
+        generateInteropCall(symbols, builder, failCompilation) { generateEnumVarValueAccess(callSite) }
     isMemberAtAccessor(callSite.symbol.owner) ->
-        generateInteropCall(symbols, builder) { generateMemberAtAccess(callSite) }
+        generateInteropCall(symbols, builder, failCompilation) { generateMemberAtAccess(callSite) }
     isBitFieldAccessor(callSite.symbol.owner) ->
-        generateInteropCall(symbols, builder) { generateBitFieldAccess(callSite) }
+        generateInteropCall(symbols, builder, failCompilation) { generateBitFieldAccess(callSite) }
     isArrayMemberAtAccessor(callSite.symbol.owner) ->
-        generateInteropCall(symbols, builder) { generateArrayMemberAtAccess(callSite) }
+        generateInteropCall(symbols, builder, failCompilation) { generateArrayMemberAtAccess(callSite) }
     else -> null
 }
 
@@ -292,7 +326,8 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
                 type.isStoredInMemoryDirectly() -> readValueFromMemory(fieldPointer, type)
                 type.isCPointer() -> readPointerFromMemory(fieldPointer)
                 type.isNativePointed() -> readPointed(fieldPointer)
-                else -> error("Cannot get field type: ${type.getClass()?.name}")
+                type.isSupportedReference() -> readObjectiveCReferenceFromMemory(fieldPointer, type)
+                else -> failCompilation("Unsupported struct field type: ${type.getClass()?.name}")
             }
         }
         accessor.isSetter -> {
@@ -302,10 +337,11 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
                 type.isCEnumType() -> writeEnumValueToMemory(fieldPointer, value, type)
                 type.isStoredInMemoryDirectly() -> writeValueToMemory(fieldPointer, value, type)
                 type.isCPointer() -> writePointerToMemory(fieldPointer, value, type)
-                else -> error("Cannot set field of type ${type.getClass()?.name}")
+                type.isSupportedReference() -> writeObjCReferenceToMemory(fieldPointer, value, type)
+                else -> failCompilation("Unsupported struct field type: ${type.getClass()?.name}")
             }
         }
-        else -> error("")
+        else -> error("Unexpected accessor function: ${accessor.name}")
     }
 }
 
@@ -386,6 +422,6 @@ private fun InteropCallContext.generateBitFieldAccess(callSite: IrCall): IrExpre
             val type = accessor.returnType
             readBits(base, offset, size, type)
         }
-        else -> error("Unexpected function: ${accessor.name}")
+        else -> error("Unexpected accessor function: ${accessor.name}")
     }
 }

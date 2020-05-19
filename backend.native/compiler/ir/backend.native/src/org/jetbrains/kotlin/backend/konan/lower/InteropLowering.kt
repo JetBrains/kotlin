@@ -950,7 +950,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             return generateWithStubs { generateCCall(expression, builder, isInvoke = false) }
         }
 
-        tryGenerateInteropMemberAccess(expression, symbols, builder)?.let { return it }
+        val failCompilation = { msg: String -> context.reportCompilationError(msg, irFile, expression) }
+        tryGenerateInteropMemberAccess(expression, symbols, builder, failCompilation)?.let { return it }
 
         tryGenerateInteropConstantRead(expression)?.let { return it }
 
