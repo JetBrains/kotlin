@@ -5,38 +5,51 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
-import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.codegen.inline.insnOpcodeText
 import org.jetbrains.kotlin.codegen.inline.nodeText
 import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.removeAll
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
-import java.util.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
 private class PossibleSpilledValue(val source: AbstractInsnNode, type: Type?) : BasicValue(type) {
     val usages = mutableSetOf<AbstractInsnNode>()
 
-    override fun toString(): String = source.insnOpcodeText
+    override fun toString(): String = when {
+        source.opcode == Opcodes.ALOAD -> "" + (source as VarInsnNode).`var`
+        source.isUnitInstance() -> "U"
+        else -> error("unreachable")
+    }
+
+    override fun equals(other: Any?): Boolean =
+        other is PossibleSpilledValue && source == other.source
+
+    override fun hashCode(): Int = super.hashCode() xor source.hashCode()
 }
 
-private object ConstructedValue : BasicValue(AsmTypes.OBJECT_TYPE)
+private object NonSpillableValue : BasicValue(AsmTypes.OBJECT_TYPE) {
+    override fun equals(other: Any?): Boolean = other is NonSpillableValue
 
-private class RedundantSpillingInterpreter(
-    private val languageVersionSettings: LanguageVersionSettings,
-    private val methodNode: MethodNode
-) :
-    BasicInterpreter(Opcodes.API_VERSION) {
+    override fun toString(): String = "N"
+}
+
+private object ConstructedValue : BasicValue(AsmTypes.OBJECT_TYPE) {
+    override fun equals(other: Any?): Boolean = other is ConstructedValue
+
+    override fun toString(): String = "C"
+}
+
+fun BasicValue?.nonspillable(): BasicValue? = if (this?.type?.sort == Type.OBJECT) NonSpillableValue else this
+
+private class RedundantSpillingInterpreter : BasicInterpreter(Opcodes.API_VERSION) {
     val possibleSpilledValues = mutableSetOf<PossibleSpilledValue>()
 
     override fun newOperation(insn: AbstractInsnNode): BasicValue? {
@@ -47,7 +60,7 @@ private class RedundantSpillingInterpreter(
             // They can be spilled before they are eventually popped.
             // Track them.
             PossibleSpilledValue(insn, basicValue.type).also { possibleSpilledValues += it }
-        else basicValue
+        else basicValue.nonspillable()
     }
 
     override fun copyOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
@@ -56,32 +69,30 @@ private class RedundantSpillingInterpreter(
             is PossibleSpilledValue -> {
                 value.usages += insn
                 if (insn.opcode == Opcodes.ALOAD || insn.opcode == Opcodes.ASTORE) value
-                else super.newValue(value.type)
+                else value.nonspillable()
             }
-            else -> value
+            else -> value?.nonspillable()
         }
 
     override fun naryOperation(insn: AbstractInsnNode, values: MutableList<out BasicValue?>): BasicValue? {
         for (value in values.filterIsInstance<PossibleSpilledValue>()) {
             value.usages += insn
         }
-        return super.naryOperation(insn, values)
+        return super.naryOperation(insn, values)?.nonspillable()
     }
 
     override fun merge(v: BasicValue?, w: BasicValue?): BasicValue? =
-        if (v is PossibleSpilledValue && w is PossibleSpilledValue && v.source == w.source) v else super.newValue(v?.type)
+        if (v is PossibleSpilledValue && w is PossibleSpilledValue && v.source == w.source) v
+        else v?.nonspillable()
 }
 
 // Inliner emits a lot of locals during inlining.
 // Remove all of them since these locals are
 //  1) going to be spilled into continuation object
 //  2) breaking tail-call elimination
-internal class RedundantLocalsEliminationMethodTransformer(
-    private val languageVersionSettings: LanguageVersionSettings,
-    private val suspensionPoints: List<SuspensionPoint>
-) : MethodTransformer() {
+internal class RedundantLocalsEliminationMethodTransformer(private val suspensionPoints: List<SuspensionPoint>) : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        val interpreter = RedundantSpillingInterpreter(languageVersionSettings, methodNode)
+        val interpreter = RedundantSpillingInterpreter()
         val frames = MethodAnalyzer<BasicValue>(internalClassName, methodNode, interpreter).analyze()
 
         val toDelete = mutableSetOf<AbstractInsnNode>()
