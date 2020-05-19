@@ -23,7 +23,7 @@ class TSuiteImpl(override val abstractTestClass: Class<*>, override val generate
     override val imports = mutableListOf<String>()
 }
 
-inline fun <reified T: Any> MutableTGroup.suite(
+inline fun <reified T: Any> MutableTGroup.testClass(
     generatedClassName: String = getDefaultSuiteTestClassName(T::class.java),
     block: MutableTSuite.() -> Unit
 ) {

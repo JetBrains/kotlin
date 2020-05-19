@@ -29,7 +29,7 @@ class TGroupImpl(override val modulePath: String, override val testSourcesPath: 
     override val suites = mutableListOf<TSuite>()
 }
 
-fun MutableTWorkspace.group(
+fun MutableTWorkspace.testGroup(
     modulePath: String,
     testSourcesPath: String = "test",
     testDataPath: String = "testData",
