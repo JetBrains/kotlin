@@ -338,7 +338,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
               }
             }
             TextRange range = mySuppressor.getHighlightingRange(element, SuppressionUtil.ALL);
-            String allSuppression = element.getText().substring(range.getStartOffset(), range.getEndOffset());
+            String allSuppression = range.substring(element.getText());
             holder.registerProblem(element, range,
                                    InspectionsBundle.message("inspection.redundant.suppression.description"),
                                    mySuppressor.createRemoveRedundantSuppressionFix(allSuppression));
