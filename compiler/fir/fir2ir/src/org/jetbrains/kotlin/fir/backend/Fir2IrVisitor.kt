@@ -251,18 +251,25 @@ class Fir2IrVisitor(
     }
 
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: Any?): IrElement {
-        val irReturnType = varargArgumentsExpression.typeRef.toIrType()
-        return IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irReturnType,
-                            varargArgumentsExpression.varargElementType.toIrType(),
-                            varargArgumentsExpression.arguments.map { arg ->
-                                convertToIrExpression(arg).run {
-                                    if (arg is FirSpreadArgumentExpression || arg is FirNamedArgumentExpression && arg.isSpread) {
-                                        IrSpreadElementImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this)
-                                    }
-                                    else this
-                                }
-                            })
+        return varargArgumentsExpression.convertWithOffsets { startOffset, endOffset ->
+            IrVarargImpl(
+                startOffset,
+                endOffset,
+                varargArgumentsExpression.typeRef.toIrType(),
+                varargArgumentsExpression.varargElementType.toIrType(),
+                varargArgumentsExpression.arguments.map { it.convertToIrVarargElement() }
+            )
+        }
     }
+
+    private fun FirExpression.convertToIrVarargElement(): IrVarargElement =
+        if (this is FirSpreadArgumentExpression || this is FirNamedArgumentExpression && this.isSpread) {
+            IrSpreadElementImpl(
+                source?.startOffset ?: UNDEFINED_OFFSET,
+                source?.endOffset ?: UNDEFINED_OFFSET,
+                convertToIrExpression(this)
+            )
+        } else convertToIrExpression(this)
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Any?): IrExpression {
         val convertibleCall = if (functionCall.toResolvedCallableSymbol()?.fir is FirIntegerOperator) {
@@ -774,9 +781,7 @@ class Fir2IrVisitor(
                 startOffset, endOffset,
                 type = arrayType,
                 varargElementType = elementType,
-                elements = arrayOfCall.arguments.map {
-                    convertToIrExpression(it)
-                }
+                elements = arrayOfCall.arguments.map { it.convertToIrVarargElement() }
             )
         }
     }
