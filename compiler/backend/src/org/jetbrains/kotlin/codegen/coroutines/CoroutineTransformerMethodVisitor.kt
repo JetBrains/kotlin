@@ -573,11 +573,9 @@ class CoroutineTransformerMethodVisitor(
             return false
         }
 
-        val starts = methodNode.instructions.asSequence().filter {
-            isBeforeSuspendMarker(it) &&
-                    cfg.getPredecessorsIndices(it).isNotEmpty() // Ignore unreachable start markers
-        }.toList()
-        return starts.mapNotNull { start ->
+        return methodNode.instructions.asSequence().filter {
+            isBeforeSuspendMarker(it)
+        }.mapNotNull { start ->
             val ends = mutableSetOf<AbstractInsnNode>()
             if (collectSuspensionPointEnds(start, mutableSetOf(), ends)) return@mapNotNull null
             // Ignore suspension points, if the suspension call begin is alive and suspension call end is dead
@@ -586,7 +584,7 @@ class CoroutineTransformerMethodVisitor(
             // this is an exit point for the corresponding coroutine.
             val end = ends.find { isAfterSuspendMarker(it) } ?: return@mapNotNull null
             SuspensionPoint(start.previous, end)
-        }
+        }.toList()
     }
 
     private fun dropSuspensionMarkers(methodNode: MethodNode) {
@@ -983,7 +981,7 @@ private class MethodNodeExaminer(
         val typedFrames = basicAnalyser.frames
 
         val isReferenceMap = popsBeforeSafeUnitInstances
-            .map { it to (!isUnreachable(it.index(), sourceFrames) && typedFrames[it.index()]?.top()?.isReference == true) }
+            .map { it to (typedFrames[it.index()]?.top()?.isReference == true) }
             .toMap()
 
         for (pop in popsBeforeSafeUnitInstances) {
@@ -1007,8 +1005,6 @@ private class MethodNodeExaminer(
         return suspensionPoints.all { suspensionPoint ->
             val beginIndex = instructions.indexOf(suspensionPoint.suspensionCallBegin)
             val endIndex = instructions.indexOf(suspensionPoint.suspensionCallEnd)
-
-            if (isUnreachable(endIndex, sourceFrames)) return@all true
 
             val insideTryBlock = methodNode.tryCatchBlocks.any { block ->
                 val tryBlockStartIndex = instructions.indexOf(block.start)
@@ -1043,7 +1039,6 @@ private class MethodNodeExaminer(
             val insn = insns[index]
 
             if (insn.opcode == Opcodes.ARETURN && !insn.isAreturnAfterSafeUnitInstance()) {
-                if (isUnreachable(index, sourceFrames)) return@init null
                 return@init setOf(index)
             }
 
@@ -1214,10 +1209,6 @@ private fun getAllParameterTypes(desc: String, hasDispatchReceiver: Boolean, thi
 internal class IgnoringCopyOperationSourceInterpreter : SourceInterpreter(Opcodes.API_VERSION) {
     override fun copyOperation(insn: AbstractInsnNode?, value: SourceValue?) = value
 }
-
-// Check whether this instruction is unreachable, i.e. there is no path leading to this instruction
-internal fun <T : Value> isUnreachable(index: Int, sourceFrames: Array<out Frame<out T>?>): Boolean =
-    sourceFrames.size <= index || sourceFrames[index] == null
 
 private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode): Boolean {
     val insns = methodNode.instructions

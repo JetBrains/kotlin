@@ -121,6 +121,16 @@ internal class RedundantLocalsEliminationMethodTransformer(private val suspensio
             }
         }
 
+        // Remove unreachable instructions to simplify further analyses
+        for (index in frames.indices) {
+            if (frames[index] == null) {
+                val insn = methodNode.instructions[index]
+                if (insn !is LabelNode) {
+                    toDelete.add(insn)
+                }
+            }
+        }
+
         methodNode.instructions.removeAll(toDelete)
     }
 
