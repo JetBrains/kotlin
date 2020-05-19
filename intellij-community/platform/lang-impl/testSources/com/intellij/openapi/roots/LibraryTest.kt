@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.ApplicationRule
+import com.intellij.testFramework.assertions.Assertions
 import com.intellij.testFramework.rules.ProjectModelRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.ClassRule
@@ -231,6 +232,30 @@ class LibraryTest {
     }
 
     assertThat(library.getFiles(OrderRootType.CLASSES)).containsExactly(root1, root2)
+  }
+
+  @Test
+  fun `root set listener`() {
+    val library = projectModel.addProjectLevelLibrary("a")
+    var changeCount = 0
+    library.rootProvider.addRootSetChangedListener { changeCount++ }
+    edit(library) { model ->
+      assertThat(changeCount).isEqualTo(0)
+      model.addRoot(projectModel.baseProjectDir.newVirtualDirectory("classes"), OrderRootType.CLASSES)
+      assertThat(changeCount).isEqualTo(0)
+    }
+    assertThat(changeCount).isEqualTo(1)
+  }
+
+  @Test
+  fun `commit without changes`() {
+    val library = projectModel.addProjectLevelLibrary("a")
+    var changeCount = 0
+    library.rootProvider.addRootSetChangedListener { changeCount++ }
+    edit(library) { model ->
+      assertThat(changeCount).isEqualTo(0)
+    }
+    assertThat(changeCount).isEqualTo(0)
   }
 
   private fun checkConsistency(library: LibraryEx) {
