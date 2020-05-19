@@ -148,4 +148,59 @@ class ModuleLevelLibrariesInRootModelTest {
     dropModuleSourceEntry(ModuleRootManager.getInstance(module), 0)
     assertThat((library as LibraryEx).isDisposed).isTrue()
   }
+
+  @Test
+  fun `rename library before committing root model`() {
+    val model = createModifiableModel(module)
+    val library = model.moduleLibraryTable.createLibrary("foo")
+    val libraryModel = library.modifiableModel
+    assertThat((dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry).libraryName).isEqualTo("foo")
+    libraryModel.name = "bar"
+    assertThat((dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry).libraryName).isEqualTo("foo")
+    libraryModel.commit()
+    assertThat((dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry).libraryName).isEqualTo("bar")
+    val committed = commitModifiableRootModel(model)
+    assertThat((dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry).libraryName).isEqualTo("bar")
+  }
+
+  @Test
+  fun `do not commit library model`() {
+    val model = createModifiableModel(module)
+    val library = model.moduleLibraryTable.createLibrary("foo")
+    val libraryModel = library.modifiableModel
+    val classesRoot = projectModel.baseProjectDir.newVirtualDirectory("classes")
+    libraryModel.addRoot(classesRoot, OrderRootType.CLASSES)
+    assertThat(libraryModel.getFiles(OrderRootType.CLASSES)).containsExactly(classesRoot)
+    assertThat((dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry).getRootFiles(OrderRootType.CLASSES)).isEmpty()
+    val committed = commitModifiableRootModel(model)
+    assertThat((dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry).getRootFiles(OrderRootType.CLASSES)).isEmpty()
+  }
+
+  @Test
+  fun `two libraries with the same name`() {
+    val model = createModifiableModel(module)
+    val lib1 = model.moduleLibraryTable.createLibrary("foo")
+    val lib2 = model.moduleLibraryTable.createLibrary("foo")
+    val (entry1, entry2) = dropModuleSourceEntry(model, 2)
+    assertThat((entry1 as LibraryOrderEntry).library).isEqualTo(lib1)
+    assertThat((entry2 as LibraryOrderEntry).library).isEqualTo(lib2)
+    val committed = commitModifiableRootModel(model)
+    val (committedEntry1, committedEntry2) = dropModuleSourceEntry(committed, 2)
+    assertThat((committedEntry1 as LibraryOrderEntry).library).isEqualTo(lib1)
+    assertThat((committedEntry2 as LibraryOrderEntry).library).isEqualTo(lib2)
+  }
+
+  @Test
+  fun `two unnamed libraries`() {
+    val model = createModifiableModel(module)
+    val lib1 = model.moduleLibraryTable.createLibrary()
+    val lib2 = model.moduleLibraryTable.createLibrary()
+    val (entry1, entry2) = dropModuleSourceEntry(model, 2)
+    assertThat((entry1 as LibraryOrderEntry).library).isEqualTo(lib1)
+    assertThat((entry2 as LibraryOrderEntry).library).isEqualTo(lib2)
+    val committed = commitModifiableRootModel(model)
+    val (committedEntry1, committedEntry2) = dropModuleSourceEntry(committed, 2)
+    assertThat((committedEntry1 as LibraryOrderEntry).library).isEqualTo(lib1)
+    assertThat((committedEntry2 as LibraryOrderEntry).library).isEqualTo(lib2)
+  }
 }
