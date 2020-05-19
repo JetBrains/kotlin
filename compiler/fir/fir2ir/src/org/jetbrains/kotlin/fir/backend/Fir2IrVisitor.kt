@@ -233,12 +233,12 @@ class Fir2IrVisitor(
         val irTarget = conversionScope.returnTarget(returnExpression)
         return returnExpression.convertWithOffsets { startOffset, endOffset ->
             val result = returnExpression.result
-            val descriptor = irTarget.descriptor
             IrReturnImpl(
                 startOffset, endOffset, irBuiltIns.nothingType,
-                when (descriptor) {
-                    is ClassConstructorDescriptor -> symbolTable.referenceConstructor(descriptor)
-                    else -> symbolTable.referenceSimpleFunction(descriptor)
+                when (irTarget) {
+                    is IrConstructor -> irTarget.symbol
+                    is IrSimpleFunction -> irTarget.symbol
+                    else -> throw AssertionError("Should not be here: $irTarget")
                 },
                 convertToIrExpression(result)
             )
