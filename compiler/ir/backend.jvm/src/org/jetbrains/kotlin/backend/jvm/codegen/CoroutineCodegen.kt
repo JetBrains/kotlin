@@ -144,13 +144,13 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspen
         !isBridgeToSuspendImplMethod() &&
         !isStaticInlineClassReplacementDelegatingCall()
 
-internal fun IrFunction.hasContinuation(): Boolean = isSuspend && shouldContainSuspendMarkers() &&
+internal fun IrFunction.hasContinuation(): Boolean = isInvokeSuspendOfLambda() || (isSuspend && shouldContainSuspendMarkers() &&
         // This is inline-only function
         !isEffectivelyInlineOnly() &&
         // These are templates for the inliner; the continuation will be generated after it runs.
         origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
-        origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+        origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE)
 
 internal fun IrExpression?.isReadOfCrossinline(): Boolean = when (this) {
     is IrGetValue -> (symbol.owner as? IrValueParameter)?.isCrossinline == true
