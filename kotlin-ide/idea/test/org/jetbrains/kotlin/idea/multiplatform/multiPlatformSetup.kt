@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.idea.multiplatform
 
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import junit.framework.TestCase
 import org.jetbrains.kotlin.checkers.utils.clearFileFromDiagnosticMarkup
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
@@ -22,13 +20,16 @@ import org.jetbrains.kotlin.idea.stubs.createMultiplatformFacetM1
 import org.jetbrains.kotlin.idea.stubs.createMultiplatformFacetM3
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.platform.*
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.projectModel.*
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.types.typeUtil.closure
 import java.io.File
 
@@ -196,15 +197,13 @@ private fun setupJsTestOutput(module: Module) {
 
 private fun AbstractMultiModuleTest.createModule(name: String): Module {
     val moduleDir = createTempDir("")
-    val module = createModule(moduleDir.toString() + "/" + name, StdModuleTypes.JAVA)
+    val module = createModule("$moduleDir/$name", StdModuleTypes.JAVA)
     val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(moduleDir)
-    TestCase.assertNotNull(root)
-    object : WriteCommandAction.Simple<Unit>(module.project) {
-        @Throws(Throwable::class)
-        override fun run() {
-            root!!.refresh(false, true)
-        }
-    }.execute().throwException()
+    checkNotNull(root)
+    module.project.executeWriteCommand("refresh") {
+        root.refresh(false, true)
+    }
+
     return module
 }
 
