@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,6 +25,9 @@ open class KotlinJsTargetPreset(
     var irPreset: KotlinJsIrTargetPreset? = null
         internal set
 
+    open val isMpp: Boolean
+        get() = true
+
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
 
@@ -40,6 +43,7 @@ open class KotlinJsTargetPreset(
                     KotlinJsCompilerType.IR.lowerName
                 )
             )
+            this.isMpp = this@KotlinJsTargetPreset.isMpp
 
             project.whenEvaluated {
                 if (!isBrowserConfigured && !isNodejsConfigured) {
@@ -88,6 +92,8 @@ class KotlinJsSingleTargetPreset(
     project,
     kotlinPluginVersion
 ) {
+    override val isMpp: Boolean
+        get() = false
 
     override fun useDisambiguitionClassifierAsSourcesetNamePreffix() = false
 

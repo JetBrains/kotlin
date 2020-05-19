@@ -80,6 +80,16 @@ constructor(
         }
     }
 
+    override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
+        return super.createUsageContexts(producingCompilation) +
+                DefaultKotlinUsageContext(
+                    compilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
+                    usage = project.usageByName("java-api-jars"),
+                    dependencyConfigurationName = apiElementsConfigurationName,
+                    overrideConfigurationArtifacts = emptySet()
+                )
+    }
+
     override fun createKotlinVariant(
         componentName: String,
         compilation: KotlinCompilation<*>,
@@ -99,6 +109,10 @@ constructor(
             .get()
 
     var irTarget: KotlinJsIrTarget? = null
+        internal set
+
+    open var isMpp: Boolean? = null
+        internal set
 
     val testTaskName get() = testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).testTaskName
     val testTask: TaskProvider<KotlinTestReport>
