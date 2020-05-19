@@ -1,0 +1,5 @@
+package
+
+public fun foo(/*0*/ x: () -> kotlin.Int): kotlin.Unit
+public fun </*0*/ T> id(/*0*/ x: T): T
+public fun main(): kotlin.Unit

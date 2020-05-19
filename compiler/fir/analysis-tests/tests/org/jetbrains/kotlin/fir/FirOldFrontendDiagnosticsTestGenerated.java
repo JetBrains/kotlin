@@ -8195,6 +8195,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/functionLiterals/lambdaInLambda2.kt");
         }
 
+        @TestMetadata("missedTypeMismatch.kt")
+        public void testMissedTypeMismatch() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/functionLiterals/missedTypeMismatch.kt");
+        }
+
         @TestMetadata("prematurelyAnalyzingLambdaWhileFixingTypeVariableForAnotherArgument.kt")
         public void testPrematurelyAnalyzingLambdaWhileFixingTypeVariableForAnotherArgument() throws Exception {
             runTest("compiler/testData/diagnostics/tests/functionLiterals/prematurelyAnalyzingLambdaWhileFixingTypeVariableForAnotherArgument.kt");
