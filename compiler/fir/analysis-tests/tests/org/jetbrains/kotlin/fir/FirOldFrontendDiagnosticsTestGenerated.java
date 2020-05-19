@@ -10534,6 +10534,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/commonSystem/boundOnNullableVariable.kt");
             }
 
+            @TestMetadata("castToSubtype.kt")
+            public void testCastToSubtype() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/commonSystem/castToSubtype.kt");
+            }
+
             @TestMetadata("cstFromNullableChildAndNonParameterizedType.kt")
             public void testCstFromNullableChildAndNonParameterizedType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/commonSystem/cstFromNullableChildAndNonParameterizedType.kt");
