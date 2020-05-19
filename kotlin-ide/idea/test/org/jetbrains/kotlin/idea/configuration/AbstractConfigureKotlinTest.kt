@@ -21,6 +21,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
@@ -47,17 +48,13 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     override fun initApplication() {
         super.initApplication()
 
-        KotlinSdkType.setUpIfNeeded()
+        KotlinSdkType.setUpIfNeeded(testRootDisposable)
 
         ApplicationManager.getApplication().runWriteAction {
-            val jdkTable = getProjectJdkTableSafe()
-
-            jdkTable.addJdk(PluginTestCaseBase.mockJdk6())
-            jdkTable.addJdk(PluginTestCaseBase.mockJdk8())
-            jdkTable.addJdk(PluginTestCaseBase.mockJdk9())
+            addJdk(testRootDisposable, ::mockJdk6)
+            addJdk(testRootDisposable, ::mockJdk8)
+            addJdk(testRootDisposable, ::mockJdk9)
         }
-
-        PluginTestCaseBase.clearSdkTable(testRootDisposable)
 
         val tempLibDir = FileUtil.createTempDirectory("temp", null)
         PathMacros.getInstance().setMacro(TEMP_DIR_MACRO_KEY, FileUtilRt.toSystemDependentName(tempLibDir.absolutePath))

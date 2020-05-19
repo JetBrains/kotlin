@@ -12,6 +12,7 @@ import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PlatformTestCase
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.tools.projectWizard.cli.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.Services
@@ -40,7 +41,7 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
         super.setUp()
         runWriteAction {
             val sdk = SimpleJavaSdkType().createJdk(SDK_NAME, IdeaTestUtil.requireRealJdkHome())
-            ProjectJdkTable.getInstance().addJdk(sdk, project)
+            PluginTestCaseBase.addJdk(testRootDisposable, { sdk })
         }
         sdkCreationChecker = KotlinSdkCreationChecker()
     }

@@ -137,7 +137,9 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(myJdkHome))!!
             val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, GRADLE_JDK_NAME)
             TestCase.assertNotNull("Cannot create JDK for $myJdkHome", jdk)
-            jdkTable.addJdk(jdk!!)
+            if (!jdkTable.allJdks.contains(jdk)) {
+                jdkTable.addJdk(jdk!!, testRootDisposable)
+            }
             FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
 
         }

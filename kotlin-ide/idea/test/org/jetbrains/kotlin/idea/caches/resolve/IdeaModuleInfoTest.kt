@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.platform
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
@@ -349,10 +350,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     fun testSdkForScript() {
         // The first known jdk will be used for scripting if there is no jdk in the project
         runWriteAction {
-            val jdkTable = getProjectJdkTableSafe()
-
-            jdkTable.addJdk(mockJdk6())
-            jdkTable.addJdk(mockJdk9())
+            addJdk(testRootDisposable, ::mockJdk6)
+            addJdk(testRootDisposable, ::mockJdk9)
 
             ProjectRootManager.getInstance(project).projectSdk = null
         }
@@ -366,10 +365,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
 
     fun testSdkForScriptProjectSdk() {
         runWriteAction {
-            val jdkTable = getProjectJdkTableSafe()
-
-            jdkTable.addJdk(mockJdk6())
-            jdkTable.addJdk(mockJdk9())
+            addJdk(testRootDisposable, ::mockJdk6)
+            addJdk(testRootDisposable, ::mockJdk9)
 
             ProjectRootManager.getInstance(project).projectSdk = mockJdk9()
         }
@@ -383,10 +380,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         val a = module("a")
 
         runWriteAction {
-            val jdkTable = getProjectJdkTableSafe()
-
-            jdkTable.addJdk(mockJdk6())
-            jdkTable.addJdk(mockJdk9())
+            addJdk(testRootDisposable, ::mockJdk6)
+            addJdk(testRootDisposable, ::mockJdk9)
 
             ProjectRootManager.getInstance(project).projectSdk = mockJdk6()
             with(ModuleRootManager.getInstance(a).modifiableModel) {
@@ -493,8 +488,6 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     override fun tearDown() {
-        clearSdkTable(testRootDisposable)
-
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
         super.tearDown()
