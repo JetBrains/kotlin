@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.FirSymbolOwner
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
@@ -60,10 +58,6 @@ abstract class FirSymbolProvider : FirSessionComponent {
     open fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> = emptySet()
 
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
-
-    companion object {
-        fun getInstance(session: FirSession) = session.firSymbolProvider
-    }
 }
 
 fun FirSession.getNestedClassifierScope(lookupTag: ConeClassLikeLookupTag): FirScope? =

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirScope() {
 
-    private val symbolProvider = FirSymbolProvider.getInstance(session)
+    private val symbolProvider = session.firSymbolProvider
 
     private val classifierCache = mutableMapOf<Name, FirClassifierSymbol<*>?>()
 

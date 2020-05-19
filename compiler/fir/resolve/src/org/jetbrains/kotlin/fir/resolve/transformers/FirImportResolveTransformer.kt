@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -32,13 +33,13 @@ open class FirImportResolveTransformer protected constructor(phase: FirResolvePh
     constructor(session: FirSession) : this() {
         this.session = session
         // TODO: clarify this
-        symbolProvider = FirSymbolProvider.getInstance(session)
+        symbolProvider = session.firSymbolProvider
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         file.replaceResolvePhase(transformerPhase)
         session = file.session
-        symbolProvider = FirSymbolProvider.getInstance(file.session)
+        symbolProvider = file.session.firSymbolProvider
         return file.also { it.transformChildren(this, null) }.compose()
     }
 

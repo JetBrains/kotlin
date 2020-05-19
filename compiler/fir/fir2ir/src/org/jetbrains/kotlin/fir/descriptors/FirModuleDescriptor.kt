@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -30,7 +30,7 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
         get() = null
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
-        val symbolProvider = FirSymbolProvider.getInstance(session)
+        val symbolProvider = session.firSymbolProvider
         if (symbolProvider.getPackage(fqName) != null) {
             return FirPackageViewDescriptor(fqName, this)
         }
