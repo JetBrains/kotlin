@@ -144,6 +144,8 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
             }
             return prebuiltTree;
           }
+        } catch (ProcessCanceledException pce) {
+          throw pce;
         } catch (Exception e) {
           LOG.error("Error while indexing: " + inputData.getFileName() + " using prebuilt stub index", e);
         }
