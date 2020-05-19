@@ -68,7 +68,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitConstantExpression(expression: KtConstantExpression) {
-        myMatchingVisitor.result = myMatchingVisitor.element.text == expression.text
+        val other = getTreeElement<KtConstantExpression>() ?: return
+        myMatchingVisitor.result = expression.text == other.text
     }
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
