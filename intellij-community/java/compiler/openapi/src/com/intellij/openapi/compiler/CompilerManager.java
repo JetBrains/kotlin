@@ -106,7 +106,7 @@ public abstract class CompilerManager {
    *
    * @param type the type to check.
    * @return true if the file type is compilable, false otherwise.
-   * @see com.intellij.openapi.compiler.CompilableFileTypesProvider#getCompilableFileTypes()
+   * @see CompilableFileTypesProvider#getCompilableFileTypes()
    */
   public abstract boolean isCompilableFileType(@NotNull FileType type);
 

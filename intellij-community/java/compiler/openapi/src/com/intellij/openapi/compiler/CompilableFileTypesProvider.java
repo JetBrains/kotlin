@@ -17,7 +17,7 @@ import java.util.Set;
  * &lt;/extensions&gt;
  * </pre>
  *
- * @see com.intellij.openapi.compiler.CompilerManager#isCompilableFileType
+ * @see CompilerManager#isCompilableFileType
  */
 public interface CompilableFileTypesProvider {
   @NotNull

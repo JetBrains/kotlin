@@ -132,7 +132,7 @@ public final class Utils {
   }
 
   /**
-   * Validates that specified class represents {@link javax.swing.JComponent} with
+   * Validates that specified class represents {@link JComponent} with
    * empty constructor.
    *
    * @return descriptive human readable error message or {@code null} if

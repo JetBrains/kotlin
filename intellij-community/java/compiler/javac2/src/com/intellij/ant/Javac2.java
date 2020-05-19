@@ -33,7 +33,7 @@ public class Javac2 extends Javac {
 
   /**
    * Check if Java classes should be actually compiled by the task. This method is overridden by
-   * {@link com.intellij.ant.InstrumentIdeaExtensions} task in order to suppress actual compilation
+   * {@link InstrumentIdeaExtensions} task in order to suppress actual compilation
    * of the java sources.
    *
    * @return true if the java classes are compiled, false if just instrumentation is performed.

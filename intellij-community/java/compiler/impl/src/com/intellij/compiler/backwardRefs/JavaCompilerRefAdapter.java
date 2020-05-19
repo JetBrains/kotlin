@@ -82,7 +82,7 @@ public class JavaCompilerRefAdapter implements LanguageCompilerRefAdapter {
                                                                 @NotNull PsiElement basePsi,
                                                                 @NotNull NameEnumerator names, @NotNull GlobalSearchScope libraryScope)
     throws IOException {
-    com.intellij.psi.@Nullable PsiClass value =
+    @Nullable PsiClass value =
       basePsi instanceof PsiClass ? (PsiClass)basePsi : ReadAction.compute(() -> (PsiMember)basePsi).getContainingClass();
     final PsiClass baseClass = Objects.requireNonNull(value);
 

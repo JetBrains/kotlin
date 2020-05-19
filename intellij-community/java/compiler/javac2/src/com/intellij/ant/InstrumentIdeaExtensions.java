@@ -24,7 +24,7 @@ public class InstrumentIdeaExtensions extends Javac2 {
      * Customize behavior of {@link Javac2} disabling compilation of java classes.
      *
      * @return false, meaning that java classes are not compiled
-     * @see com.intellij.ant.Javac2#areJavaClassesCompiled()
+     * @see Javac2#areJavaClassesCompiled()
      */
     @Override
     protected boolean areJavaClassesCompiled() {

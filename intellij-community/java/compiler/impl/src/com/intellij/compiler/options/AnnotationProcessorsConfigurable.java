@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.java.compiler.ProcessorConfigProfile;
 
 import javax.swing.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,7 +73,7 @@ public class AnnotationProcessorsConfigurable implements SearchableConfigurable,
       return true;
     }
 
-    final Map<String, ProcessorConfigProfile> configProfiles = new java.util.HashMap<>();
+    final Map<String, ProcessorConfigProfile> configProfiles = new HashMap<>();
     for (ProcessorConfigProfile profile : config.getModuleProcessorProfiles()) {
       configProfiles.put(profile.getName(), profile);
     }
