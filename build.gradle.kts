@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
@@ -42,6 +43,8 @@ plugins {
     idea
     id("jps-compatible")
     id("org.jetbrains.gradle.plugin.idea-ext")
+    id("org.gradle.crypto.checksum") version "1.2.0"
+    signing
 }
 
 pill {
@@ -833,6 +836,33 @@ val zipPlugin by task<Zip> {
         logger.lifecycle("Plugin artifacts packed to $archiveFile")
     }
 }
+
+fun Project.secureZipTask(zipTask: TaskProvider<Zip>): RegisteringDomainObjectDelegateProviderWithAction<out TaskContainer, Task> {
+    val checkSumTask = tasks.register("${zipTask.name}Checksum", Checksum::class) {
+        dependsOn(zipTask)
+        val compilerFile = zipTask.get().outputs.files.singleFile
+        files = files(compilerFile)
+        outputDir = compilerFile.parentFile
+        algorithm = Checksum.Algorithm.SHA256
+    }
+
+    val signTask = tasks.register("${zipTask.name}Sign", Sign::class) {
+        description = "Signs the archive produced by the '" + zipTask.name + "' task."
+        sign(zipTask.get())
+    }
+
+    return tasks.registering {
+        dependsOn(checkSumTask)
+        dependsOn(signTask)
+    }
+}
+
+signing {
+    useGpgCmd()
+}
+
+val zipCompilerWithSignature by secureZipTask(zipCompiler)
+val zipPluginWithSignature by secureZipTask(zipPlugin)
 
 configure<IdeaModel> {
     module {
