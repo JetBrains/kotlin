@@ -6185,6 +6185,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/keepInfixCall.kt");
         }
 
+        @TestMetadata("kt35015.kt")
+        public void testKt35015() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedSymbolUsage/kt35015.kt");
+        }
+
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/localFun.kt");
