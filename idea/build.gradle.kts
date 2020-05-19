@@ -22,7 +22,8 @@ sourceSets {
         resources.srcDirs(
             "idea-completion/resources",
             "idea-live-templates/resources",
-            "idea-repl/resources"
+            "idea-repl/resources",
+            "resources-en"
         )
     }
     "test" {
