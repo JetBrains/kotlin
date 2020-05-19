@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
 import com.intellij.ide.actions.searcheverywhere.FoundItemDescriptor;
@@ -31,6 +31,8 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FList;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.indexing.FindSymbolParameters;
+import com.intellij.util.ui.FixingLayoutMatcherUtil;
+import com.intellij.util.ui.KeyboardLayoutUtil;
 import one.util.streamex.IntStreamEx;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +85,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
       if (!processItemsForPattern(base, parameters, consumer, indicator)) {
         return false;
       }
-      String fixedPattern = FixingLayoutMatcher.fixLayout(pattern);
+      String fixedPattern = FixingLayoutMatcher.fixLayout(pattern, KeyboardLayoutUtil::getAsciiForChar);
       return fixedPattern == null || processItemsForPattern(base, parameters.withCompletePattern(fixedPattern), consumer, indicator);
     }
     finally {
@@ -146,7 +148,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
   public static MinusculeMatcher getQualifiedNameMatcher(@NotNull String pattern) {
     pattern = "*" + StringUtil.replace(StringUtil.replace(pattern, "\\", "*\\*"), "/", "*/*");
 
-    return NameUtil.buildMatcher(pattern)
+    return FixingLayoutMatcherUtil.buildLayoutFixingMatcher(pattern)
       .withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE)
       .preferringStartMatches()
       .build();
@@ -326,7 +328,8 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
       boolean preferStartMatches = from == 0 && !patternSuffix.startsWith("*");
       String matchPattern = (from > 0 ? " " : "*") + patternSuffix;
 
-      NameUtil.MatcherBuilder builder = NameUtil.buildMatcher(matchPattern).withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE);
+      NameUtil.MatcherBuilder builder = FixingLayoutMatcherUtil.buildLayoutFixingMatcher(matchPattern)
+        .withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE);
       if (preferStartMatches) {
         builder.preferringStartMatches();
       }

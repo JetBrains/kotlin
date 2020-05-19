@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything.groups;
 
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.util.Function;
+import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +21,7 @@ import java.util.Optional;
  */
 public abstract class RunAnythingGroup {
   public static final Function<String, NameUtil.MatcherBuilder> RUN_ANYTHING_MATCHER_BUILDER =
-    pattern -> NameUtil.buildMatcher("*" + pattern);
+    pattern -> FixingLayoutMatcherUtil.buildLayoutFixingMatcher("*" + pattern);
 
   /**
    * {@link #myMoreIndex} is a group's 'load more..' index in the main list.

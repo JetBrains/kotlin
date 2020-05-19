@@ -1,8 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.codeWithMe.ClientId;
 import com.intellij.execution.Executor;
 import com.intellij.execution.ExecutorRegistry;
 import com.intellij.execution.RunnerAndConfigurationSettings;
@@ -102,7 +103,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.Matcher;
 import com.intellij.util.text.MatcherHolder;
 import com.intellij.util.ui.*;
-import com.intellij.codeWithMe.ClientId;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1063,7 +1063,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       myLocationString = null;
       String pattern = "*" + myPopupField.getText();
-      Matcher matcher = NameUtil.buildMatcher(pattern, 0, true, true);
+      Matcher matcher = NameUtil.buildMatcher(pattern, 0, true, true, KeyboardLayoutUtil::getAsciiForChar);
       Component cmp = isMoreItem(index)
             ? More.get(isSelected)
             : SearchEverywhereClassifier.EP_Manager.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -1453,7 +1453,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       if (actions ? !Registry.is("search.everywhere.actions") : !Registry.is("search.everywhere.settings")) {
         return result;
       }
-      final MinusculeMatcher matcher = NameUtil.buildMatcher("*" +pattern).build();
+      final MinusculeMatcher matcher = FixingLayoutMatcherUtil.buildLayoutFixingMatcher("*" + pattern).build();
       if (myActionProvider == null) {
         myActionProvider = createActionProvider();
       }
@@ -1530,7 +1530,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
     private synchronized void buildStructure(final String pattern) {
       if (!Registry.is("search.everywhere.structure") || myStructureModel == null) return;
       final List<StructureViewTreeElement> elements = new ArrayList<>();
-      final MinusculeMatcher matcher = NameUtil.buildMatcher("*" + pattern).build();
+      final MinusculeMatcher matcher = FixingLayoutMatcherUtil.buildLayoutFixingMatcher("*" + pattern).build();
       fillStructure(myStructureModel.getRoot(), elements, matcher);
       if (!elements.isEmpty()) {
         SwingUtilities.invokeLater(() -> {
@@ -1607,7 +1607,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       if (!Registry.is("search.everywhere.configurations")) {
         return configurations;
       }
-      final MinusculeMatcher matcher = NameUtil.buildMatcher(pattern).build();
+      final MinusculeMatcher matcher = FixingLayoutMatcherUtil.buildLayoutFixingMatcher(pattern).build();
       final List<ChooseRunConfigurationPopup.ItemWrapper> wrappers = ChooseRunConfigurationPopup.createFlatSettingsList(project);
       check();
       for (ChooseRunConfigurationPopup.ItemWrapper wrapper : wrappers) {
@@ -1769,7 +1769,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
     }
 
     private synchronized void buildRecentFiles(String pattern) {
-      final MinusculeMatcher matcher = NameUtil.buildMatcher("*" + pattern).build();
+      final MinusculeMatcher matcher = FixingLayoutMatcherUtil.buildLayoutFixingMatcher("*" + pattern).build();
       final ArrayList<VirtualFile> files = new ArrayList<>();
       final List<VirtualFile> selected = Arrays.asList(FileEditorManager.getInstance(project).getSelectedFiles());
       for (VirtualFile file : ContainerUtil.reverse(EditorHistoryManager.getInstance(project).getFileList())) {

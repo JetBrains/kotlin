@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util.gotoByName;
 
 import com.intellij.concurrency.JobLauncher;
@@ -24,6 +24,8 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FList;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.indexing.IdFilter;
+import com.intellij.util.ui.FixingLayoutMatcherUtil;
+import com.intellij.util.ui.KeyboardLayoutUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -286,7 +288,8 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
     String fullRawPattern = buildFullPattern(base, parameters.getCompletePattern());
     String fullNamePattern = buildFullPattern(base, base.transformPattern(parameters.getCompletePattern()));
 
-    return NameUtil.buildMatcherWithFallback(fullRawPattern, fullNamePattern, NameUtil.MatchingCaseSensitivity.NONE);
+    return NameUtil.buildMatcherWithFallback(fullRawPattern, fullNamePattern, NameUtil.MatchingCaseSensitivity.NONE,
+                                             KeyboardLayoutUtil::getAsciiForChar);
   }
 
   @NotNull
@@ -418,7 +421,7 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
 
   @NotNull
   private static MinusculeMatcher buildPatternMatcher(@NotNull String pattern, boolean preferStartMatches) {
-    NameUtil.MatcherBuilder builder = NameUtil.buildMatcher(pattern).withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE);
+    NameUtil.MatcherBuilder builder = FixingLayoutMatcherUtil.buildLayoutFixingMatcher(pattern).withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE);
     if (preferStartMatches) {
       builder = builder.preferringStartMatches();
     }

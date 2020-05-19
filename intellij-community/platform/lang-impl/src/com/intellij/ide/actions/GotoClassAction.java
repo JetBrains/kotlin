@@ -32,9 +32,9 @@ import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.MinusculeMatcher;
-import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -160,7 +160,7 @@ public class GotoClassAction extends GotoActionBase implements DumbAware {
         return null;
       }
 
-      MinusculeMatcher matcher = NameUtil.buildMatcher(memberPattern).build();
+      MinusculeMatcher matcher = FixingLayoutMatcherUtil.buildLayoutFixingMatcher(memberPattern).build();
       int max = Integer.MIN_VALUE;
       Object target = null;
       for (TreeElement treeElement : element.getChildren()) {
