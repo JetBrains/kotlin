@@ -319,8 +319,8 @@ private fun IrClass.findMatchingOverriddenSymbolsFromThisAndSupertypes(
             continue
         }
         when {
-            declaration is IrFunction && target is IrFunction ->
-                if (declaration.descriptor.modality != Modality.FINAL &&
+            declaration is IrSimpleFunction && target is IrSimpleFunction ->
+                if (declaration.modality != Modality.FINAL &&
                     !Visibilities.isPrivate(declaration.visibility) &&
                     isOverriding(irBuiltIns, target, declaration)
                 ) {
@@ -339,7 +339,7 @@ private fun IrClass.findMatchingOverriddenSymbolsFromThisAndSupertypes(
                 if (targetIsPropertyAccessor) {
                     val getter = declaration.getter
                     if (getter != null) {
-                        if (getter.descriptor.modality != Modality.FINAL &&
+                        if (getter.modality != Modality.FINAL &&
                             !Visibilities.isPrivate(getter.visibility) &&
                             isOverriding(irBuiltIns, target, getter)
                         ) {
@@ -348,7 +348,7 @@ private fun IrClass.findMatchingOverriddenSymbolsFromThisAndSupertypes(
                     }
                     val setter = declaration.setter
                     if (setter != null) {
-                        if (setter.descriptor.modality != Modality.FINAL &&
+                        if (setter.modality != Modality.FINAL &&
                             !Visibilities.isPrivate(setter.visibility) &&
                             isOverriding(irBuiltIns, target, setter)
                         ) {
