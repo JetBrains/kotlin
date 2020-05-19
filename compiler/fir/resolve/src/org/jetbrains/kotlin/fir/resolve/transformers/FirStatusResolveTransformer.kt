@@ -213,9 +213,11 @@ fun FirDeclaration.resolveStatus(
 }
 
 private fun FirDeclaration.resolveVisibility(containingClass: FirClass<*>?): Visibility {
+    // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
     if (this is FirConstructor) {
         if (containingClass != null &&
-            (containingClass.classKind == ClassKind.ENUM_CLASS || containingClass.modality == Modality.SEALED)
+            (containingClass.classKind == ClassKind.ENUM_CLASS || containingClass.classKind == ClassKind.ENUM_ENTRY ||
+                    containingClass.modality == Modality.SEALED)
         ) {
             return Visibilities.PRIVATE
         }

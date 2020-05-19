@@ -544,9 +544,9 @@ class RawFirBuilder(
                 }
             }
 
+            // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
             fun defaultVisibility() = when {
-                // TODO: object / enum is HIDDEN (?)
-                owner is KtObjectDeclaration || owner.hasModifier(ENUM_KEYWORD) -> Visibilities.PRIVATE
+                owner is KtObjectDeclaration || owner.hasModifier(ENUM_KEYWORD) || owner is KtEnumEntry -> Visibilities.PRIVATE
                 owner.hasModifier(SEALED_KEYWORD) -> Visibilities.PRIVATE
                 else -> Visibilities.UNKNOWN
             }

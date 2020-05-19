@@ -26,7 +26,7 @@ FILE: enums.kt
             internal get(): Double
 
         public final static enum entry MERCURY: R|Planet| = object : R|Planet| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|Planet|>(Double(1.0), Double(2.0))
             }
 
@@ -37,7 +37,7 @@ FILE: enums.kt
         }
 
         public final static enum entry VENERA: R|Planet| = object : R|Planet| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|Planet|>(Double(3.0), Double(4.0))
             }
 
@@ -48,7 +48,7 @@ FILE: enums.kt
         }
 
         public final static enum entry EARTH: R|Planet| = object : R|Planet| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|Planet|>(Double(5.0), Double(6.0))
             }
 
@@ -89,49 +89,49 @@ FILE: enums.kt
             public? get(): String
 
         public final static enum entry FIX_STACK_BEFORE_JUMP: R|PseudoInsn| = object : R|PseudoInsn| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|PseudoInsn|>()
             }
 
         }
 
         public final static enum entry FAKE_ALWAYS_TRUE_IFEQ: R|PseudoInsn| = object : R|PseudoInsn| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|PseudoInsn|>(String(()I))
             }
 
         }
 
         public final static enum entry FAKE_ALWAYS_FALSE_IFEQ: R|PseudoInsn| = object : R|PseudoInsn| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|PseudoInsn|>(String(()I))
             }
 
         }
 
         public final static enum entry SAVE_STACK_BEFORE_TRY: R|PseudoInsn| = object : R|PseudoInsn| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|PseudoInsn|>()
             }
 
         }
 
         public final static enum entry RESTORE_STACK_IN_TRY_CATCH: R|PseudoInsn| = object : R|PseudoInsn| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|PseudoInsn|>()
             }
 
         }
 
         public final static enum entry STORE_NOT_NULL: R|PseudoInsn| = object : R|PseudoInsn| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|PseudoInsn|>()
             }
 
         }
 
         public final static enum entry AS_NOT_NULL: R|PseudoInsn| = object : R|PseudoInsn| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|PseudoInsn|>(String((Ljava/lang/Object;)Ljava/lang/Object;))
             }
 

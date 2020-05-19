@@ -30,14 +30,14 @@ FILE: annotation.kt
         }
 
         public final static enum entry FIRST: R|My| = @base() object : R|My| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|My|>()
             }
 
         }
 
         public final static enum entry SECOND: R|My| = @base() object : R|My| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|My|>()
             }
 

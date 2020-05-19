@@ -22,7 +22,7 @@ FILE: enums2.kt
             public? get(): Some
 
         public final static enum entry FIRST: R|SomeEnum| = object : R|SomeEnum| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|SomeEnum|>(O1#)
             }
 
@@ -33,7 +33,7 @@ FILE: enums2.kt
         }
 
         public final static enum entry SECOND: R|SomeEnum| = object : R|SomeEnum| {
-            public? constructor(): R|anonymous| {
+            private constructor(): R|anonymous| {
                 super<R|SomeEnum|>(O2#)
             }
 
