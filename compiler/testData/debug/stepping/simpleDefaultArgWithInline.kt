@@ -9,7 +9,7 @@ fun box(): String {
 }
 // TODO: IR Backend behaves like simpleDefaultArg: 8,3,4, _3_ ,8
 // LINENUMBERS
-// test.kt:8
-// test.kt:3
-// test.kt:4
-// test.kt:8
+// test.kt:8 box
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:8 box

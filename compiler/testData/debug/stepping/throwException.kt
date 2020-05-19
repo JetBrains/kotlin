@@ -1,4 +1,4 @@
-//FILE: test.kt
+// FILE: test.kt
 fun box() {
     val a = 1
     val b = 2
@@ -15,13 +15,13 @@ fun throwIfLess(a: Int, b: Int) {
         throw java.lang.IllegalStateException()
 }
 // LINENUMBERS
-// test.kt:3
-// test.kt:4
-// test.kt:5
-// test.kt:6
-// test.kt:14
-// test.kt:15
-// test.kt:7
-// test.kt:8
-// test.kt:14
-// test.kt:15
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:5 box
+// test.kt:6 box
+// test.kt:14 throwIfLess
+// test.kt:15 throwIfLess
+// test.kt:7 box
+// test.kt:8 box
+// test.kt:14 throwIfLess
+// test.kt:15 throwIfLess

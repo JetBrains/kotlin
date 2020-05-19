@@ -11,8 +11,8 @@ fun box(): String {
 }
 
 // LINENUMBERS
-// test.kt:10
-// test.kt:5
-// test.kt:3
-// test.kt:6
-// test.kt:10
+// test.kt:10 box
+// test.kt:5 box
+// test.kt:3 box
+// test.kt:6 box
+// test.kt:10 box
