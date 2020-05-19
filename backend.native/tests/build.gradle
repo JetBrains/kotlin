@@ -3477,6 +3477,10 @@ createInterop("cunion") {
     it.defFile 'interop/basics/cunion.def'
 }
 
+createInterop("cenums") {
+    it.defFile 'interop/basics/cenums.def'
+}
+
 createInterop("carrayPointers") {
     it.defFile 'interop/basics/carrayPointers.def'
 }
@@ -3734,6 +3738,12 @@ interopTest("interop_union") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     interop = 'cunion'
     source = "interop/basics/union.kt"
+}
+
+interopTest("interop_enums") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    interop = 'cenums'
+    source = "interop/basics/enums.kt"
 }
 
 interopTest("interop_array_pointers") {
