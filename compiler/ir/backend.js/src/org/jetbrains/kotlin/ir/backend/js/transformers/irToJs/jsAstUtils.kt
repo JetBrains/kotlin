@@ -55,7 +55,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForValueDeclaration(it)) }
     functionParams.forEach { function.addParameter(it) }
-    if (declaration.descriptor.isSuspend) {
+    if (declaration.isSuspend) {
         function.addParameter(JsName(Namer.CONTINUATION)) // TODO: Use namer?
     }
 

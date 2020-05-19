@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.js.backend.ast.JsScope
@@ -35,7 +36,7 @@ class JsGenerationContext(
         get() = if (isCoroutineDoResume()) {
             JsThisRef()
         } else {
-            if (currentFunction!!.descriptor.isSuspend) {
+            if (currentFunction!!.isSuspend) {
                 JsNameRef(Namer.CONTINUATION)
             } else {
                 getNameForValueDeclaration(currentFunction.valueParameters.last()).makeRef()
