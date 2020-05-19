@@ -36,5 +36,7 @@ abstract class FirFile : FirPureAbstractElement(), FirAnnotationContainer, FirDe
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile
 
+    abstract fun <D> transformImports(transformer: FirTransformer<D>, data: D): FirFile
+
     abstract fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirFile
 }
