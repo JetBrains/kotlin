@@ -86,6 +86,8 @@ public class IndexedHashesSupport {
       hasher.putString(content.getCharset().name(), StandardCharsets.UTF_8);
     }
 
+    hasher.putString(content.getFileName(), StandardCharsets.UTF_8);
+
     FileType fileType = content.getFileType();
     hasher.putString(fileType.getName(), StandardCharsets.UTF_8);
 
