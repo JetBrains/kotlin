@@ -135,7 +135,7 @@ abstract class LibraryTableTestCase {
       model1.commit()
       model2.commit()
     }
-    assertThat(libraryTable.libraries).containsExactly(a, b, c)
+    assertThat(libraryTable.libraries).containsExactlyInAnyOrder(a, b, c)
   }
 
   @Test
