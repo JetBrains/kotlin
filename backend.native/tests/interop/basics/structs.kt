@@ -23,11 +23,49 @@ fun main() {
         e = E.G
         assertEquals(e, E.G)
 
+        assertEquals(K, nonStrict)
+        nonStrict = S
+        assertEquals(S, nonStrict)
+
         assertEquals(arr[0], -51)
         assertEquals(arr[1], -19)
         arr[0] = 51
         arr[1] = 19
         assertEquals(arr[0], 51)
         assertEquals(arr[1], 19)
+
+        // Check that subtyping via Nothing-returning functions does not break compiler.
+        assertFailsWith<NotImplementedError> {
+            ui = TODO()
+            t.i = TODO()
+            next = TODO()
+            e = TODO()
+            nonStrict = TODO()
+        }
     }
+    memScoped {
+        val packed = alloc<Packed>()
+        packed.i = -1
+        assertEquals(-1, packed.i)
+        packed.e = E.R
+        assertEquals(E.R, packed.e)
+        // Check that subtyping via Nothing-returning functions does not break compiler.
+        assertFailsWith<NotImplementedError> {
+            packed.i = TODO()
+            packed.e = TODO()
+        }
+    }
+    // Check that generics doesn't break anything.
+    checkEnumSubTyping(E.R)
+    checkIntSubTyping(630090)
+}
+
+fun <T : E> checkEnumSubTyping(e: T) = memScoped {
+    val s = alloc<Complex>()
+    s.e = e
+}
+
+fun <T : Int> checkIntSubTyping(x: T) = memScoped {
+    val s = alloc<Trivial>()
+    s.i = x
 }

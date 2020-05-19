@@ -1,3 +1,4 @@
+nonStrictEnums = NonStrict
 ---
 typedef struct {
     int i;
@@ -7,12 +8,22 @@ enum E {
     R, G, B
 };
 
+enum NonStrict {
+    N, S, K
+};
+
 struct Complex {
     unsigned int ui;
     Trivial t;
     struct Complex* next;
     enum E e;
+    enum NonStrict nonStrict;
     int arr[2];
+};
+
+struct __attribute__((packed)) Packed {
+    int i : 1;
+    enum E e : 2;
 };
 
 struct Complex produceComplex() {
@@ -21,6 +32,7 @@ struct Complex produceComplex() {
 		    .t = {1},
 		    .next = 0,
 		    .e = R,
+		    .nonStrict = K,
 		    .arr = {-51, -19}
     };
     return complex;
