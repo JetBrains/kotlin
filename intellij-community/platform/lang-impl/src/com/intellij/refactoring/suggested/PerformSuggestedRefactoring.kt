@@ -148,6 +148,7 @@ internal fun performSuggestedRefactoring(
           if (!isOk) {
             SuggestedRefactoringFeatureUsage.logEvent(SuggestedRefactoringFeatureUsage.POPUP_CANCELED, refactoringData, state, actionPlace)
           }
+          Disposer.dispose(component)
         }
       )
       component.onOk = callbacks.onOk
