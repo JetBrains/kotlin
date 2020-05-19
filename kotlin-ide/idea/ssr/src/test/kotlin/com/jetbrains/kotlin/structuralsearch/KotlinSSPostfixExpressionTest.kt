@@ -5,6 +5,10 @@ class KotlinSSPostfixExpressionTest : KotlinSSTest() {
 
     fun testIncrement() { doTest("'_ ++") }
 
+    fun testIncrementParenthesis() { doTest("('_)++") }
+
+    fun testIncrementMultParenthesis() { doTest("(('_))++") }
+
     fun testDecrement() { doTest("'_--") }
 
     fun testAssertNotNull() { doTest("'_!!") }

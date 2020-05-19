@@ -1,11 +1,14 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
+import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
@@ -33,6 +36,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
     }
 
+    private fun KtExpression.countParenthesize(initial: Int = 0): Int {
+        val paranthesized = children.firstOrNull { it is KtParenthesizedExpression } as KtExpression?
+        return paranthesized?.let { it.countParenthesize(initial + 1) } ?: initial
+    }
+
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
         val other = getTreeElement<KtArrayAccessExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.arrayExpression, other.arrayExpression)
@@ -51,16 +59,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.matchSons(expression, other)
     }
 
-    override fun visitPrefixExpression(expression: KtPrefixExpression) {
-        val other = getTreeElement<KtPrefixExpression>() ?: return
-        myMatchingVisitor.result = expression.operationToken == other.operationToken
-                && myMatchingVisitor.match(expression.lastChild, other.lastChild) // check operand
-    }
-
-    override fun visitPostfixExpression(expression: KtPostfixExpression) {
-        val other = getTreeElement<KtPostfixExpression>() ?: return
-        myMatchingVisitor.result = expression.operationToken == other.operationToken
-                && myMatchingVisitor.match(expression.firstChild, other.firstChild) // check operand
+    override fun visitUnaryExpression(expression: KtUnaryExpression) {
+        val other = getTreeElement<KtUnaryExpression>() ?: return
+        val exprParCount = expression.countParenthesize()
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.referenceExpression(), other.referenceExpression())
+                && myMatchingVisitor.match(expression.operationReference, other.operationReference)
+                && (exprParCount == 0 || exprParCount == other.countParenthesize())
     }
 
     override fun visitConstantExpression(expression: KtConstantExpression) {

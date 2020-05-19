@@ -9,8 +9,12 @@ class KotlinSSPrefixExpressionTest : KotlinSSTest() {
 
     fun testNot() { doTest("!'_") }
 
-    fun testPreIncrement() { doTest("++'_") }
+    fun testIncrement() { doTest("++'_") }
 
-    fun testPreDecrement() { doTest("--'_") }
+    fun testIncrementParenthesis() { doTest("++('_)") }
+
+    fun testIncrementMultParenthesis() { doTest("++(('_))") }
+
+    fun testDecrement() { doTest("--'_") }
 
 }
