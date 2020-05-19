@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReferenc
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
@@ -279,7 +280,11 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun Candidate.createArgumentsMapping(): ExpectedArgumentType? {
         return argumentMapping?.map { (argument, valueParameter) ->
-            val expectedType = valueParameter.returnTypeRef.substitute(this)
+            val expectedType = if (valueParameter.isVararg) {
+                valueParameter.returnTypeRef.substitute(this).varargElementType(session)
+            } else {
+                valueParameter.returnTypeRef.substitute(this)
+            }
             argument.unwrapArgument() to expectedType
         }?.toMap()?.toExpectedType()
     }
