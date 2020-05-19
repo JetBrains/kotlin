@@ -100,6 +100,12 @@ public class IndexedHashesSupport {
         }
 
         @Override
+        public @NotNull HashBuilder putBoolean(boolean val) {
+          hasher.putBoolean(val);
+          return this;
+        }
+
+        @Override
         public @NotNull HashBuilder putString(@NotNull CharSequence charSequence) {
           hasher.putString(charSequence, StandardCharsets.UTF_8);
           return this;
