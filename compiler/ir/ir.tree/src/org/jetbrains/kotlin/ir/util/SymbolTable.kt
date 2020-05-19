@@ -840,7 +840,7 @@ open class SymbolTable(
         descriptor: VariableDescriptor,
         type: IrType,
         variableFactory: (IrVariableSymbol) -> IrVariable = {
-            IrVariableImpl(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type)
+            IrVariableImpl(startOffset, endOffset, origin, descriptor, type, nameProvider.nameForDeclaration(descriptor), it)
         }
 
     ): IrVariable =

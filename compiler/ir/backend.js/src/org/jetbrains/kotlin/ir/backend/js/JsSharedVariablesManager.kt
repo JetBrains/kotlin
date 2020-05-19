@@ -58,9 +58,9 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
             IrVariableSymbolImpl(descriptor),
             originalDeclaration.name,
             irCall.type,
-            false,
-            false,
-            false
+            isVar = false,
+            isConst = false,
+            isLateinit = false
         ).also {
             descriptor.bind(it)
             it.parent = originalDeclaration.parent

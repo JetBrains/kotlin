@@ -29,18 +29,17 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.SmartList
 
 class IrVariableImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrVariableSymbol,
-    override val name: Name = symbol.descriptor.name,
+    override val name: Name,
     override val type: IrType,
-    override val isVar: Boolean = symbol.descriptor.isVar,
-    override val isConst: Boolean = symbol.descriptor.isConst,
-    override val isLateinit: Boolean = symbol.descriptor.isLateInit
+    override val isVar: Boolean,
+    override val isConst: Boolean,
+    override val isLateinit: Boolean
 ) : IrVariable {
 
     private var _parent: IrDeclarationParent? = null
@@ -58,23 +57,17 @@ class IrVariableImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrVariableSymbol,
-        type: IrType
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name, type,
-        isVar = symbol.descriptor.isVar,
-        isConst = symbol.descriptor.isConst,
-        isLateinit = symbol.descriptor.isLateInit
-    )
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
         descriptor: VariableDescriptor,
-        type: IrType
-    ) : this(startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), type)
+        type: IrType,
+        name: Name = descriptor.name,
+        symbol: IrVariableSymbol = IrVariableSymbolImpl(descriptor)
+    ) : this(
+        startOffset, endOffset, origin,
+        symbol, name, type,
+        isVar = descriptor.isVar,
+        isConst = descriptor.isConst,
+        isLateinit = descriptor.isLateInit
+    )
 
     constructor(
         startOffset: Int,

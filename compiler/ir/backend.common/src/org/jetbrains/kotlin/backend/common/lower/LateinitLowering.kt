@@ -127,9 +127,9 @@ class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLowe
                     IrVariableSymbolImpl(descriptor),
                     declaration.name,
                     type,
-                    true,
-                    false,
-                    true
+                    isVar = true,
+                    isConst = false,
+                    isLateinit = true
                 ).also {
                     descriptor.bind(it)
                     it.parent = declaration.parent
