@@ -767,6 +767,7 @@ class Fir2IrVisitor(
         return arrayOfCall.convertWithOffsets { startOffset, endOffset ->
             lateinit var elementType: IrType
             lateinit var arrayType: IrType
+            // Resolved arrayOf call will have resolved type. FirArrayOfCall from collection literal won't.
             if (arrayOfCall.typeRef is FirResolvedTypeRef) {
                 arrayType = arrayOfCall.typeRef.toIrType()
                 elementType = arrayType.getArrayElementType(irBuiltIns)

@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
       TestAnnWithIntArray(x = CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null)
-      TestAnnWithStringArray(x = CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.Array<kotlin.String> origin=null)
+      TestAnnWithStringArray(x = ['a', 'b', 'c'])
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:

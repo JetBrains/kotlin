@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -22,6 +21,10 @@ val FirTypeRef.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds
 val FirTypeRef.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
 val FirTypeRef.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
 val FirTypeRef.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
+val FirTypeRef.isArrayType: Boolean
+    get() =
+        isBuiltinType(StandardClassIds.Array, false) ||
+                StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
 
 private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
     val type = when (this) {

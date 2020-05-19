@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
@@ -41,9 +39,20 @@ import org.jetbrains.kotlin.types.Variance
 
 class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
+    private val arrayOfCallTransformer = FirArrayOfCallTransformer()
+    var enableArrayOfCallTransformation = false
 
     init {
         components.callResolver.initTransformer(this)
+    }
+
+    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
+        enableArrayOfCallTransformation = true
+        return try {
+            block()
+        } finally {
+            enableArrayOfCallTransformation = false
+        }
     }
 
     override fun transformExpression(expression: FirExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
@@ -187,6 +196,13 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             }
 
         dataFlowAnalyzer.exitFunctionCall(completeInference, callCompleted)
+        if (callCompleted) {
+            if (enableArrayOfCallTransformation) {
+                arrayOfCallTransformer.toArrayOfCall(completeInference)?.let {
+                    return it.compose()
+                }
+            }
+        }
         return completeInference.compose()
     }
 
@@ -584,12 +600,14 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         if (annotationCall.resolved) return annotationCall.compose()
         dataFlowAnalyzer.enterAnnotationCall(annotationCall)
-        return (annotationCall.transformChildren(transformer, data) as FirAnnotationCall).also {
-            // TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
-            it.argumentList.transformArguments(integerLiteralTypeApproximator, null)
-            it.replaceResolved(true)
-            dataFlowAnalyzer.exitAnnotationCall(it)
-        }.compose()
+        return withFirArrayOfCallTransformer {
+            (annotationCall.transformChildren(transformer, data) as FirAnnotationCall).also {
+                // TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
+                it.argumentList.transformArguments(integerLiteralTypeApproximator, null)
+                it.replaceResolved(true)
+                dataFlowAnalyzer.exitAnnotationCall(it)
+            }.compose()
+        }
     }
 
     private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {
