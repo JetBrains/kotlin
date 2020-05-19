@@ -1,16 +1,15 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsIrSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -100,5 +99,18 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {
         super.defineConfigurationsForTarget(target)
         implementationToApiElements(target)
+
+        if (target.isMpp!!) return
+
+        target.project.configurations.maybeCreate(
+            target.commonFakeApiElementsConfigurationName
+        ).apply {
+            description = "Common Fake API elements for main."
+            isVisible = false
+            isCanBeResolved = false
+            isCanBeConsumed = true
+            attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+        }
     }
 }

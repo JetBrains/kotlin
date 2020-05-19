@@ -50,6 +50,9 @@ constructor(
             field = value
         }
 
+    internal val commonFakeApiElementsConfigurationName: String
+        get() = disambiguateName("commonFakeApiElements")
+
     val disambiguationClassifierInPlatform: String?
         get() = if (irTarget != null) {
             disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)

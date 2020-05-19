@@ -1,18 +1,16 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.gradle.api.attributes.Usage
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
@@ -98,6 +96,23 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
                 sourceMap = true
                 sourceMapEmbedSources = null
             }
+        }
+    }
+
+    override fun defineConfigurationsForTarget(target: KotlinJsTarget) {
+        super.defineConfigurationsForTarget(target)
+
+        if (target.isMpp!!) return
+
+        target.project.configurations.maybeCreate(
+            target.commonFakeApiElementsConfigurationName
+        ).apply {
+            description = "Common Fake API elements for main."
+            isVisible = false
+            isCanBeResolved = false
+            isCanBeConsumed = true
+            attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
         }
     }
 }
