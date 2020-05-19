@@ -268,6 +268,16 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/ReturnContinue.kt");
     }
 
+    @TestMetadata("Semicolon.kt")
+    public void testSemicolon() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Semicolon.kt");
+    }
+
+    @TestMetadata("Semicolon2.kt")
+    public void testSemicolon2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Semicolon2.kt");
+    }
+
     @TestMetadata("SettingAlignMultilineParametersInCalls.kt")
     public void testSettingAlignMultilineParametersInCalls() throws Exception {
         runTest("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.kt");

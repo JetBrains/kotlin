@@ -270,6 +270,16 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/ReturnContinue.after.kt");
         }
 
+        @TestMetadata("Semicolon.after.kt")
+        public void testSemicolon() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Semicolon.after.kt");
+        }
+
+        @TestMetadata("Semicolon2.after.kt")
+        public void testSemicolon2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Semicolon2.after.kt");
+        }
+
         @TestMetadata("SettingAlignMultilineParametersInCalls.after.kt")
         public void testSettingAlignMultilineParametersInCalls() throws Exception {
             runTest("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.kt");
@@ -334,6 +344,11 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         public void testAllFilesPresentInInvertedSettings() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+        }
+
+        @TestMetadata("ArgumentListNormalIndent.after.inv.kt")
+        public void testArgumentListNormalIndent() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ArgumentListNormalIndent.after.inv.kt");
         }
 
         @TestMetadata("AssignmentAfterEq.after.inv.kt")
