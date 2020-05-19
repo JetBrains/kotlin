@@ -33,11 +33,8 @@ import org.jetbrains.kotlin.idea.debugger.test.util.KotlinOutputChecker
 import org.jetbrains.kotlin.idea.debugger.test.util.LogPropagator
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.test.Directives
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.ComparisonFailure
 import java.io.File
@@ -48,6 +45,7 @@ internal const val TEST_LIBRARY_NAME = "TestLibrary"
 
 class TestFiles(val originalFile: File, val wholeFile: TestFile, files: List<TestFile>) : List<TestFile> by files
 
+@WithMutedInDatabaseRunTest
 abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     private lateinit var testAppDirectory: File
     private lateinit var sourcesOutputDirectory: File
@@ -233,8 +231,8 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         return super.getData(dataId)
     }
 
-    override fun shouldRunTest(): Boolean {
-        return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this)
+    override fun runTest() {
+        runTest { super.runTest() }
     }
 
     protected fun getTestDirectoryPath(): String = javaClass.getAnnotation(TestMetadata::class.java).value

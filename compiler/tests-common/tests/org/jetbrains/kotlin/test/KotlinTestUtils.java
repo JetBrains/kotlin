@@ -69,6 +69,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -755,7 +756,7 @@ public class KotlinTestUtils {
     }
 
     private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
-        if (testCase != null) {
+        if (testCase != null && !isRunTestOverridden(testCase)) {
             Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
                 try {
                     test.invoke(testDataFilePath);
@@ -770,11 +771,20 @@ public class KotlinTestUtils {
                 return;
             }
         }
+        MuteWithFileKt.testWithMuteInFile(test, testCase).invoke(testDataFilePath);
+    }
 
-        DoTest wrappedTest = testCase != null ?
-                             MuteWithFileKt.testWithMuteInFile(test, testCase) :
-                             MuteWithFileKt.testWithMuteInFile(test, "");
-        wrappedTest.invoke(testDataFilePath);
+    private static boolean isRunTestOverridden(TestCase testCase) {
+        Class<?> type = testCase.getClass();
+        while (type != null) {
+            for (Annotation annotation : type.getDeclaredAnnotations()) {
+                if (annotation.annotationType().equals(WithMutedInDatabaseRunTest.class)) {
+                    return true;
+                }
+            }
+            type = type.getSuperclass();
+        }
+        return false;
     }
 
     private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {
