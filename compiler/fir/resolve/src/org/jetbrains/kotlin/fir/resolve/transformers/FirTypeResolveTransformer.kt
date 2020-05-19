@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -17,36 +16,21 @@ import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
-
-@AdapterForResolvePhase
-class FirTypeResolveTransformerAdapter(
-    private val scopeSession: ScopeSession
-) : FirTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        error("Should not be called for ${element::class}, only for files")
-    }
-
-    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        val transformer = FirTypeResolveTransformer(scopeSession, file.session)
-        return file.transform(transformer, null)
-    }
-}
 
 fun <F : FirClass<F>> F.runTypeResolvePhaseForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,
     currentScopeList: List<FirScope>,
 ): F {
-    val transformer = FirTypeResolveTransformer(scopeSession, session, currentScopeList)
+    val transformer = FirTypeResolveTransformer(session, scopeSession, currentScopeList)
 
     return this.transform<F, Nothing?>(transformer, null).single
 }
 
-private class FirTypeResolveTransformer(
-    private val scopeSession: ScopeSession,
+class FirTypeResolveTransformer(
     override val session: FirSession,
+    private val scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList()
 ) : FirAbstractTreeTransformerWithSuperTypes(
     phase = FirResolvePhase.TYPES,
@@ -60,6 +44,7 @@ private class FirTypeResolveTransformer(
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(towerScope, session)
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
+        checkSessionConsistency(file)
         return withScopeCleanup {
             towerScope.addScopes(createImportingScopes(file, session, scopeSession))
             super.transformFile(file, data)

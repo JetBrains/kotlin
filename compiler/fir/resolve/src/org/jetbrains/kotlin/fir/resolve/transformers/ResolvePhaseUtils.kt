@@ -26,7 +26,7 @@ fun FirResolvePhase.createTransformerByPhase(session: FirSession, scopeSession: 
         IMPORTS -> FirImportResolveTransformer(session)
         SUPER_TYPES -> FirSupertypeResolverTransformer(session, scopeSession)
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsTransformer()
-        TYPES -> FirTypeResolveTransformerAdapter(scopeSession)
+        TYPES -> FirTypeResolveTransformer(session, scopeSession)
         STATUS -> FirStatusResolveTransformerAdapter()
         CONTRACTS -> FirContractResolveTransformerAdapter(scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveTransformerAdapter(scopeSession)
