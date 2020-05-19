@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegenState
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.backend.jvm.codegen.mapClass
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
@@ -46,24 +47,26 @@ class FirJvmClassCodegen(
     irClass: IrClass,
     context: JvmBackendContext,
     parentFunction: IrFunction?,
-    session: FirSession,
+    val session: FirSession,
 ) : ClassCodegen(irClass, context, parentFunction) {
-    private val serializerExtension = FirJvmSerializerExtension(session, visitor.serializationBindings, state, irClass, typeMapper)
+    override fun begin(parent: ClassCodegenState?): ClassCodegenState =
+        FirJvmClassCodegenState(this, parent as? FirJvmClassCodegenState)
+}
+
+private class FirJvmClassCodegenState(codegen: FirJvmClassCodegen, parent: FirJvmClassCodegenState?) : ClassCodegenState(codegen) {
+    private val serializerExtension = FirJvmSerializerExtension(codegen.session, visitor.serializationBindings, state, irClass, typeMapper)
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {
-            is FirMetadataSource.Class -> FirElementSerializer.create(
-                metadata.klass, serializerExtension, (parentClassCodegen as? FirJvmClassCodegen)?.serializer
-            )
-            is FirMetadataSource.File -> FirElementSerializer.createTopLevel(session, serializerExtension)
-            is FirMetadataSource.Function -> FirElementSerializer.createForLambda(session, serializerExtension)
+            is FirMetadataSource.Class -> FirElementSerializer.create(metadata.klass, serializerExtension, parent?.serializer)
+            is FirMetadataSource.File -> FirElementSerializer.createTopLevel(codegen.session, serializerExtension)
+            is FirMetadataSource.Function -> FirElementSerializer.createForLambda(codegen.session, serializerExtension)
             else -> null
         }
 
-    private val approximator = object : AbstractTypeApproximator(session.typeContext) {
-        override fun createErrorType(message: String): SimpleTypeMarker {
-            return ConeKotlinErrorType(message)
+    private val approximator: AbstractTypeApproximator = parent?.approximator
+        ?: object : AbstractTypeApproximator(codegen.session.typeContext) {
+            override fun createErrorType(message: String): SimpleTypeMarker = ConeKotlinErrorType(message)
         }
-    }
 
     private fun FirTypeRef.approximated(
         toSuper: Boolean,
@@ -96,7 +99,6 @@ class FirJvmClassCodegen(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun generateKotlinMetadataAnnotation() {
-
         val localDelegatedProperties = (irClass.attributeOwnerId as? IrClass)?.let(context.localDelegatedProperties::get)
         if (localDelegatedProperties != null && localDelegatedProperties.isNotEmpty()) {
             state.bindingTrace.record(

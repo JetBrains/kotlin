@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
-import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.Modality
@@ -30,12 +28,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.*
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -302,75 +297,6 @@ fun IrFunction.isInlineOnly() =
     isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
 
 fun IrFunction.isReifiable() = typeParameters.any { it.isReified }
-
-// Borrowed with modifications from ImplementationBodyCodegen.java
-
-private val KOTLIN_MARKER_INTERFACES: Map<FqName, String> = run {
-    val kotlinMarkerInterfaces = mutableMapOf<FqName, String>()
-    for (platformMutabilityMapping in JavaToKotlinClassMap.mutabilityMappings) {
-        kotlinMarkerInterfaces[platformMutabilityMapping.kotlinReadOnly.asSingleFqName()] = "kotlin/jvm/internal/markers/KMappedMarker"
-
-        val mutableClassId = platformMutabilityMapping.kotlinMutable
-        kotlinMarkerInterfaces[mutableClassId.asSingleFqName()] =
-            "kotlin/jvm/internal/markers/K" + mutableClassId.relativeClassName.asString()
-                .replace("MutableEntry", "Entry") // kotlin.jvm.internal.markers.KMutableMap.Entry for some reason
-                .replace(".", "$")
-    }
-    kotlinMarkerInterfaces
-}
-
-internal class IrSuperClassInfo(val type: Type, val irType: IrType?)
-
-internal fun getSignature(
-    irClass: IrClass,
-    classAsmType: Type,
-    superClassInfo: IrSuperClassInfo,
-    typeMapper: IrTypeMapper
-): JvmClassSignature {
-    val sw = BothSignatureWriter(BothSignatureWriter.Mode.CLASS)
-
-    typeMapper.writeFormalTypeParameters(irClass.typeParameters, sw)
-
-    sw.writeSuperclass()
-    val irType = superClassInfo.irType
-    if (irType == null) {
-        sw.writeClassBegin(superClassInfo.type)
-        sw.writeClassEnd()
-    } else {
-        typeMapper.mapSupertype(irType, sw)
-    }
-    sw.writeSuperclassEnd()
-
-    val superInterfaces = LinkedHashSet<String>()
-    val kotlinMarkerInterfaces = LinkedHashSet<String>()
-
-    for (superType in irClass.superTypes) {
-        val superClass = superType.safeAs<IrSimpleType>()?.classifier?.safeAs<IrClassSymbol>()?.owner ?: continue
-        if (superClass.isJvmInterface) {
-            val kotlinInterfaceName = superClass.fqNameWhenAvailable!!
-
-            sw.writeInterface()
-            val jvmInterfaceType = typeMapper.mapSupertype(superType, sw)
-            sw.writeInterfaceEnd()
-
-            superInterfaces.add(jvmInterfaceType.internalName)
-            kotlinMarkerInterfaces.addIfNotNull(KOTLIN_MARKER_INTERFACES[kotlinInterfaceName])
-        }
-    }
-
-    for (kotlinMarkerInterface in kotlinMarkerInterfaces) {
-        sw.writeInterface()
-        sw.writeAsmType(Type.getObjectType(kotlinMarkerInterface))
-        sw.writeInterfaceEnd()
-    }
-
-    superInterfaces.addAll(kotlinMarkerInterfaces)
-
-    return JvmClassSignature(
-        classAsmType.internalName, superClassInfo.type.internalName,
-        ArrayList(superInterfaces), sw.makeJavaGenericSignature()
-    )
-}
 
 /* Copied with modifications from AsmUtil.getVisibilityAccessFlagForClass */
 /*

@@ -28,20 +28,21 @@ class DescriptorBasedClassCodegen internal constructor(
     context: JvmBackendContext,
     parentFunction: IrFunction?,
 ) : ClassCodegen(irClass, context, parentFunction) {
+    override fun begin(parent: ClassCodegenState?): ClassCodegenState =
+        DescriptorBasedState(this, parent as? DescriptorBasedState)
+}
 
+private class DescriptorBasedState(codegen: ClassCodegen, parent: DescriptorBasedState?) : ClassCodegenState(codegen) {
     private val serializerExtension = JvmSerializerExtension(visitor.serializationBindings, state, typeMapper)
     private val serializer: DescriptorSerializer? =
         when (val metadata = irClass.metadata) {
-            is MetadataSource.Class -> DescriptorSerializer.create(
-                metadata.descriptor, serializerExtension, (parentClassCodegen as? DescriptorBasedClassCodegen)?.serializer
-            )
+            is MetadataSource.Class -> DescriptorSerializer.create(metadata.descriptor, serializerExtension, parent?.serializer)
             is MetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension)
             is MetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension)
             else -> null
         }
 
     override fun generateKotlinMetadataAnnotation() {
-
         val localDelegatedProperties = (irClass.attributeOwnerId as? IrClass)?.let(context.localDelegatedProperties::get)
         if (localDelegatedProperties != null && localDelegatedProperties.isNotEmpty()) {
             state.bindingTrace.record(
@@ -75,7 +76,8 @@ class DescriptorBasedClassCodegen internal constructor(
                 serializerExtension.serializeJvmPackage(packageProto, type)
 
                 val facadeClassName = context.multifileFacadeForPart[irClass.attributeOwnerId]
-                val kind = if (facadeClassName != null) KotlinClassHeader.Kind.MULTIFILE_CLASS_PART else KotlinClassHeader.Kind.FILE_FACADE
+                val kind =
+                    if (facadeClassName != null) KotlinClassHeader.Kind.MULTIFILE_CLASS_PART else KotlinClassHeader.Kind.FILE_FACADE
                 writeKotlinMetadata(visitor, state, kind, extraFlags) { av ->
                     AsmUtil.writeAnnotationData(av, serializer, packageProto.build())
 
