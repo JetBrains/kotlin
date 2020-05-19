@@ -809,6 +809,14 @@ class Collections {
             assertPrints(people.joinToString(), "Sweyn Forkbeard, Ragnar Lodbrok, Bjorn Ironside")
         }
 
+        @Sample
+        fun sortedBy() {
+            val list = listOf("aaa", "cc", "bbbb")
+            val sorted = list.sortedBy { it.length }
+
+            assertPrints(list, "[aaa, cc, bbbb]")
+            assertPrints(sorted, "[cc, aaa, bbbb]")
+        }
     }
 
     class Filtering {

@@ -432,7 +432,6 @@ object Ordering : TemplateGroupBase() {
         if (f != ArraysOfPrimitives) {
             appendStableSortNote()
         }
-
         specialFor(Sequences) {
             returns("SELF")
             doc {
@@ -441,6 +440,8 @@ object Ordering : TemplateGroupBase() {
             appendStableSortNote()
             sequenceClassification(intermediate, stateful)
         }
+        sample("samples.collections.Collections.Sorting.sortedBy")
+
         body {
             "return sortedWith(compareBy(selector))"
         }
