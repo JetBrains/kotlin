@@ -22,16 +22,14 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 @AdapterForResolvePhase
-class FirContractResolveTransformerAdapter(private val scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
+class FirContractResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
+    private val transformer = FirContractResolveTransformer(session, scopeSession)
+
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        val transformer = FirContractResolveTransformer(
-            file.session,
-            scopeSession
-        )
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
 }
