@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSPropertyTest : KotlinSSTest() {
-    override fun getBasePath() = "property"
+    override fun getBasePath(): String = "property"
 
     fun testVar() { doTest("var '_") }
 
@@ -18,4 +18,10 @@ class KotlinSSPropertyTest : KotlinSSTest() {
     fun testValReceiverType() { doTest("val '_ : ('_T) -> '_U = '_") }
 
     fun testVarTypeProjection() { doTest("var '_ : Comparable<'_T>") }
+
+    fun testVarStringAssign() { doTest("var '_  = \"Hell world\"") }
+
+    fun testVarStringAssignPar() { doTest("var '_  = (\"Hell world\")") }
+
+    fun testVarRefAssign() { doTest("var '_  = a") }
 }

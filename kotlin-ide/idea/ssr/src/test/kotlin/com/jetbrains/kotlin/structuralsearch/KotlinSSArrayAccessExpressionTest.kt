@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSArrayAccessExpressionTest : KotlinSSTest() {
-    override fun getBasePath() = "arrayAccessExpression"
+    override fun getBasePath(): String = "arrayAccessExpression"
 
     fun testConstantExpressionAccess() { doTest("a[0]") }
 }

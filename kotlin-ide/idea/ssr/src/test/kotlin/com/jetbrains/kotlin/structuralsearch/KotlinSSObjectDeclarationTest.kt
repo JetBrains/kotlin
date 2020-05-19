@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSObjectDeclarationTest : KotlinSSTest() {
-    override fun getBasePath() = "objectDeclaration"
+    override fun getBasePath(): String = "objectDeclaration"
 
     fun testObject() { doTest("object '_") }
 

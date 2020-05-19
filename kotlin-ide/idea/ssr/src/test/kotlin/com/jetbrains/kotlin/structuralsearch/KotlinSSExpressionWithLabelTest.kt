@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSExpressionWithLabelTest : KotlinSSTest() {
-    override fun getBasePath() = "expressionWithLabel"
+    override fun getBasePath(): String = "expressionWithLabel"
 
     fun testBreak() { doTest("break") }
     fun testBreakLabel() { doTest("break@loop") }

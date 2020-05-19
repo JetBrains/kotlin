@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSQualifiedExpressionTest : KotlinSSTest() {
-    override fun getBasePath() = "qualifiedExpression"
+    override fun getBasePath(): String = "qualifiedExpression"
 
     fun testDotRegular() { doTest("'_.'_") }
 

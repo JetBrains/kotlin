@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSIsExpressionTest : KotlinSSTest() {
-    override fun getBasePath() = "isExpression"
+    override fun getBasePath(): String = "isExpression"
 
     fun testIs() { doTest("'_ is '_") }
 

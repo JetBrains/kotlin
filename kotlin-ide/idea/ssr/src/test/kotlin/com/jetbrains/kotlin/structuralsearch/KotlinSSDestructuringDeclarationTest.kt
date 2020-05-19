@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSDestructuringDeclarationTest : KotlinSSTest() {
-    override fun getBasePath() = "destructuringDeclaration"
+    override fun getBasePath(): String = "destructuringDeclaration"
 
     fun testDataClass() { doTest("val ('_, '_, '_) = '_") }
 

@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSObjectExpression : KotlinSSTest() {
-    override fun getBasePath() = "objectExpression"
+    override fun getBasePath(): String = "objectExpression"
 
     fun testObject() {
         doTest(

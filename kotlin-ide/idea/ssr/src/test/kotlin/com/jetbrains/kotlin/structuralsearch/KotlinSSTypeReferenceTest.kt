@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSTypeReferenceTest : KotlinSSTest() {
-    override fun getBasePath() = "typeReference"
+    override fun getBasePath(): String = "typeReference"
 
     fun testAny() { doTest("fun '_('_ : '_) { '_* }") }
 

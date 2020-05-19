@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSWhenExpressionTest : KotlinSSTest() {
-    override fun getBasePath() = "whenExpression"
+    override fun getBasePath(): String = "whenExpression"
 
     fun testWhenVariableSubject() {
         doTest(

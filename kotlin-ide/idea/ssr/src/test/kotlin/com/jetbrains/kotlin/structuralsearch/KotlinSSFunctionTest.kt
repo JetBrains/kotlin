@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSFunctionTest : KotlinSSTest() {
-    override fun getBasePath() = "function"
+    override fun getBasePath(): String = "function"
 
     fun testFun() { doTest("fun a() { '_* }") }
 

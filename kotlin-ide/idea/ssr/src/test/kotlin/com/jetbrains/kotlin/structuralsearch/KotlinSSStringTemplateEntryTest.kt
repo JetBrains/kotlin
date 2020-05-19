@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSStringTemplateEntryTest : KotlinSSTest() {
-    override fun getBasePath() = "stringTemplateEntry"
+    override fun getBasePath(): String = "stringTemplateEntry"
 
     fun testLiteral() { doTest(""" "foo" """) }
 
@@ -19,4 +19,5 @@ class KotlinSSStringTemplateEntryTest : KotlinSSTest() {
 
     fun testStringsContainingLongTemplate() { doTest(""" "$$'_*${'$'}{ '_ }$$'_*" """) }
 
+    fun testStringWithBinaryExpression() { doTest(""" "${"$"}{3 * 2 + 1}" """) }
 }

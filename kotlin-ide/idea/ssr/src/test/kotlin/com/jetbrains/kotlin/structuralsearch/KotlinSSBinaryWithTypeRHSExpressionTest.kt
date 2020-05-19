@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSBinaryWithTypeRHSExpressionTest : KotlinSSTest() {
-    override fun getBasePath() = "binaryWithTypeRHSExpression"
+    override fun getBasePath(): String = "binaryWithTypeRHSExpression"
 
     fun testAs() { doTest("'_ as '_") }
 

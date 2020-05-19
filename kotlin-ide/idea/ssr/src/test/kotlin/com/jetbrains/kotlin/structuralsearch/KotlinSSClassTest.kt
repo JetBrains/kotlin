@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSClassTest : KotlinSSTest() {
-    override fun getBasePath() = "class"
+    override fun getBasePath(): String = "class"
 
     fun testClass() { doTest("class A") }
 

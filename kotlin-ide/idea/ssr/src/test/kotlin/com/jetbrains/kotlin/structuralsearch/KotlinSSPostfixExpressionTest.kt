@@ -1,13 +1,13 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSPostfixExpressionTest : KotlinSSTest() {
-    override fun getBasePath() = "postfixExpression"
+    override fun getBasePath(): String = "postfixExpression"
 
     fun testIncrement() { doTest("'_ ++") }
 
-    fun testIncrementParenthesis() { doTest("('_)++") }
+    fun testIncrementParentheses() { doTest("('_)++") }
 
-    fun testIncrementMultParenthesis() { doTest("(('_))++") }
+    fun testIncrementMultParentheses() { doTest("(('_))++") }
 
     fun testDecrement() { doTest("'_--") }
 

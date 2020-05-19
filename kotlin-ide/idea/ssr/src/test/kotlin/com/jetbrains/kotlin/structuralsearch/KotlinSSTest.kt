@@ -25,9 +25,7 @@ import java.util.*
 @Suppress("UnstableApiUsage")
 abstract class KotlinSSTest : BasePlatformTestCase() {
 
-    override fun getProjectDescriptor(): LightProjectDescriptor {
-        return KotlinLightProjectDescriptor()
-    }
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor()
 
     protected fun doTest(pattern: String) {
         myFixture.configureByFile(getTestName(true) + ".kt")
@@ -46,9 +44,7 @@ abstract class KotlinSSTest : BasePlatformTestCase() {
         myFixture.testHighlighting(true, false, false)
     }
 
-    override fun getTestDataPath(): String {
-        return "src/test/resources/$basePath/"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/$basePath/"
 
     internal class KotlinLightProjectDescriptor : LightProjectDescriptor() {
 

@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSPrefixExpressionTest : KotlinSSTest() {
-    override fun getBasePath() = "prefixExpression"
+    override fun getBasePath(): String = "prefixExpression"
 
     fun testUnaryPlus() { doTest("+'_") }
 
@@ -11,9 +11,9 @@ class KotlinSSPrefixExpressionTest : KotlinSSTest() {
 
     fun testIncrement() { doTest("++'_") }
 
-    fun testIncrementParenthesis() { doTest("++('_)") }
+    fun testIncrementParentheses() { doTest("++('_)") }
 
-    fun testIncrementMultParenthesis() { doTest("++(('_))") }
+    fun testIncrementMultParentheses() { doTest("++(('_))") }
 
     fun testDecrement() { doTest("--'_") }
 

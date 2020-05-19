@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSIfExpressionTest : KotlinSSTest() {
-    override fun getBasePath() = "ifExpression"
+    override fun getBasePath(): String = "ifExpression"
 
     fun testIf() { doTest("if(true) b = true") }
 

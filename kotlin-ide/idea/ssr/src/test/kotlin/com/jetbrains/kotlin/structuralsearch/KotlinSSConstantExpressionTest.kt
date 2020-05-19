@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSConstantExpressionTest : KotlinSSTest() {
-    override fun getBasePath() = "constantExpression"
+    override fun getBasePath(): String = "constantExpression"
 
     fun testNull() { doTest("null") }
 

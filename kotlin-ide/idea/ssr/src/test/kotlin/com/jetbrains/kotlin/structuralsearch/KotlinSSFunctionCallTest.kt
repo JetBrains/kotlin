@@ -1,7 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 class KotlinSSFunctionCallTest : KotlinSSTest() {
-    override fun getBasePath() = "functionCall"
+    override fun getBasePath(): String = "functionCall"
 
     fun testFunArgCall() { doTest("a(true, 0)") }
 
