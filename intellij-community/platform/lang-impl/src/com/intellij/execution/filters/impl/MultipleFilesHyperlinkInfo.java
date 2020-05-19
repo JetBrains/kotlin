@@ -123,11 +123,9 @@ class MultipleFilesHyperlinkInfo extends HyperlinkInfoBase implements FileHyperl
       offset = document.getLineStartOffset(myLineNumber);
     } 
     OpenFileDescriptor descriptor = new OpenFileDescriptor(myProject, file.getVirtualFile(), offset);
-    if (myAction != null) {
-      Editor editor = FileEditorManager.getInstance(myProject).openTextEditor(descriptor, true);
-      if (editor != null) {
-        myAction.onLinkFollowed(file, editor, originalEditor);
-      }
+    Editor editor = FileEditorManager.getInstance(myProject).openTextEditor(descriptor, true);
+    if (myAction != null && editor != null) {
+      myAction.onLinkFollowed(file, editor, originalEditor);
     }
   }
 
