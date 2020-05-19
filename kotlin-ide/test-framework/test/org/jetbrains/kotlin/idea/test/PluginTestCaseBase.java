@@ -95,6 +95,12 @@ public class PluginTestCaseBase {
     @NotNull
     public static Sdk addJdk(@NotNull Disposable disposable, @NotNull Function0<Sdk> getJdk) {
         Sdk jdk = getJdk.invoke();
+        Sdk[] allJdks = IjPlatformUtil.getProjectJdkTableSafe().getAllJdks();
+        for (Sdk existingJdk : allJdks) {
+            if (existingJdk == jdk) {
+                return existingJdk;
+            }
+        }
         ApplicationManager.getApplication().runWriteAction(() -> IjPlatformUtil.getProjectJdkTableSafe().addJdk(jdk, disposable));
         return jdk;
     }
