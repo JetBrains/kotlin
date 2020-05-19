@@ -2,14 +2,17 @@ package com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler
 
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
 import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
+import com.intellij.structuralsearch.impl.matcher.handlers.MatchingHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.handlers.DeclarationHandler
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
@@ -27,14 +30,25 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     inner class KotlinWordOptimizer : KotlinRecursiveElementWalkingVisitor(), WordOptimizer
 
+    private fun getHandler(element: PsiElement) =
+        myCompilingVisitor.context.pattern.getHandler(element)
+
+    private fun setHandler(element: PsiElement, handler: MatchingHandler) =
+        myCompilingVisitor.context.pattern.setHandler(element, handler)
+
     override fun visitElement(element: PsiElement) {
         super.visitElement(element)
         myCompilingVisitor.handle(element)
+
+        when(element) {
+            is LeafPsiElement -> getHandler(element).setFilter { it is LeafPsiElement }
+            is KDoc -> getHandler(element).setFilter { it is KDoc }
+        }
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
         super.visitDotQualifiedExpression(expression)
-        myCompilingVisitor.context.pattern.getHandler(expression).setFilter {
+        getHandler(expression).setFilter {
             it is KtDotQualifiedExpression || it is KtReferenceExpression
         }
     }
@@ -46,7 +60,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         visitElement(expression)
-        myCompilingVisitor.context.pattern.getHandler(expression).let { handler ->
+        getHandler(expression).let { handler ->
             if (handler is SubstitutionHandler) handler.setFilter { true }
         }
     }
@@ -54,8 +68,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
         visitElement(entry)
         val expression = entry.expression ?: return
-        val pattern = myCompilingVisitor.context.pattern
-        val exprHandler = pattern.getHandler(expression)
+        val exprHandler = getHandler(expression)
 
         // Apply the child SubstitutionHandler to the TemplateEntry
         if (exprHandler is SubstitutionHandler) {
@@ -70,7 +83,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
                 val exprPredicate = exprHandler.predicate
                 if (exprPredicate != null) predicate = exprPredicate
             }
-            pattern.setHandler(entry, newHandler)
+            setHandler(entry, newHandler)
         }
     }
 
@@ -79,9 +92,9 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
         val handler = DeclarationHandler()
         handler.setFilter { it is KtDeclaration || it is PsiComment }
-        myCompilingVisitor.context.pattern.setHandler(dcl, handler)
+        setHandler(dcl, handler)
 
         val lastElement = PsiTreeUtil.skipWhitespacesBackward(dcl)
-        if (lastElement is PsiComment) myCompilingVisitor.context.pattern.setHandler(lastElement, handler)
+        if (lastElement is PsiComment) setHandler(lastElement, handler)
     }
 }

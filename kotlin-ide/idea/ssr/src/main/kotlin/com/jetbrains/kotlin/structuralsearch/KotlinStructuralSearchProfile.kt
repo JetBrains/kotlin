@@ -4,6 +4,7 @@ import com.intellij.dupLocator.util.NodeFilter
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.DebugUtil
@@ -54,7 +55,10 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         physical: Boolean
     ): Array<PsiElement> {
         val fragment = KtPsiFactory(project, false).createBlockCodeFragment("Unit\n$text", null)
-        val elements = getNonWhitespaceChildren(fragment.firstChild).drop(1)
+        val elements = when (fragment.lastChild) {
+            is PsiComment -> getNonWhitespaceChildren(fragment).drop(1)
+            else -> getNonWhitespaceChildren(fragment.firstChild).drop(1)
+        }
         for (element in elements) print(DebugUtil.psiToString(element, false))
 
         return when {

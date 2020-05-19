@@ -7,6 +7,8 @@ class KotlinSSCommentTest : KotlinSSTest() {
      * EOL
      */
 
+    fun testEol() { doTest("//") }
+
     fun testEolBeforeProperty() { doTest("""
         //
         val '_ = '_
@@ -23,6 +25,8 @@ class KotlinSSCommentTest : KotlinSSTest() {
      * Block
      */
 
+    fun testBlock() { doTest("/**/") }
+
     fun testBlockInProperty() { doTest("val '_ /**/ = '_") }
 
     fun testBlockBeforeClass() { doTest("""
@@ -38,6 +42,12 @@ class KotlinSSCommentTest : KotlinSSTest() {
     /**
      * KDoc
      */
+
+    fun testKdoc() { doTest("""
+        /**
+         *
+         */
+    """.trimIndent()) }
 
     fun testKdocClass() { doTest("""
         /**

@@ -5,8 +5,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
@@ -403,6 +406,17 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             is LeafPsiElement -> {
                 val other = getTreeElement<LeafPsiElement>() ?: return
                 myMatchingVisitor.result = element.elementType.index == other.elementType.index
+            }
+            is KDoc -> {
+                val other = getTreeElement<KDoc>() ?: return
+                myMatchingVisitor.result = myMatchingVisitor.matchSequentially(
+                    element.getChildrenOfType<KDocSection>(),
+                    other.getChildrenOfType<KDocSection>()
+                )
+            }
+            is KDocSection -> {
+                val other = getTreeElement<KDocSection>() ?: return
+                myMatchingVisitor.result = myMatchingVisitor.matchText(element, other)
             }
         }
     }
