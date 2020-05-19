@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.module.Module
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -17,8 +19,11 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.util.addAnnotation
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
@@ -35,14 +40,18 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
     KtThrowExpression::class.java, KotlinBundle.lazyMessage("add.throws.annotation")
 ) {
     override fun isApplicableTo(element: KtThrowExpression, caretOffset: Int): Boolean {
-        if (!element.platform.isJvm()) return false
+        if (element.platform.isJs()) return false
         val containingDeclaration = element.getContainingDeclaration() ?: return false
 
         val type = element.thrownExpression?.resolveToCall()?.resultingDescriptor?.returnType ?: return false
         if ((type.constructor.declarationDescriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.LOCAL) return false
 
-        val context = element.analyze(BodyResolveMode.PARTIAL)
+        val module = element.module ?: return false
+        if (!KOTLIN_THROWS_ANNOTATION_FQ_NAME.fqNameIsExists(module) &&
+            !(element.platform.isJvm() && JVM_THROWS_ANNOTATION_FQ_NAME.fqNameIsExists(module))
+        ) return false
 
+        val context = element.analyze(BodyResolveMode.PARTIAL)
         val annotationEntry = containingDeclaration.findThrowsAnnotation(context) ?: return true
         val valueArguments = annotationEntry.valueArguments
         if (valueArguments.isEmpty()) return true
@@ -140,3 +149,9 @@ private fun KtPsiFactory.createCollectionLiteral(expressions: List<KtExpression>
         appendFixedText(lastExpression)
         appendFixedText("]")
     } as KtCollectionLiteralExpression
+
+private fun FqName.fqNameIsExists(module: Module): Boolean = KotlinFullClassNameIndex.getInstance()[
+        asString(),
+        module.project,
+        GlobalSearchScope.moduleWithLibrariesScope(module)
+].isNotEmpty()

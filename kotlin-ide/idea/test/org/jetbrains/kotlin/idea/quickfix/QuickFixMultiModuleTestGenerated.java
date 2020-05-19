@@ -194,6 +194,34 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/multiModuleQuickFix/addThrowAnnotation")
+    public static class AddThrowAnnotation extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("common")
+        public void testCommon() throws Exception {
+            runTest("testData/multiModuleQuickFix/addThrowAnnotation/common/");
+        }
+
+        @TestMetadata("js")
+        public void testJs() throws Exception {
+            runTest("testData/multiModuleQuickFix/addThrowAnnotation/js/");
+        }
+
+        @TestMetadata("jvm")
+        public void testJvm() throws Exception {
+            runTest("testData/multiModuleQuickFix/addThrowAnnotation/jvm/");
+        }
+
+        @TestMetadata("jvmWithoutStdlib")
+        public void testJvmWithoutStdlib() throws Exception {
+            runTest("testData/multiModuleQuickFix/addThrowAnnotation/jvmWithoutStdlib/");
+        }
+    }
+
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/changeModifier")
     public static class ChangeModifier extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
