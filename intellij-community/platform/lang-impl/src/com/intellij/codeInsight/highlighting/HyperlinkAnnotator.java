@@ -42,6 +42,8 @@ public class HyperlinkAnnotator implements Annotator {
             .create();
         }
         else if (reference instanceof HighlightedReference) {
+          if (reference.isSoft()) continue;
+
           TextRange rangeInElement = reference.getRangeInElement();
           if (rangeInElement.isEmpty()) continue;
 
