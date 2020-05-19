@@ -4,18 +4,25 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
+import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor.OccurenceKind.COMMENT
 import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
 import com.intellij.structuralsearch.impl.matcher.handlers.MatchingHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
+import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinMatchUtil
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.handlers.DeclarationHandler
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
+import java.util.regex.Pattern
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
+
+    private val ourSubstitutionPattern = Pattern.compile("\\b(_____\\w+)\\b")
+
     fun compile(topLevelElements: Array<out PsiElement>?) {
         val optimizer = KotlinWordOptimizer()
         val pattern = myCompilingVisitor.context.pattern
@@ -40,7 +47,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         super.visitElement(element)
         myCompilingVisitor.handle(element)
 
-        when(element) {
+        when (element) {
             is LeafPsiElement -> getHandler(element).setFilter { it is LeafPsiElement }
             is KDoc -> getHandler(element).setFilter { it is KDoc }
         }
@@ -96,5 +103,16 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
         val lastElement = PsiTreeUtil.skipWhitespacesBackward(dcl)
         if (lastElement is PsiComment) setHandler(lastElement, handler)
+    }
+
+    override fun visitComment(comment: PsiComment) {
+        super.visitComment(comment)
+        val text = KotlinMatchUtil.getCommentText(comment).trim()
+
+        if (ourSubstitutionPattern.matcher(text).find()) {
+            myCompilingVisitor.processPatternStringWithFragments(comment.text, COMMENT, ourSubstitutionPattern)?.let {
+                comment.putUserData(CompiledPattern.HANDLER_KEY, it)
+            }
+        }
     }
 }

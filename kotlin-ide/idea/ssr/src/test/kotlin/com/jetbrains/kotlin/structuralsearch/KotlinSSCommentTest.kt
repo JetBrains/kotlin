@@ -9,6 +9,8 @@ class KotlinSSCommentTest : KotlinSSTest() {
 
     fun testEol() { doTest("//") }
 
+    fun testEolRegex() { doTest("// '_a:[regex( bar. )] = '_b:[regex( foo. )]") }
+
     fun testEolBeforeProperty() { doTest("""
         //
         val '_ = '_

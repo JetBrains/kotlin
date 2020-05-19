@@ -3,7 +3,10 @@ package com.jetbrains.kotlin.structuralsearch.impl.matcher
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.structuralsearch.StructuralSearchUtil
+import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
+import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
@@ -600,8 +603,20 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitComment(comment: PsiComment) {
         val other = getTreeElement<PsiComment>() ?: return
-        myMatchingVisitor.result = comment.tokenType == other.tokenType
-                && myMatchingVisitor.matchText(comment, other)
+
+        if (!myMatchingVisitor.setResult(comment.tokenType == other.tokenType)) return
+
+        when (val handler = comment.getUserData(CompiledPattern.HANDLER_KEY)) {
+            is LiteralWithSubstitutionHandler -> {
+                myMatchingVisitor.result = handler.match(comment, other, myMatchingVisitor.matchContext)
+            }
+            else -> {
+                myMatchingVisitor.result = myMatchingVisitor.matchText(
+                    StructuralSearchUtil.normalize(KotlinMatchUtil.getCommentText(comment)),
+                    StructuralSearchUtil.normalize(KotlinMatchUtil.getCommentText(other))
+                )
+            }
+        }
     }
 
 }
