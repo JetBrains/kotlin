@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.PsiErrorBuilder
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
@@ -54,7 +55,7 @@ class JvmBackendContext(
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.
     val classNameOverride: MutableMap<IrClass, JvmClassName>,
-    internal val createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen?,
+    private val createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen,
 ) : CommonBackendContext {
     override val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
         get() = TODO("not implemented")
@@ -92,7 +93,16 @@ class JvmBackendContext(
 
     internal val customEnclosingFunction = mutableMapOf<IrAttributeContainer, IrFunction>()
 
-    internal val classCodegens = mutableMapOf<IrClass, ClassCodegen>()
+    private val classCodegens = mutableMapOf<IrClass, ClassCodegen>()
+
+    internal fun getClassCodegen(irClass: IrClass, parentFunction: IrFunction? = null): ClassCodegen =
+        classCodegens.getOrPut(irClass) { createCodegen(irClass, this, parentFunction) }.also {
+            assert(parentFunction == null || it.parentFunction == parentFunction) {
+                "inconsistent parent function for ${irClass.render()}:\n" +
+                        "New: ${parentFunction!!.render()}\n" +
+                        "Old: ${it.parentFunction?.render()}"
+            }
+        }
 
     val localDelegatedProperties = mutableMapOf<IrClass, List<IrLocalDelegatedPropertySymbol>>()
 

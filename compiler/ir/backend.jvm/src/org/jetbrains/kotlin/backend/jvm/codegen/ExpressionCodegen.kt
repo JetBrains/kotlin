@@ -725,7 +725,7 @@ class ExpressionCodegen(
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
         if (declaration.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
             closureReifiedMarkers.getOrPut(declaration) {
-                val codegen = ClassCodegen.getOrCreate(declaration, context, generateSequence(this) { it.inlinedInto }.last().irFunction)
+                val codegen = context.getClassCodegen(declaration, generateSequence(this) { it.inlinedInto }.last().irFunction)
                 codegen.generate()
                 codegen.reifiedTypeParametersUsages
             }

@@ -100,9 +100,8 @@ class IrSourceCompilerForInline(
         jvmSignature: JvmMethodSignature,
         callDefault: Boolean,
         asmMethod: Method
-    ): SMAPAndMethodNode {
-        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
-    }
+    ): SMAPAndMethodNode =
+        codegen.context.getClassCodegen(callee.parentAsClass).generateMethodNode(callee)
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
 

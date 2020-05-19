@@ -45,7 +45,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager,
-        createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen?,
+        createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen,
     ) {
         irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
         val extensions = JvmGeneratorExtensions()

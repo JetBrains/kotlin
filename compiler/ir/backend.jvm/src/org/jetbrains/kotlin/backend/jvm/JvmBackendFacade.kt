@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.DescriptorBasedClassCodegen
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -94,7 +95,7 @@ object JvmBackendFacade {
 
         doGenerateFilesInternal(
             state, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig, irProviders, extensions
-        )
+        ) { irClass, context, parentFunction -> DescriptorBasedClassCodegen(irClass, context, parentFunction) }
     }
 
     internal fun doGenerateFilesInternal(
@@ -105,7 +106,7 @@ object JvmBackendFacade {
         phaseConfig: PhaseConfig,
         irProviders: List<IrProvider>,
         extensions: JvmGeneratorExtensions,
-        createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen? = { _, _, _ -> null },
+        createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen,
     ) {
         val context = JvmBackendContext(
             state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment,
@@ -136,7 +137,7 @@ object JvmBackendFacade {
                         if (loweredClass !is IrClass) {
                             throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())
                         }
-                        ClassCodegen.getOrCreate(loweredClass, context).generate()
+                        context.getClassCodegen(loweredClass).generate()
                     }
                 } catch (e: Throwable) {
                     CodegenUtil.reportBackendException(e, "code generation", irFile.fileEntry.name)
