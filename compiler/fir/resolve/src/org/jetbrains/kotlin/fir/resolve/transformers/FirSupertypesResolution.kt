@@ -25,10 +25,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSupertypeResolverTransformer(
-    private val scopeSession: ScopeSession
-) : FirTransformer<Nothing?>() {
+    override val session: FirSession,
+    scopeSession: ScopeSession
+) : FirAbstractPhaseTransformer<Nothing?>(FirResolvePhase.SUPER_TYPES) {
     private val supertypeComputationSession = SupertypeComputationSession()
 
+    private val supertypeResolverVisitor = FirSupertypeResolverVisitor(session, supertypeComputationSession, scopeSession)
     private val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
@@ -36,9 +38,9 @@ class FirSupertypeResolverTransformer(
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        val supertypeResolverVisitor = FirSupertypeResolverVisitor(file.session, supertypeComputationSession, scopeSession)
+        checkSessionConsistency(file)
         file.accept(supertypeResolverVisitor)
-        supertypeComputationSession.breakLoops(file.session)
+        supertypeComputationSession.breakLoops(session)
         return file.transform(applySupertypesTransformer, null)
     }
 }
