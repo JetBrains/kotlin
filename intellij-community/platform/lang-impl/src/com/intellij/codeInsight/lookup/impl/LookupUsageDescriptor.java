@@ -18,8 +18,14 @@ import org.jetbrains.annotations.NotNull;
 public interface LookupUsageDescriptor {
   ExtensionPointName<LookupUsageDescriptor> EP_NAME = ExtensionPointName.create("com.intellij.lookup.usageDetails");
 
+  /**
+   * @return key of extension inside {@link FeatureUsageData} of `completion.finished` event
+   */
+  @NotNull
+  String getExtensionKey();
+
   /*
    * The method is triggered after the lookup usage finishes. Use it to fill usageData with information to collect.
    */
-  void customizeUsageData(@NotNull Lookup lookup, @NotNull FeatureUsageData usageData);
+  void fillUsageData(@NotNull Lookup lookup, @NotNull FeatureUsageData usageData);
 }

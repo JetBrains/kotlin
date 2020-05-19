@@ -92,7 +92,9 @@ class LookupUsageTracker {
 
       LookupUsageDescriptor.EP_NAME.forEachExtensionSafe(usageDescriptor -> {
         if (PluginInfoDetectorKt.getPluginInfo(usageDescriptor.getClass()).isSafeToReport()) {
-          usageDescriptor.customizeUsageData(myLookup, data);
+          FeatureUsageData additionalData = new FeatureUsageData();
+          usageDescriptor.fillUsageData(myLookup, additionalData);
+          data.addAll(additionalData);
         }
       });
 

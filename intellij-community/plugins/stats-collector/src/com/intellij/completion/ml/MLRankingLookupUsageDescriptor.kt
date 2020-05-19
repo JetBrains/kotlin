@@ -8,7 +8,9 @@ import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.stats.storage.factors.LookupStorage
 
 class MLRankingLookupUsageDescriptor : LookupUsageDescriptor {
-  override fun customizeUsageData(lookup: Lookup, usageData: FeatureUsageData) {
+  override fun getExtensionKey(): String = "ml"
+
+  override fun fillUsageData(lookup: Lookup, usageData: FeatureUsageData) {
     if (lookup.isCompletion && lookup is LookupImpl) {
       val storage = LookupStorage.get(lookup)
       if (storage != null) {
