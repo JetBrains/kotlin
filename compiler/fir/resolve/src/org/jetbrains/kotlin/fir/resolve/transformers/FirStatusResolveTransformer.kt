@@ -86,6 +86,7 @@ class FirStatusResolveTransformer(
     override fun transformRegularClass(regularClass: FirRegularClass, data: FirDeclarationStatus?): CompositeTransformResult<FirStatement> {
         val status = prepareStatus(regularClass, regularClass.status)
         regularClass.transformStatus(this, regularClass.resolveStatus(status, containingClass, isLocal = false))
+        @Suppress("UNCHECKED_CAST")
         return storeClass(regularClass) {
             regularClass.typeParameters.forEach { it.transformSingle(this, data) }
             transformDeclaration(regularClass, data)
@@ -96,6 +97,7 @@ class FirStatusResolveTransformer(
         anonymousObject: FirAnonymousObject,
         data: FirDeclarationStatus?
     ): CompositeTransformResult<FirStatement> {
+        @Suppress("UNCHECKED_CAST")
         return storeClass(anonymousObject) {
             transformDeclaration(anonymousObject, data)
         } as CompositeTransformResult<FirStatement>
@@ -107,6 +109,7 @@ class FirStatusResolveTransformer(
     ): CompositeTransformResult<FirStatement> {
         val status = prepareStatus(propertyAccessor, propertyAccessor.status)
         propertyAccessor.transformStatus(this, propertyAccessor.resolveStatus(status, containingClass, isLocal = false))
+        @Suppress("UNCHECKED_CAST")
         return transformDeclaration(propertyAccessor, data) as CompositeTransformResult<FirStatement>
     }
 
@@ -145,6 +148,7 @@ class FirStatusResolveTransformer(
         valueParameter: FirValueParameter,
         data: FirDeclarationStatus?
     ): CompositeTransformResult<FirStatement> {
+        @Suppress("UNCHECKED_CAST")
         return transformDeclaration(valueParameter, data) as CompositeTransformResult<FirStatement>
     }
 
