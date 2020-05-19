@@ -116,7 +116,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   private boolean myFinishing;
   boolean myUpdating;
   private LookupUi myUi;
-  private Integer myLastVisibleIndex;
   private final AtomicInteger myDummyItemCount = new AtomicInteger();
 
   public LookupImpl(Project project, Editor editor, @NotNull LookupArranger arranger) {
@@ -1023,9 +1022,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
 
   @Override
   public int getLastVisibleIndex() {
-    if (myLastVisibleIndex != null) {
-      return myLastVisibleIndex;
-    }
     return myList.getLastVisibleIndex();
   }
 
