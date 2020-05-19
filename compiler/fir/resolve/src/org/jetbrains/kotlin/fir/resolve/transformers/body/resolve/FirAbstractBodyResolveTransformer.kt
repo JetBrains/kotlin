@@ -229,6 +229,10 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             towerDataContextForAnonymousFunctions.clear()
         }
 
+        fun cleanDataFlowContext() {
+            dataFlowAnalyzerContext.reset()
+        }
+
         private inline fun updateLastScope(transform: FirLocalScope.() -> FirLocalScope) {
             val lastScope = towerDataContext.localScopes.lastOrNull() ?: return
             replaceTowerDataContext(towerDataContext.setLastLocalScope(lastScope.transform()))

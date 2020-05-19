@@ -36,6 +36,13 @@ class DataFlowAnalyzerContext<FLOW : Flow>(
     val flowOnNodes: MutableMap<CFGNode<*>, FLOW>,
     val variablesForWhenConditions: MutableMap<WhenBranchConditionExitNode, DataFlowVariable>
 ) {
+    fun reset() {
+        graphBuilder.reset()
+        variableStorage.reset()
+        flowOnNodes.clear()
+        variablesForWhenConditions.clear()
+    }
+
     companion object {
         fun <FLOW : Flow> empty(session: FirSession) =
             DataFlowAnalyzerContext<FLOW>(

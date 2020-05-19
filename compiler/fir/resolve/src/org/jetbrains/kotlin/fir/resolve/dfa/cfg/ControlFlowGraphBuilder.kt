@@ -941,6 +941,8 @@ class ControlFlowGraphBuilder {
     fun reset() {
         exitsOfAnonymousFunctions.clear()
         exitsFromCompletedPostponedAnonymousFunctions.clear()
+        lexicalScopes.reset()
+        lexicalScopes.push(stackOf())
     }
 
     fun dropSubgraphFromCall(call: FirFunctionCall) {
