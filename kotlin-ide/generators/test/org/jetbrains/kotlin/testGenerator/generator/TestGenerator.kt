@@ -57,7 +57,18 @@ object TestGenerator {
 
         val filePath = suite.generatedClassName.replace('.', '/') + ".java"
         val file = File(group.testSourcesRoot, filePath)
-        file.writeText(postProcessContent(content))
+        write(file, postProcessContent(content))
+    }
+
+    private fun write(file: File, content: String) {
+        val oldContent = file.takeIf { it.isFile }?.readText() ?: ""
+
+        if (content != oldContent) {
+            file.writeText(content)
+            val kotlinDir = File(KotlinTestUtils.getHomeDirectory())
+            val path = file.toRelativeString(kotlinDir)
+            println("Updated $path")
+        }
     }
 
     private fun getImports(suite: TSuite): List<String> {
