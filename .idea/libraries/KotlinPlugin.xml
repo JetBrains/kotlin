@@ -24,6 +24,15 @@
       <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/android-extensions-compiler.jar!/" />
       <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-util-klib-metadata.jar!/" />
       <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/ide-common.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/completion-ranking-kotlin-0.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/javaslang-match-2.0.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-compiler-client-embeddable.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-daemon-client-new.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-daemon-client.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-daemon.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-script-util.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-util-io.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-util-klib.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
@@ -50,6 +59,15 @@
       <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/android-extensions-compiler.jar!/" />
       <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-util-klib-metadata.jar!/" />
       <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/ide-common.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/completion-ranking-kotlin-0.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/javaslang-match-2.0.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-compiler-client-embeddable.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-daemon-client-new.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-daemon-client.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-daemon.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-script-util.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-util-io.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/community/build/dependencies/build/kotlin/Kotlin/lib/kotlin-util-klib.jar!/" />
     </excluded>
   </library>
 </component>

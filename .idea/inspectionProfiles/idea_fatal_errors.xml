@@ -411,13 +411,19 @@
     </inspection_tool>
     <inspection_tool class="ArrayInDataClass" enabled="false" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="ArrayLengthInLoopCondition" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="ArrayObjectsEquals" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ArrayObjectsEquals" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="ArraysAsListWithZeroOrOneArgument" enabled="false" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="INFO" enabled="true" />
     </inspection_tool>
     <inspection_tool class="AssertAsName" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="AssertEqualsBetweenInconvertibleTypes" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="AssertEqualsBetweenInconvertibleTypesTestNG" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="AssertEqualsBetweenInconvertibleTypes" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
+    <inspection_tool class="AssertEqualsBetweenInconvertibleTypesTestNG" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="AssertEqualsCalledOnArray" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AssertEqualsMayBeAssertSame" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AssertMessageNotString" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -448,8 +454,12 @@
     <inspection_tool class="AssignmentToSuperclassField" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AssignmentUsedAsCondition" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AsyncMethodInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="AtomicFieldUpdaterIssues" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="AtomicFieldUpdaterNotStaticFinal" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="AtomicFieldUpdaterIssues" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
+    <inspection_tool class="AtomicFieldUpdaterNotStaticFinal" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="AutoBoxing" enabled="false" level="WARNING" enabled_by_default="false">
       <scope name="runtime.classes" level="WARNING" enabled="true">
         <option name="ignoreAddedToCollection" value="false" />
@@ -491,7 +501,9 @@
     <inspection_tool class="BeforeOrAfterIsPublicVoidNoArg" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BigDecimalEquals" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BigDecimalLegacyMethod" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="BigDecimalMethodWithoutRoundingCalled" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="BigDecimalMethodWithoutRoundingCalled" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="BindingAnnotationWithoutInject" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BlockMarkerComments" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BlockStatementJS" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -510,7 +522,9 @@
     <inspection_tool class="BnfUnreachableChoiceBranchInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BnfUnusedAttribute" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BnfUnusedRule" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="BooleanConstructor" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="BooleanConstructor" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="BooleanExpressionMayBeConditional" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BooleanLiteralArgument" enabled="false" level="INFO" enabled_by_default="false" />
     <inspection_tool class="BooleanMethodIsAlwaysInverted" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -522,7 +536,9 @@
     </inspection_tool>
     <inspection_tool class="BooleanParameter" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BooleanVariableAlwaysNegated" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="BoundFieldAssignment" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="BoundFieldAssignment" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="BoundedWildcard" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BoxingBoxedValue" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="android" level="WARNING" enabled="false" />
@@ -721,7 +737,9 @@
     <inspection_tool class="ComparatorCombinators" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ComparatorMethodParameterNotUsed" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ComparatorNotSerializable" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="ComparatorResultComparison" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ComparatorResultComparison" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="CompareToUsesNonFinalVariable" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ComparisonOfShortAndChar" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ComparisonToNaN" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -2202,7 +2220,9 @@
     <inspection_tool class="MissingAspectjAutoproxyInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MissingDeprecatedAnnotation" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MissingDeprecatedAnnotationOnScheduledForRemovalApi" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="MissingFinalNewline" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="MissingFinalNewline" enabled="true" level="ERROR" enabled_by_default="true">
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="MissingMnemonic" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MissingOverrideAnnotation" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreObjectMethods" value="true" />
@@ -3688,8 +3708,8 @@
           <module name="intellij.platform.configurationStore.impl" />
         </modules-set>
         <modules-set>
-          <module name="intellij.xslt.debugger.engine.impl" />
-          <module name="intellij.xslt.debugger.engine" />
+          <module name="intellij.xslt.debugger.impl.rt" />
+          <module name="intellij.xslt.debugger.rt" />
         </modules-set>
         <modules-set>
           <module name="intellij.javaee.web.impl" />
