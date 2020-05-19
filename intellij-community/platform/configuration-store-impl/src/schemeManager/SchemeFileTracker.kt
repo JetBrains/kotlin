@@ -30,7 +30,7 @@ internal class SchemeFileTracker(private val schemeManager: SchemeManagerImpl<An
       when (event) {
         is VFileContentChangeEvent -> {
           val file = event.file
-          if (isMyFileWithoutParentCheck(file) && isMyDirectory(file.parent)) {
+          if (isMyFileWithoutParentCheck(file) && file.parent != null && isMyDirectory(file.parent)) {
             LOG.debug { "CHANGED ${file.path}" }
             list.add(UpdateScheme(file))
           }
