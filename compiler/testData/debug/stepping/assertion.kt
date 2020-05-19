@@ -30,17 +30,17 @@ fun box(): String {
 }
 
 // LINENUMBERS
-// test.kt:24
-// test.kt:15
-// test.kt:16
-// test.kt:3
-// test.kt:16
-// test.kt:17
-// test.kt:21
-// test.kt:25
-// test.kt:6
-// test.kt:3
-// test.kt:6
-// test.kt:7
-// test.kt:12
-// test.kt:29
+// test.kt:24 box
+// test.kt:15 box
+// test.kt:16 box
+// test.kt:3 getMASSERTIONS_ENABLED
+// test.kt:16 box
+// test.kt:17 box
+// test.kt:21 box
+// test.kt:25 box
+// test.kt:6 box
+// test.kt:3 getMASSERTIONS_ENABLED
+// test.kt:6 box
+// test.kt:7 box
+// test.kt:12 box
+// test.kt:29 box

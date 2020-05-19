@@ -32,6 +32,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("anonymousFunction.kt")
+    public void testAnonymousFunction() throws Exception {
+        runTest("compiler/testData/debug/stepping/anonymousFunction.kt");
+    }
+
+    @Test
     @TestMetadata("assertion.kt")
     public void testAssertion() throws Exception {
         runTest("compiler/testData/debug/stepping/assertion.kt");
@@ -44,9 +50,33 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("class.kt")
+    public void testClass() throws Exception {
+        runTest("compiler/testData/debug/stepping/class.kt");
+    }
+
+    @Test
+    @TestMetadata("classObject.kt")
+    public void testClassObject() throws Exception {
+        runTest("compiler/testData/debug/stepping/classObject.kt");
+    }
+
+    @Test
     @TestMetadata("conjunction.kt")
     public void testConjunction() throws Exception {
         runTest("compiler/testData/debug/stepping/conjunction.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultParameter.kt")
+    public void testDefaultParameter() throws Exception {
+        runTest("compiler/testData/debug/stepping/defaultParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("enum.kt")
+    public void testEnum() throws Exception {
+        runTest("compiler/testData/debug/stepping/enum.kt");
     }
 
     @Test
@@ -65,6 +95,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     @TestMetadata("if.kt")
     public void testIf() throws Exception {
         runTest("compiler/testData/debug/stepping/if.kt");
+    }
+
+    @Test
+    @TestMetadata("if2.kt")
+    public void testIf2() throws Exception {
+        runTest("compiler/testData/debug/stepping/if2.kt");
     }
 
     @Test
@@ -92,6 +128,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("inlineSimpleCall.kt")
+    public void testInlineSimpleCall() throws Exception {
+        runTest("compiler/testData/debug/stepping/inlineSimpleCall.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaStepInline.kt")
     public void testLambdaStepInline() throws Exception {
         runTest("compiler/testData/debug/stepping/lambdaStepInline.kt");
@@ -104,6 +146,18 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("lineNumberAfterInline.kt")
+    public void testLineNumberAfterInline() throws Exception {
+        runTest("compiler/testData/debug/stepping/lineNumberAfterInline.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunction.kt")
+    public void testLocalFunction() throws Exception {
+        runTest("compiler/testData/debug/stepping/localFunction.kt");
+    }
+
+    @Test
     @TestMetadata("namedCallableReference.kt")
     public void testNamedCallableReference() throws Exception {
         runTest("compiler/testData/debug/stepping/namedCallableReference.kt");
@@ -113,6 +167,18 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     @TestMetadata("nestedInline.kt")
     public void testNestedInline() throws Exception {
         runTest("compiler/testData/debug/stepping/nestedInline.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyAccessor.kt")
+    public void testPropertyAccessor() throws Exception {
+        runTest("compiler/testData/debug/stepping/propertyAccessor.kt");
+    }
+
+    @Test
+    @TestMetadata("psvm.kt")
+    public void testPsvm() throws Exception {
+        runTest("compiler/testData/debug/stepping/psvm.kt");
     }
 
     @Test
@@ -140,14 +206,44 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("simpleSmap.kt")
+    public void testSimpleSmap() throws Exception {
+        runTest("compiler/testData/debug/stepping/simpleSmap.kt");
+    }
+
+    @Test
     @TestMetadata("throwException.kt")
     public void testThrowException() throws Exception {
         runTest("compiler/testData/debug/stepping/throwException.kt");
     }
 
     @Test
+    @TestMetadata("topLevel.kt")
+    public void testTopLevel() throws Exception {
+        runTest("compiler/testData/debug/stepping/topLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("trait.kt")
+    public void testTrait() throws Exception {
+        runTest("compiler/testData/debug/stepping/trait.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatch.kt")
+    public void testTryCatch() throws Exception {
+        runTest("compiler/testData/debug/stepping/tryCatch.kt");
+    }
+
+    @Test
     @TestMetadata("voidLambdaStepInline.kt")
     public void testVoidLambdaStepInline() throws Exception {
         runTest("compiler/testData/debug/stepping/voidLambdaStepInline.kt");
+    }
+
+    @Test
+    @TestMetadata("while.kt")
+    public void testWhile() throws Exception {
+        runTest("compiler/testData/debug/stepping/while.kt");
     }
 }

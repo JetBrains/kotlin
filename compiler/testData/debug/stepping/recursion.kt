@@ -1,4 +1,4 @@
-//FILE: test.kt
+// FILE: test.kt
 fun box() {
     val n = 3
     val k = foo(n)
@@ -12,15 +12,15 @@ fun foo(n :Int ) : Int {
 }
 
 // LINENUMBERS
-// test.kt:3
-// test.kt:4
-// test.kt:8
-// test.kt:11
-// test.kt:8
-// test.kt:11
-// test.kt:8
-// test.kt:9
-// test.kt:11
-// test.kt:11
-// test.kt:4
-// test.kt:5
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:8 foo
+// test.kt:11 foo
+// test.kt:8 foo
+// test.kt:11 foo
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:11 foo
+// test.kt:11 foo
+// test.kt:4 box
+// test.kt:5 box
