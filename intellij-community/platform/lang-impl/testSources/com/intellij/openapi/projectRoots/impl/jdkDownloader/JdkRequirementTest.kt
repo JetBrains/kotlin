@@ -137,7 +137,7 @@ class JdkRequirementTest : LightPlatformTestCase() {
     val req = JdkRequirements.parseRequirement(text)
     Assert.assertNotNull(req)
     req!!
-    println("parsed requirement: $req")
+    LOG.debug("parsed requirement: $req")
 
     for (match in matches) {
       Assert.assertTrue("$req matches $match", req.matches(match))
@@ -174,7 +174,7 @@ class JdkRequirementTest : LightPlatformTestCase() {
     val req = JdkRequirements.parseRequirement(text)
     Assert.assertNotNull(req)
     req!!
-    println("parsed requirement: $req")
+    LOG.debug("parsed requirement: $req")
 
     for (match in matches) {
       Assert.assertTrue("$req matches $match", req.matches(match))

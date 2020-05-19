@@ -172,11 +172,10 @@ class JdkDownloaderTest : LightPlatformTestCase() {
 
       assertThat(dir).isEqualTo(task.installDir)
 
-      println("Unpacked files:")
+      LOG.debug("Unpacked files:")
       dir.walkTopDown().forEach {
-        println("  <install dir>${it.path.removePrefix(dir.path)}")
+        LOG.debug("  <install dir>${it.path.removePrefix(dir.path)}")
       }
-      println()
 
       task.resultDir()
     }
