@@ -3,8 +3,6 @@ package com.intellij.util.indexing.contentQueue;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
@@ -27,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -219,7 +216,7 @@ public final class IndexUpdateRunner {
           .expireWith(project)
           .wrapProgress(indexingJob.myIndicator)
           .executeSynchronously();
-        indexingJob.myStatistics.addFileStatistics(fileStatistics, getFileType(fileContent));
+        indexingJob.myStatistics.addFileStatistics(fileStatistics);
       }
       catch (ProcessCanceledException e) {
         throw e;
@@ -230,23 +227,6 @@ public final class IndexUpdateRunner {
                                      "To reindex this file IDEA has to be restarted", e);
       }
     }
-  }
-
-  private static FileType getFileType(@NotNull CachedFileContent fileContent) {
-    // TODO consider CachedFileType
-    VirtualFile virtualFile = fileContent.getVirtualFile();
-    byte[] fileBytes;
-    try {
-      fileBytes = fileContent.getBytes();
-    }
-    catch (IOException e) {
-      // Must not happen but let's play safe.
-      FileBasedIndexImpl.LOG.warn("Failed to record statistics for file " + virtualFile.getUrl() + ". " +
-                                  "Its content wasn't loaded " + e.getMessage());
-      return FileTypeManager.getInstance().getFileTypeByFile(fileContent.getVirtualFile());
-    }
-
-    return FileTypeManager.getInstance().getFileTypeByFile(virtualFile, fileBytes);
   }
 
   @NotNull

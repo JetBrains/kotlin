@@ -1196,8 +1196,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     VirtualFile file = content.getVirtualFile();
     final int fileId = Math.abs(getIdMaskingNonIdBasedFile(file));
 
-    boolean setIndexedStatus = true;
-    Map<ID<?, ?>, Long> indexerTimes = Collections.emptyMap();
     long startTime = System.nanoTime();
     try {
       // if file was scheduled for update due to vfs events then it is present in myFilesToUpdate
@@ -1208,31 +1206,65 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       if (!file.isValid() || isTooLarge(file)) {
         ProgressManager.checkCanceled();
         removeDataFromIndicesForFile(fileId, file);
-        if (file instanceof DeletedVirtualFileStub && ((DeletedVirtualFileStub)file).isResurrected()) {
-          doIndexFileContent(project, new CachedFileContent(((DeletedVirtualFileStub)file).getOriginalFile()));
+        try {
+          if (file instanceof DeletedVirtualFileStub && ((DeletedVirtualFileStub)file).isResurrected()) {
+            CachedFileContent resurrectedFileContent = new CachedFileContent(((DeletedVirtualFileStub)file).getOriginalFile());
+            FileIndexingResult indexingResult = doIndexFileContent(project, resurrectedFileContent);
+            return new FileIndexingStatistics(System.nanoTime() - startTime,
+                                              indexingResult.fileType,
+                                              indexingResult.timesPerIndexer);
+          } else {
+            return new FileIndexingStatistics(System.nanoTime() - startTime,
+                                              file.getFileType(),
+                                              Collections.emptyMap());
+          }
+        } finally {
+          setIsIndexedFlag(file);
         }
       }
       else {
-        Pair<Boolean, Map<ID<?, ?>, Long>> pair = doIndexFileContent(project, content);
-        setIndexedStatus = pair.first;
-        indexerTimes = pair.second;
+        FileIndexingResult indexingResult = doIndexFileContent(project, content);
+        if (indexingResult.setIndexedStatus) {
+          setIsIndexedFlag(file);
+        }
+        return new FileIndexingStatistics(System.nanoTime() - startTime,
+                                          indexingResult.fileType,
+                                          indexingResult.timesPerIndexer);
       }
     }
     finally {
       IndexingStamp.flushCache(fileId);
+      getChangedFilesCollector().removeFileIdFromFilesScheduledForUpdate(fileId);
     }
+  }
 
-    getChangedFilesCollector().removeFileIdFromFilesScheduledForUpdate(fileId);
-    if (file instanceof VirtualFileSystemEntry && setIndexedStatus) ((VirtualFileSystemEntry)file).setFileIndexed(true);
-    return new FileIndexingStatistics(System.nanoTime() - startTime, indexerTimes);
+  private static void setIsIndexedFlag(@NotNull VirtualFile file) {
+    if (file instanceof VirtualFileSystemEntry) {
+      ((VirtualFileSystemEntry)file).setFileIndexed(true);
+    }
+  }
+
+  private static final class FileIndexingResult {
+    public final boolean setIndexedStatus;
+    public final Map<ID<?, ?>, Long> timesPerIndexer;
+    public final FileType fileType;
+
+    private FileIndexingResult(boolean setIndexedStatus,
+                               @NotNull Map<ID<?, ?>, Long> timesPerIndexer,
+                               @NotNull FileType type) {
+      this.setIndexedStatus = setIndexedStatus;
+      this.timesPerIndexer = timesPerIndexer;
+      fileType = type;
+    }
   }
 
   @NotNull
-  private Pair<Boolean, Map<ID<?, ?>, Long>> doIndexFileContent(@Nullable Project project, final @NotNull CachedFileContent content) {
+  private FileBasedIndexImpl.FileIndexingResult doIndexFileContent(@Nullable Project project, final @NotNull CachedFileContent content) {
     ProgressManager.checkCanceled();
     final VirtualFile file = content.getVirtualFile();
     Ref<Boolean> setIndexedStatus = Ref.create(Boolean.TRUE);
     Map<ID<?, ?>, Long> perIndexerTimes = new HashMap<>();
+    Ref<FileType> fileTypeRef = Ref.create();
 
     getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
       ProgressManager.checkCanceled();
@@ -1245,6 +1277,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       }
       FileContentImpl fc = new FileContentImpl(file, bytes);
       ProgressManager.checkCanceled();
+      fileTypeRef.set(fc.getFileType());
 
       PsiFile psiFile = content.getUserData(IndexingDataKeys.PSI_FILE);
       initFileContent(fc, project == null ? ProjectUtil.guessProjectForFile(file) : project, psiFile);
@@ -1302,7 +1335,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     });
 
     file.putUserData(IndexingDataKeys.REBUILD_REQUESTED, null);
-    return Pair.create(setIndexedStatus.get(), perIndexerTimes);
+    return new FileIndexingResult(setIndexedStatus.get(), perIndexerTimes, fileTypeRef.get());
   }
 
   public boolean isIndexingCandidate(@NotNull VirtualFile file, @NotNull ID<?, ?> indexId) {
