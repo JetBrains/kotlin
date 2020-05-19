@@ -31,24 +31,25 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
 @AdapterForResolvePhase
-class FirImplicitTypeBodyResolveTransformerAdapter(private val scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
+class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
     private val implicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession()
+    private val returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession).also {
+        scopeSession.returnTypeCalculator = it
+    }
+
+    private val transformer = FirImplicitAwareBodyResolveTransformer(
+        session,
+        scopeSession,
+        implicitBodyResolveComputationSession,
+        FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, implicitTypeOnly = true,
+        returnTypeCalculator
+    )
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        val session = file.session
-        val returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
-        scopeSession.returnTypeCalculator = returnTypeCalculator
-        val transformer = FirImplicitAwareBodyResolveTransformer(
-            session,
-            scopeSession,
-            implicitBodyResolveComputationSession,
-            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, implicitTypeOnly = true,
-            returnTypeCalculator
-        )
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
 }

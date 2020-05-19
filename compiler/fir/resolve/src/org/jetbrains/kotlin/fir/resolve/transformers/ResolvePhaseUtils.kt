@@ -29,7 +29,7 @@ fun FirResolvePhase.createTransformerByPhase(session: FirSession, scopeSession: 
         TYPES -> FirTypeResolveTransformer(session, scopeSession)
         STATUS -> FirStatusResolveTransformer(session)
         CONTRACTS -> FirContractResolveTransformerAdapter(session, scopeSession)
-        IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveTransformerAdapter(scopeSession)
+        IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveTransformerAdapter(session, scopeSession)
         BODY_RESOLVE -> FirBodyResolveTransformerAdapter(scopeSession)
     }
 }
