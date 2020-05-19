@@ -218,7 +218,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         var codeIndex = 0
         while (queryIndex < queryArgs.size) {
             val queryArg = queryArgs[queryIndex]
-            val codeArg = codeArgs.getOrElse(codeIndex) { return false }
+            val codeArg = codeArgs.getOrElse(codeIndex) { return@matchValueArgumentList false }
             val handler = myMatchingVisitor.matchContext.pattern.getHandler(queryArg)
             if (handler is SubstitutionHandler) {
                 return myMatchingVisitor.matchSequentially(
@@ -232,24 +232,24 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 val spreadArgExpr = queryArg.getArgumentExpression()
                 if (spreadArgExpr is KtCallExpression) {
                     spreadArgExpr.valueArguments.forEach { spreadedArg ->
-                        if (!myMatchingVisitor.match(spreadedArg, codeArgs[codeIndex++])) return false
+                        if (!myMatchingVisitor.match(spreadedArg, codeArgs[codeIndex++])) return@matchValueArgumentList false
                     }
                     queryIndex++
                     continue
-                } else { // can't match array that is not created in the call itself
-                    myMatchingVisitor.result = false
-                    return myMatchingVisitor.result
-                }
+                }   // can't match array that is not created in the call itself
+                myMatchingVisitor.result = false
+                return myMatchingVisitor.result
             }
             if (!queryArg.isSpread && codeArg.isSpread) {
                 val spreadArgExpr = codeArg.getArgumentExpression()
                 if (spreadArgExpr is KtCallExpression) {
                     spreadArgExpr.valueArguments.forEach { spreadedArg ->
-                        if (!myMatchingVisitor.match(queryArgs[queryIndex++], spreadedArg)) return false
+                        if (!myMatchingVisitor.match(queryArgs[queryIndex++], spreadedArg)) return@matchValueArgumentList false
                     }
                     codeIndex++
                     continue
-                } else return false// can't match array that is not created in the call itself
+                }
+                return false// can't match array that is not created in the call itself
             }
             // normal argument matching
             if (!myMatchingVisitor.match(queryArg, codeArg)) {
@@ -357,9 +357,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.matchInAnyOrder(klass.secondaryConstructors, other.secondaryConstructors)
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
-        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(klass.nameIdentifier)
-            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(klass, other))
-        ) return
+        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(klass.nameIdentifier)) {
+            myMatchingVisitor.result = myMatchingVisitor.handleTypedElement(klass.identifyingElement, other.identifyingElement)
+        }
     }
 
     override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
@@ -384,9 +384,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && matchTypeReferenceWithDeclaration(function.typeReference, other)
                 && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
                 && myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
-        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(function.nameIdentifier)
-            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(function, other))
-        ) return
+        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(function.nameIdentifier)) {
+            myMatchingVisitor.result = myMatchingVisitor.handleTypedElement(function.identifyingElement, other.identifyingElement)
+        }
     }
 
     override fun visitElement(element: PsiElement) {
@@ -505,9 +505,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.match(
             property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
         ))
-        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(property.nameIdentifier)
-            && !myMatchingVisitor.setResult(myMatchingVisitor.handleTypedElement(property, other))
-        ) return
+        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(property.nameIdentifier)) {
+            myMatchingVisitor.result = myMatchingVisitor.handleTypedElement(property.identifyingElement, other.identifyingElement)
+        }
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
