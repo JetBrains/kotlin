@@ -76,7 +76,13 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   public ProjectRootManagerComponent(@NotNull Project project) {
     super(project);
 
-    MessageBusConnection connection = project.getMessageBus().connect(this);
+    if (!myProject.isDefault()) {
+      registerListeners();
+    }
+  }
+
+  private void registerListeners() {
+    MessageBusConnection connection = myProject.getMessageBus().connect(this);
     connection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
       @Override
       public void beforeFileTypesChanged(@NotNull FileTypeEvent event) {
@@ -89,18 +95,17 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
       }
     });
 
-    VirtualFileManager.getInstance().addVirtualFileManagerListener(new VirtualFileManagerListener() {
-      @Override
-      public void afterRefreshFinish(boolean asynchronous) {
-        doUpdateOnRefresh();
-      }
-    }, project);
-
-    if (!myProject.isDefault()) {
-      StartupManager.getInstance(project).registerStartupActivity(() -> {
-        myStartupActivityPerformed = true;
-      });
+    if (!LightEdit.owns(myProject)) {
+      VirtualFileManager.getInstance().addVirtualFileManagerListener(new VirtualFileManagerListener() {
+        @Override
+        public void afterRefreshFinish(boolean asynchronous) {
+          doUpdateOnRefresh();
+        }
+      }, this);
     }
+    StartupManager.getInstance(myProject).registerStartupActivity(() -> {
+      myStartupActivityPerformed = true;
+    });
 
     connection.subscribe(BatchUpdateListener.TOPIC, new BatchUpdateListener() {
       @Override
@@ -120,8 +125,8 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
         makeRootsChange(EmptyRunnable.getInstance(), false, true);
       });
     });
-    AdditionalLibraryRootsProvider.EP_NAME.addChangeListener(rootsExtensionPointListener, project);
-    OrderEnumerationHandler.EP_NAME.addChangeListener(rootsExtensionPointListener, project);
+    AdditionalLibraryRootsProvider.EP_NAME.addChangeListener(rootsExtensionPointListener, this);
+    OrderEnumerationHandler.EP_NAME.addChangeListener(rootsExtensionPointListener, this);
   }
 
   @Override
@@ -168,9 +173,6 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   private void doUpdateOnRefresh() {
     if (ApplicationManager.getApplication().isUnitTestMode() && (!myStartupActivityPerformed || myProject.isDisposed())) {
       return; // in test mode suppress addition to a queue unless project is properly initialized
-    }
-    if (myProject.isDefault() || LightEdit.owns(myProject)) {
-      return;
     }
 
     if (LOG_CACHES_UPDATE || LOG.isDebugEnabled()) {
