@@ -44,6 +44,7 @@ open class FirBodyResolveTransformer(
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
 
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
+        checkSessionConsistency(file)
         context.cleanContextForAnonymousFunction()
         @OptIn(PrivateForInline::class)
         context.file = file
