@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -122,10 +123,10 @@ class BodyGenerator(
     }
 
     private fun generateReturnExpression(startOffset: Int, endOffset: Int, returnValue: IrExpression): IrReturnImpl {
-        val returnTarget = (scopeOwner as? CallableDescriptor) ?: throw AssertionError("'return' in a non-callable: $scopeOwner")
+        val returnTarget = scopeOwnerSymbol.owner as? IrFunction ?: throw AssertionError("'return' in a non-callable: $scopeOwner")
         return IrReturnImpl(
             startOffset, endOffset, context.irBuiltIns.nothingType,
-            context.symbolTable.referenceFunction(returnTarget),
+            returnTarget.symbol,
             returnValue
         )
     }
