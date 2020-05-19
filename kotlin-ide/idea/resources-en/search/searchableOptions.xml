@@ -598,6 +598,12 @@
     <option name="when" path="Blank Lines" hit="Around 'when' branches with {}"/>
     <option name="with" path="Blank Lines" hit="Around 'when' branches with {}"/>
     <option name="before" path="Blank Lines" hit="Before '}':"/>
+    <option name="annotation" path="Blank Lines" hit="Before declaration with comment or annotation"/>
+    <option name="before" path="Blank Lines" hit="Before declaration with comment or annotation"/>
+    <option name="comment" path="Blank Lines" hit="Before declaration with comment or annotation"/>
+    <option name="declaration" path="Blank Lines" hit="Before declaration with comment or annotation"/>
+    <option name="or" path="Blank Lines" hit="Before declaration with comment or annotation"/>
+    <option name="with" path="Blank Lines" hit="Before declaration with comment or annotation"/>
     <option name="blank" path="Blank Lines" hit="Blank Lines"/>
     <option name="lines" path="Blank Lines" hit="Blank Lines"/>
     <option name="at" path="Code Generation" hit="Block comment at first column"/>
@@ -1307,10 +1313,6 @@
     <option name="for" hit="ML Completion for Kotlin"/>
     <option name="kotlin" hit="ML Completion for Kotlin"/>
     <option name="ml" hit="ML Completion for Kotlin"/>
-    <option name="experimental" hit="New Experimental Project Wizard"/>
-    <option name="new" hit="New Experimental Project Wizard"/>
-    <option name="project" hit="New Experimental Project Wizard"/>
-    <option name="wizard" hit="New Experimental Project Wizard"/>
     <option name="converter" hit="New Java to Kotlin Converter"/>
     <option name="java" hit="New Java to Kotlin Converter"/>
     <option name="kotlin" hit="New Java to Kotlin Converter"/>

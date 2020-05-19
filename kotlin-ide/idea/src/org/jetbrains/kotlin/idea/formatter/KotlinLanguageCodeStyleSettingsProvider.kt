@@ -258,9 +258,16 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     "KEEP_BLANK_LINES_BEFORE_RBRACE",
                     "BLANK_LINES_AFTER_CLASS_HEADER"
                 )
+
                 showCustomOption(
                     KotlinCodeStyleSettings::BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES,
                     KotlinBundle.message("formatter.title.around.when.branches.with"),
+                    CodeStyleSettingsCustomizable.BLANK_LINES
+                )
+
+                showCustomOption(
+                    KotlinCodeStyleSettings::BLANK_LINES_BEFORE_DECLARATION_WITH_COMMENT_OR_ANNOTATION_ON_SEPARATE_LINE,
+                    KotlinBundle.message("formatter.title.before.declaration.with.comment.or.annotation"),
                     CodeStyleSettingsCustomizable.BLANK_LINES
                 )
             }
@@ -376,7 +383,24 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                }
                fun run(f: () -> Unit) {
                    f()
-               }""".trimIndent()
+               }
+               
+               class Bar {
+                   @Annotation
+                   val a = 42
+                   @Annotation
+                   val b = 43
+                   fun c() {
+                       a + b
+                   }
+                   fun d() = Unit
+                   // smth
+                   fun e() {
+                       d()
+                   }
+                   fun f() = d()
+               }
+               """.trimIndent()
 
         else -> """open class Some {
                        private val f: (Int)->Int = { a: Int -> a * 2 }
