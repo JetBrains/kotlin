@@ -44,9 +44,7 @@ public abstract class ChooseItemAction extends EditorAction implements HintManag
     @Override
     public void doExecute(@NotNull Editor editor, @Nullable Caret caret, DataContext dataContext) {
       final LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(editor);
-      if (lookup == null) {
-        throw new AssertionError("The last lookup disposed at: " + LookupImpl.getLastLookupDisposeTrace() + "\n-----------------------\n");
-      }
+      assert lookup != null;
 
       if ((finishingChar == Lookup.NORMAL_SELECT_CHAR || finishingChar == Lookup.REPLACE_SELECT_CHAR) &&
           hasTemplatePrefix(lookup, finishingChar)) {

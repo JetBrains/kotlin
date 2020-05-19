@@ -1073,12 +1073,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     hide();
   }
 
-  private static Throwable staticDisposeTrace = null;
   private Throwable disposeTrace = null;
-
-  public static String getLastLookupDisposeTrace() {
-    return ExceptionUtil.getThrowableText(staticDisposeTrace);
-  }
 
   @Override
   public void dispose() {
@@ -1095,8 +1090,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     if (LOG.isDebugEnabled()) {
       LOG.debug("Disposing lookup:", disposeTrace);
     }
-    //noinspection AssignmentToStaticFieldFromInstanceMethod
-    staticDisposeTrace = disposeTrace;
   }
 
   private String formatDisposeTrace() {
