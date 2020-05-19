@@ -121,6 +121,11 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
             runTest("compiler/testData/codegen/boxInline/anonymousObject/defineClass.kt");
         }
 
+        @TestMetadata("inlineCallInsideInlineLambda.kt")
+        public void testInlineCallInsideInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/inlineCallInsideInlineLambda.kt");
+        }
+
         @TestMetadata("kt13133.kt")
         public void testKt13133() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt13133.kt");

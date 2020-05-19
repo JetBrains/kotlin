@@ -121,6 +121,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTest("compiler/testData/codegen/boxInline/anonymousObject/defineClass.kt");
         }
 
+        @TestMetadata("inlineCallInsideInlineLambda.kt")
+        public void testInlineCallInsideInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/inlineCallInsideInlineLambda.kt");
+        }
+
         @TestMetadata("kt13182.kt")
         public void testKt13182() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt13182.kt");
