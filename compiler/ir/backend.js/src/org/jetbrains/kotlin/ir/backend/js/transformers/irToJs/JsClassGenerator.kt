@@ -35,7 +35,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private val es6mode = context.staticContext.backendContext.es6mode
 
     fun generate(): JsStatement {
-        assert(!irClass.descriptor.isExpect)
+        assert(!irClass.isExpect)
 
         if (!es6mode) maybeGeneratePrimaryConstructor()
         val transformer = IrDeclarationToJsTransformer()

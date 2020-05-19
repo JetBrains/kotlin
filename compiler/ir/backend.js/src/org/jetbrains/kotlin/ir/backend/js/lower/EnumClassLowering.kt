@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
+import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -102,7 +103,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         (declaration.parent as? IrClass)?.let { irClass ->
-            if (!irClass.isEnumClass || irClass.descriptor.isExpect || irClass.isEffectivelyExternal()) return null
+            if (!irClass.isEnumClass || irClass.isExpect || irClass.isEffectivelyExternal()) return null
 
             if (declaration is IrConstructor) {
                 // Add `name` and `ordinal` parameters to enum class constructors
@@ -317,7 +318,7 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
 //-------------------------------------------------------
 
 private val IrClass.goodEnum: Boolean
-    get() = isEnumClass && !descriptor.isExpect && !isEffectivelyExternal()
+    get() = isEnumClass && !isExpect && !isEffectivelyExternal()
 
 class EnumEntryInstancesLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
@@ -552,7 +553,7 @@ private val IrClass.enumEntries: List<IrEnumEntry>
 class EnumClassRemoveEntriesLowering(val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         // Remove IrEnumEntry nodes from class declarations. Replace them with corresponding class declarations (if they have them).
-        if (declaration is IrEnumEntry && !declaration.descriptor.isExpect && !declaration.isEffectivelyExternal()) {
+        if (declaration is IrEnumEntry && !declaration.isExpect && !declaration.isEffectivelyExternal()) {
             return listOfNotNull(declaration.correspondingClass)
         }
 
