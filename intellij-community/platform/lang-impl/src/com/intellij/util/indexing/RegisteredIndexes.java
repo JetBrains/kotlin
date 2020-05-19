@@ -72,11 +72,6 @@ class RegisteredIndexes {
   }
 
   IndexConfiguration getConfigurationState() {
-    if (!myInitialized) {
-      //throw new IndexNotReadyException();
-      LOG.error("Unexpected initialization problem");
-    }
-
     IndexConfiguration state = myState; // memory barrier
     if (state == null) {
       try {
