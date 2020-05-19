@@ -69,6 +69,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -767,23 +768,38 @@ public class KotlinTestUtils {
 
         String absoluteTestDataFilePath = new File(testRoot, testDataFilePath).getAbsolutePath();
 
-        Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
-            try {
-                test.invoke(absoluteTestDataFilePath);
-            }
-            catch (Exception e) {
-                throw new IllegalStateException(e);
-            }
-            return null;
-        });
+        if (!isRunTestOverridden(testCase)) {
+            Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
+                try {
+                    test.invoke(absoluteTestDataFilePath);
+                }
+                catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+                return null;
+            });
 
-        if (wrapWithMuteInDatabase != null) {
-            wrapWithMuteInDatabase.invoke();
-            return;
+            if (wrapWithMuteInDatabase != null) {
+                wrapWithMuteInDatabase.invoke();
+                return;
+            }
         }
 
         DoTest wrappedTest = MuteWithFileKt.testWithMuteInFile(test, testCase);
         wrappedTest.invoke(absoluteTestDataFilePath);
+    }
+
+    private static boolean isRunTestOverridden(TestCase testCase) {
+        Class<?> type = testCase.getClass();
+        while (type != null) {
+            for (Annotation annotation : type.getDeclaredAnnotations()) {
+                if (annotation.annotationType().equals(WithMutedInDatabaseRunTest.class)) {
+                    return true;
+                }
+            }
+            type = type.getSuperclass();
+        }
+        return false;
     }
 
     private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {

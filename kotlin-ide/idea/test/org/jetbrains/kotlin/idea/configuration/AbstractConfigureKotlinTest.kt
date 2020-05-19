@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
+import org.jetbrains.kotlin.test.runTest
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
 
+@WithMutedInDatabaseRunTest
 abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     override fun setUp() {
         super.setUp()
@@ -132,8 +135,8 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         UsefulTestCase.assertDoesntExist(File(JS_CONFIGURATOR.getDefaultPathToJarFile(project)))
     }
 
-    override fun shouldRunTest(): Boolean {
-        return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this)
+    override fun runTest() {
+        return runTest { super.runTest() }
     }
 
     companion object {

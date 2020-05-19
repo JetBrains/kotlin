@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
-import org.jetbrains.kotlin.test.runTest
 import org.junit.runner.RunWith
 
 @TestRoot("idea")
@@ -48,9 +47,7 @@ class CoroutineNonBlockingContextDetectionTest : KotlinLightCodeInsightFixtureTe
     }
 
     private fun doTest(fileName: String) {
-        runTest {
-            myFixture.configureByFile(fileName)
-            myFixture.testHighlighting(true, false, false, fileName)
-        }
+        myFixture.configureByFile(fileName)
+        myFixture.testHighlighting(true, false, false, fileName)
     }
 }
