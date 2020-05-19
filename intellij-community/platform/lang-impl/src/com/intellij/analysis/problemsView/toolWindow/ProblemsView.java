@@ -84,11 +84,6 @@ public final class ProblemsView implements DumbAware, ToolWindowFactory {
   }
 
   @Override
-  public boolean shouldBeAvailable(@NotNull Project project) {
-    return false;
-  }
-
-  @Override
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow window) {
     ProblemsViewState state = ProblemsViewState.getInstance(project);
     state.setShowToolbar(isToolbarVisible(window, PropertiesComponent.getInstance(project)));
