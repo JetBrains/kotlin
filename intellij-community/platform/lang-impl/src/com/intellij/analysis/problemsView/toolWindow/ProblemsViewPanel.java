@@ -321,7 +321,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   }
 
   @Nullable Option getAutoscrollToSource() {
-    return myAutoscrollToSource;
+    return isNotNullAndSelected(getShowPreview()) ? null : myAutoscrollToSource;
   }
 
   @Nullable Option getShowPreview() {
