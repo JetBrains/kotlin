@@ -83,7 +83,7 @@ abstract class ClassCodegen protected constructor(
             throw IllegalStateException("Generating class with invalid name '${type.className}': ${irClass.dump()}")
         }
         defineClass(
-            irClass.descriptor.psiElement,
+            irClass.psiElement,
             state.classFileVersion,
             irClass.flags,
             signature.name,

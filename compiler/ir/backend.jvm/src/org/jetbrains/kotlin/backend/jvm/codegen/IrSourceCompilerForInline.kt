@@ -142,5 +142,5 @@ class IrSourceCompilerForInline(
             .report(SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }
 
-    private fun findElement() = (callElement.symbol.descriptor.original as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtElement
+    private fun findElement() = callElement.psiElement as? KtElement
 }
