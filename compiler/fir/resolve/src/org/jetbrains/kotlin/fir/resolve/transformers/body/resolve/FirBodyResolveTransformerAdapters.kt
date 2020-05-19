@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -16,19 +17,19 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
 @AdapterForResolvePhase
-class FirBodyResolveTransformerAdapter(private val scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
+class FirBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
+    private val transformer = FirBodyResolveTransformer(
+        session,
+        phase = FirResolvePhase.BODY_RESOLVE,
+        implicitTypeOnly = false,
+        scopeSession = scopeSession
+    )
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        val transformer = FirBodyResolveTransformer(
-            file.session,
-            phase = FirResolvePhase.BODY_RESOLVE,
-            implicitTypeOnly = false,
-            scopeSession = scopeSession
-        )
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
 }
