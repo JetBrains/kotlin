@@ -100,16 +100,17 @@ private fun InteropCallContext.readValueFromMemory(
             it.putValueArgument(0, nativePtr)
         })
     }
-    return castPrimitiveIfNeeded(memRead, returnType)
+    return castPrimitiveIfNeeded(memRead, memoryValueType, returnType)
 }
 
 private fun InteropCallContext.writeValueToMemory(
         nativePtr: IrExpression,
-        value: IrExpression
+        value: IrExpression,
+        targetType: IrType
 ): IrExpression {
-    val memoryValueType = determineInMemoryType(value.type)
+    val memoryValueType = determineInMemoryType(targetType)
     val memWriteFn = findMemoryAccessFunction(isRead = false, valueType = memoryValueType)
-    val valueToWrite = castPrimitiveIfNeeded(value, memoryValueType)
+    val valueToWrite = castPrimitiveIfNeeded(value, targetType, memoryValueType)
     return with(builder) {
         irCall(memWriteFn).also { memWrite ->
             memWrite.dispatchReceiver = irGetObject(symbols.nativeMemUtils)
@@ -132,12 +133,13 @@ private fun InteropCallContext.determineInMemoryType(type: IrType): IrType {
 
 private fun InteropCallContext.castPrimitiveIfNeeded(
         value: IrExpression,
-        targetType: IrType
+        fromType: IrType,
+        toType: IrType
 ): IrExpression {
-    val valueClass = value.type.classOrNull!!
-    val targetClass = targetType.classOrNull!!
-    return if (valueClass != targetClass) {
-        val conversion = symbols.integerConversions.getValue(valueClass to targetClass)
+    val sourceClass = fromType.classOrNull!!
+    val targetClass = toType.classOrNull!!
+    return if (sourceClass != targetClass) {
+        val conversion = symbols.integerConversions.getValue(sourceClass to targetClass)
         builder.irCall(conversion.owner).apply {
             if (conversion.owner.dispatchReceiverParameter != null) {
                 dispatchReceiver = value
@@ -150,19 +152,23 @@ private fun InteropCallContext.castPrimitiveIfNeeded(
     }
 }
 
-private fun InteropCallContext.convertEnumToIntegral(enumValue: IrExpression): IrExpression {
-    val enumClass = enumValue.type.getClass()!!
+private fun InteropCallContext.convertEnumToIntegral(enumValue: IrExpression, targetEnumType: IrType): IrExpression {
+    val enumClass = targetEnumType.getClass()!!
     val valueProperty = enumClass.properties.single { it.name.asString() == "value" }
     return builder.irCall(valueProperty.getter!!).also {
         it.dispatchReceiver = enumValue
     }
 }
 
-private fun InteropCallContext.convertIntegralToEnum(value: IrExpression, enumType: IrType): IrExpression {
+private fun InteropCallContext.convertIntegralToEnum(
+        value: IrExpression,
+        intergralType: IrType,
+        enumType: IrType
+): IrExpression {
     val enumClass = enumType.getClass()!!
     val companionClass = enumClass.companionObject()!! as IrClass
     val byValue = companionClass.simpleFunctions().single { it.name.asString() == "byValue" }
-    val byValueArg = castPrimitiveIfNeeded(value, byValue.valueParameters.first().type)
+    val byValueArg = castPrimitiveIfNeeded(value, intergralType, byValue.valueParameters.first().type)
     return builder.irCall(byValue).apply {
         dispatchReceiver = builder.irGetObject(companionClass.symbol)
         putValueArgument(0, byValueArg)
@@ -179,12 +185,16 @@ private fun IrType.getCEnumPrimitiveType(): IrType {
 private fun InteropCallContext.readEnumValueFromMemory(nativePtr: IrExpression, enumType: IrType): IrExpression {
     val enumPrimitiveType = enumType.getCEnumPrimitiveType()
     val readMemory = readValueFromMemory(nativePtr, enumPrimitiveType)
-    return convertIntegralToEnum(readMemory, enumType)
+    return convertIntegralToEnum(readMemory, readMemory.type, enumType)
 }
 
-private fun InteropCallContext.writeEnumValueToMemory(nativePtr: IrExpression, value: IrExpression): IrExpression {
-    val valueToWrite = convertEnumToIntegral(value)
-    return writeValueToMemory(nativePtr, valueToWrite)
+private fun InteropCallContext.writeEnumValueToMemory(
+        nativePtr: IrExpression,
+        value: IrExpression,
+        targetEnumType: IrType
+): IrExpression {
+    val valueToWrite = convertEnumToIntegral(value, targetEnumType)
+    return writeValueToMemory(nativePtr, valueToWrite, targetEnumType.getCEnumPrimitiveType())
 }
 
 private fun InteropCallContext.convertCPointerToNativePtr(cPointer: IrExpression): IrExpression {
@@ -203,7 +213,7 @@ private fun InteropCallContext.writePointerToMemory(
         pointerType.isCPointer() -> convertCPointerToNativePtr(value)
         else -> error("Unsupported pointer type")
     }
-    return writeValueToMemory(nativePtr, valueToWrite)
+    return writeValueToMemory(nativePtr, valueToWrite, valueToWrite.type)
 }
 
 private fun InteropCallContext.calculateFieldPointer(receiver: IrExpression, offset: Long): IrExpression {
@@ -261,7 +271,10 @@ private fun InteropCallContext.generateEnumVarValueAccess(callSite: IrCall): IrE
     }
     return when {
         accessor.isGetter -> readEnumValueFromMemory(nativePtr, accessor.returnType)
-        accessor.isSetter -> writeEnumValueToMemory(nativePtr, callSite.getValueArgument(0)!!)
+        accessor.isSetter -> {
+            val type = accessor.valueParameters[0].type
+            writeEnumValueToMemory(nativePtr, callSite.getValueArgument(0)!!, type)
+        }
         else -> error("")
     }
 }
@@ -286,8 +299,8 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
             val value = callSite.getValueArgument(0)!!
             val type = accessor.valueParameters[0].type
             when {
-                type.isCEnumType() -> writeEnumValueToMemory(fieldPointer, value)
-                type.isStoredInMemoryDirectly() -> writeValueToMemory(fieldPointer, value)
+                type.isCEnumType() -> writeEnumValueToMemory(fieldPointer, value, type)
+                type.isStoredInMemoryDirectly() -> writeValueToMemory(fieldPointer, value, type)
                 type.isCPointer() -> writePointerToMemory(fieldPointer, value, type)
                 else -> error("Cannot set field of type ${type.getClass()?.name}")
             }
@@ -310,14 +323,15 @@ private fun InteropCallContext.writeBits(
         base: IrExpression,
         offset: Long,
         size: Int,
-        value: IrExpression
+        value: IrExpression,
+        type: IrType
 ): IrExpression {
-    val integralValue = when {
-        value.type.isCEnumType() -> convertEnumToIntegral(value)
-        else -> value
+    val (integralValue, fromType) = when {
+        type.isCEnumType() -> convertEnumToIntegral(value, type) to type.getCEnumPrimitiveType()
+        else -> value to type
     }
     val targetType = symbols.writeBits.owner.valueParameters.last().type
-    val valueToWrite = castPrimitiveIfNeeded(integralValue, targetType)
+    val valueToWrite = castPrimitiveIfNeeded(integralValue, fromType, targetType)
     return with(builder) {
         irCall(symbols.writeBits).also {
             it.putValueArgument(0, base)
@@ -349,8 +363,8 @@ private fun InteropCallContext.readBits(
         }
     }
     return when {
-        type.isCEnumType() -> convertIntegralToEnum(integralValue, type)
-        else -> castPrimitiveIfNeeded(integralValue, type)
+        type.isCEnumType() -> convertIntegralToEnum(integralValue, integralValue.type, type)
+        else -> castPrimitiveIfNeeded(integralValue, integralValue.type, type)
     }
 }
 
@@ -365,7 +379,8 @@ private fun InteropCallContext.generateBitFieldAccess(callSite: IrCall): IrExpre
     return when {
         accessor.isSetter -> {
             val argument = callSite.getValueArgument(0)!!
-            writeBits(base, offset, size, argument)
+            val type = accessor.valueParameters[0].type
+            writeBits(base, offset, size, argument, type)
         }
         accessor.isGetter -> {
             val type = accessor.returnType
