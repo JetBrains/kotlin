@@ -52,7 +52,7 @@ fun FirFile.runResolve(toPhase: FirResolvePhase, fromPhase: FirResolvePhase = Fi
     var currentPhase = fromPhase
     while (currentPhase < toPhase) {
         currentPhase = currentPhase.next
-        val phaseTransformer = currentPhase.createTransformerByPhase(scopeSession)
+        val phaseTransformer = currentPhase.createTransformerByPhase(session, scopeSession)
         transform<FirFile, Nothing?>(phaseTransformer, null)
     }
 }

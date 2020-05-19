@@ -331,7 +331,7 @@ object KotlinToJVMBytecodeCompiler {
             }
             val firProvider = (session.firProvider as FirProviderImpl)
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
-            val resolveTransformer = FirTotalResolveTransformer()
+            val resolveTransformer = FirTotalResolveTransformer(session)
             val firFiles = ktFiles.map {
                 val firFile = builder.buildFirFile(it)
                 firProvider.recordFile(firFile)

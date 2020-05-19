@@ -73,10 +73,10 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     }
 
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
-        for ((_, firFiles) in firFilesPerSession) {
+        for ((session, firFiles) in firFilesPerSession) {
             doFirResolveTestBench(
                 firFiles,
-                FirTotalResolveTransformer().transformers,
+                FirTotalResolveTransformer(session).transformers,
                 gc = false
             )
         }

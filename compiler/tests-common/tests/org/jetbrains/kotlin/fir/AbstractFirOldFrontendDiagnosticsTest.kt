@@ -31,8 +31,8 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
 
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
         val failure: FirRuntimeException? = try {
-            for ((_, firFiles) in firFilesPerSession) {
-                doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
+            for ((session, firFiles) in firFilesPerSession) {
+                doFirResolveTestBench(firFiles, FirTotalResolveTransformer(session).transformers, gc = false)
             }
             null
         } catch (e: FirRuntimeException) {

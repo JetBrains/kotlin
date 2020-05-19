@@ -55,7 +55,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
         val session = createSession(environment, scope, librariesScope, moduleData.qualifiedName)
-        val totalTransformer = FirTotalResolveTransformer()
+        val totalTransformer = FirTotalResolveTransformer(session)
 
         val firProvider = session.firProvider as FirProviderImpl
         val firFiles = if (useLightTree) {
