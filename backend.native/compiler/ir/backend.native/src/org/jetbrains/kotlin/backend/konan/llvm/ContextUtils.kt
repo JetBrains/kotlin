@@ -557,8 +557,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val irStaticInitializers = mutableListOf<IrStaticInitializer>()
     val otherStaticInitializers = mutableListOf<LLVMValueRef>()
     val fileInitializers = mutableListOf<IrField>()
-    val objects = mutableSetOf<IrClass>()
-    val sharedObjects = mutableSetOf<IrClass>()
+    var fileUsesThreadLocalObjects = false
+    val globalSharedObjects = mutableSetOf<LLVMValueRef>()
 
     private object lazyRtFunction {
         operator fun provideDelegate(
