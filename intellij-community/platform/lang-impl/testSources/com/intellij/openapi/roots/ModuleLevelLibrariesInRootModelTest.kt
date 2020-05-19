@@ -164,7 +164,7 @@ class ModuleLevelLibrariesInRootModelTest {
   }
 
   @Test
-  fun `do not commit library model`() {
+  fun `discard changes in library on disposing its modifiable model`() {
     val model = createModifiableModel(module)
     val library = model.moduleLibraryTable.createLibrary("foo")
     val libraryModel = library.modifiableModel
@@ -174,6 +174,25 @@ class ModuleLevelLibrariesInRootModelTest {
     assertThat((dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry).getRootFiles(OrderRootType.CLASSES)).isEmpty()
     val committed = commitModifiableRootModel(model)
     assertThat((dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry).getRootFiles(OrderRootType.CLASSES)).isEmpty()
+  }
+
+  @Test
+  fun `discard changes in library on disposing modifiable root model`() {
+    run {
+      val model = createModifiableModel(module)
+      model.moduleLibraryTable.createLibrary("foo")
+      commitModifiableRootModel(model)
+    }
+    val model = createModifiableModel(module)
+    val library = model.moduleLibraryTable.libraries.single()
+    val libraryModel = library.modifiableModel
+    val classesRoot = projectModel.baseProjectDir.newVirtualDirectory("classes")
+    libraryModel.addRoot(classesRoot, OrderRootType.CLASSES)
+    assertThat(libraryModel.getFiles(OrderRootType.CLASSES)).containsExactly(classesRoot)
+    libraryModel.commit()
+    assertThat((dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry).getRootFiles(OrderRootType.CLASSES)).containsExactly(classesRoot)
+    model.dispose()
+    assertThat((dropModuleSourceEntry(ModuleRootManager.getInstance(module), 1).single() as LibraryOrderEntry).getRootFiles(OrderRootType.CLASSES)).isEmpty()
   }
 
   @Test
