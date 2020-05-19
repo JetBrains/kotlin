@@ -42,7 +42,7 @@ fun processScriptModel(
         val project = task.findProject() ?: return
         val models = model.toListOfScriptModels(project)
 
-        project.kotlinGradleDslSync.getOrPut(task) { KotlinDslGradleBuildSync(task) }.models.addAll(models)
+        project.kotlinGradleDslSync[task]?.models?.addAll(models)
 
         if (models.containsErrors()) {
             throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
@@ -102,9 +102,7 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
         )
     }
 
-class KotlinDslGradleBuildSync(val taskId: ExternalSystemTaskId) {
-    lateinit var workingDir: String
-    val projectRoots = mutableSetOf<String>()
+class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSystemTaskId) {
     val models = mutableListOf<KotlinDslScriptModel>()
 }
 
