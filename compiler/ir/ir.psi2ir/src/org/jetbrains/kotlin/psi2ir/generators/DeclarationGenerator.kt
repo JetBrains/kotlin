@@ -86,7 +86,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 ktTypeAlias.startOffsetSkippingComments, ktTypeAlias.endOffset,
                 symbol,
                 typeAliasDescriptor.expandedType.toIrType(),
-                IrDeclarationOrigin.DEFINED
+                IrDeclarationOrigin.DEFINED,
+                typeAliasDescriptor
             )
         }
         generateGlobalTypeParametersDeclarations(irTypeAlias, typeAliasDescriptor.declaredTypeParameters)

@@ -38,14 +38,6 @@ class IrEnumEntryImpl(
     IrEnumEntry,
     EnumEntryCarrier {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrEnumEntrySymbol
-    ) :
-            this(startOffset, endOffset, origin, symbol, symbol.descriptor.name)
-
     init {
         symbol.bind(this)
     }

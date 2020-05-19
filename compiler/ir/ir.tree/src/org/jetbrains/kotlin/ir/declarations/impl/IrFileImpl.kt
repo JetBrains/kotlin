@@ -35,6 +35,10 @@ class IrFileImpl(
     IrElementBase(0, fileEntry.maxOffset),
     IrFile {
 
+    @Deprecated(
+        "This constructor is left for native compilation purpose only. It uses symbol.descriptor attributes " +
+                "Please provide FqName explicitly"
+    )
     constructor(
         fileEntry: SourceManager.FileEntry,
         symbol: IrFileSymbol

@@ -99,13 +99,21 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
 
     fun generateEnumEntry(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor, symbol: IrEnumEntrySymbol): IrEnumEntry {
         // TODO: corresponging class?
-        val irEntry = IrEnumEntryImpl(startOffset, endOffset, origin, symbol)
+        val irEntry = IrEnumEntryImpl(startOffset, endOffset, origin, symbol, descriptor.name)
 
         return irEntry
     }
 
-    fun generateTypeAlias(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: TypeAliasDescriptor, symbol: IrTypeAliasSymbol): IrTypeAlias {
-        val irAlias = IrTypeAliasImpl.fromSymbolDescriptor(startOffset, endOffset, symbol, descriptor.expandedType.toIrType(), origin)
+    fun generateTypeAlias(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: TypeAliasDescriptor,
+        symbol: IrTypeAliasSymbol
+    ): IrTypeAlias {
+        val irAlias = IrTypeAliasImpl.fromSymbolDescriptor(
+            startOffset, endOffset, symbol, descriptor.expandedType.toIrType(), origin, descriptor
+        )
 
         generateGlobalTypeParametersDeclarations(irAlias, descriptor.declaredTypeParameters)
 

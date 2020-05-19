@@ -66,15 +66,16 @@ class IrTypeAliasImpl(
             endOffset: Int,
             symbol: IrTypeAliasSymbol,
             expandedType: IrType,
-            origin: IrDeclarationOrigin
+            origin: IrDeclarationOrigin,
+            descriptor: TypeAliasDescriptor
         ) =
             IrTypeAliasImpl(
                 startOffset, endOffset,
                 symbol,
-                symbol.descriptor.name,
-                symbol.descriptor.visibility,
+                descriptor.name,
+                descriptor.visibility,
                 expandedType,
-                symbol.descriptor.isActual,
+                descriptor.isActual,
                 origin
             )
     }
