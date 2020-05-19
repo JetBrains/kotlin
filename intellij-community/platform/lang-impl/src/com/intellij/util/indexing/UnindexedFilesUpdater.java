@@ -55,7 +55,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
   private final PushedFilePropertiesUpdater myPusher;
 
   public UnindexedFilesUpdater(@NotNull Project project, boolean startSuspended) {
-    // should not provide equivalence object
+    super(project);
     myProject = project;
     myStartSuspended = startSuspended;
     myPusher = PushedFilePropertiesUpdater.getInstance(myProject);
