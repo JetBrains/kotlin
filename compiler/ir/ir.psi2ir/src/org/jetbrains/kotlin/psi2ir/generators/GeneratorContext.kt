@@ -57,7 +57,7 @@ class GeneratorContext(
     val typeTranslator: TypeTranslator,
     val constantValueGenerator: ConstantValueGenerator,
     override val irBuiltIns: IrBuiltIns
-) : IrGeneratorContext() {
+) : IrGeneratorContext {
 
     val callToSubstitutedDescriptorMap = mutableMapOf<IrDeclarationReference, CallableDescriptor>()
 

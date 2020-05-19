@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.knownBuiltins
@@ -301,7 +302,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         psi2Ir.addPostprocessingStep { module ->
             extension.generate(
                 module,
-                IrPluginContext(
+                IrPluginContextImpl(
                     moduleDescriptor,
                     bindingContext,
                     languageVersionSettings,
