@@ -50,13 +50,15 @@ open class FirBodyResolveTransformer(
         context.file = file
         packageFqName = file.packageFqName
         return withScopeCleanup(context.fileImportsScope) {
-            val importingScopes = createImportingScopes(file, session, components.scopeSession)
-            context.fileImportsScope += importingScopes
-            context.addNonLocalTowerDataElements(importingScopes.map { it.asTowerDataElement(isLocal = false) })
+            context.withTowerDataCleanup {
+                val importingScopes = createImportingScopes(file, session, components.scopeSession)
+                context.fileImportsScope += importingScopes
+                context.addNonLocalTowerDataElements(importingScopes.map { it.asTowerDataElement(isLocal = false) })
 
-            file.replaceResolvePhase(transformerPhase)
-            @Suppress("UNCHECKED_CAST")
-            transformDeclarationContent(file, data) as CompositeTransformResult<FirFile>
+                file.replaceResolvePhase(transformerPhase)
+                @Suppress("UNCHECKED_CAST")
+                transformDeclarationContent(file, data) as CompositeTransformResult<FirFile>
+            }
         }
     }
 
