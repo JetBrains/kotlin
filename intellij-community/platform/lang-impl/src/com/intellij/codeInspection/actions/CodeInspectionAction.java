@@ -27,10 +27,10 @@ import com.intellij.codeInspection.ex.InspectionManagerEx;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.options.ex.SingleConfigurableEditor;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.profile.codeInspection.InspectionProfileManager;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
@@ -83,7 +83,7 @@ public class CodeInspectionAction extends BaseAnalysisAction {
 
     InspectionProfileImpl externalProfile = myExternalProfile;
     final GlobalInspectionContextImpl inspectionContext = getGlobalInspectionContext(project);
-    inspectionContext.setRerunAction(() -> ApplicationManager.getApplication().invokeLater(() -> {
+    inspectionContext.setRerunAction(() -> DumbService.getInstance(project).smartInvokeLater(() -> {
       //someone called the runInspections before us, we cannot restore the state
       if (runId != myRunId) return;
       if (project.isDisposed()) return;
