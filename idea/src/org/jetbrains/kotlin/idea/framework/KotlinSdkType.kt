@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.framework
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
@@ -27,7 +28,7 @@ class KotlinSdkType : SdkType("KotlinSDK") {
             get() = PathUtil.kotlinPathsForIdeaPlugin.homePath.absolutePath
 
         @JvmOverloads
-        fun setUpIfNeeded(checkIfNeeded: () -> Boolean = { true }) {
+        fun setUpIfNeeded(disposable: Disposable? = null, checkIfNeeded: () -> Boolean = { true }) {
             val projectSdks: Array<Sdk> = ProjectJdkTable.getInstance().allJdks
             if (projectSdks.any { it.sdkType is KotlinSdkType }) return
             if (!checkIfNeeded()) return // do not create Kotlin SDK
@@ -40,7 +41,11 @@ class KotlinSdkType : SdkType("KotlinSDK") {
             ApplicationManager.getApplication().invokeAndWait {
                 runWriteAction {
                     if (ProjectJdkTable.getInstance().allJdks.any { it.sdkType is KotlinSdkType }) return@runWriteAction
-                    ProjectJdkTable.getInstance().addJdk(newJdk)
+                    if (disposable != null) {
+                        ProjectJdkTable.getInstance().addJdk(newJdk, disposable)
+                    } else {
+                        ProjectJdkTable.getInstance().addJdk(newJdk)
+                    }
                 }
             }
         }

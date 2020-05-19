@@ -77,12 +77,11 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     private val sdk by lazy {
-        val jdk = PluginTestCaseBase.jdk(TestJdkKind.MOCK_JDK)
         runWriteAction {
-            getProjectJdkTableSafe().addJdk(jdk, testRootDisposable)
-            ProjectRootManager.getInstance(project).projectSdk = jdk
+            val sdk = PluginTestCaseBase.addJdk(testRootDisposable) { PluginTestCaseBase.jdk(TestJdkKind.MOCK_JDK) }
+            ProjectRootManager.getInstance(project).projectSdk = sdk
+            sdk
         }
-        jdk
     }
 
     protected fun configureScriptFile(path: String) {
@@ -225,10 +224,8 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             else -> TestJdkKind.MOCK_JDK
         }
         runWriteAction {
-            val jdk = PluginTestCaseBase.jdk(jdkKind)
-            val projectJdkTable = getProjectJdkTableSafe()
-            if (jdk !in projectJdkTable.allJdks) {
-                projectJdkTable.addJdk(jdk, testRootDisposable)
+            val jdk = PluginTestCaseBase.addJdk(testRootDisposable) {
+                PluginTestCaseBase.jdk(jdkKind)
             }
             env["javaHome"] = File(jdk.homePath)
         }
