@@ -11,6 +11,7 @@ import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
@@ -47,6 +48,20 @@ constructor(
             }
             field = value
         }
+
+    override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
+        val usageContexts = super.createUsageContexts(producingCompilation)
+
+        if (isMpp!!) return usageContexts
+
+        return usageContexts +
+                DefaultKotlinUsageContext(
+                    compilation = compilations.getByName(MAIN_COMPILATION_NAME),
+                    usage = project.usageByName("java-api-jars"),
+                    dependencyConfigurationName = commonFakeApiElementsConfigurationName,
+                    overrideConfigurationArtifacts = emptySet()
+                )
+    }
 
     internal val commonFakeApiElementsConfigurationName: String
         get() = disambiguateName("commonFakeApiElements")

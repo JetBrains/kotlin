@@ -84,11 +84,15 @@ constructor(
     }
 
     override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
-        return super.createUsageContexts(producingCompilation) +
+        val usageContexts = super.createUsageContexts(producingCompilation)
+
+        if (isMpp!!) return usageContexts
+
+        return usageContexts +
                 DefaultKotlinUsageContext(
                     compilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
                     usage = project.usageByName("java-api-jars"),
-                    dependencyConfigurationName = apiElementsConfigurationName,
+                    dependencyConfigurationName = commonFakeApiElementsConfigurationName,
                     overrideConfigurationArtifacts = emptySet()
                 )
     }
