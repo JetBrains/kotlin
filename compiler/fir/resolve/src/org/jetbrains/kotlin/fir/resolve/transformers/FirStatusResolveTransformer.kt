@@ -17,21 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.extensionsService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-
-@AdapterForResolvePhase
-class FirStatusResolveTransformerAdapter : FirTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        error("Should not be called for ${element::class}, only for files")
-    }
-
-    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        val transformer = FirStatusResolveTransformer(file.session)
-        return file.transform(transformer, null)
-    }
-}
 
 fun <F : FirClass<F>> F.runStatusResolveForLocalClass(session: FirSession): F {
     val transformer = FirStatusResolveTransformer(session)
@@ -39,7 +26,7 @@ fun <F : FirClass<F>> F.runStatusResolveForLocalClass(session: FirSession): F {
     return this.transform<F, Nothing?>(transformer, null).single
 }
 
-private class FirStatusResolveTransformer(
+class FirStatusResolveTransformer(
     override val session: FirSession
 ) : FirAbstractTreeTransformer<FirDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
     private val classes = mutableListOf<FirClass<*>>()
