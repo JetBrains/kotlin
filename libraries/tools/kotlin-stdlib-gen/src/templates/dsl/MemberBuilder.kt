@@ -66,7 +66,7 @@ class MemberBuilder(
     var returns: String? = null; private set
     val throwsExceptions = mutableListOf<ThrowsException>()
     var body: String? = null; private set
-    val annotations: MutableList<String> = mutableListOf()
+    val annotations: MutableSet<String> = mutableSetOf()
     val suppressions: MutableList<String> = mutableListOf()
 
     fun sourceFile(file: SourceFile) { sourceFile = file }
