@@ -81,7 +81,7 @@ fun KtCallableDeclaration.getOrBuildFir(
     val klassFqName = this.containingClassOrObject?.relativeFqName()
     val declName = this.nameAsSafeName
 
-    val firProvider = session.firProvider as FirIdeProvider
+    val firProvider = session.firIdeProvider
     val firFile = firProvider.getOrBuildFile(file)
     val firMemberSymbol = firFile.findCallableMember(firProvider, this, packageFqName, klassFqName, declName).symbol
     val firMemberDeclaration = firMemberSymbol.fir
@@ -104,7 +104,7 @@ fun KtClassOrObject.getOrBuildFir(
     val packageFqName = file.packageFqName
     val klassFqName = this.relativeFqName()
 
-    val firProvider = session.firProvider as FirIdeProvider
+    val firProvider = session.firIdeProvider
     val firFile = firProvider.getOrBuildFile(file)
 
     val firClassOrEnumEntry = if (this is KtEnumEntry) {
@@ -124,7 +124,7 @@ fun KtClassOrObject.getOrBuildFir(
 
 private fun KtFile.getOrBuildRawFirFile(state: FirModuleResolveState): Pair<FirIdeProvider, FirFile> {
     val session = state.getSession(this)
-    val firProvider = session.firProvider as FirIdeProvider
+    val firProvider = session.firIdeProvider
     return firProvider to firProvider.getOrBuildFile(this)
 }
 

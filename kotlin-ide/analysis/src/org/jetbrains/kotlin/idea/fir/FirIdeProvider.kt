@@ -151,3 +151,5 @@ class FirIdeProvider(
         return cacheProvider.getNestedClassifierScope(classId)
     }
 }
+
+val FirSession.firIdeProvider: FirIdeProvider by FirSession.sessionComponentAccessor()

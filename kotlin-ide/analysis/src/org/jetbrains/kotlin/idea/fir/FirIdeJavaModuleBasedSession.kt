@@ -34,10 +34,18 @@ class FirIdeJavaModuleBasedSession(
 
 
     init {
+        val firIdeProvider = FirIdeProvider(project, scope, this, KotlinScopeProvider(::wrapScopeWithJvmMapped))
+
         registerComponent(
             FirProvider::class,
-            FirIdeProvider(project, scope, this, KotlinScopeProvider(::wrapScopeWithJvmMapped))
+            firIdeProvider
         )
+
+        registerComponent(
+            FirIdeProvider::class,
+            firIdeProvider
+        )
+
         registerComponent(
             FirSymbolProvider::class,
             FirCompositeSymbolProvider(
