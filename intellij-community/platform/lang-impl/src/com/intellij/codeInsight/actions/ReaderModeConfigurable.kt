@@ -94,7 +94,7 @@ class ReaderModeSettings : PersistentStateComponent<ReaderModeSettings.State> {
   data class State(
     var showBreadcrumbs: Boolean = true,
     var showLigatures: Boolean = true,
-    var increaseLineSpacing: Boolean = true,
+    var increaseLineSpacing: Boolean = false,
     var showRenderedDocs: Boolean = true,
     var showInlayHints: Boolean = true,
     var hideWarnings: Boolean = true,
