@@ -31,6 +31,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.ExternalFormatProcessor;
+import com.intellij.model.ModelBranch;
 import com.intellij.psi.impl.PsiDocumentManagerBase;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManager;
@@ -124,8 +125,6 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
   }
 
   public <T> T postponeFormattingInside(@NotNull Computable<T> computable) {
-    Application application = ApplicationManager.getApplication();
-    application.assertIsWriteThread();
     try {
       incrementPostponedCounter();
       return computable.compute();
@@ -141,9 +140,8 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
 
   private void decrementPostponedCounter() {
     Application application = ApplicationManager.getApplication();
-    application.assertIsWriteThread();
     if (--getContext().myPostponedCounter == 0) {
-      if (application.isWriteAccessAllowed()) {
+      if (application.isWriteAccessAllowed() || !application.isWriteThread()) {
         doPostponedFormatting();
       }
       else {
@@ -169,7 +167,7 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
         PsiFile containingFile = InjectedLanguageManager.getInstance(psiElement.getProject()).getTopLevelFile(psiElement);
         final FileViewProvider viewProvider = containingFile.getViewProvider();
 
-        if (!viewProvider.isEventSystemEnabled()) return;
+        if (!viewProvider.isEventSystemEnabled() && ModelBranch.getPsiBranch(containingFile) == null) return;
         getContext().myUpdatedProviders.putValue(viewProvider, (FileElement)containingFile.getNode());
         for (final ASTNode node : changeSet.getChangedElements()) {
           final TreeChange treeChange = changeSet.getChangesByElement(node);
