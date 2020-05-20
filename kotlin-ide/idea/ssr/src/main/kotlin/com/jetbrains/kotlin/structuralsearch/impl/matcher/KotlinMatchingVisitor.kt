@@ -17,12 +17,28 @@ import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
-    private inline fun <reified T> getTreeElement(): T? = when (myMatchingVisitor.element) {
-        is T -> myMatchingVisitor.element as T
+    private inline fun <reified T> getTreeElement(): T? =  when (val element = myMatchingVisitor.element) {
+        is KtParenthesizedExpression -> {
+            if(element is T) { // actually retrieving KtParenthesizedExpression so don't deparenthesize
+                element
+            } else {
+                val deparenthesized = element.deparenthesize()
+                if(deparenthesized is T) deparenthesized else {
+                    myMatchingVisitor.result = false
+                    null
+                }
+            }
+        }
+        is T -> element
         else -> {
             myMatchingVisitor.result = false
             null
         }
+    }
+
+    private fun KtExpression.countParenthesize(initial: Int = 0): Int {
+        val parentheses = children.firstOrNull { it is KtParenthesizedExpression } as KtExpression?
+        return parentheses?.countParenthesize(initial + 1) ?: initial
     }
 
     private fun GlobalMatchingVisitor.matchSequentially(elements: List<PsiElement?>, elements2: List<PsiElement?>) =
@@ -39,11 +55,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             is SubstitutionHandler -> handler.validate(el2, context)
             else -> myMatchingVisitor.matchText(el1, el2)
         }
-    }
-
-    private fun KtExpression.countParenthesize(initial: Int = 0): Int {
-        val parentheses = children.firstOrNull { it is KtParenthesizedExpression } as KtExpression?
-        return parentheses?.countParenthesize(initial + 1) ?: initial
     }
 
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
@@ -77,8 +88,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitConstantExpression(expression: KtConstantExpression) {
-        val other = getTreeElement<KtExpression>() ?: return
-        myMatchingVisitor.result = expression.text == other.deparenthesize().text
+        val other = getTreeElement<KtConstantExpression>() ?: return
+        myMatchingVisitor.result = expression.text == other.text
     }
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
@@ -540,11 +551,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
-        val other = getTreeElement<KtExpression>() ?: return
-        val deparenthesized = other.deparenthesize()
-        if (deparenthesized is KtStringTemplateExpression) {
-            myMatchingVisitor.result = myMatchingVisitor.matchSequentially(expression.entries, deparenthesized.entries)
-        } else myMatchingVisitor.result = false
+        val other = getTreeElement<KtStringTemplateExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(expression.entries, other.entries)
     }
 
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry) {

@@ -8,4 +8,6 @@ class KotlinSSParenthesesTest : KotlinSSTest() {
     fun testStringLiteral() { doTest("(((\"Hello World!\")))") }
 
     fun testVariableRef() { doTest("(('_))") }
+
+    fun testBinaryExpr() { doTest("1 + 2 + 3") }
 }
