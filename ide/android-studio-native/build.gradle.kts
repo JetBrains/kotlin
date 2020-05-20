@@ -39,7 +39,13 @@ dependencies {
     api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     api(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
 
-    testCompile(commonDep("junit:junit"))
+    testImplementation(kotlin("stdlib"))
+    testImplementation(project(":idea")) { isTransitive = false }
+    testImplementation(commonDep("junit:junit"))
+    testImplementation(intellijDep()) { includeJars(
+        "platform-api",
+        "util"
+    ) }
 }
 
 
