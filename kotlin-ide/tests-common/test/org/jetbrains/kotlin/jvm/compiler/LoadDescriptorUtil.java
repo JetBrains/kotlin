@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.jvm.compiler.javac.JavacRegistrarForTests;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -133,9 +132,6 @@ public class LoadDescriptorUtil {
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         configureEnvironment.accept(environment);
-        if (useJavacWrapper) {
-            JavacRegistrarForTests.INSTANCE.registerJavac(environment);
-        }
         AnalysisResult analysisResult = JvmResolveUtil.analyze(environment);
 
         PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
