@@ -71,3 +71,10 @@ public var int2: Int
 	public get
 	internal set
 
+private val privateVal: Int = 42
+private val privateVar: Int = 42
+private fun privateFun(): Int = 42
+val x: String = ""
+	get;
+var x: String = ""
+	private set;

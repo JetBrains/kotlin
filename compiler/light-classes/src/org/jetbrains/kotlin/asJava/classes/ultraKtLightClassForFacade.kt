@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 
 class KtUltraLightClassForFacade(
     manager: PsiManager,
@@ -66,11 +68,16 @@ class KtUltraLightClassForFacade(
                     ktFunction = declaration,
                     forceStatic = true
                 )
-                is KtProperty -> creator.propertyAccessors(
-                    declaration, declaration.isVar,
-                    forceStatic = true,
-                    onlyJvmStatic = false,
-                )
+                is KtProperty -> {
+                    if (!declaration.isPrivate() || declaration.accessors.isNotEmpty()) {
+                        creator.propertyAccessors(
+                            declaration = declaration,
+                            mutable = declaration.isVar,
+                            forceStatic = true,
+                            onlyJvmStatic = false,
+                        )
+                    } else emptyList()
+                }
                 else -> emptyList()
             }
             result.addAll(methods)
