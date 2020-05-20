@@ -2,8 +2,8 @@ FILE fqName:<root> fileName:/samConstructors.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:java.lang.Runnable
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): java.lang.Runnable declared in <root>'
-        CALL 'public final fun Runnable (block: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in java.lang' type=java.lang.Runnable origin=null
-          block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+        TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
+          FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test1'
@@ -12,21 +12,20 @@ FILE fqName:<root> fileName:/samConstructors.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in <root>'
-        CALL 'public final fun Runnable (block: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in java.lang' type=java.lang.Runnable origin=null
-          block: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
+        TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
+          GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:java.lang.Runnable
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): java.lang.Runnable declared in <root>'
-        CALL 'public final fun Runnable (block: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in java.lang' type=java.lang.Runnable origin=null
-          block: FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
+        TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
+          FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
   FUN name:test4 visibility:public modality:FINAL <> () returnType:java.util.Comparator<kotlin.Int?>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): java.util.Comparator<kotlin.Int?> declared in <root>'
-        CALL 'public final fun Comparator <T> (block: kotlin.Function2<T of java.util.Comparator?, T of java.util.Comparator?, kotlin.Int>): java.util.Comparator<T of java.util.Comparator> declared in java.util' type=java.util.Comparator<kotlin.Int?> origin=null
-          <T>: kotlin.Int?
-          block: FUN_EXPR type=kotlin.Function2<kotlin.Int?, kotlin.Int?, kotlin.Int> origin=LAMBDA
+        TYPE_OP type=java.util.Comparator<kotlin.Int?> origin=SAM_CONVERSION typeOperand=java.util.Comparator<kotlin.Int?>
+          FUN_EXPR type=kotlin.Function2<kotlin.Int?, kotlin.Int?, kotlin.Int> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:kotlin.Int?, b:kotlin.Int?) returnType:kotlin.Int
               VALUE_PARAMETER name:a index:0 type:kotlin.Int?
               VALUE_PARAMETER name:b index:1 type:kotlin.Int?
