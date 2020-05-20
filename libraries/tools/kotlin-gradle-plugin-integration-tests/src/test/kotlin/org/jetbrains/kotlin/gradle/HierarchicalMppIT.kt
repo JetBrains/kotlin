@@ -169,6 +169,21 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testHmppWithProjectJsIrDependency() {
+        with(Project("hierarchical-mpp-with-js-project-dependency", gradleVersion)) {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            build(
+                "assemble",
+                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.IR)
+            ) {
+                assertSuccessful()
+            }
+        }
+    }
+
     private fun publishThirdPartyLib(
         projectName: String = "third-party-lib",
         directoryPrefix: String = "hierarchical-mpp-published-modules",
