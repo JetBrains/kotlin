@@ -1,5 +1,5 @@
 /*
- * If koltin property hides some getter from java superclass this property should win in resolve
+ * If kotlin property hides some getter from java superclass this property should win in resolve
  */
 
 // FILE: A.java
