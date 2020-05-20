@@ -14,7 +14,38 @@
     <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
     <orderEntry type="library" exported="" name="Slf4j" level="project" />
     <orderEntry type="library" exported="" name="Gradle" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="org.codehaus.groovy:groovy" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="org.codehaus.groovy:groovy-ant" level="project" />
+    <orderEntry type="module-library" exported="" scope="PROVIDED">
+      <library name="org.codehaus.groovy:groovy:2.4.15" type="repository">
+        <properties maven-id="org.codehaus.groovy:groovy:2.4.15" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy/2.4.15/groovy-2.4.15.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy/2.4.15/groovy-2.4.15-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="" scope="PROVIDED">
+      <library name="org.codehaus.groovy:groovy-ant:2.4.15" type="repository">
+        <properties maven-id="org.codehaus.groovy:groovy-ant:2.4.15">
+          <exclude>
+            <dependency maven-id="org.codehaus.groovy:groovy" />
+            <dependency maven-id="org.apache.ant:ant" />
+            <dependency maven-id="org.codehaus.groovy:groovy-groovydoc" />
+            <dependency maven-id="org.apache.ant:ant-junit" />
+            <dependency maven-id="org.apache.ant:ant-launcher" />
+            <dependency maven-id="org.apache.ant:ant-antlr" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-ant/2.4.15/groovy-ant-2.4.15.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-ant/2.4.15/groovy-ant-2.4.15-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

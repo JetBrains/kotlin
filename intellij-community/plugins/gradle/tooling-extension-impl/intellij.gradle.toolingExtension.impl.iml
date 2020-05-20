@@ -11,7 +11,6 @@
     <orderEntry type="module" module-name="intellij.platform.externalSystem.rt" />
     <orderEntry type="module" module-name="intellij.gradle.toolingExtension" />
     <orderEntry type="library" name="Gradle" level="project" />
-    <orderEntry type="library" name="org.codehaus.groovy:groovy" level="project" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
     <orderEntry type="library" name="Trove4j" level="project" />
