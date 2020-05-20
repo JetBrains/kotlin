@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.execution
 
 import com.intellij.execution.Executor
@@ -22,8 +22,8 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FindSymbolParameters
-import groovyjarjarcommonscli.Option
 import icons.GradleIcons
+import org.apache.commons.cli.Option
 import org.jetbrains.plugins.gradle.action.GradleExecuteTaskAction
 import org.jetbrains.plugins.gradle.service.execution.cmd.GradleCommandLineOptionsProvider
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil

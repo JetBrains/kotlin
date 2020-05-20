@@ -29,5 +29,6 @@
     <orderEntry type="module" module-name="intellij.platform.inspect" exported="" />
     <orderEntry type="library" name="Trove4j" level="project" />
     <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="commons-cli" level="project" />
   </component>
 </module>
