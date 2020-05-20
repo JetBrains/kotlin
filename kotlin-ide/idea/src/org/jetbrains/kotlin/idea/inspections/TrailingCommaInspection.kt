@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.util.isLineBreak
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.*
 import javax.swing.JComponent
+import kotlin.properties.Delegates
 
 class TrailingCommaInspection(
     @JvmField
@@ -30,13 +31,16 @@ class TrailingCommaInspection(
 ) : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = object : TrailingCommaVisitor() {
         override val recursively: Boolean = false
+        var useTrailingComma by Delegates.notNull<Boolean>()
 
         override fun process(commaOwner: KtElement) {
+            useTrailingComma = CodeStyle.getSettings(commaOwner.project).kotlinCustomSettings.ALLOW_TRAILING_COMMA
             val action = TrailingCommaAction.create(commaOwner)
             if (action != TrailingCommaAction.REMOVE) {
                 checkCommaPosition(commaOwner)
                 checkLineBreaks(commaOwner)
             }
+
             checkTrailingComma(commaOwner, action)
         }
 
@@ -44,16 +48,8 @@ class TrailingCommaInspection(
             val first = TrailingCommaHelper.elementBeforeFirstElement(commaOwner)
             if (first?.nextLeaf(true)?.isLineBreak() == false) {
                 first.nextSibling?.let {
-                    registerProblemForLineBreak(
-                        commaOwner,
-                        it,
-                        if (ApplicationManager.getApplication().isUnitTestMode)
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                        else
-                            ProblemHighlightType.INFORMATION,
-                    )
+                    registerProblemForLineBreak(commaOwner, it, ProblemHighlightType.INFORMATION)
                 }
-
             }
 
             val last = TrailingCommaHelper.elementAfterLastElement(commaOwner)
@@ -61,7 +57,7 @@ class TrailingCommaInspection(
                 registerProblemForLineBreak(
                     commaOwner,
                     last,
-                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION,
                 )
             }
         }
@@ -84,17 +80,16 @@ class TrailingCommaInspection(
                     trailingCommaOrLastElement,
                     KotlinBundle.message("inspection.trailing.comma.missing.trailing.comma"),
                     KotlinBundle.message("inspection.trailing.comma.add.trailing.comma"),
-                    if (addCommaWarning || ApplicationManager.getApplication().isUnitTestMode)
-                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                    else
-                        ProblemHighlightType.INFORMATION,
+                    if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION,
                 )
             } else if (action == TrailingCommaAction.REMOVE) {
                 if (!trailingCommaOrLastElement.isComma) return
                 reportProblem(
                     trailingCommaOrLastElement,
                     KotlinBundle.message("inspection.trailing.comma.useless.trailing.comma"),
-                    KotlinBundle.message("inspection.trailing.comma.remove.trailing.comma")
+                    KotlinBundle.message("inspection.trailing.comma.remove.trailing.comma"),
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    checkTrailingCommaSettings = false,
                 )
             }
         }
@@ -104,6 +99,7 @@ class TrailingCommaInspection(
             message: String,
             fixMessage: String,
             highlightType: ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+            checkTrailingCommaSettings: Boolean = true,
         ) {
             val commaOwner = commaOrElement.parent as KtElement
             // case for KtFunctionLiteral, where PsiWhiteSpace after KtTypeParameterList isn't included in this list
@@ -111,7 +107,7 @@ class TrailingCommaInspection(
             holder.registerProblem(
                 problemOwner,
                 message,
-                highlightType,
+                highlightType.applyCondition(!checkTrailingCommaSettings || useTrailingComma),
                 commaOrElement.textRangeOfCommaOrSymbolAfter.shiftLeft(problemOwner.startOffset),
                 createQuickFix(fixMessage, commaOwner),
             )
@@ -126,10 +122,16 @@ class TrailingCommaInspection(
             holder.registerProblem(
                 problemElement,
                 KotlinBundle.message("inspection.trailing.comma.missing.line.break"),
-                highlightType,
+                highlightType.applyCondition(useTrailingComma),
                 TextRange.from(elementForTextRange.startOffset, 1).shiftLeft(problemElement.startOffset),
                 createQuickFix(KotlinBundle.message("inspection.trailing.comma.add.line.break"), commaOwner),
             )
+        }
+
+        private fun ProblemHighlightType.applyCondition(condition: Boolean): ProblemHighlightType = when {
+            ApplicationManager.getApplication().isUnitTestMode -> ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+            condition -> this
+            else -> ProblemHighlightType.INFORMATION
         }
 
         private fun createQuickFix(
