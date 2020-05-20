@@ -7,7 +7,7 @@ package com.example.foo
 
 import com.example.thirdparty.thirdPartyJsFun
 
-fun fooJvmAndJs(): String {
+fun fooJs(): String {
     thirdPartyJsFun()
     return "hello"
 }
