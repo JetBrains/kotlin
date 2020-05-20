@@ -46,6 +46,8 @@ val libraries by configurations.creating {
     }
 }
 
+val librariesStripVersion by configurations.creating
+
 // Compiler plugins should be copied without `kotlin-` prefix
 val compilerPlugins by configurations.creating  {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
@@ -153,6 +155,8 @@ dependencies {
         libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
     }
 
+    librariesStripVersion(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
     }
@@ -196,7 +200,6 @@ dependencies {
     fatJarContents(protobufFull())
     fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
     fatJarContents(commonDep("io.javaslang", "javaslang"))
-    fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     fatJarContents(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
 
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
@@ -342,6 +345,11 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
     into("lib") {
         from(jar) { rename { "$compilerBaseName.jar" } }
         from(libraries)
+        from(librariesStripVersion) {
+            rename {
+                it.replace(Regex("-\\d.*\\.jar\$"), ".jar")
+            }
+        }
         from(sources)
         from(compilerPlugins) {
             rename { it.removePrefix("kotlin-") }

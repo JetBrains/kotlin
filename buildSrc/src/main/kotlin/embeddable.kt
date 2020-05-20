@@ -20,7 +20,6 @@ val packagesToRelocate =
         "org.picocontainer",
         "org.jline",
         "org.fusesource",
-        "kotlinx.coroutines",
         "net.jpountz",
         "one.util.streamex",
         "kotlinx.collections.immutable"
