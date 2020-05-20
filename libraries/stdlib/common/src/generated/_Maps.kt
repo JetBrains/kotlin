@@ -190,6 +190,110 @@ public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.E
 }
 
 /**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each entry in the map.
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.maxOf(selector: (Map.Entry<K, V>) -> Double): Double {
+    return entries.maxOf(selector)
+}
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each entry in the map.
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.maxOf(selector: (Map.Entry<K, V>) -> Float): Float {
+    return entries.maxOf(selector)
+}
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each entry in the map.
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxOf(selector: (Map.Entry<K, V>) -> R): R {
+    return entries.maxOf(selector)
+}
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each entry in the map or `null` if there are no entries.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.maxOfOrNull(selector: (Map.Entry<K, V>) -> Double): Double? {
+    return entries.maxOfOrNull(selector)
+}
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each entry in the map or `null` if there are no entries.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.maxOfOrNull(selector: (Map.Entry<K, V>) -> Float): Float? {
+    return entries.maxOfOrNull(selector)
+}
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each entry in the map or `null` if there are no entries.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxOfOrNull(selector: (Map.Entry<K, V>) -> R): R? {
+    return entries.maxOfOrNull(selector)
+}
+
+/**
+ * Returns the largest value according to the provided [comparator]
+ * among all values produced by [selector] function applied to each entry in the map.
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R> Map<out K, V>.maxOfWith(comparator: Comparator<in R>, selector: (Map.Entry<K, V>) -> R): R {
+    return entries.maxOfWith(comparator, selector)
+}
+
+/**
+ * Returns the largest value according to the provided [comparator]
+ * among all values produced by [selector] function applied to each entry in the map or `null` if there are no entries.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R> Map<out K, V>.maxOfWithOrNull(comparator: Comparator<in R>, selector: (Map.Entry<K, V>) -> R): R? {
+    return entries.maxOfWithOrNull(comparator, selector)
+}
+
+/**
  * Returns the first entry having the largest value according to the provided [comparator] or `null` if there are no entries.
  */
 @kotlin.internal.InlineOnly
@@ -204,6 +308,110 @@ public inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Ent
  */
 public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     return entries.minBy(selector)
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each entry in the map.
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.minOf(selector: (Map.Entry<K, V>) -> Double): Double {
+    return entries.minOf(selector)
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each entry in the map.
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.minOf(selector: (Map.Entry<K, V>) -> Float): Float {
+    return entries.minOf(selector)
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each entry in the map.
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minOf(selector: (Map.Entry<K, V>) -> R): R {
+    return entries.minOf(selector)
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each entry in the map or `null` if there are no entries.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.minOfOrNull(selector: (Map.Entry<K, V>) -> Double): Double? {
+    return entries.minOfOrNull(selector)
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each entry in the map or `null` if there are no entries.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.minOfOrNull(selector: (Map.Entry<K, V>) -> Float): Float? {
+    return entries.minOfOrNull(selector)
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each entry in the map or `null` if there are no entries.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minOfOrNull(selector: (Map.Entry<K, V>) -> R): R? {
+    return entries.minOfOrNull(selector)
+}
+
+/**
+ * Returns the smallest value according to the provided [comparator]
+ * among all values produced by [selector] function applied to each entry in the map.
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R> Map<out K, V>.minOfWith(comparator: Comparator<in R>, selector: (Map.Entry<K, V>) -> R): R {
+    return entries.minOfWith(comparator, selector)
+}
+
+/**
+ * Returns the smallest value according to the provided [comparator]
+ * among all values produced by [selector] function applied to each entry in the map or `null` if there are no entries.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R> Map<out K, V>.minOfWithOrNull(comparator: Comparator<in R>, selector: (Map.Entry<K, V>) -> R): R? {
+    return entries.minOfWithOrNull(comparator, selector)
 }
 
 /**

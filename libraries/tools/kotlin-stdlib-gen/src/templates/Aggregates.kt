@@ -544,6 +544,152 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    fun f_minMaxOf() = sequence {
+        fun def(op: String, selectorType: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+            fn("${op}Of$orNull(selector: (T) -> $selectorType)") {
+                includeDefault()
+                include(Maps, CharSequences, ArraysOfUnsigned)
+            } builder {
+                inlineOnly()
+                since("1.4")
+                annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+                annotation("@OverloadResolutionByLambdaReturnType")
+
+                val isFloat = selectorType != "R"
+
+                doc {
+                    """
+                    Returns the ${if (op == "max") "largest" else "smallest"} value among all values produced by [selector] function 
+                    applied to each ${f.element} in the ${f.collection}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
+                    """ +
+//                    """
+//                    If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+//                    """.ifOrEmpty(isFloat) +
+                    """
+                    @throws NoSuchElementException if the ${f.collection} is empty.
+                    """.ifOrEmpty(!nullable)
+                }
+
+                if (!isFloat) typeParam("R : Comparable<R>")
+                returns(selectorType + "?".ifOrEmpty(nullable))
+                val doOnEmpty = if (nullable) "return null" else "throw NoSuchElementException()"
+                val acc = op + "Value"
+                val cmp = if (op == "max") "<" else ">"
+                body {
+                    """
+                    val iterator = iterator()
+                    if (!iterator.hasNext()) $doOnEmpty
+                    var $acc = selector(iterator.next())
+                    ${"if ($acc.isNaN()) return $acc".ifOrEmpty(isFloat)}
+                    while (iterator.hasNext()) {
+                        val v = selector(iterator.next())
+                        ${"if (v.isNaN()) return v".ifOrEmpty(isFloat)}
+                        if ($acc $cmp v) {
+                            $acc = v
+                        }
+                    }
+                    return $acc
+                    """
+                }
+                body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+                    """
+                    if (isEmpty()) $doOnEmpty
+        
+                    var $acc = selector(this[0])
+                    val lastIndex = this.lastIndex
+                    if (lastIndex == 0) return $acc
+                    ${"if ($acc.isNaN()) return $acc".ifOrEmpty(isFloat)} 
+                    for (i in 1..lastIndex) {
+                        val v = selector(this[i])
+                        ${"if (v.isNaN()) return v".ifOrEmpty(isFloat)}
+                        if ($acc $cmp v) {
+                            $acc = v
+                        }
+                    }
+                    return $acc
+                    """
+                }
+                specialFor(Maps) {
+                    inlineOnly()
+                    body { "return entries.${op}Of$orNull(selector)" }
+                }
+            }
+
+
+        for (op in listOf("min", "max"))
+            for (selectorType in listOf("R", "Float", "Double"))
+                for (nullable in listOf(false, true))
+                    yield(def(op, selectorType, nullable))
+    }
+
+    fun f_minMaxOfWith() = sequence {
+        val selectorType = "R"
+        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+            fn("${op}OfWith$orNull(comparator: Comparator<in R>, selector: (T) -> $selectorType)") {
+                includeDefault()
+                include(Maps, CharSequences, ArraysOfUnsigned)
+            } builder {
+                inlineOnly()
+                since("1.4")
+                annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+                annotation("@OverloadResolutionByLambdaReturnType")
+
+                doc {
+                    """
+                    Returns the ${if (op == "max") "largest" else "smallest"} value according to the provided [comparator] 
+                    among all values produced by [selector] function applied to each ${f.element} in the ${f.collection}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
+                    """ +
+                    """
+                    @throws NoSuchElementException if the ${f.collection} is empty.
+                    """.ifOrEmpty(!nullable)
+                }
+
+                typeParam(selectorType)
+                returns(selectorType + "?".ifOrEmpty(nullable))
+                val doOnEmpty = if (nullable) "return null" else "throw NoSuchElementException()"
+                val acc = op + "Value"
+                val cmp = if (op == "max") "<" else ">"
+                body {
+                    """
+                    val iterator = iterator()
+                    if (!iterator.hasNext()) $doOnEmpty
+                    var $acc = selector(iterator.next())
+                    while (iterator.hasNext()) {
+                        val v = selector(iterator.next())
+                        if (comparator.compare($acc, v) $cmp 0) {
+                            $acc = v
+                        }
+                    }
+                    return $acc
+                    """
+                }
+                body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+                    """
+                    if (isEmpty()) $doOnEmpty
+        
+                    var $acc = selector(this[0])
+                    val lastIndex = this.lastIndex
+                    if (lastIndex == 0) return $acc
+                    for (i in 1..lastIndex) {
+                        val v = selector(this[i])
+                        if (comparator.compare($acc, v) $cmp 0) {
+                            $acc = v
+                        }
+                    }
+                    return $acc
+                    """
+                }
+                specialFor(Maps) {
+                    body { "return entries.${op}OfWith$orNull(comparator, selector)" }
+                }
+            }
+
+        for (op in listOf("min", "max"))
+            for (nullable in listOf(false, true))
+                yield(def(op, nullable))
+    }
+
+
     val f_foldIndexed = fn("foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R)") {
         includeDefault()
         include(CharSequences)

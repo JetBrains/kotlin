@@ -9,6 +9,7 @@ import test.assertStaticAndRuntimeTypeIs
 import kotlin.test.*
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
+import kotlin.math.pow
 import kotlin.random.Random
 
 class CollectionTest {
@@ -893,6 +894,63 @@ class CollectionTest {
         expect(5, { listOf(5, 4, 3, 2, 1).asSequence().maxBy { c++; it * it } })
         assertEquals(5, c)
     }
+
+    @Test fun minOf() {
+        assertEquals(null, emptyList<Int>().minOfOrNull { it } )
+        assertFailsWith<NoSuchElementException> { emptyList<Int>().minOf { it } }
+
+        assertEquals(1, listOf(1).minOf { it })
+        assertEquals(-3, listOf(2, 3).minOf { -it })
+        assertEquals("xa", listOf('a', 'b').minOf { "x$it" })
+        assertEquals(1, listOf("b", "abc").minOf { it.length })
+
+        assertEquals(-32.0, listOf(1, 2, 3, 4, 5).minOf { (-2.0).pow(it) })
+        assertEquals(-32.0F, listOf(1, 2, 3, 4, 5).minOf { (-2.0F).pow(it) })
+
+        assertEquals(Double.NaN, listOf(1, -1, 0).minOf { it.toDouble().pow(0.5) })
+        assertEquals(Float.NaN, listOf(1, -1, 0).minOf { it.toFloat().pow(0.5F) })
+    }
+
+    @Test fun minOfWith() {
+        val data = listOf("abca", "bcaa", "cabb")
+        val result = data.minOfWith(compareBy { it.reversed() }) { it.take(3) }
+        val resultOrNull = data.minOfWithOrNull(compareBy { it.reversed() }) { it.take(3) }
+        assertEquals("bca", result)
+        assertEquals(result, resultOrNull)
+
+        assertEquals(null, emptyList<Int>().minOfWithOrNull(naturalOrder()) { it })
+        // TODO: investigate why no unit-coercion happens here and an explicit 'Unit' is required
+        assertFailsWith<NoSuchElementException> { emptyList<Int>().minOfWith(naturalOrder()) { it }; Unit }
+    }
+
+    @Test fun maxOf() {
+        assertEquals(null, emptyList<Int>().maxOfOrNull { it } )
+        assertFailsWith<NoSuchElementException> { emptyList<Int>().maxOf { it } }
+
+        assertEquals(1, listOf(1).maxOf { it })
+        assertEquals(-2, listOf(2, 3).maxOf { -it })
+        assertEquals("xb", listOf('a', 'b').maxOf { "x$it" })
+        assertEquals(3, listOf("b", "abc").maxOf { it.length })
+
+        assertEquals(16.0, listOf(1, 2, 3, 4, 5).maxOf { (-2.0).pow(it) })
+        assertEquals(16.0F, listOf(1, 2, 3, 4, 5).maxOf { (-2.0F).pow(it) })
+    }
+
+    @Test fun maxOfWith() {
+        val data = listOf("abca", "bcaa", "cabb")
+        val result = data.maxOfWith(compareBy { it.reversed() }) { it.take(3) }
+        val resultOrNull = data.maxOfWithOrNull(compareBy { it.reversed() }) { it.take(3) }
+        assertEquals("abc", result)
+        assertEquals(result, resultOrNull)
+
+        assertEquals(null, emptyList<Int>().maxOfWithOrNull(naturalOrder()) { it })
+        // TODO: investigate why no unit-coercion happens here and an explicit 'Unit' is required
+        assertFailsWith<NoSuchElementException> { emptyList<Int>().maxOfWith(naturalOrder()) { it }; Unit }
+
+        assertEquals(Double.NaN, listOf(1, -1, 0).maxOf { it.toDouble().pow(0.5) })
+        assertEquals(Float.NaN, listOf(1, -1, 0).maxOf { it.toFloat().pow(0.5F) })
+    }
+
 
     @Test fun sum() {
         expect(0) { arrayListOf<Int>().sum() }
