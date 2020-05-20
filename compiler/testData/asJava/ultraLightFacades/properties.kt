@@ -61,9 +61,6 @@ operator fun setValue(t: T, p: KProperty<*>, i: Int) {}
 @delegate:Transient
 val plainField: Int = 1
 
-@delegate:Transient
-val lazy by lazy { 1 }
-
 public var int1: Int
 	private set
 	protected get

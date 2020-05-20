@@ -1,38 +1,37 @@
-public final class Container {
-    public Container() { /* compiled code */ }
+public final class Container /* p1.Container*/ {
+  public  Container();//  .ctor()
 
-    public static final class MyString implements java.lang.CharSequence {
-        public int getLength() { /* compiled code */ }
 
-        @org.jetbrains.annotations.NotNull
-        public error.NonExistentClass chars() { /* compiled code */ }
 
-        @org.jetbrains.annotations.NotNull
-        public error.NonExistentClass codePoints() { /* compiled code */ }
+public static final class MyNumber /* p1.Container.MyNumber*/ extends java.lang.Number {
+  public  MyNumber();//  .ctor()
 
-        public char get(int index) { /* compiled code */ }
+  public byte toByte();//  toByte()
 
-        @org.jetbrains.annotations.NotNull
-        public java.lang.CharSequence subSequence(int startIndex, int endIndex) { /* compiled code */ }
+  public char toChar();//  toChar()
 
-        public MyString() { /* compiled code */ }
-    }
+  public double toDouble();//  toDouble()
 
-    public static final class MyNumber extends java.lang.Number {
-        public byte toByte() { /* compiled code */ }
+  public float toFloat();//  toFloat()
 
-        public char toChar() { /* compiled code */ }
+  public int toInt();//  toInt()
 
-        public double toDouble() { /* compiled code */ }
+  public long toLong();//  toLong()
 
-        public float toFloat() { /* compiled code */ }
+  public short toShort();//  toShort()
 
-        public int toInt() { /* compiled code */ }
+}public static final class MyString /* p1.Container.MyString*/ implements java.lang.CharSequence {
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
 
-        public long toLong() { /* compiled code */ }
+  public  MyString();//  .ctor()
 
-        public short toShort() { /* compiled code */ }
+  public char get(int);//  get(int)
 
-        public MyNumber() { /* compiled code */ }
-    }
-}
+  public error.NonExistentClass chars();//  chars()
+
+  public error.NonExistentClass codePoints();//  codePoints()
+
+  public int getLength();//  getLength()
+
+}}

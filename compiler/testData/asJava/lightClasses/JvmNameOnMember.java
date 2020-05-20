@@ -1,9 +1,10 @@
-public final class C {
-    @kotlin.jvm.JvmName(name = "myFun")
-    public final void myFun(@org.jetbrains.annotations.NotNull C c) { /* compiled code */ }
+public final class C /* C*/ {
+  @kotlin.jvm.JvmName(name = "myFun")
+  public final void myFun(@org.jetbrains.annotations.NotNull() C);//  myFun(C)
 
-    @kotlin.jvm.JvmName(name = "myFun")
-    public final void myFun(@org.jetbrains.annotations.NotNull C c, @org.jetbrains.annotations.NotNull C c2) { /* compiled code */ }
+  @kotlin.jvm.JvmName(name = "myFun")
+  public final void myFun(@org.jetbrains.annotations.NotNull() C, @org.jetbrains.annotations.NotNull() C);//  myFun(C, C)
 
-    public C() { /* compiled code */ }
+  public  C();//  .ctor()
+
 }

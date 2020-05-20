@@ -1,2 +1,2 @@
-public final class AllPrivate {
+public final class AllPrivate /* p.AllPrivate*/ {
 }

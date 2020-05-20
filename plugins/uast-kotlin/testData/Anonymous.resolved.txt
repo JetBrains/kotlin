@@ -10,9 +10,9 @@ UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = io
 UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = InputStream) -> PsiClass:InputStream: InputStream
     ULocalVariable (name = runnable) -> UObjectLiteralExpression -> null:
     UTypeReferenceExpression (name = java.lang.Runnable) -> USimpleNameReferenceExpression (identifier = Runnable) -> PsiClass:Runnable: Runnable
-    UBlockExpression -> UQualifiedReferenceExpression -> KtLightMethodImpl:run: run
+    UBlockExpression -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:run: run
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = runnable) -> LightVariableBuilder:runnable: runnable
-    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtLightMethodImpl:run) -> USimpleNameReferenceExpression (identifier = run) -> KtLightMethodImpl:run: run
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:run) -> USimpleNameReferenceExpression (identifier = run) -> KtUltraLightMethodForSourceDeclaration:run: run
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))(resolves to null) -> USimpleNameReferenceExpression (identifier = Runnable) -> PsiClass:Runnable: Runnable
         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to PsiMethod:println) -> USimpleNameReferenceExpression (identifier = println) -> PsiMethod:println: println
     UBlockExpression -> UQualifiedReferenceExpression -> PsiMethod:run: run

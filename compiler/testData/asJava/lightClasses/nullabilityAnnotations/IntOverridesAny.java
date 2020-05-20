@@ -1,11 +1,12 @@
-public final class C implements Tr {
-    private final int v;
+public final class C /* C*/ implements Tr {
+  private final int v;
 
-    @org.jetbrains.annotations.NotNull
-    public java.lang.Integer foo() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer foo();//  foo()
 
-    @org.jetbrains.annotations.NotNull
-    public java.lang.Integer getV() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer getV();//  getV()
 
-    public C() { /* compiled code */ }
+  public  C();//  .ctor()
+
 }

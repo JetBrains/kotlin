@@ -600,10 +600,9 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
             assertEquals("USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Local)", classReference.asLogString())
             val localClass = classReference.resolve().toUElement() ?: kfail("uelement expected")
             assertEquals("UClass (name = Local)", localClass.asLogString())
-            assertEquals(localClass, localFunctionResolved.toUElement())
             val localPrimaryConstructor = localFunctionResolved.toUElementOfType<UMethod>() ?: kfail("constructor expected")
             assertTrue(localPrimaryConstructor.isConstructor)
-            assertEquals(localClass, localPrimaryConstructor.uastParent)
+            assertEquals(localClass.javaPsi, localPrimaryConstructor.javaPsi.cast<PsiMethod>().containingClass)
         }
     }
 

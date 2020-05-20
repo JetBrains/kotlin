@@ -1,38 +1,38 @@
 UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
 UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
-    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = =) -> null: null
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = init) -> Light Parameter: init
 UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
 UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
-    ULocalVariable (name = result) -> USimpleNameReferenceExpression (identifier = privateProp) -> KtLightFieldForSourceDeclaration:privateProp: privateProp
-    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = privateProp) -> KtLightFieldForSourceDeclaration:privateProp: privateProp
+    ULocalVariable (name = result) -> USimpleNameReferenceExpression (identifier = privateProp) -> LightVariableBuilder:privateProp: privateProp
+    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = privateProp) -> LightVariableBuilder:privateProp: privateProp
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = =) -> null: null
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = x) -> Light Parameter: x
-    UReturnExpression -> USimpleNameReferenceExpression (identifier = privateProp) -> KtLightFieldForSourceDeclaration:privateProp: privateProp
-    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))(resolves to KtLightMethodImpl:A) -> USimpleNameReferenceExpression (identifier = A) -> KtLightMethodImpl:A: A
+    UReturnExpression -> USimpleNameReferenceExpression (identifier = privateProp) -> LightVariableBuilder:privateProp: privateProp
+    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))(resolves to KtUltraLightMethodForSourceDeclaration:A) -> USimpleNameReferenceExpression (identifier = A) -> KtUltraLightMethodForSourceDeclaration:A: A
     UPrefixExpression (operator = -) -> USimpleNameReferenceExpression (identifier = -) -> null: null
-    UPrefixExpression (operator = -) -> UQualifiedReferenceExpression -> KtLightMethodImpl:getMutableProp: getMutableProp
+    UPrefixExpression (operator = -) -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:getMutableProp: getMutableProp
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = a) -> LightVariableBuilder:a: a
-    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:getMutableProp: getMutableProp
-    UBinaryExpression (operator = =) -> UQualifiedReferenceExpression -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:getMutableProp: getMutableProp
+    UBinaryExpression (operator = =) -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = a) -> LightVariableBuilder:a: a
-    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = =) -> null: null
-    UBinaryExpression (operator = +=) -> UQualifiedReferenceExpression -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UBinaryExpression (operator = +=) -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = a) -> LightVariableBuilder:a: a
-    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UBinaryExpression (operator = +=) -> USimpleNameReferenceExpression (identifier = +=) -> null: null
     UBinaryExpression (operator = +=) -> USimpleNameReferenceExpression (identifier = x) -> LightVariableBuilder:x: x
     UPrefixExpression (operator = ++) -> USimpleNameReferenceExpression (identifier = ++) -> null: null
-    UPrefixExpression (operator = ++) -> UQualifiedReferenceExpression -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UPrefixExpression (operator = ++) -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = a) -> LightVariableBuilder:a: a
-    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:setMutableProp: setMutableProp
-    UPostfixExpression (operator = --) -> UQualifiedReferenceExpression -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
+    UPostfixExpression (operator = --) -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = a) -> LightVariableBuilder:a: a
-    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UPostfixExpression (operator = --) -> USimpleNameReferenceExpression (identifier = --) -> null: null
-UTypeReferenceExpression (name = A) -> USimpleNameReferenceExpression (identifier = A) -> KtLightClassImpl:class A(init: Int) {
+UTypeReferenceExpression (name = A) -> USimpleNameReferenceExpression (identifier = A) -> KtUltraLightClass:class A(init: Int) {
     private var privateProp = 0 // accesses should be field accesses
     var mutableProp: Int
     init {
@@ -46,13 +46,13 @@ UTypeReferenceExpression (name = A) -> USimpleNameReferenceExpression (identifie
     }
 }: A
     UPrefixExpression (operator = -) -> USimpleNameReferenceExpression (identifier = -) -> null: null
-    UPrefixExpression (operator = -) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:getMutableProp: getMutableProp
-    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UPrefixExpression (operator = -) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:getMutableProp: getMutableProp
+    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = =) -> null: null
-    UBinaryExpression (operator = +=) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UBinaryExpression (operator = +=) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UBinaryExpression (operator = +=) -> USimpleNameReferenceExpression (identifier = +=) -> null: null
     UBinaryExpression (operator = +=) -> USimpleNameReferenceExpression (identifier = x) -> LightVariableBuilder:x: x
     UPrefixExpression (operator = ++) -> USimpleNameReferenceExpression (identifier = ++) -> null: null
-    UPrefixExpression (operator = ++) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:setMutableProp: setMutableProp
-    UPostfixExpression (operator = --) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtLightMethodImpl:setMutableProp: setMutableProp
+    UPrefixExpression (operator = ++) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
+    UPostfixExpression (operator = --) -> USimpleNameReferenceExpression (identifier = mutableProp) -> KtUltraLightMethodForSourceDeclaration:setMutableProp: setMutableProp
     UPostfixExpression (operator = --) -> USimpleNameReferenceExpression (identifier = --) -> null: null

@@ -9,7 +9,6 @@ public enum Foo /* Foo*/ {
 }
 
 public final class InlinedDelegate /* InlinedDelegate*/<T>  {
-  @null()
   public final T getNode();//  getNode()
 
 }

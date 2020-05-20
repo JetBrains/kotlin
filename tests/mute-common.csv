@@ -51,7 +51,6 @@ org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncLa
 org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testStepOverInlinedLambdaStdlib, fails after advancing bootstrap KT-37879,,
 org.jetbrains.kotlin.incremental.IncrementalJsKlibCompilerRunnerTestGenerated.ClassHierarchyAffected.testMethodRemoved, full fledged FO in klib required,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.ConvertToAnonymousObject.testHasConcreateMember2, Unprocessed,,
-org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.MakePrivateAndOverrideMember.testSetter, Unprocessed,,
 org.jetbrains.uast.test.kotlin.KotlinUastTypesTest.testEa101715, Unprocessed,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateFunction.Invoke.testLambdaArgument, Unprocessed,,
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testClassAndConstuctors, Unprocessed,,
@@ -78,3 +77,10 @@ org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinL
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryMemberFunctionUsages,,, FLAKY
 org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,,,
 org.jetbrains.kotlin.idea.repl.IdeReplExecutionTest.testOnePlusOne,,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.MakePrivateAndOverrideMember.testSetter, Unprocessed,,
+org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.testAnnotatedPropertyWithSites, Unprocessed,,
+org.jetbrains.kotlin.asJava.classes.UltraLightClassSanityTestGenerated.testAnnotatedPropertyWithSites, Unprocessed,,
+org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.Facades.testSingleJvmClassName, Invalid behavior of old lightclasses in common tests,,
+org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.CompilationErrors.testActualTypeAliasCustomJvmPackageName, Invalid behavior of old lightclasses in common tests,,
+org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.CompilationErrors.testJvmPackageName, Invalid behavior of old lightclasses in common tests,,
+org.jetbrains.uast.test.kotlin.SimpleKotlinRenderLogTest.testReceiverFun, Analysing of facade annotation with receiver site is broken (connected with KT-40403),,

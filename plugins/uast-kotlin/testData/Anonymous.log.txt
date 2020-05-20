@@ -10,7 +10,7 @@ UFile (package = )
                             UClass (name = null)
                                 UMethod (name = run)
                                     UBlockExpression
-                                UMethod (name = AnonymousKt$foo$runnable$1)
+                                UMethod (name = )
                 UQualifiedReferenceExpression
                     USimpleNameReferenceExpression (identifier = runnable)
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
@@ -39,7 +39,7 @@ UFile (package = )
                                     UBlockExpression
                                 UMethod (name = run)
                                     UBlockExpression
-                                UMethod (name = AnonymousKt$foo$closeableRunnable$1)
+                                UMethod (name = )
                 UDeclarationsExpression
                     ULocalVariable (name = runnableIs)
                         UObjectLiteralExpression
@@ -50,7 +50,7 @@ UFile (package = )
                                             ULiteralExpression (value = 0)
                                 UMethod (name = run)
                                     UBlockExpression
-                                UMethod (name = AnonymousKt$foo$runnableIs$1)
+                                UMethod (name = )
         UMethod (name = withErr)
             UBlockExpression
                 UDeclarationsExpression

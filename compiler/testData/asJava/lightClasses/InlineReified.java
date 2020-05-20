@@ -1,3 +1,4 @@
-public final class InlineReified {
-    public InlineReified() { /* compiled code */ }
+public final class InlineReified /* a.InlineReified*/ {
+  public  InlineReified();//  .ctor()
+
 }
