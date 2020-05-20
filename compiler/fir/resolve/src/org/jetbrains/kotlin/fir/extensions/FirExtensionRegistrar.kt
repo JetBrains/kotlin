@@ -13,7 +13,13 @@ abstract class FirExtensionRegistrar {
     companion object : ProjectExtensionDescriptor<FirExtensionRegistrar>(
         "org.jetbrains.kotlin.fir.frontendIrExtension",
         FirExtensionRegistrar::class.java
-    )
+    ) {
+        val AVAILABLE_EXTENSIONS = listOf(
+            FirStatusTransformerExtension::class,
+            FirClassGenerationExtension::class,
+            AbstractFirAdditionalCheckersExtension::class
+        )
+    }
 
     protected abstract fun ExtensionRegistrarContext.configurePlugin()
 
@@ -37,26 +43,41 @@ abstract class FirExtensionRegistrar {
         }
     }
 
-    fun configure(): Collection<RegisteredExtensionsFactories<*>> {
+    @OptIn(PluginServicesInitialization::class)
+    fun configure(): BunchOfRegisteredExtensions {
         ExtensionRegistrarContext().configurePlugin()
-        return map.values
+        return BunchOfRegisteredExtensions(map.values)
     }
 
-    class RegisteredExtensionsFactories<P : FirExtension>(val kClass: KClass<P>) {
-        val extensionFactories: MutableList<FirExtension.Factory<P>> = mutableListOf()
+    class RegisteredExtensionsFactories(val kClass: KClass<out FirExtension>) {
+        val extensionFactories: MutableList<FirExtension.Factory<FirExtension>> = mutableListOf()
     }
 
-    private val map: MutableMap<KClass<out FirExtension>, RegisteredExtensionsFactories<*>> = mutableMapOf()
+    private val map: Map<KClass<out FirExtension>, RegisteredExtensionsFactories> = AVAILABLE_EXTENSIONS.map {
+        it to RegisteredExtensionsFactories(it)
+    }.toMap()
 
     private fun <P : FirExtension> registerExtension(kClass: KClass<out P>, factory: FirExtension.Factory<P>) {
         @Suppress("UNCHECKED_CAST")
-        val registeredExtensions = map.computeIfAbsent(kClass) { RegisteredExtensionsFactories(kClass) } as RegisteredExtensionsFactories<P>
+        val registeredExtensions = map.getValue(kClass)
         registeredExtensions.extensionFactories += factory
     }
 }
 
+class BunchOfRegisteredExtensions @PluginServicesInitialization constructor(
+    val extensions: Collection<FirExtensionRegistrar.RegisteredExtensionsFactories>
+) {
+    companion object {
+        @OptIn(PluginServicesInitialization::class)
+        fun empty(): BunchOfRegisteredExtensions {
+            val extensions = FirExtensionRegistrar.AVAILABLE_EXTENSIONS.map { FirExtensionRegistrar.RegisteredExtensionsFactories(it) }
+            return BunchOfRegisteredExtensions(extensions)
+        }
+    }
+}
+
 @OptIn(PluginServicesInitialization::class)
-fun FirExtensionService.registerExtensions(registeredExtensions: Collection<FirExtensionRegistrar.RegisteredExtensionsFactories<*>>) {
-    registeredExtensions.forEach { registerExtensions(it.kClass, it.extensionFactories) }
+fun FirExtensionService.registerExtensions(registeredExtensions: BunchOfRegisteredExtensions) {
+    registeredExtensions.extensions.forEach { registerExtensions(it.kClass, it.extensionFactories) }
     session.registeredPluginAnnotations.initialize()
 }
