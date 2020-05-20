@@ -86,10 +86,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 public class DocumentationManager extends DockablePopupManager<DocumentationComponent> {
   public static final String JAVADOC_LOCATION_AND_SIZE = "javadoc.popup";
@@ -411,7 +408,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
           }
         }
         else {
-          doShowJavaDocInfo(elementFuture, false, this, originalElement, closeCallback, null, true);
+          doShowJavaDocInfo(CompletableFuture.completedFuture(element), false, this, originalElement, closeCallback, null, true);
         }
       }
     };
@@ -773,7 +770,9 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     myLastAction = callback;
     if (myPrecalculatedDocumentation != null) {
       LOG.debug("Setting precalculated documentation:\n", myPrecalculatedDocumentation);
-      PsiElement element = collector.getElement();
+      // if precalculated documentation is provided, we also expect precalculated target element to be provided
+      // so we're not waiting for its calculation here
+      PsiElement element = collector.getElement(false);
       if (element == null) {
         LOG.debug("Element for precalculated documentation is not available anymore");
         component.setText(CodeInsightBundle.message("no.documentation.found"), null, collector.provider);
@@ -800,7 +799,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       if (myProject.isDisposed()) return;
       LOG.debug("Started fetching documentation...");
 
-      PsiElement element = collector.getElement();
+      PsiElement element = collector.getElement(true);
       if (element == null || !ReadAction.compute(() -> element.isValid())) {
         LOG.debug("Element for which documentation was requested is not available anymore");
         GuiUtils.invokeLaterIfNeeded(() -> {
@@ -1159,11 +1158,11 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     }
 
     @Nullable
-    public PsiElement getElement() {
+    public PsiElement getElement(boolean wait) {
       try {
-        return myElementFuture.get();
+        return wait ? myElementFuture.get() : myElementFuture.getNow(null);
       }
-      catch (InterruptedException | ExecutionException e) {
+      catch (Exception e) {
         LOG.debug("Cannot get target element", e);
         return null;
       }
@@ -1192,7 +1191,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     @Override
     @Nullable
     public String getDocumentation() {
-      PsiElement element = getElement();
+      PsiElement element = getElement(true);
       if (element == null) {
         return null;
       }
