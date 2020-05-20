@@ -1481,6 +1481,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         public void testImplicitInLocalClasses() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/implicitInLocalClasses.kt");
         }
+
+        @TestMetadata("typesFromSuperClasses.kt")
+        public void testTypesFromSuperClasses() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/typesFromSuperClasses.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/multifile")

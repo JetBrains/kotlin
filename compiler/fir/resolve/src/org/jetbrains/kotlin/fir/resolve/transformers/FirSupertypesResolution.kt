@@ -57,7 +57,6 @@ fun <F : FirClass<F>> F.runSupertypeResolvePhaseForLocalClass(
     localClassesNavigationInfo: LocalClassesNavigationInfo,
 ): F {
     val supertypeComputationSession = SupertypeComputationSession()
-    val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
     val supertypeResolverVisitor = FirSupertypeResolverVisitor(
         session, supertypeComputationSession, scopeSession,
         FirImmutableCompositeScope(ImmutableList.ofAll(currentScopeList)),
@@ -67,6 +66,7 @@ fun <F : FirClass<F>> F.runSupertypeResolvePhaseForLocalClass(
     this.accept(supertypeResolverVisitor)
     supertypeComputationSession.breakLoops(session)
 
+    val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
     return this.transform<F, Nothing?>(applySupertypesTransformer, null).single
 }
 
@@ -84,15 +84,25 @@ private class FirApplySupertypesTransformer(
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirStatement> {
-        if (regularClass.superTypeRefs.any { it !is FirResolvedTypeRef }) {
-            val supertypeRefs = getResolvedSupertypeRefs(regularClass)
-
-            // TODO: Replace with an immutable version or transformer
-            regularClass.replaceSuperTypeRefs(supertypeRefs)
-            regularClass.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
-        }
+        applyResolvedSupertypesToClass(regularClass)
 
         return (regularClass.transformChildren(this, null) as FirRegularClass).compose()
+    }
+
+    private fun applyResolvedSupertypesToClass(firClass: FirClass<*>) {
+        if (firClass.superTypeRefs.any { it !is FirResolvedTypeRef }) {
+            val supertypeRefs = getResolvedSupertypeRefs(firClass)
+
+            // TODO: Replace with an immutable version or transformer
+            firClass.replaceSuperTypeRefs(supertypeRefs)
+            firClass.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
+        }
+    }
+
+    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?): CompositeTransformResult<FirStatement> {
+        applyResolvedSupertypesToClass(anonymousObject)
+
+        return super.transformAnonymousObject(anonymousObject, data)
     }
 
     private fun getResolvedSupertypeRefs(classLikeDeclaration: FirClassLikeDeclaration<*>): List<FirTypeRef> {
@@ -251,6 +261,11 @@ private class FirSupertypeResolverVisitor(
     override fun visitRegularClass(regularClass: FirRegularClass) {
         resolveSpecificClassLikeSupertypes(regularClass, regularClass.superTypeRefs)
         regularClass.acceptChildren(this)
+    }
+
+    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
+        resolveSpecificClassLikeSupertypes(anonymousObject, anonymousObject.superTypeRefs)
+        anonymousObject.acceptChildren(this)
     }
 
     fun resolveSpecificClassLikeSupertypes(

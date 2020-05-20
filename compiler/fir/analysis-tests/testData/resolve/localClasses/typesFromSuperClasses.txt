@@ -1,0 +1,35 @@
+FILE: typesFromSuperClasses.kt
+    public abstract class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract interface Nested : R|kotlin/Any| {
+            public abstract fun bar(): R|kotlin/Unit|
+
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        object : R|Outer| {
+            private constructor(): R|anonymous| {
+                super<R|Outer|>()
+            }
+
+            public[local] final fun foo(n: R|Outer.Nested|): R|kotlin/Unit| {
+                R|<local>/n|.R|/Outer.Nested.bar|()
+            }
+
+        }
+
+    }
+    public final class Impl : R|Outer| {
+        public constructor(): R|Impl| {
+            super<R|Outer|>()
+        }
+
+        public final fun foo(n: R|Outer.Nested|): R|kotlin/Unit| {
+            R|<local>/n|.R|/Outer.Nested.bar|()
+        }
+
+    }
