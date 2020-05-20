@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls
@@ -25,8 +14,6 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.model.safeSubstitute
-import org.jetbrains.kotlin.utils.addToStdlib.same
 import java.lang.UnsupportedOperationException
 
 
@@ -38,7 +25,7 @@ class KotlinCallResolver(
     private val callComponents: KotlinCallComponents
 ) {
     companion object {
-        private val FACTORY_PATTERN_ANNOTATION = FqName.fromSegments(listOf("annotations", "FactoryPattern"))
+        private val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION = FqName.fromSegments(listOf("kotlin", "OverloadResolutionByLambdaReturnType"))
     }
 
     fun resolveCall(
@@ -156,11 +143,12 @@ class KotlinCallResolver(
             callComponents.languageVersionSettings.supportsFeature(LanguageFeature.FactoryPatternResolution) &&
             candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
         ) {
-            val candidateWithAnnotation = candidates.firstOrNull { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(FACTORY_PATTERN_ANNOTATION) }
-            if (candidateWithAnnotation != null) {
+            val candidatesWithAnnotation =
+                candidates.filter { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION) }
+            if (candidatesWithAnnotation.isNotEmpty()) {
                 maximallySpecificCandidates = kotlinCallCompleter.chooseCandidateRegardingFactoryPatternResolution(maximallySpecificCandidates, resolutionCallbacks)
                 if (maximallySpecificCandidates.size > 1) {
-                    maximallySpecificCandidates = setOf(candidateWithAnnotation)
+                    maximallySpecificCandidates = candidatesWithAnnotation.toSet() // or revert to original list?
                 }
             }
         }
