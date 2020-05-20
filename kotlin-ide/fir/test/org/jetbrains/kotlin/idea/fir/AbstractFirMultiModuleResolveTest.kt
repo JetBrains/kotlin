@@ -31,11 +31,9 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
-import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllTransformerBasedResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.idea.KotlinFileType

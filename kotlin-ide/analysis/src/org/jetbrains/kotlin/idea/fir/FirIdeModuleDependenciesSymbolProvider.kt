@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.fir
 
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo

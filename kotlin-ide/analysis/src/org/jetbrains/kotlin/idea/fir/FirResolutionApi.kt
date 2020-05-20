@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.fir.resolve.transformers.runResolve
