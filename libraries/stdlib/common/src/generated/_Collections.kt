@@ -1719,52 +1719,21 @@ public inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit
     for (item in this) action(checkIndexOverflow(index++), item)
 }
 
-/**
- * Returns the largest element or `null` if there are no elements.
- * 
- * If any of elements is `NaN` returns `NaN`.
- */
+@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
 @SinceKotlin("1.1")
 public fun Iterable<Double>.max(): Double? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var max = iterator.next()
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        max = maxOf(max, e)
-    }
-    return max
+    return maxOrNull()
 }
 
-/**
- * Returns the largest element or `null` if there are no elements.
- * 
- * If any of elements is `NaN` returns `NaN`.
- */
+@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
 @SinceKotlin("1.1")
 public fun Iterable<Float>.max(): Float? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var max = iterator.next()
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        max = maxOf(max, e)
-    }
-    return max
+    return maxOrNull()
 }
 
-/**
- * Returns the largest element or `null` if there are no elements.
- */
+@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
 public fun <T : Comparable<T>> Iterable<T>.max(): T? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var max = iterator.next()
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        if (max < e) max = e
-    }
-    return max
+    return maxOrNull()
 }
 
 /**
@@ -1966,6 +1935,55 @@ public inline fun <T, R> Iterable<T>.maxOfWithOrNull(comparator: Comparator<in R
 }
 
 /**
+ * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.4")
+public fun Iterable<Double>.maxOrNull(): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        max = maxOf(max, e)
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.4")
+public fun Iterable<Float>.maxOrNull(): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        max = maxOf(max, e)
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun <T : Comparable<T>> Iterable<T>.maxOrNull(): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
 public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
@@ -1979,52 +1997,21 @@ public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
     return max
 }
 
-/**
- * Returns the smallest element or `null` if there are no elements.
- * 
- * If any of elements is `NaN` returns `NaN`.
- */
+@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
 @SinceKotlin("1.1")
 public fun Iterable<Double>.min(): Double? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var min = iterator.next()
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        min = minOf(min, e)
-    }
-    return min
+    return minOrNull()
 }
 
-/**
- * Returns the smallest element or `null` if there are no elements.
- * 
- * If any of elements is `NaN` returns `NaN`.
- */
+@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
 @SinceKotlin("1.1")
 public fun Iterable<Float>.min(): Float? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var min = iterator.next()
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        min = minOf(min, e)
-    }
-    return min
+    return minOrNull()
 }
 
-/**
- * Returns the smallest element or `null` if there are no elements.
- */
+@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
 public fun <T : Comparable<T>> Iterable<T>.min(): T? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var min = iterator.next()
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        if (min > e) min = e
-    }
-    return min
+    return minOrNull()
 }
 
 /**
@@ -2223,6 +2210,55 @@ public inline fun <T, R> Iterable<T>.minOfWithOrNull(comparator: Comparator<in R
         }
     }
     return minValue
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.4")
+public fun Iterable<Double>.minOrNull(): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        min = minOf(min, e)
+    }
+    return min
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ */
+@SinceKotlin("1.4")
+public fun Iterable<Float>.minOrNull(): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        min = minOf(min, e)
+    }
+    return min
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun <T : Comparable<T>> Iterable<T>.minOrNull(): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (min > e) min = e
+    }
+    return min
 }
 
 /**

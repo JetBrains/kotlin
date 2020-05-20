@@ -1088,17 +1088,9 @@ public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit
     for (item in this) action(index++, item)
 }
 
-/**
- * Returns the largest character or `null` if there are no characters.
- */
+@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
 public fun CharSequence.max(): Char? {
-    if (isEmpty()) return null
-    var max = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (max < e) max = e
-    }
-    return max
+    return maxOrNull()
 }
 
 /**
@@ -1292,6 +1284,20 @@ public inline fun <R> CharSequence.maxOfWithOrNull(comparator: Comparator<in R>,
 }
 
 /**
+ * Returns the largest character or `null` if there are no characters.
+ */
+@SinceKotlin("1.4")
+public fun CharSequence.maxOrNull(): Char? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
  * Returns the first character having the largest value according to the provided [comparator] or `null` if there are no characters.
  */
 public fun CharSequence.maxWith(comparator: Comparator<in Char>): Char? {
@@ -1304,17 +1310,9 @@ public fun CharSequence.maxWith(comparator: Comparator<in Char>): Char? {
     return max
 }
 
-/**
- * Returns the smallest character or `null` if there are no characters.
- */
+@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
 public fun CharSequence.min(): Char? {
-    if (isEmpty()) return null
-    var min = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (min > e) min = e
-    }
-    return min
+    return minOrNull()
 }
 
 /**
@@ -1505,6 +1503,20 @@ public inline fun <R> CharSequence.minOfWithOrNull(comparator: Comparator<in R>,
         }
     }
     return minValue
+}
+
+/**
+ * Returns the smallest character or `null` if there are no characters.
+ */
+@SinceKotlin("1.4")
+public fun CharSequence.minOrNull(): Char? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
 }
 
 /**

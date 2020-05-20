@@ -348,46 +348,46 @@ class ArraysTest {
 
 
 
-    @Test fun min() {
-        expect(null, { arrayOf<Int>().min() })
-        expect(1, { arrayOf(1).min() })
-        expect(2, { arrayOf(2, 3).min() })
-        expect(2000000000000, { arrayOf(3000000000000, 2000000000000).min() })
-        expect('a', { arrayOf('a', 'b').min() })
-        expect("a", { arrayOf("a", "b").min() })
+    @Test fun minOrNull() {
+        expect(null, { arrayOf<Int>().minOrNull() })
+        expect(1, { arrayOf(1).minOrNull() })
+        expect(2, { arrayOf(2, 3).minOrNull() })
+        expect(2000000000000, { arrayOf(3000000000000, 2000000000000).minOrNull() })
+        expect('a', { arrayOf('a', 'b').minOrNull() })
+        expect("a", { arrayOf("a", "b").minOrNull() })
     }
 
-    @Test fun minInPrimitiveArrays() {
-        expect(null, { intArrayOf().min() })
-        expect(1, { intArrayOf(1).min() })
-        expect(2, { intArrayOf(2, 3).min() })
-        expect(2000000000000, { longArrayOf(3000000000000, 2000000000000).min() })
-        expect(1, { byteArrayOf(1, 3, 2).min() })
-        expect(2, { shortArrayOf(3, 2).min() })
-        expect(2.0F, { floatArrayOf(3.0F, 2.0F).min() })
-        expect(2.0, { doubleArrayOf(2.0, 3.0).min() })
-        expect('a', { charArrayOf('a', 'b').min() })
+    @Test fun minOrNullInPrimitiveArrays() {
+        expect(null, { intArrayOf().minOrNull() })
+        expect(1, { intArrayOf(1).minOrNull() })
+        expect(2, { intArrayOf(2, 3).minOrNull() })
+        expect(2000000000000, { longArrayOf(3000000000000, 2000000000000).minOrNull() })
+        expect(1, { byteArrayOf(1, 3, 2).minOrNull() })
+        expect(2, { shortArrayOf(3, 2).minOrNull() })
+        expect(2.0F, { floatArrayOf(3.0F, 2.0F).minOrNull() })
+        expect(2.0, { doubleArrayOf(2.0, 3.0).minOrNull() })
+        expect('a', { charArrayOf('a', 'b').minOrNull() })
     }
 
-    @Test fun max() {
-        expect(null, { arrayOf<Int>().max() })
-        expect(1, { arrayOf(1).max() })
-        expect(3, { arrayOf(2, 3).max() })
-        expect(3000000000000, { arrayOf(3000000000000, 2000000000000).max() })
-        expect('b', { arrayOf('a', 'b').max() })
-        expect("b", { arrayOf("a", "b").max() })
+    @Test fun maxOrNull() {
+        expect(null, { arrayOf<Int>().maxOrNull() })
+        expect(1, { arrayOf(1).maxOrNull() })
+        expect(3, { arrayOf(2, 3).maxOrNull() })
+        expect(3000000000000, { arrayOf(3000000000000, 2000000000000).maxOrNull() })
+        expect('b', { arrayOf('a', 'b').maxOrNull() })
+        expect("b", { arrayOf("a", "b").maxOrNull() })
     }
 
-    @Test fun maxInPrimitiveArrays() {
-        expect(null, { intArrayOf().max() })
-        expect(1, { intArrayOf(1).max() })
-        expect(3, { intArrayOf(2, 3).max() })
-        expect(3000000000000, { longArrayOf(3000000000000, 2000000000000).max() })
-        expect(3, { byteArrayOf(1, 3, 2).max() })
-        expect(3, { shortArrayOf(3, 2).max() })
-        expect(3.0F, { floatArrayOf(3.0F, 2.0F).max() })
-        expect(3.0, { doubleArrayOf(2.0, 3.0).max() })
-        expect('b', { charArrayOf('a', 'b').max() })
+    @Test fun maxOrNullInPrimitiveArrays() {
+        expect(null, { intArrayOf().maxOrNull() })
+        expect(1, { intArrayOf(1).maxOrNull() })
+        expect(3, { intArrayOf(2, 3).maxOrNull() })
+        expect(3000000000000, { longArrayOf(3000000000000, 2000000000000).maxOrNull() })
+        expect(3, { byteArrayOf(1, 3, 2).maxOrNull() })
+        expect(3, { shortArrayOf(3, 2).maxOrNull() })
+        expect(3.0F, { floatArrayOf(3.0F, 2.0F).maxOrNull() })
+        expect(3.0, { doubleArrayOf(2.0, 3.0).maxOrNull() })
+        expect('b', { charArrayOf('a', 'b').maxOrNull() })
     }
 
     @Test fun minWith() {

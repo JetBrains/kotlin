@@ -83,20 +83,20 @@ class NaNPropagationTest {
     }
 
     @Test
-    fun arrayMin() {
+    fun arrayMinOrNull() {
         propagateOf2(
-            { a, b -> arrayOf(a, b).min()!! },
-            { a, b -> arrayOf(a, b).min()!! },
-            "arrayOf().min()"
+            { a, b -> arrayOf(a, b).minOrNull()!! },
+            { a, b -> arrayOf(a, b).minOrNull()!! },
+            "arrayOf().minOrNull()"
         )
     }
 
     @Test
-    fun arrayMax() {
+    fun arrayMaxOrNull() {
         propagateOf2(
-            { a, b -> arrayOf(a, b).max()!! },
-            { a, b -> arrayOf(a, b).max()!! },
-            "arrayOf().max()"
+            { a, b -> arrayOf(a, b).maxOrNull()!! },
+            { a, b -> arrayOf(a, b).maxOrNull()!! },
+            "arrayOf().maxOrNull()"
         )
     }
 
@@ -108,7 +108,7 @@ class NaNPropagationTest {
             "arrayOf().minOf()"
         )
     }
-    
+
     @Test
     fun arrayMaxOf() {
         propagateOf3(
@@ -119,20 +119,20 @@ class NaNPropagationTest {
     }
 
     @Test
-    fun primitiveArrayMin() {
+    fun primitiveArrayMinOrNull() {
         propagateOf2(
-            { a, b -> doubleArrayOf(a, b).min()!! },
-            { a, b -> floatArrayOf(a, b).min()!! },
-            "primitiveArrayOf().min()"
+            { a, b -> doubleArrayOf(a, b).minOrNull()!! },
+            { a, b -> floatArrayOf(a, b).minOrNull()!! },
+            "primitiveArrayOf().minOrNull()"
         )
     }
 
     @Test
     fun primitiveArrayMax() {
         propagateOf2(
-            { a, b -> doubleArrayOf(a, b).max()!! },
-            { a, b -> floatArrayOf(a, b).max()!! },
-            "primitiveArrayOf().max()"
+            { a, b -> doubleArrayOf(a, b).minOrNull()!! },
+            { a, b -> floatArrayOf(a, b).minOrNull()!! },
+            "primitiveArrayOf().maxOrNull()"
         )
     }
 
@@ -165,20 +165,20 @@ class NaNPropagationTest {
     }
 
     @Test
-    fun listMin() {
+    fun listMinOrNull() {
         propagateOf2(
-            { a, b -> listOf(a, b).min()!! },
-            { a, b -> listOf(a, b).min()!! },
-            "listOf().min()"
+            { a, b -> listOf(a, b).minOrNull()!! },
+            { a, b -> listOf(a, b).minOrNull()!! },
+            "listOf().minOrNull()"
         )
     }
 
     @Test
-    fun listMax() {
+    fun listMaxOrNull() {
         propagateOf2(
-            { a, b -> listOf(a, b).max()!! },
-            { a, b -> listOf(a, b).max()!! },
-            "listOf().max()"
+            { a, b -> listOf(a, b).maxOrNull()!! },
+            { a, b -> listOf(a, b).maxOrNull()!! },
+            "listOf().maxOrNull()"
         )
     }
 
@@ -201,20 +201,20 @@ class NaNPropagationTest {
     }
 
     @Test
-    fun sequenceMin() {
+    fun sequenceMinOrNull() {
         propagateOf2(
-            { a, b -> sequenceOf(a, b).min()!! },
-            { a, b -> sequenceOf(a, b).min()!! },
-            "sequenceOf().min()"
+            { a, b -> sequenceOf(a, b).minOrNull()!! },
+            { a, b -> sequenceOf(a, b).minOrNull()!! },
+            "sequenceOf().minOrNull()"
         )
     }
 
     @Test
-    fun sequenceMax() {
+    fun sequenceMaxOrNull() {
         propagateOf2(
-            { a, b -> sequenceOf(a, b).max()!! },
-            { a, b -> sequenceOf(a, b).max()!! },
-            "sequenceOf().max()"
+            { a, b -> sequenceOf(a, b).maxOrNull()!! },
+            { a, b -> sequenceOf(a, b).maxOrNull()!! },
+            "sequenceOf().maxOrNull()"
         )
     }
 
@@ -266,34 +266,34 @@ class NaNTotalOrderTest {
     }
 
     @Test
-    fun arrayTMin() {
-        totalOrderMinOf2<Comparable<Any>>({ a, b -> arrayOf(a, b).min()!! }, "arrayOf().min()")
+    fun arrayTMinOrNull() {
+        totalOrderMinOf2<Comparable<Any>>({ a, b -> arrayOf(a, b).minOrNull()!! }, "arrayOf().minOrNull()")
     }
 
     @Test
-    fun arrayTMax() {
-        totalOrderMaxOf2<Comparable<Any>>({ a, b -> arrayOf(a, b).max()!! }, "arrayOf().max()")
-    }
-
-
-    @Test
-    fun listTMin() {
-        totalOrderMinOf2<Comparable<Any>>({ a, b -> listOf(a, b).min()!! }, "listOf().min()")
-    }
-
-    @Test
-    fun listTMax() {
-        totalOrderMaxOf2<Comparable<Any>>({ a, b -> listOf(a, b).max()!! }, "listOf().max()")
+    fun arrayTMaxOrNull() {
+        totalOrderMaxOf2<Comparable<Any>>({ a, b -> arrayOf(a, b).maxOrNull()!! }, "arrayOf().maxOrNull()")
     }
 
 
     @Test
-    fun sequenceTMin() {
-        totalOrderMinOf2<Comparable<Any>>({ a, b -> sequenceOf(a, b).min()!! }, "sequenceOf().min()")
+    fun listTMinOrNull() {
+        totalOrderMinOf2<Comparable<Any>>({ a, b -> listOf(a, b).minOrNull()!! }, "listOf().minOrNull()")
     }
 
     @Test
-    fun sequenceTMax() {
-        totalOrderMaxOf2<Comparable<Any>>({ a, b -> sequenceOf(a, b).max()!! }, "sequenceOf().max()")
+    fun listTMaxOrNull() {
+        totalOrderMaxOf2<Comparable<Any>>({ a, b -> listOf(a, b).maxOrNull()!! }, "listOf().maxOrNull()")
+    }
+
+
+    @Test
+    fun sequenceTMinOrNull() {
+        totalOrderMinOf2<Comparable<Any>>({ a, b -> sequenceOf(a, b).minOrNull()!! }, "sequenceOf().minOrNull()")
+    }
+
+    @Test
+    fun sequenceTMaxOrNull() {
+        totalOrderMaxOf2<Comparable<Any>>({ a, b -> sequenceOf(a, b).maxOrNull()!! }, "sequenceOf().maxOrNull()")
     }
 }

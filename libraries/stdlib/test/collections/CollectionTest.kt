@@ -823,32 +823,32 @@ class CollectionTest {
         assertTrue(hashSetOf(45, 14, 13).toIterable().contains(14))
     }
 
-    @Test fun min() {
-        expect(null, { listOf<Int>().min() })
-        expect(1, { listOf(1).min() })
-        expect(2, { listOf(2, 3).min() })
-        expect(2000000000000, { listOf(3000000000000, 2000000000000).min() })
-        expect('a', { listOf('a', 'b').min() })
-        expect("a", { listOf("a", "b").min() })
-        expect(null, { listOf<Int>().asSequence().min() })
-        expect(2, { listOf(2, 3).asSequence().min() })
+    @Test fun minOrNull() {
+        expect(null, { listOf<Int>().minOrNull() })
+        expect(1, { listOf(1).minOrNull() })
+        expect(2, { listOf(2, 3).minOrNull() })
+        expect(2000000000000, { listOf(3000000000000, 2000000000000).minOrNull() })
+        expect('a', { listOf('a', 'b').minOrNull() })
+        expect("a", { listOf("a", "b").minOrNull() })
+        expect(null, { listOf<Int>().asSequence().minOrNull() })
+        expect(2, { listOf(2, 3).asSequence().minOrNull() })
 
-        assertIsNegativeZero(listOf(0.0, -0.0).shuffled().min()!!)
-        assertIsNegativeZero(listOf(0.0F, -0.0F).shuffled().min()!!.toDouble())
+        assertIsNegativeZero(listOf(0.0, -0.0).shuffled().minOrNull()!!)
+        assertIsNegativeZero(listOf(0.0F, -0.0F).shuffled().minOrNull()!!.toDouble())
     }
 
     @Test fun max() {
-        expect(null, { listOf<Int>().max() })
-        expect(1, { listOf(1).max() })
-        expect(3, { listOf(2, 3).max() })
-        expect(3000000000000, { listOf(3000000000000, 2000000000000).max() })
-        expect('b', { listOf('a', 'b').max() })
-        expect("b", { listOf("a", "b").max() })
-        expect(null, { listOf<Int>().asSequence().max() })
-        expect(3, { listOf(2, 3).asSequence().max() })
+        expect(null, { listOf<Int>().maxOrNull() })
+        expect(1, { listOf(1).maxOrNull() })
+        expect(3, { listOf(2, 3).maxOrNull() })
+        expect(3000000000000, { listOf(3000000000000, 2000000000000).maxOrNull() })
+        expect('b', { listOf('a', 'b').maxOrNull() })
+        expect("b", { listOf("a", "b").maxOrNull() })
+        expect(null, { listOf<Int>().asSequence().maxOrNull() })
+        expect(3, { listOf(2, 3).asSequence().maxOrNull() })
 
-        assertIsPositiveZero(listOf(0.0, -0.0).shuffled().max()!!)
-        assertIsPositiveZero(listOf(0.0F, -0.0F).shuffled().max()!!.toDouble())
+        assertIsPositiveZero(listOf(0.0, -0.0).shuffled().maxOrNull()!!)
+        assertIsPositiveZero(listOf(0.0F, -0.0F).shuffled().maxOrNull()!!.toDouble())
     }
 
     @Test fun minWith() {
