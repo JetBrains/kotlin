@@ -16,8 +16,20 @@
 
 package com.intellij.openapi.editor.richcopy;
 
-public class CopyAsPlainTextAction extends ForcedCopyModeAction {
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.actionSystem.EditorAction;
+import com.intellij.openapi.editor.actions.CopyAction;
+
+public class CopyAsPlainTextAction extends EditorAction {
   public CopyAsPlainTextAction() {
-    super(false);
+    super(new CopyAction.Handler());
+  }
+
+  @Override
+  public void update(Editor editor, Presentation presentation, DataContext dataContext) {
+    super.update(editor, presentation, dataContext);
+    presentation.setVisible(editor.getSelectionModel().hasSelection(true));
   }
 }

@@ -202,16 +202,10 @@ class EditorOptionsPanel : BoundCompositeConfigurable<UnnamedConfigurable>(messa
         row {
           val copyShortcut = ActionManager.getInstance().getKeyboardShortcut(IdeActions.ACTION_COPY)
           val copyShortcutText = copyShortcut?.let { " (" + KeymapUtil.getShortcutText(it) + ")" } ?: ""
-          buttonGroup(richCopySettings::isEnabled, richCopySettings::setEnabled) {
-            checkBoxGroup(message("radiogroup.enable.richcopy.label", copyShortcutText)) {
-              row {
-                cell(isFullWidth = true) {
-                  radioButton(message("radiobutton.enable.richcopy.as.rich.text")).bindValue(true)
-                  commentNoWrap(message("radiobutton.enable.richcopy.as.rich.text.comment")).withLargeLeftGap()
-                }
-              }
-              row { radioButton(message("radiobutton.enable.richcopy.as.simple.text")).bindValue(false) }
-            }
+          cell(isFullWidth = true) {
+            checkBox(CheckboxDescriptor(message("checkbox.enable.richcopy.label", copyShortcutText),
+                                        PropertyBinding(richCopySettings::isEnabled, richCopySettings::setEnabled)))
+            commentNoWrap(message("checkbox.enable.richcopy.comment")).withLargeLeftGap()
           }
         }
         row {
