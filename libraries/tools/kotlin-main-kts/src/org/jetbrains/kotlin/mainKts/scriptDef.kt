@@ -26,6 +26,7 @@ import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
 import kotlin.script.experimental.jvmhost.jsr223.configureProvidedPropertiesFromJsr223Context
 import kotlin.script.experimental.jvmhost.jsr223.importAllBindings
 import kotlin.script.experimental.jvmhost.jsr223.jsr223
+import kotlin.script.experimental.util.filterByAnnotationType
 
 @Suppress("unused")
 @KotlinScript(
@@ -120,22 +121,22 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
             )
         }
 
-        val annotations = context.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
+        val annotations = context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.takeIf { it.isNotEmpty() }
             ?: return context.compilationConfiguration.asSuccess()
 
         val scriptBaseDir = (context.script as? FileBasedScriptSource)?.file?.parentFile
-        val importedSources = annotations.flatMap {
-            (it as? Import)?.paths?.map { sourceName ->
+        val importedSources = annotations.filterByAnnotationType<Import>().flatMap {
+            it.annotation.paths.map { sourceName ->
                 FileScriptSource(scriptBaseDir?.resolve(sourceName) ?: File(sourceName))
-            } ?: emptyList()
+            }
         }
-        val compileOptions = annotations.flatMap {
-            (it as? CompilerOptions)?.options?.toList() ?: emptyList()
+        val compileOptions = annotations.filterByAnnotationType<CompilerOptions>().flatMap {
+            it.annotation.options.toList()
         }
 
         val resolveResult = try {
             runBlocking {
-                resolver.resolveFromAnnotations( annotations.filter { it is DependsOn || it is Repository })
+                resolver.resolveFromScriptSourceAnnotations(annotations.filter { it.annotation is DependsOn || it.annotation is Repository })
             }
         } catch (e: Throwable) {
             ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics(path = context.script.locationId))
