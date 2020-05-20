@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.backend.common.ir.isExpect
-import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -23,8 +22,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ExportModelGenerator(val context: JsIrBackendContext) {
@@ -139,14 +136,14 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
     private fun exportClass(
         klass: IrClass
-    ): ExportedDeclaration? {
+    ): ExportedClass? {
         when (val exportability = classExportability(klass)) {
-            is Exportability.Prohibited -> return ErrorDeclaration(exportability.reason)
+            is Exportability.Prohibited -> return error(exportability.reason)
             is Exportability.NotNeeded -> return null
         }
 
         val members = mutableListOf<ExportedDeclaration>()
-        val statics = mutableListOf<ExportedDeclaration>()
+        val nestedClasses = mutableListOf<ExportedClass>()
 
         for (declaration in klass.declarations) {
             val candidate = getExportCandidate(declaration) ?: continue
@@ -163,7 +160,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
                     members.addIfNotNull(exportProperty(candidate))
 
                 is IrClass ->
-                    statics.addIfNotNull(exportClass(candidate))
+                    nestedClasses.addIfNotNull(exportClass(candidate))
 
                 is IrField -> {
                     assert(candidate.correspondingPropertySymbol != null) {
@@ -198,7 +195,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             superInterfaces = superInterfaces,
             typeParameters = typeParameters,
             members = members,
-            statics = statics,
+            nestedClasses = nestedClasses,
             ir = klass
         )
     }
