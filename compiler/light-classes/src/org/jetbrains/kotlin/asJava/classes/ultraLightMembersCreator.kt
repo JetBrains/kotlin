@@ -58,11 +58,12 @@ internal class UltraLightMembersCreator(
         usedPropertyNames: HashSet<String>,
         forceStatic: Boolean
     ): KtLightField? {
-        val property = variable as? KtProperty
-        if (property != null && !hasBackingField(property)) return null
+
+        if (!hasBackingField(variable)) return null
 
         if (variable.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) || variable.hasExpectModifier()) return null
 
+        val property = variable as? KtProperty
         val hasDelegate = property?.hasDelegate() == true
         val fieldName = generateUniqueFieldName((variable.name ?: "") + (if (hasDelegate) "\$delegate" else ""), usedPropertyNames)
 
@@ -93,9 +94,11 @@ internal class UltraLightMembersCreator(
         return KtUltraLightFieldForSourceDeclaration(variable, fieldName, containingClass, support, modifiers)
     }
 
-    private fun hasBackingField(property: KtProperty): Boolean {
+    private fun hasBackingField(property: KtCallableDeclaration): Boolean {
         if (property.hasModifier(ABSTRACT_KEYWORD)) return false
-        if (property.hasModifier(LATEINIT_KEYWORD) || property.accessors.isEmpty()) return true
+        if (property.hasModifier(LATEINIT_KEYWORD)) return true
+        if (property is KtParameter) return true
+        if ((property as? KtProperty)?.accessors?.isEmpty() == true) return true
 
         val context = LightClassGenerationSupport.getInstance(containingClass.project).analyze(property)
         val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)
@@ -237,7 +240,7 @@ internal class UltraLightMembersCreator(
         ) return PsiType.VOID
 
         val desc =
-            ktDeclaration.resolve()?.getterIfProperty() as? FunctionDescriptor
+            ktDeclaration.resolve()?.getterIfProperty() as? CallableDescriptor
                 ?: return PsiType.NULL
 
         return support.mapType(wrapper) { typeMapper, signatureWriter ->

@@ -973,13 +973,13 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
     fun writeFieldSignature(
         backingFieldType: KotlinType,
-        propertyDescriptor: PropertyDescriptor,
+        variableDescriptor: VariableDescriptor,
         sw: JvmSignatureWriter
     ) {
-        if (!propertyDescriptor.isVar) {
-            mapReturnType(propertyDescriptor, sw, backingFieldType)
+        if (!variableDescriptor.isVar) {
+            mapReturnType(variableDescriptor, sw, backingFieldType)
         } else {
-            writeParameterType(sw, backingFieldType, propertyDescriptor)
+            writeParameterType(sw, backingFieldType, variableDescriptor)
         }
     }
 
