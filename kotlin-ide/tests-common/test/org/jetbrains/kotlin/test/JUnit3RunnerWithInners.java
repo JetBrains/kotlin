@@ -77,35 +77,32 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
     }
 
     private Test getCollectedTests() {
-        List<Class> innerClasses = collectDeclaredClasses(testClass, false);
-        Set<Class> unprocessedInnerClasses = unprocessedClasses(innerClasses);
+        List<Class<?>> innerClasses = collectDeclaredClasses(testClass, false);
+        Set<Class<?>> unprocessedInnerClasses = unprocessedClasses(innerClasses);
 
         if (unprocessedInnerClasses.isEmpty()) {
             if (!innerClasses.isEmpty() && !hasTestMethods(testClass)) {
                 isFakeTest = true;
                 return new JUnit3RunnerWithInners.FakeEmptyClassTest(testClass);
-            }
-            else {
+            } else {
                 return new TestSuite(testClass.asSubclass(TestCase.class));
             }
-        }
-        else if (unprocessedInnerClasses.size() == innerClasses.size()) {
+        } else if (unprocessedInnerClasses.size() == innerClasses.size()) {
             return createTreeTestSuite(testClass);
-        }
-        else {
+        } else {
             return new TestSuite(testClass.asSubclass(TestCase.class));
         }
     }
 
-    private static Test createTreeTestSuite(Class root) {
-        Set<Class> classes = new LinkedHashSet<>(collectDeclaredClasses(root, true));
-        Map<Class, TestSuite> classSuites = new HashMap<>();
+    private static Test createTreeTestSuite(Class<?> root) {
+        Set<Class<?>> classes = new LinkedHashSet<>(collectDeclaredClasses(root, true));
+        Map<Class<?>, TestSuite> classSuites = new HashMap<>();
 
-        for (Class aClass : classes) {
+        for (Class<?> aClass : classes) {
             classSuites.put(aClass, hasTestMethods(aClass) ? new TestSuite(aClass) : new TestSuite(aClass.getCanonicalName()));
         }
 
-        for (Class aClass : classes) {
+        for (Class<?> aClass : classes) {
             if (aClass.getEnclosingClass() != null && classes.contains(aClass.getEnclosingClass())) {
                 classSuites.get(aClass.getEnclosingClass()).addTest(classSuites.get(aClass));
             }
@@ -114,9 +111,9 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
         return classSuites.get(root);
     }
 
-    private static Set<Class> unprocessedClasses(Collection<Class> classes) {
-        Set<Class> result = new LinkedHashSet<>();
-        for (Class aClass : classes) {
+    private static Set<Class<?>> unprocessedClasses(Collection<Class<?>> classes) {
+        Set<Class<?>> result = new LinkedHashSet<>();
+        for (Class<?> aClass : classes) {
             if (!requestedRunners.contains(aClass)) {
                 result.add(aClass);
             }
@@ -125,21 +122,21 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
         return result;
     }
 
-    private static List<Class> collectDeclaredClasses(Class klass, boolean withItself) {
-        List<Class> result = new ArrayList<>();
+    private static List<Class<?>> collectDeclaredClasses(Class<?> klass, boolean withItself) {
+        List<Class<?>> result = new ArrayList<>();
         if (withItself) {
             result.add(klass);
         }
 
-        for (Class aClass : klass.getDeclaredClasses()) {
+        for (Class<?> aClass : klass.getDeclaredClasses()) {
             result.addAll(collectDeclaredClasses(aClass, true));
         }
 
         return result;
     }
 
-    private static boolean hasTestMethods(Class klass) {
-        for (Class currentClass = klass; Test.class.isAssignableFrom(currentClass); currentClass = currentClass.getSuperclass()) {
+    private static boolean hasTestMethods(Class<?> klass) {
+        for (Class<?> currentClass = klass; Test.class.isAssignableFrom(currentClass); currentClass = currentClass.getSuperclass()) {
             for (Method each : MethodSorter.getDeclaredMethods(currentClass)) {
                 if (isTestMethod(each)) return true;
             }
