@@ -15,20 +15,20 @@
     <orderEntry type="library" exported="" name="Slf4j" level="project" />
     <orderEntry type="library" exported="" name="Gradle" level="project" />
     <orderEntry type="module-library" exported="" scope="PROVIDED">
-      <library name="org.codehaus.groovy:groovy:2.4.15" type="repository">
-        <properties maven-id="org.codehaus.groovy:groovy:2.4.15" />
+      <library name="org.codehaus.groovy:groovy:2.4.17" type="repository">
+        <properties maven-id="org.codehaus.groovy:groovy:2.4.17" />
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy/2.4.15/groovy-2.4.15.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy/2.4.17/groovy-2.4.17.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy/2.4.15/groovy-2.4.15-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy/2.4.17/groovy-2.4.17-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="" scope="PROVIDED">
-      <library name="org.codehaus.groovy:groovy-ant:2.4.15" type="repository">
-        <properties maven-id="org.codehaus.groovy:groovy-ant:2.4.15">
+      <library name="org.codehaus.groovy:groovy-ant:2.4.17" type="repository">
+        <properties maven-id="org.codehaus.groovy:groovy-ant:2.4.17">
           <exclude>
             <dependency maven-id="org.codehaus.groovy:groovy" />
             <dependency maven-id="org.apache.ant:ant" />
@@ -39,11 +39,11 @@
           </exclude>
         </properties>
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-ant/2.4.15/groovy-ant-2.4.15.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-ant/2.4.17/groovy-ant-2.4.17.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-ant/2.4.15/groovy-ant-2.4.15-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-ant/2.4.17/groovy-ant-2.4.17-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
