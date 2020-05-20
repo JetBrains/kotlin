@@ -10,6 +10,7 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.util.text.StringUtil.isEmpty
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 
@@ -34,12 +35,12 @@ internal class HighlightingProblem(val info: HighlightInfo) : Problem {
 
   override fun hasQuickFixActions(): Boolean {
     val markers = info.quickFixActionMarkers ?: return false
-    return markers.any { it.second.isValid }
+    return markers.any { !isEmpty(it.first.action.text) && it.second.isValid }
   }
 
   override fun getQuickFixActions(): Collection<AnAction> {
     val markers = info.quickFixActionMarkers ?: return emptyList()
-    return markers.filter { it.second.isValid }.map { QuickFixAction(it.first.action, it.second) }
+    return markers.filter { !isEmpty(it.first.action.text) && it.second.isValid }.map { QuickFixAction(it.first.action, it.second) }
   }
 }
 
