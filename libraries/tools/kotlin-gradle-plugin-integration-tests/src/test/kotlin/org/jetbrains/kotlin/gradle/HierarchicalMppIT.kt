@@ -146,8 +146,8 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     @Test
-    fun testHmppWithJsBothDependency() {
-        val directoryPrefix = "hierarchical-mpp-with-js-modules"
+    fun testHmppWithPublishedJsBothDependency() {
+        val directoryPrefix = "hierarchical-mpp-with-js-published-modules"
         publishThirdPartyLib(
             projectName = "third-party-lib",
             directoryPrefix = directoryPrefix,
