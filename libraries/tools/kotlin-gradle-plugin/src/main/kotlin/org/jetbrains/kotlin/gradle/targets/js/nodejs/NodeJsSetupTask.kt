@@ -52,8 +52,11 @@ open class NodeJsSetupTask : DefaultTask() {
         val startDownloadTime = System.currentTimeMillis()
         val result = conf.resolve().single()
 
-        KotlinBuildStatsService.getInstance()
-            ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, result.length() * 1000 / (System.currentTimeMillis() - startDownloadTime))
+        val downloadDuration = System.currentTimeMillis() - startDownloadTime
+        if (downloadDuration > 0) {
+            KotlinBuildStatsService.getInstance()
+                ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, result.length() * 1000 / downloadDuration)
+        }
 
         project.repositories.remove(repo)
 
