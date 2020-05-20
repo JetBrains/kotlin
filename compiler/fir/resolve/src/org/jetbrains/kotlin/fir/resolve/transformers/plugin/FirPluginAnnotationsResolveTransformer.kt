@@ -7,16 +7,15 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.Multimap
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
-import org.jetbrains.kotlin.fir.extensions.extensionsService
-import org.jetbrains.kotlin.fir.extensions.fqName
-import org.jetbrains.kotlin.fir.extensions.hasExtensions
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
@@ -42,11 +41,13 @@ class FirPluginAnnotationsResolveTransformer(
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
         if (!extensionPointService.hasExtensions) return file.compose()
+        val registeredPluginAnnotations = file.session.registeredPluginAnnotations
         file.replaceResolvePhase(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS)
         val newAnnotations = file.resolveAnnotations(extensionPointService.annotations, extensionPointService.metaAnnotations)
         if (!newAnnotations.isEmpty) {
             for (metaAnnotation in newAnnotations.keySet()) {
                 extensionPointService.registerUserDefinedAnnotation(metaAnnotation, newAnnotations[metaAnnotation])
+                registeredPluginAnnotations.registerUserDefinedAnnotation(metaAnnotation, newAnnotations[metaAnnotation])
             }
             val newAnnotationsFqns = newAnnotations.values().mapTo(mutableSetOf()) { it.symbol.classId.asSingleFqName() }
             file.resolveAnnotations(newAnnotationsFqns, emptySet())
@@ -80,14 +81,26 @@ private class FirPartialImportResolveTransformer(
 private class FirAnnotationResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirAbstractAnnotationResolveTransformer<Multimap<AnnotationFqn, FirRegularClass>>(session, scopeSession) {
+) : FirAbstractAnnotationResolveTransformer<Multimap<AnnotationFqn, FirRegularClass>, PersistentList<FirAnnotatedDeclaration>>(session, scopeSession) {
     var metaAnnotations: Set<AnnotationFqn> = emptySet()
-
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
         towerScope,
         session,
         errorTypeAsResolved = false
     )
+
+    private var owners: PersistentList<FirAnnotatedDeclaration> = persistentListOf()
+
+    override fun beforeChildren(declaration: FirAnnotatedDeclaration): PersistentList<FirAnnotatedDeclaration>? {
+        val current = owners
+        owners = owners.add(declaration)
+        return current
+    }
+
+    override fun afterChildren(state: PersistentList<FirAnnotatedDeclaration>?) {
+        requireNotNull(state)
+        owners = state
+    }
 
     override fun transformAnnotationCall(
         annotationCall: FirAnnotationCall,
@@ -107,6 +120,15 @@ private class FirAnnotationResolveTransformer(
                     data.put(annotation, regularClass)
                 }
             }
+        }
+    }
+
+    override fun transformAnnotatedDeclaration(
+        annotatedDeclaration: FirAnnotatedDeclaration,
+        data: Multimap<AnnotationFqn, FirRegularClass>
+    ): CompositeTransformResult<FirDeclaration> {
+        return super.transformAnnotatedDeclaration(annotatedDeclaration, data).also {
+            session.predicateBasedProvider.registerAnnotatedDeclaration(annotatedDeclaration, owners)
         }
     }
 }
