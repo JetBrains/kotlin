@@ -36,6 +36,9 @@ object SamTypeConversions : ParameterTypeConversion {
             if (!samConversionOracle.shouldRunSamConversionForFunction(candidate.resolvedCall.candidateDescriptor)) return true
         }
 
+        val declarationDescriptor = expectedParameterType.constructor.declarationDescriptor
+        if (declarationDescriptor is ClassDescriptor && declarationDescriptor.isDefinitelyNotSamInterface) return true
+
         return false
     }
 
