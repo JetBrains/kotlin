@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -32,7 +32,7 @@ import org.junit.Assert
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class DecompiledTextConsistencyTest : LightCodeInsightFixtureTestCase() {
+class DecompiledTextConsistencyTest : LightJavaCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() =
         object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
             override fun getSdk() = PluginTestCaseBase.fullJdk()

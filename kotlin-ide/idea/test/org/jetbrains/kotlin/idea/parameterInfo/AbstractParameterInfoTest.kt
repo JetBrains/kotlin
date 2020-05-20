@@ -12,7 +12,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.testFramework.LightProjectDescriptor
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 
-abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractParameterInfoTest : LightJavaCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
         val root = KotlinTestUtils.getTestsRoot(this::class.java)
         if (root.contains("Lib")) {

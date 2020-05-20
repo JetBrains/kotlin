@@ -10,10 +10,10 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.utils.sure
 
-abstract class AbstractNavigateFromLibrarySourcesTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractNavigateFromLibrarySourcesTest : LightJavaCodeInsightFixtureTestCase() {
     protected fun navigationElementForReferenceInLibrarySource(filePath: String, referenceText: String): PsiElement {
         val libraryOrderEntry = ModuleRootManager.getInstance(module!!).orderEntries.first { it is LibraryOrderEntry }
         val libSourcesRoot = libraryOrderEntry.getUrls(OrderRootType.SOURCES)[0]

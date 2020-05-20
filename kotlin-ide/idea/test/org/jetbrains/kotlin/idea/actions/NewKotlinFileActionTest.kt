@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.idea.actions
 
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class NewKotlinFileActionTest : LightCodeInsightFixtureTestCase() {
+class NewKotlinFileActionTest : LightJavaCodeInsightFixtureTestCase() {
     companion object {
         private const val EMPTY_PARTS_ERROR = "Name can't have empty parts"
         private const val EMPTY_ERROR = "Name can't be empty"

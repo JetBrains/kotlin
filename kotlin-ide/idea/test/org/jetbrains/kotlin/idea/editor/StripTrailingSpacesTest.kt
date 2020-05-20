@@ -9,13 +9,13 @@ import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.EditorTestUtil
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class StripTrailingSpacesTest : LightCodeInsightFixtureTestCase() {
+class StripTrailingSpacesTest : LightJavaCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/editor/stripTrailingSpaces/"
     }

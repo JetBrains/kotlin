@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
-public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTestCase {
+public class NavigateToLibraryRegressionTest extends LightJavaCodeInsightFixtureTestCase {
 
     @Override
     protected void setUp() throws Exception {

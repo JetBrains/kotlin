@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.stubs;
 
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.psi.KtClass;
@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
-public class KotlinStubsTest extends LightCodeInsightFixtureTestCase {
+public class KotlinStubsTest extends LightJavaCodeInsightFixtureTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {

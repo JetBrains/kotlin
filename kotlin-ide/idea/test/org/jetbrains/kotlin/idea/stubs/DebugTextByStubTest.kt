@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.stubs
 
 import com.intellij.psi.stubs.StubElement
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
@@ -19,7 +19,7 @@ import org.junit.Assert
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
+class DebugTextByStubTest : LightJavaCodeInsightFixtureTestCase() {
     private fun createFileAndStubTree(text: String): Pair<KtFile, StubElement<*>> {
         val file = myFixture.configureByText("test.kt", text) as KtFile
         val stub = KtFileStubBuilder().buildStubTree(file)!!

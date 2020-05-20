@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.idea.refactoring
 
 import com.intellij.lang.refactoring.NamesValidator
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class KotlinNamesValidatorTest : LightCodeInsightFixtureTestCase() {
+class KotlinNamesValidatorTest : LightJavaCodeInsightFixtureTestCase() {
     val validator: NamesValidator = KotlinNamesValidator()
 
     private fun isKeyword(string: String) = validator.isKeyword(string, null)

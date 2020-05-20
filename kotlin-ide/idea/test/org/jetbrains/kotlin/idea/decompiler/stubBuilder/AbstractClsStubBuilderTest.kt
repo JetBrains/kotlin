@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClsStubBuilder
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
@@ -24,7 +24,7 @@ import org.junit.Assert
 import java.io.File
 import java.util.*
 
-abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractClsStubBuilderTest : LightJavaCodeInsightFixtureTestCase() {
     fun doTest(sourcePath: String) {
         val ktFile = File("$sourcePath/${lastSegment(sourcePath)}.kt")
         val jvmFileName = if (ktFile.exists()) {
