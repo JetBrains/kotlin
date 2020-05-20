@@ -362,10 +362,12 @@ public final class RunDashboardManagerImpl implements RunDashboardManager, Persi
         }
         result.add(syncedServices);
       }
-      for (List<RunDashboardServiceImpl> settingServices : myServices) {
-        RunDashboardService service = settingServices.get(0);
-        if (service.getContent() != null && !settingsList.contains(service.getSettings())) {
-          result.add(settingServices);
+      for (List<RunDashboardServiceImpl> oldServices : myServices) {
+        RunDashboardService oldService = oldServices.get(0);
+        if (oldService.getContent() != null && !settingsList.contains(oldService.getSettings())) {
+          if (!updateServiceSettings(result, oldServices)) {
+            result.add(oldServices);
+          }
         }
       }
       myServices = result;
@@ -490,6 +492,25 @@ public final class RunDashboardManagerImpl implements RunDashboardManager, Persi
       }
     }
     return null;
+  }
+
+  private static boolean updateServiceSettings(List<List<RunDashboardServiceImpl>> newServiceList,
+                                               List<RunDashboardServiceImpl> oldServices) {
+    RunDashboardServiceImpl oldService = oldServices.get(0);
+    RunnerAndConfigurationSettings oldSettings = oldService.getSettings();
+    for (List<RunDashboardServiceImpl> newServices : newServiceList) {
+      RunnerAndConfigurationSettings newSettings = newServices.get(0).getSettings();
+      if (newSettings.getType().equals(oldSettings.getType()) && newSettings.getName().equals(oldSettings.getName())) {
+        newServices.get(0).setContent(oldService.getContent());
+        for (int i = 1; i < oldServices.size(); i++) {
+          RunDashboardServiceImpl newService = new RunDashboardServiceImpl(newSettings);
+          newService.setContent(oldServices.get(i).getContent());
+          newServices.add(newService);
+        }
+        return true;
+      }
+    }
+    return false;
   }
 
   private static void updateContentToolbar(Content content, boolean visible) {
