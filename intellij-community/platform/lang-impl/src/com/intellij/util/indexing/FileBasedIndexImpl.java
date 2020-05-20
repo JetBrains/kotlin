@@ -6,6 +6,7 @@ import com.intellij.AppTopics;
 import com.intellij.ide.AppLifecycleListener;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.startup.ServiceNotReadyException;
+import com.intellij.model.ModelBranch;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.application.Application;
@@ -47,8 +48,11 @@ import com.intellij.psi.impl.cache.impl.id.PlatformIdTableBuilding;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.SerializationManagerEx;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.FactoryMap;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.caches.CachedFileContent;
 import com.intellij.util.indexing.diagnostic.FileIndexingStatistics;
@@ -1000,6 +1004,37 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       assert previousState == previousDocStamp;
     });
   }
+
+  @NotNull
+  @Override
+  public <K, V> Map<K, V> getFileData(@NotNull ID<K, V> id, @NotNull VirtualFile virtualFile, @NotNull Project project) {
+    if (ModelBranch.getFileBranch(virtualFile) != null) {
+      return getInMemoryData(id, virtualFile, project);
+    }
+
+    return super.getFileData(id, virtualFile, project);
+  }
+
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @NotNull
+  private <K, V> Map<K, V> getInMemoryData(@NotNull ID<K, V> id, @NotNull VirtualFile virtualFile, @NotNull Project project) {
+    Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+    if (document != null && psiFile != null) {
+      boolean psiDependent = myRegisteredIndexes.isPsiDependentIndex(id);
+      UserDataHolder holder = psiDependent ? psiFile : document;
+      Map<ID, Map> indexValues = CachedValuesManager.getManager(project).getCachedValue(holder, () -> {
+        CharSequence text = psiDependent ? psiFile.getViewProvider().getContents() : document.getImmutableCharSequence();
+        FileContentImpl fc = new FileContentImpl(virtualFile, text, 0);
+        initFileContent(fc, project, psiFile);
+        Map<ID, Map> result = FactoryMap.create(key -> getIndex(key).getExtension().getIndexer().map(fc));
+        return CachedValueProvider.Result.createSingleDependency(result, holder);
+      });
+      return indexValues.get(id);
+    }
+    return Collections.emptyMap();
+  }
+
 
   private final StorageBufferingHandler myStorageBufferingHandler = new StorageBufferingHandler() {
     @NotNull

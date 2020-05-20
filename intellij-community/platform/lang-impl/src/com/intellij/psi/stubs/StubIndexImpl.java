@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
+import com.intellij.model.ModelBranchImpl;
 import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -22,13 +23,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.util.CachedValueImpl;
-import com.intellij.util.ConcurrencyUtil;
-import com.intellij.util.Processor;
-import com.intellij.util.Processors;
+import com.intellij.util.*;
 import com.intellij.util.containers.FactoryMap;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.AbstractUpdateData;
@@ -284,6 +283,14 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       }
     }
 
+    PairProcessor<VirtualFile, StubIdList> stubProcessor = (file, list) ->
+      myStubProcessingHelper.processStubsInFile(project, file, list, processor, scope, requiredClass);
+
+    if (!ModelBranchImpl.processBranchedFilesInScope(scope != null ? scope : new EverythingGlobalScope(project),
+                                                     file -> processInMemoryStubs(indexKey, key, project, stubProcessor, file))) {
+      return false;
+    }
+
     IdIterator ids = getContainingIds(indexKey, key, project, idFilter, scope);
     PersistentFS fs = PersistentFS.getInstance();
     IntPredicate accessibleFileFilter = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getAccessibleFileIdFilter(project);
@@ -307,7 +314,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
           LOG.error("StubUpdatingIndex & " + indexKey + " stub index mismatch. No stub index key is present");
           continue;
         }
-        if (!myStubProcessingHelper.processStubsInFile(project, file, list, processor, scope, requiredClass)) {
+        if (!stubProcessor.process(file, list)) {
           return false;
         }
       }
@@ -322,6 +329,26 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       }
     } finally {
       wipeProblematicFileIdsForParticularKeyAndStubIndex(indexKey, key);
+    }
+    return true;
+  }
+
+  private static <Key, Psi extends PsiElement> boolean processInMemoryStubs(StubIndexKey<Key, Psi> indexKey,
+                                                                            Key key,
+                                                                            Project project,
+                                                                            PairProcessor<VirtualFile, StubIdList> stubProcessor,
+                                                                            VirtualFile file) {
+    Map<Integer, SerializedStubTree> data = FileBasedIndex.getInstance().getFileData(StubUpdatingIndex.INDEX_ID, file, project);
+    if (data.size() == 1) {
+      try {
+        StubIdList list = data.values().iterator().next().restoreIndexedStubs(indexKey, key);
+        if (list != null) {
+          return stubProcessor.process(file, list);
+        }
+      }
+      catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
     return true;
   }

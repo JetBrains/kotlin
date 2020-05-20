@@ -15,6 +15,8 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
+import com.intellij.model.ModelBranch;
+import com.intellij.model.ModelBranchImpl;
 import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.*;
@@ -233,11 +235,16 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
                                                 @NotNull VirtualFile restrictToFile,
                                                 @NotNull GlobalSearchScope scope,
                                                 @NotNull ValueProcessor<? super V> processor) {
-    if (!(restrictToFile instanceof VirtualFileWithId)) return true;
+    Project project = scope.getProject();
+    if (!(restrictToFile instanceof VirtualFileWithId)) {
+      return project == null ||
+             ModelBranch.getFileBranch(restrictToFile) == null ||
+             processInMemoryFileData(indexId, dataKey, project, restrictToFile, processor);
+    }
 
     int restrictedFileId = getFileId(restrictToFile);
 
-    if (!getAccessibleFileIdFilter(scope.getProject()).test(restrictedFileId)) return true;
+    if (!getAccessibleFileIdFilter(project).test(restrictedFileId)) return true;
 
     return processValueIterator(indexId, dataKey, restrictToFile, scope, valueIt -> {
       while (valueIt.hasNext()) {
@@ -251,15 +258,30 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
     });
   }
 
+  private <K, V> boolean processInMemoryFileData(ID<K, V> indexId,
+                                                 K dataKey,
+                                                 Project project,
+                                                 VirtualFile file,
+                                                 ValueProcessor<? super V> processor) {
+    Map<K, V> data = getFileData(indexId, file, project);
+    return !data.containsKey(dataKey) || processor.process(file, data.get(dataKey));
+  }
+
   private <K, V> boolean processValuesInScope(@NotNull ID<K, V> indexId,
                                               @NotNull K dataKey,
                                               boolean ensureValueProcessedOnce,
                                               @NotNull GlobalSearchScope scope,
                                               @Nullable IdFilter idFilter,
                                               @NotNull ValueProcessor<? super V> processor) {
+    Project project = scope.getProject();
+    if (project != null &&
+        !ModelBranchImpl.processBranchedFilesInScope(scope, file -> processInMemoryFileData(indexId, dataKey, project, file, processor))) {
+      return false;
+    }
+
     PersistentFS fs = PersistentFS.getInstance();
-    IdFilter filter = idFilter != null ? idFilter : projectIndexableFiles(scope.getProject());
-    IntPredicate accessibleFileFilter = getAccessibleFileIdFilter(scope.getProject());
+    IdFilter filter = idFilter != null ? idFilter : projectIndexableFiles(project);
+    IntPredicate accessibleFileFilter = getAccessibleFileIdFilter(project);
 
     return processValueIterator(indexId, dataKey, null, scope, valueIt -> {
       while (valueIt.hasNext()) {
