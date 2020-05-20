@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -40,10 +39,6 @@ abstract class FirProvider : FirSymbolProvider() {
         getFirClassifierContainerFileIfAny(symbol.classId)
 
     abstract fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile?
-
-    companion object {
-        fun getInstance(session: FirSession): FirProvider = session.firProvider
-    }
 
     abstract fun getFirFilesByPackage(fqName: FqName): List<FirFile>
 }
