@@ -245,6 +245,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(valueParameter, type = "FirValueParameterImpl") {
             openBuilder()
+            withCopy()
         }
 
         builder(valueParameter, type = "FirDefaultSetterValueParameter") {

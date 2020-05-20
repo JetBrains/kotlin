@@ -21,9 +21,15 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.inferenceContext
+import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -32,6 +38,9 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -52,16 +61,37 @@ class FirJvmClassCodegen(
             else -> null
         }
 
+    private val approximator = object : AbstractTypeApproximator(session.inferenceContext) {
+        override fun createErrorType(message: String): SimpleTypeMarker {
+            return ConeKotlinErrorType(message)
+        }
+    }
+
+    private fun FirTypeRef.approximated(
+        toSuper: Boolean,
+        conf: TypeApproximatorConfiguration = TypeApproximatorConfiguration.PublicDeclaration
+    ): FirTypeRef {
+        val approximatedType = if (toSuper)
+            approximator.approximateToSuperType(this.coneTypeUnsafe(), conf)
+        else
+            approximator.approximateToSubType(this.coneTypeUnsafe(), conf)
+        return withReplacedConeType(approximatedType as? ConeKotlinType)
+    }
+
     private fun FirFunction<*>.copyToFreeAnonymousFunction(): FirAnonymousFunction {
         val function = this
         return buildAnonymousFunction {
             session = function.session
             origin = FirDeclarationOrigin.Source
             symbol = FirAnonymousFunctionSymbol()
-            returnTypeRef = function.returnTypeRef
-            receiverTypeRef = function.receiverTypeRef
+            returnTypeRef = function.returnTypeRef.approximated(toSuper = true)
+            receiverTypeRef = function.receiverTypeRef?.approximated(toSuper = false)
             isLambda = (function as? FirAnonymousFunction)?.isLambda == true
-            valueParameters.addAll(function.valueParameters)
+            valueParameters.addAll(function.valueParameters.map {
+                buildValueParameterCopy(it) {
+                    returnTypeRef = it.returnTypeRef.approximated(toSuper = false)
+                }
+            })
             typeParameters.addAll(function.typeParameters.filterIsInstance<FirTypeParameter>())
         }
     }
