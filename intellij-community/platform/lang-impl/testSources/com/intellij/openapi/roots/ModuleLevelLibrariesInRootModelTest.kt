@@ -196,6 +196,22 @@ class ModuleLevelLibrariesInRootModelTest {
   }
 
   @Test
+  fun `edit library without creating modifiable root model`() {
+    run {
+      val model = createModifiableModel(module)
+      model.moduleLibraryTable.createLibrary("foo")
+      commitModifiableRootModel(model)
+    }
+    val library = (dropModuleSourceEntry(ModuleRootManager.getInstance(module), 1).single() as LibraryOrderEntry).library!!
+    val libraryModel = library.modifiableModel
+    val classesRoot = projectModel.baseProjectDir.newVirtualDirectory("classes")
+    libraryModel.addRoot(classesRoot, OrderRootType.CLASSES)
+    runWriteActionAndWait { libraryModel.commit() }
+    val entry = dropModuleSourceEntry(ModuleRootManager.getInstance(module), 1).single() as LibraryOrderEntry
+    assertThat(entry.getFiles(OrderRootType.CLASSES)).containsExactly(classesRoot)
+  }
+
+  @Test
   fun `two libraries with the same name`() {
     val model = createModifiableModel(module)
     val lib1 = model.moduleLibraryTable.createLibrary("foo")
