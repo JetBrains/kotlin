@@ -1,4 +1,4 @@
-public class FunsPropsAndFields /* FunsPropsAndFields*/ {
+public class FunsPropsAndFields /* FunsPropsAndFields*/ extends kotlin.script.templates.standard.ScriptTemplateWithArgs {
   @kotlin.jvm.JvmField()
   public final int testField;
 
@@ -6,11 +6,10 @@ public class FunsPropsAndFields /* FunsPropsAndFields*/ {
 
   private int testPropVar;
 
-  @null()
-  public  FunsPropsAndFields(@null() java.lang.String[]);//  .ctor(java.lang.String[])
-
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String testFun(int);//  testFun(int)
+
+  public  FunsPropsAndFields(java.lang.String[]);//  .ctor(java.lang.String[])
 
   public final int getTestPropVal();//  getTestPropVal()
 
@@ -18,6 +17,6 @@ public class FunsPropsAndFields /* FunsPropsAndFields*/ {
 
   public final void setTestPropVar(int);//  setTestPropVar(int)
 
-  public static final void main(@null() java.lang.String[]);//  main(java.lang.String[])
+  public static final void main(java.lang.String[]);//  main(java.lang.String[])
 
 }

@@ -37,4 +37,4 @@ UFile (package = ) [public abstract interface Callback {...]
                                                             UIdentifier (Identifier (UnsupportedOperationException)) [UIdentifier (Identifier (UnsupportedOperationException))]
                                                             USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: UnsupportedOperationException) [<init>] : PsiType:UnsupportedOperationException
                                                             ULiteralExpression (value = "") [""] : PsiType:String
-                                            UMethod (name = Model$1$1) [fun Model$1$1() = UastEmptyExpression]
+                                            UMethod (name = ) [private fun () = UastEmptyExpression]

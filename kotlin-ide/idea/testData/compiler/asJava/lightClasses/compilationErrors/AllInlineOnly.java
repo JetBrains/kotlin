@@ -1,2 +1,2 @@
-public final class AllInlineOnly {
+public final class AllInlineOnly /* p.AllInlineOnly*/ {
 }

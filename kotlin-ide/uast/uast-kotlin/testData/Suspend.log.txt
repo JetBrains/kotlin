@@ -1,7 +1,7 @@
 UFile (package = test.pkg)
     UClass (name = SuspendKt)
         UMethod (name = top)
-            UParameter (name = p)
+            UParameter (name = $completion)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
                 UReturnExpression
@@ -14,7 +14,7 @@ UFile (package = test.pkg)
                             USimpleNameReferenceExpression (identifier = inner, resolvesTo = null)
     UClass (name = Context)
         UMethod (name = inner)
-            UParameter (name = p)
+            UParameter (name = $completion)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
                 UReturnExpression

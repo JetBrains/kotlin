@@ -1,25 +1,26 @@
-@test.AllOpen
-public class C {
-    private final int p;
+@test.AllOpen()
+public class C /* test.C*/ {
+  private final int p;
 
-    public void f() { /* compiled code */ }
+  public  C();//  .ctor()
 
-    public void g() { /* compiled code */ }
+  public int getP();//  getP()
 
-    public int getP() { /* compiled code */ }
+  public void f();//  f()
 
-    public C() { /* compiled code */ }
+  public void g();//  g()
 
-    public static final class D {
-        public final void z() { /* compiled code */ }
 
-        public D() { /* compiled code */ }
-    }
 
-    @test.AllOpen
-    public static class H {
-        public void j() { /* compiled code */ }
+@test.AllOpen()
+public static class H /* test.C.H*/ {
+  public  H();//  .ctor()
 
-        public H() { /* compiled code */ }
-    }
-}
+  public void j();//  j()
+
+}public static final class D /* test.C.D*/ {
+  public  D();//  .ctor()
+
+  public final void z();//  z()
+
+}}

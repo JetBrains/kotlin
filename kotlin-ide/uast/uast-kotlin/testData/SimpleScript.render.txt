@@ -1,16 +1,16 @@
 public class SimpleScript {
-    public final fun getBarOrNull(@org.jetbrains.annotations.NotNull flag: boolean) : SimpleScript.Bar {
-        return if (flag) <init>(42) else null
-    }
-    public static final fun main(@null p: java.lang.String[]) : void = UastEmptyExpression
-    public fun SimpleScript(@null p: java.lang.String[]) {
+    public fun SimpleScript(@null args: java.lang.String[]) {
         println("Hello World!")
         getBarOrNull(true)
         println("Goodbye World!")
     }
+    public static final fun main(@null args: java.lang.String[]) : void = UastEmptyExpression
+    public final fun getBarOrNull(@org.jetbrains.annotations.NotNull flag: boolean) : SimpleScript.Bar {
+        return if (flag) <init>(42) else null
+    }
     public static final class Bar {
-        @org.jetbrains.annotations.NotNull private final var b: int = 0
         @org.jetbrains.annotations.NotNull private final var a: int
+        @org.jetbrains.annotations.NotNull private final var b: int = 0
         public final fun getB() : int = UastEmptyExpression
         public final fun getAPlusB() : int {
             return a + b

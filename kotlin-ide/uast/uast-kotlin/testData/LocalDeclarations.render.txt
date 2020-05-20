@@ -1,7 +1,7 @@
 public final class LocalDeclarationsKt {
     public static final fun foo() : boolean {
         public static final class Local {
-            public fun LocalDeclarationsKt$foo$Local() = UastEmptyExpression
+            public fun Local() = UastEmptyExpression
         }
         var bar: <ErrorType> = fun () {
                 return <init>()

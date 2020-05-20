@@ -4,7 +4,7 @@ UFile (package = ) [public final class LocalDeclarationsKt {...]
             UBlockExpression [{...}] = Nothing
                 UDeclarationsExpression [public static final class Local {...}] = Undetermined
                     UClass (name = Local) [public static final class Local {...}]
-                        UMethod (name = LocalDeclarationsKt$foo$Local) [public fun LocalDeclarationsKt$foo$Local() = UastEmptyExpression]
+                        UMethod (name = Local) [public fun Local() = UastEmptyExpression]
                 UDeclarationsExpression [var bar: <ErrorType> = fun () {...}] = Undetermined
                     UVariable (name = bar) [var bar: <ErrorType> = fun () {...}]
                         ULambdaExpression [fun () {...}] = Undetermined
