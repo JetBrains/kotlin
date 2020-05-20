@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -45,7 +46,18 @@ object FirReferenceResolveHelper {
     fun FirReference.toTargetPsi(session: FirSession): PsiElement? {
         return when (this) {
             is FirResolvedNamedReference -> {
-                resolvedSymbol.fir.psi
+                val targetFir = when (val symbol = resolvedSymbol) {
+                    is SyntheticPropertySymbol -> {
+                        val syntheticProperty = symbol.fir as FirSyntheticProperty
+                        if (syntheticProperty.getter.delegate.symbol.callableId == symbol.accessorId) {
+                            syntheticProperty.getter.delegate
+                        } else {
+                            syntheticProperty.setter!!.delegate
+                        }
+                    }
+                    else -> symbol.fir
+                }
+                targetFir.findPsi(session)
             }
             is FirResolvedCallableReference -> {
                 resolvedSymbol.fir.findPsi(session)
@@ -62,13 +74,26 @@ object FirReferenceResolveHelper {
         }
     }
 
-    fun resolveToPsiElements(ref: AbstractKtReference<*>): Collection<PsiElement> {
+    internal fun resolveSimpleNameReference(
+        ref: KtSimpleNameReferenceFirImpl,
+        session: FirSession,
+        state: FirModuleResolveState
+    ): Collection<PsiElement> {
         val expression = ref.expression
-        val state = expression.firResolveState()
-        val session = state.getSession(expression)
         when (val fir = expression.getOrBuildFir(state)) {
             is FirResolvable -> {
-                return listOfNotNull(fir.calleeReference.toTargetPsi(session))
+                val calleeReference =
+                    if (fir is FirFunctionCall
+                        && fir.isImplicitFunctionCall()
+                        && expression is KtNameReferenceExpression
+                    ) {
+                        // we are resolving implicit invoke call, like
+                        // fun foo(a: () -> Unit) {
+                        //     <expression>a</expression>()
+                        // }
+                        (fir.dispatchReceiver as FirQualifiedAccessExpression).calleeReference
+                    } else fir.calleeReference
+                return listOfNotNull(calleeReference.toTargetPsi(session))
             }
             is FirResolvedTypeRef -> {
                 return listOfNotNull(fir.toTargetPsi(session))
@@ -131,6 +156,11 @@ object FirReferenceResolveHelper {
             is FirArrayOfCall -> {
                 // We can't yet find PsiElement for arrayOf, intArrayOf, etc.
                 return emptyList()
+            }
+            is FirReturnExpression -> {
+                return if (expression is KtLabelReferenceExpression) {
+                    listOfNotNull(fir.target.labeledElement.findPsi(session))
+                } else emptyList()
             }
             is FirErrorNamedReference -> {
                 return emptyList()

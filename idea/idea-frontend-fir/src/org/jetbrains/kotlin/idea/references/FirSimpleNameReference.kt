@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.resolve.ResolveCache
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.idea.fir.FirModuleResolveState
+import org.jetbrains.kotlin.idea.frontend.api.fir.AnalysisSessionFirImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -14,12 +16,18 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 internal class KtSimpleNameReferenceFirImpl(
     expression: KtSimpleNameExpression
 ) : KtSimpleNameReference(expression), FirKtReference {
+    override fun getResolvedToPsi(
+        analysisSession: AnalysisSessionFirImpl,
+        session: FirSession,
+        state: FirModuleResolveState
+    ) = FirReferenceResolveHelper.resolveSimpleNameReference(this, session, state)
+
     override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean {
         return true // TODO
     }
 
     override fun isReferenceToWithoutExtensionChecking(candidateTarget: PsiElement): Boolean {
-        return resolve() == candidateTarget
+        return resolve() == candidateTarget //todo
     }
 
     override fun handleElementRename(newElementName: String): PsiElement? {

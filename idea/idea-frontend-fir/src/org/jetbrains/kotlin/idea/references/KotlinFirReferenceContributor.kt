@@ -9,6 +9,10 @@ class KotlinFirReferenceContributor : KotlinReferenceProviderContributor {
     override fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar) {
         with(registrar) {
             registerProvider(factory = ::KtSimpleNameReferenceFirImpl)
+            registerProvider(factory = ::KtForLoopInReferenceFirImpl)
+            registerProvider(factory = ::KtInvokeFunctionReferenceFirImpl)
+            registerProvider(factory = ::KtPropertyDelegationMethodsReferenceFirImpl)
+            registerProvider(factory = ::KtDestructuringDeclarationReferenceFirImpl)
         }
     }
 }
