@@ -39,6 +39,7 @@ val projectsToShadow by extra(listOf(
         ":idea:scripting-support",
         ":idea:idea-j2k",
         ":idea:formatter",
+        ":idea:line-indent-provider",
         ":compiler:psi",
         ":compiler:fir:cones",
         ":compiler:fir:checkers",
