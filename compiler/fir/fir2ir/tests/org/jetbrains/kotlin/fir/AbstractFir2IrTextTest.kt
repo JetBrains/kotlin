@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -68,14 +68,14 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
         val firProvider = (session.firProvider as FirProviderImpl)
         val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
 
-        val resolveTransformer = FirTotalResolveTransformer(session)
+        val resolveTransformer = FirTotalResolveProcessor(session)
         val firFiles = psiFiles.map {
             val firFile = builder.buildFirFile(it)
             firProvider.recordFile(firFile)
             firFile
         }.also {
             try {
-                resolveTransformer.processFiles(it)
+                resolveTransformer.process(it)
             } catch (e: Exception) {
                 throw e
             }

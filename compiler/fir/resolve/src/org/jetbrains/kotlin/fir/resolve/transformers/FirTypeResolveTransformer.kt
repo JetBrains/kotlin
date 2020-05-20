@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 
+class FirTypeResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+    override val transformer = FirTypeResolveTransformer(session, scopeSession)
+}
+
 fun <F : FirClass<F>> F.runTypeResolvePhaseForLocalClass(
     session: FirSession,
     scopeSession: ScopeSession,

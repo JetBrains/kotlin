@@ -14,10 +14,15 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+
+@OptIn(AdapterForResolveProcessor::class)
+class FirStatusResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+    override val transformer = FirStatusResolveTransformer(session)
+}
 
 fun <F : FirClass<F>> F.runStatusResolveForLocalClass(session: FirSession): F {
     val transformer = FirStatusResolveTransformer(session)

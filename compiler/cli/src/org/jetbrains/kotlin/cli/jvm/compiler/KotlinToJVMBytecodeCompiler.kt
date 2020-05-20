@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
@@ -333,14 +333,14 @@ object KotlinToJVMBytecodeCompiler {
             }
             val firProvider = (session.firProvider as FirProviderImpl)
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
-            val resolveTransformer = FirTotalResolveTransformer(session)
+            val resolveTransformer = FirTotalResolveProcessor(session)
             val firFiles = ktFiles.map {
                 val firFile = builder.buildFirFile(it)
                 firProvider.recordFile(firFile)
                 firFile
             }.also {
                 try {
-                    resolveTransformer.processFiles(it)
+                    resolveTransformer.process(it)
                 } catch (e: Exception) {
                     throw e
                 }
