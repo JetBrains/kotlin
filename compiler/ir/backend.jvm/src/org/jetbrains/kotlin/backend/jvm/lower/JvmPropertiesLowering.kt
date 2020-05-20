@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -118,15 +119,8 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             }
         }
 
-    private fun shouldSubstituteAccessorWithField(property: IrProperty, accessor: IrSimpleFunction?): Boolean {
-        if (accessor == null) return false
-
-        if ((property.parent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS) return false
-
-        if (property.backingField?.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) == true) return true
-
-        return accessor.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && Visibilities.isPrivate(accessor.visibility)
-    }
+    private fun shouldSubstituteAccessorWithField(property: IrProperty, accessor: IrSimpleFunction?): Boolean =
+        accessor != null && !property.needsAccessor(accessor)
 
     private fun createSyntheticMethodForAnnotations(declaration: IrProperty): IrFunctionImpl =
         buildFun {

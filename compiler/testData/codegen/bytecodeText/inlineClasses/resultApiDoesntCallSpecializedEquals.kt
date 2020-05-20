@@ -1,5 +1,4 @@
 // !API_VERSION: 1.3
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // FILE: test.kt
 fun test() {

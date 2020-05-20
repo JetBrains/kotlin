@@ -110,7 +110,8 @@ internal fun IrFunction.isInvokeSuspendOfContinuation(): Boolean =
     name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
 
 private fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean =
-    isSuspend && name.asString() == "invoke" && parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+    isSuspend && name.asString().let { name -> name == "invoke" || name.startsWith("invoke-") }
+            && parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
 
 private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
     isSuspend && this is IrSimpleFunction && parentAsClass.functions.any {

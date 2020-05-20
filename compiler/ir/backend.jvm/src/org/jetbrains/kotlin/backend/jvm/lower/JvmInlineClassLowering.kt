@@ -276,6 +276,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        if (expression.origin == InlineClassAbi.UNMANGLED_FUNCTION_REFERENCE)
+            return super.visitFunctionReference(expression)
+
         val function = context.inlineClassReplacements.getReplacementFunction(expression.symbol.owner)
             ?: return super.visitFunctionReference(expression)
 
