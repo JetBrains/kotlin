@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTypeBodyResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirGlobalExtensionStatusProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirPluginAnnotationsResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirTransformerBasedExtensionStatusProcessor
 
 fun FirResolvePhase.createProcessorByPhase(
     session: FirSession,
@@ -27,6 +29,10 @@ fun FirResolvePhase.createProcessorByPhase(
         SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)
         TYPES -> FirTypeResolveProcessor(session, scopeSession)
+        EXTENSION_STATUS_UPDATE -> when (compilerMode) {
+            CompilerMode.CLI -> FirGlobalExtensionStatusProcessor(session, scopeSession)
+            CompilerMode.IDE -> FirTransformerBasedExtensionStatusProcessor(session, scopeSession)
+        }
         STATUS -> FirStatusResolveProcessor(session, scopeSession)
         CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)

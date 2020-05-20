@@ -13,6 +13,7 @@ enum class FirResolvePhase {
     SUPER_TYPES,
     SEALED_CLASS_INHERITORS,
     TYPES,
+    EXTENSION_STATUS_UPDATE,
     STATUS,
     CONTRACTS,
     IMPLICIT_TYPES_BODY_RESOLVE,
@@ -22,6 +23,7 @@ enum class FirResolvePhase {
         get() = when (this) {
             RAW_FIR -> RAW_FIR
             IMPORTS -> RAW_FIR
+            STATUS -> TYPES
             IMPLICIT_TYPES_BODY_RESOLVE, BODY_RESOLVE -> STATUS
             else -> values()[ordinal - 1]
         }
