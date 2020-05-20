@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -61,31 +61,39 @@ class KtUltraLightClassForFacade(
         result: MutableList<KtLightMethod>
     ) {
         for (declaration in file.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
-            when (declaration) {
-                is KtNamedFunction -> result.addAll(creator.createMethods(declaration, true))
-                is KtProperty -> {
-                    result.addAll(
-                        creator.propertyAccessors(
-                            declaration, declaration.isVar,
-                            forceStatic = true,
-                            onlyJvmStatic = false
-                        )
-                    )
-
-                }
+            val methods = when (declaration) {
+                is KtNamedFunction -> creator.createMethods(
+                    ktFunction = declaration,
+                    forceStatic = true
+                )
+                is KtProperty -> creator.propertyAccessors(
+                    declaration, declaration.isVar,
+                    forceStatic = true,
+                    onlyJvmStatic = false,
+                )
+                else -> emptyList()
             }
+            result.addAll(methods)
         }
     }
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
-        mutableListOf<KtLightMethod>().also { result ->
-            for ((file, support, creator) in filesWithSupportsWithCreators) {
-                loadMethodsFromFile(file, support, creator, result)
-            }
+        val result = mutableListOf<KtLightMethod>()
+        for ((file, support, creator) in filesWithSupportsWithCreators) {
+            loadMethodsFromFile(file, support, creator, result)
+        }
+        if (!multiFileClass) result else result.filterNot { it.hasModifierProperty(PsiModifier.PRIVATE) }
+    }
+
+    private val multiFileClass: Boolean by lazyPub {
+        filesWithSupports.any {
+            it.second.findAnnotation(it.first, JvmFileClassUtil.JVM_MULTIFILE_CLASS) != null
         }
     }
 
     private val _ownFields: List<KtLightField> by lazyPub {
+        if (multiFileClass) return@lazyPub emptyList()
+
         hashSetOf<String>().let { nameCache ->
             filesWithSupportsWithCreators.flatMap { (file, _, creator) ->
                 file.declarations.filterIsInstance<KtProperty>().mapNotNull {
