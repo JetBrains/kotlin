@@ -415,19 +415,19 @@ private val nameToOperationConventionOrigin = mutableMapOf(
 internal fun FirReference.statementOrigin(): IrStatementOrigin? {
     return when (this) {
         is FirPropertyFromParameterResolvedNamedReference -> IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
-        is FirResolvedNamedReference -> when (resolvedSymbol) {
+        is FirResolvedNamedReference -> when (val symbol = resolvedSymbol) {
             is AccessorSymbol, is SyntheticPropertySymbol -> IrStatementOrigin.GET_PROPERTY
             is FirNamedFunctionSymbol -> when {
-                resolvedSymbol.callableId.isInvoke() ->
+                symbol.callableId.isInvoke() ->
                     IrStatementOrigin.INVOKE
-                source?.elementType == KtNodeTypes.FOR && resolvedSymbol.callableId.isIteratorNext() ->
+                source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIteratorNext() ->
                     IrStatementOrigin.FOR_LOOP_NEXT
-                source?.elementType == KtNodeTypes.FOR && resolvedSymbol.callableId.isIteratorHasNext() ->
+                source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIteratorHasNext() ->
                     IrStatementOrigin.FOR_LOOP_HAS_NEXT
-                source?.elementType == KtNodeTypes.FOR && resolvedSymbol.callableId.isIterator() ->
+                source?.elementType == KtNodeTypes.FOR && symbol.callableId.isIterator() ->
                     IrStatementOrigin.FOR_LOOP_ITERATOR
                 source?.elementType == KtNodeTypes.OPERATION_REFERENCE ->
-                    nameToOperationConventionOrigin[resolvedSymbol.callableId.callableName]
+                    nameToOperationConventionOrigin[symbol.callableId.callableName]
                 else ->
                     null
             }

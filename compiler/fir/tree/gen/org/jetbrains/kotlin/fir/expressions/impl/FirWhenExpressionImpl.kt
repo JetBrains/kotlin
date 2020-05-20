@@ -34,8 +34,9 @@ internal class FirWhenExpressionImpl(
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         calleeReference.accept(visitor, data)
-        if (subjectVariable != null) {
-            subjectVariable.accept(visitor, data)
+        val subjectVariable_ = subjectVariable
+        if (subjectVariable_ != null) {
+            subjectVariable_.accept(visitor, data)
         } else {
             subject?.accept(visitor, data)
         }

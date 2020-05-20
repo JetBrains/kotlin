@@ -79,7 +79,7 @@ abstract class AbstractFirUseSiteMemberScope(
         createFunctionCopy(firSimpleFunction, newSymbol).apply {
             resolvePhase = firSimpleFunction.resolvePhase
             typeParameters += firSimpleFunction.typeParameters
-            valueParameters += firSimpleFunction.valueParameters.zip(foundFir.valueParameters)
+            valueParameters += firSimpleFunction.valueParameters.zip(foundFir!!.valueParameters)
                 .map { (overrideParameter, overriddenParameter) ->
                     if (overriddenParameter.defaultValue != null)
                         createValueParameterCopy(overrideParameter, overriddenParameter.defaultValue).apply {

@@ -21622,6 +21622,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt29767.kt");
                 }
 
+                @TestMetadata("kt39010.kt")
+                public void testKt39010() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt39010.kt");
+                }
+
+                @TestMetadata("kt39010_2.kt")
+                public void testKt39010_2() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt39010_2.kt");
+                }
+
                 @TestMetadata("kt4009.kt")
                 public void testKt4009() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt4009.kt");

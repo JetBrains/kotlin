@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -283,8 +284,19 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     private fun reportUnstableSmartCast(unstableSmartCast: UnstableSmartCast) {
-        // todo hack -- remove it after removing SmartCastManager
-        reportSmartCast(SmartCastDiagnostic(unstableSmartCast.argument, unstableSmartCast.targetType, null))
+        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(unstableSmartCast.argument.receiver.receiverValue, context)
+        val possibleTypes = unstableSmartCast.argument.receiver.typesFromSmartCasts
+        val argumentExpression = unstableSmartCast.argument.psiExpression ?: return
+
+        require(possibleTypes.isNotEmpty()) { "Receiver for unstable smart cast without possible types" }
+        trace.report(
+            SMARTCAST_IMPOSSIBLE.on(
+                argumentExpression,
+                intersectWrappedTypes(possibleTypes),
+                argumentExpression.text,
+                dataFlowValue.kind.description
+            )
+        )
     }
 
     override fun constraintError(diagnostic: KotlinCallDiagnostic) {
