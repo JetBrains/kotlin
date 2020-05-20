@@ -260,6 +260,11 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     }
   }
 
+  @Nullable Problem getSelectedProblem() {
+    ProblemNode node = TreeUtil.getLastUserObject(ProblemNode.class, getTree().getSelectionPath());
+    return node == null ? null : node.getProblem();
+  }
+
   private @Nullable OpenFileDescriptor getSelectedDescriptor() {
     Object object = TreeUtil.getLastUserObject(getTree().getSelectionPath());
     if (object instanceof FileNode) return getDescriptor((FileNode)object);
