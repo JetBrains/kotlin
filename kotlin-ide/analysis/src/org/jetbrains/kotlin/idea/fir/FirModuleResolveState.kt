@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -39,7 +40,7 @@ interface FirModuleResolveState {
                 sessionProvider.sessionCache[moduleInfo] = moduleBasedSession
             }
             session.also {
-                it.extensionService.registerExtensions(emptyList())
+                it.extensionService.registerExtensions(BunchOfRegisteredExtensions.empty())
             }
         }
     }
