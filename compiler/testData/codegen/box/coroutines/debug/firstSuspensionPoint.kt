@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 // FULL_JDK
 // WITH_COROUTINES
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND:
 package test // NB This test depends on line numbers
 
 import helpers.*

@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
+import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.calculateOwner
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.calculateOwnerKClass
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.kClassToJavaClass
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -106,19 +108,26 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private fun IrBuilderWithScope.computeSignatureString(expression: IrCallableReference): IrExpression {
         return expression.getter?.let { getter ->
             localPropertyIndices[getter]?.let { irString("<v#$it>") }
-                ?: if (getter.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && getter.owner.parentAsClass.isInline) {
-                    // Default property accessor in an inline class. Compute the signature now, so that we will not
-                    // get into trouble if the getter is transformed to a static method by inline classes lowering.
-                    irString(getter.owner.signature)
-                } else {
-                    // Delay the computation of the signature until after inline classes lowering to make sure
-                    // we mangle the function names correctly for things like extension methods on inline classes.
-                    irCall(signatureStringIntrinsic).apply {
-                        putValueArgument(
-                            0,
-                            IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type, getter, 0, getter, null)
+                ?: irCall(signatureStringIntrinsic).apply {
+                    // Work around for differences between `RuntimeTypeMapper.KotlinProperty` and the real Kotlin type mapper.
+                    // Most notably, the runtime type mapper does not perform inline class name mangling. This is usually not
+                    // a problem, since we will produce a getter signature as part of the Kotlin metadata, except when there
+                    // is no getter method in the bytecode. In that case we need to avoid inline class mangling for the
+                    // function reference used in the <signature-string> intrinsic.
+                    //
+                    // Note that we cannot compute the signature at this point, since we still need to mangle the names of
+                    // private properties in multifile-part classes.
+                    val needsDummySignature =
+                        getter.owner.correspondingPropertySymbol?.owner?.needsAccessor(getter.owner) == false ||
+                                getter.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && getter.owner.parentAsClass.isInline
+
+                    putValueArgument(
+                        0,
+                        IrFunctionReferenceImpl(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type, getter, 0, getter,
+                            if (needsDummySignature) InlineClassAbi.UNMANGLED_FUNCTION_REFERENCE else null
                         )
-                    }
+                    )
                 }
         } ?: irString(expression.field!!.owner.signature)
     }
@@ -252,8 +261,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             private fun createSpecializedKProperty(expression: IrCallableReference): IrExpression {
                 val referenceClass = createKPropertySubclass(expression)
                 return context.createIrBuilder(
-                    currentScope?.scope?.scopeOwnerSymbol ?: irClass.symbol, expression.startOffset, expression.endOffset
-                )
+                        currentScope?.scope?.scopeOwnerSymbol ?: irClass.symbol, expression.startOffset, expression.endOffset
+                    )
                     .irBlock {
                         // TODO: Move this to the enclosing class, right now the parent field is wrong!
                         +referenceClass

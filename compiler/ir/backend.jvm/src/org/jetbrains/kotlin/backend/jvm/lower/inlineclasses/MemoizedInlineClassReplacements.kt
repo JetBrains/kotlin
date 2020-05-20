@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -53,8 +54,8 @@ class MemoizedInlineClassReplacements {
                 it.parent.safeAs<IrClass>()?.isInline == true ->
                     createStaticReplacement(it)
 
-                // Otherwise, mangle functions with mangled parameters, while ignoring constructors
-                it is IrSimpleFunction && it.hasMangledParameters ->
+                // Otherwise, mangle functions with mangled parameters, ignoring constructors
+                it is IrSimpleFunction && (it.hasMangledParameters || it.hasMangledReturnType) ->
                     if (it.dispatchReceiverParameter != null) createMethodReplacement(it) else createStaticReplacement(it)
 
                 else ->

@@ -160,20 +160,14 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         function is IrConstructor || (function.returnType.isUnit() && !function.isGetter)
 
     // Copied from KotlinTypeMapper.forceBoxedReturnType.
-    private fun forceBoxedReturnType(function: IrFunction): Boolean {
-        if (isBoxMethodForInlineClass(function)) return true
-
-        return isJvmPrimitiveOrInlineClass(function.returnType) &&
-                function is IrSimpleFunction && function.allOverridden().any { !isJvmPrimitiveOrInlineClass(it.returnType) }
-    }
+    private fun forceBoxedReturnType(function: IrFunction): Boolean = isBoxMethodForInlineClass(function) ||
+            function is IrSimpleFunction && function.returnType.isPrimitiveType() &&
+            function.allOverridden().any { !it.returnType.isPrimitiveType() }
 
     private fun isBoxMethodForInlineClass(function: IrFunction): Boolean =
         function.parent.let { it is IrClass && it.isInline } &&
                 function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER &&
                 function.name.asString() == "box-impl"
-
-    private fun isJvmPrimitiveOrInlineClass(type: IrType): Boolean =
-        type.isPrimitiveType() || type.getClass()?.isInline == true
 
     fun mapSignatureSkipGeneric(function: IrFunction): JvmMethodSignature =
         mapSignature(function, true)

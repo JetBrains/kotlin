@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -369,7 +370,12 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private fun createInvokeMethod(receiverVar: IrValueDeclaration?): IrSimpleFunction =
             functionReferenceClass.addFunction {
                 setSourceRange(if (isLambda) callee else irFunctionReference)
-                name = superMethod.owner.name
+                name = if (callee.returnType.erasedUpperBound.isInline) {
+                    // For functions with inline class return type we need to mangle the invoke method.
+                    // Otherwise, bridge lowering may fail to generate bridges for inline class types erasing to Any.
+                    val suffix = InlineClassAbi.returnHashSuffix(callee)
+                    Name.identifier("${superMethod.owner.name.asString()}-${suffix}")
+                } else superMethod.owner.name
                 returnType = callee.returnType
                 isSuspend = callee.isSuspend
             }.apply {
