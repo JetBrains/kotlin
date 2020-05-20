@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
 interface IrSymbol {
     val owner: IrSymbolOwner
+
+    @Deprecated("Please use IR declaration properties and not its descriptor properties")
     val descriptor: DeclarationDescriptor
+
     val isBound: Boolean
 
     val signature: IdSignature
