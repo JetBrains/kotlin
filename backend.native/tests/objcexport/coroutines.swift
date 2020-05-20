@@ -221,6 +221,38 @@ private func testBridges() throws {
     try assertSame(actual: resultHolder.result, expected: KotlinUnit())
 }
 
+private func testImplicitThrows1() throws {
+    var result: KotlinUnit? = nil
+    var error: Error? = nil
+    var completionCalled = 0
+
+    CoroutinesKt.throwCancellationException { _result, _error in
+        completionCalled += 1
+        result = _result
+        error = _error
+    }
+
+    try assertEquals(actual: completionCalled, expected: 1)
+    try assertNil(result)
+    try assertTrue(error?.kotlinException is KotlinCancellationException)
+}
+
+private func testImplicitThrows2() throws {
+    var result: KotlinUnit? = nil
+    var error: Error? = nil
+    var completionCalled = 0
+
+    ThrowCancellationExceptionImpl().throwCancellationException { _result, _error in
+        completionCalled += 1
+        result = _result
+        error = _error
+    }
+
+    try assertEquals(actual: completionCalled, expected: 1)
+    try assertNil(result)
+    try assertTrue(error?.kotlinException is KotlinCancellationException)
+}
+
 class CoroutinesTests : SimpleTestProvider {
     override init() {
         super.init()
@@ -229,5 +261,7 @@ class CoroutinesTests : SimpleTestProvider {
         test("TestCall", testCall)
         test("TestOverride", testOverride)
         test("TestBridges", testBridges)
+        test("TestImplicitThrows1", testImplicitThrows1)
+        test("TestImplicitThrows2", testImplicitThrows2)
     }
 }

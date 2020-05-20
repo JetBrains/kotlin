@@ -140,3 +140,27 @@ fun callSuspendBridge(bridge: AbstractSuspendBridge, resultHolder: ResultHolder<
         callAbstractSuspendBridgeImpl(bridge)
     }.startCoroutine(ResultHolderCompletion(resultHolder))
 }
+
+suspend fun throwCancellationException(): Unit {
+    val exception = CancellationException("coroutine is cancelled")
+
+    // Note: frontend checker hardcodes fq names of CancellationException super classes (see NativeThrowsChecker).
+    // This is our best effort to keep that list in sync with actual stdlib code:
+    assertTrue(exception is kotlin.Throwable)
+    assertTrue(exception is kotlin.Exception)
+    assertTrue(exception is kotlin.RuntimeException)
+    assertTrue(exception is kotlin.IllegalStateException)
+    assertTrue(exception is kotlin.coroutines.cancellation.CancellationException)
+
+    throw exception
+}
+
+abstract class ThrowCancellationException {
+    internal abstract suspend fun throwCancellationException()
+}
+
+class ThrowCancellationExceptionImpl : ThrowCancellationException() {
+    public override suspend fun throwCancellationException() {
+        throw CancellationException()
+    }
+}

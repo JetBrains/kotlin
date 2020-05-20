@@ -22,6 +22,7 @@ object KonanFqNames {
     val nonNullNativePtr = internalPackageName.child(Name.identifier(NON_NULL_NATIVE_PTR_NAME)).toUnsafe()
     val Vector128 = packageName.child(Name.identifier(VECTOR128))
     val throws = FqName("kotlin.Throws")
+    val cancellationException = FqName("kotlin.coroutines.cancellation.CancellationException")
     val threadLocal = FqName("kotlin.native.concurrent.ThreadLocal")
     val sharedImmutable = FqName("kotlin.native.concurrent.SharedImmutable")
     val frozen = FqName("kotlin.native.internal.Frozen")

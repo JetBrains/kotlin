@@ -9,10 +9,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.ir.allParameters
-import org.jetbrains.kotlin.backend.konan.ir.isOverridable
-import org.jetbrains.kotlin.backend.konan.ir.isUnit
-import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
+import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
@@ -890,7 +887,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
 
 private fun ObjCExportCodeGenerator.generateExceptionTypeInfoArray(baseMethod: IrFunction): LLVMValueRef =
         exceptionTypeInfoArrays.getOrPut(baseMethod) {
-            val types = computesThrowsClasses(baseMethod)
+            val types = effectiveThrowsClasses(baseMethod, symbols)
             generateTypeInfoArray(types.toSet())
         }.llvm
 
@@ -900,16 +897,22 @@ private fun ObjCExportCodeGenerator.generateTypeInfoArray(types: Set<IrClass>): 
             codegen.staticData.placeGlobalConstArray("", codegen.kTypeInfoPtr, typeInfos)
         }
 
-private fun computesThrowsClasses(method: IrFunction): List<IrClass> {
-    // Note: frontend ensures that all topmost overridden methods have equal @Throws annotations.
-    // However due to linking different versions of libraries IR could end up not meeting this condition.
-    // Handling this gracefully below.
-
+private fun effectiveThrowsClasses(method: IrFunction, symbols: KonanSymbols): List<IrClass> {
     if (method is IrSimpleFunction && method.overriddenSymbols.isNotEmpty()) {
-        return computesThrowsClasses(method.overriddenSymbols.first().owner)
+        return effectiveThrowsClasses(method.overriddenSymbols.first().owner, symbols)
     }
 
-    val throwsVararg = method.annotations.findAnnotation(KonanFqNames.throws)?.getValueArgument(0)
+    val throwsAnnotation = method.annotations.findAnnotation(KonanFqNames.throws)
+            ?: return if (method.isSuspend) {
+                listOf(symbols.cancellationException.owner)
+            } else {
+                // Note: frontend ensures that all topmost overridden methods have (equal) @Throws annotations.
+                // However due to linking different versions of libraries IR could end up not meeting this condition.
+                // Handling missing annotation gracefully:
+                emptyList()
+            }
+
+    val throwsVararg = throwsAnnotation.getValueArgument(0)
             ?: return emptyList()
 
     if (throwsVararg !is IrVararg) error(method.getContainingFile(), throwsVararg, "unexpected vararg")

@@ -409,6 +409,8 @@ internal class KonanSymbols(
                     .filterNot { it.isExpect }.single().getter!!
     )
 
+    val cancellationException = topLevelClass(KonanFqNames.cancellationException)
+
     val kotlinResult = topLevelClass("kotlin.Result")
 
     val kotlinResultGetOrThrow = symbolTable.referenceSimpleFunction(

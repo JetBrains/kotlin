@@ -652,15 +652,36 @@ internal class ObjCExportTranslatorImpl(
     }
 
     private fun exportThrown(method: FunctionDescriptor) {
-        if (!method.kind.isReal) return
-        val throwsAnnotation = method.annotations.findAnnotation(KonanFqNames.throws) ?: return
-
-        val arguments = (throwsAnnotation.allValueArguments.values.single() as ArrayValue).value
-        for (argument in arguments) {
-            val classDescriptor = TypeUtils.getClassDescriptor((argument as KClassValue).getArgumentType(method.module)) ?: continue
-            generator?.requireClassOrInterface(classDescriptor)
-        }
+        getDefinedThrows(method)
+                ?.mapNotNull { method.module.findClassAcrossModuleDependencies(it) }
+                ?.forEach { generator?.requireClassOrInterface(it) }
     }
+
+    private fun getDefinedThrows(method: FunctionDescriptor): Sequence<ClassId>? {
+        if (!method.kind.isReal) return null
+
+        val throwsAnnotation = method.annotations.findAnnotation(KonanFqNames.throws)
+
+        if (throwsAnnotation != null) {
+            val argumentsArrayValue = throwsAnnotation.firstArgument() as? ArrayValue
+            return argumentsArrayValue?.value?.asSequence().orEmpty()
+                    .filterIsInstance<KClassValue>()
+                    .mapNotNull {
+                        when (val value = it.value) {
+                            is KClassValue.Value.NormalClass -> value.classId
+                            is KClassValue.Value.LocalClass -> null
+                        }
+                    }
+        }
+
+        if (method.isSuspend && method.overriddenDescriptors.isEmpty()) {
+            return implicitSuspendThrows
+        }
+
+        return null
+    }
+
+    private val implicitSuspendThrows = sequenceOf(ClassId.topLevel(KonanFqNames.cancellationException))
 
     private fun mapReturnType(returnBridge: MethodBridge.ReturnValue, method: FunctionDescriptor, objCExportScope: ObjCExportScope): ObjCType = when (returnBridge) {
         MethodBridge.ReturnValue.Suspend,
