@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
@@ -181,7 +181,7 @@ internal val psiToIrPhase = konanUnitPhase(
             )
 
             translator.addPostprocessingStep { module ->
-                val pluginContext = IrPluginContext(
+                val pluginContext = IrPluginContextImpl(
                         generatorContext.moduleDescriptor,
                         generatorContext.bindingContext,
                         generatorContext.languageVersionSettings,
