@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 
 object DeclarationCheckers {
     val DECLARATIONS: List<FirDeclarationChecker<FirDeclaration>> = listOf(
-        FirAnnotationClassDeclarationChecker,
         FirModifierChecker
     )
     val MEMBER_DECLARATIONS: List<FirDeclarationChecker<FirMemberDeclaration>> = DECLARATIONS + listOf(
+        FirAnnotationClassDeclarationChecker,
         FirInfixFunctionDeclarationChecker,
         FirExposedVisibilityChecker
     )

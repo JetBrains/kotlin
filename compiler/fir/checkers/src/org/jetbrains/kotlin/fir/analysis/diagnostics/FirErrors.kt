@@ -54,8 +54,11 @@ object FirErrors {
     val NON_PRIVATE_CONSTRUCTOR_IN_SEALED by existing<FirSourceElement, PsiElement>(Errors.NON_PRIVATE_CONSTRUCTOR_IN_SEALED)
 
     val ANNOTATION_CLASS_MEMBER by existing<FirSourceElement, PsiElement>(Errors.ANNOTATION_CLASS_MEMBER)
+    val ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT)
     val LOCAL_ANNOTATION_CLASS_ERROR by existing<FirSourceElement, KtClassOrObject>(Errors.LOCAL_ANNOTATION_CLASS_ERROR)
     val MISSING_VAL_ON_ANNOTATION_PARAMETER by existing<FirSourceElement, KtParameter>(Errors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
+    val NULLABLE_TYPE_OF_ANNOTATION_MEMBER by existing<FirSourceElement, KtTypeReference>(Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER)
+    val INVALID_TYPE_OF_ANNOTATION_MEMBER by existing<FirSourceElement, KtTypeReference>(Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER)
     val VAR_ANNOTATION_PARAMETER by existing<FirSourceElement, KtParameter>(Errors.VAR_ANNOTATION_PARAMETER)
 
     // Exposed visibility group
