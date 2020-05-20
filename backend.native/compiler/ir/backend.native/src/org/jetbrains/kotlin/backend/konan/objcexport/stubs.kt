@@ -10,7 +10,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
-abstract class Stub<out D : DeclarationDescriptor>(val name: String) {
+class ObjCComment(val contentLines: List<String>) {
+    constructor(vararg contentLines: String) : this(contentLines.toList())
+}
+
+abstract class Stub<out D : DeclarationDescriptor>(val name: String, val comment: ObjCComment? = null) {
     abstract val descriptor: D?
     open val psi: PsiElement?
         get() = ((descriptor as? DeclarationDescriptorWithSource)?.source as? PsiSourceElement)?.psi
@@ -56,12 +60,15 @@ class ObjCInterfaceImpl(
         attributes: List<String> = emptyList()
 ) : ObjCInterface(name, generics, categoryName, attributes)
 
-class ObjCMethod(override val descriptor: DeclarationDescriptor?,
-                 val isInstanceMethod: Boolean,
-                 val returnType: ObjCType,
-                 val selectors: List<String>,
-                 val parameters: List<ObjCParameter>,
-                 val attributes: List<String>) : Stub<DeclarationDescriptor>(buildMethodName(selectors, parameters))
+class ObjCMethod(
+        override val descriptor: DeclarationDescriptor?,
+        val isInstanceMethod: Boolean,
+        val returnType: ObjCType,
+        val selectors: List<String>,
+        val parameters: List<ObjCParameter>,
+        val attributes: List<String>,
+        comment: ObjCComment? = null
+) : Stub<DeclarationDescriptor>(buildMethodName(selectors, parameters), comment)
 
 class ObjCParameter(name: String,
                     override val descriptor: ParameterDescriptor?,

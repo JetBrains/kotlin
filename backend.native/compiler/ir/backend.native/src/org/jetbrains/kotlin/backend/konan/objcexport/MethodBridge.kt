@@ -71,6 +71,9 @@ internal data class MethodBridge(
 
         MethodBridgeReceiver.Instance -> true
     }
+
+    val returnsError: Boolean
+        get() = returnBridge is ReturnValue.WithError
 }
 
 internal fun MethodBridge.valueParametersAssociated(

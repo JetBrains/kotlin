@@ -142,6 +142,11 @@ __attribute__((swift_name("ContinuationHolder")))
 __attribute__((swift_name("SuspendFun")))
 @protocol KtSuspendFun
 @required
+
+/**
+ @note This method converts instances of CoroutineException, CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void)suspendFunDoYield:(BOOL)doYield doThrow:(BOOL)doThrow completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFun(doYield:doThrow:completionHandler:)")));
 @end;
 
@@ -158,13 +163,49 @@ __attribute__((swift_name("ResultHolder")))
 __attribute__((swift_name("SuspendBridge")))
 @protocol KtSuspendBridge
 @required
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void)intValue:(id _Nullable)value completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("int(value:completionHandler:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void)intAsAnyValue:(id _Nullable)value completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("intAsAny(value:completionHandler:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void)unitValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unit(value:completionHandler:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void)unitAsAnyValue:(id _Nullable)value completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unitAsAny(value:completionHandler:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 - (void)nothingValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinNothing * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothing(value:completionHandler:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 - (void)nothingAsIntValue:(id _Nullable)value completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsInt(value:completionHandler:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 - (void)nothingAsAnyValue:(id _Nullable)value completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsAny(value:completionHandler:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 - (void)nothingAsUnitValue:(id _Nullable)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
 @end;
 
@@ -172,10 +213,32 @@ __attribute__((swift_name("AbstractSuspendBridge")))
 @interface KtAbstractSuspendBridge : KtBase <KtSuspendBridge>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void)intAsAnyValue:(KtInt *)value completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("intAsAny(value:completionHandler:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void)unitAsAnyValue:(KtInt *)value completionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("unitAsAny(value:completionHandler:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 - (void)nothingAsIntValue:(KtInt *)value completionHandler:(void (^)(KtKotlinNothing * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsInt(value:completionHandler:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 - (void)nothingAsAnyValue:(KtInt *)value completionHandler:(void (^)(KtKotlinNothing * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsAny(value:completionHandler:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 - (void)nothingAsUnitValue:(KtInt *)value completionHandler:(void (^)(KtKotlinNothing * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("nothingAsUnit(value:completionHandler:)")));
 @end;
 
@@ -190,19 +253,58 @@ __attribute__((swift_name("ThrowCancellationExceptionImpl")))
 @interface KtThrowCancellationExceptionImpl : KtThrowCancellationException
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void)throwCancellationExceptionWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("CoroutinesKt")))
 @interface KtCoroutinesKt : KtBase
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 + (void)suspendFunWithCompletionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFun(completionHandler:)")));
+
+/**
+ @note This method converts instances of CoroutineException, CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 + (void)suspendFunResult:(id _Nullable)result doSuspend:(BOOL)doSuspend doThrow:(BOOL)doThrow completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFun(result:doSuspend:doThrow:completionHandler:)")));
+
+/**
+ @note This method converts instances of CoroutineException, CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 + (void)suspendFunAsyncResult:(id _Nullable)result continuationHolder:(KtContinuationHolder<id> *)continuationHolder completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("suspendFunAsync(result:continuationHolder:completionHandler:)")));
+
+/**
+ @note This method converts instances of CoroutineException, CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 + (BOOL)throwExceptionException:(KtKotlinThrowable *)exception error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("throwException(exception:)")));
 + (void)callSuspendFunSuspendFun:(id<KtSuspendFun>)suspendFun doYield:(BOOL)doYield doThrow:(BOOL)doThrow resultHolder:(KtResultHolder<KtInt *> *)resultHolder __attribute__((swift_name("callSuspendFun(suspendFun:doYield:doThrow:resultHolder:)")));
+
+/**
+ @note This method converts instances of CoroutineException, CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 + (void)callSuspendFun2SuspendFun:(id<KtSuspendFun>)suspendFun doYield:(BOOL)doYield doThrow:(BOOL)doThrow completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("callSuspendFun2(suspendFun:doYield:doThrow:completionHandler:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 + (BOOL)callSuspendBridgeBridge:(KtAbstractSuspendBridge *)bridge resultHolder:(KtResultHolder<KtKotlinUnit *> *)resultHolder error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("callSuspendBridge(bridge:resultHolder:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 + (void)throwCancellationExceptionWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
 @end;
 
@@ -258,6 +360,16 @@ __attribute__((swift_name("LibraryKt")))
 + (NSString *)readDataFromLibraryClassInput:(KtA *)input __attribute__((swift_name("readDataFromLibraryClass(input:)")));
 + (NSString *)readDataFromLibraryInterfaceInput:(id<KtI>)input __attribute__((swift_name("readDataFromLibraryInterface(input:)")));
 + (NSString *)readDataFromLibraryEnumInput:(KtE *)input __attribute__((swift_name("readDataFromLibraryEnum(input:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ThrowsEmptyKt")))
+@interface KtThrowsEmptyKt : KtBase
+
+/**
+ @warning All uncaught Kotlin exceptions are fatal.
+*/
++ (BOOL)throwsEmptyAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("throwsEmpty()")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
@@ -418,69 +530,269 @@ __attribute__((swift_name("MyError")))
 __attribute__((swift_name("SwiftOverridableMethodsWithThrows")))
 @protocol KtSwiftOverridableMethodsWithThrows
 @required
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)unitAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("unit()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)nothingAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothing()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (id _Nullable)anyAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("any()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtInt *(^ _Nullable)(void))blockAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("block()")));
 @end;
 
 __attribute__((swift_name("MethodsWithThrows")))
 @protocol KtMethodsWithThrows <KtSwiftOverridableMethodsWithThrows>
 @required
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtKotlinNothing * _Nullable)nothingNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothingN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (id _Nullable)anyNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("anyN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtInt *(^ _Nullable)(void))blockNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("blockN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void * _Nullable)pointerAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointer()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void * _Nullable)pointerNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointerN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (int32_t)intAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("int()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtLong * _Nullable)longNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("longN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (double)doubleAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("double()"))) __attribute__((swift_error(nonnull_error)));
 @end;
 
 __attribute__((swift_name("MethodsWithThrowsUnitCaller")))
 @protocol KtMethodsWithThrowsUnitCaller
 @required
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)callMethods:(id<KtMethodsWithThrows>)methods error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("call(methods:)")));
 @end;
 
 __attribute__((swift_name("Throwing")))
 @interface KtThrowing : KtBase <KtMethodsWithThrows>
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (instancetype _Nullable)initWithDoThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("init(doThrow:)"))) __attribute__((objc_designated_initializer));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)unitAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("unit()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)nothingAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothing()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtKotlinNothing * _Nullable)nothingNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothingN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (id _Nullable)anyAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("any()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (id _Nullable)anyNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("anyN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtInt *(^ _Nullable)(void))blockAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("block()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtInt *(^ _Nullable)(void))blockNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("blockN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void * _Nullable)pointerAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointer()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void * _Nullable)pointerNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointerN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (int32_t)intAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("int()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtLong * _Nullable)longNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("longN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (double)doubleAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("double()"))) __attribute__((swift_error(nonnull_error)));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("NotThrowing")))
 @interface KtNotThrowing : KtBase <KtMethodsWithThrows>
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (instancetype _Nullable)initAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)unitAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("unit()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)nothingAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothing()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtKotlinNothing * _Nullable)nothingNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("nothingN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (id _Nullable)anyAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("any()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (id _Nullable)anyNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("anyN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtInt *(^ _Nullable)(void))blockAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("block()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtInt *(^ _Nullable)(void))blockNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("blockN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void * _Nullable)pointerAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointer()")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (void * _Nullable)pointerNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("pointerN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (int32_t)intAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("int()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtLong * _Nullable)longNAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("longN()"))) __attribute__((swift_error(nonnull_error)));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (double)doubleAndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("double()"))) __attribute__((swift_error(nonnull_error)));
 @end;
 
 __attribute__((swift_name("ThrowsWithBridgeBase")))
 @protocol KtThrowsWithBridgeBase
 @required
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (id _Nullable)plusOneX:(int32_t)x error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("plusOne(x:)")));
 @end;
 
@@ -488,6 +800,11 @@ __attribute__((swift_name("ThrowsWithBridge")))
 @interface KtThrowsWithBridge : KtBase <KtThrowsWithBridgeBase>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (KtInt * _Nullable)plusOneX:(int32_t)x error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("plusOne(x:)")));
 @end;
 
@@ -1256,8 +1573,23 @@ __attribute__((swift_name("TestStringConversion")))
 __attribute__((swift_name("GH3825")))
 @protocol KtGH3825
 @required
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)call0AndReturnError:(NSError * _Nullable * _Nullable)error callback:(KtBoolean *(^)(void))callback __attribute__((swift_name("call0(callback:)")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)call1DoThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error callback:(void (^)(void))callback __attribute__((swift_name("call1(doThrow:callback:)")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)call2Callback:(void (^)(void))callback doThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("call2(callback:doThrow:)")));
 @end;
 
@@ -1266,8 +1598,23 @@ __attribute__((swift_name("GH3825KotlinImpl")))
 @interface KtGH3825KotlinImpl : KtBase <KtGH3825>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)call0AndReturnError:(NSError * _Nullable * _Nullable)error callback:(KtBoolean *(^)(void))callback __attribute__((swift_name("call0(callback:)")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)call1DoThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error callback:(void (^)(void))callback __attribute__((swift_name("call1(doThrow:callback:)")));
+
+/**
+ @note This method converts instances of MyException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 - (BOOL)call2Callback:(void (^)(void))callback doThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("call2(callback:doThrow:)")));
 @end;
 
@@ -1332,12 +1679,42 @@ __attribute__((swift_name("ValuesKt")))
 + (BOOL)isFrozenObj:(id)obj __attribute__((swift_name("isFrozen(obj:)")));
 + (id)kotlinLambdaBlock:(id (^)(id))block __attribute__((swift_name("kotlinLambda(block:)")));
 + (int64_t)multiplyInt:(int32_t)int_ long:(int64_t)long_ __attribute__((swift_name("multiply(int:long:)")));
+
+/**
+ @note This method converts instances of MyException, MyError to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 + (BOOL)throwExceptionError:(BOOL)error error:(NSError * _Nullable * _Nullable)error_ __attribute__((swift_name("throwException(error:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 + (KtKotlinObjCErrorException * _Nullable)testSwiftThrowingMethods:(id<KtSwiftOverridableMethodsWithThrows>)methods error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("testSwiftThrowing(methods:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 + (BOOL)testSwiftNotThrowingMethods:(id<KtSwiftOverridableMethodsWithThrows>)methods error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("testSwiftNotThrowing(methods:)")));
+
+/**
+ @note This method converts instances of MyError to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
 + (BOOL)callUnitMethods:(id<KtSwiftOverridableMethodsWithThrows>)methods error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("callUnit(methods:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 + (BOOL)callUnitCallerCaller:(id<KtMethodsWithThrowsUnitCaller>)caller methods:(id<KtMethodsWithThrows>)methods error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("callUnitCaller(caller:methods:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 + (BOOL)testSwiftThrowingTest:(id<KtThrowsWithBridgeBase>)test flag:(BOOL)flag error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("testSwiftThrowing(test:flag:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 + (BOOL)testSwiftNotThrowingTest:(id<KtThrowsWithBridgeBase>)test error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("testSwiftNotThrowing(test:)")));
 + (id)same:(id)receiver __attribute__((swift_name("same(_:)")));
 + (KtInt * _Nullable)callBase1:(id<KtBase1>)base1 value:(KtInt * _Nullable)value __attribute__((swift_name("call(base1:value:)")));
@@ -1365,6 +1742,10 @@ __attribute__((swift_name("ValuesKt")))
 + (int32_t)testAbstractInterfaceCallX:(id<KtIAbstractInterface>)x __attribute__((swift_name("testAbstractInterfaceCall(x:)")));
 + (int32_t)testAbstractInterfaceCall2X:(id<KtIAbstractInterface2>)x __attribute__((swift_name("testAbstractInterfaceCall2(x:)")));
 + (void)fooA:(KtKotlinAtomicReference<id> *)a __attribute__((swift_name("foo(a:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
 + (BOOL)testGH3825Gh3825:(id<KtGH3825>)gh3825 error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("testGH3825(gh3825:)")));
 + (NSDictionary<KtBoolean *, NSString *> *)mapBoolean2String __attribute__((swift_name("mapBoolean2String()")));
 + (NSDictionary<KtByte *, KtShort *> *)mapByte2Short __attribute__((swift_name("mapByte2Short()")));

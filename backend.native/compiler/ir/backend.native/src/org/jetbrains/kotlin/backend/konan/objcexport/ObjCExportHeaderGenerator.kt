@@ -640,7 +640,9 @@ internal class ObjCExportTranslatorImpl(
             attributes.addIfNotNull(mapper.getDeprecation(method)?.toDeprecationAttribute())
         }
 
-        return ObjCMethod(method, isInstanceMethod, returnType, selectorParts, parameters, attributes)
+        val comment = buildComment(method, baseMethodBridge)
+
+        return ObjCMethod(method, isInstanceMethod, returnType, selectorParts, parameters, attributes, comment)
     }
 
     private fun splitSelector(selector: String): List<String> {
@@ -649,6 +651,42 @@ internal class ObjCExportTranslatorImpl(
         } else {
             selector.trimEnd(':').split(':').map { "$it:" }
         }
+    }
+
+    private fun buildComment(method: FunctionDescriptor, bridge: MethodBridge): ObjCComment? {
+        if (method.isSuspend || bridge.returnsError) {
+            val effectiveThrows = getEffectiveThrows(method).toSet()
+            return when {
+                effectiveThrows.contains(throwableClassId) -> {
+                    ObjCComment("@note This method converts all Kotlin exceptions to errors.")
+                }
+
+                effectiveThrows.isNotEmpty() -> {
+                    ObjCComment(
+                            buildString {
+                                append("@note This method converts instances of ")
+                                effectiveThrows.joinTo(this) { it.relativeClassName.asString() }
+                                append(" to errors.")
+                            },
+                            "Other uncaught Kotlin exceptions are fatal."
+                    )
+                }
+
+                else -> {
+                    // Shouldn't happen though.
+                    ObjCComment("@warning All uncaught Kotlin exceptions are fatal.")
+                }
+            }
+        }
+
+        return null
+    }
+
+    private val throwableClassId = ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.throwable)
+
+    private fun getEffectiveThrows(method: FunctionDescriptor): Sequence<ClassId> {
+        method.overriddenDescriptors.firstOrNull()?.let { return getEffectiveThrows(it) }
+        return getDefinedThrows(method).orEmpty()
     }
 
     private fun exportThrown(method: FunctionDescriptor) {

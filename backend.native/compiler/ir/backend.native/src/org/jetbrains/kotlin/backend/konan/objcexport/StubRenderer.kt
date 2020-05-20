@@ -10,6 +10,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 object StubRenderer {
     fun render(stub: Stub<*>): List<String> = collect {
         stub.run {
+            this.comment?.let { comment ->
+                +"" // Probably makes the output more readable.
+                +"/**"
+                comment.contentLines.forEach {
+                    +" $it"
+                }
+                +"*/"
+            }
             when (this) {
                 is ObjCProtocol -> {
                     attributes.forEach {
