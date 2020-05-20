@@ -419,35 +419,35 @@ class UnsignedArraysTest {
     }
 
     @Test
-    fun min() {
-        expect(null) { arrayOf<UByte>().min() }
-        expect(1u) { arrayOf<UShort>(1).min() }
-        expect(2u) { arrayOf<UInt>(2, 3).min() }
-        expect(2uL) { arrayOf<ULong>(3, 2).min() }
+    fun minOrNull() {
+        expect(null) { arrayOf<UByte>().minOrNull() }
+        expect(1u) { arrayOf<UShort>(1).minOrNull() }
+        expect(2u) { arrayOf<UInt>(2, 3).minOrNull() }
+        expect(2uL) { arrayOf<ULong>(3, 2).minOrNull() }
     }
 
     @Test
-    fun minInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().min() }
-        expect(1u) { ushortArrayOf(1).min() }
-        expect(2u) { uintArrayOf(2, 3).min() }
-        expect(2uL) { ulongArrayOf(3, 2).min() }
+    fun minOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().minOrNull() }
+        expect(1u) { ushortArrayOf(1).minOrNull() }
+        expect(2u) { uintArrayOf(2, 3).minOrNull() }
+        expect(2uL) { ulongArrayOf(3, 2).minOrNull() }
     }
 
     @Test
-    fun max() {
-        expect(null) { arrayOf<UByte>().max() }
-        expect(1u) { arrayOf<UShort>(1).max() }
-        expect(3u) { arrayOf<UInt>(2, 3).max() }
-        expect(3uL) { arrayOf<ULong>(3, 2).max() }
+    fun maxOrNull() {
+        expect(null) { arrayOf<UByte>().maxOrNull() }
+        expect(1u) { arrayOf<UShort>(1).maxOrNull() }
+        expect(3u) { arrayOf<UInt>(2, 3).maxOrNull() }
+        expect(3uL) { arrayOf<ULong>(3, 2).maxOrNull() }
     }
 
     @Test
-    fun maxInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().max() }
-        expect(1u) { ushortArrayOf(1).max() }
-        expect(3u) { uintArrayOf(2, 3).max() }
-        expect(3uL) { ulongArrayOf(3, 2).max() }
+    fun maxOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().maxOrNull() }
+        expect(1u) { ushortArrayOf(1).maxOrNull() }
+        expect(3u) { uintArrayOf(2, 3).maxOrNull() }
+        expect(3uL) { ulongArrayOf(3, 2).maxOrNull() }
     }
 
     @Test

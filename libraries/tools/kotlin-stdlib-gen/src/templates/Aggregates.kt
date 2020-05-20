@@ -306,11 +306,11 @@ object Aggregates : TemplateGroupBase() {
     }
 
 
-    val f_minMax = run {
+    val f_minMax = sequence {
         val genericSpecializations = PrimitiveType.floatingPointPrimitives + setOf(null)
 
-        listOf("min", "max").map { op ->
-            fn("$op()") {
+        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+            fn("$op$orNull()") {
                 include(Iterables, genericSpecializations)
                 include(Sequences, genericSpecializations)
                 include(ArraysOfObjects, genericSpecializations)
@@ -318,19 +318,30 @@ object Aggregates : TemplateGroupBase() {
                 include(ArraysOfUnsigned)
                 include(CharSequences)
             } builder {
-                val isFloat = primitive?.isFloatingPoint() == true
-                val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
-
                 typeParam("T : Comparable<T>")
-                if (primitive != null) {
-                    if (isFloat && isGeneric)
+                returns("T?")
+
+                val isFloat = primitive?.isFloatingPoint() == true
+
+                if (!nullable) {
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "${op}OrNull()", DeprecationLevel.WARNING))
+
+                    val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
+                    if (isFloat && isGeneric) {
                         since("1.1")
+                    }
+
+                    body { "return ${op}OrNull()" }
+
+                    return@builder
                 }
+
+                since("1.4")
+
                 doc {
                     "Returns the ${if (op == "max") "largest" else "smallest"} ${f.element} or `null` if there are no ${f.element.pluralize()}." +
                     if (isFloat) "\n\n" + "If any of ${f.element.pluralize()} is `NaN` returns `NaN`." else ""
                 }
-                returns("T?")
 
                 val acc = op
                 val cmpBlock = if (isFloat)
@@ -361,7 +372,10 @@ object Aggregates : TemplateGroupBase() {
                     """
                 }
             }
-        }
+
+        for (op in listOf("min", "max"))
+            for (nullable in listOf(false, true))
+                yield(def(op, nullable))
     }
 
     val f_minBy = fn("minBy(selector: (T) -> R)") {
