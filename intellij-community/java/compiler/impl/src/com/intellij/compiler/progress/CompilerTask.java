@@ -73,7 +73,7 @@ public final class CompilerTask extends Task.Backgroundable {
     myContentId = new IDObject("content_id");
     mySessionId = myContentId; // by default sessionID should be unique, just as content ID
 
-    if (Registry.is("ide.jps.use.build.tool.window", false)) {
+    if (Registry.is("ide.jps.use.build.tool.window", true)) {
       myBuildViewService = new BuildOutputService(project, contentName);
     } else {
       myBuildViewService = new CompilerMessagesService(project, myContentId, contentName, headlessMode);

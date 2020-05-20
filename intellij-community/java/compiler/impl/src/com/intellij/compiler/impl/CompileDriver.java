@@ -515,7 +515,7 @@ public final class CompileDriver {
         final String statusMessage = createStatusMessage(_status, warningCount, errorCount, duration);
         final MessageType messageType = errorCount > 0 ? MessageType.ERROR : warningCount > 0 ? MessageType.WARNING : MessageType.INFO;
         if (duration > ONE_MINUTE_MS && CompilerWorkspaceConfiguration.getInstance(myProject).DISPLAY_NOTIFICATION_POPUP) {
-          String toolWindowId = Registry.is("ide.jps.use.build.tool.window", false) ?
+          String toolWindowId = Registry.is("ide.jps.use.build.tool.window", true) ?
                                 BuildContentManager.TOOL_WINDOW_ID : ToolWindowId.MESSAGES_WINDOW;
           ToolWindowManager.getInstance(myProject).notifyByBalloon(toolWindowId, messageType, statusMessage);
         }
@@ -814,7 +814,7 @@ public final class CompileDriver {
     @Override
     protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
       final Project project = myProjectRef.get();
-      boolean useBuildToolwindow = Registry.is("ide.jps.use.build.tool.window", false);
+      boolean useBuildToolwindow = Registry.is("ide.jps.use.build.tool.window", true);
       String toolWindowId = useBuildToolwindow ? BuildContentManager.TOOL_WINDOW_ID : ToolWindowId.MESSAGES_WINDOW;
       if (project != null && !project.isDisposed()) {
         if (useBuildToolwindow || CompilerMessagesService.showCompilerContent(project, myContentId)) {
