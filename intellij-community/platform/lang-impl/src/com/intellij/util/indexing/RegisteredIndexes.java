@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,12 +24,8 @@ class RegisteredIndexes {
   private final FileDocumentManager myFileDocumentManager;
   @NotNull
   private final FileBasedIndexImpl myFileBasedIndex;
-
-  RegisteredIndexes(@NotNull FileDocumentManager fileDocumentManager,
-                    @NotNull FileBasedIndexImpl fileBasedIndex) {
-    myFileDocumentManager = fileDocumentManager;
-    myFileBasedIndex = fileBasedIndex;
-  }
+  @NotNull
+  private final Future<IndexConfiguration> myStateFuture;
 
   private final List<ID<?, ?>> myIndicesForDirectories = new SmartList<>();
 
@@ -43,7 +38,6 @@ class RegisteredIndexes {
 
   private volatile boolean myInitialized;
 
-  private Future<IndexConfiguration> myStateFuture;
   private volatile IndexConfiguration myState;
   private volatile Future<?> myAllIndicesInitializedFuture;
 
@@ -51,16 +45,19 @@ class RegisteredIndexes {
 
   private final AtomicBoolean myShutdownPerformed = new AtomicBoolean(false);
 
-  boolean performShutdown() {
-    return myShutdownPerformed.compareAndSet(false, true);
-  }
-
-  void initializeIndexes(@NotNull Callable<IndexConfiguration> action) {
-    myStateFuture = IndexInfrastructure.submitGenesisTask(action);
+  RegisteredIndexes(@NotNull FileDocumentManager fileDocumentManager,
+                    @NotNull FileBasedIndexImpl fileBasedIndex) {
+    myFileDocumentManager = fileDocumentManager;
+    myFileBasedIndex = fileBasedIndex;
+    myStateFuture = IndexInfrastructure.submitGenesisTask(new FileBasedIndexDataInitialization(fileBasedIndex, this));
 
     if (!IndexInfrastructure.ourDoAsyncIndicesInitialization) {
       waitUntilIndicesAreInitialized();
     }
+  }
+
+  boolean performShutdown() {
+    return myShutdownPerformed.compareAndSet(false, true);
   }
 
   void setState(@NotNull IndexConfiguration state) {

@@ -307,7 +307,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     LOG.assertTrue(myRegisteredIndexes == null);
     myStorageBufferingHandler.resetState();
     myRegisteredIndexes = new RegisteredIndexes(myFileDocumentManager, this);
-    myRegisteredIndexes.initializeIndexes(new FileBasedIndexDataInitialization(this));
   }
 
   @Override
