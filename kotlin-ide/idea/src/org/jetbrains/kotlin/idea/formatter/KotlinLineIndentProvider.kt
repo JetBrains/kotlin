@@ -8,20 +8,20 @@ package org.jetbrains.kotlin.idea.formatter
 import com.intellij.lang.Language
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.codeStyle.lineIndent.LineIndentProvider
-import com.intellij.psi.impl.source.codeStyle.lineIndent.FormatterBasedLineIndentProvider
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.formatter.lineIndent.KotlinIndentationAdjuster
+import org.jetbrains.kotlin.idea.formatter.lineIndent.KotlinLikeLangLineIndentProvider
 
-class KotlinLineIndentProvider : LineIndentProvider {
-    private val formatterBasedProvider = FormatterBasedLineIndentProvider()
+class KotlinLineIndentProvider : KotlinLikeLangLineIndentProvider() {
+    override fun getLineIndent(project: Project, editor: Editor, language: Language?, offset: Int): String? =
+        if (useFormatter)
+            null
+        else
+            super.getLineIndent(project, editor, language, offset)
 
-    override fun getLineIndent(project: Project, editor: Editor, language: Language?, offset: Int): String? {
-        val lineIndent = formatterBasedProvider.getLineIndent(project, editor, language, offset)
-        return if (useFormatter) lineIndent else lineIndent
+    override fun indentionSettings(project: Project): KotlinIndentationAdjuster = object : KotlinIndentationAdjuster {
+
     }
-
-    override fun isSuitableFor(language: Language?): Boolean = language?.isKindOf(KotlinLanguage.INSTANCE) == true
 
     companion object {
         @get:TestOnly

@@ -8,3 +8,4 @@ fun test() {
     }
 }
 
+// WITHOUT_CUSTOM_LINE_INDENT_PROVIDER
