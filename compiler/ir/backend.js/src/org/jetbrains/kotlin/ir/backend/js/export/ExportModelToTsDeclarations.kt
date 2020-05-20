@@ -75,7 +75,7 @@ fun ExportedDeclaration.toTypeScript(indent: String): String = indent + when (th
         val modifiers = if (isAbstract && !isInterface) "abstract " else ""
 
         val klassExport = "$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$membersString$indent}"
-        val staticsExport = if (statics.isNotEmpty()) "\n" + ExportedNamespace(name, statics).toTypeScript(indent) else ""
+        val staticsExport = if (nestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, nestedClasses).toTypeScript(indent) else ""
         klassExport + staticsExport
     }
 }

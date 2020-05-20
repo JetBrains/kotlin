@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
@@ -176,9 +177,10 @@ private fun buildFactoryDeclaration(constructor: IrConstructor, irClass: IrClass
         Modality.FINAL,
         constructor.isInline,
         constructor.isExternal
-    ).also {
-        it.copyTypeParametersFrom(constructor.parentAsClass)
-        it.valueParameters += constructor.valueParameters.map { p -> p.copyTo(it) }
+    ).also { factory ->
+        factory.copyTypeParametersFrom(constructor.parentAsClass)
+        factory.valueParameters += constructor.valueParameters.map { p -> p.copyTo(factory) }
+        factory.annotations = constructor.annotations
     }
 }
 

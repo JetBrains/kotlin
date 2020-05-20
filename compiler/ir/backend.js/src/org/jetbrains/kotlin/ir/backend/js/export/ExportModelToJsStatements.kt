@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.export
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsAstUtils
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.defineProperty
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsAssignment
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.NameTable
+import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.js.backend.ast.*
 
 
@@ -85,7 +86,12 @@ class ExportModelToJsStatements(
                         )
                     )
                 ).makeStmt()
-                val staticsExport = declaration.statics.flatMap { generateDeclarationExport(it, newNameSpace) }
+
+                val staticFunctions = declaration.members.filter { it is ExportedFunction && it.isStatic }
+
+                val staticsExport = (staticFunctions + declaration.nestedClasses)
+                    .flatMap { generateDeclarationExport(it, newNameSpace) }
+
                 listOf(klassExport) + staticsExport
             }
         }

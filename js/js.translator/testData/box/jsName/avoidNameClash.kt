@@ -1,5 +1,8 @@
 // EXPECTED_REACHABLE_NODES: 1290
 
+// TODO: Support JsExport on object declarations: KT-39117
+// IGNORE_BACKEND: JS_IR
+
 @JsExport
 object A {
     @JsName("js_method") fun f() = "method"
