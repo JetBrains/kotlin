@@ -45,6 +45,8 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   private final DataIndexer<Key, Value, FileContent> myIndexer;
   @NotNull
   private final PersistentMapBasedForwardIndex myContents;
+  @NotNull
+  private final SnapshotHashEnumeratorService.HashEnumeratorHandle myEnumeratorHandle;
   private volatile PersistentHashMap<Integer, String> myIndexingTrace;
   private final Statistics myStatistics = IndexDebugProperties.DEBUG ? new Statistics() : null;
 
@@ -66,6 +68,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     myContents = createContentsIndex();
     myHashIdForwardIndexAccessor = new HashIdForwardIndexAccessor<>(this, accessor);
     myIndexingTrace = IndexDebugProperties.EXTRA_SANITY_CHECKS ? createIndexingTrace() : null;
+    myEnumeratorHandle = SnapshotHashEnumeratorService.getInstance().createHashEnumeratorHandle(myIndexId);
 
     if (VfsAwareMapReduceIndex.isCompositeIndexer(myIndexer)) {
       myCompositeHashIdEnumerator = new CompositeHashIdEnumerator(myIndexId);
@@ -245,6 +248,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   @Override
   public void close() {
     IOUtil.closeSafe(LOG, myContents, myIndexingTrace, myCompositeHashIdEnumerator);
+    myEnumeratorHandle.release();
   }
 
   @NotNull
@@ -294,11 +298,11 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   }
 
   @NotNull
-  private static Integer doGetContentHash(FileContentImpl content) throws IOException {
+  private Integer doGetContentHash(FileContentImpl content) throws IOException {
     Integer previouslyCalculatedContentHashId = content.getUserData(ourContentHashIdKey);
     if (previouslyCalculatedContentHashId == null) {
       byte[] hash = IndexedHashesSupport.getOrInitIndexedHash(content);
-      previouslyCalculatedContentHashId = IndexedHashesSupport.enumerateHash(hash);
+      previouslyCalculatedContentHashId = myEnumeratorHandle.enumerateHash(hash);
       content.putUserData(ourContentHashIdKey, previouslyCalculatedContentHashId);
     }
     return previouslyCalculatedContentHashId;

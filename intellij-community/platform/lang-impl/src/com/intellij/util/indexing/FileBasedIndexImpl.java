@@ -58,7 +58,7 @@ import com.intellij.util.indexing.caches.CachedFileContent;
 import com.intellij.util.indexing.diagnostic.FileIndexingStatistics;
 import com.intellij.util.indexing.impl.MapReduceIndex;
 import com.intellij.util.indexing.memory.InMemoryIndexStorage;
-import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
+import com.intellij.util.indexing.snapshot.SnapshotHashEnumeratorService;
 import com.intellij.util.indexing.snapshot.SnapshotInputMappings;
 import com.intellij.util.indexing.snapshot.SnapshotSingleValueIndexStorage;
 import com.intellij.util.io.storage.HeavyProcessLatch;
@@ -379,8 +379,10 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     for (int attempt = 0; attempt < 2; attempt++) {
       try {
         if (VfsAwareMapReduceIndex.hasSnapshotMapping(extension)) {
-          IndexedHashesSupport.initContentHashesEnumerator();
-          contentHashesEnumeratorOk = true;
+          contentHashesEnumeratorOk = SnapshotHashEnumeratorService.getInstance().initialize();
+          if (!contentHashesEnumeratorOk) {
+            throw new IOException("content hash enumerator will be forcibly clean");
+          }
         }
 
         storage = createIndexStorage(extension);
@@ -502,7 +504,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         }
 
         FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.shutdown());
-        IndexedHashesSupport.flushContentHashes();
+        SnapshotHashEnumeratorService.getInstance().close();
         if (!keepConnection) {
           myConnection.disconnect();
         }
@@ -588,7 +590,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       }
     }
 
-    IndexedHashesSupport.flushContentHashes();
+    SnapshotHashEnumeratorService.getInstance().flush();
   }
 
   private static final ThreadLocal<Integer> myUpToDateCheckState = new ThreadLocal<>();
