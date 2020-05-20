@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.extensions.*
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
+import org.jetbrains.kotlin.fir.extensions.AbstractFirAdditionalCheckersExtension
+import org.jetbrains.kotlin.fir.extensions.FirExtensionPointName
+import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 
 abstract class FirAdditionalCheckersExtension(session: FirSession) : AbstractFirAdditionalCheckersExtension(session) {
     companion object {
@@ -22,31 +22,8 @@ abstract class FirAdditionalCheckersExtension(session: FirSession) : AbstractFir
 
     final override val name: FirExtensionPointName
         get() = NAME
-
-    final override val directlyApplicableAnnotations: Set<AnnotationFqn>
-        get() = emptySet()
-
-    final override val childrenApplicableAnnotations: Set<AnnotationFqn>
-        get() = emptySet()
-
-    final override val metaAnnotations: Map<AnnotationFqn, MetaAnnotationMode>
-        get() = emptyMap()
-
-    final override val mode: Mode
-        get() = Mode.ALL
 }
 
-val FirOldExtensionsService.additionalCheckers: List<FirAdditionalCheckersExtension> by FirOldExtensionsService.additionalCheckers()
-
-private fun FirOldExtensionsService.Companion.additionalCheckers(): ReadOnlyProperty<FirOldExtensionsService, List<FirAdditionalCheckersExtension>> {
-    val accessor = generateAccessor<FirRegisteredExtension<AbstractFirAdditionalCheckersExtension>, AbstractFirAdditionalCheckersExtension>(
-        AbstractFirAdditionalCheckersExtension::class
-    )
-    return object : ReadOnlyProperty<FirOldExtensionsService, List<FirAdditionalCheckersExtension>> {
-        override fun getValue(thisRef: FirOldExtensionsService, property: KProperty<*>): List<FirAdditionalCheckersExtension> {
-            val extensions = accessor.getValue(thisRef, property)
-            @Suppress("UNCHECKED_CAST")
-            return extensions.extensionsWithAllMode as List<FirAdditionalCheckersExtension>
-        }
-    }
-}
+val FirExtensionService.additionalCheckers: List<FirAdditionalCheckersExtension> by FirExtensionService.registeredExtensions(
+    AbstractFirAdditionalCheckersExtension::class
+)

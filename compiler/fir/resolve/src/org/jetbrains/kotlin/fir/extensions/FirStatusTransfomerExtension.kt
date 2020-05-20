@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import kotlin.reflect.KClass
 
-abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension(session) {
+abstract class FirStatusTransformerExtension(session: FirSession) : FirPredicateBasedExtension(session) {
     companion object {
         val NAME = FirExtensionPointName("StatusTransformer")
     }
@@ -28,7 +28,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     fun interface Factory : FirExtension.Factory<FirStatusTransformerExtension>
 }
 
-val FirOldExtensionsService.statusTransformerExtensions: FirOldExtensionsService.ExtensionsAccessor<FirStatusTransformerExtension> by FirOldExtensionsService.registeredExtensions()
+val FirExtensionService.statusTransformerExtensions: List<FirStatusTransformerExtension> by FirExtensionService.registeredExtensions()
 
 inline fun FirDeclarationStatus.transform(
     visibility: Visibility = this.visibility,

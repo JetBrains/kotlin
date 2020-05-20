@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.FirSessionProvider
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
-import org.jetbrains.kotlin.fir.extensions.FirOldExtensionsService
+import org.jetbrains.kotlin.fir.extensions.FirExtensionService
+import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
@@ -123,8 +124,13 @@ class FirLibrarySession private constructor(
         )
 
         registerComponent(
-            FirOldExtensionsService::class,
-            FirOldExtensionsService(this)
+            FirExtensionService::class,
+            FirExtensionService(this)
+        )
+
+        registerComponent(
+            FirRegisteredPluginAnnotations::class,
+            FirRegisteredPluginAnnotations.create(this)
         )
 
         registerComponent(

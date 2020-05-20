@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.fir.FirSession
+import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar {
     companion object : ProjectExtensionDescriptor<FirExtensionRegistrar>(
@@ -14,51 +15,48 @@ abstract class FirExtensionRegistrar {
         FirExtensionRegistrar::class.java
     )
 
+    protected abstract fun ExtensionRegistrarContext.configurePlugin()
+
     protected inner class ExtensionRegistrarContext {
         @JvmName("plusStatusTransformerExtension")
         operator fun ((FirSession) -> FirStatusTransformerExtension).unaryPlus() {
-            statusTransformerExtensions += FirStatusTransformerExtension.Factory { this.invoke(it) }
+            registerExtension(FirStatusTransformerExtension::class, FirStatusTransformerExtension.Factory { this.invoke(it) })
         }
 
         @JvmName("plusClassGenerationExtension")
         operator fun ((FirSession) -> FirClassGenerationExtension).unaryPlus() {
-            classGenerationExtensions += FirClassGenerationExtension.Factory { this.invoke(it) }
+            registerExtension(FirClassGenerationExtension::class, FirClassGenerationExtension.Factory { this.invoke(it) })
         }
 
         @JvmName("plusAdditionalCheckersExtension")
         operator fun ((FirSession) -> AbstractFirAdditionalCheckersExtension).unaryPlus() {
-            additionalCheckersExtensions += AbstractFirAdditionalCheckersExtension.Factory { this.invoke(it) }
+            registerExtension(
+                AbstractFirAdditionalCheckersExtension::class,
+                AbstractFirAdditionalCheckersExtension.Factory { this.invoke(it) }
+            )
         }
     }
 
-    protected abstract fun ExtensionRegistrarContext.configurePlugin()
-
-    fun configure(): RegisteredExtensions {
+    fun configure(): Collection<RegisteredExtensionsFactories<*>> {
         ExtensionRegistrarContext().configurePlugin()
-        return RegisteredExtensions(
-            statusTransformerExtensions,
-            classGenerationExtensions,
-            additionalCheckersExtensions,
-        )
+        return map.values
     }
 
-    private val statusTransformerExtensions: MutableList<FirStatusTransformerExtension.Factory> = mutableListOf()
-    private val classGenerationExtensions: MutableList<FirClassGenerationExtension.Factory> = mutableListOf()
-    private val additionalCheckersExtensions: MutableList<AbstractFirAdditionalCheckersExtension.Factory> = mutableListOf()
+    class RegisteredExtensionsFactories<P : FirExtension>(val kClass: KClass<P>) {
+        val extensionFactories: MutableList<FirExtension.Factory<P>> = mutableListOf()
+    }
 
-    class RegisteredExtensions(
-        val statusTransformerExtensions: List<FirStatusTransformerExtension.Factory>,
-        val classGenerationExtensions: List<FirClassGenerationExtension.Factory>,
-        val additionalCheckersExtensions: List<AbstractFirAdditionalCheckersExtension.Factory>,
-    ) {
-        companion object {
-            val EMPTY = RegisteredExtensions(emptyList(), emptyList(), emptyList())
-        }
+    private val map: MutableMap<KClass<out FirExtension>, RegisteredExtensionsFactories<*>> = mutableMapOf()
+
+    private fun <P : FirExtension> registerExtension(kClass: KClass<out P>, factory: FirExtension.Factory<P>) {
+        @Suppress("UNCHECKED_CAST")
+        val registeredExtensions = map.computeIfAbsent(kClass) { RegisteredExtensionsFactories(kClass) } as RegisteredExtensionsFactories<P>
+        registeredExtensions.extensionFactories += factory
     }
 }
 
-fun FirOldExtensionsService.registerExtensions(extensions: FirExtensionRegistrar.RegisteredExtensions) {
-    registerExtensions(FirStatusTransformerExtension::class, extensions.statusTransformerExtensions)
-    registerExtensions(FirClassGenerationExtension::class, extensions.classGenerationExtensions)
-    registerExtensions(AbstractFirAdditionalCheckersExtension::class, extensions.additionalCheckersExtensions)
+@OptIn(PluginServicesInitialization::class)
+fun FirExtensionService.registerExtensions(registeredExtensions: Collection<FirExtensionRegistrar.RegisteredExtensionsFactories<*>>) {
+    registeredExtensions.forEach { registerExtensions(it.kClass, it.extensionFactories) }
+    session.registeredPluginAnnotations.initialize()
 }

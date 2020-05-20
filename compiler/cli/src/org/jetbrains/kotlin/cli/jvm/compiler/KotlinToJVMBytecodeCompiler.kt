@@ -45,7 +45,10 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.common.toLogger
 import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.CodegenFactory
+import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.*
@@ -54,8 +57,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.oldExtensionsService
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
@@ -327,7 +329,7 @@ object KotlinToJVMBytecodeCompiler {
                     dependenciesInfo, provider, librariesScope,
                     project, environment.createPackagePartProvider(librariesScope)
                 )
-                it.oldExtensionsService.registerExtensions(FirExtensionRegistrar.RegisteredExtensions.EMPTY)
+                it.extensionService.registerExtensions(emptyList())
             }
             val firProvider = (session.firProvider as FirProviderImpl)
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
