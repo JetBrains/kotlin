@@ -35,7 +35,7 @@ class ModuleExtensionRegistrationTest : HeavyPlatformTestCase() {
       }
     })
     for (module in ModuleManager.getInstance(myProject).modules) {
-      ModuleExtension.EP_NAME.getPoint(module).registerExtension(MockModuleExtension(), moduleTypeDisposable)
+      ModuleRootManagerEx.MODULE_EXTENSION_NAME.getPoint(module).registerExtension(MockModuleExtension(), moduleTypeDisposable)
     }
   }
 }
