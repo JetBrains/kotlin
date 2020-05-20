@@ -403,7 +403,12 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         break;
       }
       catch (Exception e) {
-        LOG.info(e);
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+          LOG.error(e);
+        }
+        else {
+          LOG.info(e);
+        }
         boolean instantiatedStorage = storage != null;
         try {
           if (storage != null) storage.close();
