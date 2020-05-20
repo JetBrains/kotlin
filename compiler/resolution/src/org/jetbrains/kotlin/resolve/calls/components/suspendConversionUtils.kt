@@ -22,7 +22,6 @@ object SuspendTypeConversions : ParameterTypeConversion {
         if (argument !is SimpleKotlinCallArgument) return true
 
         val argumentType = argument.receiver.stableType
-        if (!argumentType.isFunctionType) return true
         if (argumentType.isSuspendFunctionType) return true
 
         if (!expectedParameterType.isSuspendFunctionType) return true
@@ -30,7 +29,9 @@ object SuspendTypeConversions : ParameterTypeConversion {
         return false
     }
 
-    override fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean = true
+    override fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean =
+        argument is SimpleKotlinCallArgument && argument.receiver.stableType.isFunctionType
+
     override fun conversionIsNeededAfterSubtypingCheck(argument: KotlinCallArgument): Boolean =
         argument is SimpleKotlinCallArgument && argument.receiver.stableType.isFunctionTypeOrSubtype
 
