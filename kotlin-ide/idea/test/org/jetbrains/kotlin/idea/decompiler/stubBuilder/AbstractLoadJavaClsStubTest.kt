@@ -10,82 +10,99 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.BinaryLightVirtualFile
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.indexing.FileContentImpl
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClsStubBuilder
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
-import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar
-import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
 
-abstract class AbstractLoadJavaClsStubTest : TestCaseWithTmpdir() {
+abstract class AbstractLoadJavaClsStubTest : KotlinLightCodeInsightFixtureTestCase() {
     @Throws(Exception::class)
-    protected fun doTestCompiledKotlin(ktFileName: String) {
-        doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_ONLY, false)
-    }
+    protected fun doTestCompiledKotlin(path: String) {
+        myFixture.configureByFile(path)
 
-    @Throws(Exception::class)
-    private fun doTestCompiledKotlin(ktFileName: String, configurationKind: ConfigurationKind, useTypeTableInSerializer: Boolean) {
-        val ktFile = File(ktFileName)
+        val ktFile = myFixture.file as KtFile
+        val analysisResult = ktFile.analyzeWithAllCompilerChecks()
 
-        val configuration = newConfiguration(configurationKind, TestJdkKind.MOCK_JDK, getAnnotationsJar())
-        if (useTypeTableInSerializer) {
-            configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true)
-        }
-        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        environment.projectEnvironment.environment.application.registerService(
-            IDEKotlinBinaryClassCache::class.java,
-            IDEKotlinBinaryClassCache()
-        )
+        val configuration = CompilerConfiguration().apply { languageVersionSettings = file.languageVersionSettings }
 
-        LoadDescriptorUtil.compileKotlinToDirAndGetModule(listOf(ktFile), tmpdir, environment)
+        val state = GenerationState.Builder(
+            project, ClassBuilderFactories.BINARIES, analysisResult.moduleDescriptor,
+            analysisResult.bindingContext, listOf(ktFile), configuration
+        ).build()
 
-        val classFiles = tmpdir.walk().filter { it.extension == "class" }.toList()
+        try {
+            KotlinCodegenFacade.compileCorrectFiles(state)
+            val outputFiles = state.factory
 
-        val testDir = File(tmpdir, "test")
+            val lightFiles = HashMap<String, VirtualFile>()
 
-        val fileChildren = HashMap<String, VirtualFile>()
-        val parentDir = object : LightVirtualFile(testDir.absolutePath) {
-            override fun findChild(name: String) = fileChildren[name]
-        }
+            fun addDirectory(filePath: String) {
+                assert(filePath.startsWith('/'))
 
-        classFiles.forEach { classFile ->
-            Assert.assertTrue(classFile.parent == testDir.absolutePath)
-            fileChildren[classFile.name] = object : BinaryLightVirtualFile(classFile.name, classFile.readBytes()) {
-                override fun getParent(): VirtualFile = parentDir
+                lightFiles.getOrPut(filePath) {
+                    object : LightVirtualFile(filePath) {
+                        override fun isDirectory() = true
+                        override fun getParent() = lightFiles[File(path).parent]
+                        override fun findChild(name: String) = lightFiles[File(filePath, name).absolutePath]
+                    }
+                }
             }
-        }
 
-        for (file in fileChildren.values) {
-            val fileContent = FileContentImpl.createByFile(file)
+            fun addFile(filePath: String, content: ByteArray) {
+                assert(filePath.startsWith('/'))
 
-            val stubTreeFromCls = KotlinClsStubBuilder().buildFileStub(fileContent)
-
-            if (stubTreeFromCls != null) {
-                val stubsFromDeserializedDescriptors = run {
-                    val decompiledProvider =
-                        KotlinDecompiledFileViewProvider(PsiManager.getInstance(environment.project), file, true) { provider ->
-                            KtClsFile(provider)
-                        }
-
-                    KtFileStubBuilder().buildStubTree(KtClsFile(decompiledProvider))
+                val pathSegments = filePath.drop(1).split('/')
+                repeat(pathSegments.size) { i ->
+                    addDirectory("/" + pathSegments.take(i).joinToString("/"))
                 }
 
+                lightFiles[filePath] = object : BinaryLightVirtualFile(filePath, content) {
+                    override fun getParent() = lightFiles[File(filePath).parent]
+                }
+            }
+
+            addDirectory("/")
+
+            for (file in outputFiles.asList()) {
+                if (!file.relativePath.endsWith(".class")) {
+                    continue
+                }
+
+                addFile("/" + file.relativePath, file.asByteArray())
+            }
+
+            val psiManager = PsiManager.getInstance(project)
+
+            for (lightFile in lightFiles.values) {
+                if (lightFile.isDirectory) {
+                    continue
+                }
+
+                val fileContent = FileContentImpl.createByFile(lightFile)
+                val stubTreeFromCls = KotlinClsStubBuilder().buildFileStub(fileContent) ?: continue
+
+                val decompiledProvider = KotlinDecompiledFileViewProvider(psiManager, lightFile, false, ::KtClsFile)
+                val stubsFromDeserializedDescriptors = KtFileStubBuilder().buildStubTree(KtClsFile(decompiledProvider))
+
                 Assert.assertEquals(
-                    "File: ${file.name}",
+                    "File: ${lightFile.name}",
                     stubsFromDeserializedDescriptors.serializeToString(),
                     stubTreeFromCls.serializeToString()
                 )
             }
+        } finally {
+            state.destroy()
         }
     }
 }
