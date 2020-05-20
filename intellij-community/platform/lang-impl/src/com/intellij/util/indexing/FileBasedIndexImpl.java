@@ -177,12 +177,12 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       @Override
       public void appWillBeClosed(boolean isRestart) {
         if (!myRegisteredIndexes.areIndexesReady()) {
-          ProgressManager.getInstance().run(new Task.Modal(null, IndexingBundle.message("indexes.preparing.to.shutdown.message"), false) {
+          new Task.Modal(null, IndexingBundle.message("indexes.preparing.to.shutdown.message"), false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
               myRegisteredIndexes.waitUntilAllIndicesAreInitialized();
             }
-          });
+          }.queue();
         }
       }
     });
