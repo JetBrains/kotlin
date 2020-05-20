@@ -145,17 +145,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val startOffset = ktElement.pureStartOffsetOrUndefined
         val endOffset = ktElement.pureEndOffsetOrUndefined
 
-        val backingField =
-            if (propertyDescriptor.actuallyHasBackingField(context.bindingContext) && propertyDescriptor.fieldVisibility.admitsFakeOverride)
-                context.symbolTable.declareFieldWithOverrides(
-                    startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE,
-                    propertyDescriptor, propertyDescriptor.type.toIrType()
-                ) { it.actuallyHasBackingField(context.bindingContext) }
-            else
-                null
-
         return context.symbolTable.declareProperty(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, propertyDescriptor).apply {
-            this.backingField = backingField
             this.getter = propertyDescriptor.getter?.let {
                 FunctionGenerator(declarationGenerator).generateFakeOverrideFunction(it, ktElement)
             }

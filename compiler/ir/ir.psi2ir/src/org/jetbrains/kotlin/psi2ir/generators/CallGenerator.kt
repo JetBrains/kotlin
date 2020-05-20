@@ -179,7 +179,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
 
         return if (getMethodDescriptor == null) {
             call.callReceiver.call { dispatchReceiverValue, _ ->
-                val fieldSymbol = context.symbolTable.referenceField(descriptor.original)
+                val fieldSymbol = context.symbolTable.referenceField(descriptor.resolveFakeOverride().original)
                 IrGetFieldImpl(
                     startOffset, endOffset,
                     fieldSymbol,
@@ -416,3 +416,14 @@ fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, origin: 
 
 fun CallGenerator.generateCall(irExpression: IrExpression, call: CallBuilder, origin: IrStatementOrigin? = null) =
     generateCall(irExpression.startOffset, irExpression.endOffset, call, origin)
+
+// Only works for descriptors of Java fields.
+private fun PropertyDescriptor.resolveFakeOverride(): PropertyDescriptor {
+    assert(getter == null)
+    // Fields can only be inherited from objects, so there will be at most one overridden descriptor at each step.
+    var current = this
+    while (current.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+        current = current.overriddenDescriptors.single()
+    }
+    return current
+}

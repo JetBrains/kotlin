@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.coerceToUnit
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -69,10 +66,10 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
     }
 
     private fun IrBuilderWithScope.substituteSetter(irProperty: IrProperty, expression: IrCall): IrExpression =
-        patchReceiver(irSetField(expression.dispatchReceiver, irProperty.backingField!!, expression.getValueArgument(0)!!))
+        patchReceiver(irSetField(expression.dispatchReceiver, irProperty.resolveFakeOverride()!!.backingField!!, expression.getValueArgument(0)!!))
 
     private fun IrBuilderWithScope.substituteGetter(irProperty: IrProperty, expression: IrCall): IrExpression {
-        val backingField = irProperty.backingField!!
+        val backingField = irProperty.resolveFakeOverride()!!.backingField!!
         val value = irGetField(expression.dispatchReceiver, backingField)
         return if (irProperty.isLateinit) {
             irBlock {

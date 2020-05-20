@@ -535,7 +535,7 @@ class ExpressionCodegen(
             assert(callee.constantValue() == null) { "access of const val: ${expression.dump()}" }
         }
 
-        val realField = callee.resolveFakeOverride()!!
+        val realField = callee
         val fieldType = typeMapper.mapType(realField.type)
         val fieldName = realField.name.asString()
         val isStatic = expression.receiver == null
