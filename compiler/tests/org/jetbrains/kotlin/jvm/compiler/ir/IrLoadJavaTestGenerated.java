@@ -31,6 +31,11 @@ public class IrLoadJavaTestGenerated extends AbstractIrLoadJavaTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("ArrayInGenericArguments.java")
+        public void testArrayInGenericArguments() throws Exception {
+            runTest("compiler/testData/loadJava/compiledJava/ArrayInGenericArguments.java");
+        }
+
         @TestMetadata("ArrayTypeVariance.java")
         public void testArrayTypeVariance() throws Exception {
             runTest("compiler/testData/loadJava/compiledJava/ArrayTypeVariance.java");

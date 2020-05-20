@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
@@ -123,20 +123,7 @@ internal fun JavaType?.toConeKotlinTypeWithoutEnhancement(
             classId.toConeKotlinType(emptyArray(), isNullable = false)
         }
         is JavaArrayType -> {
-            val componentType = componentType
-            if (componentType !is JavaPrimitiveType) {
-                val classId = StandardClassIds.Array
-                val argumentType = componentType.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
-                classId.toConeFlexibleType(
-                    arrayOf(argumentType),
-                    typeArgumentsForUpper = arrayOf(ConeKotlinTypeProjectionOut(argumentType))
-                )
-            } else {
-                val javaComponentName = componentType.type?.typeName?.asString()?.capitalize() ?: error("Array of voids")
-                val classId = StandardClassIds.byName(javaComponentName + "Array")
-
-                classId.toConeFlexibleType(emptyArray())
-            }
+            toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
         }
         is JavaWildcardType -> bound?.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack) ?: run {
             StandardClassIds.Any.toConeFlexibleType(emptyArray())
@@ -145,6 +132,26 @@ internal fun JavaType?.toConeKotlinTypeWithoutEnhancement(
             StandardClassIds.Any.toConeFlexibleType(emptyArray())
         }
         else -> error("Strange JavaType: ${this::class.java}")
+    }
+}
+
+private fun JavaArrayType.toConeKotlinTypeWithoutEnhancement(
+    session: FirSession,
+    javaTypeParameterStack: JavaTypeParameterStack
+): ConeFlexibleType {
+    val componentType = componentType
+    return if (componentType !is JavaPrimitiveType) {
+        val classId = StandardClassIds.Array
+        val argumentType = componentType.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
+        classId.toConeFlexibleType(
+            arrayOf(argumentType),
+            typeArgumentsForUpper = arrayOf(ConeKotlinTypeProjectionOut(argumentType))
+        )
+    } else {
+        val javaComponentName = componentType.type?.typeName?.asString()?.capitalize() ?: error("Array of voids")
+        val classId = StandardClassIds.byName(javaComponentName + "Array")
+
+        classId.toConeFlexibleType(emptyArray())
     }
 }
 
@@ -385,6 +392,7 @@ private fun JavaType?.toConeProjectionWithoutEnhancement(
             }
         }
         is JavaClassifierType -> toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
+        is JavaArrayType -> toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
         else -> ConeClassErrorType("Unexpected type argument: $this")
     }
 }

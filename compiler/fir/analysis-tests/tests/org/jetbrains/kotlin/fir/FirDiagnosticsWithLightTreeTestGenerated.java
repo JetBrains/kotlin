@@ -1669,11 +1669,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaAccessorConversion.kt");
         }
 
-        @TestMetadata("javaArrayInGeneric.kt")
-        public void testJavaArrayInGeneric() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaArrayInGeneric.kt");
-        }
-
         @TestMetadata("javaQualifier.kt")
         public void testJavaQualifier() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaQualifier.kt");
@@ -2192,6 +2187,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
 
             public void testAllFilesPresentInJ_k() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("ArrayInGenericArguments.kt")
+            public void testArrayInGenericArguments() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k/ArrayInGenericArguments.kt");
             }
 
             @TestMetadata("flexibleWildcard.kt")
