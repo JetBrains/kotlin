@@ -5,5 +5,3 @@ FILE: simple.kt
         }
 
     }
-    public final object FooA : R|kotlin/Any| {
-    }
