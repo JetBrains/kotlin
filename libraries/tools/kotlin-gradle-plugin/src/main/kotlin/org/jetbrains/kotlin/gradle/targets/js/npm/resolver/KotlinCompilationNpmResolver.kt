@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
+import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -123,8 +125,8 @@ internal class KotlinCompilationNpmResolver(
         all.description = "NPM configuration for $compilation."
 
         compilation.allKotlinSourceSets.forEach { sourceSet ->
-            sourceSet.relatedConfigurationNames.forEach { configurationName ->
-                val configuration = project.configurations.getByName(configurationName)
+            KotlinDependencyScope.values().forEach { scope ->
+                val configuration = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
                 all.extendsFrom(configuration)
             }
         }
