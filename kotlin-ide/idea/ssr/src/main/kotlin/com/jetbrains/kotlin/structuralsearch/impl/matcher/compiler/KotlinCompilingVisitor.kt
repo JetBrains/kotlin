@@ -72,6 +72,17 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry) {
+        super.visitLiteralStringTemplateEntry(entry)
+
+        if (ourSubstitutionPattern.matcher(entry.text).find()) {
+            myCompilingVisitor.processPatternStringWithFragments(entry.text, COMMENT, ourSubstitutionPattern)?.let {
+                entry.putUserData(CompiledPattern.HANDLER_KEY, it)
+            }
+        }
+        getHandler(entry).setFilter { it is KtLiteralStringTemplateEntry }
+    }
+
     override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
         visitElement(entry)
         val expression = entry.expression ?: return

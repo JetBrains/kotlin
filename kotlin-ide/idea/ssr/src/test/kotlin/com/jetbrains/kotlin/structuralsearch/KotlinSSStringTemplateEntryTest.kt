@@ -5,6 +5,8 @@ class KotlinSSStringTemplateEntryTest : KotlinSSTest() {
 
     fun testLiteral() { doTest(""" "foo" """) }
 
+    fun testLiteralRegex() { doTest(""" "'_:[regex( . )] + '_:[regex( . )]" """) }
+
     fun testSimpleName() { doTest(""" "${"$"}foo" """) }
 
     fun testLongTemplate() { doTest(""" "${"$"}{1 + 1}" """) }

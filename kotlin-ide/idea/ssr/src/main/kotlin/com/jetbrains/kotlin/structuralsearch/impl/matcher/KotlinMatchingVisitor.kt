@@ -548,7 +548,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry) {
-        myMatchingVisitor.result = matchTextOrVariable(entry, myMatchingVisitor.element)
+        val other = myMatchingVisitor.element
+        myMatchingVisitor.result = when (val handler = entry.getUserData(CompiledPattern.HANDLER_KEY)) {
+            is LiteralWithSubstitutionHandler -> handler.match(entry, other, myMatchingVisitor.matchContext)
+            else -> matchTextOrVariable(entry, other)
+        }
     }
 
     override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
