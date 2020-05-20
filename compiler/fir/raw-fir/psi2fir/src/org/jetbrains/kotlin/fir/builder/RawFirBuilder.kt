@@ -661,7 +661,7 @@ class RawFirBuilder(
         }
 
         override fun visitClassOrObject(classOrObject: KtClassOrObject, data: Unit): FirElement {
-            return withChildClassName(classOrObject.nameAsSafeName) {
+            return withChildClassName(classOrObject.nameAsSafeName, classOrObject.isLocal) {
 
                 val classKind = when (classOrObject) {
                     is KtObjectDeclaration -> ClassKind.OBJECT

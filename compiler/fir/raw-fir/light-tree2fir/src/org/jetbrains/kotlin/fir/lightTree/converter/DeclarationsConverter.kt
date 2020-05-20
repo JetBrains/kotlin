@@ -370,7 +370,7 @@ class DeclarationsConverter(
         val className = identifier.nameAsSafeName(if (modifiers.isCompanion()) "Companion" else "")
         val isLocal = isClassLocal(classNode) { getParent() }
 
-        return withChildClassName(className) {
+        return withChildClassName(className, isLocal) {
             withCapturedTypeParameters {
                 val status = FirDeclarationStatusImpl(
                     if (isLocal) Visibilities.LOCAL else modifiers.getVisibility(),

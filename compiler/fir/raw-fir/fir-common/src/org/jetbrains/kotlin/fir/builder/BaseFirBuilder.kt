@@ -53,12 +53,18 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     abstract val T?.selectorExpression: T?
 
     /**** Class name utils ****/
-    inline fun <T> withChildClassName(name: Name, l: () -> T): T {
+    inline fun <T> withChildClassName(
+        name: Name,
+        isLocal: Boolean = context.firFunctionTargets.isNotEmpty(),
+        l: () -> T
+    ): T {
         context.className = context.className.child(name)
+        context.localBits.add(isLocal)
         return try {
             l()
         } finally {
             context.className = context.className.parent()
+            context.localBits.removeLast()
         }
     }
 
