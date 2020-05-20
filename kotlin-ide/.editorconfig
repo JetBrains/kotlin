@@ -16,6 +16,9 @@ ij_java_space_after_type_cast = true
 ij_java_space_before_array_initializer_left_brace = true
 ij_java_spaces_within_braces = false
 ij_java_static_field_name_prefix = ""
+ij_java_catch_on_new_line = false
+ij_java_else_on_new_line = false
+ij_java_finally_on_new_line = false
 
 [{*.kt,*.kts}]
 ij_continuation_indent_size = 4
