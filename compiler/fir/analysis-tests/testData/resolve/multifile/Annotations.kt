@@ -11,7 +11,7 @@ annotation class WithString(val s: String)
 
 annotation class Complex(val wi: WithInt, val ws: WithString)
 
-annotation class VeryComplex(val f: Float, val d: Double, val b: Boolean, val l: Long, val n: Int?)
+annotation class VeryComplex(val f: Float, val d: Double, val b: Boolean, val l: Long, val n: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Int?<!>)
 
 // FILE: main.kt
 
