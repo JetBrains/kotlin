@@ -1,4 +1,4 @@
-// FILE: throws.kt
+// FILE: kotlin.kt
 package kotlin
 
 import kotlin.reflect.KClass
@@ -7,19 +7,35 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
 
+public open class Exception : Throwable()
+
+public open class RuntimeException : Exception()
+
+public open class IllegalStateException : RuntimeException()
+
 // FILE: native.kt
 package kotlin.native
 
 @Deprecated("")
 public typealias Throws = kotlin.Throws
 
+// FILE: CancellationException.kt
+package kotlin.coroutines.cancellation
+
+public open class CancellationException() : IllegalStateException()
+
 // FILE: test.kt
+import kotlin.coroutines.cancellation.CancellationException
+
 class Exception1 : Throwable()
 class Exception2 : Throwable()
 class Exception3 : Throwable()
 
 <!THROWS_LIST_EMPTY!>@Throws<!>
 fun foo() {}
+
+<!THROWS_LIST_EMPTY!>@Throws()<!>
+fun throwsEmptyParens() {}
 
 interface Base0 {
     fun foo()
@@ -200,3 +216,88 @@ class OverrideIncompatibleThrowsOnFakeOverride2 : IncompatibleThrowsOnFakeOverri
 class InheritIncompatibleThrowsOnFakeOverride : IncompatibleThrowsOnFakeOverride {
     <!INCOMPATIBLE_THROWS_INHERITED!>override fun foo() {}<!>
 }
+
+<!THROWS_LIST_EMPTY!>@Throws<!>
+suspend fun suspendThrowsNothing() {}
+
+interface SuspendFun {
+    suspend fun foo()
+}
+
+class OverrideImplicitThrowsOnSuspendWithExplicit : SuspendFun {
+    // Although `SuspendFun.foo` effectively has `@Throws(CancellationException::class)`,
+    // overriding it with equal explicit `@Throws` is forbidden:
+    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws(CancellationException::class)<!> override suspend fun foo() {}
+}
+
+interface SuspendFunThrows {
+    @Throws(CancellationException::class) suspend fun foo() {}
+}
+
+class InheritExplicitThrowsOnSuspend : SuspendFunThrows {
+    override suspend fun foo() {}
+}
+
+<!MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND!>@Throws(Exception1::class)<!>
+suspend fun suspendDoesNotThrowCancellationException1() {}
+
+<!MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND!>@Throws(Exception1::class, Exception2::class)<!>
+suspend fun suspendDoesNotThrowCancellationException2() {}
+
+@Throws(Exception1::class, CancellationException::class)
+suspend fun suspendThrowsCancellationException1() {}
+
+@Throws(CancellationException::class, Exception1::class)
+suspend fun suspendThrowsCancellationException2() {}
+
+typealias CancellationExceptionAlias = CancellationException
+
+@Throws(CancellationExceptionAlias::class)
+suspend fun suspendThrowsCancellationExceptionTypealias() {}
+
+@Throws(IllegalStateException::class)
+suspend fun suspendThrowsIllegalStateException1() {}
+
+@Throws(Exception2::class, IllegalStateException::class)
+suspend fun suspendThrowsIllegalStateException2() {}
+
+typealias IllegalStateExceptionAlias = IllegalStateException
+
+@Throws(IllegalStateExceptionAlias::class)
+suspend fun suspendThrowsIllegalStateExceptionTypealias() {}
+
+@Throws(RuntimeException::class)
+suspend fun suspendThrowsRuntimeException1() {}
+
+@Throws(RuntimeException::class, Exception3::class)
+suspend fun suspendThrowsRuntimeException2() {}
+
+typealias RuntimeExceptionAlias = RuntimeException
+
+@Throws(RuntimeExceptionAlias::class)
+suspend fun suspendThrowsRuntimeExceptionTypealias() {}
+
+@Throws(Exception::class)
+suspend fun suspendThrowsException1() {}
+
+@Throws(Exception1::class, Exception::class)
+suspend fun suspendThrowsException2() {}
+
+typealias ExceptionAlias = Exception
+
+@Throws(ExceptionAlias::class)
+suspend fun suspendThrowsExceptionTypealias() {}
+
+@Throws(Throwable::class)
+suspend fun suspendThrowsThrowable1() {}
+
+@Throws(Throwable::class, Exception2::class)
+suspend fun suspendThrowsThrowable2() {}
+
+@Throws(Throwable::class, CancellationException::class)
+suspend fun suspendThrowsThrowable3() {}
+
+typealias ThrowableAlias = Throwable
+
+@Throws(ThrowableAlias::class)
+suspend fun suspendThrowsThrowableTypealias() {}

@@ -1,6 +1,26 @@
 package
 
 @kotlin.Throws(exceptionClasses = {}) public fun foo(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {Exception1::class}) public suspend fun suspendDoesNotThrowCancellationException1(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {Exception1::class, Exception2::class}) public suspend fun suspendDoesNotThrowCancellationException2(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {Exception1::class, kotlin.coroutines.cancellation.CancellationException::class}) public suspend fun suspendThrowsCancellationException1(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.coroutines.cancellation.CancellationException::class, Exception1::class}) public suspend fun suspendThrowsCancellationException2(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.coroutines.cancellation.CancellationException::class}) public suspend fun suspendThrowsCancellationExceptionTypealias(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.Exception::class}) public suspend fun suspendThrowsException1(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {Exception1::class, kotlin.Exception::class}) public suspend fun suspendThrowsException2(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.Exception::class}) public suspend fun suspendThrowsExceptionTypealias(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.IllegalStateException::class}) public suspend fun suspendThrowsIllegalStateException1(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {Exception2::class, kotlin.IllegalStateException::class}) public suspend fun suspendThrowsIllegalStateException2(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.IllegalStateException::class}) public suspend fun suspendThrowsIllegalStateExceptionTypealias(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsNothing(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.RuntimeException::class}) public suspend fun suspendThrowsRuntimeException1(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.RuntimeException::class, Exception3::class}) public suspend fun suspendThrowsRuntimeException2(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.RuntimeException::class}) public suspend fun suspendThrowsRuntimeExceptionTypealias(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.Throwable::class}) public suspend fun suspendThrowsThrowable1(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.Throwable::class, Exception2::class}) public suspend fun suspendThrowsThrowable2(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.Throwable::class, kotlin.coroutines.cancellation.CancellationException::class}) public suspend fun suspendThrowsThrowable3(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {kotlin.Throwable::class}) public suspend fun suspendThrowsThrowableTypealias(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsEmptyParens(): kotlin.Unit
 public fun withLocalClass(): kotlin.Unit
 
 public interface Base0 {
@@ -100,6 +120,14 @@ public interface IncompatibleThrowsOnFakeOverride : Base1, Base2 {
     @kotlin.Throws(exceptionClasses = {Exception1::class}) public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InheritExplicitThrowsOnSuspend : SuspendFunThrows {
+    public constructor InheritExplicitThrowsOnSuspend()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ suspend fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class InheritIncompatibleThrowsOnFakeOverride : IncompatibleThrowsOnFakeOverride {
@@ -218,6 +246,14 @@ public final class OverrideDifferentThrowsOnFakeOverride : ThrowsOnFakeOverride 
     public constructor OverrideDifferentThrowsOnFakeOverride()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.Throws(exceptionClasses = {Exception2::class}) public open override /*1*/ fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OverrideImplicitThrowsOnSuspendWithExplicit : SuspendFun {
+    public constructor OverrideImplicitThrowsOnSuspendWithExplicit()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.Throws(exceptionClasses = {kotlin.coroutines.cancellation.CancellationException::class}) public open override /*1*/ suspend fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -342,6 +378,20 @@ public final class SameThrowsOnOverride : Base1 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public interface SuspendFun {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract suspend fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SuspendFunThrows {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.Throws(exceptionClasses = {kotlin.coroutines.cancellation.CancellationException::class}) public open suspend fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public interface ThrowsOnFakeOverride : Base1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.Throws(exceptionClasses = {Exception1::class}) public abstract override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
@@ -356,8 +406,40 @@ public final class ThrowsOnOverride : Base0 {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias CancellationExceptionAlias = kotlin.coroutines.cancellation.CancellationException
+public typealias ExceptionAlias = kotlin.Exception
+public typealias IllegalStateExceptionAlias = kotlin.IllegalStateException
+public typealias RuntimeExceptionAlias = kotlin.RuntimeException
+public typealias ThrowableAlias = kotlin.Throwable
 
 package kotlin {
+
+    public open class Exception : kotlin.Throwable {
+        public constructor Exception()
+        public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+        public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class IllegalStateException : kotlin.RuntimeException {
+        public constructor IllegalStateException()
+        public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+        public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class RuntimeException : kotlin.Exception {
+        public constructor RuntimeException()
+        public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+        public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 
     @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class Throws : kotlin.Annotation {
         public constructor Throws(/*0*/ vararg exceptionClasses: kotlin.reflect.KClass<out kotlin.Throwable> /*kotlin.Array<out kotlin.reflect.KClass<out kotlin.Throwable>>*/)
@@ -365,6 +447,21 @@ package kotlin {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    package kotlin.coroutines {
+
+        package kotlin.coroutines.cancellation {
+
+            public open class CancellationException : kotlin.IllegalStateException {
+                public constructor CancellationException()
+                public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+                public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
     }
 
     package kotlin.native {
