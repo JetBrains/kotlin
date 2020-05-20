@@ -52,7 +52,7 @@ constructor(
     override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
         val usageContexts = super.createUsageContexts(producingCompilation)
 
-        if (isMpp!!) return usageContexts
+        if (isMpp!! || mixedMode) return usageContexts
 
         return usageContexts +
                 DefaultKotlinUsageContext(
