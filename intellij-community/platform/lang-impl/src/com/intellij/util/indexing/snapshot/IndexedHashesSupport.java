@@ -33,7 +33,7 @@ public class IndexedHashesSupport {
   private static volatile ContentHashEnumerator ourTextContentHashes;
 
   public static int getVersion() {
-    return 2;
+    return 3;
   }
 
   public static void initContentHashesEnumerator() throws IOException {
