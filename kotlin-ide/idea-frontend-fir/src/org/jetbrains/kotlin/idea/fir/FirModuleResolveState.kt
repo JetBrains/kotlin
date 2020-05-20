@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.LibrarySourceInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.psi.KtElement
@@ -27,13 +29,18 @@ interface FirModuleResolveState {
     val sessionProvider: FirProjectSessionProvider
 
     fun getSession(psi: KtElement): FirSession {
-        val moduleInfo = psi.getModuleInfo() as ModuleSourceInfo
+        val moduleInfo = psi.getModuleInfo()
         return getSession(psi.project, moduleInfo)
     }
 
-    fun getSession(project: Project, moduleInfo: ModuleSourceInfo): FirSession {
+    fun getSession(project: Project, moduleInfo: IdeaModuleInfo): FirSession {
         sessionProvider.getSession(moduleInfo)?.let { return it }
-        return synchronized(moduleInfo.module) {
+        val lock = when (moduleInfo) {
+            is ModuleSourceInfo -> moduleInfo.module
+            is LibrarySourceInfo -> moduleInfo.library
+            else -> TODO(moduleInfo.toString())
+        }
+        return synchronized(lock) {
             val session = sessionProvider.getSession(moduleInfo) ?: FirIdeJavaModuleBasedSession.create(
                 project, moduleInfo, sessionProvider, moduleInfo.contentScope()
             ).also { moduleBasedSession ->
@@ -89,7 +96,7 @@ class FirModuleResolveStateImpl(override val sessionProvider: FirProjectSessionP
     }
 
     override fun record(psi: KtElement, fir: FirElement) {
-        cache[psi] = fir
+        cache.putIfAbsent(psi, fir)
     }
 
     override fun record(psi: KtElement, diagnostic: Diagnostic) {

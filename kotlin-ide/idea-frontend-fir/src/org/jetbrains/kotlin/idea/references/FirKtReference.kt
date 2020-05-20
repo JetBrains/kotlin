@@ -5,8 +5,17 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.psi.impl.source.resolve.ResolveCache
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.idea.fir.FirModuleResolveState
+import org.jetbrains.kotlin.idea.frontend.api.fir.AnalysisSessionFirImpl
 
 interface FirKtReference : KtReference {
+    fun getResolvedToPsi(
+        analysisSession: AnalysisSessionFirImpl,
+        session: FirSession,
+        state: FirModuleResolveState
+    ): Collection<PsiElement>
+
     override val resolver get() = KtFirReferenceResolver
 }
