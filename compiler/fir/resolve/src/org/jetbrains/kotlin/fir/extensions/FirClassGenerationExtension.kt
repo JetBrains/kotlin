@@ -43,4 +43,4 @@ abstract class FirClassGenerationExtension(session: FirSession) : FirExtension(s
     fun interface Factory : FirExtension.Factory<FirClassGenerationExtension>
 }
 
-val FirExtensionsService.classGenerationExtensions: FirExtensionsService.ExtensionsAccessor<FirClassGenerationExtension> by FirExtensionsService.registeredExtensions()
+val FirOldExtensionsService.classGenerationExtensions: FirOldExtensionsService.ExtensionsAccessor<FirClassGenerationExtension> by FirOldExtensionsService.registeredExtensions()

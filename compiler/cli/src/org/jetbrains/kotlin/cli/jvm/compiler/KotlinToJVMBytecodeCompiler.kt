@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.extensionsService
+import org.jetbrains.kotlin.fir.extensions.oldExtensionsService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
@@ -327,7 +327,7 @@ object KotlinToJVMBytecodeCompiler {
                     dependenciesInfo, provider, librariesScope,
                     project, environment.createPackagePartProvider(librariesScope)
                 )
-                it.extensionsService.registerExtensions(FirExtensionRegistrar.RegisteredExtensions.EMPTY)
+                it.oldExtensionsService.registerExtensions(FirExtensionRegistrar.RegisteredExtensions.EMPTY)
             }
             val firProvider = (session.firProvider as FirProviderImpl)
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)

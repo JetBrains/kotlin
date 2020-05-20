@@ -57,7 +57,7 @@ abstract class FirExtensionRegistrar {
     }
 }
 
-fun FirExtensionsService.registerExtensions(extensions: FirExtensionRegistrar.RegisteredExtensions) {
+fun FirOldExtensionsService.registerExtensions(extensions: FirExtensionRegistrar.RegisteredExtensions) {
     registerExtensions(FirStatusTransformerExtension::class, extensions.statusTransformerExtensions)
     registerExtensions(FirClassGenerationExtension::class, extensions.classGenerationExtensions)
     registerExtensions(AbstractFirAdditionalCheckersExtension::class, extensions.additionalCheckersExtensions)

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.FirClassGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.classGenerationExtensions
-import org.jetbrains.kotlin.fir.extensions.extensionsService
+import org.jetbrains.kotlin.fir.extensions.oldExtensionsService
 import org.jetbrains.kotlin.fir.extensions.hasExtensions
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -22,7 +22,7 @@ class FirFirstGenerationTransformer : FirDefaultTransformer<Nothing?>() {
     private lateinit var session: FirSession
     private val generatedDeclarations: MutableList<FirClassGenerationExtension.GeneratedClass> = mutableListOf()
     private lateinit var file: FirFile
-    private val extensionPointService get() = session.extensionsService
+    private val extensionPointService get() = session.oldExtensionsService
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         session = file.session

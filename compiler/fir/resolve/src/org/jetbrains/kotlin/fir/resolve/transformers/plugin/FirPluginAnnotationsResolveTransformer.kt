@@ -33,7 +33,7 @@ class FirPluginAnnotationsResolveTransformer(
     private val annotationTransformer = FirAnnotationResolveTransformer(session, scopeSession)
     private val importTransformer = FirPartialImportResolveTransformer(session)
 
-    private val extensionPointService = session.extensionsService
+    val extensionPointService = session.oldExtensionsService
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         throw IllegalStateException("Should not be here")

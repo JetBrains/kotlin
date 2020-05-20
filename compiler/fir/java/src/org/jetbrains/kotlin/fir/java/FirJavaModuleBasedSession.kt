@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.FirSessionProvider
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
-import org.jetbrains.kotlin.fir.extensions.FirExtensionsService
+import org.jetbrains.kotlin.fir.extensions.FirOldExtensionsService
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
@@ -122,8 +122,8 @@ class FirLibrarySession private constructor(
         )
 
         registerComponent(
-            FirExtensionsService::class,
-            FirExtensionsService(this)
+            FirOldExtensionsService::class,
+            FirOldExtensionsService(this)
         )
 
         sessionProvider.sessionCache[moduleInfo] = this

@@ -36,14 +36,14 @@ abstract class FirAdditionalCheckersExtension(session: FirSession) : AbstractFir
         get() = Mode.ALL
 }
 
-val FirExtensionsService.additionalCheckers: List<FirAdditionalCheckersExtension> by FirExtensionsService.additionalCheckers()
+val FirOldExtensionsService.additionalCheckers: List<FirAdditionalCheckersExtension> by FirOldExtensionsService.additionalCheckers()
 
-private fun FirExtensionsService.Companion.additionalCheckers(): ReadOnlyProperty<FirExtensionsService, List<FirAdditionalCheckersExtension>> {
+private fun FirOldExtensionsService.Companion.additionalCheckers(): ReadOnlyProperty<FirOldExtensionsService, List<FirAdditionalCheckersExtension>> {
     val accessor = generateAccessor<FirRegisteredExtension<AbstractFirAdditionalCheckersExtension>, AbstractFirAdditionalCheckersExtension>(
         AbstractFirAdditionalCheckersExtension::class
     )
-    return object : ReadOnlyProperty<FirExtensionsService, List<FirAdditionalCheckersExtension>> {
-        override fun getValue(thisRef: FirExtensionsService, property: KProperty<*>): List<FirAdditionalCheckersExtension> {
+    return object : ReadOnlyProperty<FirOldExtensionsService, List<FirAdditionalCheckersExtension>> {
+        override fun getValue(thisRef: FirOldExtensionsService, property: KProperty<*>): List<FirAdditionalCheckersExtension> {
             val extensions = accessor.getValue(thisRef, property)
             @Suppress("UNCHECKED_CAST")
             return extensions.extensionsWithAllMode as List<FirAdditionalCheckersExtension>
