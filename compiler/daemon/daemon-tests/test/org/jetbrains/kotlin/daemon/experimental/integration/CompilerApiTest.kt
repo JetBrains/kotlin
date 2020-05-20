@@ -76,8 +76,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
     val compilerClassPath = listOf(
         File(compilerLibDir, "kotlin-compiler.jar"),
-        File(compilerLibDir, "kotlin-daemon.jar"),
-        File(compilerLibDir, "ktor-network-1.0.1.jar")
+        File(compilerLibDir, "kotlin-daemon.jar")
     )
     val scriptRuntimeClassPath = listOf(
         File(compilerLibDir, "kotlin-runtime.jar"),

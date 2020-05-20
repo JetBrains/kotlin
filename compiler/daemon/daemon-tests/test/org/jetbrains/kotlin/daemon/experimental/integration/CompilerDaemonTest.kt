@@ -97,9 +97,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     )
 
     val daemonClientClassPath = listOf(
-        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client-new.jar"),
-        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"),
-        File(KotlinIntegrationTestBase.getCompilerLib(), "ktor-network-1.0.1.jar")
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client.jar"),
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar")
     )
 
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
