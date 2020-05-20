@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.perf;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/indentationOnNewline")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
+@RunWith(Enclosed.class)
 public class PerformanceTypingIndentationTestGenerated extends AbstractPerformanceTypingIndentationTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
@@ -275,7 +275,6 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
 
     @TestMetadata("idea/testData/indentationOnNewline/script")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
     public static class Script extends AbstractPerformanceTypingIndentationTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);

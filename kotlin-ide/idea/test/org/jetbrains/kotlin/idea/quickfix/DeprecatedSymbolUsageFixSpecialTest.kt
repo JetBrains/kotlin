@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
 
 @TestMetadata("idea/testData/quickfix.special/deprecatedSymbolUsage")
 @TestDataPath("\$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners::class)
+@RunWith(Enclosed::class)
 class DeprecatedSymbolUsageFixSpecialTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 

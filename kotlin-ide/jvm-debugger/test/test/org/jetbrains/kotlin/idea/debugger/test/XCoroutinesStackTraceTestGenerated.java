@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.debugger.test;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/xcoroutines")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
+@RunWith(Enclosed.class)
 public class XCoroutinesStackTraceTestGenerated extends AbstractXCoroutinesStackTraceTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);

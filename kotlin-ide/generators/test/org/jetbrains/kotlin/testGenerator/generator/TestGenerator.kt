@@ -38,14 +38,15 @@ object TestGenerator {
 
             appendImports(getImports(suite))
             appendGeneratedComment()
-            appendAnnotation(TAnnotation<TestRoot>(group.modulePath))
             appendAnnotation(TAnnotation<SuppressWarnings>("all"))
+            appendAnnotation(TAnnotation<TestRoot>(group.modulePath))
+            appendAnnotation(TAnnotation<TestDataPath>("\$CONTENT_ROOT"))
+            appendAnnotation(TAnnotation<RunWith>(JUnit3RunnerWithInners::class.java))
 
             val singleModel = suite.models.singleOrNull()
             if (singleModel != null) {
                 append(SuiteElement.create(group, suite, singleModel, rootModelName, isNested = false))
             } else {
-                appendAnnotation(TAnnotation<RunWith>(JUnit3RunnerWithInners::class.java))
                 appendBlock("public class $rootModelName extends ${suite.abstractTestClass.simpleName}") {
                     val children = suite.models
                         .map { SuiteElement.create(group, suite, it, it.testClassName, isNested = true) }

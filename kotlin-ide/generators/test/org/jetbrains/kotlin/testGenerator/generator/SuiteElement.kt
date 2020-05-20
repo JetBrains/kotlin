@@ -1,12 +1,9 @@
 package org.jetbrains.kotlin.testGenerator.generator
 
-import com.intellij.testFramework.TestDataPath
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testGenerator.generator.methods.RunTestMethod
 import org.jetbrains.kotlin.testGenerator.generator.methods.TestCaseMethod
 import org.jetbrains.kotlin.testGenerator.model.*
-import org.junit.runner.RunWith
 import java.io.File
 import java.util.*
 import javax.lang.model.element.Modifier
@@ -82,9 +79,7 @@ class SuiteElement private constructor(
         val testDataPath = File(group.testDataRoot, model.path).toRelativeString(group.moduleRoot)
 
         appendAnnotation(TAnnotation<TestMetadata>(testDataPath))
-        appendAnnotation(TAnnotation<TestDataPath>("\$CONTENT_ROOT"))
         suite.annotations.forEach { appendAnnotation(it) }
-        appendAnnotation(TAnnotation<RunWith>(JUnit3RunnerWithInners::class.java))
 
         appendModifiers(if (isNested) EnumSet.of(Modifier.PUBLIC, Modifier.STATIC) else EnumSet.of(Modifier.PUBLIC))
         appendBlock("class $className extends ${suite.abstractTestClass.simpleName}") {
