@@ -152,6 +152,10 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
         fun openBuilder() {
             builder.isOpen = true
         }
+
+        fun withCopy() {
+            builder.wantsCopy = true
+        }
     }
 
     fun builder(name: String? = null, block: IntermediateBuilderConfigurationContext.() -> Unit): IntermediateBuilderDelegateProvider {
