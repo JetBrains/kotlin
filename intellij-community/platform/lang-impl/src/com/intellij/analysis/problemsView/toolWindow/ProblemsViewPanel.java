@@ -13,6 +13,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.OnePixelSplitter;
+import com.intellij.ui.PopupHandler;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.tree.AsyncTreeModel;
@@ -165,6 +166,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     });
     EditSourceOnDoubleClickHandler.install(myTree);
     EditSourceOnEnterKeyHandler.install(myTree);
+    PopupHandler.installPopupHandler(myTree, "ProblemsView.ToolWindow.TreePopup", ActionPlaces.POPUP);
 
     ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction("ProblemsView.ToolWindow.Toolbar");
     myToolbar = ActionManager.getInstance().createActionToolbar(getClass().getName(), group, false);
@@ -258,11 +260,6 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
       ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction("ProblemsView.ToolWindow.SecondaryActions");
       ((ToolWindowEx)window).setAdditionalGearActions(group);
     }
-  }
-
-  @Nullable Problem getSelectedProblem() {
-    ProblemNode node = TreeUtil.getLastUserObject(ProblemNode.class, getTree().getSelectionPath());
-    return node == null ? null : node.getProblem();
   }
 
   private @Nullable OpenFileDescriptor getSelectedDescriptor() {
