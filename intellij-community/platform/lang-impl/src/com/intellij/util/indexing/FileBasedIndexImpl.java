@@ -1270,10 +1270,11 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       }
       FileContentImpl fc = new FileContentImpl(file, bytes);
       ProgressManager.checkCanceled();
-      fileTypeRef.set(fc.getFileType());
 
       PsiFile psiFile = content.getUserData(IndexingDataKeys.PSI_FILE);
       initFileContent(fc, project == null ? ProjectUtil.guessProjectForFile(file) : project, psiFile);
+
+      fileTypeRef.set(fc.getFileType());
 
       if (FileBasedIndex.ourSnapshotMappingsEnabled) {
         IndexedHashesSupport.getOrInitIndexedHash(fc);
