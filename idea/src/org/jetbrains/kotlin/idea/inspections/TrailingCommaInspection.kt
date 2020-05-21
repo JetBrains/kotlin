@@ -31,7 +31,7 @@ class TrailingCommaInspection(
 ) : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = object : TrailingCommaVisitor() {
         override val recursively: Boolean = false
-        var useTrailingComma by Delegates.notNull<Boolean>()
+        private var useTrailingComma by Delegates.notNull<Boolean>()
 
         override fun process(commaOwner: KtElement) {
             useTrailingComma = CodeStyle.getSettings(commaOwner.project).kotlinCustomSettings.ALLOW_TRAILING_COMMA
