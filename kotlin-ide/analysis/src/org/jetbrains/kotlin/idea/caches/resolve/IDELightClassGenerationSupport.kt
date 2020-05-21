@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
-import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.concurrent.ConcurrentMap
 
@@ -62,39 +61,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             JvmCodegenUtil.getModuleName(moduleDescriptor)
         }
 
-        override fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>? {
-            val candidates = owner.annotationEntries.filter {
-                it.shortName == fqName.shortName() || owner.containingKtFile.hasAlias(it.shortName)
-            }
-            for (entry in candidates) {
-                val descriptor = analyzeAnnotation(entry)
-                if (descriptor?.fqName == fqName) {
-                    return Pair(entry, descriptor)
-                }
-            }
-
-            if (owner is KtPropertyAccessor) {
-                // We might have from the beginning just resolve the descriptor of the accessor
-                // But we trying to avoid analysis in case property doesn't have any relevant annotations at all
-                // (in case of `findAnnotation` returns null)
-                if (findAnnotation(owner.property, fqName) == null) return null
-
-                val accessorDescriptor = owner.resolveToDescriptorIfAny() ?: return null
-
-                // Just reuse the logic of use-site targeted annotation from the compiler
-                val annotationDescriptor = accessorDescriptor.annotations.findAnnotation(fqName) ?: return null
-                val entry = annotationDescriptor.source.getPsi() as? KtAnnotationEntry ?: return null
-
-                return entry to annotationDescriptor
-            }
-
-            return null
-        }
-
         @OptIn(FrontendInternals::class)
         override val deprecationResolver: DeprecationResolver
             get() = resolutionFacade.getFrontendService(DeprecationResolver::class.java)
-
 
         override val typeMapper: KotlinTypeMapper by lazyPub {
             KotlinTypeMapper(
@@ -152,6 +121,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     override fun createUltraLightClassForScript(script: KtScript): KtUltraLightClassForScript? =
         KtUltraLightClassForScript(script, support = KtUltraLightSupportImpl(script))
+
+    override fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport =
+        KtUltraLightSupportImpl(element)
 
     private fun KtFile.hasAlias(shortName: Name?): Boolean {
         if (shortName == null) return false
