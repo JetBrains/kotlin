@@ -247,10 +247,7 @@ class ComposerParamTransformer(
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET
     ): IrExpression {
-        val classSymbol = classOrNull
-        if (classSymbol?.isBound == false) {
-            context.irProviders.getDeclaration(classSymbol)
-        }
+        val classSymbol = classOrNull?.bindIfNecessary()
         if (this !is IrSimpleType || hasQuestionMark || classSymbol?.owner?.isInline != true)
             return IrConstImpl.defaultValueForType(startOffset, endOffset, this)
 

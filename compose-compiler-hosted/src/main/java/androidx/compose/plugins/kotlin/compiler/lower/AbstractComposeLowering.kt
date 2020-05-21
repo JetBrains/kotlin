@@ -26,6 +26,7 @@ import androidx.compose.plugins.kotlin.isSpecialType
 import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
@@ -96,12 +97,16 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
@@ -125,6 +130,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class AbstractComposeLowering(
     val context: IrPluginContext,
@@ -197,8 +203,36 @@ abstract class AbstractComposeLowering(
 
     fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
 
+    fun IrType.unboxInlineClass() = unboxType() ?: this
+
+    fun <T : IrSymbol> T.bindIfNecessary(): T {
+        if (!isBound) {
+            context.irProviders.firstNotNullResult { it.getDeclaration(this) }
+        }
+        return this
+    }
+
+    // NOTE(lmr): This implementation mimics the kotlin-provided unboxInlineClass method, except
+    // this one makes sure to bind the symbol if it is unbound, so is a bit safer to use.
+    fun IrType.unboxType(): IrType? {
+        val classSymbol = classOrNull ?: return null
+        val klass = classSymbol.bindIfNecessary().owner
+        if (!klass.isInline) return null
+
+        // TODO: Apply type substitutions
+        val underlyingType = InlineClassAbi.getUnderlyingType(klass).unboxInlineClass()
+        if (!isNullable()) return underlyingType
+        if (underlyingType.isNullable() || underlyingType.isPrimitiveType())
+            return null
+        return underlyingType.makeNullable()
+    }
+
     fun IrAnnotationContainer.hasComposableAnnotation(): Boolean {
         return annotations.hasAnnotation(ComposeFqNames.Composable)
+    }
+
+    fun IrAnnotationContainer.hasStableAnnotation(): Boolean {
+        return annotations.hasAnnotation(ComposeFqNames.Stable)
     }
 
     fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
@@ -434,7 +468,7 @@ abstract class AbstractComposeLowering(
         extensionReceiver: IrExpression? = null,
         vararg args: IrExpression
     ): IrCallImpl {
-        context.irProviders.getDeclaration(symbol)
+        symbol.bindIfNecessary()
         return IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,

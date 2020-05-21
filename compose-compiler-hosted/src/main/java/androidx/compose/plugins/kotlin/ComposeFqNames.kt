@@ -38,6 +38,7 @@ object ComposeFqNames {
     val Direct = ComposeUtils.composeFqName("Direct")
     val key = ComposeUtils.composeFqName("key")
     val StableMarker = ComposeUtils.composeFqName("StableMarker")
+    val Stable = ComposeUtils.composeFqName("Stable")
     val Composer = ComposeUtils.composeFqName("Composer")
     val Untracked = ComposeUtils.composeFqName("Untracked")
     val UiComposer = FqName.fromSegments(listOf("androidx", "ui", "node", "UiComposer"))

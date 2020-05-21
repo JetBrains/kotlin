@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -114,8 +115,10 @@ import org.jetbrains.kotlin.ir.types.isUnitOrNullableUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
+import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.statements
@@ -2312,6 +2315,18 @@ class ComposableFunctionBodyTransformer(
             // Getting a companion object or top level object can be considered static if the
             // type of that object is Stable. (`Modifier` for instance is a common example)
             is IrGetObjectValue -> symbol.owner.superTypes.any { it.toKotlinType().isStable() }
+            is IrConstructorCall -> {
+                // special case constructors of inline classes as static if their underlying
+                // value is static.
+                if (
+                    type.isInlined() &&
+                    type.unboxInlineClass().toKotlinType().isStable() &&
+                    getValueArgument(0)?.isStatic() == true
+                ) {
+                    return true
+                }
+                false
+            }
             is IrCall -> when (origin) {
                 is IrStatementOrigin.GET_PROPERTY -> {
                     // If we are in a GET_PROPERTY call, then this should usually resolve to
@@ -2322,13 +2337,34 @@ class ComposableFunctionBodyTransformer(
                     // if the property is a top level constant, then it is static.
                     if (prop.isConst) return true
 
+                    val typeIsStable = type.toKotlinType().isStable()
+                    val dispatchReceiverIsStatic = dispatchReceiver?.isStatic() != false
+                    val extensionReceiverIsStatic = extensionReceiver?.isStatic() != false
+
                     // if we see that the property is read-only with a default getter and a
                     // stable return type , then reading the property can also be considered
                     // static if this is a top level property or the subject is also static.
-                    !prop.isVar &&
+                    if (!prop.isVar &&
                             prop.getter?.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
-                            type.toKotlinType().isStable() &&
-                            (dispatchReceiver == null || dispatchReceiver?.isStatic() == true)
+                        typeIsStable &&
+                        dispatchReceiverIsStatic && extensionReceiverIsStatic
+                    ) {
+                        return true
+                    }
+
+                    val getterIsStable = prop.hasStableAnnotation() ||
+                            symbol.owner.hasStableAnnotation()
+
+                    if (
+                        getterIsStable &&
+                        typeIsStable &&
+                        dispatchReceiverIsStatic &&
+                        extensionReceiverIsStatic
+                    ) {
+                        return true
+                    }
+
+                    false
                 }
                 is IrStatementOrigin.PLUS,
                 is IrStatementOrigin.MUL,
@@ -2346,9 +2382,32 @@ class ComposableFunctionBodyTransformer(
                     // special case mathematical operators that are in the stdlib. These are
                     // immutable operations so the overall result is static if the operands are
                     // also static
-                    symbol.descriptor.fqNameSafe.topLevelName() == "kotlin" &&
-                    dispatchReceiver?.isStatic() == true &&
-                    getValueArgument(0)?.isStatic() == true
+                    val isStableOperator = symbol
+                        .descriptor
+                        .fqNameSafe
+                        .topLevelName() == "kotlin" ||
+                            symbol.owner.hasStableAnnotation()
+
+                    val typeIsStable = type.toKotlinType().isStable()
+                    if (!typeIsStable) return false
+
+                    if (!isStableOperator) {
+                        return false
+                    }
+
+                    getArguments().all { it.second.isStatic() }
+                }
+                null -> {
+                    // normal function call. If the function is marked as Stable and the result
+                    // is Stable, then the static-ness of it is the static-ness of its arguments
+                    val isStable = symbol.owner.hasStableAnnotation()
+                    if (!isStable) return false
+
+                    val typeIsStable = type.toKotlinType().isStable()
+                    if (!typeIsStable) return false
+
+                    // getArguments includes the receivers!
+                    getArguments().all { it.second.isStatic() }
                 }
                 else -> false
             }
