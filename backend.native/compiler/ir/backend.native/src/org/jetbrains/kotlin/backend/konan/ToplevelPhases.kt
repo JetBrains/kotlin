@@ -347,6 +347,7 @@ internal val allLoweringsPhase = namedIrModulePhase(
                                 innerClassPhase then
                                 dataClassesPhase then
                                 singleAbstractMethodPhase then
+                                ifNullExpressionsFusionPhase then
                                 builtinOperatorPhase then
                                 finallyBlocksPhase then
                                 testProcessorPhase then
