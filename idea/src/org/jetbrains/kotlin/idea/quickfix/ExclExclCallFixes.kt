@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 abstract class ExclExclCallFix(psiElement: PsiElement) : KotlinQuickFixAction<PsiElement>(psiElement) {
@@ -96,10 +97,15 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
 
         val expr = getExpressionForIntroduceCall() ?: return
         val modifiedExpression = expr.expression
+        val psiFactory = KtPsiFactory(project)
         val exclExclExpression = if (expr.implicitReceiver) {
-            KtPsiFactory(project).createExpressionByPattern("this!!.$0", modifiedExpression)
+            if (modifiedExpression is KtCallableReferenceExpression) {
+                psiFactory.createExpressionByPattern("this!!::$0", modifiedExpression.callableReference)
+            } else {
+                psiFactory.createExpressionByPattern("this!!.$0", modifiedExpression)
+            }
         } else {
-            KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
+            psiFactory.createExpressionByPattern("$0!!", modifiedExpression)
         }
         modifiedExpression.replace(exclExclExpression)
     }
@@ -129,24 +135,26 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
                 }
             }
             is KtExpression -> {
+                val parent = psiElement.parent
                 val context = psiElement.analyze()
                 if (checkImplicitReceivers && psiElement.getResolvedCall(context)?.getImplicitReceiverValue() is ExtensionReceiver) {
-                    val expressionToReplace = psiElement.parent as? KtCallExpression ?: psiElement
+                    val expressionToReplace = parent as? KtCallExpression ?: parent as? KtCallableReferenceExpression ?: psiElement
                     expressionToReplace.expressionForCall(implicitReceiver = true)
                 } else {
-                    context[BindingContext.EXPRESSION_TYPE_INFO, psiElement]?.let {
+                    val targetElement = parent.safeAs<KtCallableReferenceExpression>()?.receiverExpression ?: psiElement
+                    context[BindingContext.EXPRESSION_TYPE_INFO, targetElement]?.let {
                         val type = it.type
 
-                        val dataFlowValueFactory = psiElement.getResolutionFacade().getDataFlowValueFactory()
+                        val dataFlowValueFactory = targetElement.getResolutionFacade().getDataFlowValueFactory()
 
                         if (type != null) {
                             val nullability = it.dataFlowInfo.getStableNullability(
-                                dataFlowValueFactory.createDataFlowValue(psiElement, type, context, psiElement.findModuleDescriptor())
+                                dataFlowValueFactory.createDataFlowValue(targetElement, type, context, targetElement.findModuleDescriptor())
                             )
                             if (!nullability.canBeNonNull()) return null
                         }
                     }
-                    psiElement.expressionForCall()
+                    targetElement.expressionForCall()
                 }
             }
             else -> null

@@ -641,6 +641,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addExclExclCall/array4.kt");
         }
 
+        @TestMetadata("functionReference.kt")
+        public void testFunctionReference() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/functionReference.kt");
+        }
+
+        @TestMetadata("functionReference2.kt")
+        public void testFunctionReference2() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/functionReference2.kt");
+        }
+
+        @TestMetadata("functionReference3.kt")
+        public void testFunctionReference3() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/functionReference3.kt");
+        }
+
         @TestMetadata("implicit.kt")
         public void testImplicit() throws Exception {
             runTest("idea/testData/quickfix/addExclExclCall/implicit.kt");
