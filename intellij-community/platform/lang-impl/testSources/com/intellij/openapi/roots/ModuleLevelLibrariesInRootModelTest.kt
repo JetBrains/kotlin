@@ -42,12 +42,15 @@ class ModuleLevelLibrariesInRootModelTest {
       val library = model.moduleLibraryTable.createLibrary() as LibraryEx
       assertThat(model.moduleLibraryTable.libraries.single()).isEqualTo(library)
       val libraryEntry = dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry
+      assertThat(libraryEntry.ownerModule).isEqualTo(module)
       assertThat(libraryEntry.isModuleLevel).isTrue()
       assertThat(libraryEntry.libraryName).isNull()
       assertThat(libraryEntry.presentableName).isEqualTo("Empty Library")
       assertThat(libraryEntry.library).isEqualTo(library)
       assertThat(libraryEntry.scope).isEqualTo(DependencyScope.COMPILE)
       assertThat(libraryEntry.isExported).isFalse()
+      assertThat(libraryEntry.isSynthetic).isTrue()
+      assertThat(libraryEntry.isValid).isTrue()
       assertThat(libraryEntry.libraryLevel).isEqualTo(LibraryTableImplUtil.MODULE_LEVEL)
       assertThat(model.findLibraryOrderEntry(library)).isEqualTo(libraryEntry)
       assertThat(library.isDisposed).isFalse()

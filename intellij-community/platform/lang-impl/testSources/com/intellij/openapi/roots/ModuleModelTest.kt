@@ -143,9 +143,11 @@ class ModuleModelTest {
     val moduleModel = createModifiableModuleModel()
     val module = projectModel.createModule("a", moduleModel)
     val model = createModifiableModel(module)
-    model.addLibraryEntry(library)
+    val entry = model.addLibraryEntry(library)
+    assertThat(entry.ownerModule).isEqualTo(module)
     val committed = commitModifiableRootModel(model)
     val libraryEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
+    assertThat(libraryEntry.ownerModule).isEqualTo(module)
     assertThat(libraryEntry.library).isEqualTo(library)
     runWriteActionAndWait { moduleModel.commit() }
     val libraryEntryForCommitted = dropModuleSourceEntry(ModuleRootManager.getInstance(module), 1).single() as LibraryOrderEntry

@@ -45,14 +45,22 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
       val libraryEntry = model.addLibraryEntry(library)
       assertThat(libraryEntry.isModuleLevel).isFalse()
       assertThat(libraryEntry.libraryName).isEqualTo("foo")
+      assertThat(libraryEntry.presentableName).isEqualTo("foo")
       assertThat(libraryEntry.library).isEqualTo(library)
+      assertThat(libraryEntry.ownerModule).isEqualTo(module)
       assertThat(libraryEntry.libraryLevel).isEqualTo(libraryTable.tableLevel)
+      assertThat(libraryEntry.isValid).isTrue()
+      assertThat(libraryEntry.isSynthetic).isFalse()
       assertThat(model.findLibraryOrderEntry(library)).isEqualTo(libraryEntry)
       assertThat((library as LibraryEx).isDisposed).isFalse()
       val committed = commitModifiableRootModel(model)
       val committedEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
       assertThat(committedEntry.scope).isEqualTo(DependencyScope.COMPILE)
       assertThat(committedEntry.isExported).isFalse()
+      assertThat(committedEntry.isValid).isTrue()
+      assertThat(committedEntry.isSynthetic).isFalse()
+      assertThat(committedEntry.presentableName).isEqualTo("foo")
+      assertThat(committedEntry.ownerModule).isEqualTo(module)
       assertThat(committedEntry.library).isEqualTo(library)
     }
 
@@ -169,11 +177,17 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
   fun `add invalid library`() {
     run {
       val model = createModifiableModel(module)
-      model.addInvalidLibrary("foo", libraryTable.tableLevel)
+      val entry = model.addInvalidLibrary("foo", libraryTable.tableLevel)
+      assertThat(entry.isValid).isFalse()
+      assertThat(entry.isSynthetic).isFalse()
+      assertThat(entry.presentableName).isEqualTo("foo")
       val committed = commitModifiableRootModel(model)
       val libraryEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
       assertThat(libraryEntry.library).isNull()
       assertThat(libraryEntry.libraryName).isEqualTo("foo")
+      assertThat(libraryEntry.isValid).isFalse()
+      assertThat(libraryEntry.isSynthetic).isFalse()
+      assertThat(libraryEntry.presentableName).isEqualTo("foo")
     }
 
     val library = createLibrary("foo")

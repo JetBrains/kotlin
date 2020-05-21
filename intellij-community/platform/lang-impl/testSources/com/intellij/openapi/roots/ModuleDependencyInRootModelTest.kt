@@ -40,7 +40,10 @@ class ModuleDependencyInRootModelTest {
       assertThat(dropModuleSourceEntry(model, 1).single() as ModuleOrderEntry).isEqualTo(entry)
       assertThat(entry.scope).isEqualTo(DependencyScope.COMPILE)
       assertThat(entry.isExported).isFalse()
+      assertThat(entry.isSynthetic).isFalse()
+      assertThat(entry.isValid).isTrue()
       assertThat(entry.moduleName).isEqualTo("dep")
+      assertThat(entry.presentableName).isEqualTo("dep")
       assertThat(entry.module).isEqualTo(depModule)
       assertThat(model.findModuleOrderEntry(depModule)).isEqualTo(entry)
 
@@ -48,7 +51,10 @@ class ModuleDependencyInRootModelTest {
       val committedEntry = dropModuleSourceEntry(committed, 1).single() as ModuleOrderEntry
       assertThat(committedEntry.scope).isEqualTo(DependencyScope.COMPILE)
       assertThat(committedEntry.isExported).isFalse()
+      assertThat(committedEntry.isSynthetic).isFalse()
+      assertThat(committedEntry.isValid).isTrue()
       assertThat(committedEntry.moduleName).isEqualTo("dep")
+      assertThat(committedEntry.presentableName).isEqualTo("dep")
       assertThat(committedEntry.module).isEqualTo(depModule)
     }
 
@@ -130,11 +136,17 @@ class ModuleDependencyInRootModelTest {
   fun `add invalid module`() {
     run {
       val model = createModifiableModel(mainModule)
-      model.addInvalidModuleEntry("foo")
+      val uncommittedEntry = model.addInvalidModuleEntry("foo")
+      assertThat(uncommittedEntry.isValid).isFalse()
+      assertThat(uncommittedEntry.isSynthetic).isFalse()
+      assertThat(uncommittedEntry.presentableName).isEqualTo("foo")
       val committed = commitModifiableRootModel(model)
       val entry = dropModuleSourceEntry(committed, 1).single() as ModuleOrderEntry
       assertThat(entry.module).isNull()
+      assertThat(entry.isValid).isFalse()
+      assertThat(entry.isSynthetic).isFalse()
       assertThat(entry.moduleName).isEqualTo("foo")
+      assertThat(entry.presentableName).isEqualTo("foo")
     }
 
     val fooModule = projectModel.createModule("foo")

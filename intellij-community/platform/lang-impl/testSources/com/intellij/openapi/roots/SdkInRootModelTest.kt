@@ -40,7 +40,21 @@ class SdkInRootModelTest {
     assertThat(model.isSdkInherited).isFalse()
     assertThat(model.sdk).isEqualTo(sdk)
     assertThat(model.sdkName).isEqualTo("my sdk")
+    val orderEntry = dropModuleSourceEntry(model, 1).single() as JdkOrderEntry
+    assertThat(orderEntry.ownerModule).isEqualTo(module)
+    assertThat(orderEntry.presentableName).isEqualTo("< my sdk >")
+    assertThat(orderEntry.isValid).isTrue()
+    assertThat(orderEntry.isSynthetic).isTrue()
+    assertThat(orderEntry.jdkName).isEqualTo("my sdk")
+    assertThat(orderEntry.jdk).isEqualTo(sdk)
     val committed = commitModifiableRootModel(model)
+    val committedEntry = dropModuleSourceEntry(committed, 1).single() as JdkOrderEntry
+    assertThat(committedEntry.ownerModule).isEqualTo(module)
+    assertThat(committedEntry.presentableName).isEqualTo("< my sdk >")
+    assertThat(committedEntry.isValid).isTrue()
+    assertThat(committedEntry.isSynthetic).isTrue()
+    assertThat(committedEntry.jdkName).isEqualTo("my sdk")
+    assertThat(committedEntry.jdk).isEqualTo(sdk)
     assertThat(committed.isSdkInherited).isFalse()
     assertThat(committed.sdk).isEqualTo(sdk)
 
@@ -58,9 +72,21 @@ class SdkInRootModelTest {
     assertThat(model.isSdkInherited).isTrue()
     assertThat(model.sdk).isEqualTo(sdk)
     assertThat(model.sdkName).isEqualTo("my sdk")
+    val orderEntry = dropModuleSourceEntry(model, 1).single() as JdkOrderEntry
+    assertThat(orderEntry.presentableName).isEqualTo("< my sdk >")
+    assertThat(orderEntry.isValid).isTrue()
+    assertThat(orderEntry.isSynthetic).isFalse()
+    assertThat(orderEntry.jdkName).isEqualTo("my sdk")
+    assertThat(orderEntry.jdk).isEqualTo(sdk)
     val committed = commitModifiableRootModel(model)
     assertThat(committed.isSdkInherited).isTrue()
     assertThat(committed.sdk).isEqualTo(sdk)
+    val committedEntry = dropModuleSourceEntry(committed, 1).single() as JdkOrderEntry
+    assertThat(committedEntry.presentableName).isEqualTo("< my sdk >")
+    assertThat(committedEntry.isValid).isTrue()
+    assertThat(committedEntry.isSynthetic).isFalse()
+    assertThat(committedEntry.jdkName).isEqualTo("my sdk")
+    assertThat(committedEntry.jdk).isEqualTo(sdk)
 
     val cleared = commitModifiableRootModel(createModifiableModel(module).also { it.clear() })
     assertThat(cleared.isSdkInherited).isFalse()
@@ -75,10 +101,19 @@ class SdkInRootModelTest {
     assertThat(model.isSdkInherited).isFalse()
     assertThat(model.sdk).isEqualTo(sdk)
     assertThat(model.sdkName).isEqualTo("my sdk")
+    val orderEntry = dropModuleSourceEntry(model, 1).single() as JdkOrderEntry
+    assertThat(orderEntry.presentableName).isEqualTo("< my sdk >")
+    assertThat(orderEntry.isValid).isTrue()
+    assertThat(orderEntry.jdkName).isEqualTo("my sdk")
+    assertThat(orderEntry.jdk).isEqualTo(sdk)
     val committed = commitModifiableRootModel(model)
     projectModel.addSdk(sdk)
     assertThat(committed.isSdkInherited).isFalse()
     assertThat(committed.sdk).isEqualTo(sdk)
+    val committedEntry = dropModuleSourceEntry(committed, 1).single() as JdkOrderEntry
+    assertThat(committedEntry.presentableName).isEqualTo("< my sdk >")
+    assertThat(committedEntry.isValid).isTrue()
+    assertThat(committedEntry.jdkName).isEqualTo("my sdk")
   }
 
   @Test
@@ -88,11 +123,19 @@ class SdkInRootModelTest {
     assertThat(model.isSdkInherited).isFalse()
     assertThat(model.sdk).isNull()
     assertThat(model.sdkName).isEqualTo("my sdk")
+    val orderEntry = dropModuleSourceEntry(model, 1).single() as JdkOrderEntry
+    assertThat(orderEntry.presentableName).isEqualTo("< my sdk >")
+    assertThat(orderEntry.isValid).isFalse()
+    assertThat(orderEntry.isSynthetic).isTrue()
     val committed = commitModifiableRootModel(model)
+    val committedEntry = dropModuleSourceEntry(committed, 1).single() as JdkOrderEntry
     assertThat(committed.isSdkInherited).isFalse()
     assertThat(committed.sdk).isNull()
+    assertThat(committedEntry.isValid).isFalse()
     val sdk = projectModel.addSdk(projectModel.createSdk("my sdk"))
     assertThat(committed.sdk).isEqualTo(sdk)
+    val committedEntry2 = dropModuleSourceEntry(committed, 1).single() as JdkOrderEntry
+    assertThat(committedEntry2.isValid).isTrue()
   }
 
   @Test
@@ -103,11 +146,19 @@ class SdkInRootModelTest {
     assertThat(model.isSdkInherited).isTrue()
     assertThat(model.sdk).isNull()
     assertThat(model.sdkName).isEqualTo("my sdk")
+    val orderEntry = dropModuleSourceEntry(model, 1).single() as JdkOrderEntry
+    assertThat(orderEntry.presentableName).isEqualTo("< my sdk >")
+    assertThat(orderEntry.isValid).isFalse()
     val committed = commitModifiableRootModel(model)
     assertThat(committed.isSdkInherited).isTrue()
     assertThat(committed.sdk).isNull()
+    val committedEntry = dropModuleSourceEntry(committed, 1).single() as JdkOrderEntry
+    assertThat(committedEntry.presentableName).isEqualTo("< my sdk >")
+    assertThat(committedEntry.isValid).isFalse()
     val sdk = projectModel.addSdk(projectModel.createSdk("my sdk"))
     assertThat(committed.sdk).isEqualTo(sdk)
+    val committedEntry2 = dropModuleSourceEntry(committed, 1).single() as JdkOrderEntry
+    assertThat(committedEntry2.isValid).isTrue()
   }
 
   @Test
