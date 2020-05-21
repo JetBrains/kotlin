@@ -66,6 +66,13 @@ fun ExportedDeclaration.toTypeScript(indent: String): String = indent + when (th
 
         val membersString = members.joinToString("") { it.toTypeScript("$indent    ") + "\n" }
 
+        // If there are no exported constructors, add a private constructor to disable default one
+        val privateCtorString =
+            if (!isInterface && !isAbstract && members.none { it is ExportedConstructor })
+                "$indent    private constructor();\n"
+            else
+                ""
+
         val renderedTypeParameters =
             if (typeParameters.isNotEmpty())
                 "<" + typeParameters.joinToString(", ") + ">"
@@ -74,7 +81,9 @@ fun ExportedDeclaration.toTypeScript(indent: String): String = indent + when (th
 
         val modifiers = if (isAbstract && !isInterface) "abstract " else ""
 
-        val klassExport = "$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$membersString$indent}"
+        val bodyString = privateCtorString + membersString + indent
+
+        val klassExport = "$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
         val staticsExport = if (nestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, nestedClasses).toTypeScript(indent) else ""
         klassExport + staticsExport
     }
