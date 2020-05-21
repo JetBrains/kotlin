@@ -5,21 +5,15 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
-import com.intellij.openapi.util.registry.Registry
-import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.PsiUtil.getElementType
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -52,22 +46,25 @@ object TrailingCommaHelper {
                 commaOwner.isMultiline()
     }
 
+    fun trailingCommaExists(commaOwner: KtElement): Boolean = when (commaOwner) {
+        is KtFunctionLiteral -> commaOwner.valueParameterList?.trailingComma != null
+        is KtWhenEntry -> commaOwner.trailingComma != null
+        is KtDestructuringDeclaration -> commaOwner.trailingComma != null
+        else -> trailingCommaOrLastElement(commaOwner)?.isComma == true
+    }
+
     fun trailingCommaOrLastElement(commaOwner: KtElement): PsiElement? {
         val lastChild = commaOwner.lastSignificantChild ?: return null
-        val withSelf = when (getElementType(lastChild)) {
+        val withSelf = when (PsiUtil.getElementType(lastChild)) {
             KtTokens.COMMA -> return lastChild
             in RIGHT_BARRIERS -> false
             else -> true
         }
 
         return lastChild.getPrevSiblingIgnoringWhitespaceAndComments(withSelf)?.takeIf {
-            getElementType(it) !in LEFT_BARRIERS
+            PsiUtil.getElementType(it) !in LEFT_BARRIERS
         }?.takeIfIsNotError()
     }
-
-    fun trailingCommaAllowedInModule(source: PsiElement): Boolean =
-        Registry.`is`("kotlin.formatter.allowTrailingCommaInAnyProject", false) ||
-                source.module?.languageVersionSettings?.supportsFeature(LanguageFeature.TrailingCommas) == true
 
     fun elementBeforeFirstElement(commaOwner: KtElement): PsiElement? = when (commaOwner) {
         is KtParameterList -> {
@@ -100,15 +97,3 @@ object TrailingCommaHelper {
             else -> lastChild
         }
 }
-
-fun PsiElement.leafIgnoringWhitespace(forward: Boolean = true, skipEmptyElements: Boolean = true) =
-    leaf(forward) { (!skipEmptyElements || it.textLength != 0) && it !is PsiWhiteSpace }
-
-fun PsiElement.leafIgnoringWhitespaceAndComments(forward: Boolean = true, skipEmptyElements: Boolean = true) =
-    leaf(forward) { (!skipEmptyElements || it.textLength != 0) && it !is PsiWhiteSpace && it !is PsiComment }
-
-fun PsiElement.leaf(forward: Boolean = true, filter: (PsiElement) -> Boolean): PsiElement? =
-    if (forward) nextLeaf(filter)
-    else prevLeaf(filter)
-
-val PsiElement.isComma: Boolean get() = getElementType(this) == KtTokens.COMMA

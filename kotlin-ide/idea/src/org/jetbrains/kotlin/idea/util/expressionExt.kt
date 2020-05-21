@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.idea.util
 
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.*
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -58,5 +60,3 @@ fun KtDotQualifiedExpression.hasNotReceiver(): Boolean {
             element is PsiMember && element.hasModifier(JvmModifier.STATIC) ||
             element is PsiMethod && element.isConstructor
 }
-
-fun PsiElement?.isLineBreak() = this is PsiWhiteSpace && StringUtil.containsLineBreak(text)

@@ -11,20 +11,26 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -56,6 +62,20 @@ fun PsiElement.getLineCount(): Int {
 
 fun PsiElement.isMultiline() = getLineCount() > 1
 
+fun PsiElement?.isLineBreak() = this is PsiWhiteSpace && StringUtil.containsLineBreak(text)
+
+fun PsiElement.leafIgnoringWhitespace(forward: Boolean = true, skipEmptyElements: Boolean = true) =
+    leaf(forward) { (!skipEmptyElements || it.textLength != 0) && it !is PsiWhiteSpace }
+
+fun PsiElement.leafIgnoringWhitespaceAndComments(forward: Boolean = true, skipEmptyElements: Boolean = true) =
+    leaf(forward) { (!skipEmptyElements || it.textLength != 0) && it !is PsiWhiteSpace && it !is PsiComment }
+
+fun PsiElement.leaf(forward: Boolean = true, filter: (PsiElement) -> Boolean): PsiElement? =
+    if (forward) nextLeaf(filter)
+    else prevLeaf(filter)
+
+val PsiElement.isComma: Boolean get() = PsiUtil.getElementType(this) == KtTokens.COMMA
+
 fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings?, checkExistingTrailingComma: Boolean = true): Boolean =
     needTrailingComma(
         settings = settings,
@@ -79,7 +99,7 @@ fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings?, c
         globalEndOffset = { rPar?.endOffset },
     )
 
-fun <T : PsiElement> T.needTrailingComma(
+private fun <T : PsiElement> T.needTrailingComma(
     settings: CodeStyleSettings?,
     trailingComma: T.() -> PsiElement?,
     additionalCheck: () -> Boolean = { true },
@@ -136,9 +156,12 @@ private fun elementType(userDataHolder: UserDataHolder): IElementType? = when (u
     else -> null
 }
 
-fun PsiElement.canAddTrailingComma(): Boolean = canAddTrailingComma(this)
+fun ASTNode.canAddTrailingComma(): Boolean = psi?.canAddTrailingComma() == true
 
-fun ASTNode.canAddTrailingComma(): Boolean = canAddTrailingComma(this)
+fun PsiElement.canAddTrailingComma(): Boolean =
+    if (this is KtWhenEntry && (isElse || parent.cast<KtWhenExpression>().leftParenthesis == null))
+        false
+    else
+        canAddTrailingComma(this)
 
 private fun canAddTrailingComma(userDataHolder: UserDataHolder): Boolean = elementType(userDataHolder) in TYPES_WITH_TRAILING_COMMA
-

@@ -18,8 +18,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.formatter.*
+import org.jetbrains.kotlin.idea.formatter.TrailingCommaHelper
+import org.jetbrains.kotlin.idea.formatter.TrailingCommaVisitor
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
+import org.jetbrains.kotlin.idea.formatter.trailingCommaAllowedInModule
+import org.jetbrains.kotlin.idea.util.isComma
 import org.jetbrains.kotlin.idea.util.isLineBreak
+import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.*
 import javax.swing.JComponent
@@ -75,7 +80,7 @@ class TrailingCommaInspection(
         private fun checkTrailingComma(commaOwner: KtElement, action: TrailingCommaAction) {
             val trailingCommaOrLastElement = TrailingCommaHelper.trailingCommaOrLastElement(commaOwner) ?: return
             if (action == TrailingCommaAction.ADD) {
-                if (!TrailingCommaHelper.trailingCommaAllowedInModule(commaOwner) || trailingCommaOrLastElement.isComma) return
+                if (!trailingCommaAllowedInModule(commaOwner) || trailingCommaOrLastElement.isComma) return
                 reportProblem(
                     trailingCommaOrLastElement,
                     KotlinBundle.message("inspection.trailing.comma.missing.trailing.comma"),
