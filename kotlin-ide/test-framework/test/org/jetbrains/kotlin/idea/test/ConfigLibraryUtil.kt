@@ -16,16 +16,13 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.util.*
 import kotlin.test.assertNotNull
 
 /**
@@ -57,13 +54,7 @@ object ConfigLibraryUtil {
 
     fun configureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
-        addLibrary(
-            getKotlinRuntimeLibEditor(
-                DEFAULT_KOTLIN_JS_STDLIB_NAME,
-                PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath
-            ), module,
-            JSLibraryKind
-        )
+        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_JS_STDLIB_NAME, TestKotlinArtifacts.kotlinStdlibJs), module, JSLibraryKind)
     }
 
     fun configureKotlinCommonRuntime(module: Module) {
@@ -78,8 +69,8 @@ object ConfigLibraryUtil {
     }
 
     fun configureKotlinRuntime(module: Module) {
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.kotlinPathsForDistDirectory.stdlibPath), module)
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, PathUtil.kotlinPathsForDistDirectory.kotlinTestPath), module)
+        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, TestKotlinArtifacts.kotlinStdlib), module)
+        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, TestKotlinArtifacts.kotlinTest), module)
     }
 
     fun unConfigureKotlinRuntime(module: Module) {
