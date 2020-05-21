@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.components.*
@@ -25,7 +26,7 @@ class KotlinCallResolver(
     private val callComponents: KotlinCallComponents
 ) {
     companion object {
-        private val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION = FqName.fromSegments(listOf("kotlin", "OverloadResolutionByLambdaReturnType"))
+        val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION = FqName.fromSegments(listOf("kotlin", "OverloadResolutionByLambdaReturnType"))
     }
 
     fun resolveCall(

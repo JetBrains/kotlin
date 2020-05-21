@@ -2844,6 +2844,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         public void testOverloadByLambdaReturnType_enabled_no_annotation() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/overloadByLambdaReturnType_enabled_no_annotation.kt");
         }
+
+        @TestMetadata("resolutionInOldInference.kt")
+        public void testResolutionInOldInference() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/resolutionInOldInference.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop")
