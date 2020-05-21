@@ -21,6 +21,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
@@ -225,7 +226,10 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
         configureBinaries(target)
         configureFrameworkExport(target)
         configureCInterops(target)
-        warnAboutIncorrectDependencies(target)
+
+        if (PropertiesProvider(target.project).ignoreIncorrectNativeDependencies != true) {
+            warnAboutIncorrectDependencies(target)
+        }
     }
 
     override fun configureArchivesAndComponent(target: T): Unit = with(target.project) {
@@ -353,10 +357,15 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
                         Dependencies:
                         ${it.second.joinToString(separator = "\n") { it.stringCoordinates() }}
 
-                    """.trimIndent()
+                        """.trimIndent()
                     )
                 }
-                warn("Such dependencies are not applicable for Kotlin/Native, consider changing the dependency type to 'implementation' or 'api'.")
+                warn(
+                    """
+                    Such dependencies are not applicable for Kotlin/Native, consider changing the dependency type to 'implementation' or 'api'.
+                    To disable this warning, set the $KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES=true project property
+                    """.trimIndent()
+                )
             }
         }
     }

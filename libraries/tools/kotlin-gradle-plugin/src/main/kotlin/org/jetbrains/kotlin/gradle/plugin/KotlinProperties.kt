@@ -95,6 +95,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
 
+    val ignoreIncorrectNativeDependencies: Boolean?
+        get() = booleanProperty(KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES)
+
     /**
      * Enables parallel tasks execution within a project with Workers API.
      * Does not enable using actual worker proccesses
@@ -227,6 +230,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         private const val CACHED_PROVIDER_EXT_NAME = "kotlin.properties.provider"
 
         internal const val KOTLIN_NATIVE_DISABLE_COMPILER_DAEMON = "kotlin.native.disableCompilerDaemon"
+        internal const val KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES = "kotlin.native.ignoreIncorrectDependencies"
 
         // TODO: Remove once KT-37550 is fixed
         internal const val KOTLIN_NATIVE_ENABLE_PARALLEL_EXECUTION_CHECK = "kotlin.native.enableParallelExecutionCheck"

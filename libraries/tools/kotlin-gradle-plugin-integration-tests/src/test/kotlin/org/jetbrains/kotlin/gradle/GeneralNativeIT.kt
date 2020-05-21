@@ -56,5 +56,25 @@ class GeneralNativeIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testIncorrectDependenciesWarning() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
+        setupWorkingDir()
+        gradleBuildScript().modify {
+            it.replace(
+                "api 'org.jetbrains.kotlin:kotlin-stdlib-common'",
+                "compileOnly 'org.jetbrains.kotlin:kotlin-stdlib-common'"
+            )
+        }
+
+        build {
+            assertSuccessful()
+            assertContains("A compileOnly dependency is used in the Kotlin/Native target")
+        }
+        build("-Pkotlin.native.ignoreIncorrectDependencies=true") {
+            assertSuccessful()
+            assertNotContains("A compileOnly dependency is used in the Kotlin/Native target")
+        }
+    }
+
     // TODO: Move native specific tests from NewMultiplatformIT here.
 }
