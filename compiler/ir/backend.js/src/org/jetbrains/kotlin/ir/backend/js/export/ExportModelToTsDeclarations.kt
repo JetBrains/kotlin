@@ -42,10 +42,10 @@ fun ExportedDeclaration.toTypeScript(indent: String): String = indent + when (th
 
         val renderedReturnType = returnType.toTypeScript()
 
-        "$keyword$name$renderedTypeParameters($renderedParameters): $renderedReturnType"
+        "$keyword$name$renderedTypeParameters($renderedParameters): $renderedReturnType;"
     }
     is ExportedConstructor ->
-        "constructor(${parameters.joinToString(", ") { it.toTypeScript() }})"
+        "constructor(${parameters.joinToString(", ") { it.toTypeScript() }});"
 
     is ExportedProperty -> {
         val keyword = when {
