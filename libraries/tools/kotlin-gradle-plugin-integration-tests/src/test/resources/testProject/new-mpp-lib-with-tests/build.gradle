@@ -29,7 +29,6 @@ kotlin {
     }
 
 	js {
-		browser()
 		nodejs()
 	}
 
