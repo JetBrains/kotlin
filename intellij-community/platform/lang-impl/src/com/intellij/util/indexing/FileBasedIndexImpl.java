@@ -1196,7 +1196,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     VirtualFile file = content.getVirtualFile();
     final int fileId = Math.abs(getIdMaskingNonIdBasedFile(file));
 
-    FileIndexingResult indexingResult;
     long startTime = System.nanoTime();
     try {
       // if file was scheduled for update due to vfs events then it is present in myFilesToUpdate
@@ -1207,27 +1206,41 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       if (!file.isValid() || isTooLarge(file)) {
         ProgressManager.checkCanceled();
         removeDataFromIndicesForFile(fileId, file);
-        if (file instanceof DeletedVirtualFileStub && ((DeletedVirtualFileStub)file).isResurrected()) {
-          CachedFileContent resurrectedFileContent = new CachedFileContent(((DeletedVirtualFileStub)file).getOriginalFile());
-          indexingResult = doIndexFileContent(project, resurrectedFileContent);
-        } else {
-          indexingResult = new FileIndexingResult(true, Collections.emptyMap(), file.getFileType());
+        try {
+          if (file instanceof DeletedVirtualFileStub && ((DeletedVirtualFileStub)file).isResurrected()) {
+            CachedFileContent resurrectedFileContent = new CachedFileContent(((DeletedVirtualFileStub)file).getOriginalFile());
+            FileIndexingResult indexingResult = doIndexFileContent(project, resurrectedFileContent);
+            return new FileIndexingStatistics(System.nanoTime() - startTime,
+                                              indexingResult.fileType,
+                                              indexingResult.timesPerIndexer);
+          } else {
+            return new FileIndexingStatistics(System.nanoTime() - startTime,
+                                              file.getFileType(),
+                                              Collections.emptyMap());
+          }
+        } finally {
+          setIsIndexedFlag(file);
         }
       }
       else {
-        indexingResult = doIndexFileContent(project, content);
+        FileIndexingResult indexingResult = doIndexFileContent(project, content);
+        if (indexingResult.setIndexedStatus) {
+          setIsIndexedFlag(file);
+        }
+        return new FileIndexingStatistics(System.nanoTime() - startTime,
+                                          indexingResult.fileType,
+                                          indexingResult.timesPerIndexer);
       }
-
-      if (indexingResult.setIndexedStatus && file instanceof VirtualFileSystemEntry) {
-        ((VirtualFileSystemEntry)file).setFileIndexed(true);
-      }
-      return new FileIndexingStatistics(System.nanoTime() - startTime,
-                                        indexingResult.fileType,
-                                        indexingResult.timesPerIndexer);
     }
     finally {
       IndexingStamp.flushCache(fileId);
       getChangedFilesCollector().removeFileIdFromFilesScheduledForUpdate(fileId);
+    }
+  }
+
+  private static void setIsIndexedFlag(@NotNull VirtualFile file) {
+    if (file instanceof VirtualFileSystemEntry) {
+      ((VirtualFileSystemEntry)file).setFileIndexed(true);
     }
   }
 
