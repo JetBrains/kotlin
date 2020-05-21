@@ -106,5 +106,10 @@
       <option name="name" value="75325590-b8e2-483b-bb73-29731a39425f" />
       <option name="url" value="https://cache-redirector.jetbrains.com/clojars.org/repo" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="9806f76a-efa6-41d4-b0b2-8085ceedaa45" />
+      <option name="name" value="9806f76a-efa6-41d4-b0b2-8085ceedaa45" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/space" />
+    </remote-repository>
   </component>
 </project>

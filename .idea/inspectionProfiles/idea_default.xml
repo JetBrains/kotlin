@@ -196,19 +196,21 @@
     <inspection_tool class="CharsetObjectCanBeUsed" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="CheckNodeTest" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ClassGetClass" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="ClassInitializerMayBeStatic" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="CloneCallsSuperClone" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CloneDeclaresCloneNotSupported" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CodeBlock2Expr" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="CollectionAddedToSelf" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="CommaExpressionJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ComparatorResultComparison" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="ComparisonOfShortAndChar" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ComparisonOfShortAndChar" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ConditionCoveredByFurtherCondition" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ConditionalBreakInInfiniteLoop" enabled="true" level="Strong Warning" enabled_by_default="true">
       <option name="noConversionToDoWhile" value="true" />
     </inspection_tool>
-    <inspection_tool class="ConfusingOctalEscape" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="ConstantConditionalExpression" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="ConditionalExpressionWithIdenticalBranches" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="ConfusingOctalEscape" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="ConstantConditionalExpression" enabled="true" level="Strong Warning" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="ConstantConditionalExpressionJS" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -260,6 +262,7 @@
     </inspection_tool>
     <inspection_tool class="DuplicateThrows" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="DuplicatedBlockNamesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="EmptyFinallyBlock" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EmptyStatementBody" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_reportEmptyBlocks" value="true" />
       <option name="commentsAreContent" value="true" />
@@ -267,7 +270,8 @@
     <inspection_tool class="EmptyStatementBodyJS" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="m_reportEmptyBlocks" value="false" />
     </inspection_tool>
-    <inspection_tool class="EmptySynchronizedStatement" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="EmptySynchronizedStatement" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="EndlessStream" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EqualsOnSuspiciousObject" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EqualsWithItself" enabled="true" level="Strong Warning" enabled_by_default="true">
       <scope name="Tests" level="Strong Warning" enabled="false" />

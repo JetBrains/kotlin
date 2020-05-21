@@ -895,8 +895,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.impl.iml" filepath="$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.plugin.iml" filepath="$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/fleet.iml" filepath="$PROJECT_DIR$/intellij/fleet/fleet.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/andel/fleet.andel.iml" filepath="$PROJECT_DIR$/intellij/fleet/andel/fleet.andel.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/andel/andel.core/fleet.andel.core.iml" filepath="$PROJECT_DIR$/intellij/fleet/andel/andel.core/fleet.andel.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/andel.core/fleet.andel.core.iml" filepath="$PROJECT_DIR$/intellij/fleet/andel.core/fleet.andel.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/andel.editor/fleet.andel.editor.iml" filepath="$PROJECT_DIR$/intellij/fleet/andel.editor/fleet.andel.editor.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/app/fleet.app.iml" filepath="$PROJECT_DIR$/intellij/fleet/app/fleet.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/app/fleet.app.withBackend.iml" filepath="$PROJECT_DIR$/intellij/fleet/app/fleet.app.withBackend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/fleet.backend.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/fleet.backend.iml" />
@@ -914,6 +914,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/protocol/fleet.protocol.iml" filepath="$PROJECT_DIR$/intellij/fleet/protocol/fleet.protocol.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/rhizomedb/fleet.rhizomedb.iml" filepath="$PROJECT_DIR$/intellij/fleet/rhizomedb/fleet.rhizomedb.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/server/fleet.server.iml" filepath="$PROJECT_DIR$/intellij/fleet/server/fleet.server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/space/fleet.space.iml" filepath="$PROJECT_DIR$/intellij/fleet/space/fleet.space.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/util/fleet.util.iml" filepath="$PROJECT_DIR$/intellij/fleet/util/fleet.util.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-core/intellij.akka.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-core/intellij.akka.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-java-tests/intellij.akka.java.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-java-tests/intellij.akka.java.tests.iml" />
