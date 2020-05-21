@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.workers.IsolationMode
@@ -48,6 +49,9 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     @get:Input
     lateinit var javacOptions: Map<String, String>
 
+    @get:Input
+    val androidPluginNotApplied: Provider<Boolean> = project.provider { project.plugins.none { it is KotlinAndroidPluginWrapper } }
+
     private fun getAnnotationProcessorOptions(): Map<String, String> {
         val options = processorOptions.subpluginOptionsByPluginId[Kapt3KotlinGradleSubplugin.KAPT_SUBPLUGIN_ID] ?: return emptyMap()
 
@@ -70,7 +74,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
         }
 
         val compileClasspath = classpath.files.toMutableList()
-        if (project.plugins.none { it is KotlinAndroidPluginWrapper }) {
+        if (androidPluginNotApplied.get()) {
             compileClasspath.addAll(0, PathUtil.getJdkClassesRootsFromCurrentJre())
         }
 
