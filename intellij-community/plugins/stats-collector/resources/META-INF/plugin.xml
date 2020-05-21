@@ -82,8 +82,6 @@
     <completion.contributor language="any" order="first" id="ml_context"
                             implementationClass="com.intellij.stats.completion.ContextFeaturesContributor"/>
 
-    <statistics.counterUsagesCollector groupId="completion" version="2"/>
-
     <registryKey key="completion.ml.reorder.only.top.items" defaultValue="true"
                  description="Reorder only a few items on the top in the lookup to preserve a proper grouping for the items below"/>
 
