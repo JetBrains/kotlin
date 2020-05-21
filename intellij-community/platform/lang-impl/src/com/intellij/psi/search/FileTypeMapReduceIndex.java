@@ -7,6 +7,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.MapInputDataDiffBuilder;
+import com.intellij.util.indexing.impl.storage.VfsAwareMapReduceIndex;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.PersistentStringEnumerator;
 import org.jetbrains.annotations.NotNull;
