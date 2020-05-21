@@ -99,8 +99,19 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     final override fun invoke(project: Project, editor: Editor?, file: PsiFile) {
         editor ?: return
         val target = getTarget(editor, file) ?: return
-        if (!FileModificationService.getInstance().preparePsiElementForWrite(target)) return
+        if (!preparePsiElementForWriteIfNeeded(target)) return
         applyTo(target, editor)
+    }
+
+    /**
+     * If [startInWriteAction] returns true, that means that the platform already called `preparePsiElementForWrite`
+     * for us (we do not want to call it again because it will throw if the intention is used with Intention Preview).
+     *
+     * Otherwise we have to call it ourselves (see javadoc for [getElementToMakeWritable]).
+     */
+    private fun preparePsiElementForWriteIfNeeded(target: TElement): Boolean {
+        if (startInWriteAction()) return true
+        return FileModificationService.getInstance().preparePsiElementForWrite(target)
     }
 
     override fun startInWriteAction() = true
