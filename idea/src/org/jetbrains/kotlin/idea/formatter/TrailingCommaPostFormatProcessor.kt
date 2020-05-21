@@ -19,8 +19,9 @@ import com.intellij.psi.impl.source.codeStyle.PostFormatProcessorHelper
 import com.intellij.psi.util.PsiUtil.getElementType
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaHelper.findInvalidCommas
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaHelper.needComma
-import org.jetbrains.kotlin.idea.formatter.TrailingCommaHelper.trailingCommaAllowedInModule
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaHelper.trailingCommaOrLastElement
+import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespace
+import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
