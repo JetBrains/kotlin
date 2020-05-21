@@ -7,7 +7,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.testFramework.BinaryLightVirtualFile
 import com.intellij.testFramework.SkipSlowTestLocally
 import com.intellij.testFramework.fixtures.BareTestFixtureTestCase
-import com.intellij.util.indexing.caches.*
+import com.intellij.util.indexing.contentQueue.*
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.concurrent.CountDownLatch
