@@ -9,10 +9,12 @@ declare namespace JS_TESTS {
         readonly x: string;
     }
     class ClassWithSecondaryCtor {
+        private constructor();
         readonly x: string;
         static create(y: string): ClassWithSecondaryCtor
     }
     class ClassWithMultipleSecondaryCtors {
+        private constructor();
         readonly x: string;
         static createFromString(y: string): ClassWithMultipleSecondaryCtors
         static createFromInts(y: number, z: number): ClassWithMultipleSecondaryCtors
@@ -24,6 +26,7 @@ declare namespace JS_TESTS {
         static createFromInts(y: number, z: number): OpenClassWithMixedConstructors
     }
     class DerivedClassWithSecondaryCtor extends OpenClassWithMixedConstructors {
+        private constructor();
         static delegateToPrimary(y: string): DerivedClassWithSecondaryCtor
         static delegateToCreateFromInts(y: number, z: number): DerivedClassWithSecondaryCtor
     }
