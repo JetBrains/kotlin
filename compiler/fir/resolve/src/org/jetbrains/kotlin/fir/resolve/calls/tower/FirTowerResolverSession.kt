@@ -114,14 +114,19 @@ class FirTowerResolverSession internal constructor(
         }
     }
 
-    private suspend fun processLevelForPropertyWithInvoke(
+    private suspend fun processLevelForPropertyWithInvokeExtension(
         towerLevel: SessionBasedTowerLevel,
         callInfo: CallInfo,
-        group: TowerGroup,
-        explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+        group: TowerGroup
     ) {
         if (callInfo.callKind == CallKind.Function) {
-            processLevel(towerLevel, callInfo, group, explicitReceiverKind, InvokeResolveMode.RECEIVER_FOR_INVOKE_BUILTIN_EXTENSION)
+            processLevel(
+                towerLevel,
+                callInfo,
+                group,
+                ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                InvokeResolveMode.RECEIVER_FOR_INVOKE_BUILTIN_EXTENSION
+            )
         }
     }
 
@@ -406,7 +411,7 @@ class FirTowerResolverSession internal constructor(
             info, towerGroup, ExplicitReceiverKind.EXTENSION_RECEIVER
         )
 
-        processLevelForPropertyWithInvoke(
+        processLevelForPropertyWithInvokeExtension(
             scope.toScopeTowerLevel(), info, towerGroup
         )
 
@@ -425,19 +430,19 @@ class FirTowerResolverSession internal constructor(
             info, parentGroup.Member, ExplicitReceiverKind.EXTENSION_RECEIVER
         )
         // properties for invoke on implicit receiver
-        processLevelForPropertyWithInvoke(
+        processLevelForPropertyWithInvokeExtension(
             implicitReceiverValue.toMemberScopeTowerLevel(), info, parentGroup.Member
         )
 
         enumerateTowerLevels(
             onScope = { scope, group ->
-                processLevelForPropertyWithInvoke(
+                processLevelForPropertyWithInvokeExtension(
                     scope.toScopeTowerLevel(extensionReceiver = implicitReceiverValue),
                     info, group
                 )
             },
             onImplicitReceiver = { receiver, group ->
-                processLevelForPropertyWithInvoke(
+                processLevelForPropertyWithInvokeExtension(
                     receiver.toMemberScopeTowerLevel(extensionReceiver = implicitReceiverValue),
                     info, group
                 )
