@@ -10,18 +10,20 @@ import com.intellij.util.ui.tree.TreeUtil.getLastUserObject
 import javax.swing.JTree
 
 internal class ProblemsViewQuickFixes : ActionGroup() {
-  private fun getProblem(context: DataContext?): Problem? {
-    val tree = context?.getData(CONTEXT_COMPONENT) as? JTree ?: return null
-    return getLastUserObject(ProblemNode::class.java, tree.selectionPath)?.problem
-  }
+  override fun canBePerformed(context: DataContext) = false
 
-  override fun canBePerformed(context: DataContext): Boolean {
-    val problem = getProblem(context) ?: return true
-    return !problem.hasQuickFixActions()
+  override fun update(event: AnActionEvent) {
+    val enabled = getProblem(event)?.hasQuickFixActions()
+    event.presentation.isEnabledAndVisible = enabled == true
   }
 
   override fun getChildren(event: AnActionEvent?): Array<AnAction> {
-    val actions = getProblem(event?.dataContext)?.getQuickFixActions()
+    val actions = getProblem(event)?.getQuickFixActions()
     return if (actions == null || actions.isEmpty()) AnAction.EMPTY_ARRAY else actions.toTypedArray()
+  }
+
+  private fun getProblem(event: AnActionEvent?): Problem? {
+    val tree = event?.getData(CONTEXT_COMPONENT) as? JTree ?: return null
+    return getLastUserObject(ProblemNode::class.java, tree.selectionPath)?.problem
   }
 }
