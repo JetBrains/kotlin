@@ -329,37 +329,33 @@ object Aggregates : TemplateGroupBase() {
                 }
                 returns("T?")
 
+                val acc = op
+                val cmpBlock = if (isFloat)
+                    """$acc = ${op}Of($acc, e)"""
+                else
+                    """if ($acc ${if (op == "max") "<" else ">"} e) $acc = e"""
                 body {
                     """
                     val iterator = iterator()
                     if (!iterator.hasNext()) return null
-                    var $op = iterator.next()
-                    ${if (isFloat) "if ($op.isNaN()) return $op" else "\\"}
-
+                    var $acc = iterator.next()
                     while (iterator.hasNext()) {
                         val e = iterator.next()
-                        ${if (isFloat) "if (e.isNaN()) return e" else "\\"}
-                        if ($op ${if (op == "max") "<" else ">"} e) $op = e
+                        $cmpBlock
                     }
-                    return $op
+                    return $acc
                     """
                 }
                 body(ArraysOfObjects, ArraysOfPrimitives, CharSequences, ArraysOfUnsigned) {
                     """
                     if (isEmpty()) return null
-                    var $op = this[0]
-                    ${if (isFloat) "if ($op.isNaN()) return $op" else "\\"}
-
+                    var $acc = this[0]
                     for (i in 1..lastIndex) {
                         val e = this[i]
-                        ${if (isFloat) "if (e.isNaN()) return e" else "\\"}
-                        if ($op ${if (op == "max") "<" else ">"} e) $op = e
+                        $cmpBlock
                     }
-                    return $op
+                    return $acc
                     """
-                }
-                body {
-                    body!!.replace(Regex("""^\s+\\\n""", RegexOption.MULTILINE), "") // remove empty lines ending with \
                 }
             }
         }

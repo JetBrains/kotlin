@@ -832,6 +832,9 @@ class CollectionTest {
         expect("a", { listOf("a", "b").min() })
         expect(null, { listOf<Int>().asSequence().min() })
         expect(2, { listOf(2, 3).asSequence().min() })
+
+        assertIsNegativeZero(listOf(0.0, -0.0).shuffled().min()!!)
+        assertIsNegativeZero(listOf(0.0F, -0.0F).shuffled().min()!!.toDouble())
     }
 
     @Test fun max() {
@@ -843,6 +846,9 @@ class CollectionTest {
         expect("b", { listOf("a", "b").max() })
         expect(null, { listOf<Int>().asSequence().max() })
         expect(3, { listOf(2, 3).asSequence().max() })
+
+        assertIsPositiveZero(listOf(0.0, -0.0).shuffled().max()!!)
+        assertIsPositiveZero(listOf(0.0F, -0.0F).shuffled().max()!!.toDouble())
     }
 
     @Test fun minWith() {

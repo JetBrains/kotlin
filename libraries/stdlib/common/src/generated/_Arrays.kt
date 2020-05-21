@@ -13084,11 +13084,9 @@ public inline fun CharArray.forEachIndexed(action: (index: Int, Char) -> Unit): 
 public fun Array<out Double>.max(): Double? {
     if (isEmpty()) return null
     var max = this[0]
-    if (max.isNaN()) return max
     for (i in 1..lastIndex) {
         val e = this[i]
-        if (e.isNaN()) return e
-        if (max < e) max = e
+        max = maxOf(max, e)
     }
     return max
 }
@@ -13102,11 +13100,9 @@ public fun Array<out Double>.max(): Double? {
 public fun Array<out Float>.max(): Float? {
     if (isEmpty()) return null
     var max = this[0]
-    if (max.isNaN()) return max
     for (i in 1..lastIndex) {
         val e = this[i]
-        if (e.isNaN()) return e
-        if (max < e) max = e
+        max = maxOf(max, e)
     }
     return max
 }
@@ -13184,11 +13180,9 @@ public fun LongArray.max(): Long? {
 public fun FloatArray.max(): Float? {
     if (isEmpty()) return null
     var max = this[0]
-    if (max.isNaN()) return max
     for (i in 1..lastIndex) {
         val e = this[i]
-        if (e.isNaN()) return e
-        if (max < e) max = e
+        max = maxOf(max, e)
     }
     return max
 }
@@ -13201,11 +13195,9 @@ public fun FloatArray.max(): Float? {
 public fun DoubleArray.max(): Double? {
     if (isEmpty()) return null
     var max = this[0]
-    if (max.isNaN()) return max
     for (i in 1..lastIndex) {
         val e = this[i]
-        if (e.isNaN()) return e
-        if (max < e) max = e
+        max = maxOf(max, e)
     }
     return max
 }
@@ -15059,11 +15051,9 @@ public fun CharArray.maxWith(comparator: Comparator<in Char>): Char? {
 public fun Array<out Double>.min(): Double? {
     if (isEmpty()) return null
     var min = this[0]
-    if (min.isNaN()) return min
     for (i in 1..lastIndex) {
         val e = this[i]
-        if (e.isNaN()) return e
-        if (min > e) min = e
+        min = minOf(min, e)
     }
     return min
 }
@@ -15077,11 +15067,9 @@ public fun Array<out Double>.min(): Double? {
 public fun Array<out Float>.min(): Float? {
     if (isEmpty()) return null
     var min = this[0]
-    if (min.isNaN()) return min
     for (i in 1..lastIndex) {
         val e = this[i]
-        if (e.isNaN()) return e
-        if (min > e) min = e
+        min = minOf(min, e)
     }
     return min
 }
@@ -15159,11 +15147,9 @@ public fun LongArray.min(): Long? {
 public fun FloatArray.min(): Float? {
     if (isEmpty()) return null
     var min = this[0]
-    if (min.isNaN()) return min
     for (i in 1..lastIndex) {
         val e = this[i]
-        if (e.isNaN()) return e
-        if (min > e) min = e
+        min = minOf(min, e)
     }
     return min
 }
@@ -15176,11 +15162,9 @@ public fun FloatArray.min(): Float? {
 public fun DoubleArray.min(): Double? {
     if (isEmpty()) return null
     var min = this[0]
-    if (min.isNaN()) return min
     for (i in 1..lastIndex) {
         val e = this[i]
-        if (e.isNaN()) return e
-        if (min > e) min = e
+        min = minOf(min, e)
     }
     return min
 }
