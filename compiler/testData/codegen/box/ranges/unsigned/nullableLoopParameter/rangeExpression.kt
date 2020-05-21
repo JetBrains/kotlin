@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // See KT-38833: Runtime exception is "java.lang.ClassCastException: java.lang.Integer cannot be cast to kotlin.UInt"
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_LIGHT_ANALYSIS
