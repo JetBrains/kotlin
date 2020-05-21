@@ -9470,6 +9470,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/modifiers/suspend"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("anonymousFunction.kt")
+            public void testAnonymousFunction() throws Exception {
+                runTest("idea/testData/quickfix/modifiers/suspend/anonymousFunction.kt");
+            }
+
             @TestMetadata("base.kt")
             public void testBase() throws Exception {
                 runTest("idea/testData/quickfix/modifiers/suspend/base.kt");
