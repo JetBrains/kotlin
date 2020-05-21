@@ -562,9 +562,9 @@ object Aggregates : TemplateGroupBase() {
                     Returns the ${if (op == "max") "largest" else "smallest"} value among all values produced by [selector] function 
                     applied to each ${f.element} in the ${f.collection}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
                     """ +
-//                    """
-//                    If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
-//                    """.ifOrEmpty(isFloat) +
+                    """
+                    If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+                    """.ifOrEmpty(isFloat) +
                     """
                     @throws NoSuchElementException if the ${f.collection} is empty.
                     """.ifOrEmpty(!nullable)
@@ -574,19 +574,20 @@ object Aggregates : TemplateGroupBase() {
                 returns(selectorType + "?".ifOrEmpty(nullable))
                 val doOnEmpty = if (nullable) "return null" else "throw NoSuchElementException()"
                 val acc = op + "Value"
-                val cmp = if (op == "max") "<" else ">"
+                val cmpBlock = if (isFloat)
+                    """$acc = ${op}Of($acc, v)"""
+                else
+                    """if ($acc ${if (op == "max") "<" else ">"} v) {
+                            $acc = v
+                        }"""
                 body {
                     """
                     val iterator = iterator()
                     if (!iterator.hasNext()) $doOnEmpty
                     var $acc = selector(iterator.next())
-                    ${"if ($acc.isNaN()) return $acc".ifOrEmpty(isFloat)}
                     while (iterator.hasNext()) {
                         val v = selector(iterator.next())
-                        ${"if (v.isNaN()) return v".ifOrEmpty(isFloat)}
-                        if ($acc $cmp v) {
-                            $acc = v
-                        }
+                        $cmpBlock
                     }
                     return $acc
                     """
@@ -596,15 +597,9 @@ object Aggregates : TemplateGroupBase() {
                     if (isEmpty()) $doOnEmpty
         
                     var $acc = selector(this[0])
-                    val lastIndex = this.lastIndex
-                    if (lastIndex == 0) return $acc
-                    ${"if ($acc.isNaN()) return $acc".ifOrEmpty(isFloat)} 
                     for (i in 1..lastIndex) {
                         val v = selector(this[i])
-                        ${"if (v.isNaN()) return v".ifOrEmpty(isFloat)}
-                        if ($acc $cmp v) {
-                            $acc = v
-                        }
+                        $cmpBlock
                     }
                     return $acc
                     """
@@ -668,8 +663,6 @@ object Aggregates : TemplateGroupBase() {
                     if (isEmpty()) $doOnEmpty
         
                     var $acc = selector(this[0])
-                    val lastIndex = this.lastIndex
-                    if (lastIndex == 0) return $acc
                     for (i in 1..lastIndex) {
                         val v = selector(this[i])
                         if (comparator.compare($acc, v) $cmp 0) {

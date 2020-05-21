@@ -1127,6 +1127,8 @@ public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R):
  * Returns the largest value among all values produced by [selector] function
  * applied to each character in the char sequence.
  * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
  */
 @SinceKotlin("1.4")
@@ -1136,15 +1138,9 @@ public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R):
 public inline fun CharSequence.maxOf(selector: (Char) -> Double): Double {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -1152,6 +1148,8 @@ public inline fun CharSequence.maxOf(selector: (Char) -> Double): Double {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each character in the char sequence.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
  */
@@ -1162,15 +1160,9 @@ public inline fun CharSequence.maxOf(selector: (Char) -> Double): Double {
 public inline fun CharSequence.maxOf(selector: (Char) -> Float): Float {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -1188,12 +1180,8 @@ public inline fun CharSequence.maxOf(selector: (Char) -> Float): Float {
 public inline fun <R : Comparable<R>> CharSequence.maxOf(selector: (Char) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -1204,6 +1192,8 @@ public inline fun <R : Comparable<R>> CharSequence.maxOf(selector: (Char) -> R):
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each character in the char sequence or `null` if there are no characters.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1212,15 +1202,9 @@ public inline fun <R : Comparable<R>> CharSequence.maxOf(selector: (Char) -> R):
 public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Double): Double? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -1228,6 +1212,8 @@ public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Double): Double? 
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each character in the char sequence or `null` if there are no characters.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1236,15 +1222,9 @@ public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Double): Double? 
 public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Float): Float? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -1260,12 +1240,8 @@ public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Float): Float? {
 public inline fun <R : Comparable<R>> CharSequence.maxOfOrNull(selector: (Char) -> R): R? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -1286,8 +1262,6 @@ public inline fun <R : Comparable<R>> CharSequence.maxOfOrNull(selector: (Char) 
 public inline fun <R> CharSequence.maxOfWith(comparator: Comparator<in R>, selector: (Char) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(maxValue, v) < 0) {
@@ -1308,8 +1282,6 @@ public inline fun <R> CharSequence.maxOfWith(comparator: Comparator<in R>, selec
 public inline fun <R> CharSequence.maxOfWithOrNull(comparator: Comparator<in R>, selector: (Char) -> R): R? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(maxValue, v) < 0) {
@@ -1371,6 +1343,8 @@ public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R):
  * Returns the smallest value among all values produced by [selector] function
  * applied to each character in the char sequence.
  * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
  */
 @SinceKotlin("1.4")
@@ -1380,15 +1354,9 @@ public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R):
 public inline fun CharSequence.minOf(selector: (Char) -> Double): Double {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -1396,6 +1364,8 @@ public inline fun CharSequence.minOf(selector: (Char) -> Double): Double {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each character in the char sequence.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
  */
@@ -1406,15 +1376,9 @@ public inline fun CharSequence.minOf(selector: (Char) -> Double): Double {
 public inline fun CharSequence.minOf(selector: (Char) -> Float): Float {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -1432,12 +1396,8 @@ public inline fun CharSequence.minOf(selector: (Char) -> Float): Float {
 public inline fun <R : Comparable<R>> CharSequence.minOf(selector: (Char) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (minValue > v) {
             minValue = v
         }
@@ -1448,6 +1408,8 @@ public inline fun <R : Comparable<R>> CharSequence.minOf(selector: (Char) -> R):
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each character in the char sequence or `null` if there are no characters.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1456,15 +1418,9 @@ public inline fun <R : Comparable<R>> CharSequence.minOf(selector: (Char) -> R):
 public inline fun CharSequence.minOfOrNull(selector: (Char) -> Double): Double? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -1472,6 +1428,8 @@ public inline fun CharSequence.minOfOrNull(selector: (Char) -> Double): Double? 
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each character in the char sequence or `null` if there are no characters.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1480,15 +1438,9 @@ public inline fun CharSequence.minOfOrNull(selector: (Char) -> Double): Double? 
 public inline fun CharSequence.minOfOrNull(selector: (Char) -> Float): Float? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -1504,12 +1456,8 @@ public inline fun CharSequence.minOfOrNull(selector: (Char) -> Float): Float? {
 public inline fun <R : Comparable<R>> CharSequence.minOfOrNull(selector: (Char) -> R): R? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (minValue > v) {
             minValue = v
         }
@@ -1530,8 +1478,6 @@ public inline fun <R : Comparable<R>> CharSequence.minOfOrNull(selector: (Char) 
 public inline fun <R> CharSequence.minOfWith(comparator: Comparator<in R>, selector: (Char) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(minValue, v) > 0) {
@@ -1552,8 +1498,6 @@ public inline fun <R> CharSequence.minOfWith(comparator: Comparator<in R>, selec
 public inline fun <R> CharSequence.minOfWithOrNull(comparator: Comparator<in R>, selector: (Char) -> R): R? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(minValue, v) > 0) {

@@ -193,6 +193,8 @@ public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.E
  * Returns the largest value among all values produced by [selector] function
  * applied to each entry in the map.
  * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
  * @throws NoSuchElementException if the map is empty.
  */
 @SinceKotlin("1.4")
@@ -206,6 +208,8 @@ public inline fun <K, V> Map<out K, V>.maxOf(selector: (Map.Entry<K, V>) -> Doub
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each entry in the map.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the map is empty.
  */
@@ -234,6 +238,8 @@ public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxOf(selector: (Map.E
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each entry in the map or `null` if there are no entries.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -246,6 +252,8 @@ public inline fun <K, V> Map<out K, V>.maxOfOrNull(selector: (Map.Entry<K, V>) -
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each entry in the map or `null` if there are no entries.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -314,6 +322,8 @@ public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.E
  * Returns the smallest value among all values produced by [selector] function
  * applied to each entry in the map.
  * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
  * @throws NoSuchElementException if the map is empty.
  */
 @SinceKotlin("1.4")
@@ -327,6 +337,8 @@ public inline fun <K, V> Map<out K, V>.minOf(selector: (Map.Entry<K, V>) -> Doub
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each entry in the map.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the map is empty.
  */
@@ -355,6 +367,8 @@ public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minOf(selector: (Map.E
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each entry in the map or `null` if there are no entries.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -367,6 +381,8 @@ public inline fun <K, V> Map<out K, V>.minOfOrNull(selector: (Map.Entry<K, V>) -
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each entry in the map or `null` if there are no entries.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)

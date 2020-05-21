@@ -1,10 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test
 
+import kotlin.math.withSign
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -28,3 +30,12 @@ fun assertArrayContentEquals(expected: UIntArray, actual: UIntArray, message: St
 fun assertArrayContentEquals(expected: ULongArray, actual: ULongArray, message: String? = null)   = assertTrue(expected contentEquals actual, message)
 fun assertArrayContentEquals(expected: UShortArray, actual: UShortArray, message: String? = null) = assertTrue(expected contentEquals actual, message)
 fun assertArrayContentEquals(expected: UByteArray, actual: UByteArray, message: String? = null)   = assertTrue(expected contentEquals actual, message)
+
+fun assertIsNegativeZero(value: Double) {
+    assertEquals(-0.0, value)
+    assertEquals(-1.0, 1.0.withSign(value))
+}
+fun assertIsPositiveZero(value: Double) {
+    assertEquals(0.0, value)
+    assertEquals(1.0, 1.0.withSign(value))
+}

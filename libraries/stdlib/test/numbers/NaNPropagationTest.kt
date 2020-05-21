@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -101,6 +101,24 @@ class NaNPropagationTest {
     }
 
     @Test
+    fun arrayMinOf() {
+        propagateOf3(
+            { a, b, c -> arrayOf(a, b, c).minOf { it } },
+            { a, b, c -> arrayOf(a, b, c).minOf { it } },
+            "arrayOf().minOf()"
+        )
+    }
+    
+    @Test
+    fun arrayMaxOf() {
+        propagateOf3(
+            { a, b, c -> arrayOf(a, b, c).maxOf { it } },
+            { a, b, c -> arrayOf(a, b, c).maxOf { it } },
+            "arrayOf().maxOf()"
+        )
+    }
+
+    @Test
     fun primitiveArrayMin() {
         propagateOf2(
             { a, b -> doubleArrayOf(a, b).min()!! },
@@ -115,6 +133,34 @@ class NaNPropagationTest {
             { a, b -> doubleArrayOf(a, b).max()!! },
             { a, b -> floatArrayOf(a, b).max()!! },
             "primitiveArrayOf().max()"
+        )
+    }
+
+    @Test
+    fun primitiveArrayMinOf() {
+        propagateOf3(
+            { a, b, c -> doubleArrayOf(a, b, c).minOf { it } },
+            { a, b, c -> floatArrayOf(a, b, c).minOf { it } },
+            "primitiveArrayOf().minOf()"
+        )
+        propagateOf3(
+            { a, b, c -> val arr = doubleArrayOf(a, b, c); intArrayOf(0, 1, 2).minOf { arr[it] } },
+            { a, b, c -> val arr = floatArrayOf(a, b, c); intArrayOf(0, 1, 2).minOf { arr[it] } },
+            "intArrayOf().minOf()"
+        )
+    }
+
+    @Test
+    fun primitiveArrayMaxOf() {
+        propagateOf3(
+            { a, b, c -> doubleArrayOf(a, b, c).maxOf { it } },
+            { a, b, c -> floatArrayOf(a, b, c).maxOf { it } },
+            "primitiveArrayOf().maxOf()"
+        )
+        propagateOf3(
+            { a, b, c -> val arr = doubleArrayOf(a, b, c); intArrayOf(0, 1, 2).maxOf { arr[it] } },
+            { a, b, c -> val arr = floatArrayOf(a, b, c); intArrayOf(0, 1, 2).maxOf { arr[it] } },
+            "intArrayOf().maxOf()"
         )
     }
 
@@ -137,6 +183,24 @@ class NaNPropagationTest {
     }
 
     @Test
+    fun listMinOf() {
+        propagateOf3(
+            { a, b, c -> listOf(a, b, c).minOf { it } },
+            { a, b, c -> listOf(a, b, c).minOf { it } },
+            "listOf().minOf()"
+        )
+    }
+
+    @Test
+    fun listMaxOf() {
+        propagateOf3(
+            { a, b, c -> listOf(a, b, c).maxOf { it } },
+            { a, b, c -> listOf(a, b, c).maxOf { it } },
+            "listOf().maxOf()"
+        )
+    }
+
+    @Test
     fun sequenceMin() {
         propagateOf2(
             { a, b -> sequenceOf(a, b).min()!! },
@@ -154,6 +218,23 @@ class NaNPropagationTest {
         )
     }
 
+    @Test
+    fun sequenceMinOf() {
+        propagateOf3(
+            { a, b, c -> sequenceOf(a, b, c).minOf { it } },
+            { a, b, c -> sequenceOf(a, b, c).minOf { it } },
+            "sequenceOf().minOf()"
+        )
+    }
+
+    @Test
+    fun sequenceMaxOf() {
+        propagateOf3(
+            { a, b, c -> sequenceOf(a, b, c).maxOf { it } },
+            { a, b, c -> sequenceOf(a, b, c).maxOf { it } },
+            "sequenceOf().maxOf()"
+        )
+    }
 }
 
 class NaNTotalOrderTest {

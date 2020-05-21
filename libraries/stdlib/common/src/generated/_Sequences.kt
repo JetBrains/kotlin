@@ -1252,6 +1252,8 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.maxBy(selector: (T) -> R): 
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the sequence.
  * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
  * @throws NoSuchElementException if the sequence is empty.
  *
  * The operation is _terminal_.
@@ -1264,13 +1266,9 @@ public inline fun <T> Sequence<T>.maxOf(selector: (T) -> Double): Double {
     val iterator = iterator()
     if (!iterator.hasNext()) throw NoSuchElementException()
     var maxValue = selector(iterator.next())
-    if (maxValue.isNaN()) return maxValue
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -1278,6 +1276,8 @@ public inline fun <T> Sequence<T>.maxOf(selector: (T) -> Double): Double {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the sequence.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the sequence is empty.
  *
@@ -1291,13 +1291,9 @@ public inline fun <T> Sequence<T>.maxOf(selector: (T) -> Float): Float {
     val iterator = iterator()
     if (!iterator.hasNext()) throw NoSuchElementException()
     var maxValue = selector(iterator.next())
-    if (maxValue.isNaN()) return maxValue
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -1320,7 +1316,6 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.maxOf(selector: (T) -> R): 
     var maxValue = selector(iterator.next())
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -1331,6 +1326,8 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.maxOf(selector: (T) -> R): 
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the sequence or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  *
  * The operation is _terminal_.
  */
@@ -1342,13 +1339,9 @@ public inline fun <T> Sequence<T>.maxOfOrNull(selector: (T) -> Double): Double? 
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxValue = selector(iterator.next())
-    if (maxValue.isNaN()) return maxValue
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -1356,6 +1349,8 @@ public inline fun <T> Sequence<T>.maxOfOrNull(selector: (T) -> Double): Double? 
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the sequence or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  *
  * The operation is _terminal_.
  */
@@ -1367,13 +1362,9 @@ public inline fun <T> Sequence<T>.maxOfOrNull(selector: (T) -> Float): Float? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxValue = selector(iterator.next())
-    if (maxValue.isNaN()) return maxValue
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -1394,7 +1385,6 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.maxOfOrNull(selector: (T) -
     var maxValue = selector(iterator.next())
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -1552,6 +1542,8 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.minBy(selector: (T) -> R): 
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the sequence.
  * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
  * @throws NoSuchElementException if the sequence is empty.
  *
  * The operation is _terminal_.
@@ -1564,13 +1556,9 @@ public inline fun <T> Sequence<T>.minOf(selector: (T) -> Double): Double {
     val iterator = iterator()
     if (!iterator.hasNext()) throw NoSuchElementException()
     var minValue = selector(iterator.next())
-    if (minValue.isNaN()) return minValue
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -1578,6 +1566,8 @@ public inline fun <T> Sequence<T>.minOf(selector: (T) -> Double): Double {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the sequence.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the sequence is empty.
  *
@@ -1591,13 +1581,9 @@ public inline fun <T> Sequence<T>.minOf(selector: (T) -> Float): Float {
     val iterator = iterator()
     if (!iterator.hasNext()) throw NoSuchElementException()
     var minValue = selector(iterator.next())
-    if (minValue.isNaN()) return minValue
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -1620,7 +1606,6 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.minOf(selector: (T) -> R): 
     var minValue = selector(iterator.next())
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        
         if (minValue > v) {
             minValue = v
         }
@@ -1631,6 +1616,8 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.minOf(selector: (T) -> R): 
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the sequence or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  *
  * The operation is _terminal_.
  */
@@ -1642,13 +1629,9 @@ public inline fun <T> Sequence<T>.minOfOrNull(selector: (T) -> Double): Double? 
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minValue = selector(iterator.next())
-    if (minValue.isNaN()) return minValue
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -1656,6 +1639,8 @@ public inline fun <T> Sequence<T>.minOfOrNull(selector: (T) -> Double): Double? 
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the sequence or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  *
  * The operation is _terminal_.
  */
@@ -1667,13 +1652,9 @@ public inline fun <T> Sequence<T>.minOfOrNull(selector: (T) -> Float): Float? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minValue = selector(iterator.next())
-    if (minValue.isNaN()) return minValue
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -1694,7 +1675,6 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.minOfOrNull(selector: (T) -
     var minValue = selector(iterator.next())
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
-        
         if (minValue > v) {
             minValue = v
         }

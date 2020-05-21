@@ -5,6 +5,8 @@
 
 package test.collections
 
+import test.assertIsNegativeZero
+import test.assertIsPositiveZero
 import test.assertStaticAndRuntimeTypeIs
 import kotlin.test.*
 import test.collections.behaviors.*
@@ -909,6 +911,9 @@ class CollectionTest {
 
         assertEquals(Double.NaN, listOf(1, -1, 0).minOf { it.toDouble().pow(0.5) })
         assertEquals(Float.NaN, listOf(1, -1, 0).minOf { it.toFloat().pow(0.5F) })
+
+        assertIsNegativeZero(listOf(1.0, -1.0).shuffled().minOf { it * 0.0 })
+        assertIsNegativeZero(listOf(1.0F, -1.0F).shuffled().minOf { it * 0.0F }.toDouble())
     }
 
     @Test fun minOfWith() {
@@ -934,6 +939,9 @@ class CollectionTest {
 
         assertEquals(16.0, listOf(1, 2, 3, 4, 5).maxOf { (-2.0).pow(it) })
         assertEquals(16.0F, listOf(1, 2, 3, 4, 5).maxOf { (-2.0F).pow(it) })
+
+        assertIsPositiveZero(listOf(1.0, -1.0).shuffled().maxOf { it * 0.0 })
+        assertIsPositiveZero(listOf(1.0F, -1.0F).shuffled().maxOf { it * 0.0F }.toDouble())
     }
 
     @Test fun maxOfWith() {
@@ -946,9 +954,6 @@ class CollectionTest {
         assertEquals(null, emptyList<Int>().maxOfWithOrNull(naturalOrder()) { it })
         // TODO: investigate why no unit-coercion happens here and an explicit 'Unit' is required
         assertFailsWith<NoSuchElementException> { emptyList<Int>().maxOfWith(naturalOrder()) { it }; Unit }
-
-        assertEquals(Double.NaN, listOf(1, -1, 0).maxOf { it.toDouble().pow(0.5) })
-        assertEquals(Float.NaN, listOf(1, -1, 0).maxOf { it.toFloat().pow(0.5F) })
     }
 
 

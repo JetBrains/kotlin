@@ -5874,6 +5874,8 @@ public inline fun <R : Comparable<R>> UShortArray.maxBy(selector: (UShort) -> R)
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
  * @throws NoSuchElementException if the array is empty.
  */
 @SinceKotlin("1.4")
@@ -5884,15 +5886,9 @@ public inline fun <R : Comparable<R>> UShortArray.maxBy(selector: (UShort) -> R)
 public inline fun UIntArray.maxOf(selector: (UInt) -> Double): Double {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -5900,6 +5896,8 @@ public inline fun UIntArray.maxOf(selector: (UInt) -> Double): Double {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -5911,15 +5909,9 @@ public inline fun UIntArray.maxOf(selector: (UInt) -> Double): Double {
 public inline fun ULongArray.maxOf(selector: (ULong) -> Double): Double {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -5927,6 +5919,8 @@ public inline fun ULongArray.maxOf(selector: (ULong) -> Double): Double {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -5938,15 +5932,9 @@ public inline fun ULongArray.maxOf(selector: (ULong) -> Double): Double {
 public inline fun UByteArray.maxOf(selector: (UByte) -> Double): Double {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -5954,6 +5942,8 @@ public inline fun UByteArray.maxOf(selector: (UByte) -> Double): Double {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -5965,15 +5955,9 @@ public inline fun UByteArray.maxOf(selector: (UByte) -> Double): Double {
 public inline fun UShortArray.maxOf(selector: (UShort) -> Double): Double {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -5981,6 +5965,8 @@ public inline fun UShortArray.maxOf(selector: (UShort) -> Double): Double {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -5992,15 +5978,9 @@ public inline fun UShortArray.maxOf(selector: (UShort) -> Double): Double {
 public inline fun UIntArray.maxOf(selector: (UInt) -> Float): Float {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6008,6 +5988,8 @@ public inline fun UIntArray.maxOf(selector: (UInt) -> Float): Float {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -6019,15 +6001,9 @@ public inline fun UIntArray.maxOf(selector: (UInt) -> Float): Float {
 public inline fun ULongArray.maxOf(selector: (ULong) -> Float): Float {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6035,6 +6011,8 @@ public inline fun ULongArray.maxOf(selector: (ULong) -> Float): Float {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -6046,15 +6024,9 @@ public inline fun ULongArray.maxOf(selector: (ULong) -> Float): Float {
 public inline fun UByteArray.maxOf(selector: (UByte) -> Float): Float {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6062,6 +6034,8 @@ public inline fun UByteArray.maxOf(selector: (UByte) -> Float): Float {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -6073,15 +6047,9 @@ public inline fun UByteArray.maxOf(selector: (UByte) -> Float): Float {
 public inline fun UShortArray.maxOf(selector: (UShort) -> Float): Float {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6100,12 +6068,8 @@ public inline fun UShortArray.maxOf(selector: (UShort) -> Float): Float {
 public inline fun <R : Comparable<R>> UIntArray.maxOf(selector: (UInt) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -6127,12 +6091,8 @@ public inline fun <R : Comparable<R>> UIntArray.maxOf(selector: (UInt) -> R): R 
 public inline fun <R : Comparable<R>> ULongArray.maxOf(selector: (ULong) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -6154,12 +6114,8 @@ public inline fun <R : Comparable<R>> ULongArray.maxOf(selector: (ULong) -> R): 
 public inline fun <R : Comparable<R>> UByteArray.maxOf(selector: (UByte) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -6181,12 +6137,8 @@ public inline fun <R : Comparable<R>> UByteArray.maxOf(selector: (UByte) -> R): 
 public inline fun <R : Comparable<R>> UShortArray.maxOf(selector: (UShort) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -6197,6 +6149,8 @@ public inline fun <R : Comparable<R>> UShortArray.maxOf(selector: (UShort) -> R)
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -6206,15 +6160,9 @@ public inline fun <R : Comparable<R>> UShortArray.maxOf(selector: (UShort) -> R)
 public inline fun UIntArray.maxOfOrNull(selector: (UInt) -> Double): Double? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6222,6 +6170,8 @@ public inline fun UIntArray.maxOfOrNull(selector: (UInt) -> Double): Double? {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -6231,15 +6181,9 @@ public inline fun UIntArray.maxOfOrNull(selector: (UInt) -> Double): Double? {
 public inline fun ULongArray.maxOfOrNull(selector: (ULong) -> Double): Double? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6247,6 +6191,8 @@ public inline fun ULongArray.maxOfOrNull(selector: (ULong) -> Double): Double? {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -6256,15 +6202,9 @@ public inline fun ULongArray.maxOfOrNull(selector: (ULong) -> Double): Double? {
 public inline fun UByteArray.maxOfOrNull(selector: (UByte) -> Double): Double? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6272,6 +6212,8 @@ public inline fun UByteArray.maxOfOrNull(selector: (UByte) -> Double): Double? {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -6281,15 +6223,9 @@ public inline fun UByteArray.maxOfOrNull(selector: (UByte) -> Double): Double? {
 public inline fun UShortArray.maxOfOrNull(selector: (UShort) -> Double): Double? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6297,6 +6233,8 @@ public inline fun UShortArray.maxOfOrNull(selector: (UShort) -> Double): Double?
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -6306,15 +6244,9 @@ public inline fun UShortArray.maxOfOrNull(selector: (UShort) -> Double): Double?
 public inline fun UIntArray.maxOfOrNull(selector: (UInt) -> Float): Float? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6322,6 +6254,8 @@ public inline fun UIntArray.maxOfOrNull(selector: (UInt) -> Float): Float? {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -6331,15 +6265,9 @@ public inline fun UIntArray.maxOfOrNull(selector: (UInt) -> Float): Float? {
 public inline fun ULongArray.maxOfOrNull(selector: (ULong) -> Float): Float? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6347,6 +6275,8 @@ public inline fun ULongArray.maxOfOrNull(selector: (ULong) -> Float): Float? {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -6356,15 +6286,9 @@ public inline fun ULongArray.maxOfOrNull(selector: (ULong) -> Float): Float? {
 public inline fun UByteArray.maxOfOrNull(selector: (UByte) -> Float): Float? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6372,6 +6296,8 @@ public inline fun UByteArray.maxOfOrNull(selector: (UByte) -> Float): Float? {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -6381,15 +6307,9 @@ public inline fun UByteArray.maxOfOrNull(selector: (UByte) -> Float): Float? {
 public inline fun UShortArray.maxOfOrNull(selector: (UShort) -> Float): Float? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-    if (maxValue.isNaN()) return maxValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (maxValue < v) {
-            maxValue = v
-        }
+        maxValue = maxOf(maxValue, v)
     }
     return maxValue
 }
@@ -6406,12 +6326,8 @@ public inline fun UShortArray.maxOfOrNull(selector: (UShort) -> Float): Float? {
 public inline fun <R : Comparable<R>> UIntArray.maxOfOrNull(selector: (UInt) -> R): R? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -6431,12 +6347,8 @@ public inline fun <R : Comparable<R>> UIntArray.maxOfOrNull(selector: (UInt) -> 
 public inline fun <R : Comparable<R>> ULongArray.maxOfOrNull(selector: (ULong) -> R): R? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -6456,12 +6368,8 @@ public inline fun <R : Comparable<R>> ULongArray.maxOfOrNull(selector: (ULong) -
 public inline fun <R : Comparable<R>> UByteArray.maxOfOrNull(selector: (UByte) -> R): R? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -6481,12 +6389,8 @@ public inline fun <R : Comparable<R>> UByteArray.maxOfOrNull(selector: (UByte) -
 public inline fun <R : Comparable<R>> UShortArray.maxOfOrNull(selector: (UShort) -> R): R? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (maxValue < v) {
             maxValue = v
         }
@@ -6508,8 +6412,6 @@ public inline fun <R : Comparable<R>> UShortArray.maxOfOrNull(selector: (UShort)
 public inline fun <R> UIntArray.maxOfWith(comparator: Comparator<in R>, selector: (UInt) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(maxValue, v) < 0) {
@@ -6533,8 +6435,6 @@ public inline fun <R> UIntArray.maxOfWith(comparator: Comparator<in R>, selector
 public inline fun <R> ULongArray.maxOfWith(comparator: Comparator<in R>, selector: (ULong) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(maxValue, v) < 0) {
@@ -6558,8 +6458,6 @@ public inline fun <R> ULongArray.maxOfWith(comparator: Comparator<in R>, selecto
 public inline fun <R> UByteArray.maxOfWith(comparator: Comparator<in R>, selector: (UByte) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(maxValue, v) < 0) {
@@ -6583,8 +6481,6 @@ public inline fun <R> UByteArray.maxOfWith(comparator: Comparator<in R>, selecto
 public inline fun <R> UShortArray.maxOfWith(comparator: Comparator<in R>, selector: (UShort) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(maxValue, v) < 0) {
@@ -6606,8 +6502,6 @@ public inline fun <R> UShortArray.maxOfWith(comparator: Comparator<in R>, select
 public inline fun <R> UIntArray.maxOfWithOrNull(comparator: Comparator<in R>, selector: (UInt) -> R): R? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(maxValue, v) < 0) {
@@ -6629,8 +6523,6 @@ public inline fun <R> UIntArray.maxOfWithOrNull(comparator: Comparator<in R>, se
 public inline fun <R> ULongArray.maxOfWithOrNull(comparator: Comparator<in R>, selector: (ULong) -> R): R? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(maxValue, v) < 0) {
@@ -6652,8 +6544,6 @@ public inline fun <R> ULongArray.maxOfWithOrNull(comparator: Comparator<in R>, s
 public inline fun <R> UByteArray.maxOfWithOrNull(comparator: Comparator<in R>, selector: (UByte) -> R): R? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(maxValue, v) < 0) {
@@ -6675,8 +6565,6 @@ public inline fun <R> UByteArray.maxOfWithOrNull(comparator: Comparator<in R>, s
 public inline fun <R> UShortArray.maxOfWithOrNull(comparator: Comparator<in R>, selector: (UShort) -> R): R? {
     if (isEmpty()) return null
     var maxValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(maxValue, v) < 0) {
@@ -6910,6 +6798,8 @@ public inline fun <R : Comparable<R>> UShortArray.minBy(selector: (UShort) -> R)
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
  * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
  * @throws NoSuchElementException if the array is empty.
  */
 @SinceKotlin("1.4")
@@ -6920,15 +6810,9 @@ public inline fun <R : Comparable<R>> UShortArray.minBy(selector: (UShort) -> R)
 public inline fun UIntArray.minOf(selector: (UInt) -> Double): Double {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -6936,6 +6820,8 @@ public inline fun UIntArray.minOf(selector: (UInt) -> Double): Double {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -6947,15 +6833,9 @@ public inline fun UIntArray.minOf(selector: (UInt) -> Double): Double {
 public inline fun ULongArray.minOf(selector: (ULong) -> Double): Double {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -6963,6 +6843,8 @@ public inline fun ULongArray.minOf(selector: (ULong) -> Double): Double {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -6974,15 +6856,9 @@ public inline fun ULongArray.minOf(selector: (ULong) -> Double): Double {
 public inline fun UByteArray.minOf(selector: (UByte) -> Double): Double {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -6990,6 +6866,8 @@ public inline fun UByteArray.minOf(selector: (UByte) -> Double): Double {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -7001,15 +6879,9 @@ public inline fun UByteArray.minOf(selector: (UByte) -> Double): Double {
 public inline fun UShortArray.minOf(selector: (UShort) -> Double): Double {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7017,6 +6889,8 @@ public inline fun UShortArray.minOf(selector: (UShort) -> Double): Double {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -7028,15 +6902,9 @@ public inline fun UShortArray.minOf(selector: (UShort) -> Double): Double {
 public inline fun UIntArray.minOf(selector: (UInt) -> Float): Float {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7044,6 +6912,8 @@ public inline fun UIntArray.minOf(selector: (UInt) -> Float): Float {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -7055,15 +6925,9 @@ public inline fun UIntArray.minOf(selector: (UInt) -> Float): Float {
 public inline fun ULongArray.minOf(selector: (ULong) -> Float): Float {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7071,6 +6935,8 @@ public inline fun ULongArray.minOf(selector: (ULong) -> Float): Float {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -7082,15 +6948,9 @@ public inline fun ULongArray.minOf(selector: (ULong) -> Float): Float {
 public inline fun UByteArray.minOf(selector: (UByte) -> Float): Float {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7098,6 +6958,8 @@ public inline fun UByteArray.minOf(selector: (UByte) -> Float): Float {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the array is empty.
  */
@@ -7109,15 +6971,9 @@ public inline fun UByteArray.minOf(selector: (UByte) -> Float): Float {
 public inline fun UShortArray.minOf(selector: (UShort) -> Float): Float {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7136,12 +6992,8 @@ public inline fun UShortArray.minOf(selector: (UShort) -> Float): Float {
 public inline fun <R : Comparable<R>> UIntArray.minOf(selector: (UInt) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (minValue > v) {
             minValue = v
         }
@@ -7163,12 +7015,8 @@ public inline fun <R : Comparable<R>> UIntArray.minOf(selector: (UInt) -> R): R 
 public inline fun <R : Comparable<R>> ULongArray.minOf(selector: (ULong) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (minValue > v) {
             minValue = v
         }
@@ -7190,12 +7038,8 @@ public inline fun <R : Comparable<R>> ULongArray.minOf(selector: (ULong) -> R): 
 public inline fun <R : Comparable<R>> UByteArray.minOf(selector: (UByte) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (minValue > v) {
             minValue = v
         }
@@ -7217,12 +7061,8 @@ public inline fun <R : Comparable<R>> UByteArray.minOf(selector: (UByte) -> R): 
 public inline fun <R : Comparable<R>> UShortArray.minOf(selector: (UShort) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (minValue > v) {
             minValue = v
         }
@@ -7233,6 +7073,8 @@ public inline fun <R : Comparable<R>> UShortArray.minOf(selector: (UShort) -> R)
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -7242,15 +7084,9 @@ public inline fun <R : Comparable<R>> UShortArray.minOf(selector: (UShort) -> R)
 public inline fun UIntArray.minOfOrNull(selector: (UInt) -> Double): Double? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7258,6 +7094,8 @@ public inline fun UIntArray.minOfOrNull(selector: (UInt) -> Double): Double? {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -7267,15 +7105,9 @@ public inline fun UIntArray.minOfOrNull(selector: (UInt) -> Double): Double? {
 public inline fun ULongArray.minOfOrNull(selector: (ULong) -> Double): Double? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7283,6 +7115,8 @@ public inline fun ULongArray.minOfOrNull(selector: (ULong) -> Double): Double? {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -7292,15 +7126,9 @@ public inline fun ULongArray.minOfOrNull(selector: (ULong) -> Double): Double? {
 public inline fun UByteArray.minOfOrNull(selector: (UByte) -> Double): Double? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7308,6 +7136,8 @@ public inline fun UByteArray.minOfOrNull(selector: (UByte) -> Double): Double? {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -7317,15 +7147,9 @@ public inline fun UByteArray.minOfOrNull(selector: (UByte) -> Double): Double? {
 public inline fun UShortArray.minOfOrNull(selector: (UShort) -> Double): Double? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7333,6 +7157,8 @@ public inline fun UShortArray.minOfOrNull(selector: (UShort) -> Double): Double?
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -7342,15 +7168,9 @@ public inline fun UShortArray.minOfOrNull(selector: (UShort) -> Double): Double?
 public inline fun UIntArray.minOfOrNull(selector: (UInt) -> Float): Float? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7358,6 +7178,8 @@ public inline fun UIntArray.minOfOrNull(selector: (UInt) -> Float): Float? {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -7367,15 +7189,9 @@ public inline fun UIntArray.minOfOrNull(selector: (UInt) -> Float): Float? {
 public inline fun ULongArray.minOfOrNull(selector: (ULong) -> Float): Float? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7383,6 +7199,8 @@ public inline fun ULongArray.minOfOrNull(selector: (ULong) -> Float): Float? {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -7392,15 +7210,9 @@ public inline fun ULongArray.minOfOrNull(selector: (ULong) -> Float): Float? {
 public inline fun UByteArray.minOfOrNull(selector: (UByte) -> Float): Float? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7408,6 +7220,8 @@ public inline fun UByteArray.minOfOrNull(selector: (UByte) -> Float): Float? {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each element in the array or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -7417,15 +7231,9 @@ public inline fun UByteArray.minOfOrNull(selector: (UByte) -> Float): Float? {
 public inline fun UShortArray.minOfOrNull(selector: (UShort) -> Float): Float? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-    if (minValue.isNaN()) return minValue 
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        if (v.isNaN()) return v
-        if (minValue > v) {
-            minValue = v
-        }
+        minValue = minOf(minValue, v)
     }
     return minValue
 }
@@ -7442,12 +7250,8 @@ public inline fun UShortArray.minOfOrNull(selector: (UShort) -> Float): Float? {
 public inline fun <R : Comparable<R>> UIntArray.minOfOrNull(selector: (UInt) -> R): R? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (minValue > v) {
             minValue = v
         }
@@ -7467,12 +7271,8 @@ public inline fun <R : Comparable<R>> UIntArray.minOfOrNull(selector: (UInt) -> 
 public inline fun <R : Comparable<R>> ULongArray.minOfOrNull(selector: (ULong) -> R): R? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (minValue > v) {
             minValue = v
         }
@@ -7492,12 +7292,8 @@ public inline fun <R : Comparable<R>> ULongArray.minOfOrNull(selector: (ULong) -
 public inline fun <R : Comparable<R>> UByteArray.minOfOrNull(selector: (UByte) -> R): R? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (minValue > v) {
             minValue = v
         }
@@ -7517,12 +7313,8 @@ public inline fun <R : Comparable<R>> UByteArray.minOfOrNull(selector: (UByte) -
 public inline fun <R : Comparable<R>> UShortArray.minOfOrNull(selector: (UShort) -> R): R? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
-     
     for (i in 1..lastIndex) {
         val v = selector(this[i])
-        
         if (minValue > v) {
             minValue = v
         }
@@ -7544,8 +7336,6 @@ public inline fun <R : Comparable<R>> UShortArray.minOfOrNull(selector: (UShort)
 public inline fun <R> UIntArray.minOfWith(comparator: Comparator<in R>, selector: (UInt) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(minValue, v) > 0) {
@@ -7569,8 +7359,6 @@ public inline fun <R> UIntArray.minOfWith(comparator: Comparator<in R>, selector
 public inline fun <R> ULongArray.minOfWith(comparator: Comparator<in R>, selector: (ULong) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(minValue, v) > 0) {
@@ -7594,8 +7382,6 @@ public inline fun <R> ULongArray.minOfWith(comparator: Comparator<in R>, selecto
 public inline fun <R> UByteArray.minOfWith(comparator: Comparator<in R>, selector: (UByte) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(minValue, v) > 0) {
@@ -7619,8 +7405,6 @@ public inline fun <R> UByteArray.minOfWith(comparator: Comparator<in R>, selecto
 public inline fun <R> UShortArray.minOfWith(comparator: Comparator<in R>, selector: (UShort) -> R): R {
     if (isEmpty()) throw NoSuchElementException()
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(minValue, v) > 0) {
@@ -7642,8 +7426,6 @@ public inline fun <R> UShortArray.minOfWith(comparator: Comparator<in R>, select
 public inline fun <R> UIntArray.minOfWithOrNull(comparator: Comparator<in R>, selector: (UInt) -> R): R? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(minValue, v) > 0) {
@@ -7665,8 +7447,6 @@ public inline fun <R> UIntArray.minOfWithOrNull(comparator: Comparator<in R>, se
 public inline fun <R> ULongArray.minOfWithOrNull(comparator: Comparator<in R>, selector: (ULong) -> R): R? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(minValue, v) > 0) {
@@ -7688,8 +7468,6 @@ public inline fun <R> ULongArray.minOfWithOrNull(comparator: Comparator<in R>, s
 public inline fun <R> UByteArray.minOfWithOrNull(comparator: Comparator<in R>, selector: (UByte) -> R): R? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(minValue, v) > 0) {
@@ -7711,8 +7489,6 @@ public inline fun <R> UByteArray.minOfWithOrNull(comparator: Comparator<in R>, s
 public inline fun <R> UShortArray.minOfWithOrNull(comparator: Comparator<in R>, selector: (UShort) -> R): R? {
     if (isEmpty()) return null
     var minValue = selector(this[0])
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minValue
     for (i in 1..lastIndex) {
         val v = selector(this[i])
         if (comparator.compare(minValue, v) > 0) {
