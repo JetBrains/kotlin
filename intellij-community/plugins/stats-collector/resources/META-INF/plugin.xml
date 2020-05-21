@@ -109,9 +109,13 @@
     <lookup.usageDetails implementation="com.intellij.completion.ml.MLRankingLookupUsageDescriptor"/>
   </extensions>
 
+  <applicationListeners>
+    <listener class="com.intellij.completion.sorting.PositionDiffArrowInitializer"
+              topic="com.intellij.openapi.project.ProjectManagerListener"/>
+  </applicationListeners>
+
   <projectListeners>
     <listener class="com.intellij.completion.ml.common.RecentPlacesFeatures$StoreRecentPlacesListener"
               topic="com.intellij.openapi.fileEditor.impl.IdeDocumentHistoryImpl$RecentPlacesListener"/>
-    <listener class="com.intellij.completion.sorting.PositionDiffArrowInitializer" topic="com.intellij.openapi.project.ProjectManagerListener"/>
   </projectListeners>
 </idea-plugin>
