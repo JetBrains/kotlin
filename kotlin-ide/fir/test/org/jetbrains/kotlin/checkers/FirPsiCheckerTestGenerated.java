@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("fir")
 @TestDataPath("$CONTENT_ROOT")
+@RunWith(JUnit3RunnerWithInners.class)
 public class FirPsiCheckerTestGenerated extends AbstractFirPsiCheckerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/checker")

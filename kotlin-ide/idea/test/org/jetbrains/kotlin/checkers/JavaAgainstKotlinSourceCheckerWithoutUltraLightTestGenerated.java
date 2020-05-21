@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
+@RunWith(JUnit3RunnerWithInners.class)
 public class JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated extends AbstractJavaAgainstKotlinSourceCheckerWithoutUltraLightTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/kotlinAndJavaChecker/javaAgainstKotlin")
