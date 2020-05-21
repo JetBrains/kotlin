@@ -1260,12 +1260,24 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             interface Modifier {
               companion object : Modifier { }
             }
+            inline class Dp(val value: Int)
+            @Stable
+            fun stableFun(x: Int): Int = x * x
+            @Stable
+            operator fun Dp.plus(other: Dp): Dp = Dp(this.value + other.value)
+            @Stable
+            val Int.dp: Dp get() = Dp(this)
         """,
         """
             // all of these should result in 0b0110
             @Composable fun A() {
                 val x = 123
+                C(stableFun(123))
+                C(16.dp + 10.dp)
+                C(Dp(16))
+                C(16.dp)
                 C(normInt)
+                C(Int.MAX_VALUE)
                 C(stableTopLevelProp)
                 C(Modifier)
                 C(Foo.Bar)
@@ -1287,7 +1299,12 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               %composer.startRestartGroup(%key)
               if (%changed !== 0 || !%composer.skipping) {
                 val x = 123
+                C(stableFun(123), %composer, <>, 0b0110)
+                C(16.dp + 10.dp, %composer, <>, 0b0110)
+                C(Dp(16), %composer, <>, 0b0110)
+                C(16.dp, %composer, <>, 0b0110)
                 C(normInt, %composer, <>, 0b0110)
+                C(Companion.MAX_VALUE, %composer, <>, 0b0110)
                 C(stableTopLevelProp, %composer, <>, 0b0110)
                 C(Companion, %composer, <>, 0b0110)
                 C(Foo.Bar, %composer, <>, 0b0110)

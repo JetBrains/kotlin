@@ -331,16 +331,16 @@ private class IrSourcePrinterVisitor(
                 // unary prefx
                 "unaryPlus", "unaryMinus", "not" -> {
                     print(opSymbol)
-                    expression.dispatchReceiver?.print()
+                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                 }
                 // unary postfix
                 "inc", "dec" -> {
-                    expression.dispatchReceiver?.print()
+                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     print(opSymbol)
                 }
                 // invoke
                 "invoke" -> {
-                    expression.dispatchReceiver?.print()
+                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     expression.printArgumentList()
                 }
                 // get indexer
@@ -355,7 +355,7 @@ private class IrSourcePrinterVisitor(
                 }
                 // set indexer
                 "set" -> {
-                    expression.dispatchReceiver?.print()
+                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     print("[")
                     expression.getValueArgument(0)?.print()
                     print("] = ")
@@ -368,14 +368,14 @@ private class IrSourcePrinterVisitor(
                     expression.getValueArgument(1)?.print()
                 }
                 "iterator", "hasNext", "next" -> {
-                    expression.dispatchReceiver?.print()
+                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     print(".")
                     print(opSymbol)
                     print("()")
                 }
                 // else binary
                 else -> {
-                    expression.dispatchReceiver?.print()
+                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     print(" $opSymbol ")
                     expression.getValueArgument(0)?.print()
                 }
