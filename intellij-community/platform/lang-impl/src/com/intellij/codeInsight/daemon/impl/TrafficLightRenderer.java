@@ -242,7 +242,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       }
       else {
         status.reasonWhySuspended = DaemonBundle.message("process.title.heavy.operation.is.running");
-        status.heavyProcessType = HeavyProcessLatch.Type.Paused;
+        status.heavyProcessType = HeavyProcessLatch.Type.Processing;
       }
       status.errorAnalyzingFinished = true;
       return status;
