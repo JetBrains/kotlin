@@ -9,7 +9,7 @@ import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Assert
 import org.junit.Test
 
-class ExternalTestsModelCompatibilityTestCase : GradleImportingTestCase() {
+class ExternalTestsModelCompatibilityTest : GradleImportingTestCase() {
   @Test
   fun `test simple tests finding`() {
     val buildScript = GradleBuildScriptBuilderEx()
