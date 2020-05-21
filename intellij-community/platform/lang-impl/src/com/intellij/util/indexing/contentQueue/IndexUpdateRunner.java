@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -28,14 +29,17 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @ApiStatus.Internal
 public final class IndexUpdateRunner {
+
+  private static final long SOFT_MAX_TOTAL_BYTES_LOADED_INTO_MEMORY = 20 * FileUtilRt.MEGABYTE;
 
   private static final Key<Boolean> FAILED_TO_INDEX = Key.create("FAILED_TO_INDEX");
 
@@ -47,9 +51,23 @@ public final class IndexUpdateRunner {
 
   private final int myNumberOfIndexingThreads;
 
-  private static final CachedFileLoadLimiter LOAD_LIMITER_FOR_USUAL_FILES = new MaxTotalSizeCachedFileLoadLimiter(16 * 1024 * 1024);
-
-  private static final CachedFileLoadLimiter LOAD_LIMITER_FOR_LARGE_FILES = new UnlimitedSingleCachedFileLoadLimiter();
+  /**
+   * Memory optimization to prevent OutOfMemory on loading file contents.
+   *
+   * "Soft" total limit of bytes loaded into memory in the whole application is {@link #SOFT_MAX_TOTAL_BYTES_LOADED_INTO_MEMORY}.
+   * It is "soft" because one (and only one) "indexable" file can exceed this limit.
+   *
+   * "Indexable" file is any file for which {@link FileBasedIndexImpl#isTooLarge(VirtualFile)} returns {@code false}.
+   * Note that this method may return {@code false} even for relatively big files with size greater than {@link #SOFT_MAX_TOTAL_BYTES_LOADED_INTO_MEMORY}.
+   * This is because for some files (or file types) the size limit is ignored.
+   *
+   * So in its maximum we will load {@code SOFT_MAX_TOTAL_BYTES_LOADED_INTO_MEMORY + <size of not "too large" file>}, which seems acceptable,
+   * because we have to index this "not too large" file anyway (even if its size is 4 Gb), and {@code SOFT_MAX_TOTAL_BYTES_LOADED_INTO_MEMORY}
+   * additional bytes are insignificant.
+   */
+  private static long ourTotalBytesLoadedIntoMemory = 0;
+  private static final Lock ourLoadedBytesLimitLock = new ReentrantLock();
+  private static final Condition ourLoadedBytesAreReleasedCondition = ourLoadedBytesLimitLock.newCondition();
 
   public IndexUpdateRunner(@NotNull FileBasedIndexImpl fileBasedIndex,
                            @NotNull ExecutorService indexingExecutor,
@@ -67,11 +85,7 @@ public final class IndexUpdateRunner {
     indicator.setIndeterminate(false);
 
     CachedFileContentLoader contentLoader = new CurrentProjectHintedCachedFileContentLoader(project);
-    CachedFileContentQueue queue =
-      LimitedCachedFileContentQueue.createNonAppendableForFiles(files, LOAD_LIMITER_FOR_USUAL_FILES, contentLoader);
-    LimitedCachedFileContentQueue queueOfLargeFiles =
-      LimitedCachedFileContentQueue.createEmptyAppendable(LOAD_LIMITER_FOR_LARGE_FILES, contentLoader);
-    IndexingJob indexingJob = new IndexingJob(project, queue, queueOfLargeFiles, indicator, files.size());
+    IndexingJob indexingJob = new IndexingJob(project, indicator, contentLoader, files);
     ourIndexingJobs.add(indexingJob);
 
     try {
@@ -85,7 +99,8 @@ public final class IndexUpdateRunner {
             }
             try {
               indexOneFileOfJob(job);
-            } catch (ProcessCanceledException ignored) {
+            }
+            catch (ProcessCanceledException ignored) {
               break;
             }
           }
@@ -95,7 +110,8 @@ public final class IndexUpdateRunner {
       if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
         // If the current thread has acquired the write lock, we can't grant it to worker threads, so we must do the work in the current thread.
         indexingWorker.run();
-      } else {
+      }
+      else {
         List<Future<?>> futures = new ArrayList<>(myNumberOfIndexingThreads);
         for (int i = 0; i < myNumberOfIndexingThreads; i++) {
           futures.add(myIndexingExecutor.submit(indexingWorker));
@@ -113,9 +129,9 @@ public final class IndexUpdateRunner {
 
   private void indexOneFileOfJob(@NotNull IndexingJob indexingJob) throws ProcessCanceledException {
     long contentLoadingStartTime = System.nanoTime();
-    CachedFileContentToken token;
+    ContentLoadingResult loadingResult;
     try {
-      token = loadNextContent(indexingJob, indexingJob.myIndicator);
+      loadingResult = loadNextContent(indexingJob, indexingJob.myIndicator);
     }
     catch (TooLargeContentException e) {
       indexingJob.oneMoreFileProcessed();
@@ -131,58 +147,98 @@ public final class IndexUpdateRunner {
       indexingJob.myStatistics.addContentLoadingTime(System.nanoTime() - contentLoadingStartTime);
     }
 
-    if (token == null) {
+    if (loadingResult == null) {
       indexingJob.myIsFinished.set(true);
       return;
     }
 
+    CachedFileContent fileContent = loadingResult.cachedFileContent;
     try {
-      CachedFileContent fileContent = token.getContent();
       long indexingStartTime = System.nanoTime();
       try {
         indexOneFileOfJob(indexingJob, fileContent);
-      } finally {
+      }
+      finally {
         indexingJob.myStatistics.addIndexingTime(System.nanoTime() - indexingStartTime);
       }
-      token.release();
       indexingJob.oneMoreFileProcessed();
     }
     catch (ProcessCanceledException e) {
-      token.pushBack();
+      pushBackFile(indexingJob, fileContent.getVirtualFile());
       throw e;
     }
     catch (Throwable e) {
-      token.release();
       indexingJob.oneMoreFileProcessed();
       ExceptionUtil.rethrow(e);
     }
+    finally {
+      signalThatFileIsUnloaded(loadingResult.fileLength);
+    }
+  }
+
+  private static void pushBackFile(@NotNull IndexingJob indexingJob, @NotNull VirtualFile file) {
+    indexingJob.myQueueOfFiles.add(file);
   }
 
   @Nullable
-  private CachedFileContentToken loadNextContent(@NotNull IndexingJob indexingJob,
-                                                 @NotNull ProgressIndicator indicator) throws FailedToLoadContentException,
-                                                                                                         TooLargeContentException,
-                                                                                                         ProcessCanceledException {
-    indicator.checkCanceled();
-    CachedFileContentToken token;
-    try {
-      // Try to load content from the main queue.
-      token = indexingJob.myFileContentQueue.loadNextContent(indicator);
+  private IndexUpdateRunner.ContentLoadingResult loadNextContent(@NotNull IndexingJob indexingJob,
+                                                                 @NotNull ProgressIndicator indicator) throws FailedToLoadContentException,
+                                                                                                              TooLargeContentException,
+                                                                                                              ProcessCanceledException {
+    VirtualFile file = indexingJob.myQueueOfFiles.poll();
+    if (file == null) {
+      return null;
     }
-    catch (TooLargeContentException e) {
-      VirtualFile largeFile = e.getFile();
-      if (myFileBasedIndex.isTooLarge(largeFile)) {
-        throw e;
-      }
-      indexingJob.myQueueOfLargeFiles.addFileToLoad(largeFile);
-      return indexingJob.myQueueOfLargeFiles.loadNextContent(indicator);
+    if (myFileBasedIndex.isTooLarge(file)) {
+      throw new TooLargeContentException(file);
     }
+    long fileLength = file.getLength();
+    waitForFreeMemoryToLoadFileContent(indicator, fileLength);
+    CachedFileContent fileContent = indexingJob.myContentLoader.loadContent(file);
+    return new ContentLoadingResult(fileContent, fileLength);
+  }
 
-    if (token == null) {
-      // All files from the main queue have been processed. There can be files in the large files queue.
-      return indexingJob.myQueueOfLargeFiles.loadNextContent(indicator);
+  private static class ContentLoadingResult {
+    final @NotNull CachedFileContent cachedFileContent;
+    final long fileLength;
+
+    private ContentLoadingResult(@NotNull CachedFileContent cachedFileContent, long fileLength) {
+      this.cachedFileContent = cachedFileContent;
+      this.fileLength = fileLength;
     }
-    return token;
+  }
+
+  private static void waitForFreeMemoryToLoadFileContent(@NotNull ProgressIndicator indicator, long fileLength) {
+    ourLoadedBytesLimitLock.lock();
+    try {
+      while (ourTotalBytesLoadedIntoMemory >= SOFT_MAX_TOTAL_BYTES_LOADED_INTO_MEMORY) {
+        indicator.checkCanceled();
+        try {
+          ourLoadedBytesAreReleasedCondition.await(100, TimeUnit.MILLISECONDS);
+        }
+        catch (InterruptedException e) {
+          throw new ProcessCanceledException(e);
+        }
+      }
+      ourTotalBytesLoadedIntoMemory += fileLength;
+    }
+    finally {
+      ourLoadedBytesLimitLock.unlock();
+    }
+  }
+
+  private static void signalThatFileIsUnloaded(long fileLength) {
+    ourLoadedBytesLimitLock.lock();
+    try {
+      assert ourTotalBytesLoadedIntoMemory >= fileLength;
+      ourTotalBytesLoadedIntoMemory -= fileLength;
+      if (ourTotalBytesLoadedIntoMemory < SOFT_MAX_TOTAL_BYTES_LOADED_INTO_MEMORY) {
+        ourLoadedBytesAreReleasedCondition.signalAll();
+      }
+    }
+    finally {
+      ourLoadedBytesLimitLock.unlock();
+    }
   }
 
   private static void logFailedToLoadContentException(@NotNull FailedToLoadContentException e) {
@@ -256,8 +312,8 @@ public final class IndexUpdateRunner {
 
   private static class IndexingJob {
     final Project myProject;
-    final CachedFileContentQueue myFileContentQueue;
-    final LimitedCachedFileContentQueue myQueueOfLargeFiles;
+    final CachedFileContentLoader myContentLoader;
+    final BlockingQueue<VirtualFile> myQueueOfFiles;
     final ProgressIndicator myIndicator;
     final AtomicInteger myNumberOfFilesProcessed = new AtomicInteger();
     final int myTotalFiles;
@@ -265,15 +321,14 @@ public final class IndexUpdateRunner {
     final IndexingJobStatistics myStatistics = new IndexingJobStatistics();
 
     IndexingJob(@NotNull Project project,
-                @NotNull CachedFileContentQueue queue,
-                @NotNull LimitedCachedFileContentQueue queueOfLargeFiles,
                 @NotNull ProgressIndicator indicator,
-                int totalFiles) {
+                @NotNull CachedFileContentLoader contentLoader,
+                @NotNull Collection<VirtualFile> files) {
       myProject = project;
-      myFileContentQueue = queue;
       myIndicator = indicator;
-      myTotalFiles = totalFiles;
-      myQueueOfLargeFiles = queueOfLargeFiles;
+      myTotalFiles = files.size();
+      myContentLoader = contentLoader;
+      myQueueOfFiles = new ArrayBlockingQueue<>(files.size(), false, files);
     }
 
     public void oneMoreFileProcessed() {

@@ -8,6 +8,5 @@ import org.jetbrains.annotations.NotNull;
 public interface CachedFileContentLoader {
   @NotNull
   CachedFileContent loadContent(@NotNull VirtualFile file) throws ProcessCanceledException,
-                                                                  FailedToLoadContentException,
-                                                                  TooLargeContentException;
+                                                                  FailedToLoadContentException;
 }

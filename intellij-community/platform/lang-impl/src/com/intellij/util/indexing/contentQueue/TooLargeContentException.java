@@ -6,19 +6,13 @@ import org.jetbrains.annotations.NotNull;
 
 public final class TooLargeContentException extends Exception {
   private final VirtualFile myFile;
-  private final long myFileSize;
 
-  public TooLargeContentException(@NotNull VirtualFile file, long fileSize) {
+  public TooLargeContentException(@NotNull VirtualFile file) {
     myFile = file;
-    myFileSize = fileSize;
   }
 
   @NotNull
   public VirtualFile getFile() {
     return myFile;
-  }
-
-  public long getFileSize() {
-    return myFileSize;
   }
 }
