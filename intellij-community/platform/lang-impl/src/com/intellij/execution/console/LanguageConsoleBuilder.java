@@ -132,7 +132,7 @@ public final class LanguageConsoleBuilder {
   }
 
   /**
-   * @see com.intellij.openapi.editor.ex.EditorEx#setOneLineMode(boolean)
+   * @see EditorEx#setOneLineMode(boolean)
    */
   @SuppressWarnings("UnusedDeclaration")
   public LanguageConsoleBuilder oneLineInput() {
@@ -141,7 +141,7 @@ public final class LanguageConsoleBuilder {
   }
 
   /**
-   * @see com.intellij.openapi.editor.ex.EditorEx#setOneLineMode(boolean)
+   * @see EditorEx#setOneLineMode(boolean)
    */
   public LanguageConsoleBuilder oneLineInput(boolean value) {
     oneLineInput = value;

@@ -321,11 +321,11 @@ public class IdentifierHighlighterPass extends TextEditorHighlightingPass {
 
   /**
    * Does additional work on code block markers highlighting: <ul>
-   * <li>Draws vertical line covering the scope on the gutter by {@link BraceHighlightingHandler#lineMarkFragment(com.intellij.openapi.editor.ex.EditorEx, com.intellij.openapi.editor.Document, int, int, boolean)}</li>
+   * <li>Draws vertical line covering the scope on the gutter by {@link BraceHighlightingHandler#lineMarkFragment(EditorEx, Document, int, int, boolean)}</li>
    * <li>Schedules preview of the block start if necessary by {@link BraceHighlightingHandler#showScopeHint(Editor, com.intellij.util.Alarm, int, int, com.intellij.util.IntIntFunction)}</li>
    * </ul>
    *
-   * In brace matching case this is done from {@link BraceHighlightingHandler#highlightBraces(com.intellij.openapi.util.TextRange, com.intellij.openapi.util.TextRange, boolean, boolean, com.intellij.openapi.fileTypes.FileType)}
+   * In brace matching case this is done from {@link BraceHighlightingHandler#highlightBraces(TextRange, TextRange, boolean, boolean, com.intellij.openapi.fileTypes.FileType)}
    */
   private void doAdditionalCodeBlockHighlighting() {
     if (myCodeBlockMarkerRanges.size() < 2 || !(myEditor instanceof EditorEx)) {

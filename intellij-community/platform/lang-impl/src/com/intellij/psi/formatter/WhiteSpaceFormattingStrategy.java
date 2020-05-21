@@ -85,7 +85,7 @@ public interface WhiteSpaceFormattingStrategy {
 
             
   /**
-   * PSI-based version of {@link #adjustWhiteSpaceIfNecessary(CharSequence, CharSequence, int, int, com.intellij.psi.codeStyle.CodeStyleSettings, com.intellij.lang.ASTNode)}.
+   * PSI-based version of {@link #adjustWhiteSpaceIfNecessary(CharSequence, CharSequence, int, int, CodeStyleSettings, ASTNode)}.
    * <p/>
    * There is a possible case that particular changes are performed to PSI tree and it's not yet synchronized with the underlying
    * document. Hence, we can't directly work with document char sequence but need to traverse PSI tree instead. I.e. we start with

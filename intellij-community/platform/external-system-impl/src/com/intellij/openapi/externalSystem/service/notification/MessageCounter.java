@@ -31,9 +31,9 @@ public class MessageCounter {
           ContainerUtil.getOrCreate(
             map,
             projectSystemId,
-            new java.util.HashMap<>()),
+            new HashMap<>()),
           groupName,
-          new java.util.HashMap<>()
+          new HashMap<>()
         ),
         source,
         new MyTObjectIntHashMap<>()
@@ -48,13 +48,13 @@ public class MessageCounter {
       ContainerUtil.getOrCreate(
         map,
         projectSystemId,
-        new java.util.HashMap<>());
+        new HashMap<>());
     if (groupName != null) {
       final TObjectIntHashMap<NotificationCategory> counter = ContainerUtil.getOrCreate(
         ContainerUtil.getOrCreate(
           groupMap,
           groupName,
-          new java.util.HashMap<>()
+          new HashMap<>()
         ),
         notificationSource,
         new MyTObjectIntHashMap<>()

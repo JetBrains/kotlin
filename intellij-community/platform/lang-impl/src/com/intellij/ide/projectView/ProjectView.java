@@ -121,7 +121,7 @@ public abstract class ProjectView {
 
   /**
    * e.g. {@link com.intellij.ide.projectView.impl.ProjectViewPane#ID}
-   * @see com.intellij.ide.projectView.impl.AbstractProjectViewPane#getId()
+   * @see AbstractProjectViewPane#getId()
    */
   public abstract String getCurrentViewId();
 

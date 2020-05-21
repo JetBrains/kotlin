@@ -57,7 +57,7 @@ public class CompletionAutoPopupHandler extends TypedHandlerDelegate {
   }
 
   /**
-   * @deprecated can be emulated with {@link com.intellij.openapi.application.AppUIExecutor}
+   * @deprecated can be emulated with {@link AppUIExecutor}
    */
   @Deprecated
   public static void runLaterWithCommitted(@NotNull Project project, @SuppressWarnings("unused") Document document, @NotNull Runnable runnable) {

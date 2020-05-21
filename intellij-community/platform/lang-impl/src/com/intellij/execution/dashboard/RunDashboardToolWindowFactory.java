@@ -19,7 +19,7 @@ import com.intellij.execution.services.ServiceViewToolWindowFactory;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * @deprecated Use {@link com.intellij.execution.services.ServiceViewToolWindowFactory} instead.
+ * @deprecated Use {@link ServiceViewToolWindowFactory} instead.
  */
 @ApiStatus.ScheduledForRemoval(inVersion = "2020.2")
 @Deprecated

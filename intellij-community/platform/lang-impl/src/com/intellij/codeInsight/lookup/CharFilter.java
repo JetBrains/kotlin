@@ -31,7 +31,7 @@ public abstract class CharFilter {
    * @param c character being inserted
    * @param prefixLength
    * @param lookup
-   * @return further action or null, which indicates that some other {@link com.intellij.codeInsight.lookup.CharFilter}
+   * @return further action or null, which indicates that some other {@link CharFilter}
    * should handle this char. Default char filter handles common cases like finishing with ' ', '(', ';', etc.  
    */
   @Nullable

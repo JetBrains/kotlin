@@ -51,7 +51,7 @@ public class CurrentFileTodosTreeBuilder extends TodoTreeBuilder {
   }
 
   /**
-   * @see com.intellij.ide.todo.CurrentFileTodosTreeStructure#setFile
+   * @see CurrentFileTodosTreeStructure#setFile
    */
   public void setFile(PsiFile file){
     CurrentFileTodosTreeStructure treeStructure=(CurrentFileTodosTreeStructure)getTodoTreeStructure();

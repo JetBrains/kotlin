@@ -81,7 +81,7 @@ public abstract class LibraryType<P extends LibraryProperties> extends LibraryPr
 
   /**
    * Override this method to customize the library roots editor
-   * @return {@link com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor} instance
+   * @return {@link LibraryRootsComponentDescriptor} instance
    */
   @Nullable
   public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {
@@ -106,7 +106,7 @@ public abstract class LibraryType<P extends LibraryProperties> extends LibraryPr
 
   @NotNull
   public static LibraryType findByKind(@NotNull LibraryKind kind) {
-    for (LibraryType type : EP_NAME.getExtensions()) {
+    for (LibraryType<?> type : EP_NAME.getExtensions()) {
       if (type.getKind() == kind) {
         return type;
       }
