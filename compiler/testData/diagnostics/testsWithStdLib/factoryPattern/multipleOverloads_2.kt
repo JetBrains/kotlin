@@ -2,21 +2,21 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION -EXPERIMENTAL_API_USAGE -EXPERIMENTAL_UNSIGNED_LITERALS
 // ISSUE: KT-11265
 
-// FILE: FactoryPattern.kt
+// FILE: OverloadResolutionByLambdaReturnType.kt
 
-package annotations
+package kotlin
 
-annotation class FactoryPattern
+annotation class OverloadResolutionByLambdaReturnType
 
 // FILE: main.kt
 
-import annotations.FactoryPattern
+import kotlin.OverloadResolutionByLambdaReturnType
 
-@FactoryPattern
+@OverloadResolutionByLambdaReturnType
 fun <T, R : Comparable<R>> Iterable<T>.myMaxOf(selector: (T) -> R): R = TODO()
-@FactoryPattern
+@OverloadResolutionByLambdaReturnType
 fun <T> Iterable<T>.myMaxOf(selector: (T) -> Double): Double = TODO()
-@FactoryPattern
+@OverloadResolutionByLambdaReturnType
 fun <T> Iterable<T>.myMaxOf(selector: (T) -> Float): Float = TODO()
 
 fun Double.pow(v: Int): Double = this

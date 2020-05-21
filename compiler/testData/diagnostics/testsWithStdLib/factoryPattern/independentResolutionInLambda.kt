@@ -2,18 +2,18 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
 
-// FILE: FactoryPattern.kt
+// FILE: OverloadResolutionByLambdaReturnType.kt
 
-package annotations
+package kotlin
 
-annotation class FactoryPattern
+annotation class OverloadResolutionByLambdaReturnType
 
 // FILE: main.kt
 
-import annotations.FactoryPattern
+import kotlin.OverloadResolutionByLambdaReturnType
 
 @kotlin.jvm.JvmName("myFlatMapIterable")
-@FactoryPattern
+@OverloadResolutionByLambdaReturnType
 fun <T, R> Sequence<T>.myFlatMap(transform: (T) -> Iterable<R>): Sequence<R> {
     TODO()
 }

@@ -2,22 +2,22 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION -EXPERIMENTAL_API_USAGE -EXPERIMENTAL_UNSIGNED_LITERALS
 // ISSUE: KT-11265
 
-// FILE: FactoryPattern.kt
+// FILE: OverloadResolutionByLambdaReturnType.kt
 
-package annotations
+package kotlin
 
-annotation class FactoryPattern
+annotation class OverloadResolutionByLambdaReturnType
 
 // FILE: main.kt
 
-import annotations.FactoryPattern
+import kotlin.OverloadResolutionByLambdaReturnType
 
-@FactoryPattern
+@OverloadResolutionByLambdaReturnType
 fun <R> UByteArray.fooMap(t: (UByte) -> Iterable<R>): List<R> {
     TODO("ub.fm")
 }
 
-@FactoryPattern
+@OverloadResolutionByLambdaReturnType
 fun <T, R> Iterable<T>.fooMap(t: (T) -> Iterable<R>): List<R> {
     TODO("i.fm(i)")
 }

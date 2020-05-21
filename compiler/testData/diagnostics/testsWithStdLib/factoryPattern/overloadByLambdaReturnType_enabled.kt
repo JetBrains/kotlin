@@ -2,17 +2,17 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
 
-// FILE: FactoryPattern.kt
+// FILE: OverloadResolutionByLambdaReturnType.kt
 
-package annotations
+package kotlin
 
-annotation class FactoryPattern
+annotation class OverloadResolutionByLambdaReturnType
 
 // FILE: main.kt
 
-import annotations.FactoryPattern
+import kotlin.OverloadResolutionByLambdaReturnType
 
-@FactoryPattern
+@OverloadResolutionByLambdaReturnType
 fun create(f: (Int) -> Int): Int = 1
 fun create(f: (Int) -> String): String = ""
 
@@ -30,10 +30,10 @@ fun test_2() {
 }
 
 fun test_3() {
-    val x = create { <!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }
+    val x = create <!TYPE_MISMATCH!>{ <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }<!>
 }
 
-@FactoryPattern
+@OverloadResolutionByLambdaReturnType
 fun <K> create(x: K, f: (K) -> Int): Int = 1
 fun <T> create(x: T, f: (T) -> String): String = ""
 

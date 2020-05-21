@@ -2,15 +2,15 @@ package
 
 public fun takeDouble(/*0*/ value: kotlin.Double): kotlin.Unit
 public fun test(): kotlin.Unit
-@annotations.FactoryPattern public fun </*0*/ T, /*1*/ R : kotlin.Comparable<R>> kotlin.collections.Iterable<T>.myMaxOf(/*0*/ selector: (T) -> R): R
-@annotations.FactoryPattern public fun </*0*/ T> kotlin.collections.Iterable<T>.myMaxOf(/*0*/ selector: (T) -> kotlin.Double): kotlin.Double
-@annotations.FactoryPattern public fun </*0*/ T> kotlin.collections.Iterable<T>.myMaxOf(/*0*/ selector: (T) -> kotlin.Float): kotlin.Float
+@kotlin.OverloadResolutionByLambdaReturnType public fun </*0*/ T, /*1*/ R : kotlin.Comparable<R>> kotlin.collections.Iterable<T>.myMaxOf(/*0*/ selector: (T) -> R): R
+@kotlin.OverloadResolutionByLambdaReturnType public fun </*0*/ T> kotlin.collections.Iterable<T>.myMaxOf(/*0*/ selector: (T) -> kotlin.Double): kotlin.Double
+@kotlin.OverloadResolutionByLambdaReturnType public fun </*0*/ T> kotlin.collections.Iterable<T>.myMaxOf(/*0*/ selector: (T) -> kotlin.Float): kotlin.Float
 public fun kotlin.Double.pow(/*0*/ v: kotlin.Int): kotlin.Double
 
-package annotations {
+package kotlin {
 
-    public final annotation class FactoryPattern : kotlin.Annotation {
-        public constructor FactoryPattern()
+    public final annotation class OverloadResolutionByLambdaReturnType : kotlin.Annotation {
+        public constructor OverloadResolutionByLambdaReturnType()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
