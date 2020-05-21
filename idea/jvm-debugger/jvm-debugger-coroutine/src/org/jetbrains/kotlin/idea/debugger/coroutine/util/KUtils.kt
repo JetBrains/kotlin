@@ -9,13 +9,7 @@ import com.intellij.debugger.engine.JavaStackFrame
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.xdebugger.XDebuggerUtil
-import com.intellij.xdebugger.XSourcePosition
 import com.sun.jdi.Location
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ApplicationThreadExecutor
 import org.jetbrains.kotlin.idea.debugger.safeLineNumber
 import org.jetbrains.kotlin.idea.debugger.safeLocation
 import org.jetbrains.kotlin.idea.debugger.safeMethod

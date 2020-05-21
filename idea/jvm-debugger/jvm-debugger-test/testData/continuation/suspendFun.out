@@ -3,22 +3,22 @@ Run Java
 Connected to the target VM
 suspendFun.kt:28
 Thread stack trace:
-	b:28, SuspendFunKt (coroutine1)
+	KotlinStackFrame b:!LINE_NUMBER!, SuspendFunKt (coroutine1)
 		($completion, b, bParam)
-	a:21, SuspendFunKt (coroutine1)
+	CoroutinePreflightFrame a:!LINE_NUMBER!, SuspendFunKt (coroutine1)
 		($completion, $continuation, $result, a, aParam)
-CoroutineNameIdState(name=coroutine, id=-1, state=UNKNOWN, dispatcher=null)
-	test1:15, SuspendFunKt (coroutine1)
-		(i, test1)
-	invoke:9, SuspendFunKt$main$result$1 (coroutine1)
+CoroutineInfo: -1 coroutine UNKNOWN
+	CoroutineStackFrame test1:!LINE_NUMBER!, SuspendFunKt (coroutine1)
+		($completion, $continuation, $result, i, test1)
+	CoroutineStackFrame invoke:!LINE_NUMBER!, SuspendFunKt$main$result$1 (coroutine1)
 		(continuation, p1, this)
-	invokeSuspend:121, IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$3 (kotlin.coroutines.intrinsics)
+	CoroutineStackFrame invokeSuspend:!LINE_NUMBER!, IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$3 (kotlin.coroutines.intrinsics)
 		($i$a$-createCoroutineFromSuspendFunction-IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$2, it, result, this)
-	resumeWith:33, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
+	CoroutineStackFrame resumeWith:!LINE_NUMBER!, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
 		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
-	startCoroutine:128, ContinuationKt (kotlin.coroutines)
+	CoroutineStackFrame startCoroutine:!LINE_NUMBER!, ContinuationKt (kotlin.coroutines)
 		($this$startCoroutine, completion, receiver)
-	main:9, SuspendFunKt (coroutine1)
+	CoroutineStackFrame main:!LINE_NUMBER!, SuspendFunKt (coroutine1)
 		(cnt)
 Disconnected from the target VM
 

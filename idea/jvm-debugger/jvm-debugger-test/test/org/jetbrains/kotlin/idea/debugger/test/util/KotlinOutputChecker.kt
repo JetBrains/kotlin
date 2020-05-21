@@ -109,9 +109,10 @@ internal class KotlinOutputChecker(
         val disconnectedIndex = lines.indexOfFirst { it.startsWith(DISCONNECT_PREFIX) }
         lines[disconnectedIndex] = DISCONNECT_PREFIX
 
-        return lines.filter {
-            !(it.matches(JDI_BUG_OUTPUT_PATTERN_1) || it.matches(JDI_BUG_OUTPUT_PATTERN_2))
-        }.joinToString("\n")
+        return lines
+            .map { it.replace("FRAME:(.*):\\d+".toRegex(), "$1:!LINE_NUMBER!")  }
+            .filter { !(it.matches(JDI_BUG_OUTPUT_PATTERN_1) || it.matches(JDI_BUG_OUTPUT_PATTERN_2)) }
+            .joinToString("\n")
     }
 
     private fun buildOutputString(): String {

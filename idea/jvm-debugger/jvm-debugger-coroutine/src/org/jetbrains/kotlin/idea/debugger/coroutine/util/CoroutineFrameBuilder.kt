@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.util
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
-import com.intellij.debugger.ui.impl.watch.MethodsTracker
-import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
+import com.intellij.xdebugger.frame.XNamedValue
 import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ContinuationHolder
@@ -23,14 +22,14 @@ class CoroutineFrameBuilder {
         val log by logger
         private const val PRE_FETCH_FRAME_COUNT = 5
 
-        fun build(coroutine: CoroutineInfoData, suspendContext: SuspendContextImpl): DoubleFrameList? =
+        fun build(coroutine: CoroutineInfoData, suspendContext: SuspendContextImpl): CoroutineFrameItemLists? =
             when {
                 coroutine.isRunning() -> buildStackFrameForActive(coroutine, suspendContext)
-                coroutine.isSuspended() -> DoubleFrameList(coroutine.stackTrace, coroutine.creationStackTrace)
+                coroutine.isSuspended() -> CoroutineFrameItemLists(coroutine.stackTrace, coroutine.creationStackTrace)
                 else -> null
             }
 
-        private fun buildStackFrameForActive(coroutine: CoroutineInfoData, suspendContext: SuspendContextImpl): DoubleFrameList? {
+        private fun buildStackFrameForActive(coroutine: CoroutineInfoData, suspendContext: SuspendContextImpl): CoroutineFrameItemLists? {
             val activeThread = coroutine.activeThread ?: return null
 
             val coroutineStackFrameList = mutableListOf<CoroutineStackFrameItem>()
@@ -43,47 +42,77 @@ class CoroutineFrameBuilder {
                         coroutineStackFrameList.add(it)
                     }
 
-                    val doubleFrameList = build(preflightStackFrame, suspendContext)
-                    coroutineStackFrameList.addAll(doubleFrameList.stackTrace)
-                    return DoubleFrameList(coroutineStackFrameList, doubleFrameList.creationStackTrace)
+                    val coroutineFrameLists = build(preflightStackFrame, suspendContext)
+                    coroutineStackFrameList.addAll(coroutineFrameLists.frames)
+                    return CoroutineFrameItemLists(coroutineStackFrameList, coroutineFrameLists.creationFrames)
                 } else {
                     buildRealStackFrameItem(runningStackFrameProxy)?.let {
                         coroutineStackFrameList.add(it)
                     }
                 }
             }
-            return DoubleFrameList(coroutineStackFrameList, emptyList())
+            return CoroutineFrameItemLists(coroutineStackFrameList, emptyList())
         }
 
         /**
          * Used by CoroutineAsyncStackTraceProvider to build XFramesView
          */
-        fun build(preflightFrame: CoroutinePreflightStackFrame, suspendContext: SuspendContextImpl): DoubleFrameList {
+        fun build(preflightFrame: CoroutinePreflightFrame, suspendContext: SuspendContextImpl): CoroutineFrameItemLists {
             val stackFrames = mutableListOf<CoroutineStackFrameItem>()
 
-            stackFrames.addAll(preflightFrame.restoredStackTrace())
+            val (restoredStackTrace, variablesRemovedFromBottomRestoredFrame) = restoredStackTrace(
+                preflightFrame
+            )
+            stackFrames.addAll(restoredStackTrace)
 
-            // rest of the stack
-            // @TODO perhaps we need to merge the dropped frame below with the last restored (at least variables).
-            val framesLeft = preflightFrame.threadPreCoroutineFrames.drop(1)
+            // @TODO perhaps we need to merge the dropped variables with the frame below...
+            val framesLeft = preflightFrame.threadPreCoroutineFrames
             stackFrames.addAll(framesLeft.mapIndexedNotNull { index, stackFrameProxyImpl ->
                 suspendContext.invokeInManagerThread { buildRealStackFrameItem(stackFrameProxyImpl) }
             })
 
-            return DoubleFrameList(stackFrames, preflightFrame.coroutineInfoData.creationStackTrace)
+            return CoroutineFrameItemLists(stackFrames, preflightFrame.coroutineInfoData.creationStackTrace)
         }
 
-        data class DoubleFrameList(
-            val stackTrace: List<CoroutineStackFrameItem>,
-            val creationStackTrace: List<CreationCoroutineStackFrameItem>
-        )
+        fun restoredStackTrace(preflightFrame: CoroutinePreflightFrame): Pair<List<CoroutineStackFrameItem>, List<XNamedValue>> {
+            val preflightFrameLocation = preflightFrame.stackFrameProxy.location()
+            val coroutineStackFrame = preflightFrame.coroutineInfoData.stackTrace
+            val preCoroutineTopFrameLocation = preflightFrame.threadPreCoroutineFrames.firstOrNull()?.location()
+
+            val variablesRemovedFromTopRestoredFrame = mutableListOf<XNamedValue>()
+            val stripTopStackTrace = coroutineStackFrame.dropWhile {
+                it.location.isFilterFromTop(preflightFrameLocation).apply {
+                    if (this)
+                        variablesRemovedFromTopRestoredFrame.addAll(it.spilledVariables)
+                }
+            }
+            // @TODO Need to merge variablesRemovedFromTopRestoredFrame into stripTopStackTrace.firstOrNull().spilledVariables
+            val variablesRemovedFromBottomRestoredFrame = mutableListOf<XNamedValue>()
+            val restoredFrames = when (preCoroutineTopFrameLocation) {
+                null -> stripTopStackTrace
+                else ->
+                    stripTopStackTrace.dropLastWhile {
+                        it.location.isFilterFromBottom(preCoroutineTopFrameLocation)
+                            .apply { variablesRemovedFromBottomRestoredFrame.addAll(it.spilledVariables) }
+                    }
+            }
+            return Pair(restoredFrames, variablesRemovedFromBottomRestoredFrame)
+        }
+
+        data class CoroutineFrameItemLists(
+            val frames: List<CoroutineStackFrameItem>,
+            val creationFrames: List<CreationCoroutineStackFrameItem>
+        ) {
+            fun allFrames() =
+                frames + creationFrames
+        }
 
         private fun buildRealStackFrameItem(
             frame: StackFrameProxyImpl
         ): RunningCoroutineStackFrameItem? {
-            val location = frame.location()
+            val location = frame.location() ?: return null
             return if (!location.safeCoroutineExitPointLineNumber())
-                RunningCoroutineStackFrameItem(SkipCoroutineStackFrameProxyImpl(frame), location)
+                RunningCoroutineStackFrameItem(SkipCoroutineStackFrameProxyImpl(frame))
             else
                 null
         }
@@ -94,14 +123,14 @@ class CoroutineFrameBuilder {
         fun coroutineExitFrame(
             frame: StackFrameProxyImpl,
             suspendContext: SuspendContextImpl
-        ): CoroutinePreflightStackFrame? {
+        ): CoroutinePreflightFrame? {
             return suspendContext.invokeInManagerThread {
                 val sem = frame.location().isPreFlight()
-                if (sem.isCoroutineFound()) {
+                val preflightStackFrame = if (sem.isCoroutineFound()) {
                     lookupContinuation(suspendContext, frame, sem)
                 } else
                     null
-
+                preflightStackFrame
             }
         }
 
@@ -109,7 +138,7 @@ class CoroutineFrameBuilder {
             suspendContext: SuspendContextImpl,
             frame: StackFrameProxyImpl,
             mode: SuspendExitMode
-        ): CoroutinePreflightStackFrame? {
+        ): CoroutinePreflightFrame? {
             if (!mode.isCoroutineFound())
                 return null
 
@@ -133,10 +162,9 @@ class CoroutineFrameBuilder {
 
                 val continuationHolder = ContinuationHolder.instance(context)
                 val coroutineInfo = continuationHolder.extractCoroutineInfoData(continuation) ?: return null
-                val descriptor = StackFrameDescriptorImpl(frame, MethodsTracker())
-                return CoroutinePreflightStackFrame(
+                return CoroutinePreflightFrame(
                     coroutineInfo,
-                    descriptor,
+                    frame,
                     theFollowingFrames,
                     mode
                 )

@@ -1,23 +1,23 @@
-LineBreakpoint created at coroutineSuspendFun136.kt:29
+LineBreakpoint created at suspendFunWithInner.kt:40
 Run Java
 Connected to the target VM
-coroutineSuspendFun136.kt:29
+suspendFunWithInner.kt:40
 Thread stack trace:
-	KotlinStackFrame c:!LINE_NUMBER!, CoroutineSuspendFun136Kt (continuation)
-		($completion, c, paramB)
-	CoroutinePreflightFrame b:!LINE_NUMBER!, CoroutineSuspendFun136Kt (continuation)
-		($completion, $continuation, $result, b, paramA)
+	CoroutinePreflightFrame c:!LINE_NUMBER!, TestSuspendA$InClassB$InClassC (continuation)
+		($completion, $continuation, $result, inClassCMethodVal, this)
 CoroutineInfo: 1 coroutine RUNNING
-	CoroutineStackFrame a:!LINE_NUMBER!, CoroutineSuspendFun136Kt (continuation)
-		(a)
-	CoroutineStackFrame invokeSuspend:!LINE_NUMBER!, CoroutineSuspendFun136Kt$main$1 (continuation)
-		($this$runBlocking)
+	CoroutineStackFrame b:!LINE_NUMBER!, TestSuspendA$InClassB (continuation)
+		(inClassBMethodVal, this)
+	CoroutineStackFrame a:!LINE_NUMBER!, TestSuspendA (continuation)
+		(methodVal, this)
+	CoroutineStackFrame invokeSuspend:!LINE_NUMBER!, SuspendFunWithInnerKt$main$1 (continuation)
+		($this$runBlocking, rootCoroutineVal)
 	CoroutineStackFrame resumeWith:!LINE_NUMBER!, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
 		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
 	CoroutineStackFrame run:!LINE_NUMBER!, DispatchedTask (kotlinx.coroutines)
 		($i$a$-withCoroutineContext-DispatchedTask$run$1, $i$f$withCoroutineContext, context, continuation, countOrElement$iv, delegate, exception, fatalException, job, oldValue$iv, state, taskContext, this)
 	CoroutineStackFrame processNextEvent:!LINE_NUMBER!, EventLoopImplBase (kotlinx.coroutines)
-		(delayed, task, this)
+		(delayed, this)
 	CoroutineStackFrame joinBlocking:!LINE_NUMBER!, BlockingCoroutine (kotlinx.coroutines)
 		(this)
 	CoroutineStackFrame runBlocking:!LINE_NUMBER!, BuildersKt__BuildersKt (kotlinx.coroutines)
@@ -28,8 +28,8 @@ CoroutineInfo: 1 coroutine RUNNING
 		()
 	CoroutineStackFrame runBlocking$default:!LINE_NUMBER!, BuildersKt (kotlinx.coroutines)
 		()
-	CoroutineStackFrame main:!LINE_NUMBER!, CoroutineSuspendFun136Kt (continuation)
-		(main)
+	CoroutineStackFrame main:!LINE_NUMBER!, SuspendFunWithInnerKt (continuation)
+		(mainTestVal)
 Coroutine creation stack trace
 	CreationCoroutineStackFrame createCoroutineUnintercepted:!LINE_NUMBER!, IntrinsicsKt__IntrinsicsJvmKt (kotlin.coroutines.intrinsics)
 		()
@@ -37,9 +37,9 @@ Coroutine creation stack trace
 		()
 	CreationCoroutineStackFrame runBlocking$default:!LINE_NUMBER!, BuildersKt (kotlinx.coroutines)
 		()
-	CreationCoroutineStackFrame main:!LINE_NUMBER!, CoroutineSuspendFun136Kt (continuation)
+	CreationCoroutineStackFrame main:!LINE_NUMBER!, SuspendFunWithInnerKt (continuation)
 		()
-	CreationCoroutineStackFrame FRAME:main:-1, CoroutineSuspendFun136Kt (continuation)
+	CreationCoroutineStackFrame FRAME:main:-1, SuspendFunWithInnerKt (continuation)
 		()
 Disconnected from the target VM
 

@@ -67,8 +67,3 @@ org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncLa
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncSimple, redesign test AsyncStackTraces,,
 org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testStepOverInlinedLambdaStdlib, fails after advancing bootstrap KT-37879,,
 org.jetbrains.kotlin.incremental.IncrementalJsKlibCompilerRunnerTestGenerated.ClassHierarchyAffected.testMethodRemoved, FO in klib required,,
-org.jetbrains.kotlin.idea.debugger.test.XCoroutinesStackTraceTestGenerated.testCoroutineSuspendFun136, running test on SNAPSHOT version,,
-org.jetbrains.kotlin.idea.debugger.test.XCoroutinesStackTraceTestGenerated.testCoroutineSuspendFun, unstable,,
-org.jetbrains.kotlin.idea.debugger.test.XCoroutinesStackTraceTestGenerated.testSuspendMain, unstable,,
-org.jetbrains.kotlin.idea.debugger.test.ContinuationStackTraceTestGenerated.testSuspendLambda, unstable,,
-org.jetbrains.kotlin.idea.debugger.test.ContinuationStackTraceTestGenerated.testSuspendFun, unstable in 201/202,,

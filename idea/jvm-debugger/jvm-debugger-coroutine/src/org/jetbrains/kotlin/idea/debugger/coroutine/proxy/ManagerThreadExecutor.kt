@@ -49,8 +49,5 @@ class ManagerThreadExecutor(val debugProcess: DebugProcessImpl) {
     }
 }
 
-class ApplicationThreadExecutor {
-    fun schedule(f: () -> Unit, component: Component) {
-        return ApplicationManager.getApplication().invokeLater({ f() }, ModalityState.stateForComponent(component))
-    }
-}
+fun invokeLater(component: Component, f: () -> Unit) =
+    ApplicationManager.getApplication().invokeLater({ f() }, ModalityState.stateForComponent(component))

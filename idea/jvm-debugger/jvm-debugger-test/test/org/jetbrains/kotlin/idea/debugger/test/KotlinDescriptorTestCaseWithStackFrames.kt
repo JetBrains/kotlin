@@ -19,10 +19,11 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEdito
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.xdebugger.frame.XNamedValue
 import com.intellij.xdebugger.frame.XStackFrame
+import com.intellij.xdebugger.impl.frame.XDebuggerFramesList
 import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.jps.model.library.JpsMavenRepositoryLibraryDescriptor
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider
-import org.jetbrains.kotlin.idea.debugger.coroutine.PreflightProvider
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutinePreflightFrame
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CreationCoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.invokeInSuspendManagerThread
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
@@ -44,7 +45,7 @@ abstract class KotlinDescriptorTestCaseWithStackFrames() : KotlinDescriptorTestC
     val classPath = mutableListOf<String>()
 
     protected fun out(frame: XStackFrame) {
-        out(INDENT_FRAME, XDebuggerTestUtil.getFramePresentation(frame))
+        out(INDENT_FRAME, frame.javaClass.simpleName + " FRAME:" + XDebuggerTestUtil.getFramePresentation(frame))
         outVariables(frame)
     }
 
@@ -84,32 +85,28 @@ abstract class KotlinDescriptorTestCaseWithStackFrames() : KotlinDescriptorTestC
                     out("Thread stack trace:")
                     val stackFrames: List<XStackFrame> = XDebuggerTestUtil.collectFrames(executionStack)
                     val suspendContextImpl = suspendContext as SuspendContextImpl
-                    suspendContextImpl.runActionInSuspendCommand {
-                        for (frame in stackFrames) {
-                            if (frame is JavaStackFrame) {
-                                out(frame)
-                                val stackFrames = suspendContext.invokeInSuspendManagerThread(debugProcess) {
-                                    asyncStackTraceProvider?.getAsyncStackTrace(frame, suspendContextImpl)
-                                }
-                                if (stackFrames != null) {
-                                    if (stackFrames is PreflightProvider) {
-                                        val preflightFrame = stackFrames.getPreflight()
-                                        out(0, preflightFrame.coroutineInfoData.key.toString())
-                                    }
-                                    for (frameItem in stackFrames) {
-                                        if (frameItem is CreationCoroutineStackFrameItem && frameItem.first)
-                                            out(0, "Creation stack frame")
+                    for (frame in stackFrames) {
+                        if (frame is JavaStackFrame) {
+                            out(frame)
+                            if (frame is CoroutinePreflightFrame) {
+                                val key = frame.coroutineInfoData.key
+                                out(0, "CoroutineInfo: ${key.id} ${key.name} ${key.state}")
+                            }
+                            val stackFrames = suspendContext.invokeInSuspendManagerThread(debugProcess) {
+                                asyncStackTraceProvider?.getAsyncStackTrace(frame, suspendContextImpl)
+                            }
+                            if (stackFrames != null) {
+                                for (frameItem in stackFrames) {
+                                    val frame: XStackFrame? =
+                                        frameItem.createFrame(debugProcess)
+                                    if (frame is XDebuggerFramesList.ItemWithSeparatorAbove && frame.hasSeparatorAbove())
+                                        out(0, frame.captionAboveOf)
 
-                                        val frame: XStackFrame? = suspendContext.invokeInSuspendManagerThread(debugProcess) {
-                                            frameItem.createFrame(debugProcess)
-                                        }
-                                        frame?.let {
-                                            out(frame)
-                                        }
-
+                                    frame?.let {
+                                        out(frame)
                                     }
-                                    return@runActionInSuspendCommand
                                 }
+                                return@doWhenXSessionPausedThenResume
                             }
                         }
                     }
