@@ -205,10 +205,10 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
             managerThreadExecutor.on(suspendContext).invoke {
                 val children = XValueChildrenList()
                 val doubleFrameList = CoroutineFrameBuilder.build(infoData, suspendContext)
-                doubleFrameList?.stackTrace?.forEach {
+                doubleFrameList?.frames?.forEach {
                     children.add(CoroutineFrameValue(infoData, it))
                 }
-                doubleFrameList?.creationStackTrace?.let {
+                doubleFrameList?.creationFrames?.let {
                     children.add(CreationFramesContainer(infoData, it))
                 }
                 node.addChildren(children, true)

@@ -3,24 +3,24 @@ Run Java
 Connected to the target VM
 suspendLambda.kt:12
 Thread stack trace:
-	nextSequence:12, SuspendLambdaKt (continuation)
+	KotlinStackFrame nextSequence:!LINE_NUMBER!, SuspendLambdaKt (continuation)
 		(terms, terms1)
-	invokeSuspend:23, SuspendLambdaKt$fibonacci$1 (continuation)
+	CoroutinePreflightFrame invokeSuspend:!LINE_NUMBER!, SuspendLambdaKt$fibonacci$1 (continuation)
 		($result, $this$sequence, step, terms, this)
-CoroutineNameIdState(name=coroutine, id=-1, state=UNKNOWN, dispatcher=null)
-	resumeWith:33, kotlin.coroutines.jvm.internal.BaseContinuationImpl
+CoroutineInfo: -1 coroutine UNKNOWN
+	CoroutineStackFrame resumeWith:!LINE_NUMBER!, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
 		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
-	hasNext:140, kotlin.sequences.SequenceBuilderIterator
+	CoroutineStackFrame hasNext:!LINE_NUMBER!, SequenceBuilderIterator (kotlin.sequences)
 		(step, this)
-	hasNext:406, kotlin.sequences.TakeSequence$iterator$1
+	CoroutineStackFrame hasNext:!LINE_NUMBER!, TakeSequence$iterator$1 (kotlin.sequences)
 		(this)
-	toCollection:722, kotlin.sequences.SequencesKt___SequencesKt
+	CoroutineStackFrame toCollection:!LINE_NUMBER!, SequencesKt___SequencesKt (kotlin.sequences)
 		($this$toCollection, destination)
-	toMutableList:752, kotlin.sequences.SequencesKt___SequencesKt
+	CoroutineStackFrame toMutableList:!LINE_NUMBER!, SequencesKt___SequencesKt (kotlin.sequences)
 		($this$toMutableList)
-	toList:743, kotlin.sequences.SequencesKt___SequencesKt
+	CoroutineStackFrame toList:!LINE_NUMBER!, SequencesKt___SequencesKt (kotlin.sequences)
 		($this$toList)
-	main:5, continuation.SuspendLambdaKt
+	CoroutineStackFrame main:!LINE_NUMBER!, SuspendLambdaKt (continuation)
 		(a)
 Disconnected from the target VM
 

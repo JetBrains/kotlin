@@ -9,7 +9,7 @@ import com.intellij.debugger.engine.AsyncStackTraceProvider
 import com.intellij.debugger.engine.JavaStackFrame
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.memory.utils.StackFrameItem
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutinePreflightStackFrame
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutinePreflightFrame
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CoroutineFrameBuilder
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.threadAndContextSupportsEvaluation
@@ -19,18 +19,19 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
 
     override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
         val stackFrameList = hopelessAware {
-            if (stackFrame is CoroutinePreflightStackFrame)
+            if (stackFrame is CoroutinePreflightFrame)
                 processPreflight(stackFrame, suspendContext)
             else
                 null
         }
         return if (stackFrameList == null || stackFrameList.isEmpty())
             null
-        else stackFrameList
+        else
+            stackFrameList
     }
 
     private fun processPreflight(
-        preflightFrame: CoroutinePreflightStackFrame,
+        preflightFrame: CoroutinePreflightFrame,
         suspendContext: SuspendContextImpl
     ): List<CoroutineStackFrameItem>? {
         val resumeWithFrame = preflightFrame.threadPreCoroutineFrames.firstOrNull()
@@ -41,15 +42,8 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
             )
         ) {
             val doubleFrameList = CoroutineFrameBuilder.build(preflightFrame, suspendContext)
-            val resultList = doubleFrameList.stackTrace + doubleFrameList.creationStackTrace
-            return PreflightProvider(preflightFrame, resultList)
+            return doubleFrameList.allFrames()
         }
         return null
     }
-}
-
-class PreflightProvider(private val preflight: CoroutinePreflightStackFrame, stackFrames: List<CoroutineStackFrameItem>) :
-    List<CoroutineStackFrameItem> by stackFrames {
-    fun getPreflight() =
-        preflight
 }

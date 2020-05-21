@@ -5,13 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.test
 
-import com.intellij.debugger.engine.JavaStackFrame
-import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.execution.process.ProcessOutputTypes
-import com.intellij.xdebugger.frame.XStackFrame
-import org.jetbrains.kotlin.idea.debugger.coroutine.PreflightProvider
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
-import org.jetbrains.kotlin.idea.debugger.test.util.XDebuggerTestUtil
 
 abstract class AbstractXCoroutinesStackTraceTest : KotlinDescriptorTestCaseWithStackFrames() {
     override fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences) {

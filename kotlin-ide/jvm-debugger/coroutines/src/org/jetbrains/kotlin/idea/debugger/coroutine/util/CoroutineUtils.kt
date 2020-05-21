@@ -19,6 +19,7 @@ import com.intellij.xdebugger.XSourcePosition
 import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.SuspendExitMode
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.invokeLater
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 
@@ -71,6 +72,12 @@ fun ReferenceType.isSuspendLambda() =
 fun Location.isInvokeSuspend() =
     safeMethod()?.isInvokeSuspend() ?: false
 
+fun Location.isInvokeSuspendWithNegativeLineNumber() =
+    isInvokeSuspend() && safeLineNumber() < 0
+
+fun Location.isFilteredInvokeSuspend() =
+    isInvokeSuspend() || isInvokeSuspendWithNegativeLineNumber()
+
 fun StackFrameProxyImpl.variableValue(variableName: String): ObjectReference? {
     val continuationVariable = safeVisibleVariableByName(variableName) ?: return null
     return getValue(continuationVariable) as? ObjectReference ?: return null
@@ -104,7 +111,9 @@ fun StackTraceElement.findPosition(project: Project): XSourcePosition? =
     getPosition(project, className, lineNumber)
 
 fun Location.findPosition(project: Project) =
-    getPosition(project, declaringType().name(), lineNumber())
+    readAction {
+        getPosition(project, declaringType().name(), lineNumber())
+    }
 
 private fun getPosition(project: Project, className: String, lineNumber: Int): XSourcePosition? {
     val psiFacade = JavaPsiFacade.getInstance(project)
@@ -137,3 +146,13 @@ fun threadAndContextSupportsEvaluation(suspendContext: SuspendContextImpl, frame
     suspendContext.invokeInManagerThread {
         suspendContext.supportsEvaluation() && frameProxy?.threadProxy()?.supportsEvaluation() ?: false
     } ?: false
+
+
+fun Location.sameLineAndMethod(location: Location?): Boolean =
+    location != null && location.safeMethod() == safeMethod() && location.safeLineNumber() == safeLineNumber()
+
+fun Location.isFilterFromTop(location: Location?): Boolean =
+    isFilteredInvokeSuspend() || sameLineAndMethod(location) || location?.safeMethod() == safeMethod()
+
+fun Location.isFilterFromBottom(location: Location?): Boolean =
+    sameLineAndMethod(location)

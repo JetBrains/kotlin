@@ -31,7 +31,7 @@ import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
 import com.intellij.xdebugger.impl.ui.tree.XDebuggerTree
 import com.intellij.xdebugger.impl.ui.tree.nodes.*
 import org.jetbrains.kotlin.idea.debugger.KotlinFrameExtraVariablesProvider
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.ContinuationValueDescriptorImpl
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.ContinuationVariableValueDescriptorImpl
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
 import org.jetbrains.kotlin.idea.debugger.invokeInManagerThread
 import org.jetbrains.kotlin.idea.debugger.test.KOTLIN_LIBRARY_NAME
@@ -275,7 +275,7 @@ private class Printer(private val delegate: FramePrinterDelegate, private val co
             is ThisDescriptorImpl -> "this"
             is FieldDescriptor -> "field"
             is ArrayElementDescriptor -> "element"
-            is ContinuationValueDescriptorImpl -> "cont"
+            is ContinuationVariableValueDescriptorImpl -> "cont"
             is MessageDescriptor -> ""
             else -> "unknown"
         }

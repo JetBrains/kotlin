@@ -33,6 +33,11 @@ public class ContinuationStackTraceTestGenerated extends AbstractContinuationSta
         runTest("idea/jvm-debugger/jvm-debugger-test/testData/continuation/suspendFun.kt");
     }
 
+    @TestMetadata("suspendFunWithInner.kt")
+    public void testSuspendFunWithInner() throws Exception {
+        runTest("idea/jvm-debugger/jvm-debugger-test/testData/continuation/suspendFunWithInner.kt");
+    }
+
     @TestMetadata("suspendLambda.kt")
     public void testSuspendLambda() throws Exception {
         runTest("idea/jvm-debugger/jvm-debugger-test/testData/continuation/suspendLambda.kt");

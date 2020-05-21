@@ -35,14 +35,6 @@ data class CoroutineInfoData(
 
     fun topFrameVariables() = topRestoredFrame()?.spilledVariables ?: emptyList()
 
-    fun restoredStackTrace(mode: SuspendExitMode): List<CoroutineStackFrameItem> =
-        if (stackTrace.isNotEmpty() && stackTrace.first().isInvokeSuspend())
-            stackTrace.drop(1)
-        else if (mode == SuspendExitMode.SUSPEND_METHOD_PARAMETER)
-            stackTrace.drop(1)
-        else
-            stackTrace
-
     companion object {
         val log by logger
         const val DEFAULT_COROUTINE_NAME = "coroutine"
