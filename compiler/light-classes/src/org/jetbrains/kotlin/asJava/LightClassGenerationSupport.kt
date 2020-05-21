@@ -51,6 +51,8 @@ abstract class LightClassGenerationSupport {
 
     abstract fun createUltraLightClassForScript(script: KtScript): KtUltraLightClassForScript?
 
+    abstract fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport
+
     abstract fun createUltraLightClassForFacade(
         manager: PsiManager,
         facadeClassFqName: FqName,
