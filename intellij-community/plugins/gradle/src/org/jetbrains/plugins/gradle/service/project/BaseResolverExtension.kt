@@ -17,7 +17,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.Consumer
 import com.intellij.util.net.HttpConfigurable
 import gnu.trove.THash
-import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling
 import org.gradle.internal.impldep.com.google.common.collect.Multimap
 import org.gradle.tooling.model.build.BuildEnvironment
 import org.gradle.tooling.model.idea.IdeaModule
