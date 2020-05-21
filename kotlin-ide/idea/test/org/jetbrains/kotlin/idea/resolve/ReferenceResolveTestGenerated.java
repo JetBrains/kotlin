@@ -401,6 +401,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         runTest("testData/resolve/references/WrongNumberOfTypeArgumentsInSupertype.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/resolve/references/delegatedPropertyAccessors")
     public static class DelegatedPropertyAccessors extends AbstractReferenceResolveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -412,6 +413,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
             runTest("testData/resolve/references/delegatedPropertyAccessors/unresolved.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/resolve/references/delegatedPropertyAccessors/inSource")
         public static class InSource extends AbstractReferenceResolveTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -439,6 +441,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/resolve/references/delegatedPropertyAccessors/inStandardLibrary")
         public static class InStandardLibrary extends AbstractReferenceResolveTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -457,6 +460,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/resolve/references/forLoopIn")
     public static class ForLoopIn extends AbstractReferenceResolveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -468,6 +472,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
             runTest("testData/resolve/references/forLoopIn/unresolvedIterator.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/resolve/references/forLoopIn/inBuiltIns")
         public static class InBuiltIns extends AbstractReferenceResolveTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -485,6 +490,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/resolve/references/forLoopIn/inLibrary")
         public static class InLibrary extends AbstractReferenceResolveTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -497,6 +503,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/resolve/references/forLoopIn/inSource")
         public static class InSource extends AbstractReferenceResolveTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -520,6 +527,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/resolve/references/invoke")
     public static class Invoke extends AbstractReferenceResolveTest {
         private void runTest(String testDataFilePath) throws Exception {

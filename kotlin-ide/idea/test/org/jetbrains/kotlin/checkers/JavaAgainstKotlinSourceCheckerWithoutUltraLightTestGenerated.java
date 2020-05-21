@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated extends AbstractJavaAgainstKotlinSourceCheckerWithoutUltraLightTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/kotlinAndJavaChecker/javaAgainstKotlin")
     public static class JavaAgainstKotlin extends AbstractJavaAgainstKotlinSourceCheckerWithoutUltraLightTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -198,6 +198,7 @@ public class JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated extend
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/kotlinAndJavaChecker/javaWithKotlin")
     public static class JavaWithKotlin extends AbstractJavaAgainstKotlinSourceCheckerWithoutUltraLightTest {
         private void runTest(String testDataFilePath) throws Exception {

@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class FormatterTestGenerated extends AbstractFormatterTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/formatter")
     public static class Formatter extends AbstractFormatterTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -882,6 +882,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("testData/formatter/WhileSpacing.after.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/callChain")
         public static class CallChain extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -974,6 +975,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/fileAnnotations")
         public static class FileAnnotations extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1026,6 +1028,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/modifierList")
         public static class ModifierList extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1113,6 +1116,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/parameterList")
         public static class ParameterList extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1175,8 +1179,10 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma")
         public static class TrailingComma extends AbstractFormatterTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/collectionLiteralExpression")
             public static class CollectionLiteralExpression extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1189,6 +1195,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/destructuringDeclarations")
             public static class DestructuringDeclarations extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1206,6 +1213,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/enumEntry")
             public static class EnumEntry extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1218,6 +1226,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/indices")
             public static class Indices extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1230,6 +1239,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/lambdaParameters")
             public static class LambdaParameters extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1242,6 +1252,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/typeArguments")
             public static class TypeArguments extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1254,6 +1265,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/typeParameters")
             public static class TypeParameters extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1266,6 +1278,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/valueArguments")
             public static class ValueArguments extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1293,6 +1306,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/valueParameters")
             public static class ValueParameters extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1325,6 +1339,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/whenEntry")
             public static class WhenEntry extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1339,8 +1354,10 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/formatter/trailingComma")
     public static class FormatterCallSite extends AbstractFormatterTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/collectionLiteralExpression")
         public static class CollectionLiteralExpression extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1353,6 +1370,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/indices")
         public static class Indices extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1365,6 +1383,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/lambdaParameters")
         public static class LambdaParameters extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1377,6 +1396,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/typeArguments")
         public static class TypeArguments extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1389,6 +1409,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/typeParameters")
         public static class TypeParameters extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1401,6 +1422,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/valueArguments")
         public static class ValueArguments extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1413,6 +1435,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/valueParameters")
         public static class ValueParameters extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1426,6 +1449,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/formatter")
     public static class FormatterInverted extends AbstractFormatterTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1692,6 +1716,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("testData/formatter/WhileOnNewLine.after.inv.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/callChain")
         public static class CallChain extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1739,6 +1764,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/parameterList")
         public static class ParameterList extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1751,8 +1777,10 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma")
         public static class TrailingComma extends AbstractFormatterTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/collectionLiteralExpression")
             public static class CollectionLiteralExpression extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1765,6 +1793,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/destructuringDeclarations")
             public static class DestructuringDeclarations extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1782,6 +1811,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/enumEntry")
             public static class EnumEntry extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1794,6 +1824,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/indices")
             public static class Indices extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1806,6 +1837,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/lambdaParameters")
             public static class LambdaParameters extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1818,6 +1850,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/typeArguments")
             public static class TypeArguments extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1830,6 +1863,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/typeParameters")
             public static class TypeParameters extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1842,6 +1876,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/valueArguments")
             public static class ValueArguments extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1869,6 +1904,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/valueParameters")
             public static class ValueParameters extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1901,6 +1937,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/whenEntry")
             public static class WhenEntry extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1915,8 +1952,10 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/formatter/trailingComma")
     public static class FormatterInvertedCallSite extends AbstractFormatterTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/collectionLiteralExpression")
         public static class CollectionLiteralExpression extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1929,6 +1968,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/indices")
         public static class Indices extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1941,6 +1981,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/lambdaParameters")
         public static class LambdaParameters extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1953,6 +1994,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/typeArguments")
         public static class TypeArguments extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1965,6 +2007,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/typeParameters")
         public static class TypeParameters extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1977,6 +2020,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/valueArguments")
         public static class ValueArguments extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1989,6 +2033,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/valueParameters")
         public static class ValueParameters extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {

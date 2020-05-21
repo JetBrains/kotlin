@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/quickfix")
 public class QuickFixTestGenerated extends AbstractQuickFixTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/abstract")
     public static class Abstract extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -194,6 +195,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addAnnotationTarget")
     public static class AddAnnotationTarget extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -341,6 +343,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addConstructorParameterFromSuperTypeCall")
     public static class AddConstructorParameterFromSuperTypeCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -393,6 +396,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addCrossinline")
     public static class AddCrossinline extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -410,6 +414,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addDataModifier")
     public static class AddDataModifier extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -497,6 +502,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addDefaultConstructor")
     public static class AddDefaultConstructor extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -519,6 +525,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addExclExclCall")
     public static class AddExclExclCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -591,6 +598,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addGenericUpperBound")
     public static class AddGenericUpperBound extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -628,6 +636,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addInitializer")
     public static class AddInitializer extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -720,6 +729,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addInline")
     public static class AddInline extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -737,6 +747,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addInlineToReifiedFunctionFix")
     public static class AddInlineToReifiedFunctionFix extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -749,6 +760,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addIsToWhenCondition")
     public static class AddIsToWhenCondition extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -761,6 +773,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addJvmDefault")
     public static class AddJvmDefault extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -778,6 +791,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addJvmNameAnnotation")
     public static class AddJvmNameAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -805,6 +819,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addNewLineAfterAnnotations")
     public static class AddNewLineAfterAnnotations extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -832,6 +847,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addNoinline")
     public static class AddNoinline extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -849,6 +865,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addPropertyAccessors")
     public static class AddPropertyAccessors extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -876,6 +893,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addPropertyToSupertype")
     public static class AddPropertyToSupertype extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -898,6 +916,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addReifiedToTypeParameterOfFunctionFix")
     public static class AddReifiedToTypeParameterOfFunctionFix extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -920,6 +939,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addReturnToLastExpressionInFunction")
     public static class AddReturnToLastExpressionInFunction extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -957,6 +977,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addReturnToUnusedLastExpressionInFunction")
     public static class AddReturnToUnusedLastExpressionInFunction extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -994,6 +1015,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addRunBeforeLambda")
     public static class AddRunBeforeLambda extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1006,6 +1028,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addSemicolonBeforeLambdaExpression")
     public static class AddSemicolonBeforeLambdaExpression extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1078,6 +1101,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addStarProjections")
     public static class AddStarProjections extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1114,6 +1138,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/addStarProjections/unqualifiedMapOneArg.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/addStarProjections/cast")
         public static class Cast extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1231,6 +1256,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/addStarProjections/checkType")
         public static class CheckType extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1253,6 +1279,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/addStarProjections/inner")
         public static class Inner extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1300,6 +1327,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/addStarProjections/when")
         public static class When extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1338,6 +1366,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addSuspend")
     public static class AddSuspend extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1375,6 +1404,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addTypeAnnotationToValueParameter")
     public static class AddTypeAnnotationToValueParameter extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1432,6 +1462,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addValVar")
     public static class AddValVar extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1449,6 +1480,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addVarianceModifier")
     public static class AddVarianceModifier extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1471,8 +1503,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/assignOperatorAmbiguity")
     public static class AssignOperatorAmbiguity extends AbstractQuickFixTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/assignOperatorAmbiguity/changeToVal")
         public static class ChangeToVal extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1515,6 +1549,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall")
         public static class ReplaceWithAssignCall extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1553,6 +1588,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/assignToProperty")
     public static class AssignToProperty extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1620,6 +1656,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/autoImports")
     public static class AutoImports extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1791,6 +1828,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/autoImports/unresolvedReferenceInCall.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/autoImports/kt21515")
         public static class Kt21515 extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1814,6 +1852,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/canBeParameter")
     public static class CanBeParameter extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1841,6 +1880,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/canBePrimaryConstructorProperty")
     public static class CanBePrimaryConstructorProperty extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1873,6 +1913,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/changeFeatureSupport")
     public static class ChangeFeatureSupport extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1885,6 +1926,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/changeObjectToClass")
     public static class ChangeObjectToClass extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1902,6 +1944,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/changeSignature")
     public static class ChangeSignature extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2199,6 +2242,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/changeSuperTypeListEntryTypeArgument")
     public static class ChangeSuperTypeListEntryTypeArgument extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2226,6 +2270,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/changeToLabeledReturn")
     public static class ChangeToLabeledReturn extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2253,6 +2298,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/changeToMutableCollection")
     public static class ChangeToMutableCollection extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2285,6 +2331,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/changeToUseSpreadOperator")
     public static class ChangeToUseSpreadOperator extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2332,6 +2379,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/checkArguments")
     public static class CheckArguments extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2343,6 +2391,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/checkArguments/nonVarargSpread.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/checkArguments/addNameToArgument")
         public static class AddNameToArgument extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2386,6 +2435,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/conflictingImports")
     public static class ConflictingImports extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2408,6 +2458,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/convertLateinitPropertyToNotNullDelegate")
     public static class ConvertLateinitPropertyToNotNullDelegate extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2450,6 +2501,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/convertPropertyInitializerToGetter")
     public static class ConvertPropertyInitializerToGetter extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2472,6 +2524,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/convertToAnonymousObject")
     public static class ConvertToAnonymousObject extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2519,10 +2572,13 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/createFromUsage")
     public static class CreateFromUsage extends AbstractQuickFixTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createClass")
         public static class CreateClass extends AbstractQuickFixTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/annotationEntry")
             public static class AnnotationEntry extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -2570,6 +2626,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/callExpression")
             public static class CallExpression extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -2766,6 +2823,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("testData/quickfix/createFromUsage/createClass/callExpression/unusedCallResult.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/quickfix/createFromUsage/createClass/callExpression/typeArguments")
                 public static class TypeArguments extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -2834,6 +2892,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/delegationSpecifier")
             public static class DelegationSpecifier extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -2886,6 +2945,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/importDirective")
             public static class ImportDirective extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -2957,6 +3017,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("testData/quickfix/createFromUsage/createClass/importDirective/traitWithQualifier.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/quickfix/createFromUsage/createClass/importDirective/kt21515")
                 public static class Kt21515 extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -2990,6 +3051,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/referenceExpression")
             public static class ReferenceExpression extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -3202,6 +3264,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/typeReference")
             public static class TypeReference extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -3360,8 +3423,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createFunction")
         public static class CreateFunction extends AbstractQuickFixTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/binaryOperations")
             public static class BinaryOperations extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -3449,6 +3514,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/call")
             public static class Call extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -3790,6 +3856,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("testData/quickfix/createFromUsage/createFunction/call/unresolvedSupertype.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/quickfix/createFromUsage/createFunction/call/abstract")
                 public static class Abstract extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -3837,6 +3904,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     }
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/quickfix/createFromUsage/createFunction/call/extensionByExtensionReceiver")
                 public static class ExtensionByExtensionReceiver extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -3869,6 +3937,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     }
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/quickfix/createFromUsage/createFunction/call/typeArguments")
                 public static class TypeArguments extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -3947,6 +4016,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/callableReferences")
             public static class CallableReferences extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -3984,6 +4054,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/component")
             public static class Component extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4006,6 +4077,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/delegateAccessors")
             public static class DelegateAccessors extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4043,6 +4115,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/get")
             public static class Get extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4115,6 +4188,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/hasNext")
             public static class HasNext extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4132,6 +4206,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/invoke")
             public static class Invoke extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4164,6 +4239,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/iterator")
             public static class Iterator extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4186,6 +4262,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/next")
             public static class Next extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4203,6 +4280,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/set")
             public static class Set extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4230,6 +4308,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/unaryOperations")
             public static class UnaryOperations extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4263,6 +4342,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createSecondaryConstructor")
         public static class CreateSecondaryConstructor extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -4360,8 +4440,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createTypeParameter")
         public static class CreateTypeParameter extends AbstractQuickFixTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration")
             public static class InContainingDeclaration extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4469,6 +4551,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createTypeParameter/inReferencedDeclaration")
             public static class InReferencedDeclaration extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4507,8 +4590,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createVariable")
         public static class CreateVariable extends AbstractQuickFixTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createVariable/localVariable")
             public static class LocalVariable extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4626,6 +4711,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createVariable/parameter")
             public static class Parameter extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4898,6 +4984,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createVariable/primaryParameter")
             public static class PrimaryParameter extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -4970,6 +5057,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createVariable/property")
             public static class Property extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -5191,6 +5279,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("testData/quickfix/createFromUsage/createVariable/property/varOnUserType.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/quickfix/createFromUsage/createVariable/property/abstract")
                 public static class Abstract extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -5226,6 +5315,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/createLabel")
     public static class CreateLabel extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5278,6 +5368,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/declarationCantBeInlined")
     public static class DeclarationCantBeInlined extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5295,6 +5386,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/decreaseVisibility")
     public static class DecreaseVisibility extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5357,6 +5449,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/deprecatedJavaAnnotation")
     public static class DeprecatedJavaAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5384,6 +5477,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/deprecatedSymbolUsage")
     public static class DeprecatedSymbolUsage extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5640,6 +5734,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/deprecatedSymbolUsage/usageInDerivedClassGeneric.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/argumentSideEffects")
         public static class ArgumentSideEffects extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -5747,6 +5842,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/classUsages")
         public static class ClassUsages extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -5968,6 +6064,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("testData/quickfix/deprecatedSymbolUsage/classUsages/simple.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject")
             public static class WholeProject extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -5981,6 +6078,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/functionLiteralArguments")
         public static class FunctionLiteralArguments extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6003,6 +6101,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/keepComments")
         public static class KeepComments extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6045,6 +6144,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/keepLineBreaks")
         public static class KeepLineBreaks extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6067,6 +6167,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/operatorCalls")
         public static class OperatorCalls extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6084,6 +6185,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/optionalParameters")
         public static class OptionalParameters extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6156,6 +6258,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/properties")
         public static class Properties extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6188,6 +6291,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/publishedApi")
         public static class PublishedApi extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6245,6 +6349,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/safeCall")
         public static class SafeCall extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6292,6 +6397,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/typeAliases")
         public static class TypeAliases extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6359,6 +6465,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/typeArguments")
         public static class TypeArguments extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6430,6 +6537,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("testData/quickfix/deprecatedSymbolUsage/typeArguments/typeReference.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/deprecatedSymbolUsage/typeArguments/wholeProject")
             public static class WholeProject extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -6443,6 +6551,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/vararg")
         public static class Vararg extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6566,6 +6675,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/experimental")
     public static class Experimental extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6663,6 +6773,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/expressions")
     public static class Expressions extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6840,6 +6951,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/foldTryCatch")
     public static class FoldTryCatch extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6872,8 +6984,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/functionWithLambdaExpressionBody")
     public static class FunctionWithLambdaExpressionBody extends AbstractQuickFixTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/functionWithLambdaExpressionBody/removeBraces")
         public static class RemoveBraces extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6921,6 +7035,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/functionWithLambdaExpressionBody/wrapRun")
         public static class WrapRun extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -6939,6 +7054,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/implement")
     public static class Implement extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7121,6 +7237,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/increaseVisibility")
     public static class IncreaseVisibility extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7227,6 +7344,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/increaseVisibility/protectedMemberToPublicSingleFile.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/increaseVisibility/invisibleFake")
         public static class InvisibleFake extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -7285,6 +7403,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/initializeWithConstructorParameter")
     public static class InitializeWithConstructorParameter extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7372,6 +7491,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/inlineTypeParameterFix")
     public static class InlineTypeParameterFix extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7394,6 +7514,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/insertDelegationCall")
     public static class InsertDelegationCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7441,6 +7562,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/kdocMissingDocumentation")
     public static class KdocMissingDocumentation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7458,6 +7580,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/lateinit")
     public static class Lateinit extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7495,6 +7618,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/leakingThis")
     public static class LeakingThis extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7542,6 +7666,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/libraries")
     public static class Libraries extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7559,6 +7684,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/localVariableWithTypeParameters")
     public static class LocalVariableWithTypeParameters extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7571,6 +7697,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/makeConstructorParameterProperty")
     public static class MakeConstructorParameterProperty extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7603,6 +7730,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/makeTypeParameterReified")
     public static class MakeTypeParameterReified extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7625,6 +7753,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/memberVisibilityCanBePrivate")
     public static class MemberVisibilityCanBePrivate extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7657,8 +7786,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/migration")
     public static class Migration extends AbstractQuickFixTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/commasInWhenWithoutArgument")
         public static class CommasInWhenWithoutArgument extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -7676,6 +7807,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/conflictingExtension")
         public static class ConflictingExtension extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -7753,6 +7885,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/jsExternal")
         public static class JsExternal extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -7885,6 +8018,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/missingConstructorKeyword")
         public static class MissingConstructorKeyword extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -7897,6 +8031,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/obsoleteLabelSyntax")
         public static class ObsoleteLabelSyntax extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -7914,6 +8049,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/removeNameFromFunctionExpression")
         public static class RemoveNameFromFunctionExpression extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -7926,6 +8062,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/typeParameterList")
         public static class TypeParameterList extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -7944,6 +8081,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/missingConstructorBrackets")
     public static class MissingConstructorBrackets extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7956,6 +8094,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/modifiers")
     public static class Modifiers extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8267,6 +8406,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/modifiers/withAnnotationAndEolComment3.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/modifiers/addOpenToClassDeclaration")
         public static class AddOpenToClassDeclaration extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -8349,6 +8489,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/modifiers/suspend")
         public static class Suspend extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -8402,6 +8543,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/moveMemberToCompanionObject")
     public static class MoveMemberToCompanionObject extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8414,6 +8556,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/moveReceiverAnnotation")
     public static class MoveReceiverAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8441,6 +8584,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/moveToConstructorParameters")
     public static class MoveToConstructorParameters extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8508,6 +8652,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/moveTypeAliasToTopLevel")
     public static class MoveTypeAliasToTopLevel extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8535,6 +8680,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/nullables")
     public static class Nullables extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8561,6 +8707,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/nullables/removeUselessNullable.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/nullables/unsafeInfixCall")
         public static class UnsafeInfixCall extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -8629,6 +8776,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/obsoleteCoroutines")
     public static class ObsoleteCoroutines extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8676,6 +8824,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/optimizeImports")
     public static class OptimizeImports extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8708,6 +8857,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/override")
     public static class Override extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8809,6 +8959,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/override/virtualMethodHidden.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/override/nothingToOverride")
         public static class NothingToOverride extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9001,6 +9152,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/override/typeMismatchOnOverride")
         public static class TypeMismatchOnOverride extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9109,6 +9261,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/platformClasses")
     public static class PlatformClasses extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9136,6 +9289,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/platformTypesInspection")
     public static class PlatformTypesInspection extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9163,6 +9317,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/primitiveCastToConversion")
     public static class PrimitiveCastToConversion extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9190,8 +9345,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/properties")
     public static class Properties extends AbstractQuickFixTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/properties/extensionPropertyInitializerToGetter")
         public static class ExtensionPropertyInitializerToGetter extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9225,6 +9382,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/protectedInFinal")
     public static class ProtectedInFinal extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9242,6 +9400,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/redundantFun")
     public static class RedundantFun extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9254,6 +9413,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/redundantIf")
     public static class RedundantIf extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9301,6 +9461,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/redundantInline")
     public static class RedundantInline extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9313,6 +9474,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/redundantLateinit")
     public static class RedundantLateinit extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9325,6 +9487,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/redundantModalityModifier")
     public static class RedundantModalityModifier extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9342,6 +9505,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/redundantSemicolon")
     public static class RedundantSemicolon extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9359,6 +9523,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/redundantSuspend")
     public static class RedundantSuspend extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9371,6 +9536,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/redundantVisibilityModifier")
     public static class RedundantVisibilityModifier extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9388,6 +9554,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeAnnotation")
     public static class RemoveAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9405,6 +9572,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeArgument")
     public static class RemoveArgument extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9437,6 +9605,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeAtFromAnnotationArgument")
     public static class RemoveAtFromAnnotationArgument extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9459,6 +9628,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeDefaultParameterValue")
     public static class RemoveDefaultParameterValue extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9481,6 +9651,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeFinalUpperBound")
     public static class RemoveFinalUpperBound extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9498,6 +9669,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeNoConstructor")
     public static class RemoveNoConstructor extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9510,6 +9682,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeRedundantAssignment")
     public static class RemoveRedundantAssignment extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9537,6 +9710,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeRedundantInitializer")
     public static class RemoveRedundantInitializer extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9549,6 +9723,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeRedundantLabel")
     public static class RemoveRedundantLabel extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9566,6 +9741,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeRedundantSpreadOperator")
     public static class RemoveRedundantSpreadOperator extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9578,6 +9754,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeSingleLambdaParameter")
     public static class RemoveSingleLambdaParameter extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9625,6 +9802,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeSuspend")
     public static class RemoveSuspend extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9662,6 +9840,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeToStringInStringTemplate")
     public static class RemoveToStringInStringTemplate extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9699,6 +9878,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeTypeVariance")
     public static class RemoveTypeVariance extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9716,6 +9896,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeUnused")
     public static class RemoveUnused extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9863,6 +10044,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeUnusedReceiver")
     public static class RemoveUnusedReceiver extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9880,6 +10062,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/renameToRem")
     public static class RenameToRem extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9907,6 +10090,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/renameToUnderscore")
     public static class RenameToUnderscore extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9954,6 +10138,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/renameUnresolvedReference")
     public static class RenameUnresolvedReference extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9991,6 +10176,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/replaceInfixOrOperatorCall")
     public static class ReplaceInfixOrOperatorCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10048,6 +10234,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/replaceJvmFieldWithConst")
     public static class ReplaceJvmFieldWithConst extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10100,6 +10287,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/replaceWithArrayCallInAnnotation")
     public static class ReplaceWithArrayCallInAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10127,6 +10315,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/replaceWithDotCall")
     public static class ReplaceWithDotCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10154,6 +10343,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/replaceWithSafeCall")
     public static class ReplaceWithSafeCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10256,6 +10446,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/replaceWithSafeCallForScopeFunction")
     public static class ReplaceWithSafeCallForScopeFunction extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10348,8 +10539,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/restrictedRetentionForExpressionAnnotation")
     public static class RestrictedRetentionForExpressionAnnotation extends AbstractQuickFixTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/restrictedRetentionForExpressionAnnotation/addSourceRetention")
         public static class AddSourceRetention extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10382,6 +10575,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/restrictedRetentionForExpressionAnnotation/changeRetentionToSource")
         public static class ChangeRetentionToSource extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10414,6 +10608,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/restrictedRetentionForExpressionAnnotation/removeExpressionTarget")
         public static class RemoveExpressionTarget extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10452,6 +10647,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/simplifyComparison")
     public static class SimplifyComparison extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10494,6 +10690,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/smartCastImpossibleInIfThen")
     public static class SmartCastImpossibleInIfThen extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10561,6 +10758,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/specifyOverrideExplicitly")
     public static class SpecifyOverrideExplicitly extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10603,6 +10801,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/specifyVisibilityInExplicitApiMode")
     public static class SpecifyVisibilityInExplicitApiMode extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10635,6 +10834,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/superTypeIsExtensionType")
     public static class SuperTypeIsExtensionType extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10657,6 +10857,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/supercalls")
     public static class Supercalls extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10669,6 +10870,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/supertypeInitialization")
     public static class SupertypeInitialization extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10811,8 +11013,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/suppress")
     public static class Suppress extends AbstractQuickFixTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suppress/annotationPosition")
         public static class AnnotationPosition extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10900,6 +11104,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suppress/availability")
         public static class Availability extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10957,6 +11162,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suppress/declarationKinds")
         public static class DeclarationKinds extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -11024,6 +11230,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suppress/errorRecovery")
         public static class ErrorRecovery extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -11041,6 +11248,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suppress/external")
         public static class External extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -11058,6 +11266,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suppress/forStatement")
         public static class ForStatement extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -11254,6 +11463,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("testData/quickfix/suppress/forStatement/while.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/suppress/forStatement/unavailable")
             public static class Unavailable extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -11317,6 +11527,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suppress/inspections")
         public static class Inspections extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -11335,6 +11546,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/surroundWithArrayOfForNamedArgumentsToVarargs")
     public static class SurroundWithArrayOfForNamedArgumentsToVarargs extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11367,6 +11579,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/surroundWithNullCheck")
     public static class SurroundWithNullCheck extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11474,8 +11687,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/suspiciousCollectionReassignment")
     public static class SuspiciousCollectionReassignment extends AbstractQuickFixTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suspiciousCollectionReassignment/changeTypeToMutable")
         public static class ChangeTypeToMutable extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -11538,6 +11753,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suspiciousCollectionReassignment/joinWithInitializer")
         public static class JoinWithInitializer extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -11565,6 +11781,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suspiciousCollectionReassignment/replaceWithAssignment")
         public static class ReplaceWithAssignment extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -11647,6 +11864,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suspiciousCollectionReassignment/replaceWithFilter")
         public static class ReplaceWithFilter extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -11674,6 +11892,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suspiciousCollectionReassignment/replaceWithOrdinaryAssignment")
         public static class ReplaceWithOrdinaryAssignment extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -11687,6 +11906,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/toString")
     public static class ToString extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11714,6 +11934,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/tooLongCharLiteralToString")
     public static class TooLongCharLiteralToString extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11756,6 +11977,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/typeAddition")
     public static class TypeAddition extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11858,6 +12080,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/typeImports")
     public static class TypeImports extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11890,6 +12113,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/typeInferenceExpectedTypeMismatch")
     public static class TypeInferenceExpectedTypeMismatch extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11902,6 +12126,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/typeMismatch")
     public static class TypeMismatch extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12308,6 +12533,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/typeMismatch/wrapWithArrayLiteral.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/casts")
         public static class Casts extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12375,6 +12601,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch")
         public static class ComponentFunctionReturnTypeMismatch extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12412,6 +12639,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/convertCollection")
         public static class ConvertCollection extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12474,6 +12702,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/fixOverloadedOperator")
         public static class FixOverloadedOperator extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12496,6 +12725,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/numberConversion")
         public static class NumberConversion extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12523,6 +12753,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/parameterTypeMismatch")
         public static class ParameterTypeMismatch extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12570,6 +12801,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/roundNumber")
         public static class RoundNumber extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12607,6 +12839,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression")
         public static class TypeMismatchOnReturnedExpression extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12694,6 +12927,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/wrapWithCollectionLiteral")
         public static class WrapWithCollectionLiteral extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12771,6 +13005,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/wrongPrimitive")
         public static class WrongPrimitive extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12849,6 +13084,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/typeOfAnnotationMember")
     public static class TypeOfAnnotationMember extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12901,6 +13137,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/typeParameters")
     public static class TypeParameters extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12918,6 +13155,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/typeProjection")
     public static class TypeProjection extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12960,6 +13198,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/unnecessaryLateinit")
     public static class UnnecessaryLateinit extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12997,6 +13236,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/unusedSuppressAnnotation")
     public static class UnusedSuppressAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -13024,6 +13264,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/variables")
     public static class Variables extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -13075,6 +13316,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/variables/unusedVariableWithoutInitializer.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/variables/changeMutability")
         public static class ChangeMutability extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -13141,6 +13383,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("testData/quickfix/variables/changeMutability/valWithSetter.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/variables/changeMutability/canBeVal")
             public static class CanBeVal extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -13194,6 +13437,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/variables/changeToFunctionInvocation")
         public static class ChangeToFunctionInvocation extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -13231,6 +13475,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/variables/changeToPropertyAccess")
         public static class ChangeToPropertyAccess extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -13263,6 +13508,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/variables/removeValVarFromParameter")
         public static class RemoveValVarFromParameter extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -13306,6 +13552,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/when")
     public static class When extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -13448,6 +13695,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/wrapWithSafeLetCall")
     public static class WrapWithSafeLetCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -13515,6 +13763,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/wrongLongSuffix")
     public static class WrongLongSuffix extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -13527,6 +13776,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/yieldUnsupported")
     public static class YieldUnsupported extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {

@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("jps/jps-plugin")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/multiModule/common")
     public static class Common extends AbstractIncrementalJvmJpsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -148,6 +148,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/multiModule/jvm")
     public static class Jvm extends AbstractIncrementalJvmJpsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -180,6 +181,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/multiModule/multiplatform/custom")
     public static class Custom extends AbstractIncrementalJvmJpsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -212,6 +214,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/pureKotlin")
     public static class PureKotlin extends AbstractIncrementalJvmJpsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -809,8 +812,10 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/withJava")
     public static class WithJava extends AbstractIncrementalJvmJpsTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/incremental/withJava/convertBetweenJavaAndKotlin")
         public static class ConvertBetweenJavaAndKotlin extends AbstractIncrementalJvmJpsTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -838,6 +843,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/incremental/withJava/javaUsedInKotlin")
         public static class JavaUsedInKotlin extends AbstractIncrementalJvmJpsTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -939,6 +945,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
                 runTest("testData/incremental/withJava/javaUsedInKotlin/notChangeSignature/");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/incremental/withJava/javaUsedInKotlin/samConversions")
             public static class SamConversions extends AbstractIncrementalJvmJpsTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -967,6 +974,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/incremental/withJava/kotlinUsedInJava")
         public static class KotlinUsedInJava extends AbstractIncrementalJvmJpsTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1044,6 +1052,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/incremental/withJava/other")
         public static class Other extends AbstractIncrementalJvmJpsTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1197,6 +1206,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/inlineFunCallSite")
     public static class InlineFunCallSite extends AbstractIncrementalJvmJpsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1274,6 +1284,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/classHierarchyAffected")
     public static class ClassHierarchyAffected extends AbstractIncrementalJvmJpsTest {
         private void runTest(String testDataFilePath) throws Exception {

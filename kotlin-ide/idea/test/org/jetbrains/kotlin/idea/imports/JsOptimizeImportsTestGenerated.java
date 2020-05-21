@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/editor/optimizeImports/js")
     public static class Js extends AbstractJsOptimizeImportsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -33,6 +33,7 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/editor/optimizeImports/common")
     public static class Common extends AbstractJsOptimizeImportsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -199,6 +200,7 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
             runTest("testData/editor/optimizeImports/common/WithAlias2.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/editor/optimizeImports/common/kt21515")
         public static class Kt21515 extends AbstractJsOptimizeImportsTest {
             private void runTest(String testDataFilePath) throws Exception {

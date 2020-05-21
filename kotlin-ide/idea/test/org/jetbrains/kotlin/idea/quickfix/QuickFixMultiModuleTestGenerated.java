@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/multiModuleQuickFix")
 public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModuleTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/accessibilityChecker")
     public static class AccessibilityChecker extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -114,6 +115,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/addMissingActualMembers")
     public static class AddMissingActualMembers extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -191,6 +193,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/changeModifier")
     public static class ChangeModifier extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -208,6 +211,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/changeSignature")
     public static class ChangeSignature extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -255,6 +259,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/createActual")
     public static class CreateActual extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -432,6 +437,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/createExpect")
     public static class CreateExpect extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -719,6 +725,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/makeOverridenMemberOpen")
     public static class MakeOverridenMemberOpen extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -746,6 +753,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/other")
     public static class Other extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {

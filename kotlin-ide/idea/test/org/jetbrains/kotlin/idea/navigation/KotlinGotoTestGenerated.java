@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/navigation/gotoClass")
     public static class GotoClass extends AbstractKotlinGotoTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -83,6 +83,7 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/navigation/gotoSymbol")
     public static class GotoSymbol extends AbstractKotlinGotoTest {
         private void runTest(String testDataFilePath) throws Exception {

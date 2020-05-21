@@ -81,6 +81,7 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
         runTest("../completion/testData/basic/codeFragments/topLevel.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../completion/testData/basic/codeFragments/runtimeType")
     public static class RuntimeType extends AbstractCodeFragmentCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {

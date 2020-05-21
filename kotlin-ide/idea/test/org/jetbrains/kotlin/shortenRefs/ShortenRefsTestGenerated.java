@@ -151,6 +151,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         runTest("testData/shortenRefs/UnresolvedOverload.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/shortenRefs/constructor")
     public static class Constructor extends AbstractShortenRefsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -238,6 +239,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/shortenRefs/imports")
     public static class Imports extends AbstractShortenRefsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -260,6 +262,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/shortenRefs/java")
     public static class Java extends AbstractShortenRefsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -312,6 +315,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/shortenRefs/kt21515")
     public static class Kt21515 extends AbstractShortenRefsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -349,6 +353,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/shortenRefs/this")
     public static class This extends AbstractShortenRefsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -396,6 +401,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/shortenRefs/type")
     public static class Type extends AbstractShortenRefsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -493,6 +499,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/shortenRefs/typealias")
     public static class Typealias extends AbstractShortenRefsTest {
         private void runTest(String testDataFilePath) throws Exception {

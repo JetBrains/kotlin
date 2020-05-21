@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/removeExpression")
     public static class RemoveExpression extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -53,6 +53,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/unwrapThen")
     public static class UnwrapThen extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -75,6 +76,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/unwrapElse")
     public static class UnwrapElse extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -97,6 +99,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/removeElse")
     public static class RemoveElse extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -109,6 +112,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/unwrapLoop")
     public static class UnwrapLoop extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -131,6 +135,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/unwrapTry")
     public static class UnwrapTry extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -153,6 +158,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/unwrapCatch")
     public static class UnwrapCatch extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -175,6 +181,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/removeCatch")
     public static class RemoveCatch extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -187,6 +194,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/unwrapFinally")
     public static class UnwrapFinally extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -209,6 +217,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/removeFinally")
     public static class RemoveFinally extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -226,6 +235,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/unwrapLambda")
     public static class UnwrapLambda extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -283,6 +293,7 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/unwrapAndRemove/unwrapFunctionParameter")
     public static class UnwrapFunctionParameter extends AbstractUnwrapRemoveTest {
         private void runTest(String testDataFilePath) throws Exception {

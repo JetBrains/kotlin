@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/inspectionsLocal")
 public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/addOperatorModifier")
     public static class AddOperatorModifier extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -64,6 +65,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/arrayInDataClass")
     public static class ArrayInDataClass extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -76,6 +78,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/booleanLiteralArgument")
     public static class BooleanLiteralArgument extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -143,8 +146,10 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/branched")
     public static class Branched extends AbstractLocalInspectionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/branched/ifThenToElvis")
         public static class IfThenToElvis extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -427,6 +432,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/branched/ifThenToSafeAccess")
         public static class IfThenToSafeAccess extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -734,6 +740,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/branched/introduceWhenSubject")
         public static class IntroduceWhenSubject extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -822,6 +829,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/canBeVal")
     public static class CanBeVal extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -834,6 +842,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/cascadeIf")
     public static class CascadeIf extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -896,8 +905,10 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/collections")
     public static class Collections extends AbstractLocalInspectionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/collections/convertCallChainIntoSequence")
         public static class ConvertCallChainIntoSequence extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1034,6 +1045,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/startsWithGroupingBy.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination")
             public static class Termination extends AbstractLocalInspectionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1367,6 +1379,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/collections/simplifiableCall")
         public static class SimplifiableCall extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1484,6 +1497,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/collections/simplifiableCallChain")
         public static class SimplifiableCallChain extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1720,6 +1734,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("testData/inspectionsLocal/collections/simplifiableCallChain/sortedLastOrNull.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray")
             public static class PrimitiveArray extends AbstractLocalInspectionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1783,6 +1798,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/collections/uselessCallOnCollection")
         public static class UselessCallOnCollection extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1870,6 +1886,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/collections/uselessCallOnNotNull")
         public static class UselessCallOnNotNull extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1928,6 +1945,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/complexRedundantLet")
     public static class ComplexRedundantLet extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2300,6 +2318,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/constantConditionIf")
     public static class ConstantConditionIf extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2427,8 +2446,10 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/controlFlowWithEmptyBody")
     public static class ControlFlowWithEmptyBody extends AbstractLocalInspectionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/controlFlowWithEmptyBody/also")
         public static class Also extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2481,6 +2502,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/controlFlowWithEmptyBody/doWhile")
         public static class DoWhile extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2513,6 +2535,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/controlFlowWithEmptyBody/for")
         public static class For extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2545,6 +2568,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/controlFlowWithEmptyBody/if")
         public static class If extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2592,6 +2616,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/controlFlowWithEmptyBody/ifElse")
         public static class IfElse extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2624,6 +2649,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/controlFlowWithEmptyBody/when")
         public static class When extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2651,6 +2677,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/controlFlowWithEmptyBody/while")
         public static class While extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2684,8 +2711,10 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/conventionNameCalls")
     public static class ConventionNameCalls extends AbstractLocalInspectionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator")
         public static class ReplaceCallWithBinaryOperator extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2893,6 +2922,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet")
         public static class ReplaceGetOrSet extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3026,6 +3056,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/convertNaNEquality")
     public static class ConvertNaNEquality extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3068,6 +3099,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/convertPairConstructorToToFunction")
     public static class ConvertPairConstructorToToFunction extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3085,6 +3117,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/convertSealedSubClassToObject")
     public static class ConvertSealedSubClassToObject extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3177,6 +3210,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/convertTwoComparisonsToRangeCheck")
     public static class ConvertTwoComparisonsToRangeCheck extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3349,6 +3383,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/copyWithoutNamedArguments")
     public static class CopyWithoutNamedArguments extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3371,8 +3406,10 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/coroutines")
     public static class Coroutines extends AbstractLocalInspectionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/coroutines/deferredIsResult")
         public static class DeferredIsResult extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3405,6 +3442,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/coroutines/directUseOfResultType")
         public static class DirectUseOfResultType extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3462,6 +3500,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/coroutines/redundantAsync")
         public static class RedundantAsync extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3524,6 +3563,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/coroutines/redundantRunCatching")
         public static class RedundantRunCatching extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3536,6 +3576,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/coroutines/suspendFunctionOnCoroutineScope")
         public static class SuspendFunctionOnCoroutineScope extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3639,6 +3680,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/covariantEquals")
     public static class CovariantEquals extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3696,6 +3738,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/delegationToVarProperty")
     public static class DelegationToVarProperty extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3723,6 +3766,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/deprecatedCallableAddReplaceWith")
     public static class DeprecatedCallableAddReplaceWith extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3855,6 +3899,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/doubleNegation")
     public static class DoubleNegation extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3882,6 +3927,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/emptyRange")
     public static class EmptyRange extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3894,6 +3940,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/equalsBetweenInconvertibleTypes")
     public static class EqualsBetweenInconvertibleTypes extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4011,6 +4058,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/explicitThis")
     public static class ExplicitThis extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4153,6 +4201,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/foldInitializerAndIfToElvis")
     public static class FoldInitializerAndIfToElvis extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4285,6 +4334,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/forEachParameterNotUsed")
     public static class ForEachParameterNotUsed extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4322,6 +4372,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/functionWithLambdaExpressionBody")
     public static class FunctionWithLambdaExpressionBody extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4378,6 +4429,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("testData/inspectionsLocal/functionWithLambdaExpressionBody/getterHasType2.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/functionWithLambdaExpressionBody/addArrow")
         public static class AddArrow extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -4395,6 +4447,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/functionWithLambdaExpressionBody/removeBraces")
         public static class RemoveBraces extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -4427,6 +4480,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/functionWithLambdaExpressionBody/specifyType")
         public static class SpecifyType extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -4444,6 +4498,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/functionWithLambdaExpressionBody/wrapRun")
         public static class WrapRun extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -4477,6 +4532,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/implicitNullableNothingType")
     public static class ImplicitNullableNothingType extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4529,6 +4585,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/implicitThis")
     public static class ImplicitThis extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4596,6 +4653,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/javaCollectionsStaticMethod")
     public static class JavaCollectionsStaticMethod extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4658,6 +4716,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/javaMapForEach")
     public static class JavaMapForEach extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4695,6 +4754,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/kdocMissingDocumentation")
     public static class KdocMissingDocumentation extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4717,6 +4777,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/lateinitVarOverridesLateinitVar")
     public static class LateinitVarOverridesLateinitVar extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4739,6 +4800,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/leakingThis")
     public static class LeakingThis extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4796,8 +4858,10 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/liftOut")
     public static class LiftOut extends AbstractLocalInspectionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/liftOut/ifToAssignment")
         public static class IfToAssignment extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -4960,6 +5024,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/liftOut/ifToReturn")
         public static class IfToReturn extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -5017,6 +5082,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/liftOut/tryToAssignment")
         public static class TryToAssignment extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -5089,6 +5155,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/liftOut/tryToReturn")
         public static class TryToReturn extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -5141,6 +5208,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/liftOut/whenToAssignment")
         public static class WhenToAssignment extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -5218,6 +5286,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/liftOut/whenToReturn")
         public static class WhenToReturn extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -5301,6 +5370,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/mainFunctionReturnUnit")
     public static class MainFunctionReturnUnit extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5343,6 +5413,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/mapGetWithNotNullAssertionOperator")
     public static class MapGetWithNotNullAssertionOperator extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5385,6 +5456,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/mayBeConstant")
     public static class MayBeConstant extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5512,6 +5584,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/memberVisibilityCanBePrivate")
     public static class MemberVisibilityCanBePrivate extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5549,6 +5622,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/migrateDiagnosticSuppression")
     public static class MigrateDiagnosticSuppression extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5571,6 +5645,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/moveLambdaOutsideParentheses")
     public static class MoveLambdaOutsideParentheses extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5693,6 +5768,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/moveSuspiciousCallableReferenceIntoParentheses")
     public static class MoveSuspiciousCallableReferenceIntoParentheses extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5795,6 +5871,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/moveVariableDeclarationIntoWhen")
     public static class MoveVariableDeclarationIntoWhen extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5907,6 +5984,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter")
     public static class NestedLambdaShadowedImplicitParameter extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -5989,6 +6067,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/nullChecksToSafeCall")
     public static class NullChecksToSafeCall extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6036,6 +6115,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/nullableBooleanElvis")
     public static class NullableBooleanElvis extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6068,6 +6148,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/objectLiteralToLambda")
     public static class ObjectLiteralToLambda extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6080,6 +6161,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/prohibitJvmOverloadsOnConstructorsOfAnnotationClassesMigration")
     public static class ProhibitJvmOverloadsOnConstructorsOfAnnotationClassesMigration extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6092,6 +6174,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/prohibitRepeatedUseSiteTargetAnnotationsMigration")
     public static class ProhibitRepeatedUseSiteTargetAnnotationsMigration extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6134,6 +6217,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/prohibitTypeParametersForLocalVariablesMigration")
     public static class ProhibitTypeParametersForLocalVariablesMigration extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6146,6 +6230,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/prohibitUseSiteTargetAnnotationsOnSuperTypesMigration")
     public static class ProhibitUseSiteTargetAnnotationsOnSuperTypesMigration extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6178,6 +6263,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/recursiveEqualsCall")
     public static class RecursiveEqualsCall extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6235,6 +6321,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantCompanionReference")
     public static class RedundantCompanionReference extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6477,6 +6564,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantElseInIf")
     public static class RedundantElseInIf extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6544,6 +6632,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantElvisReturnNull")
     public static class RedundantElvisReturnNull extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6571,6 +6660,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantEmptyInitializerBlock")
     public static class RedundantEmptyInitializerBlock extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6593,6 +6683,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantEnumConstructorInvocation")
     public static class RedundantEnumConstructorInvocation extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6620,6 +6711,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantExplicitType")
     public static class RedundantExplicitType extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6707,6 +6799,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantGetter")
     public static class RedundantGetter extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6779,6 +6872,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantInnerClassModifier")
     public static class RedundantInnerClassModifier extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6881,6 +6975,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantLabelMigration")
     public static class RedundantLabelMigration extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -6898,6 +6993,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantLambdaArrow")
     public static class RedundantLambdaArrow extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7075,6 +7171,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantObjectTypeCheck")
     public static class RedundantObjectTypeCheck extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7112,6 +7209,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantOverride")
     public static class RedundantOverride extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7259,6 +7357,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantRequireNotNullCall")
     public static class RedundantRequireNotNullCall extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7316,6 +7415,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantReturnLabel")
     public static class RedundantReturnLabel extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7343,6 +7443,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantSamConstructor")
     public static class RedundantSamConstructor extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7445,6 +7546,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantSemicolon")
     public static class RedundantSemicolon extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7527,6 +7629,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantSetter")
     public static class RedundantSetter extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7619,6 +7722,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantSuspend")
     public static class RedundantSuspend extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7646,6 +7750,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantUnitExpression")
     public static class RedundantUnitExpression extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7773,6 +7878,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantVisibilityModifier")
     public static class RedundantVisibilityModifier extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7820,6 +7926,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantWith")
     public static class RedundantWith extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -7927,6 +8034,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/removeCurlyBracesFromTemplate")
     public static class RemoveCurlyBracesFromTemplate extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8019,6 +8127,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/removeEmptyParenthesesFromAnnotationEntry")
     public static class RemoveEmptyParenthesesFromAnnotationEntry extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8056,6 +8165,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/removeRedundantBackticks")
     public static class RemoveRedundantBackticks extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8108,6 +8218,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/removeRedundantQualifierName")
     public static class RemoveRedundantQualifierName extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8525,6 +8636,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/removeRedundantSpreadOperator")
     public static class RemoveRedundantSpreadOperator extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8622,6 +8734,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/removeSetterParameterType")
     public static class RemoveSetterParameterType extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8634,6 +8747,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/removeToStringInStringTemplate")
     public static class RemoveToStringInStringTemplate extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8651,6 +8765,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceArrayEqualityOpWithArraysEquals")
     public static class ReplaceArrayEqualityOpWithArraysEquals extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8678,6 +8793,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceArrayOfWithLiteral")
     public static class ReplaceArrayOfWithLiteral extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8740,6 +8856,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceAssertBooleanWithAssertEquality")
     public static class ReplaceAssertBooleanWithAssertEquality extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8807,6 +8924,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceAssociateFunction")
     public static class ReplaceAssociateFunction extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8818,6 +8936,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("testData/inspectionsLocal/replaceAssociateFunction/version1_2.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceAssociateFunction/associateBy")
         public static class AssociateBy extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -8835,6 +8954,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceAssociateFunction/associateByKeyAndValue")
         public static class AssociateByKeyAndValue extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -8877,6 +8997,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceAssociateFunction/associateByTo")
         public static class AssociateByTo extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -8894,6 +9015,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceAssociateFunction/associateByToKeyAndValue")
         public static class AssociateByToKeyAndValue extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -8926,6 +9048,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceAssociateFunction/associateWith")
         public static class AssociateWith extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -8993,6 +9116,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceAssociateFunction/associateWithTo")
         public static class AssociateWithTo extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9031,6 +9155,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceCollectionCountWithSize")
     public static class ReplaceCollectionCountWithSize extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9073,6 +9198,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceGuardClauseWithFunctionCall")
     public static class ReplaceGuardClauseWithFunctionCall extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9099,6 +9225,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/version12.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/check")
         public static class Check extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9111,6 +9238,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/checkNotNull")
         public static class CheckNotNull extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9123,6 +9251,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require")
         public static class Require extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9175,6 +9304,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/requireNotNull")
         public static class RequireNotNull extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9193,8 +9323,10 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog")
     public static class ReplaceJavaStaticMethodWithKotlinAnalog extends AbstractLocalInspectionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections")
         public static class Collections extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9317,6 +9449,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/compare")
         public static class Compare extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9359,6 +9492,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/io")
         public static class Io extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9406,6 +9540,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/math")
         public static class Math extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9618,6 +9753,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/system")
         public static class System extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9630,6 +9766,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/toString")
         public static class ToString extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -9723,6 +9860,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceManualRangeWithIndicesCalls")
     public static class ReplaceManualRangeWithIndicesCalls extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9760,6 +9898,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty")
     public static class ReplaceNegatedIsEmptyWithIsNotEmpty extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9787,6 +9926,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceNotNullAssertionWithElvisReturn")
     public static class ReplaceNotNullAssertionWithElvisReturn extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9854,6 +9994,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replacePutWithAssignment")
     public static class ReplacePutWithAssignment extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9926,6 +10067,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceRangeStartEndInclusiveWithFirstLast")
     public static class ReplaceRangeStartEndInclusiveWithFirstLast extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -9968,6 +10110,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceRangeToWithUntil")
     public static class ReplaceRangeToWithUntil extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10015,6 +10158,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceStringFormatWithLiteral")
     public static class ReplaceStringFormatWithLiteral extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10067,8 +10211,10 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceSubstring")
     public static class ReplaceSubstring extends AbstractLocalInspectionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceSubstring/withDropLast")
         public static class WithDropLast extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10101,6 +10247,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceSubstring/withIndexingOperation")
         public static class WithIndexingOperation extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10123,6 +10270,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceSubstring/withSubstringAfter")
         public static class WithSubstringAfter extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10150,6 +10298,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceSubstring/withSubstringBefore")
         public static class WithSubstringBefore extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10182,6 +10331,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceSubstring/withTake")
         public static class WithTake extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10215,6 +10365,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceToStringWithStringTemplate")
     public static class ReplaceToStringWithStringTemplate extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10242,6 +10393,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceToWithInfixForm")
     public static class ReplaceToWithInfixForm extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10259,6 +10411,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceWithEnumMap")
     public static class ReplaceWithEnumMap extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10291,6 +10444,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceWithOperatorAssignment")
     public static class ReplaceWithOperatorAssignment extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10373,6 +10527,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/restrictReturnStatementTargetMigration")
     public static class RestrictReturnStatementTargetMigration extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10390,6 +10545,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/safeCastWithReturn")
     public static class SafeCastWithReturn extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10437,8 +10593,10 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/scopeFunctions")
     public static class ScopeFunctions extends AbstractLocalInspectionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/scopeFunctions/alsoToApply")
         public static class AlsoToApply extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10451,6 +10609,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/scopeFunctions/applyToAlso")
         public static class ApplyToAlso extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10513,6 +10672,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/scopeFunctions/letToRun")
         public static class LetToRun extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10560,6 +10720,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/scopeFunctions/runToLet")
         public static class RunToLet extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -10578,6 +10739,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/selfAssignment")
     public static class SelfAssignment extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10695,6 +10857,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/selfReferenceConstructorParameter")
     public static class SelfReferenceConstructorParameter extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10717,6 +10880,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/setterBackingFieldAssignment")
     public static class SetterBackingFieldAssignment extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -10809,6 +10973,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/simpleRedundantLet")
     public static class SimpleRedundantLet extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11206,6 +11371,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/simplifyAssertNotNull")
     public static class SimplifyAssertNotNull extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11268,6 +11434,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/simplifyNegatedBinaryExpression")
     public static class SimplifyNegatedBinaryExpression extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11335,6 +11502,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/simplifyWhenWithBooleanConstantCondition")
     public static class SimplifyWhenWithBooleanConstantCondition extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11412,6 +11580,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/sortModifiers")
     public static class SortModifiers extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11459,6 +11628,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/suspiciousAsDynamic")
     public static class SuspiciousAsDynamic extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11471,6 +11641,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/suspiciousCollectionReassignment")
     public static class SuspiciousCollectionReassignment extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11528,6 +11699,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/suspiciousVarProperty")
     public static class SuspiciousVarProperty extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11560,6 +11732,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/throwableNotThrown")
     public static class ThrowableNotThrown extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11682,6 +11855,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/trailingComma")
     public static class TrailingComma extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11779,6 +11953,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/unlabeledReturnInsideLambda")
     public static class UnlabeledReturnInsideLambda extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11806,6 +11981,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/unnecessaryVariable")
     public static class UnnecessaryVariable extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11873,6 +12049,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/unsafeCastFromDynamic")
     public static class UnsafeCastFromDynamic extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11895,6 +12072,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/unusedLambdaExpressionBody")
     public static class UnusedLambdaExpressionBody extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11912,6 +12090,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/unusedMainParameter")
     public static class UnusedMainParameter extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -11939,6 +12118,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/unusedReceiverParameter")
     public static class UnusedReceiverParameter extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12026,6 +12206,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/unusedSymbol")
     public static class UnusedSymbol extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12188,6 +12369,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/unusedUnaryOperator")
     public static class UnusedUnaryOperator extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12240,6 +12422,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/useExpressionBody")
     public static class UseExpressionBody extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12281,6 +12464,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("testData/inspectionsLocal/useExpressionBody/whenWithEarlyReturn.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/useExpressionBody/convertToExpressionBody")
         public static class ConvertToExpressionBody extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12487,6 +12671,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/while.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/inspectionsLocal/useExpressionBody/convertToExpressionBody/keepComments")
             public static class KeepComments extends AbstractLocalInspectionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -12516,6 +12701,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/usePropertyAccessSyntax")
     public static class UsePropertyAccessSyntax extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12538,6 +12724,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/warningOnMainUnusedParameterMigration")
     public static class WarningOnMainUnusedParameterMigration extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12555,6 +12742,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/whenWithOnlyElse")
     public static class WhenWithOnlyElse extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -12581,6 +12769,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("testData/inspectionsLocal/whenWithOnlyElse/simpleExpression.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/whenWithOnlyElse/subjectVariable")
         public static class SubjectVariable extends AbstractLocalInspectionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -12612,6 +12801,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/hasSameNameVariable4.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/blockElse")
             public static class BlockElse extends AbstractLocalInspectionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -12639,6 +12829,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/blockElseUsedAsExpression")
             public static class BlockElseUsedAsExpression extends AbstractLocalInspectionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -12666,6 +12857,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/inspectionsLocal/whenWithOnlyElse/subjectVariable/singleElse")
             public static class SingleElse extends AbstractLocalInspectionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -12715,6 +12907,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/wrapUnaryOperator")
     public static class WrapUnaryOperator extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {

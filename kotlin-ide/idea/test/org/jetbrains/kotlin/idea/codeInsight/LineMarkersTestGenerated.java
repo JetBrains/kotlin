@@ -31,6 +31,7 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         runTest("testData/codeInsight/lineMarker/MethodSeparators.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/lineMarker/dslMarker")
     public static class DslMarker extends AbstractLineMarkersTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -43,6 +44,7 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/lineMarker/overrideImplement")
     public static class OverrideImplement extends AbstractLineMarkersTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -180,6 +182,7 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/lineMarker/recursiveCall")
     public static class RecursiveCall extends AbstractLineMarkersTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -277,6 +280,7 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/lineMarker/runMarkers")
     public static class RunMarkers extends AbstractLineMarkersTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -294,6 +298,7 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/lineMarker/suspendCall")
     public static class SuspendCall extends AbstractLineMarkersTest {
         private void runTest(String testDataFilePath) throws Exception {

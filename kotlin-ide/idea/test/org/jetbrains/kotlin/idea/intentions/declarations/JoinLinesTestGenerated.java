@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/joinLines")
 public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/joinLines/addSemicolon")
     public static class AddSemicolon extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -114,6 +115,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/joinLines/declarationAndAssignment")
     public static class DeclarationAndAssignment extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -206,6 +208,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/joinLines/initializerAndIfToElvis")
     public static class InitializerAndIfToElvis extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -218,6 +221,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/joinLines/nestedIfs")
     public static class NestedIfs extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -255,6 +259,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/joinLines/removeBraces")
     public static class RemoveBraces extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -357,6 +362,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/joinLines/removeTrailingComma")
     public static class RemoveTrailingComma extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -424,6 +430,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/joinLines/stringTemplate")
     public static class StringTemplate extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {

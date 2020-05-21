@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentationTestBase {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/indentationOnNewline")
     public static class DirectSettings extends AbstractTypingIndentationTestBase {
         private void runTest(String testDataFilePath) throws Exception {
@@ -272,6 +272,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("testData/indentationOnNewline/While.after.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/indentationOnNewline/script")
         public static class Script extends AbstractTypingIndentationTestBase {
             private void runTest(String testDataFilePath) throws Exception {
@@ -310,6 +311,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/indentationOnNewline")
     public static class InvertedSettings extends AbstractTypingIndentationTestBase {
         private void runTest(String testDataFilePath) throws Exception {

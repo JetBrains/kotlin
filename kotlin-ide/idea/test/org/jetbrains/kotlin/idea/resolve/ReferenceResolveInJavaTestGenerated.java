@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolveInJavaTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/resolve/referenceInJava/binaryAndSource")
     public static class BinaryAndSource extends AbstractReferenceResolveInJavaTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -88,6 +88,7 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/resolve/referenceInJava/sourceOnly")
     public static class SourceOnly extends AbstractReferenceResolveInJavaTest {
         private void runTest(String testDataFilePath) throws Exception {

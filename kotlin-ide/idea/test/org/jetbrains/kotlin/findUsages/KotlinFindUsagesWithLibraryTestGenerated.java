@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/findUsages/libraryUsages")
 public class KotlinFindUsagesWithLibraryTestGenerated extends AbstractKotlinFindUsagesWithLibraryTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/findUsages/libraryUsages/javaLibrary")
     public static class JavaLibrary extends AbstractKotlinFindUsagesWithLibraryTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -59,6 +60,7 @@ public class KotlinFindUsagesWithLibraryTestGenerated extends AbstractKotlinFind
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/findUsages/libraryUsages/kotlinLibrary")
     public static class KotlinLibrary extends AbstractKotlinFindUsagesWithLibraryTest {
         private void runTest(String testDataFilePath) throws Exception {

@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/refactoring/inline")
 public class InlineTestGenerated extends AbstractInlineTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/inline/function")
     public static class Function extends AbstractInlineTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -98,6 +99,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/UnitReturnType2.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/inline/function/expressionBody")
         public static class ExpressionBody extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -220,6 +222,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/inline/function/fromIntellij")
         public static class FromIntellij extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -322,6 +325,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/inline/function/returnAtEnd")
         public static class ReturnAtEnd extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -435,6 +439,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/inline/inlineTypeAlias")
     public static class InlineTypeAlias extends AbstractInlineTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -472,6 +477,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/inline/inlineVariableOrProperty")
     public static class InlineVariableOrProperty extends AbstractInlineTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -588,6 +594,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/inlineVariableOrProperty/whenSubject.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/inline/inlineVariableOrProperty/addParenthesis")
         public static class AddParenthesis extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -755,6 +762,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/inline/inlineVariableOrProperty/explicateParameterTypes")
         public static class ExplicateParameterTypes extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -797,6 +805,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/inline/inlineVariableOrProperty/explicateTypeArgument")
         public static class ExplicateTypeArgument extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -854,6 +863,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/inline/inlineVariableOrProperty/property")
         public static class Property extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -915,6 +925,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/property/removeImport.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/inline/inlineVariableOrProperty/property/accessors")
             public static class Accessors extends AbstractInlineTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -953,6 +964,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/inline/inlineVariableOrProperty/stringTemplates")
         public static class StringTemplates extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {

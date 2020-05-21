@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class ExtractionTestGenerated extends AbstractExtractionTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/introduceVariable")
     public static class IntroduceVariable extends AbstractExtractionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -457,6 +457,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             runTest("testData/refactoring/introduceVariable/WhileCondition.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceVariable/explicateTypeArguments")
         public static class ExplicateTypeArguments extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -494,6 +495,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceVariable/extractToScope")
         public static class ExtractToScope extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -556,6 +558,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceVariable/multiDeclarations")
         public static class MultiDeclarations extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -608,6 +611,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceVariable/script")
         public static class Script extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -630,6 +634,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceVariable/stringTemplates")
         public static class StringTemplates extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -723,8 +728,10 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/extractFunction")
     public static class ExtractFunction extends AbstractExtractionTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/basic")
         public static class Basic extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1002,8 +1009,10 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/controlFlow")
         public static class ControlFlow extends AbstractExtractionTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/conditionalJumps")
             public static class ConditionalJumps extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1061,6 +1070,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/default")
             public static class Default extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1103,6 +1113,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/definiteReturns")
             public static class DefiniteReturns extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1150,6 +1161,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/evaluateExpression")
             public static class EvaluateExpression extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1227,6 +1239,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/exitPointEquivalence")
             public static class ExitPointEquivalence extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1274,6 +1287,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/initializer")
             public static class Initializer extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1316,6 +1330,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/outputValues")
             public static class OutputValues extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1448,6 +1463,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/returnTypeCandidates")
             public static class ReturnTypeCandidates extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1470,6 +1486,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/throws")
             public static class Throws extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1512,6 +1529,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/unextractable")
             public static class Unextractable extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1555,6 +1573,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/defaultContainer")
         public static class DefaultContainer extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1597,6 +1616,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/delegation")
         public static class Delegation extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1619,6 +1639,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/duplicates")
         public static class Duplicates extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1681,8 +1702,10 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/initializers")
         public static class Initializers extends AbstractExtractionTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/initializers/accessors")
             public static class Accessors extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1710,6 +1733,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/initializers/classes")
             public static class Classes extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1737,6 +1761,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/initializers/functions")
             public static class Functions extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1804,6 +1829,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/initializers/properties")
             public static class Properties extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1852,6 +1878,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/multiline")
         public static class Multiline extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1879,8 +1906,10 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/parameters")
         public static class Parameters extends AbstractExtractionTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/parameters/candidateTypes")
             public static class CandidateTypes extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1973,6 +2002,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/parameters/capturedFunctions")
             public static class CapturedFunctions extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -2005,6 +2035,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/parameters/extractSuper")
             public static class ExtractSuper extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -2032,6 +2063,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/parameters/extractThis")
             public static class ExtractThis extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -2134,6 +2166,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/parameters/it")
             public static class It extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -2161,6 +2194,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/parameters/misc")
             public static class Misc extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -2298,6 +2332,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/parameters/nonDenotableTypes")
             public static class NonDenotableTypes extends AbstractExtractionTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -2341,6 +2376,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/script")
         public static class Script extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2358,6 +2394,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/stringTemplates")
         public static class StringTemplates extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2445,6 +2482,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/typeParameters")
         public static class TypeParameters extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2538,6 +2576,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/introduceProperty")
     public static class IntroduceProperty extends AbstractExtractionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2719,6 +2758,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             runTest("testData/refactoring/introduceProperty/typeParameterResolvableInTargetScope.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceProperty/script")
         public static class Script extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2741,6 +2781,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceProperty/stringTemplates")
         public static class StringTemplates extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2829,6 +2870,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/introduceParameter")
     public static class IntroduceParameter extends AbstractExtractionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3100,6 +3142,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             runTest("testData/refactoring/introduceParameter/while.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceParameter/multiline")
         public static class Multiline extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3127,6 +3170,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceParameter/script")
         public static class Script extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3149,6 +3193,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceParameter/stringTemplates")
         public static class StringTemplates extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3236,6 +3281,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceParameter/variableConversion")
         public static class VariableConversion extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3254,6 +3300,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/introduceLambdaParameter")
     public static class IntroduceLambdaParameter extends AbstractExtractionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3310,6 +3357,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             runTest("testData/refactoring/introduceLambdaParameter/suspendCalls.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceLambdaParameter/multiline")
         public static class Multiline extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3337,6 +3385,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/introduceLambdaParameter/stringTemplates")
         public static class StringTemplates extends AbstractExtractionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -3425,6 +3474,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/introduceJavaParameter")
     public static class IntroduceJavaParameter extends AbstractExtractionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3442,6 +3492,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/introduceTypeParameter")
     public static class IntroduceTypeParameter extends AbstractExtractionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3479,6 +3530,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/introduceTypeAlias")
     public static class IntroduceTypeAlias extends AbstractExtractionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3631,6 +3683,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/extractSuperclass")
     public static class ExtractSuperclass extends AbstractExtractionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3728,6 +3781,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/extractInterface")
     public static class ExtractInterface extends AbstractExtractionTest {
         private void runTest(String testDataFilePath) throws Exception {

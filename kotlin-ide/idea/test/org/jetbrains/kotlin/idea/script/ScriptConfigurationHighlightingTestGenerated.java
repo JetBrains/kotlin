@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class ScriptConfigurationHighlightingTestGenerated extends AbstractScriptConfigurationHighlightingTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/script/definition/highlighting")
     public static class Highlighting extends AbstractScriptConfigurationHighlightingTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -133,6 +133,7 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/script/definition/complex")
     public static class Complex extends AbstractScriptConfigurationHighlightingTest {
         private void runTest(String testDataFilePath) throws Exception {

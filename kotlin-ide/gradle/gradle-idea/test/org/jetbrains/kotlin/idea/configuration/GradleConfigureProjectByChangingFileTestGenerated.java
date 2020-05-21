@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("gradle/gradle-idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractGradleConfigureProjectByChangingFileTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../../idea/testData/configuration/gradle")
     public static class Gradle extends AbstractGradleConfigureProjectByChangingFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -73,6 +73,7 @@ public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractG
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../../idea/testData/configuration/gsk")
     public static class Gsk extends AbstractGradleConfigureProjectByChangingFileTest {
         private void runTest(String testDataFilePath) throws Exception {

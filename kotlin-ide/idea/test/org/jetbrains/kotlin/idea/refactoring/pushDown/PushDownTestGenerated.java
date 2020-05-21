@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class PushDownTestGenerated extends AbstractPushDownTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/pushDown/k2k")
     public static class K2K extends AbstractPushDownTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -128,6 +128,7 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/pushDown/k2j")
     public static class K2J extends AbstractPushDownTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -140,6 +141,7 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/pushDown/j2k")
     public static class J2K extends AbstractPushDownTest {
         private void runTest(String testDataFilePath) throws Exception {

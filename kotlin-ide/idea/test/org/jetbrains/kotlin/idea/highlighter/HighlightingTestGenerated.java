@@ -156,6 +156,7 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         runTest("testData/highlighter/VariablesAsFunctions.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/highlighter/deprecated")
     public static class Deprecated extends AbstractHighlightingTest {
         private void runTest(String testDataFilePath) throws Exception {

@@ -156,6 +156,7 @@ public class PerformanceHighlightingTestGenerated extends AbstractPerformanceHig
         runTest("../idea/testData/highlighter/VariablesAsFunctions.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/highlighter/deprecated")
     public static class Deprecated extends AbstractPerformanceHighlightingTest {
         private void runTest(String testDataFilePath) throws Exception {

@@ -401,6 +401,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         runTest("../idea/testData/resolve/references/WrongNumberOfTypeArgumentsInSupertype.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/resolve/references/delegatedPropertyAccessors")
     public static class DelegatedPropertyAccessors extends AbstractFirReferenceResolveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -412,6 +413,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             runTest("../idea/testData/resolve/references/delegatedPropertyAccessors/unresolved.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("../idea/testData/resolve/references/delegatedPropertyAccessors/inSource")
         public static class InSource extends AbstractFirReferenceResolveTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -439,6 +441,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("../idea/testData/resolve/references/delegatedPropertyAccessors/inStandardLibrary")
         public static class InStandardLibrary extends AbstractFirReferenceResolveTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -457,6 +460,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/resolve/references/forLoopIn")
     public static class ForLoopIn extends AbstractFirReferenceResolveTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -468,6 +472,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             runTest("../idea/testData/resolve/references/forLoopIn/unresolvedIterator.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("../idea/testData/resolve/references/forLoopIn/inBuiltIns")
         public static class InBuiltIns extends AbstractFirReferenceResolveTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -485,6 +490,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("../idea/testData/resolve/references/forLoopIn/inLibrary")
         public static class InLibrary extends AbstractFirReferenceResolveTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -497,6 +503,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("../idea/testData/resolve/references/forLoopIn/inSource")
         public static class InSource extends AbstractFirReferenceResolveTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -520,6 +527,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/resolve/references/invoke")
     public static class Invoke extends AbstractFirReferenceResolveTest {
         private void runTest(String testDataFilePath) throws Exception {

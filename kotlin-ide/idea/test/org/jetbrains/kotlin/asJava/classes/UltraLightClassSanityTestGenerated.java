@@ -146,6 +146,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         runTest("testData/compiler/asJava/lightClasses/VarArgs.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/compilationErrors")
     public static class CompilationErrors extends AbstractUltraLightClassSanityTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -248,6 +249,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/delegation")
     public static class Delegation extends AbstractUltraLightClassSanityTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -270,6 +272,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/facades")
     public static class Facades extends AbstractUltraLightClassSanityTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -302,6 +305,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/ideRegression")
     public static class IdeRegression extends AbstractUltraLightClassSanityTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -364,6 +368,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/nullabilityAnnotations")
     public static class NullabilityAnnotations extends AbstractUltraLightClassSanityTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -461,6 +466,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/object")
     public static class Object extends AbstractUltraLightClassSanityTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -473,6 +479,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/publicField")
     public static class PublicField extends AbstractUltraLightClassSanityTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -490,6 +497,7 @@ public class UltraLightClassSanityTestGenerated extends AbstractUltraLightClassS
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/script")
     public static class Script extends AbstractUltraLightClassSanityTest {
         private void runTest(String testDataFilePath) throws Exception {

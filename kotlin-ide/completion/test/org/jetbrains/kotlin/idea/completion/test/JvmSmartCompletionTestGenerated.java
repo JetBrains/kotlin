@@ -516,6 +516,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         runTest("testData/smart/WrongReceiver.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/afterAs")
     public static class AfterAs extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -538,6 +539,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/anonymousObject")
     public static class AnonymousObject extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -570,6 +572,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/callableReference")
     public static class CallableReference extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -692,6 +695,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/constructor")
     public static class Constructor extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -789,6 +793,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/forLoopRange")
     public static class ForLoopRange extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -831,6 +836,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/functionLiterals")
     public static class FunctionLiterals extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -928,6 +934,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/generics")
     public static class Generics extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -965,6 +972,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/heuristicSignatures")
     public static class HeuristicSignatures extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1037,6 +1045,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/ifValue")
     public static class IfValue extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1074,6 +1083,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/inElvisOperator")
     public static class InElvisOperator extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1111,6 +1121,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/inOperator")
     public static class InOperator extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1168,6 +1179,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/inheritors")
     public static class Inheritors extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1220,6 +1232,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/lambdaSignature")
     public static class LambdaSignature extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1262,6 +1275,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/multipleArgsItem")
     public static class MultipleArgsItem extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1334,6 +1348,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/propertyDelegate")
     public static class PropertyDelegate extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1461,6 +1476,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/smartCasts")
     public static class SmartCasts extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1518,6 +1534,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/this")
     public static class This extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1565,6 +1582,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/vararg")
     public static class Vararg extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1607,6 +1625,7 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/smart/whenEntry")
     public static class WhenEntry extends AbstractJvmSmartCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {

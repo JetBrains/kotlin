@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/compiler/loadJava/compiledKotlin")
 public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/annotations")
     public static class Annotations extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -73,6 +74,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             runTest("testData/compiler/loadJava/compiledKotlin/annotations/TargetedAnnotation.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/annotations/classMembers")
         public static class ClassMembers extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -135,6 +137,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/annotations/classes")
         public static class Classes extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -217,6 +220,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/annotations/packageMembers")
         public static class PackageMembers extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -264,6 +268,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/annotations/parameters")
         public static class Parameters extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -331,6 +336,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields")
         public static class PropertiesWithoutBackingFields extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -378,6 +384,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/annotations/types")
         public static class Types extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -430,6 +437,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/annotations/withUseSiteTarget")
         public static class WithUseSiteTarget extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -458,6 +466,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/class")
     public static class Class extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -644,6 +653,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             runTest("testData/compiler/loadJava/compiledKotlin/class/Trait.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/class/javaBean")
         public static class JavaBean extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -682,6 +692,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/classFun")
     public static class ClassFun extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -714,6 +725,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/classObject")
     public static class ClassObject extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -786,6 +798,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/constructor")
     public static class Constructor extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -872,6 +885,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             runTest("testData/compiler/loadJava/compiledKotlin/constructor/PrivateConstructor1WithParamDefaultValue.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/constructor/vararg")
         public static class Vararg extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -890,6 +904,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/coroutines")
     public static class Coroutines extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -902,6 +917,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/dataClass")
     public static class DataClass extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -929,6 +945,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/enum")
     public static class Enum extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -966,6 +983,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/fromLoadJava")
     public static class FromLoadJava extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1142,6 +1160,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             runTest("testData/compiler/loadJava/compiledKotlin/fromLoadJava/UnboundWildcard.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/fromLoadJava/kotlinSignature")
         public static class KotlinSignature extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1228,6 +1247,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 runTest("testData/compiler/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/StarProjection.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/compiler/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error")
             public static class Error extends AbstractResolveByStubTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1370,6 +1390,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/compiler/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation")
             public static class Propagation extends AbstractResolveByStubTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1381,6 +1402,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                     runTest("testData/compiler/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/PropagateTypeArgumentNullable.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/compiler/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter")
                 public static class Parameter extends AbstractResolveByStubTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -1518,6 +1540,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                     }
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/compiler/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return")
                 public static class Return extends AbstractResolveByStubTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -1695,6 +1718,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                     }
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/compiler/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter")
                 public static class TypeParameter extends AbstractResolveByStubTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -1749,6 +1773,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/fromLoadJava/library")
         public static class Library extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1771,6 +1796,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/fromLoadJava/modality")
         public static class Modality extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1783,6 +1809,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/fromLoadJava/notNull")
         public static class NotNull extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1816,6 +1843,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/fun")
     public static class Fun extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1877,6 +1905,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             runTest("testData/compiler/loadJava/compiledKotlin/fun/PropagateSubclassOfComparable.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/fun/genericWithTypeVariables")
         public static class GenericWithTypeVariables extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1934,6 +1963,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/fun/genericWithoutTypeVariables")
         public static class GenericWithoutTypeVariables extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1966,6 +1996,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/fun/nonGeneric")
         public static class NonGeneric extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2053,6 +2084,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/fun/vararg")
         public static class Vararg extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2076,6 +2108,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/inline")
     public static class Inline extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2088,6 +2121,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/memberOrder")
     public static class MemberOrder extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2125,6 +2159,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/nested")
     public static class Nested extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2147,6 +2182,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/platformTypes")
     public static class PlatformTypes extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2164,6 +2200,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/prop")
     public static class Prop extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2340,6 +2377,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             runTest("testData/compiler/loadJava/compiledKotlin/prop/VarWithDelegated.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/compiler/loadJava/compiledKotlin/prop/defaultAccessors")
         public static class DefaultAccessors extends AbstractResolveByStubTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2398,6 +2436,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/type")
     public static class Type extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2560,6 +2599,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/typealias")
     public static class Typealias extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2587,6 +2627,7 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/visibility")
     public static class Visibility extends AbstractResolveByStubTest {
         private void runTest(String testDataFilePath) throws Exception {

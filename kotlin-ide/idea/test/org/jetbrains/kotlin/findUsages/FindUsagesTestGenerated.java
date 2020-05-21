@@ -19,10 +19,11 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/findUsages/kotlin")
     public static class Kotlin extends AbstractFindUsagesTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/companionObject")
         public static class CompanionObject extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -50,6 +51,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/conventions")
         public static class Conventions extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -141,6 +143,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 runTest("testData/findUsages/kotlin/conventions/unaryMinus.0.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/findUsages/kotlin/conventions/components")
             public static class Components extends AbstractFindUsagesTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -244,6 +247,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findClassUsages")
         public static class FindClassUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -541,6 +545,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findFunctionUsages")
         public static class FindFunctionUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -728,6 +733,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findJavaPropertyUsages")
         public static class FindJavaPropertyUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -750,6 +756,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findObjectUsages")
         public static class FindObjectUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -792,6 +799,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findPackageUsages")
         public static class FindPackageUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -804,6 +812,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findParameterUsages")
         public static class FindParameterUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -846,6 +855,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findPrimaryConstructorUsages")
         public static class FindPrimaryConstructorUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -888,6 +898,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findPropertyUsages")
         public static class FindPropertyUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1040,6 +1051,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findSecondaryConstructorUsages")
         public static class FindSecondaryConstructorUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1067,6 +1079,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findTypeAliasUsages")
         public static class FindTypeAliasUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1079,6 +1092,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findTypeParameterUsages")
         public static class FindTypeParameterUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1101,6 +1115,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findWithFilteringImports")
         public static class FindWithFilteringImports extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1113,6 +1128,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/findWithStructuralGrouping")
         public static class FindWithStructuralGrouping extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1135,8 +1151,10 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/internal")
         public static class Internal extends AbstractFindUsagesTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/findUsages/kotlin/internal/findFunctionUsages")
             public static class FindFunctionUsages extends AbstractFindUsagesTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1179,6 +1197,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/findUsages/kotlin/internal/findPrimaryConstructorUsages")
             public static class FindPrimaryConstructorUsages extends AbstractFindUsagesTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1196,6 +1215,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/findUsages/kotlin/internal/findPropertyUsages")
             public static class FindPropertyUsages extends AbstractFindUsagesTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1223,6 +1243,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/findUsages/kotlin/internal/findSecondaryConstructorUsages")
             public static class FindSecondaryConstructorUsages extends AbstractFindUsagesTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1246,6 +1267,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/propertyFiles")
         public static class PropertyFiles extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1263,6 +1285,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/script")
         public static class Script extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1295,6 +1318,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/unresolvedAnnotation")
         public static class UnresolvedAnnotation extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1307,6 +1331,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/variable")
         public static class Variable extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1335,8 +1360,10 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/findUsages/java")
     public static class Java extends AbstractFindUsagesTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/java/findConstructorUsages")
         public static class FindConstructorUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1374,6 +1401,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/java/findJavaClassUsages")
         public static class FindJavaClassUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1496,6 +1524,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/java/findJavaFieldUsages")
         public static class FindJavaFieldUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1508,6 +1537,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/java/findJavaMethodUsages")
         public static class FindJavaMethodUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1585,6 +1615,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/java/findJavaPropertyUsages")
         public static class FindJavaPropertyUsages extends AbstractFindUsagesTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1603,6 +1634,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/findUsages/propertyFiles")
     public static class PropertyFiles extends AbstractFindUsagesTest {
         private void runTest(String testDataFilePath) throws Exception {

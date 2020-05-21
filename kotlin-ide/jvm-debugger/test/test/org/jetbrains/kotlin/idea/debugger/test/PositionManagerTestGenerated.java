@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("jvm-debugger/test")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/positionManager")
     public static class SingleFile extends AbstractPositionManagerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -128,6 +128,7 @@ public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/positionManager")
     public static class MultiFile extends AbstractPositionManagerTest {
         private void runTest(String testDataFilePath) throws Exception {

@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("jvm-debugger/test")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpressionForDebuggerTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/selectExpression")
     public static class SelectExpression extends AbstractSelectExpressionForDebuggerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -218,6 +218,7 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/selectExpression/disallowMethodCalls")
     public static class DisallowMethodCalls extends AbstractSelectExpressionForDebuggerTest {
         private void runTest(String testDataFilePath) throws Exception {

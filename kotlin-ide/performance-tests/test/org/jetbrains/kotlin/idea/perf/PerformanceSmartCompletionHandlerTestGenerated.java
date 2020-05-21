@@ -726,6 +726,7 @@ public class PerformanceSmartCompletionHandlerTestGenerated extends AbstractPerf
         runTest("../completion/testData/handlers/smart/WhenElse.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../completion/testData/handlers/smart/lambda")
     public static class Lambda extends AbstractPerformanceSmartCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -773,6 +774,7 @@ public class PerformanceSmartCompletionHandlerTestGenerated extends AbstractPerf
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../completion/testData/handlers/smart/lambdaSignature")
     public static class LambdaSignature extends AbstractPerformanceSmartCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -790,6 +792,7 @@ public class PerformanceSmartCompletionHandlerTestGenerated extends AbstractPerf
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../completion/testData/handlers/smart/suspendLambdaSignature")
     public static class SuspendLambdaSignature extends AbstractPerformanceSmartCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {

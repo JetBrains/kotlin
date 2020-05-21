@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("project-wizard/idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class ProjectTemplateNewWizardProjectImportTestGenerated extends AbstractProjectTemplateNewWizardProjectImportTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../cli/testData/projectTemplatesBuildFileGeneration")
     public static class GradleKts extends AbstractProjectTemplateNewWizardProjectImportTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -73,6 +73,7 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../cli/testData/projectTemplatesBuildFileGeneration")
     public static class GradleGroovy extends AbstractProjectTemplateNewWizardProjectImportTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -125,6 +126,7 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../cli/testData/projectTemplatesBuildFileGeneration")
     public static class Maven extends AbstractProjectTemplateNewWizardProjectImportTest {
         private void runTest(String testDataFilePath) throws Exception {

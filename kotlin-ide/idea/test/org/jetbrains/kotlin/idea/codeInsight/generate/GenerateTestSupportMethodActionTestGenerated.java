@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/codeInsight/generate/testFrameworkSupport")
 public class GenerateTestSupportMethodActionTestGenerated extends AbstractGenerateTestSupportMethodActionTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/generate/testFrameworkSupport/jUnit4")
     public static class JUnit4 extends AbstractGenerateTestSupportMethodActionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -64,6 +65,7 @@ public class GenerateTestSupportMethodActionTestGenerated extends AbstractGenera
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/generate/testFrameworkSupport/junit3")
     public static class Junit3 extends AbstractGenerateTestSupportMethodActionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -96,6 +98,7 @@ public class GenerateTestSupportMethodActionTestGenerated extends AbstractGenera
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/generate/testFrameworkSupport/testNG")
     public static class TestNG extends AbstractGenerateTestSupportMethodActionTest {
         private void runTest(String testDataFilePath) throws Exception {

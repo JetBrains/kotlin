@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/codeInsight/generate/toString")
 public class GenerateToStringActionTestGenerated extends AbstractGenerateToStringActionTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/generate/toString/common")
     public static class Common extends AbstractGenerateToStringActionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -44,6 +45,7 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/generate/toString/multipeTemplates")
     public static class MultipeTemplates extends AbstractGenerateToStringActionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -96,6 +98,7 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/generate/toString/singleTemplate")
     public static class SingleTemplate extends AbstractGenerateToStringActionTest {
         private void runTest(String testDataFilePath) throws Exception {

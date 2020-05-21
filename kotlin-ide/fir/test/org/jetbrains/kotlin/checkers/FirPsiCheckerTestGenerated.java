@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("fir")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class FirPsiCheckerTestGenerated extends AbstractFirPsiCheckerTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/checker")
     public static class Checker extends AbstractFirPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -358,6 +358,7 @@ public class FirPsiCheckerTestGenerated extends AbstractFirPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/checker/regression")
     public static class Regression extends AbstractFirPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -595,6 +596,7 @@ public class FirPsiCheckerTestGenerated extends AbstractFirPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/checker/recovery")
     public static class Recovery extends AbstractFirPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -617,6 +619,7 @@ public class FirPsiCheckerTestGenerated extends AbstractFirPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/checker/rendering")
     public static class Rendering extends AbstractFirPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -629,8 +632,10 @@ public class FirPsiCheckerTestGenerated extends AbstractFirPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/checker/duplicateJvmSignature")
     public static class DuplicateJvmSignature extends AbstractFirPsiCheckerTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("../idea/testData/checker/duplicateJvmSignature/fields")
         public static class Fields extends AbstractFirPsiCheckerTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -643,6 +648,7 @@ public class FirPsiCheckerTestGenerated extends AbstractFirPsiCheckerTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("../idea/testData/checker/duplicateJvmSignature/functionAndProperty")
         public static class FunctionAndProperty extends AbstractFirPsiCheckerTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -700,6 +706,7 @@ public class FirPsiCheckerTestGenerated extends AbstractFirPsiCheckerTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("../idea/testData/checker/duplicateJvmSignature/traitImpl")
         public static class TraitImpl extends AbstractFirPsiCheckerTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -713,6 +720,7 @@ public class FirPsiCheckerTestGenerated extends AbstractFirPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/checker/infos")
     public static class Infos extends AbstractFirPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -800,6 +808,7 @@ public class FirPsiCheckerTestGenerated extends AbstractFirPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("../idea/testData/checker/diagnosticsMessage")
     public static class DiagnosticsMessage extends AbstractFirPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {

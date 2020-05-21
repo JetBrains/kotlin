@@ -211,8 +211,10 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         runTest("testData/weighers/basic/UnavailableDslReceiver.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/weighers/basic/contextualReturn")
     public static class ContextualReturn extends AbstractBasicCompletionWeigherTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/weighers/basic/contextualReturn/noReturnType")
         public static class NoReturnType extends AbstractBasicCompletionWeigherTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -275,6 +277,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/weighers/basic/contextualReturn/withReturnType")
         public static class WithReturnType extends AbstractBasicCompletionWeigherTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -368,6 +371,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/weighers/basic/expectedInfo")
     public static class ExpectedInfo extends AbstractBasicCompletionWeigherTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -450,6 +454,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/weighers/basic/parameterNameAndType")
     public static class ParameterNameAndType extends AbstractBasicCompletionWeigherTest {
         private void runTest(String testDataFilePath) throws Exception {

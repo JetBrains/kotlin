@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentHighlightingTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker/codeFragments")
     public static class CodeFragments extends AbstractCodeFragmentHighlightingTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -158,6 +158,7 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker/codeFragments/imports")
     public static class Imports extends AbstractCodeFragmentHighlightingTest {
         private void runTest(String testDataFilePath) throws Exception {

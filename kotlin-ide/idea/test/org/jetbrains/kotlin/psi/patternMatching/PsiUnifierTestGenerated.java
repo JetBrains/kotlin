@@ -22,8 +22,10 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/unifier")
 public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/unifier/equivalence")
     public static class Equivalence extends AbstractPsiUnifierTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/unifier/equivalence/controlStructures")
         public static class ControlStructures extends AbstractPsiUnifierTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -95,6 +97,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 runTest("testData/unifier/equivalence/controlStructures/whileRuntime.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/controlStructures/blocks")
             public static class Blocks extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -118,8 +121,10 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/unifier/equivalence/declarations")
         public static class Declarations extends AbstractPsiUnifierTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/declarations/classesAndObjects")
             public static class ClassesAndObjects extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -157,6 +162,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/declarations/localCallables")
             public static class LocalCallables extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -183,6 +189,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                     runTest("testData/unifier/equivalence/declarations/localCallables/multiDeclaration.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/unifier/equivalence/declarations/localCallables/lambdas")
                 public static class Lambdas extends AbstractPsiUnifierTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -216,6 +223,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/declarations/typeParameters")
             public static class TypeParameters extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -229,6 +237,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/unifier/equivalence/expressions")
         public static class Expressions extends AbstractPsiUnifierTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -260,6 +269,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 runTest("testData/unifier/equivalence/expressions/stringTemplate.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/expressions/callableReferences")
             public static class CallableReferences extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -282,6 +292,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/expressions/calls")
             public static class Calls extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -339,6 +350,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/expressions/casts")
             public static class Casts extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -361,6 +373,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/expressions/conventions")
             public static class Conventions extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -417,6 +430,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                     runTest("testData/unifier/equivalence/expressions/conventions/unaryMinus.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/unifier/equivalence/expressions/conventions/assignments")
                 public static class Assignments extends AbstractPsiUnifierTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -449,6 +463,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                     }
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/unifier/equivalence/expressions/conventions/invoke")
                 public static class Invoke extends AbstractPsiUnifierTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -477,6 +492,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/expressions/misc")
             public static class Misc extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -499,6 +515,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/expressions/super")
             public static class Super extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -526,6 +543,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/expressions/this")
             public static class This extends AbstractPsiUnifierTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -584,6 +602,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/unifier/equivalence/types")
         public static class Types extends AbstractPsiUnifierTest {
             private void runTest(String testDataFilePath) throws Exception {

@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("jvm-debugger/test")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluateExpressionTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/evaluation/singleBreakpoint")
     public static class SingleBreakpoint extends AbstractKotlinEvaluateExpressionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -507,6 +507,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("testData/evaluation/singleBreakpoint/.kt.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/evaluation/singleBreakpoint/compilingEvaluator")
         public static class CompilingEvaluator extends AbstractKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -569,6 +570,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/evaluation/singleBreakpoint/coroutines")
         public static class Coroutines extends AbstractKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -611,6 +613,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/evaluation/singleBreakpoint/createExpression")
         public static class CreateExpression extends AbstractKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -633,6 +636,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/evaluation/singleBreakpoint/extraVariables")
         public static class ExtraVariables extends AbstractKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -695,6 +699,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/evaluation/singleBreakpoint/frame")
         public static class Frame extends AbstractKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -942,6 +947,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/evaluation/singleBreakpoint/javaContext")
         public static class JavaContext extends AbstractKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -979,6 +985,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/evaluation/singleBreakpoint/labels")
         public static class Labels extends AbstractKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1011,6 +1018,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/evaluation/singleBreakpoint/lambdas")
         public static class Lambdas extends AbstractKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1068,6 +1076,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/evaluation/singleBreakpoint/renderer")
         public static class Renderer extends AbstractKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1081,6 +1090,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/evaluation/multipleBreakpoints")
     public static class MultipleBreakpoints extends AbstractKotlinEvaluateExpressionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1212,6 +1222,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("testData/evaluation/multipleBreakpoints/withoutBodyTypeParameters.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/evaluation/multipleBreakpoints/library")
         public static class Library extends AbstractKotlinEvaluateExpressionTest {
             private void runTest(String testDataFilePath) throws Exception {

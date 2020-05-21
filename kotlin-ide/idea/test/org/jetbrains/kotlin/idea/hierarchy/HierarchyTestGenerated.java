@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class HierarchyTestGenerated extends AbstractHierarchyTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/hierarchy/class/type")
     public static class Type extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -173,6 +173,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/hierarchy/class/super")
     public static class Super extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -200,6 +201,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/hierarchy/class/sub")
     public static class Sub extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -277,6 +279,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/hierarchy/calls/callers")
     public static class Callers extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -389,6 +392,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/hierarchy/calls/callersJava")
     public static class CallersJava extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -401,6 +405,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/hierarchy/calls/callees")
     public static class Callees extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -473,6 +478,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/hierarchy/overrides")
     public static class Overrides extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {

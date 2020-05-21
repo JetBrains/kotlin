@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("scripting-support")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/scratch")
     public static class ScratchCompiling extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -103,6 +103,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/scratch")
     public static class ScratchRepl extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -185,6 +186,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/scratch/multiFile")
     public static class ScratchMultiFile extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -202,6 +204,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/worksheet")
     public static class WorksheetCompiling extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -214,6 +217,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/worksheet")
     public static class WorksheetRepl extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -226,6 +230,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/worksheet/multiFile")
     public static class WorksheetMultiFile extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -243,6 +248,7 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/scratch/rightPanelOutput")
     public static class ScratchRightPanelOutput extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {

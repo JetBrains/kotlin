@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/sequence/streams/sequence")
 public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCase {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/sequence/streams/sequence/append")
     public static class Append extends AbstractSequenceTraceTestCase {
         private void runTest(String testDataFilePath) throws Exception {
@@ -49,6 +50,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/sequence/streams/sequence/distinct")
     public static class Distinct extends AbstractSequenceTraceTestCase {
         private void runTest(String testDataFilePath) throws Exception {
@@ -91,6 +93,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/sequence/streams/sequence/filter")
     public static class Filter extends AbstractSequenceTraceTestCase {
         private void runTest(String testDataFilePath) throws Exception {
@@ -148,6 +151,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/sequence/streams/sequence/flatMap")
     public static class FlatMap extends AbstractSequenceTraceTestCase {
         private void runTest(String testDataFilePath) throws Exception {
@@ -165,6 +169,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/sequence/streams/sequence/map")
     public static class Map extends AbstractSequenceTraceTestCase {
         private void runTest(String testDataFilePath) throws Exception {
@@ -192,6 +197,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/sequence/streams/sequence/misc")
     public static class Misc extends AbstractSequenceTraceTestCase {
         private void runTest(String testDataFilePath) throws Exception {
@@ -274,6 +280,7 @@ public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCas
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/sequence/streams/sequence/sort")
     public static class Sort extends AbstractSequenceTraceTestCase {
         private void runTest(String testDataFilePath) throws Exception {

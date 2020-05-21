@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/editor/optimizeImports/jvm")
     public static class Jvm extends AbstractJvmOptimizeImportsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -167,6 +167,7 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             runTest("testData/editor/optimizeImports/jvm/WithAliases.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/editor/optimizeImports/jvm/allUnderImports")
         public static class AllUnderImports extends AbstractJvmOptimizeImportsTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -220,6 +221,7 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/editor/optimizeImports/common")
     public static class Common extends AbstractJvmOptimizeImportsTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -386,6 +388,7 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             runTest("testData/editor/optimizeImports/common/WithAlias2.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/editor/optimizeImports/common/kt21515")
         public static class Kt21515 extends AbstractJvmOptimizeImportsTest {
             private void runTest(String testDataFilePath) throws Exception {

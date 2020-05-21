@@ -19,10 +19,11 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations")
     public static class ClassBodyDeclarations extends AbstractMoveStatementTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations/accessors")
         public static class Accessors extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -50,6 +51,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations/class")
         public static class Class extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -177,6 +179,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations/classInitializer")
         public static class ClassInitializer extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -244,6 +247,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations/enums")
         public static class Enums extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -291,6 +295,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations/function")
         public static class Function extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -393,6 +398,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors")
         public static class FunctionAnchors extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -430,6 +436,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations/property")
         public static class Property extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -517,6 +524,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations/propertyAnchors")
         public static class PropertyAnchors extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -540,8 +548,10 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/moveUpDown/closingBraces")
     public static class ClosingBraces extends AbstractMoveStatementTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/closingBraces/for")
         public static class For extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -559,6 +569,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/closingBraces/function")
         public static class Function extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -586,6 +597,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/closingBraces/if")
         public static class If extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -613,6 +625,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/closingBraces/nested")
         public static class Nested extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -630,6 +643,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/closingBraces/when")
         public static class When extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -667,6 +681,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/closingBraces/while")
         public static class While extends AbstractMoveStatementTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -695,6 +710,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/moveUpDown/expressions")
     public static class Expressions extends AbstractMoveStatementTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1127,6 +1143,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/moveUpDown/parametersAndArguments")
     public static class ParametersAndArguments extends AbstractMoveStatementTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1254,6 +1271,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/moveUpDown/trailingComma")
     public static class TrailingComma extends AbstractMoveStatementTest {
         private void runTest(String testDataFilePath) throws Exception {

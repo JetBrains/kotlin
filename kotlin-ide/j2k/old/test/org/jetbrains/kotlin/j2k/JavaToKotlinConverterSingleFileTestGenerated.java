@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/fileOrElement")
 public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaToKotlinConverterSingleFileTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/annotations")
     public static class Annotations extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -119,6 +120,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/anonymousBlock")
     public static class AnonymousBlock extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -136,6 +138,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/anonymousClass")
     public static class AnonymousClass extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -153,6 +156,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/arrayAccessExpression")
     public static class ArrayAccessExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -175,6 +179,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/arrayInitializerExpression")
     public static class ArrayInitializerExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -242,6 +247,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/arrayType")
     public static class ArrayType extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -299,6 +305,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/assertStatement")
     public static class AssertStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -331,6 +338,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/assignmentExpression")
     public static class AssignmentExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -428,6 +436,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/binaryExpression")
     public static class BinaryExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -535,6 +544,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/blocks")
     public static class Blocks extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -547,6 +557,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/boxedType")
     public static class BoxedType extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -609,6 +620,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/breakStatement")
     public static class BreakStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -626,6 +638,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/callChainExpression")
     public static class CallChainExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -663,6 +676,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/class")
     public static class Class extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -845,6 +859,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/classExpression")
     public static class ClassExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -872,6 +887,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/comments")
     public static class Comments extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -914,6 +930,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/conditionalExpression")
     public static class ConditionalExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -931,6 +948,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/constructors")
     public static class Constructors extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1143,6 +1161,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/continueStatement")
     public static class ContinueStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1160,6 +1179,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/declarationStatement")
     public static class DeclarationStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1197,6 +1217,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/detectProperties")
     public static class DetectProperties extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1434,6 +1455,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/doWhileStatement")
     public static class DoWhileStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1466,6 +1488,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/docComments")
     public static class DocComments extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1548,6 +1571,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/enum")
     public static class Enum extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1645,6 +1669,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/equals")
     public static class Equals extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1682,6 +1707,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/field")
     public static class Field extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1754,6 +1780,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/for")
     public static class For extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1981,6 +2008,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/foreachStatement")
     public static class ForeachStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2018,6 +2046,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/formatting")
     public static class Formatting extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2060,6 +2089,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/function")
     public static class Function extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2242,6 +2272,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/identifier")
     public static class Identifier extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2264,6 +2295,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/ifStatement")
     public static class IfStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2311,6 +2343,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/importStatement")
     public static class ImportStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2343,6 +2376,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/inheritance")
     public static class Inheritance extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2375,6 +2409,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/isOperator")
     public static class IsOperator extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2397,6 +2432,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/issues")
     public static class Issues extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2629,6 +2665,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/kotlinApiAccess")
     public static class KotlinApiAccess extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2731,6 +2768,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/labelStatement")
     public static class LabelStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2743,6 +2781,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/list")
     public static class List extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2760,6 +2799,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/literalExpression")
     public static class LiteralExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2842,6 +2882,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/localVariable")
     public static class LocalVariable extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2894,6 +2935,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/methodCallExpression")
     public static class MethodCallExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2966,6 +3008,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/misc")
     public static class Misc extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3003,6 +3046,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/mutableCollections")
     public static class MutableCollections extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3050,6 +3094,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/newClassExpression")
     public static class NewClassExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3132,6 +3177,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/nullability")
     public static class Nullability extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3324,6 +3370,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/objectLiteral")
     public static class ObjectLiteral extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3336,6 +3383,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/overloads")
     public static class Overloads extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3378,6 +3426,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/packageStatement")
     public static class PackageStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3390,6 +3439,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/parenthesizedExpression")
     public static class ParenthesizedExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3407,6 +3457,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/polyadicExpression")
     public static class PolyadicExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3444,6 +3495,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/postProcessing")
     public static class PostProcessing extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3511,6 +3563,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/postfixOperator")
     public static class PostfixOperator extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3528,6 +3581,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/prefixOperator")
     public static class PrefixOperator extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3565,6 +3619,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/projections")
     public static class Projections extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3577,6 +3632,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/protected")
     public static class Protected extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3619,6 +3675,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/rawGenerics")
     public static class RawGenerics extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3646,6 +3703,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/returnStatement")
     public static class ReturnStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3678,6 +3736,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/settings")
     public static class Settings extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3705,6 +3764,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/staticMembers")
     public static class StaticMembers extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3737,6 +3797,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/strings")
     public static class Strings extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3759,6 +3820,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/superExpression")
     public static class SuperExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3781,6 +3843,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/switch")
     public static class Switch extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3868,6 +3931,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/synchronizedStatement")
     public static class SynchronizedStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3880,6 +3944,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/thisExpression")
     public static class ThisExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3897,6 +3962,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/throwStatement")
     public static class ThrowStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3909,6 +3975,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/toArray")
     public static class ToArray extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3921,6 +3988,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/toKotlinClasses")
     public static class ToKotlinClasses extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -3953,6 +4021,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/trait")
     public static class Trait extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4015,6 +4084,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/tryStatement")
     public static class TryStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4047,6 +4117,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/tryWithResource")
     public static class TryWithResource extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4104,6 +4175,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/typeCastExpression")
     public static class TypeCastExpression extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4166,6 +4238,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/typeParameters")
     public static class TypeParameters extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4248,6 +4321,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/varArg")
     public static class VarArg extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -4265,6 +4339,7 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/whileStatement")
     public static class WhileStatement extends AbstractJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {

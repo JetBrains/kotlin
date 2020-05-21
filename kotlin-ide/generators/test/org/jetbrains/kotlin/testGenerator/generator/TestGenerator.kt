@@ -41,7 +41,6 @@ object TestGenerator {
             appendAnnotation(TAnnotation<SuppressWarnings>("all"))
             appendAnnotation(TAnnotation<TestRoot>(group.modulePath))
             appendAnnotation(TAnnotation<TestDataPath>("\$CONTENT_ROOT"))
-            appendAnnotation(TAnnotation<RunWith>(JUnit3RunnerWithInners::class.java))
 
             val singleModel = suite.models.singleOrNull()
             if (singleModel != null) {

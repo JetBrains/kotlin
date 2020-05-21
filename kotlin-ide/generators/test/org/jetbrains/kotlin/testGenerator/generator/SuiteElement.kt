@@ -1,9 +1,11 @@
 package org.jetbrains.kotlin.testGenerator.generator
 
+import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testGenerator.generator.methods.RunTestMethod
 import org.jetbrains.kotlin.testGenerator.generator.methods.TestCaseMethod
 import org.jetbrains.kotlin.testGenerator.model.*
+import org.junit.runner.RunWith
 import java.io.File
 import java.util.*
 import javax.lang.model.element.Modifier
@@ -78,6 +80,7 @@ class SuiteElement private constructor(
     override fun Code.render() {
         val testDataPath = File(group.testDataRoot, model.path).toRelativeString(group.moduleRoot)
 
+        appendAnnotation(TAnnotation<RunWith>(JUnit3RunnerWithInners::class.java))
         appendAnnotation(TAnnotation<TestMetadata>(testDataPath))
         suite.annotations.forEach { appendAnnotation(it) }
 

@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("jvm-debugger/test")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/stepping/stepIntoAndSmartStepInto")
     public static class StepInto extends AbstractKotlinSteppingTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -108,6 +108,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/stepping/stepIntoAndSmartStepInto")
     public static class SmartStepInto extends AbstractKotlinSteppingTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -195,6 +196,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/stepping/stepInto")
     public static class StepIntoOnly extends AbstractKotlinSteppingTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -317,6 +319,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/stepping/stepOut")
     public static class StepOut extends AbstractKotlinSteppingTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -369,6 +372,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/stepping/stepOver")
     public static class StepOver extends AbstractKotlinSteppingTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -906,6 +910,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/stepping/filters")
     public static class Filters extends AbstractKotlinSteppingTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -973,6 +978,7 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/stepping/custom")
     public static class Custom extends AbstractKotlinSteppingTest {
         private void runTest(String testDataFilePath) throws Exception {

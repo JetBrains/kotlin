@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("jps/jps-plugin")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/classSignatureChange")
     public static class ClassSignatureChange extends AbstractJsProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -83,6 +83,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/classPrivateOnlyChange")
     public static class ClassPrivateOnlyChange extends AbstractJsProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -115,6 +116,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/classMembersOnlyChanged")
     public static class ClassMembersOnlyChanged extends AbstractJsProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -172,6 +174,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/packageMembers")
     public static class PackageMembers extends AbstractJsProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -204,6 +207,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/unchanged")
     public static class Unchanged extends AbstractJsProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -221,6 +225,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/jsOnly")
     public static class JsOnly extends AbstractJsProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {

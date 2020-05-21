@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/incremental/multiModule/multiplatform/withGeneratedContent")
 public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractMultiplatformJpsTestWithGeneratedContent {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative")
     public static class IgnoreAndWarnAboutNative extends AbstractMultiplatformJpsTestWithGeneratedContent {
         private void runTest(String testDataFilePath) throws Exception {
@@ -34,6 +35,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/multiModule/multiplatform/withGeneratedContent/simple")
     public static class Simple extends AbstractMultiplatformJpsTestWithGeneratedContent {
         private void runTest(String testDataFilePath) throws Exception {
@@ -61,6 +63,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests")
     public static class SimpleJsJvmProjectWithTests extends AbstractMultiplatformJpsTestWithGeneratedContent {
         private void runTest(String testDataFilePath) throws Exception {
@@ -78,6 +81,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp")
     public static class SimpleNewMpp extends AbstractMultiplatformJpsTestWithGeneratedContent {
         private void runTest(String testDataFilePath) throws Exception {
@@ -105,6 +109,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate")
     public static class Ultimate extends AbstractMultiplatformJpsTestWithGeneratedContent {
         private void runTest(String testDataFilePath) throws Exception {

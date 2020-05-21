@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteClass/kotlinClass")
     public static class KotlinClass extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -98,6 +98,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteClass/kotlinClassWithJava")
     public static class KotlinClassWithJava extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -110,6 +111,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin")
     public static class JavaClassWithKotlin extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -132,6 +134,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteObject/kotlinObject")
     public static class KotlinObject extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -194,6 +197,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteFunction/kotlinFunction")
     public static class KotlinFunction extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -286,6 +290,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava")
     public static class KotlinFunctionWithJava extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -353,6 +358,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteFunction/javaFunctionWithKotlin")
     public static class JavaFunctionWithKotlin extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -370,6 +376,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteProperty/kotlinProperty")
     public static class KotlinProperty extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -497,6 +504,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava")
     public static class KotlinPropertyWithJava extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -564,6 +572,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin")
     public static class JavaPropertyWithKotlin extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -601,6 +610,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias")
     public static class KotlinTypeAlias extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -618,6 +628,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter")
     public static class KotlinTypeParameter extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -705,6 +716,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava")
     public static class KotlinTypeParameterWithJava extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -797,6 +809,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter")
     public static class KotlinValueParameter extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -964,6 +977,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava")
     public static class KotlinValueParameterWithJava extends AbstractSafeDeleteTest {
         private void runTest(String testDataFilePath) throws Exception {

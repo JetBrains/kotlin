@@ -46,6 +46,7 @@ public class BackspaceHandlerTestGenerated extends AbstractBackspaceHandlerTest 
         runTest("testData/editor/backspaceHandler/typeArguments.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/editor/backspaceHandler/stringTemplate")
     public static class StringTemplate extends AbstractBackspaceHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {

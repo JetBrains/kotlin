@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/if")
     public static class If extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -62,8 +62,10 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             runTest("testData/codeInsight/surroundWith/if/variable.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/surroundWith/if/moveDeclarationsOut")
         public static class MoveDeclarationsOut extends AbstractSurroundWithTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/codeInsight/surroundWith/if/moveDeclarationsOut/class")
             public static class Class extends AbstractSurroundWithTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -81,6 +83,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/codeInsight/surroundWith/if/moveDeclarationsOut/function")
             public static class Function extends AbstractSurroundWithTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -103,6 +106,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/codeInsight/surroundWith/if/moveDeclarationsOut/object")
             public static class Object extends AbstractSurroundWithTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -115,6 +119,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/codeInsight/surroundWith/if/moveDeclarationsOut/order")
             public static class Order extends AbstractSurroundWithTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -137,6 +142,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/codeInsight/surroundWith/if/moveDeclarationsOut/val")
             public static class Val extends AbstractSurroundWithTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -169,6 +175,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/codeInsight/surroundWith/if/moveDeclarationsOut/var")
             public static class Var extends AbstractSurroundWithTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -190,6 +197,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
                     runTest("testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/varWoTypeWithInitializer.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/defaultValue")
                 public static class DefaultValue extends AbstractSurroundWithTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -215,6 +223,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/ifElse")
     public static class IfElse extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -262,6 +271,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/ifElseExpression")
     public static class IfElseExpression extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -284,6 +294,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/ifElseExpressionBraces")
     public static class IfElseExpressionBraces extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -301,6 +312,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/not")
     public static class Not extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -343,6 +355,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/parentheses")
     public static class Parentheses extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -364,6 +377,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             runTest("testData/codeInsight/surroundWith/parentheses/partOfExpr.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/surroundWith/parentheses/notApplicable")
         public static class NotApplicable extends AbstractSurroundWithTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -417,6 +431,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/stringTemplate")
     public static class StringTemplate extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -444,6 +459,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/when")
     public static class When extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -466,6 +482,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/tryCatch")
     public static class TryCatch extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -498,6 +515,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/tryCatchExpression")
     public static class TryCatchExpression extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -515,6 +533,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/tryCatchFinally")
     public static class TryCatchFinally extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -537,6 +556,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/tryCatchFinallyExpression")
     public static class TryCatchFinallyExpression extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -554,6 +574,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/tryFinally")
     public static class TryFinally extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -576,6 +597,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/functionLiteral")
     public static class FunctionLiteral extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -598,6 +620,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/withIfExpression")
     public static class WithIfExpression extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -615,6 +638,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/surroundWith/withIfElseExpression")
     public static class WithIfElseExpression extends AbstractSurroundWithTest {
         private void runTest(String testDataFilePath) throws Exception {

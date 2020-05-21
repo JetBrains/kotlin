@@ -146,6 +146,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         runTest("testData/compiler/asJava/lightClasses/VarArgs.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/delegation")
     public static class Delegation extends AbstractIdeCompiledLightClassTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -163,6 +164,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/facades")
     public static class Facades extends AbstractIdeCompiledLightClassTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -190,6 +192,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/nullabilityAnnotations")
     public static class NullabilityAnnotations extends AbstractIdeCompiledLightClassTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -287,6 +290,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/object")
     public static class Object extends AbstractIdeCompiledLightClassTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -299,6 +303,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/publicField")
     public static class PublicField extends AbstractIdeCompiledLightClassTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -316,6 +321,7 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/asJava/lightClasses/script")
     public static class Script extends AbstractIdeCompiledLightClassTest {
         private void runTest(String testDataFilePath) throws Exception {

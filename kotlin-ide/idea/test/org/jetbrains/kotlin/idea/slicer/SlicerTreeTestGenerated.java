@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/slicer")
 public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/slicer/inflow")
     public static class Inflow extends AbstractSlicerTreeTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -424,10 +425,13 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/slicer/mpp")
     public static class Mpp extends AbstractSlicerTreeTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/actualClassFunctionParameter")
         public static class ActualClassFunctionParameter extends AbstractSlicerTreeTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/actualClassFunctionParameter/common")
             public static class Common extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -440,6 +444,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/actualClassFunctionParameter/jvm")
             public static class Jvm extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -453,8 +458,10 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/actualFunctionParameter")
         public static class ActualFunctionParameter extends AbstractSlicerTreeTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/actualFunctionParameter/common")
             public static class Common extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -467,6 +474,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/actualFunctionParameter/jvm")
             public static class Jvm extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -480,8 +488,10 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectClassFunctionParameter")
         public static class ExpectClassFunctionParameter extends AbstractSlicerTreeTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectClassFunctionParameter/common")
             public static class Common extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -494,6 +504,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectClassFunctionParameter/jvm")
             public static class Jvm extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -507,8 +518,10 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectExtensionFunctionResultOut")
         public static class ExpectExtensionFunctionResultOut extends AbstractSlicerTreeTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectExtensionFunctionResultOut/common")
             public static class Common extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -521,6 +534,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectExtensionFunctionResultOut/jvm")
             public static class Jvm extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -534,8 +548,10 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectFunctionParameter")
         public static class ExpectFunctionParameter extends AbstractSlicerTreeTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectFunctionParameter/common")
             public static class Common extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -548,6 +564,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectFunctionParameter/jvm")
             public static class Jvm extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -561,8 +578,10 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectFunctionResultIn")
         public static class ExpectFunctionResultIn extends AbstractSlicerTreeTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectFunctionResultIn/common")
             public static class Common extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -575,6 +594,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectFunctionResultIn/jvm")
             public static class Jvm extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -588,8 +608,10 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectFunctionResultOut")
         public static class ExpectFunctionResultOut extends AbstractSlicerTreeTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectFunctionResultOut/common")
             public static class Common extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -602,6 +624,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectFunctionResultOut/jvm")
             public static class Jvm extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -615,8 +638,10 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectPropertyResultIn")
         public static class ExpectPropertyResultIn extends AbstractSlicerTreeTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectPropertyResultIn/common")
             public static class Common extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -629,6 +654,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectPropertyResultIn/jvm")
             public static class Jvm extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -642,8 +668,10 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectPropertyResultOut")
         public static class ExpectPropertyResultOut extends AbstractSlicerTreeTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectPropertyResultOut/common")
             public static class Common extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -656,6 +684,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectPropertyResultOut/jvm")
             public static class Jvm extends AbstractSlicerTreeTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -670,6 +699,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/slicer/outflow")
     public static class Outflow extends AbstractSlicerTreeTest {
         private void runTest(String testDataFilePath) throws Exception {

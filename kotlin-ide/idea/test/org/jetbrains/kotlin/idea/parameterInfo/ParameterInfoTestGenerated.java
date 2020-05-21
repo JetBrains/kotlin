@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/parameterInfo")
 public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/parameterInfo/annotations")
     public static class Annotations extends AbstractParameterInfoTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -44,6 +45,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/parameterInfo/arrayAccess")
     public static class ArrayAccess extends AbstractParameterInfoTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -76,6 +78,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/parameterInfo/functionCall")
     public static class FunctionCall extends AbstractParameterInfoTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -333,6 +336,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/parameterInfo/typeArguments")
     public static class TypeArguments extends AbstractParameterInfoTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -385,6 +389,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/parameterInfo/withLib1")
     public static class WithLib1 extends AbstractParameterInfoTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -397,6 +402,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/parameterInfo/withLib2")
     public static class WithLib2 extends AbstractParameterInfoTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -409,6 +415,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/parameterInfo/withLib3")
     public static class WithLib3 extends AbstractParameterInfoTest {
         private void runTest(String testDataFilePath) throws Exception {

@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class InspectionTestGenerated extends AbstractInspectionTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions")
     public static class Intentions extends AbstractInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -58,6 +58,7 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspections")
     public static class Inspections extends AbstractInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -470,6 +471,7 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal")
     public static class InspectionsLocal extends AbstractInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {

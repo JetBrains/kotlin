@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("maven")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMavenConfigureProjectByChangingFileTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/configurator/jvm")
     public static class Jvm extends AbstractMavenConfigureProjectByChangingFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -73,6 +73,7 @@ public class MavenConfigureProjectByChangingFileTestGenerated extends AbstractMa
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/configurator/js")
     public static class Js extends AbstractMavenConfigureProjectByChangingFileTest {
         private void runTest(String testDataFilePath) throws Exception {

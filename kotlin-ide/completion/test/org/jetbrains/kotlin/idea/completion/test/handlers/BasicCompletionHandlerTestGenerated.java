@@ -236,6 +236,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         runTest("testData/handlers/basic/TypeParameter.kt");
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/annotation")
     public static class Annotation extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -263,6 +264,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/callableReference")
     public static class CallableReference extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -295,6 +297,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/exclChar")
     public static class ExclChar extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -327,6 +330,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/extensionMethodInObject")
     public static class ExtensionMethodInObject extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -374,6 +378,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/highOrderFunctions")
     public static class HighOrderFunctions extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -496,6 +501,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/importAliases")
     public static class ImportAliases extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -538,6 +544,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/override")
     public static class Override extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -650,6 +657,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/parameterNameAndType")
     public static class ParameterNameAndType extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -722,6 +730,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/staticMemberOfNotImported")
     public static class StaticMemberOfNotImported extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -754,6 +763,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/staticMembers")
     public static class StaticMembers extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -781,6 +791,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/stringTemplate")
     public static class StringTemplate extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -863,6 +874,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/handlers/basic/typeArgsForCall")
     public static class TypeArgsForCall extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {

@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker")
     public static class Checker extends AbstractPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -358,6 +358,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker/regression")
     public static class Regression extends AbstractPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -595,6 +596,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker/recovery")
     public static class Recovery extends AbstractPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -617,6 +619,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker/rendering")
     public static class Rendering extends AbstractPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -629,6 +632,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker/scripts")
     public static class Scripts extends AbstractPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -656,8 +660,10 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker/duplicateJvmSignature")
     public static class DuplicateJvmSignature extends AbstractPsiCheckerTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/checker/duplicateJvmSignature/fields")
         public static class Fields extends AbstractPsiCheckerTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -670,6 +676,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/checker/duplicateJvmSignature/functionAndProperty")
         public static class FunctionAndProperty extends AbstractPsiCheckerTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -727,6 +734,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/checker/duplicateJvmSignature/traitImpl")
         public static class TraitImpl extends AbstractPsiCheckerTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -740,6 +748,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker/infos")
     public static class Infos extends AbstractPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -827,6 +836,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker/diagnosticsMessage")
     public static class DiagnosticsMessage extends AbstractPsiCheckerTest {
         private void runTest(String testDataFilePath) throws Exception {

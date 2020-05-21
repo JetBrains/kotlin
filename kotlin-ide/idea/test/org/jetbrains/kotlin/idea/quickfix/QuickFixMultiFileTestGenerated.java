@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/quickfix")
 public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addAnnotationTarget")
     public static class AddAnnotationTarget extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -34,6 +35,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addJvmDefault")
     public static class AddJvmDefault extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -46,6 +48,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addSpreadOperatorForArrayAsVarargAfterSam")
     public static class AddSpreadOperatorForArrayAsVarargAfterSam extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -68,6 +71,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/autoImports")
     public static class AutoImports extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -634,6 +638,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("testData/quickfix/autoImports/withSmartCastQualifier.before.Main.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/autoImports/kt21515")
         public static class Kt21515 extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -646,6 +651,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/autoImports/mismatchingArgs")
         public static class MismatchingArgs extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -734,6 +740,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/changeSignature")
     public static class ChangeSignature extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -760,6 +767,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("testData/quickfix/changeSignature/removeJavaMethodParameter.before.Main.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/changeSignature/jk")
         public static class Jk extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -832,6 +840,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/changeSignature/kj")
         public static class Kj extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -850,6 +859,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/convertJavaInterfaceToClass")
     public static class ConvertJavaInterfaceToClass extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -862,10 +872,13 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/createFromUsage")
     public static class CreateFromUsage extends AbstractQuickFixMultiFileTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createClass")
         public static class CreateClass extends AbstractQuickFixMultiFileTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/annotationEntry")
             public static class AnnotationEntry extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -888,6 +901,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/callExpression")
             public static class CallExpression extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -949,6 +963,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                     runTest("testData/quickfix/createFromUsage/createClass/callExpression/callWithSupertraitAndJavaReceiver.before.Main.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/quickfix/createFromUsage/createClass/callExpression/typeArguments")
                 public static class TypeArguments extends AbstractQuickFixMultiFileTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -982,6 +997,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/delegationSpecifier")
             public static class DelegationSpecifier extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1009,6 +1025,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/importDirective")
             public static class ImportDirective extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1051,6 +1068,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/referenceExpression")
             public static class ReferenceExpression extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1103,6 +1121,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/typeReference")
             public static class TypeReference extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1141,8 +1160,10 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createFunction")
         public static class CreateFunction extends AbstractQuickFixMultiFileTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/call")
             public static class Call extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1204,6 +1225,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                     runTest("testData/quickfix/createFromUsage/createFunction/call/staticFunOnJavaInterface.before.Main.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/quickfix/createFromUsage/createFunction/call/typeArguments")
                 public static class TypeArguments extends AbstractQuickFixMultiFileTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -1227,6 +1249,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/fromJava")
             public static class FromJava extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1255,6 +1278,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createSecondaryConstructor")
         public static class CreateSecondaryConstructor extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1282,8 +1306,10 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createVariable")
         public static class CreateVariable extends AbstractQuickFixMultiFileTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createVariable/parameter")
             public static class Parameter extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1296,6 +1322,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createVariable/primaryParameter")
             public static class PrimaryParameter extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1313,6 +1340,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createVariable/property")
             public static class Property extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1374,6 +1402,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                     runTest("testData/quickfix/createFromUsage/createVariable/property/varOnJavaType.before.Main.kt");
                 }
 
+                @RunWith(JUnit3RunnerWithInners.class)
                 @TestMetadata("testData/quickfix/createFromUsage/createVariable/property/fieldFromJava")
                 public static class FieldFromJava extends AbstractQuickFixMultiFileTest {
                     private void runTest(String testDataFilePath) throws Exception {
@@ -1404,6 +1433,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/deprecatedSymbolUsage")
     public static class DeprecatedSymbolUsage extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1420,6 +1450,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("testData/quickfix/deprecatedSymbolUsage/toMethodFromCompanionObject.before.Main.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/classUsages")
         public static class ClassUsages extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1431,6 +1462,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 runTest("testData/quickfix/deprecatedSymbolUsage/classUsages/addImportFromSamePackage.before.Main.kt");
             }
 
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject")
             public static class WholeProject extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1454,6 +1486,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/imports")
         public static class Imports extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1511,8 +1544,10 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/typeAliases")
         public static class TypeAliases extends AbstractQuickFixMultiFileTest {
+            @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/deprecatedSymbolUsage/typeAliases/wholeProject")
             public static class WholeProject extends AbstractQuickFixMultiFileTest {
                 private void runTest(String testDataFilePath) throws Exception {
@@ -1526,6 +1561,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/typeArguments")
         public static class TypeArguments extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1538,6 +1574,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/wholeProject")
         public static class WholeProject extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1556,6 +1593,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/increaseVisibility")
     public static class IncreaseVisibility extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1588,6 +1626,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/makePrivateAndOverrideMember")
     public static class MakePrivateAndOverrideMember extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1630,6 +1669,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/memberVisibilityCanBePrivate")
     public static class MemberVisibilityCanBePrivate extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1642,8 +1682,10 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/migration")
     public static class Migration extends AbstractQuickFixMultiFileTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/conflictingExtension")
         public static class ConflictingExtension extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1661,6 +1703,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/javaAnnotationPositionedArguments")
         public static class JavaAnnotationPositionedArguments extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1684,6 +1727,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/modifiers")
     public static class Modifiers extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1695,6 +1739,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("testData/quickfix/modifiers/constVal.before.Main.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/modifiers/addOpenToClassDeclaration")
         public static class AddOpenToClassDeclaration extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1713,6 +1758,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/optimizeImports")
     public static class OptimizeImports extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1730,8 +1776,10 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/override")
     public static class Override extends AbstractQuickFixMultiFileTest {
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/override/nothingToOverride")
         public static class NothingToOverride extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1755,6 +1803,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/removeUnused")
     public static class RemoveUnused extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1802,6 +1851,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/typeImports")
     public static class TypeImports extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1814,6 +1864,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/typeMismatch")
     public static class TypeMismatch extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -1830,6 +1881,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("testData/quickfix/typeMismatch/paramTypeInOverrides.before.Main.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/typeMismatch/genericVarianceViolation")
         public static class GenericVarianceViolation extends AbstractQuickFixMultiFileTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1843,6 +1895,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/when")
     public static class When extends AbstractQuickFixMultiFileTest {
         private void runTest(String testDataFilePath) throws Exception {

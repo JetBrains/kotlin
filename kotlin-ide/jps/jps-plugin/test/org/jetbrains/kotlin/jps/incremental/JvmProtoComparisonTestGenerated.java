@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("jps/jps-plugin")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/classSignatureChange")
     public static class ClassSignatureChange extends AbstractJvmProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -83,6 +83,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/classPrivateOnlyChange")
     public static class ClassPrivateOnlyChange extends AbstractJvmProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -115,6 +116,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/classMembersOnlyChanged")
     public static class ClassMembersOnlyChanged extends AbstractJvmProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -172,6 +174,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/packageMembers")
     public static class PackageMembers extends AbstractJvmProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -204,6 +207,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/unchanged")
     public static class Unchanged extends AbstractJvmProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -221,6 +225,7 @@ public class JvmProtoComparisonTestGenerated extends AbstractJvmProtoComparisonT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/comparison/jvmOnly")
     public static class JvmOnly extends AbstractJvmProtoComparisonTest {
         private void runTest(String testDataFilePath) throws Exception {

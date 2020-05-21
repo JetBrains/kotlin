@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("jps/jps-plugin")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyCachesTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/lazyKotlinCaches")
     public static class LazyKotlinCaches extends AbstractIncrementalLazyCachesTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -68,6 +68,7 @@ public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyC
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/changeIncrementalOption")
     public static class ChangeIncrementalOption extends AbstractIncrementalLazyCachesTest {
         private void runTest(String testDataFilePath) throws Exception {

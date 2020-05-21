@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("completion")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/basic/common")
     public static class Common extends AbstractJvmBasicCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -742,6 +742,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             runTest("testData/basic/common/VariableClassName.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/annotations")
         public static class Annotations extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -899,6 +900,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/autoPopup")
         public static class AutoPopup extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -981,6 +983,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/boldOrGrayed")
         public static class BoldOrGrayed extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1083,6 +1086,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/callableReference")
         public static class CallableReference extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1130,6 +1134,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/dslMarker")
         public static class DslMarker extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1172,6 +1177,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/extensionFunctionTypeValues")
         public static class ExtensionFunctionTypeValues extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1199,6 +1205,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/extensionMethodInObject")
         public static class ExtensionMethodInObject extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1261,6 +1268,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/extensions")
         public static class Extensions extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1383,6 +1391,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/fromSmart")
         public static class FromSmart extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1450,6 +1459,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/fromUnresolvedNames")
         public static class FromUnresolvedNames extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1507,6 +1517,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/getOperator")
         public static class GetOperator extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1529,6 +1540,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/highOrderFunctions")
         public static class HighOrderFunctions extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1586,6 +1598,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/inStringLiterals")
         public static class InStringLiterals extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1623,6 +1636,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/lambdaSignature")
         public static class LambdaSignature extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1680,6 +1694,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/namedArguments")
         public static class NamedArguments extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1797,6 +1812,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/noCompletion")
         public static class NoCompletion extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1839,6 +1855,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/objects")
         public static class Objects extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1861,6 +1878,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/operatorNames")
         public static class OperatorNames extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1883,6 +1901,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/override")
         public static class Override extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1950,6 +1969,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/parameterNameAndType")
         public static class ParameterNameAndType extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2092,6 +2112,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/shadowing")
         public static class Shadowing extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2204,6 +2225,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/smartCast")
         public static class SmartCast extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2251,6 +2273,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/staticMembers")
         public static class StaticMembers extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2303,6 +2326,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/substitutedSignature")
         public static class SubstitutedSignature extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2345,6 +2369,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/super")
         public static class Super extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2397,6 +2422,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/typeArgsOrNot")
         public static class TypeArgsOrNot extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2449,6 +2475,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/variableNameAndType")
         public static class VariableNameAndType extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2471,6 +2498,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/common/visibility")
         public static class Visibility extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2544,6 +2572,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/basic/java")
     public static class Java extends AbstractJvmBasicCompletionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -2645,6 +2674,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             runTest("testData/basic/java/TopLevelFromStandardLibrary.kt");
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/java/boldOrGrayed")
         public static class BoldOrGrayed extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2677,6 +2707,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/java/importAliases")
         public static class ImportAliases extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -2729,6 +2760,7 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/basic/java/syntheticExtensions")
         public static class SyntheticExtensions extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {

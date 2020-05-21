@@ -19,8 +19,8 @@ import org.junit.runner.RunWith;
 @SuppressWarnings("all")
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/folding/noCollapse")
     public static class NoCollapse extends AbstractKotlinFoldingTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -68,6 +68,7 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
         }
     }
 
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/folding/checkCollapse")
     public static class CheckCollapse extends AbstractKotlinFoldingTest {
         private void runTest(String testDataFilePath) throws Exception {
