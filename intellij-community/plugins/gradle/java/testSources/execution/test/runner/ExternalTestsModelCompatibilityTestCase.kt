@@ -17,7 +17,7 @@ class ExternalTestsModelCompatibilityTestCase : GradleImportingTestCase() {
       .withJUnit("4.12")
     importProject(buildScript.generate())
     assertTestTasks(createProjectSubFile("src/test/java/package/TestCase.java", "class TestCase"),
-                    listOf(":cleanTest", ":test"))
+                    listOf(":test"))
   }
 
   @Test
@@ -44,11 +44,11 @@ class ExternalTestsModelCompatibilityTestCase : GradleImportingTestCase() {
       """.trimIndent())
     importProject(buildScript.generate())
     assertTestTasks(createProjectSubFile("foo-src/package/TestCase.java", "class TestCase"),
-                    listOf(":cleanFoo test task", ":foo test task"),
-                    listOf(":cleanSuper foo test task", ":super foo test task"))
+                    listOf(":foo test task"),
+                    listOf(":super foo test task"))
     assertTestTasks(createProjectSubFile("foo-other-src/package/TestCase.java", "class TestCase"),
-                    listOf(":cleanFoo test task", ":foo test task"),
-                    listOf(":cleanSuper foo test task", ":super foo test task"))
+                    listOf(":foo test task"),
+                    listOf(":super foo test task"))
   }
 
   @Test
@@ -75,11 +75,11 @@ class ExternalTestsModelCompatibilityTestCase : GradleImportingTestCase() {
       """.trimIndent())
     importProject(buildScript.generate())
     assertTestTasks(createProjectSubFile("foo-src/package/TestCase.java", "class TestCase"),
-                    listOf(":cleanFoo test task", ":foo test task"),
-                    listOf(":cleanSuper foo test task", ":super foo test task"))
+                    listOf(":foo test task"),
+                    listOf(":super foo test task"))
     assertTestTasks(createProjectSubFile("foo-other-src/package/TestCase.java", "class TestCase"),
-                    listOf(":cleanFoo test task", ":foo test task"),
-                    listOf(":cleanSuper foo test task", ":super foo test task"))
+                    listOf(":foo test task"),
+                    listOf(":super foo test task"))
   }
 
   private fun assertTestTasks(source: VirtualFile, vararg expected: List<String>) {
