@@ -24,10 +24,12 @@ import org.jetbrains.jps.service.JpsServiceManager;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class JpsServiceManagerImpl extends JpsServiceManager {
   private final ConcurrentMap<Class, Object> myServices = new ConcurrentHashMap<>(16, 0.75f, 1);
   private final ConcurrentMap<Class, List<?>> myExtensions = new ConcurrentHashMap<>(16, 0.75f, 1);
+  private final AtomicInteger myModificationStamp = new AtomicInteger(0);
   private volatile JpsPluginManager myPluginManager;
 
   @Override
@@ -62,7 +64,7 @@ public class JpsServiceManagerImpl extends JpsServiceManager {
 
   @Override
   public <T> Iterable<T> getExtensions(Class<T> extensionClass) {
-    List<?> cached = myExtensions.get(extensionClass);
+    List<?> cached = cleanupExtensionCache()? null : myExtensions.get(extensionClass);
     if (cached == null) {
       // confine costly service initialization to single thread for defined startup profile
       synchronized (myExtensions) {
@@ -78,6 +80,18 @@ public class JpsServiceManagerImpl extends JpsServiceManager {
     }
     //noinspection unchecked
     return (List<T>)cached;
+  }
+
+  private boolean cleanupExtensionCache() {
+    JpsPluginManager manager = myPluginManager;
+    if (manager != null) {
+      int stamp = manager.getModificationStamp();
+      if (myModificationStamp.getAndSet(stamp) != stamp) {
+        myExtensions.clear();
+        return true;
+      }
+    }
+    return false;
   }
 
   @NotNull
@@ -114,6 +128,11 @@ public class JpsServiceManagerImpl extends JpsServiceManager {
     public <T> Collection<T> loadExtensions(@NotNull Class<T> extensionClass) {
       ServiceLoader<T> loader = ServiceLoader.load(extensionClass, extensionClass.getClassLoader());
       return ContainerUtil.newArrayList(loader);
+    }
+
+    @Override
+    public int getModificationStamp() {
+      return 0;
     }
   }
 }

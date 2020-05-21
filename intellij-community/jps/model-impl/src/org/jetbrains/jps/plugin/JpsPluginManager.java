@@ -28,4 +28,6 @@ public abstract class JpsPluginManager {
 
   @NotNull
   public abstract <T> Collection<T> loadExtensions(@NotNull Class<T> extensionClass);
+
+  public abstract int getModificationStamp();
 }
