@@ -60,6 +60,11 @@ void consoleWriteUtf8(const void* utf8, uint32_t sizeBytes) {
 #ifdef KONAN_ANDROID
   // TODO: use sizeBytes!
   __android_log_print(ANDROID_LOG_INFO, "Konan_main", "%s", utf8);
+//#elif KONAN_WINDOWS
+//  // UTF-16 write
+//  void *con = GetStdHandle(STD_OUTPUT_HANDLE);
+//  unsigned long num;
+//  ::WriteConsole(con, utf8, sizeBytes, &num, NULL);
 #else
   ::write(STDOUT_FILENO, utf8, sizeBytes);
 #endif
@@ -69,6 +74,11 @@ void consoleErrorUtf8(const void* utf8, uint32_t sizeBytes) {
 #ifdef KONAN_ANDROID
   // TODO: use sizeBytes!
   __android_log_print(ANDROID_LOG_ERROR, "Konan_main", "%s", utf8);
+//#elif KONAN_WINDOWS
+//  // UTF-16 write
+//  void *con = GetStdHandle(STD_ERROR_HANDLE);
+//  unsigned long num;
+//  ::WriteConsole(con, utf8, sizeBytes, &num, NULL);
 #else
   ::write(STDERR_FILENO, utf8, sizeBytes);
 #endif
@@ -77,8 +87,30 @@ void consoleErrorUtf8(const void* utf8, uint32_t sizeBytes) {
 int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
 #ifdef KONAN_ZEPHYR
   return 0;
+#elif KONAN_WINDOWS
+  void *con = ::GetStdHandle(STD_INPUT_HANDLE);
+  unsigned long bufferRead;
+  auto bufferLength = maxSizeBytes / 4;
+  wchar_t buffer[bufferLength];
+  ::ReadConsoleW(con, buffer, bufferLength, &bufferRead, NULL);
+  auto length = ::WideCharToMultiByte(CP_UTF8, 0, buffer, bufferRead, (char*) utf8, maxSizeBytes, NULL, NULL);
+  if (!length) {
+    auto errCode = ::GetLastError();
+    if (errCode) {
+      auto flags = FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER;
+      wchar_t *errMsgBuffer;
+      auto errMsgLength = ::FormatMessageW(flags, NULL, errCode, 0, errMsgBuffer, 1024, NULL);
+      char errMsgUtf8[4096];
+      ::WideCharToMultiByte(CP_UTF8, 0, errMsgBuffer, errMsgLength, errMsgUtf8,
+                            sizeof(errMsgUtf8), NULL, NULL);
+      consoleErrorf("UTF-16 to UTF-8 convertion error %d: %s\n", errCode, errMsgUtf8);
+      ::LocalFree(errMsgBuffer);
+    }
+  }
+  ((char*) utf8)[length] = 0;
 #else
   auto length = ::read(STDIN_FILENO, utf8, maxSizeBytes - 1);
+#endif
   if (length <= 0) return -1;
   char* start = reinterpret_cast<char*>(utf8);
   char* current = start + length - 1;
@@ -96,7 +128,6 @@ int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
     current--;
   }
   return length;
-#endif
 }
 
 #if KONAN_INTERNAL_SNPRINTF

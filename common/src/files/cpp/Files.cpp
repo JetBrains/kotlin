@@ -17,7 +17,7 @@ bool renameAtomic(const char* from, const char* to, bool replaceExisting) {
 #include <windows.h>
 
 bool renameAtomic(const char* from, const char* to, bool replaceExisting) {
-    return MoveFileEx(from, to, replaceExisting ? MOVEFILE_REPLACE_EXISTING : 0) != 0;
+    return MoveFileExA(from, to, replaceExisting ? MOVEFILE_REPLACE_EXISTING : 0) != 0;
 }
 
 #else

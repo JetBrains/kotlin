@@ -205,6 +205,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 listOf("-DUSE_GCC_UNWIND=1",
                         "-DUSE_PE_COFF_SYMBOLS=1",
                         "-DKONAN_WINDOWS=1",
+                        "-DUNICODE",
                         if (target == KonanTarget.MINGW_X64) "-DKONAN_X64=1" else "-DKONAN_X86=1",
                         "-DKONAN_NO_MEMMEM=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
