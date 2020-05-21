@@ -43,8 +43,9 @@ class AddSuspendModifierFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = diagnostic.psiElement
             val function = (element as? KtElement)?.containingDeclarationForPseudocode as? KtNamedFunction ?: return null
+            val functionName = function.name ?: return null
 
-            return AddSuspendModifierFix(function, function.name)
+            return AddSuspendModifierFix(function, functionName)
         }
     }
 
