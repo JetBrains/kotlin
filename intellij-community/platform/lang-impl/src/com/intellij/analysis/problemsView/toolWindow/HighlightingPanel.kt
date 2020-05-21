@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow
 
-import com.intellij.analysis.problemsView.AnalysisProblemBundle.message
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option
 import com.intellij.openapi.fileEditor.*
@@ -19,7 +18,7 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState) : P
     })
   }
 
-  public override fun getDisplayName() = message("problems.view.highlighting")
+  public override fun getDisplayName() = ProblemsViewBundle.message("problems.view.highlighting")
 
   public override fun getShowErrors(): Option? = null
 

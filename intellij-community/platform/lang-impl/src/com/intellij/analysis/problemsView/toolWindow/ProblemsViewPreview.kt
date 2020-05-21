@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow
 
-import com.intellij.analysis.problemsView.AnalysisProblemBundle.message
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory.getInstance
@@ -11,7 +10,7 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 
 internal class ProblemsViewPreview(private val panel: ProblemsViewPanel)
-  : JLabel(message("problems.view.panel.preview.nothing"), CENTER) {
+  : JLabel(ProblemsViewBundle.message("problems.view.panel.preview.nothing"), CENTER) {
 
   private var preview: Editor? = null
     set(value) {
