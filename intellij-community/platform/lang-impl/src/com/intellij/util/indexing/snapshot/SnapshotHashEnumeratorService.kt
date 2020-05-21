@@ -4,7 +4,6 @@ package com.intellij.util.indexing.snapshot
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.util.ShutDownTracker
 import com.intellij.openapi.vfs.newvfs.persistent.FlushingDaemon
 import com.intellij.util.hash.ContentHashEnumerator
 import com.intellij.util.indexing.ID
@@ -50,7 +49,6 @@ class SnapshotHashEnumeratorService : Closeable {
 
   init {
     FlushingDaemon.everyFiveSeconds { flush() }
-    ShutDownTracker.getInstance().registerShutdownTask { close() }
   }
 
   @Throws(IOException::class)
