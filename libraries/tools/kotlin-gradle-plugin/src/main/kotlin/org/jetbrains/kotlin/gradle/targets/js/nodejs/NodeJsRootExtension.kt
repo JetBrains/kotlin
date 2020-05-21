@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
@@ -55,6 +58,9 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
 
     val npmInstallTask: KotlinNpmInstallTask
         get() = rootProject.tasks.getByName(KotlinNpmInstallTask.NAME) as KotlinNpmInstallTask
+
+    val packageJsonUmbrellaTaskProvider: TaskProvider<Task>
+        get() = rootProject.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME)
 
     val rootPackageJsonTask: RootPackageJsonTask
         get() = rootProject.tasks.getByName(RootPackageJsonTask.NAME) as RootPackageJsonTask
