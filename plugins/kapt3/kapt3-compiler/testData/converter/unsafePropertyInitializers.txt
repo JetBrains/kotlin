@@ -185,10 +185,6 @@ public final class HavingState {
         return null;
     }
 
-    public final int getUint() {
-        return 0;
-    }
-
     @org.jetbrains.annotations.NotNull()
     public final kotlin.UInt[] getUintArray() {
         return null;
