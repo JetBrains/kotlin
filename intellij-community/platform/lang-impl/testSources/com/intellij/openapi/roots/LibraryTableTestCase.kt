@@ -101,6 +101,23 @@ abstract class LibraryTableTestCase {
   }
 
   @Test
+  fun `rename uncommitted library`() {
+    val library = edit {
+      val library = createLibrary("a", it)
+      val libraryModel = library.modifiableModel
+      libraryModel.name = "b"
+      assertThat(it.getLibraryByName("a")).isEqualTo(library)
+      assertThat(it.getLibraryByName("b")).isNull()
+      runWriteActionAndWait { libraryModel.commit() }
+      assertThat(it.getLibraryByName("a")).isNull()
+      assertThat(it.getLibraryByName("b")).isEqualTo(library)
+      assertThat(libraryTable.getLibraryByName("b")).isNull()
+      library
+    }
+    assertThat(libraryTable.getLibraryByName("b")).isEqualTo(library)
+  }
+
+  @Test
   fun `remove library and dispose model`() {
     val a = createLibrary("a")
     val model = libraryTable.modifiableModel
