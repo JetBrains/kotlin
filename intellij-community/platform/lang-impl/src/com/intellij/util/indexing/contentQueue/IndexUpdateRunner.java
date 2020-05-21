@@ -231,12 +231,9 @@ public final class IndexUpdateRunner {
 
   @NotNull
   public static String getPresentableLocationBeingIndexed(@NotNull Project project, @NotNull VirtualFile file) {
-    VirtualFile actualFile;
-    if (file.getFileSystem() instanceof ArchiveFileSystem) {
-      actualFile = VfsUtil.getLocalFile(file);
-    }
-    else {
-      actualFile = file.getParent() != null ? file.getParent() : file;
+    VirtualFile actualFile = file;
+    if (actualFile.getFileSystem() instanceof ArchiveFileSystem) {
+      actualFile = VfsUtil.getLocalFile(actualFile);
     }
     return FileUtil.toSystemDependentName(getProjectRelativeOrAbsolutePath(project, actualFile));
   }
