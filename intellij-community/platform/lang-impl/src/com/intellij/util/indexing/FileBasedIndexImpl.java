@@ -1231,12 +1231,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     }
   }
 
-  private static void setIsIndexedFlag(@NotNull VirtualFile file) {
-    if (file instanceof VirtualFileSystemEntry) {
-      ((VirtualFileSystemEntry)file).setFileIndexed(true);
-    }
-  }
-
   private static final class FileIndexingResult {
     public final boolean setIndexedStatus;
     public final Map<ID<?, ?>, Long> timesPerIndexer;
