@@ -12,6 +12,7 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil;
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemNotificationManager;
 import com.intellij.openapi.externalSystem.service.notification.NotificationCategory;
 import com.intellij.openapi.externalSystem.service.notification.NotificationData;
@@ -20,10 +21,11 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.externalSystem.util.PathPrefixTreeMap;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.DependencyScope;
+import com.intellij.openapi.roots.ui.configuration.SdkLookupDecision;
+import com.intellij.openapi.roots.ui.configuration.SdkLookupProvider;
+import com.intellij.openapi.roots.ui.configuration.SdkLookupProviderImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -34,7 +36,6 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.lang.JavaVersion;
 import gnu.trove.THashSet;
 import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.GradleModuleVersion;
@@ -65,7 +66,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.intellij.openapi.util.text.StringUtil.*;
 import static com.intellij.util.containers.ContainerUtil.newLinkedHashSet;
@@ -202,56 +202,27 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
   }
 
   private static void populateProjectSdkModel(@NotNull IdeaProject ideaProject, @NotNull DataNode<? extends ProjectData> projectNode) {
-    String sdkName = findJdkName(ideaProject.getJdkName());
+    String sdkName = resolveJdkName(ideaProject.getJdkName());
     ProjectSdkData projectSdkData = new ProjectSdkData(sdkName);
     projectNode.createChild(ProjectSdkData.KEY, projectSdkData);
   }
 
   private static void populateModuleSdkModel(@NotNull IdeaModule ideaModule, @NotNull DataNode<? extends ModuleData> moduleNode) {
-    String sdkName = findJdkName(ideaModule.getJdkName());
+    String sdkName = resolveJdkName(ideaModule.getJdkName());
     ModuleSdkData moduleSdkData = new ModuleSdkData(sdkName);
     moduleNode.createChild(ModuleSdkData.KEY, moduleSdkData);
   }
 
-  private static @Nullable String findJdkName(@Nullable String jdkNameOrVersion) {
+  private static @Nullable String resolveJdkName(@Nullable String jdkNameOrVersion) {
     if (jdkNameOrVersion == null) return null;
-    Sdk sdkByName = findJdkByName(jdkNameOrVersion);
-    if (sdkByName != null) return sdkByName.getName();
-    Sdk sdkByVersion = findJdkByVersion(jdkNameOrVersion);
-    if (sdkByVersion != null) return sdkByVersion.getName();
-    return jdkNameOrVersion;
-  }
-
-  private static @Nullable Sdk findJdkByName(@NotNull String jdkName) {
-    ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
-    return projectJdkTable.findJdk(jdkName);
-  }
-
-  private static @Nullable Sdk findJdkByVersion(@NotNull String jdkVersionString) {
-    JavaVersion jdkVersion = JavaVersion.tryParse(jdkVersionString);
-    if (jdkVersion == null) return null;
-    ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
-    List<Pair<JavaVersion, Sdk>> index = new ArrayList<>();
-    for (Sdk sdk : projectJdkTable.getAllJdks()) {
-      String versionString = getVersionString(sdk);
-      JavaVersion version = JavaVersion.tryParse(versionString);
-      if (version == null) continue;
-      index.add(new Pair<>(version, sdk));
-    }
-    return Stream.concat(
-      index.stream().filter(it -> jdkVersion.equals(it.first)),
-      index.stream().filter(it -> jdkVersion.feature == it.first.feature)
-    )
-      .findFirst()
-      .map(it -> it.second)
-      .orElse(null);
-  }
-
-  private static @Nullable String getVersionString(@NotNull Sdk sdk) {
-    String versionString = sdk.getVersionString();
-    if (versionString != null) return versionString;
-    SdkTypeId type = sdk.getSdkType();
-    return type.getVersionString(sdk);
+    SdkLookupProvider lookupProvider = new SdkLookupProviderImpl();
+    lookupProvider.newLookupBuilder()
+      .withSdkName(jdkNameOrVersion)
+      .withSdkType(ExternalSystemJdkUtil.getJavaSdkType())
+      .onDownloadableSdkSuggested(__ -> SdkLookupDecision.STOP)
+      .executeLookup();
+    Sdk sdk = lookupProvider.blockingGetSdk();
+    return sdk == null ? null : sdk.getName();
   }
 
   private static String @NotNull [] getIdeModuleGroup(String moduleName, IdeaModule gradleModule) {

@@ -3,6 +3,9 @@ package com.intellij.openapi.externalSystem.service.execution
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.externalSystem.util.environment.Environment
 import com.intellij.openapi.externalSystem.util.environment.TestEnvironment
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -24,7 +27,7 @@ abstract class ExternalSystemJdkUtilTestCase : SdkTestCase() {
     application.replaceService(Environment::class.java, TestEnvironment(), testRootDisposable)
     application.replaceService(ExternalSystemJdkProvider::class.java, TestJdkProvider(), testRootDisposable)
 
-    UnknownSdkResolver.EP_NAME.getPoint(null).registerExtension(TestUnknownSdkResolver, testRootDisposable)
+    UnknownSdkResolver.EP_NAME.point.registerExtension(TestUnknownSdkResolver, testRootDisposable)
 
     environment.variables(ExternalSystemJdkUtil.JAVA_HOME to null)
 
@@ -59,6 +62,26 @@ abstract class ExternalSystemJdkUtilTestCase : SdkTestCase() {
     }
     else {
       assertTrue("Unexpected sdk registration $newSdks", newSdks.isEmpty())
+    }
+  }
+
+  fun withoutRegisteredSdks(action: () -> Unit) {
+    val jdkTable = ProjectJdkTable.getInstance()
+    val sdks = runReadAction { jdkTable.allJdks }
+    invokeAndWaitIfNeeded {
+      runWriteAction {
+        sdks.forEach { jdkTable.removeJdk(it) }
+      }
+    }
+    try {
+      assertUnexpectedSdksRegistration(action)
+    }
+    finally {
+      invokeAndWaitIfNeeded {
+        runWriteAction {
+          sdks.forEach { jdkTable.addJdk(it) }
+        }
+      }
     }
   }
 
