@@ -16,6 +16,7 @@
 
 package com.intellij.ide.fileTemplates;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
@@ -25,7 +26,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,11 +55,10 @@ public class DefaultCreateFromTemplateHandler implements CreateFromTemplateHandl
     FileType type = FileTypeRegistry.getInstance().getFileTypeByFileName(fileName);
     PsiFile file = PsiFileFactory.getInstance(project).createFileFromText(fileName, type, templateText);
 
-    if (template.isReformatCode()) {
-      CodeStyleManager.getInstance(project).reformat(file);
-    }
-
     file = (PsiFile)directory.add(file);
+    if (template.isReformatCode()) {
+      CodeStyle.scheduleReformatWhenSettingsComputed(file);
+    }
     return file;
   }
 

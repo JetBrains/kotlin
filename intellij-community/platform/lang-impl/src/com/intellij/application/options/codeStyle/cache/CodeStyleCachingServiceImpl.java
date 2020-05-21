@@ -54,6 +54,17 @@ public class CodeStyleCachingServiceImpl implements CodeStyleCachingService, Dis
     return provider != null ? provider.tryGetSettings() : null;
   }
 
+  @Override
+  public void scheduleWhenSettingsComputed(@NotNull PsiFile file, @NotNull Runnable runnable) {
+    CodeStyleCachedValueProvider provider = getOrCreateCachedValueProvider(file);
+    if (provider != null) {
+      provider.scheduleWhenComputed(runnable);
+    }
+    else {
+      runnable.run();
+    }
+  }
+
   @Nullable
   private CodeStyleCachedValueProvider getOrCreateCachedValueProvider(@NotNull PsiFile file) {
     synchronized (CACHE_LOCK) {

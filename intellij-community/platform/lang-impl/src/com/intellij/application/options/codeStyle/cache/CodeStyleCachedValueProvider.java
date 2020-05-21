@@ -70,6 +70,10 @@ class CodeStyleCachedValueProvider implements CachedValueProvider<CodeStyleSetti
     }
   }
 
+  void scheduleWhenComputed(@NotNull Runnable runnable) {
+    myComputation.schedule(runnable);
+  }
+
   @Nullable
   @Override
   public Result<CodeStyleSettings> compute() {
@@ -114,6 +118,7 @@ class CodeStyleCachedValueProvider implements CachedValueProvider<CodeStyleSetti
     private final             SimpleModificationTracker myTracker  = new SimpleModificationTracker();
     private final             Project                   myProject;
     private                   CancellablePromise<Void>  myPromise;
+    private final             List<Runnable>            myScheduledRunnables = new ArrayList<>();
 
     private AsyncComputation() {
       myProject = getReferencedPsi().getProject();
@@ -145,6 +150,15 @@ class CodeStyleCachedValueProvider implements CachedValueProvider<CodeStyleSetti
 
     public boolean isExpired() {
       return myCurrResult == null;
+    }
+
+    private void schedule(@NotNull Runnable runnable) {
+      if (myIsActive.get()) {
+        myScheduledRunnables.add(runnable);
+      }
+      else {
+        runnable.run();
+      }
     }
 
     private boolean isRunOnBackground() {
@@ -207,10 +221,14 @@ class CodeStyleCachedValueProvider implements CachedValueProvider<CodeStyleSetti
     }
 
     void reset() {
+      myScheduledRunnables.clear();
       myIsActive.set(false);
     }
 
     private void notifyCachedValueComputed() {
+      for (Runnable runnable : myScheduledRunnables) {
+        runnable.run();
+      }
       if (!myProject.isDisposed()) {
         ObjectUtils.consumeIfNotNull(myFileRef.get(), file -> {
           final CodeStyleSettingsManager settingsManager = CodeStyleSettingsManager.getInstance(myProject);
