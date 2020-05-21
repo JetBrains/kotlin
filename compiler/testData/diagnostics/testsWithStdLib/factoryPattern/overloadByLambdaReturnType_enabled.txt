@@ -4,6 +4,8 @@ package
 public fun create(/*0*/ f: (kotlin.Int) -> kotlin.String): kotlin.String
 @kotlin.OverloadResolutionByLambdaReturnType public fun </*0*/ K> create(/*0*/ x: K, /*1*/ f: (K) -> kotlin.Int): kotlin.Int
 public fun </*0*/ T> create(/*0*/ x: T, /*1*/ f: (T) -> kotlin.String): kotlin.String
+@kotlin.OverloadResolutionByLambdaReturnType public fun foo(/*0*/ f: () -> A): kotlin.Int
+public fun foo(/*0*/ f: () -> B): kotlin.String
 public fun takeInt(/*0*/ s: kotlin.Int): kotlin.Unit
 public fun takeString(/*0*/ s: kotlin.String): kotlin.Unit
 public fun test_1(): kotlin.Unit
@@ -11,6 +13,25 @@ public fun test_2(): kotlin.Unit
 public fun test_3(): kotlin.Unit
 public fun test_4(): kotlin.Unit
 public fun test_5(): kotlin.Unit
+public fun test_6(/*0*/ c: C): kotlin.Unit
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface C : A, B {
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
 
 package kotlin {
 

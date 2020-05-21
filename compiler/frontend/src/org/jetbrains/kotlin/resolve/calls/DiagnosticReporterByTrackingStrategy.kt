@@ -77,6 +77,9 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.report(factory.on(it, typeVariable.originalTypeParameter))
                 }
             }
+            CandidateChosenUsingOverloadResolutionByLambdaAnnotation::class.java -> {
+                trace.report(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION.on(psiKotlinCall.psiCall.callElement))
+            }
         }
     }
 

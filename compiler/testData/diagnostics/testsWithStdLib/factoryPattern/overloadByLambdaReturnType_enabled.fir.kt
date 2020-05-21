@@ -46,3 +46,16 @@ fun test_5() {
     val x = <!AMBIGUITY!>create<!>("") { 1 }
     takeInt(x)
 }
+
+interface A
+interface B
+interface C : A, B
+
+@OverloadResolutionByLambdaReturnType
+fun foo(f: () -> A): Int = 1
+fun foo(f: () -> B): String = ""
+
+fun test_6(c: C) {
+    val x = <!AMBIGUITY!>foo<!> { c }
+    takeString(x)
+}

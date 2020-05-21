@@ -30,7 +30,7 @@ fun test_2() {
 }
 
 fun test_3() {
-    val x = create <!TYPE_MISMATCH!>{ <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }<!>
+    val x = <!CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION!>create <!TYPE_MISMATCH!>{ <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }<!><!>
 }
 
 @OverloadResolutionByLambdaReturnType
@@ -45,4 +45,17 @@ fun test_4() {
 fun test_5() {
     val x = create("") { 1 }
     takeInt(x)
+}
+
+interface A
+interface B
+interface C : A, B
+
+@OverloadResolutionByLambdaReturnType
+fun foo(f: () -> A): Int = 1
+fun foo(f: () -> B): String = ""
+
+fun test_6(c: C) {
+    val x = <!CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION!>foo { c }<!>
+    takeString(x)
 }

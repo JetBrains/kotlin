@@ -155,6 +155,7 @@ class KotlinCallResolver(
 
                 if (maximallySpecificCandidates.size > 1) {
                     maximallySpecificCandidates = candidates.toMutableSet().apply { removeAll(candidatesWithAnnotation) }
+                    maximallySpecificCandidates.singleOrNull()?.addDiagnostic(CandidateChosenUsingOverloadResolutionByLambdaAnnotation())
                 }
             }
         }

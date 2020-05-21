@@ -243,3 +243,9 @@ class NotEnoughInformationForLambdaParameter(
         reporter.onCallArgument(lambdaArgument, this)
     }
 }
+
+class CandidateChosenUsingOverloadResolutionByLambdaAnnotation : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}

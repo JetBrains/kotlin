@@ -759,6 +759,8 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, TypeParameterDescriptor> TYPE_PARAMETER_AS_REIFIED_ARRAY_WARNING = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, KotlinType> REIFIED_TYPE_FORBIDDEN_SUBSTITUTION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> REIFIED_TYPE_UNSAFE_SUBSTITUTION = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory0<KtElement> CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION = DiagnosticFactory0.create(WARNING);
+
 
     DiagnosticFactory3<KtReferenceExpression, ClassifierDescriptor, WrongResolutionToClassifier, String> RESOLUTION_TO_CLASSIFIER =
             DiagnosticFactory3.create(ERROR);
