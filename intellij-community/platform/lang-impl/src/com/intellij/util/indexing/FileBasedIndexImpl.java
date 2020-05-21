@@ -1203,6 +1203,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       if (file.isValid() && content.getTimeStamp() != file.getTimeStamp()) {
         content = new CachedFileContent(file);
       }
+      FileIndexingStatistics indexingStatistics;
       if (!file.isValid() || isTooLarge(file)) {
         ProgressManager.checkCanceled();
         removeDataFromIndicesForFile(fileId, file);
@@ -1210,15 +1211,17 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           if (file instanceof DeletedVirtualFileStub && ((DeletedVirtualFileStub)file).isResurrected()) {
             CachedFileContent resurrectedFileContent = new CachedFileContent(((DeletedVirtualFileStub)file).getOriginalFile());
             FileIndexingResult indexingResult = doIndexFileContent(project, resurrectedFileContent);
-            return new FileIndexingStatistics(System.nanoTime() - startTime,
-                                              indexingResult.fileType,
-                                              indexingResult.timesPerIndexer);
-          } else {
-            return new FileIndexingStatistics(System.nanoTime() - startTime,
-                                              file.getFileType(),
-                                              Collections.emptyMap());
+            indexingStatistics = new FileIndexingStatistics(System.nanoTime() - startTime,
+                                                            indexingResult.fileType,
+                                                            indexingResult.timesPerIndexer);
           }
-        } finally {
+          else {
+            indexingStatistics = new FileIndexingStatistics(System.nanoTime() - startTime,
+                                                            file.getFileType(),
+                                                            Collections.emptyMap());
+          }
+        }
+        finally {
           setIsIndexedFlag(file);
         }
       }
@@ -1227,14 +1230,15 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         if (indexingResult.setIndexedStatus) {
           setIsIndexedFlag(file);
         }
-        return new FileIndexingStatistics(System.nanoTime() - startTime,
-                                          indexingResult.fileType,
-                                          indexingResult.timesPerIndexer);
+        indexingStatistics = new FileIndexingStatistics(System.nanoTime() - startTime,
+                                                        indexingResult.fileType,
+                                                        indexingResult.timesPerIndexer);
       }
+      getChangedFilesCollector().removeFileIdFromFilesScheduledForUpdate(fileId);
+      return indexingStatistics;
     }
     finally {
       IndexingStamp.flushCache(fileId);
-      getChangedFilesCollector().removeFileIdFromFilesScheduledForUpdate(fileId);
     }
   }
 
