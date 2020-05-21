@@ -577,7 +577,7 @@
           "casesNumber": 25,
           "description": "When without bound value, various expressions in the control structure body.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-2/pos/1.1.kt",
-          "unexpectedBehaviour": true,
+          "unexpectedBehaviour": false,
           "linkType": "main",
           "helpers": "typesProvider, classes, functions"
         },
@@ -652,7 +652,7 @@
           "casesNumber": 25,
           "description": "\u0027When\u0027 with bound value and with different variants of expressions in the control structure body.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.1.kt",
-          "unexpectedBehaviour": true,
+          "unexpectedBehaviour": false,
           "linkType": "main",
           "helpers": "typesProvider, classes, functions"
         },
