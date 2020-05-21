@@ -5,7 +5,9 @@ import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.impl.libraries.LibraryTableImplUtil
+import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.testFramework.rules.ProjectModelRule
@@ -42,6 +44,7 @@ class ModuleLevelLibrariesInRootModelTest {
       val libraryEntry = dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry
       assertThat(libraryEntry.isModuleLevel).isTrue()
       assertThat(libraryEntry.libraryName).isNull()
+      assertThat(libraryEntry.presentableName).isEqualTo("Empty Library")
       assertThat(libraryEntry.library).isEqualTo(library)
       assertThat(libraryEntry.scope).isEqualTo(DependencyScope.COMPILE)
       assertThat(libraryEntry.isExported).isFalse()
@@ -56,7 +59,6 @@ class ModuleLevelLibrariesInRootModelTest {
       assertThat(committedEntry.isExported).isFalse()
       assertThat(committedEntry.isModuleLevel).isTrue()
       assertThat(committedEntry.libraryName).isNull()
-      assertThat(committedEntry.library).isEqualTo(library)
       assertThat(committedEntry.libraryLevel).isEqualTo(LibraryTableImplUtil.MODULE_LEVEL)
       assertThat(library.isDisposed).isTrue()
       assertThat((committedEntry.library as LibraryEx).module).isEqualTo(module)
@@ -69,9 +71,12 @@ class ModuleLevelLibrariesInRootModelTest {
       val library = model.moduleLibraryTable.libraries.single()
       val libraryModel = library.modifiableModel
       libraryModel.addRoot(root, OrderRootType.CLASSES)
+      val libraryEntryForUncommitted = dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry
+      assertThat(libraryEntryForUncommitted.getFiles(OrderRootType.CLASSES)).isEmpty()
       libraryModel.commit()
       val libraryEntry = dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry
       assertThat(libraryEntry.getFiles(OrderRootType.CLASSES).single()).isEqualTo(root)
+      assertThat(libraryEntry.presentableName).isEqualTo(root.presentableUrl)
       libraryEntry.scope = DependencyScope.RUNTIME
       libraryEntry.isExported = true
       assertThat(model.findLibraryOrderEntry(library)).isEqualTo(libraryEntry)
@@ -105,12 +110,12 @@ class ModuleLevelLibrariesInRootModelTest {
       assertThat(model.moduleLibraryTable.libraries.single()).isEqualTo(library)
       val libraryEntry = dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry
       assertThat(libraryEntry.libraryName).isEqualTo("foo")
+      assertThat(libraryEntry.presentableName).isEqualTo("foo")
       assertThat(libraryEntry.library).isEqualTo(library)
 
       val committed = commitModifiableRootModel(model)
       val committedEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
       assertThat(committedEntry.libraryName).isEqualTo("foo")
-      assertThat(committedEntry.library).isEqualTo(library)
     }
 
     run {
@@ -213,29 +218,47 @@ class ModuleLevelLibrariesInRootModelTest {
 
   @Test
   fun `two libraries with the same name`() {
+    val root1 = projectModel.baseProjectDir.newVirtualDirectory("lib1")
+    val root2 = projectModel.baseProjectDir.newVirtualDirectory("lib2")
     val model = createModifiableModel(module)
     val lib1 = model.moduleLibraryTable.createLibrary("foo")
+    addClassesRoot(lib1, root1)
     val lib2 = model.moduleLibraryTable.createLibrary("foo")
+    addClassesRoot(lib2, root2)
     val (entry1, entry2) = dropModuleSourceEntry(model, 2)
     assertThat((entry1 as LibraryOrderEntry).library).isEqualTo(lib1)
     assertThat((entry2 as LibraryOrderEntry).library).isEqualTo(lib2)
     val committed = commitModifiableRootModel(model)
     val (committedEntry1, committedEntry2) = dropModuleSourceEntry(committed, 2)
-    assertThat((committedEntry1 as LibraryOrderEntry).library).isEqualTo(lib1)
-    assertThat((committedEntry2 as LibraryOrderEntry).library).isEqualTo(lib2)
+    assertThat((committedEntry1 as LibraryOrderEntry).libraryName).isEqualTo("foo")
+    assertThat(committedEntry1.getFiles(OrderRootType.CLASSES)).containsExactly(root1)
+    assertThat((committedEntry2 as LibraryOrderEntry).libraryName).isEqualTo("foo")
+    assertThat(committedEntry2.getFiles(OrderRootType.CLASSES)).containsExactly(root2)
   }
 
   @Test
   fun `two unnamed libraries`() {
+    val root1 = projectModel.baseProjectDir.newVirtualDirectory("lib1")
+    val root2 = projectModel.baseProjectDir.newVirtualDirectory("lib2")
     val model = createModifiableModel(module)
     val lib1 = model.moduleLibraryTable.createLibrary()
+    addClassesRoot(lib1, root1)
     val lib2 = model.moduleLibraryTable.createLibrary()
+    addClassesRoot(lib2, root2)
     val (entry1, entry2) = dropModuleSourceEntry(model, 2)
     assertThat((entry1 as LibraryOrderEntry).library).isEqualTo(lib1)
     assertThat((entry2 as LibraryOrderEntry).library).isEqualTo(lib2)
     val committed = commitModifiableRootModel(model)
     val (committedEntry1, committedEntry2) = dropModuleSourceEntry(committed, 2)
-    assertThat((committedEntry1 as LibraryOrderEntry).library).isEqualTo(lib1)
-    assertThat((committedEntry2 as LibraryOrderEntry).library).isEqualTo(lib2)
+    assertThat((committedEntry1 as LibraryOrderEntry).library).isNotNull()
+    assertThat(committedEntry1.getFiles(OrderRootType.CLASSES)).containsExactly(root1)
+    assertThat((committedEntry2 as LibraryOrderEntry).library).isNotNull()
+    assertThat(committedEntry2.getFiles(OrderRootType.CLASSES)).containsExactly(root2)
+  }
+
+  private fun addClassesRoot(library: Library, root: VirtualFile) {
+    val model = library.modifiableModel
+    model.addRoot(root, OrderRootType.CLASSES)
+    model.commit()
   }
 }
