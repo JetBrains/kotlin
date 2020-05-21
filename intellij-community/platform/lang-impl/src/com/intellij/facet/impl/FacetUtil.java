@@ -22,8 +22,12 @@ import java.util.Arrays;
 public class FacetUtil {
 
   public static <F extends Facet> F addFacet(Module module, FacetType<F, ?> type) {
+    return addFacet(module, type, type.getPresentableName());
+  }
+
+  public static <F extends Facet> F addFacet(@NotNull Module module, @NotNull FacetType<F, ?> type, @NotNull String facetName) {
     final ModifiableFacetModel model = FacetManager.getInstance(module).createModifiableModel();
-    final F facet = createFacet(module, type);
+    final F facet = createFacet(module, type, facetName);
     ApplicationManager.getApplication().runWriteAction(() -> {
       model.addFacet(facet);
       model.commit();
@@ -31,8 +35,9 @@ public class FacetUtil {
     return facet;
   }
 
-  private static <F extends Facet, C extends FacetConfiguration> F createFacet(final Module module, final FacetType<F, C> type) {
-    return FacetManager.getInstance(module).createFacet(type, type.getPresentableName(), type.createDefaultConfiguration(), null);
+  private static <F extends Facet, C extends FacetConfiguration> F createFacet(final Module module,
+                                                                               final FacetType<F, C> type, @NotNull String facetName) {
+    return FacetManager.getInstance(module).createFacet(type, facetName, type.createDefaultConfiguration(), null);
   }
 
   public static void deleteFacet(final Facet facet) {
