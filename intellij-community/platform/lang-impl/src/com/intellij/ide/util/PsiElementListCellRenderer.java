@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util;
 
 import com.intellij.ide.ui.UISettings;
@@ -31,6 +31,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.text.Matcher;
 import com.intellij.util.text.MatcherHolder;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -255,7 +256,8 @@ public abstract class PsiElementListCellRenderer<T extends PsiElement> extends J
     return null;
   }
 
-  private static DefaultListCellRenderer getModuleRenderer(Object value) {
+  @ApiStatus.Internal
+  public static @Nullable DefaultListCellRenderer getModuleRenderer(Object value) {
     final DefaultListCellRenderer renderer = ModuleRendererFactory.findInstance(value).getModuleRenderer();
     if (renderer instanceof PlatformModuleRendererFactory.PlatformModuleRenderer) {
       // it won't display any new information

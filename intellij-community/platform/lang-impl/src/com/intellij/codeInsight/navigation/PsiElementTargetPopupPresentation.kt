@@ -1,23 +1,16 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.navigation
 
-import com.intellij.icons.AllIcons
+import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.NavigationItem
 import com.intellij.navigation.TargetPopupPresentation
 import com.intellij.openapi.editor.markup.EffectType
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.fileEditor.impl.EditorTabPresentationUtil
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleType
-import com.intellij.openapi.module.ModuleUtil
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.Iconable
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vcs.FileStatusManager
-import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.problems.WolfTheProblemSolver
 import com.intellij.psi.PsiElement
@@ -26,16 +19,23 @@ import com.intellij.ui.JBColor
 import org.jetbrains.annotations.ApiStatus.Experimental
 import java.awt.Color
 import java.awt.Font
-import java.io.File
 import javax.swing.Icon
+import javax.swing.JLabel
+import javax.swing.JList
 
 @Experimental
 class PsiElementTargetPopupPresentation(private val myElement: PsiElement) : TargetPopupPresentation {
 
   private val myProject: Project = myElement.project
   private val myVirtualFile: VirtualFile? = myElement.containingFile?.virtualFile
-  private val myModule: Module? by lazy { myVirtualFile?.let { ModuleUtil.findModuleForFile(it, myProject) } }
   private val myItemPresentation: ItemPresentation? = (myElement as? NavigationItem)?.presentation
+  private val myModuleRendererData: Pair<String, Icon?>? = run {
+    val renderer = PsiElementListCellRenderer.getModuleRenderer(myElement)
+    val component = renderer?.getListCellRendererComponent(JList<PsiElement>(), myElement, -1, false, false) as? JLabel
+    component?.let {
+      Pair(component.text, component.icon)
+    }
+  }
 
   override fun getIcon(): Icon? = myElement.getIcon(Iconable.ICON_FLAG_VISIBILITY or Iconable.ICON_FLAG_READ_STATUS)
 
@@ -77,34 +77,7 @@ class PsiElementTargetPopupPresentation(private val myElement: PsiElement) : Tar
     }
   }
 
-  override fun getRightText(): String? {
-    val virtualFile = myVirtualFile ?: return null
-    val fileIndex = ProjectFileIndex.getInstance(myProject)
-    if (fileIndex.isInLibrarySource(virtualFile) || fileIndex.isInLibraryClasses(virtualFile)) {
-      val jar = JarFileSystem.getInstance().getVirtualFileForJar(virtualFile) ?: return null
-      val name = jar.name
-      val text = orderEntryText(fileIndex, virtualFile) ?: sdkText(virtualFile) ?: return "($name)"
-      return if (text == name) text else "$text ($name)"
-    }
-    else {
-      val module = myModule ?: return null
-      if (Registry.`is`("ide.show.folder.name.instead.of.module.name")) {
-        val path = ModuleUtilCore.getModuleDirPath(module)
-        return if (path.isEmpty()) module.name else File(path).name
-      }
-      else {
-        return module.name
-      }
-    }
-  }
+  override fun getRightText(): String? = myModuleRendererData?.first
 
-  override fun getRightIcon(): Icon? {
-    val virtualFile = myVirtualFile ?: return null
-    val fileIndex = ProjectFileIndex.getInstance(myProject)
-    return when {
-      fileIndex.isInLibrarySource(virtualFile) || fileIndex.isInLibraryClasses(virtualFile) -> AllIcons.Nodes.PpLibFolder
-      fileIndex.isInTestSourceContent(virtualFile) -> AllIcons.Nodes.TestSourceFolder
-      else -> myModule?.let { ModuleType.get(it) }?.icon
-    }
-  }
+  override fun getRightIcon(): Icon? = myModuleRendererData?.second
 }
