@@ -53,7 +53,6 @@ internal class BaseResolverExtension : GradleProjectResolverExtension {
       Init::class.java,  // gradle-tooling-extension-impl jar
       Multimap::class.java, // repacked gradle guava
       GsonBuilder::class.java,
-      ShortTypeHandling::class.java,
       THash::class.java,  // trove4j jar
       IonType::class.java,  // ion-java jar
       SystemInfoRt::class.java // util-rt jar, !!! do not replace it with SystemInfo.class from util module
