@@ -56,7 +56,7 @@ internal class BaseResolverExtension : GradleProjectResolverExtension {
       ShortTypeHandling::class.java,
       THash::class.java,  // trove4j jar
       IonType::class.java,  // ion-java jar
-      SystemInfoRt::class.java // util-rt jat, !!! do not replace it with SystemInfo.class from util module
+      SystemInfoRt::class.java // util-rt jar, !!! do not replace it with SystemInfo.class from util module
     )
   }
 
