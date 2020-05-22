@@ -4,6 +4,7 @@ package com.intellij.openapi.roots
 import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.impl.RootConfigurationAccessor
 import com.intellij.testFramework.ApplicationRule
@@ -162,6 +163,41 @@ class SdkInRootModelTest {
   }
 
   @Test
+  fun `rename sdk`() {
+    val sdk = projectModel.addSdk(projectModel.createSdk("foo"))
+    val model = createModifiableModel(module)
+    model.sdk = sdk
+    commitModifiableRootModel(model)
+
+    renameSdk(sdk, "bar")
+
+    val rootManager = ModuleRootManager.getInstance(module)
+    val entry = dropModuleSourceEntry(rootManager, 1).single() as JdkOrderEntry
+    assertThat(entry.isValid).isTrue()
+    assertThat(entry.jdk).isEqualTo(sdk)
+    assertThat(rootManager.isSdkInherited).isFalse()
+    assertThat(rootManager.sdk).isEqualTo(sdk)
+  }
+
+  @Test
+  fun `rename project sdk`() {
+    val sdk = projectModel.addSdk(projectModel.createSdk("foo"))
+    runWriteActionAndWait { projectModel.projectRootManager.projectSdk = sdk }
+    val model = createModifiableModel(module)
+    model.inheritSdk()
+    commitModifiableRootModel(model)
+    
+    renameSdk(sdk, "baz")
+    val rootManager = ModuleRootManager.getInstance(module)
+    val entry = dropModuleSourceEntry(rootManager, 1).single() as JdkOrderEntry
+    assertThat(entry.isValid).isTrue()
+    assertThat(entry.jdkName).isEqualTo("baz")
+    assertThat(entry.jdk).isEqualTo(sdk)
+    assertThat(rootManager.isSdkInherited).isTrue()
+    assertThat(rootManager.sdk).isEqualTo(sdk)
+  }
+
+  @Test
   fun `set module sdk from accessor`() {
     val sdk = projectModel.createSdk("my sdk")
     val model = createModifiableModel(module, object : RootConfigurationAccessor() {
@@ -212,5 +248,13 @@ class SdkInRootModelTest {
     projectModel.addSdk(sdk)
     runWriteActionAndWait { projectModel.projectRootManager.projectSdk = sdk }
     assertThat(committed.sdk).isEqualTo(sdk)
+  }
+
+  private fun renameSdk(sdk: Sdk, newName: String) {
+    val modificator = sdk.sdkModificator
+    modificator.name = newName
+    runWriteActionAndWait {
+      ProjectJdkTable.getInstance().updateJdk(sdk, modificator as Sdk)
+    }
   }
 }
