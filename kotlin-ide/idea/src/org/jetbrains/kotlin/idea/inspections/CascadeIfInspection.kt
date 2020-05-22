@@ -10,9 +10,9 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.core.util.isOneLiner
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfToWhenIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
 import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*

@@ -17,7 +17,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.moveCaret
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
+import org.jetbrains.kotlin.idea.core.util.isOneLiner
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.countUsages
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
 import org.jetbrains.kotlin.lexer.KtTokens

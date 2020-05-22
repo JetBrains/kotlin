@@ -18,11 +18,9 @@ fun foo(o: Any) {
     val x = i(o)
 }
 
-private fun i(o: Any): Int {
-    return when (o) {
-        is A -> {
-            if (o is T) o.a + o.t else o.a
-        }
-        else -> o.hashCode()
+private fun i(o: Any) = when (o) {
+    is A -> {
+        if (o is T) o.a + o.t else o.a
     }
+    else -> o.hashCode()
 }
