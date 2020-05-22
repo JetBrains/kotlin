@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.actions;
 
+import com.intellij.model.ModelPatch;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -17,9 +18,11 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.ChangedRangesInfo;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -122,5 +125,11 @@ public class VcsFacade {
    */
   public void runHeavyModificationTask(@NotNull Project project, @NotNull Document document, @NotNull Runnable o) {
     o.run();
+  }
+
+  @ApiStatus.Experimental
+  @Nullable
+  public JComponent createPatchPreviewComponent(@NotNull Project project, @NotNull ModelPatch patch) {
+    return null;
   }
 }
