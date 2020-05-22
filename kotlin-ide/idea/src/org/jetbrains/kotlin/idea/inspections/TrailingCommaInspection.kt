@@ -32,7 +32,7 @@ import kotlin.properties.Delegates
 
 class TrailingCommaInspection(
     @JvmField
-    var addCommaWarning: Boolean = false,
+    var addCommaWarning: Boolean = false
 ) : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = object : TrailingCommaVisitor() {
         override val recursively: Boolean = false
@@ -40,9 +40,8 @@ class TrailingCommaInspection(
 
         override fun process(trailingCommaContext: TrailingCommaContext) {
             val element = trailingCommaContext.ktElement
-            if (!element.canAddTrailingCommaWithRegistryCheck()) return
-
-            useTrailingComma = CodeStyle.getSettings(element.project).kotlinCustomSettings.ALLOW_TRAILING_COMMA
+            val kotlinCustomSettings = CodeStyle.getSettings(element.project).kotlinCustomSettings
+            useTrailingComma = kotlinCustomSettings.addTrailingCommaIsAllowedFor(element)
             when (trailingCommaContext.state) {
                 TrailingCommaState.MISSING, TrailingCommaState.EXISTS -> {
                     checkCommaPosition(element)
@@ -161,6 +160,7 @@ class TrailingCommaInspection(
                 val range = createFormatterTextRange(element)
                 val settings = CodeStyle.getSettings(project).clone()
                 settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA = true
+                settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA_ON_CALL_SITE = true
                 CodeStyle.doWithTemporarySettings(project, settings, Runnable {
                     CodeStyleManager.getInstance(project).reformatRange(element, range.startOffset, range.endOffset)
                 })

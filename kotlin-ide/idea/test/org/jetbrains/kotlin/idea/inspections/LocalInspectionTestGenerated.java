@@ -11972,6 +11972,41 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("testData/inspectionsLocal/trailingComma/changeCommaPosition5.kt");
         }
 
+        @TestMetadata("destructuringDeclarations.kt")
+        public void testDestructuringDeclarations() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/destructuringDeclarations.kt");
+        }
+
+        @TestMetadata("destructuringDeclarationsInLambda.kt")
+        public void testDestructuringDeclarationsInLambda() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/destructuringDeclarationsInLambda.kt");
+        }
+
+        @TestMetadata("functionArguments.kt")
+        public void testFunctionArguments() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/functionArguments.kt");
+        }
+
+        @TestMetadata("indices.kt")
+        public void testIndices() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/indices.kt");
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/inner.kt");
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/lambda.kt");
+        }
+
+        @TestMetadata("literal.kt")
+        public void testLiteral() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/literal.kt");
+        }
+
         @TestMetadata("missingLineBreak.kt")
         public void testMissingLineBreak() throws Exception {
             runTest("testData/inspectionsLocal/trailingComma/missingLineBreak.kt");
@@ -12005,6 +12040,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("removeComma4.kt")
         public void testRemoveComma4() throws Exception {
             runTest("testData/inspectionsLocal/trailingComma/removeComma4.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/simple.kt");
+        }
+
+        @TestMetadata("typeArguments.kt")
+        public void testTypeArguments() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/typeArguments.kt");
+        }
+
+        @TestMetadata("typeParameters.kt")
+        public void testTypeParameters() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/typeParameters.kt");
+        }
+
+        @TestMetadata("whenEntry.kt")
+        public void testWhenEntry() throws Exception {
+            runTest("testData/inspectionsLocal/trailingComma/whenEntry.kt");
         }
     }
 
