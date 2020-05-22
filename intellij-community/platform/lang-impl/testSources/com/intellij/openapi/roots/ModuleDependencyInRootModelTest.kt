@@ -314,7 +314,6 @@ class ModuleDependencyInRootModelTest {
       assertThat(entry.module).isEqualTo(a)
       val committed = commitModifiableRootModel(model)
       val moduleEntry = dropModuleSourceEntry(committed, 1).single() as ModuleOrderEntry
-      assertThat(moduleEntry.module).isEqualTo(a)
       assertThat(moduleEntry.moduleName).isEqualTo("a")
     }
     runWriteActionAndWait { moduleModel.commit() }
