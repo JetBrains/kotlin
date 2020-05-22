@@ -10,7 +10,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler
 import org.jetbrains.kotlin.idea.perf.profilers.doOrThrow
-import org.jetbrains.kotlin.idea.testFramework.logMessage
+import org.jetbrains.kotlin.idea.perf.util.logMessage
 import java.io.File
 import java.lang.reflect.Method
 import java.nio.file.Files

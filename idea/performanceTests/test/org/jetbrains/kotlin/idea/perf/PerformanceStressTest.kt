@@ -5,95 +5,91 @@
 
 package org.jetbrains.kotlin.idea.perf
 
-import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
+import com.intellij.codeInsight.daemon.impl.HighlightInfo
+import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.idea.perf.util.DefaultProfile
+import org.jetbrains.kotlin.idea.perf.util.PerformanceSuite
+import org.jetbrains.kotlin.idea.perf.util.PerformanceSuite.TypingConfig
+import org.jetbrains.kotlin.idea.perf.util.ProjectProfile
+import org.jetbrains.kotlin.idea.perf.util.suite
+import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
+import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.junit.runner.RunWith
 
-class PerformanceStressTest : AbstractPerformanceProjectsTest() {
-
-    companion object {
-
-        @JvmStatic
-        var warmedUp: Boolean = false
-
-        @JvmStatic
-        val hwStats: Stats = Stats("helloWorld project")
-
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread { hwStats.close() })
-        }
-
-    }
-
-    override fun setUp() {
-        super.setUp()
-        // warm up: open simple small project
-        if (!warmedUp) {
-            warmUpProject(hwStats, "src/HelloMain.kt") {
-                openProject {
-                    name("helloWorld")
-
-                    kotlinFile("HelloMain") {
-                        topFunction("main") {
-                            param("args", "Array<String>")
-                            body("""println("Hello World!")""")
-                        }
-                    }
-                }
-            }
-            warmedUp = true
-        }
-    }
+@RunWith(JUnit3RunnerWithInners::class)
+class PerformanceStressTest : UsefulTestCase() {
 
     fun testLotsOfOverloadedMethods() {
         // KT-35135
         val generatedTypes = mutableListOf(listOf<String>())
         generateTypes(arrayOf("Int", "String", "Long", "List<Int>", "Array<Int>"), generatedTypes)
 
-        tcSuite("Lots of overloaded method project") {
-            myProject = openProject {
-                name("kt-35135")
-                buildGradle("idea/testData/perfTest/simpleTemplate/")
+        suite(
+            suiteName = "Lots of overloaded method project",
+            config = PerformanceSuite.StatsScopeConfig(name = "kt-35135 project", warmup = 8, iterations = 15)
+        ) {
+            app {
+                warmUpProject()
 
-                kotlinFile("OverloadX") {
-                    pkg("pkg")
+                project {
+                    descriptor {
+                        name("kt-35135")
+                        buildGradle("idea/testData/perfTest/simpleTemplate/")
 
-                    topClass("OverloadX") {
-                        openClass()
+                        kotlinFile("OverloadX") {
+                            pkg("pkg")
 
-                        for (types in generatedTypes) {
-                            function("foo") {
-                                openFunction()
-                                returnType("String")
-                                for ((index, type) in types.withIndex()) {
-                                    param("arg$index", type)
+                            topClass("OverloadX") {
+                                openClass()
+
+                                for (types in generatedTypes) {
+                                    function("foo") {
+                                        openFunction()
+                                        returnType("String")
+                                        for ((index, type) in types.withIndex()) {
+                                            param("arg$index", type)
+                                        }
+                                        body("TODO()")
+                                    }
                                 }
-                                body("TODO()")
+                            }
+                        }
+
+                        kotlinFile("SomeClass") {
+                            pkg("pkg")
+
+                            topClass("SomeClass") {
+                                superClass("OverloadX")
+
+                                body("ov")
+                            }
+                        }
+                    }
+
+                    profile(DefaultProfile)
+
+                    fixture("src/main/java/pkg/SomeClass.kt").use { fixture ->
+                        val typingConfig = TypingConfig(
+                            fixture,
+                            marker = "ov",
+                            insertString = "override fun foo(): String = TODO()",
+                            delayMs = 50
+                        )
+
+                        measure<List<HighlightInfo>>("type override fun foo()", fixture = fixture) {
+                            before = {
+                                moveCursor(typingConfig)
+                            }
+                            test = {
+                                typeAndHighlight(typingConfig)
+                            }
+                            after = {
+                                fixture.restoreText()
+                                commitAllDocuments()
                             }
                         }
                     }
                 }
-
-                kotlinFile("SomeClass") {
-                    pkg("pkg")
-
-                    topClass("SomeClass") {
-                        superClass("OverloadX")
-
-                        body("ov")
-                    }
-                }
-            }
-
-            val stats = Stats("kt-35135 project")
-            stats.use { stats ->
-                perfType(
-                    stats,
-                    "src/main/java/pkg/SomeClass.kt",
-                    "ov",
-                    "override fun foo(): String = TODO()",
-                    note = "override fun foo()",
-                    delay = 50
-                )
             }
         }
     }

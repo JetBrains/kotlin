@@ -25,6 +25,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.parameterInfo.HintType
+import org.jetbrains.kotlin.idea.perf.TestApplicationManager
 import org.jetbrains.kotlin.idea.test.runPostStartupActivitiesOnce
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -74,7 +75,7 @@ fun dispatchAllInvocationEvents() {
 fun loadProjectWithName(path: String, name: String): Project? =
     ProjectManagerEx.getInstanceEx().loadProject(name, path)
 
-fun closeProject(project: Project) {
+fun TestApplicationManager.closeProject(project: Project) {
     dispatchAllInvocationEvents()
     val projectManagerEx = ProjectManagerEx.getInstanceEx()
     projectManagerEx.forceCloseProjectEx(project, true)
@@ -132,16 +133,4 @@ fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementatio
     if (filteredExtensions.size < extensions.size) {
         PlatformTestUtil.maskExtensions(pointName, filteredExtensions + listOf(point), parentDisposable)
     }
-}
-
-fun logMessage(message: () -> String) {
-    println("-- ${message()}")
-}
-
-fun logMessage(t: Throwable, message: () -> String) {
-    val writer = StringWriter()
-    PrintWriter(writer).use {
-        t.printStackTrace(it)
-    }
-    println("-- ${message()}:\n$writer")
 }

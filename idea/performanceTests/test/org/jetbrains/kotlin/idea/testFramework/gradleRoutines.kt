@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import org.jetbrains.plugins.gradle.service.project.open.setupGradleSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
+import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleLog
 import java.io.File
@@ -26,6 +27,8 @@ fun refreshGradleProject(projectPath: String, project: Project) {
     dispatchAllInvocationEvents()
 }
 
+const val GRADLE_JDK_NAME = "Gradle JDK"
+
 /**
  * inspired by org.jetbrains.plugins.gradle.service.project.open.importProject(projectDirectory, project)
  */
@@ -34,7 +37,16 @@ private fun _importProject(projectPath: String, project: Project) {
     val projectSdk = ProjectRootManager.getInstance(project).projectSdk
     assertNotNull(projectSdk, "project SDK not found for ${project.name} at $projectPath")
     val gradleProjectSettings = GradleProjectSettings()
+
+    GradleSettings.getInstance(project).gradleVmOptions =
+        "-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${System.getProperty("user.dir")}"
+
     setupGradleSettings(gradleProjectSettings, projectPath, project, projectSdk)
+    gradleProjectSettings.gradleJvm = GRADLE_JDK_NAME
+
+    GradleSettings.getInstance(project).getLinkedProjectSettings(projectPath)?.let { linkedProjectSettings ->
+        linkedProjectSettings.gradleJvm = GRADLE_JDK_NAME
+    }
 
     _attachGradleProjectAndRefresh(gradleProjectSettings, project)
 }

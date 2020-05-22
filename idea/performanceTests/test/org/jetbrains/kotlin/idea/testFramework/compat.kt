@@ -13,3 +13,6 @@ fun ProjectManagerEx.forceCloseProjectEx(project: Project, dispose: Boolean): Bo
     if (!dispose) error("dispose should be true")
     return this.forceCloseProject(project, true)
 }
+
+// BUNCH: 193
+typealias TestApplicationManager = com.intellij.idea.IdeaTestApplication
