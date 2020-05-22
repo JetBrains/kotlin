@@ -77,6 +77,11 @@ public final class GistManagerImpl extends GistManager {
     invalidateDependentCaches();
   }
 
+  @Override
+  public void invalidateData(@NotNull VirtualFile file) {
+    invalidateData(); // should be more granular in future
+  }
+
   private void invalidateGists() {
     if (LOG.isDebugEnabled()) {
       LOG.debug("Invalidating gists", new Throwable());
