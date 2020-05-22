@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.lookup.impl.actions;
 
@@ -10,6 +10,7 @@ import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupFocusDegree;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
+import com.intellij.codeInsight.template.TemplateActionContext;
 import com.intellij.codeInsight.template.impl.*;
 import com.intellij.codeInsight.template.impl.editorActions.ExpandLiveTemplateCustomAction;
 import com.intellij.featureStatistics.FeatureUsageTracker;
@@ -115,7 +116,8 @@ public abstract class ChooseItemAction extends EditorAction implements HintManag
         return true;
       }
 
-      List<TemplateImpl> templates = TemplateManagerImpl.listApplicableTemplateWithInsertingDummyIdentifier(editor, file, false);
+      List<TemplateImpl> templates = TemplateManagerImpl.listApplicableTemplateWithInsertingDummyIdentifier(
+        TemplateActionContext.expanding(file, editor));
       TemplateImpl template = LiveTemplateCompletionContributor.findFullMatchedApplicableTemplate(editor, offset, templates);
       if (template != null && shortcutChar == TemplateSettings.getInstance().getShortcutChar(template)) {
         return true;

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.template.actions;
 
@@ -6,6 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.completion.OffsetKey;
 import com.intellij.codeInsight.completion.OffsetsInFile;
+import com.intellij.codeInsight.template.TemplateActionContext;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.codeInsight.template.impl.*;
 import com.intellij.lang.StdLanguages;
@@ -121,8 +122,8 @@ public class SaveAsTemplateAction extends AnAction {
                                                                      editor.getSelectionModel().getSelectionEnd(),
                                                                      CompletionUtil.DUMMY_IDENTIFIER_TRIMMED);
 
-    Set<TemplateContextType> applicable = TemplateManagerImpl.getApplicableContextTypes(copy.getFile(),
-                                                                                        copy.getOffsets().getOffset(startKey));
+    Set<TemplateContextType> applicable = TemplateManagerImpl.getApplicableContextTypes(
+      TemplateActionContext.expanding(copy.getFile(), copy.getOffsets().getOffset(startKey)));
 
     for (TemplateContextType contextType : TemplateManagerImpl.getAllContextTypes()) {
       template.getTemplateContext().setEnabled(contextType, applicable.contains(contextType));
