@@ -42,4 +42,6 @@ class KotlinSSFunctionTest : KotlinSSTest() {
     fun testMethod() { doTest("fun a() { }") }
 
     fun testMethodProtectedModifier() { doTest("protected fun '_() { }") }
+
+    fun testFunExprBlock() { doTest("fun '_(): Int = 0") }
 }

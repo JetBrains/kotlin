@@ -402,14 +402,27 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(declaration.body, other.body)
     }
 
+    private fun getSingleExpression(expression: KtExpression?): KtExpression? {
+        return if(expression is KtBlockExpression && expression.statements.size == 1) {
+            val firstStatement = expression.firstStatement
+            if(firstStatement is KtReturnExpression) {
+                firstStatement.returnedExpression
+            } else null
+        } else null
+    }
+
     override fun visitNamedFunction(function: KtNamedFunction) {
         val other = getTreeElement<KtNamedFunction>() ?: return
+        val blockExpr = getSingleExpression(function.bodyExpression)
+        val otherBlockExpr = getSingleExpression(other.bodyExpression)
         myMatchingVisitor.result = matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(function.modifierList, other.modifierList)
                 && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)
                 && matchTypeReferenceWithDeclaration(function.typeReference, other)
                 && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
-                && myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
+                && if(blockExpr == null && otherBlockExpr == null) { // both bodies are not single expression
+            myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
+        } else myMatchingVisitor.match(blockExpr, otherBlockExpr)
         if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(function.nameIdentifier)) {
             myMatchingVisitor.result = myMatchingVisitor.handleTypedElement(function.identifyingElement, other.identifyingElement)
         }
