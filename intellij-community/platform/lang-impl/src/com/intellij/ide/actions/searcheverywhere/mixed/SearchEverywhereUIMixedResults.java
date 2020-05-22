@@ -670,7 +670,7 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
         .addInputEvent(e);
       featureTriggered(SearchEverywhereUsageTriggerCollector.GROUP_NAVIGATE, data);
     });
-    registerAction(SearchEverywhereActions.NAVIGATE_TO_NEXT_GROUP, e -> {
+    registerAction(SearchEverywhereActions.NAVIGATE_TO_PREV_GROUP, e -> {
       scrollList(false);
       FeatureUsageData data = SearchEverywhereUsageTriggerCollector
         .createData(null)

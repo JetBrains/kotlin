@@ -32,6 +32,7 @@ class SEListSelectionTracker implements ListSelectionListener {
   @Override
   public void valueChanged(ListSelectionEvent e) {
     if (isLocked()) return;
+    if (myList.getSelectedIndices().length == 0) return;
 
     saveSelection();
   }
