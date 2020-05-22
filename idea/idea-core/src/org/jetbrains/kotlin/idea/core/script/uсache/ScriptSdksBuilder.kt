@@ -22,11 +22,7 @@ class ScriptSdksBuilder(
     private val sdks: MutableMap<String?, Sdk?> = mutableMapOf(),
     private val remove: Sdk? = null
 ) {
-    private val defaultSdk = getScriptDefaultSdk()
-
-    init {
-        sdks[null] = defaultSdk
-    }
+    private val defaultSdk by lazy { getScriptDefaultSdk() }
 
     fun build() = ScriptSdks(project, sdks)
 
@@ -35,7 +31,8 @@ class ScriptSdksBuilder(
     }
 
     fun addSdk(javaHome: File?): Sdk? {
-        if (javaHome == null) return defaultSdk
+        if (javaHome == null) return addDefaultSdk()
+
         val canonicalPath = FileUtil.toSystemIndependentName(javaHome.canonicalPath)
         return sdks.getOrPut(canonicalPath) {
             getScriptSdkByJavaHome(javaHome) ?: defaultSdk
@@ -53,6 +50,9 @@ class ScriptSdksBuilder(
         return getProjectJdkTableSafe().allJdks.find { it.homeDirectory == javaHomeVF }
             ?.takeIf { it.canBeUsedForScript() }
     }
+
+    fun addDefaultSdk(): Sdk? =
+        sdks.getOrPut(null) { defaultSdk }
 
     fun addSdkByName(sdkName: String) {
         val sdk = getProjectJdkTableSafe().allJdks
@@ -85,5 +85,15 @@ class ScriptSdksBuilder(
 
     fun toStorage(storage: ScriptClassRootsStorage) {
         storage.sdks = sdks.values.mapNotNullTo(mutableSetOf()) { it?.name }
+        storage.defaultSdkUsed = sdks.containsKey(null)
+    }
+
+    fun fromStorage(storage: ScriptClassRootsStorage) {
+        storage.sdks.forEach {
+            addSdkByName(it)
+        }
+        if (storage.defaultSdkUsed) {
+            addDefaultSdk()
+        }
     }
 }

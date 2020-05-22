@@ -22,6 +22,7 @@ class ScriptClassRootsStorage(val project: Project) : PersistentStateComponent<S
     var classpath: Set<String> = hashSetOf()
     var sources: Set<String> = hashSetOf()
     var sdks: Set<String> = hashSetOf()
+    var defaultSdkUsed: Boolean = false
 
     override fun getState(): ScriptClassRootsStorage? {
         return this
