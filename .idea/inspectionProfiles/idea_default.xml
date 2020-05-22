@@ -136,6 +136,7 @@
     <inspection_tool class="ArgNamesWarningsInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="AroundAdviceStyleInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ArrayEquals" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="ArrayHashCode" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ArrayObjectsEquals" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ArraysAsListWithZeroOrOneArgument" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="INFO" enabled="true" />
@@ -272,6 +273,7 @@
     </inspection_tool>
     <inspection_tool class="EmptySynchronizedStatement" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EndlessStream" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="EqualsBetweenInconvertibleTypes" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EqualsOnSuspiciousObject" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EqualsWithItself" enabled="true" level="Strong Warning" enabled_by_default="true">
       <scope name="Tests" level="Strong Warning" enabled="false" />
@@ -280,7 +282,9 @@
     <inspection_tool class="ExcessiveLambdaUsage" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ExcessiveRangeCheck" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ExplicitArrayFilling" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="ExtendsObject" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ExtendsTagPositionInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ExternalizableWithoutPublicNoArgConstructor" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="FallthroughInSwitchStatementJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="FieldAccessedSynchronizedAndUnsynchronized" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="countGettersAndSetters" value="false" />
@@ -403,6 +407,7 @@
     <inspection_tool class="IncorrectParentDisposable" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Production" level="WARNING" enabled="true" />
     </inspection_tool>
+    <inspection_tool class="IndexOfReplaceableByContains" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="IndexZeroUsage" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="InfiniteLoopJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="InfiniteRecursion" enabled="true" level="ERROR" enabled_by_default="true" />
@@ -415,6 +420,7 @@
       <option name="ignoreNonOverflowingCompileTimeConstants" value="true" />
     </inspection_tool>
     <inspection_tool class="InterceptionAnnotationWithoutRuntimeRetention" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="InterfaceMethodClashesWithObject" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="InvalidComparatorMethodReference" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="InvalidImplementedBy" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="InvalidProvidedBy" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -594,6 +600,8 @@
     <inspection_tool class="JavaFxUnresolvedFxIdReference" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="JavaFxUnresolvedStyleClassReference" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="JavaFxUnusedImports" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="JavaLangInvokeHandleSignature" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="JavacQuirks" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="JavadocReference" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="ERROR" enabled="false" />
       <scope name="idea openapi" level="WARNING" enabled="true">
@@ -621,10 +629,13 @@
     <inspection_tool class="MathRandomCastToInt" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MavenDuplicateDependenciesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MavenModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="MetaAnnotationWithoutRuntimeRetention" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MethodMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_onlyPrivateOrFinal" value="true" />
       <option name="m_ignoreEmptyMethods" value="true" />
     </inspection_tool>
+    <inspection_tool class="MethodNameSameAsClassName" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="MethodNameSameAsParentName" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MethodNamesDifferOnlyByCase" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MethodOverloadsParentMethod" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MethodOverridesStaticMethod" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -634,7 +645,7 @@
     <inspection_tool class="MismatchedStringBuilderQueryUpdate" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MismatchedStringCase" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MisorderedAssertEqualsParameters" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="MissingDeprecatedAnnotation" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="MissingDeprecatedAnnotation" enabled="true" level="Strong Warning" enabled_by_default="true">
       <option name="warnOnMissingJavadoc" value="true" />
     </inspection_tool>
     <inspection_tool class="MissingOverrideAnnotation" enabled="true" level="WARNING" enabled_by_default="true">
@@ -646,7 +657,7 @@
       <option name="typeUseWithType" value="true" />
     </inspection_tool>
     <inspection_tool class="MisspelledCompareTo" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="MisspelledEquals" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="MisspelledEquals" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="MisspelledHashcode" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MisspelledSetUp" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MisspelledTearDown" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -654,6 +665,10 @@
     <inspection_tool class="MultipleBindingAnnotations" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MultipleInjectedConstructorsForClass" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MultipleTypedDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="MultipleVariablesInDeclaration" enabled="true" level="Strong Warning" enabled_by_default="true">
+      <option name="ignoreForLoopDeclarations" value="false" />
+      <option name="onlyWarnArrayDimensions" value="true" />
+    </inspection_tool>
     <inspection_tool class="NestedSynchronizedStatement" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NewClassNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
       <extension name="JUnitTestClassNamingConvention" enabled="true">
@@ -712,6 +727,7 @@
     <inspection_tool class="OctalIntegerJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="OctalLiteral" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="OverflowingLoopIndex" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="OverwrittenKey" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="PackageInfoWithoutPackage" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="PagesModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="ParameterCanBeLocal" enabled="true" level="Strong Warning" enabled_by_default="true" />
@@ -999,6 +1015,7 @@
     </inspection_tool>
     <inspection_tool class="ReflectionForUnavailableAnnotation" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="RemoveCurlyBracesFromTemplate" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="ReplaceAllDot" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ReplaceAssignmentWithOperatorAssignment" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreLazyOperators" value="true" />
       <option name="ignoreObscureOperators" value="true" />

@@ -62,11 +62,6 @@
       <option name="url" value="https://cache-redirector.jetbrains.com/dl.bintray.com/groovy/maven" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="jitpack mirror" />
-      <option name="name" value="jitpack mirror" />
-      <option name="url" value="https://cache-redirector.jetbrains.com/jitpack.io" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="7f849d18-5038-490f-a93d-226871e8f98c" />
       <option name="name" value="7f849d18-5038-490f-a93d-226871e8f98c" />
       <option name="url" value="https://cache-redirector.jetbrains.com/www.myget.org/F/rd-snapshots/maven" />
