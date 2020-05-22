@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.include.FileIncludeManager;
 import com.intellij.ui.ComboboxWithBrowseButton;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -26,6 +27,8 @@ public class FileIncludeContextHectorPanel extends HectorComponentPanel {
     myFile = file;
     myIncludeManager = includeManager;
 
+    myPanel.setBackground(UIUtil.getToolTipActionBackground());
+    myContextFile.setBackground(UIUtil.getToolTipActionBackground());
     reset();
   }
 
