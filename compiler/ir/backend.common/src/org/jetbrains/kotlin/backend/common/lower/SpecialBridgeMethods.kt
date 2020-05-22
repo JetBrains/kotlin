@@ -113,7 +113,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
     }
 }
 
-fun IrSimpleFunction.allOverridden(): Sequence<IrSimpleFunction> {
+fun IrSimpleFunction.allOverridden(includeSelf: Boolean = false): Sequence<IrSimpleFunction> {
     val visited = mutableSetOf<IrSimpleFunction>()
 
     fun IrSimpleFunction.search(): Sequence<IrSimpleFunction> {
@@ -125,5 +125,5 @@ fun IrSimpleFunction.allOverridden(): Sequence<IrSimpleFunction> {
         }
     }
 
-    return search().drop(1) // First element is `this`
+    return if (includeSelf) search() else search().drop(1)
 }

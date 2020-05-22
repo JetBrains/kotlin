@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
@@ -32,17 +33,16 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.getJvmMethodNameIfSpecial
-import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.forceSingleValueParameterBoxing
 import org.jetbrains.kotlin.load.kotlin.getJvmModuleNameForDeserializedDescriptor
+import org.jetbrains.kotlin.load.kotlin.signatures
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -64,14 +64,16 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         return sw.makeJavaGenericSignature()
     }
 
-    fun mapFunctionName(function: IrFunction): String {
-        if (function.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) {
-            val platformName = function.getJvmNameFromAnnotation()
-            if (platformName != null) return platformName
-        }
+    fun mapFunctionName(function: IrFunction, skipSpecial: Boolean = false): String {
+        if (!skipSpecial) {
+            if (function.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) {
+                val platformName = function.getJvmNameFromAnnotation()
+                if (platformName != null) return platformName
+            }
 
-        val nameForSpecialFunction = getJvmMethodNameIfSpecial(function.descriptor)
-        if (nameForSpecialFunction != null) return nameForSpecialFunction
+            val nameForSpecialFunction = getJvmMethodNameIfSpecial(function)
+            if (nameForSpecialFunction != null) return nameForSpecialFunction
+        }
 
         val property = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
         if (property != null && function.name.isSpecial) {
@@ -175,7 +177,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     fun mapSignatureWithGeneric(function: IrFunction): JvmMethodGenericSignature =
         mapSignature(function, false)
 
-    private fun mapSignature(function: IrFunction, skipGenericSignature: Boolean): JvmMethodGenericSignature {
+    private fun mapSignature(function: IrFunction, skipGenericSignature: Boolean, skipSpecial: Boolean = false): JvmMethodGenericSignature {
         if (function is IrLazyFunctionBase && function.initialSignatureFunction != null) {
             // Overrides of special builtin in Kotlin classes always have special signature
             if (function.descriptor.getOverriddenBuiltinReflectingJvmDescriptor() == null ||
@@ -210,7 +212,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         mapReturnType(function, sw)
         sw.writeReturnTypeEnd()
 
-        val signature = sw.makeJvmMethodSignature(mapFunctionName(function))
+        val signature = sw.makeJvmMethodSignature(mapFunctionName(function, skipSpecial))
 
         val specialSignatureInfo = with(BuiltinMethodsWithSpecialGenericSignature) { function.descriptor.getSpecialSignatureInfo() }
 
@@ -344,5 +346,45 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 ?: error("Fake override should have at least one overridden descriptor: ${current.render()}")
         }
         return current
+    }
+
+    private fun getJvmMethodNameIfSpecial(irFunction: IrFunction): String? =
+        (irFunction as? IrSimpleFunction)?.run {
+            getBuiltinSpecialPropertyGetterName() ?: getDifferentNameForJvmBuiltinFunction()
+        }
+
+    private val IrSimpleFunction.isBuiltIn: Boolean
+        get() = getPackageFragment()?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME ||
+                parent.safeAs<IrClass>()?.fqNameWhenAvailable?.toUnsafe()?.let(JavaToKotlinClassMap::mapKotlinToJava) != null
+
+    // From BuiltinMethodsWithDifferentJvmName.isBuiltinFunctionWithDifferentNameInJvm, BuiltinMethodsWithDifferentJvmName.getJvmName
+    private fun IrSimpleFunction.getDifferentNameForJvmBuiltinFunction(): String? {
+        if (name !in BuiltinMethodsWithDifferentJvmName.ORIGINAL_SHORT_NAMES) return null
+        if (!isBuiltIn) return null
+        return allOverridden(includeSelf = true)
+            .filter { it.isBuiltIn }
+            .mapNotNull {
+                val signature = it.computeJvmSignature()
+                BuiltinMethodsWithDifferentJvmName.SIGNATURE_TO_JVM_REPRESENTATION_NAME[signature]?.asString()
+            }
+            .firstOrNull()
+    }
+
+    private fun IrSimpleFunction.getBuiltinSpecialPropertyGetterName(): String? {
+        val propertyName = correspondingPropertySymbol?.owner?.name ?: return null
+        if (propertyName !in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES) return null
+        if (!isBuiltIn) return null
+        return allOverridden(includeSelf = true)
+            .mapNotNull {
+                val property = it.correspondingPropertySymbol!!.owner
+                BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[property.fqNameWhenAvailable]?.asString()
+            }
+            .firstOrNull()
+    }
+
+    private fun IrFunction.computeJvmSignature(): String = signatures {
+        val classPart = typeMapper.mapType(parentAsClass.defaultType).internalName
+        val signature = mapSignature(this@computeJvmSignature, skipGenericSignature = false, skipSpecial = true).toString()
+        return signature(classPart, signature)
     }
 }
