@@ -71,16 +71,6 @@ fun Candidate.resolveArgumentExpression(
                 )
             else
                 preprocessCallableReference(argument, expectedType)
-        // NB: FirCallableReferenceAccess should be checked earlier
-        is FirQualifiedAccessExpression -> resolvePlainExpressionArgument(
-            csBuilder,
-            argument,
-            expectedType,
-            sink,
-            isReceiver,
-            isDispatch,
-            isSafeCall
-        )
         // TODO:!
         is FirAnonymousFunction -> preprocessLambdaArgument(csBuilder, argument, expectedType, expectedTypeRef)
         // TODO:!
