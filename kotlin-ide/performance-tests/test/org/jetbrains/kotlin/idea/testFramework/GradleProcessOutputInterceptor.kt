@@ -12,6 +12,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener.EP_NAME as EP
 import com.intellij.testFramework.ExtensionTestUtil.maskExtensions
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
+import org.jetbrains.kotlin.idea.perf.util.gradleMessage
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.lang.Exception
 import kotlin.test.assertNull
@@ -44,8 +45,10 @@ private class GradleProcessOutputInterceptorImpl : GradleProcessOutputIntercepto
     private val buffer = StringBuilder()
 
     override fun onTaskOutput(id: ExternalSystemTaskId, text: String, stdOut: Boolean) {
-        if (id.projectSystemId == GRADLE_SYSTEM_ID && text.isNotEmpty())
+        if (id.projectSystemId == GRADLE_SYSTEM_ID && text.isNotEmpty()) {
+            gradleMessage { text }
             buffer.append(text)
+        }
     }
 
     override fun reset() = buffer.setLength(0)

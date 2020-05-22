@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.perf.profilers
 
 import org.jetbrains.kotlin.idea.perf.profilers.async.AsyncProfilerHandler
 import org.jetbrains.kotlin.idea.perf.profilers.yk.YKProfilerHandler
-import org.jetbrains.kotlin.idea.testFramework.logMessage
+import org.jetbrains.kotlin.idea.perf.util.logMessage
 
 interface ProfilerHandler {
     fun startProfiling(activityName: String, options: List<String> = emptyList())

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.idea.testFramework
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.lang.LanguageAnnotators
 import com.intellij.lang.LanguageExtensionPoint
@@ -21,8 +24,8 @@ import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.parameterInfo.HintType
-import java.io.PrintWriter
-import java.io.StringWriter
+import org.jetbrains.kotlin.idea.perf.util.logMessage
+import org.jetbrains.kotlin.idea.test.runPostStartupActivitiesOnce
 import java.nio.file.Paths
 
 fun commitAllDocuments() {
@@ -68,10 +71,23 @@ fun dispatchAllInvocationEvents() {
 fun loadProjectWithName(path: String, name: String): Project? =
     ProjectManagerEx.getInstanceEx().loadAndOpenProject(Paths.get(path), OpenProjectTask(projectName = name))
 
-fun closeProject(project: Project) {
+fun TestApplicationManager.closeProject(project: Project) {
+    val name = project.name
+    val startupManagerImpl = StartupManager.getInstance(project) as StartupManagerImpl
+    val daemonCodeAnalyzerSettings = DaemonCodeAnalyzerSettings.getInstance()
+    val daemonCodeAnalyzerImpl = DaemonCodeAnalyzer.getInstance(project) as DaemonCodeAnalyzerImpl
+
+    setDataProvider(null)
+    daemonCodeAnalyzerSettings.isImportHintEnabled = true // return default value to avoid unnecessary save
+    startupManagerImpl.checkCleared()
+    daemonCodeAnalyzerImpl.cleanupAfterTest()
+
+    logMessage { "project '$name' is about to be closed" }
     dispatchAllInvocationEvents()
     val projectManagerEx = ProjectManagerEx.getInstanceEx()
     projectManagerEx.forceCloseProjectEx(project, true)
+
+    logMessage { "project '$name' successfully closed" }
 }
 
 fun runStartupActivities(project: Project) {
@@ -98,16 +114,4 @@ fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementatio
     if (filteredExtensions.size < extensions.size) {
         ExtensionTestUtil.maskExtensions(pointName, filteredExtensions + listOf(point), parentDisposable)
     }
-}
-
-fun logMessage(message: () -> String) {
-    println("-- ${message()}")
-}
-
-fun logMessage(t: Throwable, message: () -> String) {
-    val writer = StringWriter()
-    PrintWriter(writer).use {
-        t.printStackTrace(it)
-    }
-    println("-- ${message()}:\n$writer")
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.perf.profilers.yk
 
 import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler
 import org.jetbrains.kotlin.idea.perf.profilers.doOrThrow
-import org.jetbrains.kotlin.idea.testFramework.logMessage
+import org.jetbrains.kotlin.idea.perf.util.logMessage
 import java.lang.management.ManagementFactory
 import java.lang.reflect.Method
 import java.nio.file.Files

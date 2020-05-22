@@ -13,9 +13,9 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.ExternalAnnotatorsFilter
 import com.intellij.lang.LanguageAnnotators
-import com.intellij.lang.StdLanguages
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -43,17 +43,29 @@ import junit.framework.TestCase.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
-import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import java.io.Closeable
 
-
-class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, val vFile: VirtualFile = psiFile.virtualFile) : Closeable {
+class Fixture(
+    val fileName: String,
+    val project: Project,
+    val editor: Editor,
+    val psiFile: PsiFile,
+    val vFile: VirtualFile = psiFile.virtualFile
+) : AutoCloseable {
     private var delegate = EditorTestFixture(project, editor, vFile)
+
+    private var savedText: String? = null
 
     val document: Document
         get() = editor.document
+
+    val text: String
+        get() = document.text
+
+    init {
+        storeText()
+    }
 
     fun doHighlighting(): List<HighlightInfo> = delegate.doHighlighting() ?: emptyList()
 
@@ -73,7 +85,21 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
     fun complete(type: CompletionType = CompletionType.BASIC, invocationCount: Int = 1): Array<LookupElement> =
         delegate.complete(type, invocationCount) ?: emptyArray()
 
-    fun revertChanges(revertChangesAtTheEnd: Boolean, text: String) {
+    fun storeText() {
+        savedText = text
+    }
+
+    fun restoreText() {
+        savedText?.let {
+            try {
+                applyText(it)
+            } finally {
+                cleanupCaches(project)
+            }
+        }
+    }
+
+    fun revertChanges(revertChangesAtTheEnd: Boolean = true, text: String) {
         try {
             if (revertChangesAtTheEnd) {
                 // TODO: [VD] revert ?
@@ -108,7 +134,10 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
         dispatchAllInvocationEvents()
     }
 
-    override fun close() = close(project, vFile)
+    override fun close() {
+        savedText = null
+        close(project, vFile)
+    }
 
     companion object {
         // quite simple impl - good so far
@@ -128,7 +157,7 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
             InjectedLanguageManager.getInstance(project) // zillion of Dom Sem classes
             with(LanguageAnnotators.INSTANCE) {
                 allForLanguage(JavaLanguage.INSTANCE) // pile of annotator classes loads
-                allForLanguage(StdLanguages.XML)
+                allForLanguage(XMLLanguage.INSTANCE)
                 allForLanguage(KotlinLanguage.INSTANCE)
             }
             DaemonAnalyzerTestCase.assertTrue(
@@ -147,7 +176,7 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
             dispatchAllInvocationEvents()
 
             assertTrue(scriptDefinitionsManager.isReady())
-            assertFalse(KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled)
+            //assertFalse(KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled)
         }
 
 
@@ -157,7 +186,7 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
             val editorFactory = EditorFactory.getInstance()
             val editor = editorFactory.getEditors(fileInEditor.document, project)[0]
 
-            return Fixture(project, editor, file)
+            return Fixture(fileName, project, editor, file)
         }
 
         private fun baseName(name: String): String {
@@ -177,10 +206,10 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
             val projectBaseName = baseName(project.name)
 
             val virtualFiles = FilenameIndex.getVirtualFilesByName(
-                    project,
-                    baseFileName, true,
-                    GlobalSearchScope.projectScope(project)
-                )
+                project,
+                baseFileName, true,
+                GlobalSearchScope.projectScope(project)
+            )
                 .filter { it.canonicalPath?.contains("/$projectBaseName/$name") ?: false }.toList()
 
             assertEquals(
@@ -230,7 +259,7 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
         ) {
             val fileInEditor = openFileInEditor(project, fileName)
             val editor = EditorFactory.getInstance().getEditors(fileInEditor.document, project)[0]
-            val fixture = Fixture(project, editor, fileInEditor.psiFile)
+            val fixture = Fixture(fileName, project, editor, fileInEditor.psiFile)
 
             val initialText = editor.document.text
             try {

@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.perf.PerformanceNativeProjectsTest.TestProject.*
 import org.jetbrains.kotlin.idea.perf.PerformanceNativeProjectsTest.TestTarget.*
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
-import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
+import org.jetbrains.kotlin.idea.perf.util.TeamCity.suite
+import org.jetbrains.kotlin.idea.perf.util.logMessage
 import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction.GRADLE_PROJECT
-import org.jetbrains.kotlin.idea.testFramework.logMessage
 import org.jetbrains.kotlin.idea.testFramework.suggestOsNeutralFileName
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.library.KOTLIN_STDLIB_NAME
@@ -157,7 +157,7 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
         assertTrue("Target $testTarget is not allowed on your host OS", testTarget.enabled)
 
         val projectName = projectName(testTarget, testProject, enableCommonizer)
-        tcSuite(projectName) {
+        suite(projectName) {
             Stats(projectName).use { stats ->
                 myProject = perfOpenTemplateGradleProject(stats, testTarget, testProject, enableCommonizer)
 

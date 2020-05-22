@@ -8,15 +8,13 @@ package org.jetbrains.kotlin.idea.perf
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.TEST_KEY
-import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
-import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
+import org.jetbrains.kotlin.idea.perf.util.TeamCity.suite
 import org.jetbrains.kotlin.idea.testFramework.Fixture
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScriptFile
@@ -29,10 +27,10 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     companion object {
 
         @JvmStatic
-        var warmedUp: Boolean = false
+        val hwStats: Stats = Stats("helloWorld project")
 
         @JvmStatic
-        val hwStats: Stats = Stats("helloWorld project")
+        val warmUp = WarmUpProject(hwStats)
 
         @JvmStatic
         val timer: AtomicLong = AtomicLong()
@@ -53,17 +51,28 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
     override fun setUp() {
         super.setUp()
-        // warm up: open simple small project
-        if (!warmedUp) {
-            warmUpProject(hwStats, "src/HelloMain.kt") { perfOpenHelloWorld(hwStats, WARM_UP) }
-            warmedUp = true
-        }
+        warmUp.warmUp(this)
     }
 
     fun testHelloWorldProject() {
+        suite("Hello world project") {
+            myProject = perfOpenProject(stats = hwStats) {
+                name("helloKotlin")
 
-        tcSuite("Hello world project") {
-            myProject = perfOpenHelloWorld(hwStats)
+                kotlinFile("HelloMain") {
+                    topFunction("main") {
+                        param("args", "Array<String>")
+                        body("""println("Hello World!")""")
+                    }
+                }
+
+                kotlinFile("HelloMain2") {
+                    topFunction("main") {
+                        param("args", "Array<String>")
+                        body("""println("Hello World!")""")
+                    }
+                }
+            }
 
             // highlight
             perfHighlightFile("src/HelloMain.kt", hwStats)
@@ -72,9 +81,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testKotlinProject() {
-        tcSuite("Kotlin project") {
-            val stats = Stats("kotlin project")
-            stats.use {
+        suite("Kotlin project") {
+            Stats("kotlin project").use {
                 perfOpenKotlinProject(it)
 
                 val filesToHighlight = arrayOf(
@@ -114,9 +122,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testKotlinProjectCopyAndPaste() {
-        tcSuite("Kotlin copy-and-paste") {
-            val stats = Stats("Kotlin copy-and-paste")
-            stats.use { stat ->
+        suite("Kotlin copy-and-paste") {
+            Stats("Kotlin copy-and-paste").use { stat ->
                 perfOpenKotlinProjectFast(stat)
 
                 perfCopyAndPaste(
@@ -129,9 +136,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testKotlinProjectCompletionKtFile() {
-        tcSuite("Kotlin completion ktFile") {
-            val stats = Stats("Kotlin completion ktFile")
-            stats.use { stat ->
+        suite("Kotlin completion ktFile") {
+            Stats("Kotlin completion ktFile").use { stat ->
                 perfOpenKotlinProjectFast(stat)
 
                 perfTypeAndAutocomplete(
@@ -157,9 +163,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testKotlinProjectCompletionBuildGradle() {
-        tcSuite("Kotlin completion gradle.kts") {
-            val stats = Stats("kotlin completion gradle.kts")
-            stats.use { stat ->
+        suite("Kotlin completion gradle.kts") {
+            Stats("kotlin completion gradle.kts").use { stat ->
                 runAndMeasure("open kotlin project") {
                     perfOpenKotlinProjectFast(stat)
                 }
@@ -191,9 +196,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testKotlinProjectScriptDependenciesBuildGradle() {
-        tcSuite("Kotlin scriptDependencies gradle.kts") {
-            val stats = Stats("kotlin scriptDependencies gradle.kts")
-            stats.use { stat ->
+        suite("Kotlin scriptDependencies gradle.kts") {
+            Stats("kotlin scriptDependencies gradle.kts").use { stat ->
                 perfOpenKotlinProjectFast(stat)
 
                 perfScriptDependenciesBuildGradleKts(stat)
@@ -205,9 +209,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testKotlinProjectBuildGradle() {
-        tcSuite("Kotlin gradle.kts") {
-            val stats = Stats("kotlin gradle.kts")
-            stats.use { stat ->
+        suite("Kotlin gradle.kts") {
+            Stats("kotlin gradle.kts").use { stat ->
                 perfOpenKotlinProjectFast(stat)
 
                 perfFileAnalysisBuildGradleKts(stat)
@@ -280,14 +283,14 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
             val extraStats = Stats("${stats.name} $testName")
             val extraTimingsNs = mutableListOf<Map<String, Any>?>()
 
-            val warmUpIterations = 20
-            val iterations = 30
+            val warmUpIterations = 30
+            val iterations = 50
 
             performanceTest<Fixture, Pair<Long, List<HighlightInfo>>> {
                 name(testName)
                 stats(stats)
-                warmUpIterations(30)
-                iterations(50)
+                warmUpIterations(warmUpIterations)
+                iterations(iterations)
                 setUp(perfKtsFileAnalysisSetUp(project, fileName))
                 test(perfKtsFileAnalysisTest())
                 tearDown(perfKtsFileAnalysisTearDown(extraTimingsNs, project))
