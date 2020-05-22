@@ -6,10 +6,12 @@
 package kotlin.native.concurrent
 
 /**
- * Marks a top level variable with a backing field or an object as thread local.
+ * Marks a top level property with a backing field or an object as thread local.
  * The object remains mutable and it is possible to change its state,
  * but every thread will have a distinct copy of this object,
  * so changes in one thread are not reflected in another.
+ *
+ * The annotation has effect only in Kotlin/Native platform.
  *
  * PLEASE NOTE THAT THIS ANNOTATION MAY GO AWAY IN UPCOMING RELEASES.
  */
@@ -18,9 +20,11 @@ package kotlin.native.concurrent
 public actual annotation class ThreadLocal
 
 /**
- * Marks a top level variable with a backing field or an object as immutable.
- * It is possible to share such object between multiple threads, but it becomes deeply frozen,
+ * Marks a top level property with a backing field as immutable.
+ * It is possible to share the value of such property between multiple threads, but it becomes deeply frozen,
  * so no changes can be made to its state or the state of objects it refers to.
+ *
+ * The annotation has effect only in Kotlin/Native platform.
  *
  * PLEASE NOTE THAT THIS ANNOTATION MAY GO AWAY IN UPCOMING RELEASES.
  */
