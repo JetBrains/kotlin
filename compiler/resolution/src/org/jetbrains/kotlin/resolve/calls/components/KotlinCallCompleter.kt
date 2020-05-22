@@ -222,7 +222,7 @@ class KotlinCallCompleter(
         forwardToInferenceSession: Boolean = false
     ): CallResolutionResult {
         val systemStorage = getSystem().asReadOnlyStorage()
-        val allDiagnostics = diagnosticsHolder.getDiagnostics() + this.diagnosticsFromResolutionParts
+        val allDiagnostics = diagnosticsHolder.getDiagnostics() + diagnosticsFromResolutionParts
 
         if (isErrorCandidate()) {
             return ErrorCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)

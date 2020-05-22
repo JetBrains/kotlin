@@ -30,7 +30,7 @@ class Foo<out A> {
             other1.product(
                 other2.product(
                     other3.product(
-                        <!TYPE_MISMATCH, TYPE_MISMATCH!>bar { d -> { c -> { b -> { a -> function(<!DEBUG_INFO_EXPRESSION_TYPE("A")!>a<!>, <!DEBUG_INFO_EXPRESSION_TYPE("B")!>b<!>, <!DEBUG_INFO_EXPRESSION_TYPE("C")!>c<!>, <!DEBUG_INFO_EXPRESSION_TYPE("D")!>d<!>) } } } }<!>
+                        <!TYPE_MISMATCH!>bar { d -> { c -> { b -> { a -> function(<!DEBUG_INFO_EXPRESSION_TYPE("A")!>a<!>, <!DEBUG_INFO_EXPRESSION_TYPE("B")!>b<!>, <!DEBUG_INFO_EXPRESSION_TYPE("C")!>c<!>, <!DEBUG_INFO_EXPRESSION_TYPE("D")!>d<!>) } } } }<!>
                     )
                 )
             )
@@ -43,7 +43,7 @@ class Foo<out A> {
             other1.product(
                 other2.product(
                     other3.product(
-                        <!TYPE_MISMATCH, TYPE_MISMATCH!>other4.product(
+                        <!TYPE_MISMATCH!>other4.product(
                             bar { e -> { d -> { c -> { b -> { a -> function(<!DEBUG_INFO_EXPRESSION_TYPE("A")!>a<!>, <!DEBUG_INFO_EXPRESSION_TYPE("B")!>b<!>, <!DEBUG_INFO_EXPRESSION_TYPE("C")!>c<!>, <!DEBUG_INFO_EXPRESSION_TYPE("D")!>d<!>, <!DEBUG_INFO_EXPRESSION_TYPE("E")!>e<!>) } } } } }
                         )<!>
                     )

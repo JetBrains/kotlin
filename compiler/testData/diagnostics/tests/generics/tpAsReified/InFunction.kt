@@ -14,5 +14,5 @@ fun <A> main() {
     val <!UNUSED_VARIABLE!>b<!>: Int = f()
     f<Int>()
 
-    val <!UNUSED_VARIABLE!>с<!>: A = id(<!NI;TYPE_PARAMETER_AS_REIFIED, TYPE_PARAMETER_AS_REIFIED!>f<!>())
+    val <!UNUSED_VARIABLE!>с<!>: A = id(<!TYPE_PARAMETER_AS_REIFIED!>f<!>())
 }

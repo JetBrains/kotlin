@@ -10566,6 +10566,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/genericCandidateInGenericClass.kt");
                 }
 
+                @TestMetadata("iltInsideSeveralCalls.kt")
+                public void testIltInsideSeveralCalls() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/commonSystem/iltInsideSeveralCalls.kt");
+                }
+
                 @TestMetadata("inferenceWithUpperBoundsInLambda.kt")
                 public void testInferenceWithUpperBoundsInLambda() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/inferenceWithUpperBoundsInLambda.kt");

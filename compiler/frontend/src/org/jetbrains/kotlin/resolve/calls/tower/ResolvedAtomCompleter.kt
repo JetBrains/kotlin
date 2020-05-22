@@ -77,7 +77,6 @@ class ResolvedAtomCompleter(
             is ResolvedLambdaAtom -> completeLambda(resolvedAtom)
             is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
             is ResolvedSubCallArgument -> completeSubCallArgument(resolvedAtom)
-            is PartialCallResolutionResult -> completeResolvedCall(resolvedAtom.resultCallAtom, resolvedAtom.diagnostics)
         }
     }
 
@@ -102,20 +101,24 @@ class ResolvedAtomCompleter(
     }
 
     fun completeResolvedCall(resolvedCallAtom: ResolvedCallAtom, diagnostics: Collection<KotlinCallDiagnostic>): ResolvedCall<*>? {
+        val diagnosticsFromPartiallyResolvedCall = extractDiagnosticsFromPartiallyResolvedCall(resolvedCallAtom)
+
         clearPartiallyResolvedCall(resolvedCallAtom)
 
         if (resolvedCallAtom.atom.psiKotlinCall is PSIKotlinCallForVariable) return null
+
+        val allDiagnostics = diagnostics + diagnosticsFromPartiallyResolvedCall
 
         val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(
             resolvedCallAtom,
             topLevelTrace,
             resultSubstitutor,
-            diagnostics
+            allDiagnostics
         )
 
         val lastCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.functionCall else resolvedCall
         if (ErrorUtils.isError(resolvedCall.candidateDescriptor)) {
-            kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
+            kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, lastCall as NewResolvedCallImpl<*>)
             checkMissingReceiverSupertypes(resolvedCall, missingSupertypesResolver, topLevelTrace)
             return resolvedCall
         }
@@ -135,11 +138,11 @@ class ResolvedAtomCompleter(
 
         kotlinToResolvedCallTransformer.bind(topLevelTrace, resolvedCall)
 
-        kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
+        kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, lastCall as NewResolvedCallImpl<*>)
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, callCheckerContext)
         kotlinToResolvedCallTransformer.runAdditionalReceiversCheckers(resolvedCall, topLevelCallContext)
 
-        kotlinToResolvedCallTransformer.reportDiagnostics(topLevelCallContext, topLevelTrace, resolvedCall, diagnostics)
+        kotlinToResolvedCallTransformer.reportDiagnostics(topLevelCallContext, topLevelTrace, resolvedCall, allDiagnostics)
 
         return resolvedCall
     }
@@ -158,6 +161,13 @@ class ResolvedAtomCompleter(
                 missingSupertypesResolver
             )
         }
+    }
+
+    private fun extractDiagnosticsFromPartiallyResolvedCall(resolvedCallAtom: ResolvedCallAtom): Set<KotlinCallDiagnostic> {
+        val psiCall = KotlinToResolvedCallTransformer.keyForPartiallyResolvedCall(resolvedCallAtom)
+        val partialCallContainer = topLevelTrace[BindingContext.ONLY_RESOLVED_CALL, psiCall]
+
+        return partialCallContainer?.result?.diagnostics.orEmpty().toSet()
     }
 
     private fun clearPartiallyResolvedCall(resolvedCallAtom: ResolvedCallAtom) {

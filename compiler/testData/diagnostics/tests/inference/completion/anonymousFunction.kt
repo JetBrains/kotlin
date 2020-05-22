@@ -20,5 +20,5 @@ fun testFunctions() {
 fun testNestedCalls() {
     id<String>(inferFromLambda { materialize() })
     id<String>(inferFromLambda(fun() = materialize()))
-    id<String>(inferFromLambda2(<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>fun<!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>()<!> = materialize()<!>))
+    id<String>(inferFromLambda2(<!TYPE_MISMATCH, TYPE_MISMATCH!>fun<!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>()<!> = materialize()<!>))
 }

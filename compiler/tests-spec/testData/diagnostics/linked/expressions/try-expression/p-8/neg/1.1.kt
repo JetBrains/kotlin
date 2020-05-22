@@ -47,7 +47,6 @@ fun case2() {
 
 /*
  * TESTCASE NUMBER: 3
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-35494
  */
 fun case3() {
@@ -56,9 +55,9 @@ fun case3() {
         throwExceptionA(false)
         A(2)
     } catch (e: ExcA) {
-        A(<!NULL_FOR_NONNULL_TYPE, NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
+        A(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
     } catch (e: ExcB) {
-        B(<!NULL_FOR_NONNULL_TYPE, NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
+        B(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
     }<!>
 }
 

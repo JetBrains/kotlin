@@ -35,7 +35,7 @@ fun test5(): Bound? = select(
 fun test6() {
     select(
         null,
-        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReified<!>()
+        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReified<!>()
     )
 }
 
@@ -48,6 +48,6 @@ fun test7(): Bound? =
 fun test8() {
     select(
         null,
-        <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReifiedUnbound<!>()
+        <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReifiedUnbound<!>()
     )
 }

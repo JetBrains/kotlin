@@ -279,12 +279,7 @@ class KotlinToResolvedCallTransformer(
     }
 
     // todo very beginning code
-    fun runArgumentsChecks(
-        context: BasicCallResolutionContext,
-        trace: BindingTrace,
-        resolvedCall: NewResolvedCallImpl<*>,
-    ) {
-
+    fun runArgumentsChecks(context: BasicCallResolutionContext, resolvedCall: NewResolvedCallImpl<*>) {
         for (valueArgument in resolvedCall.call.valueArguments) {
             val argumentMapping = resolvedCall.getArgumentMapping(valueArgument!!)
             val parameter: ValueParameterDescriptor?
