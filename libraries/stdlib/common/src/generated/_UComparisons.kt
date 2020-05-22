@@ -92,7 +92,7 @@ public inline fun maxOf(a: UShort, b: UShort, c: UShort): UShort {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -103,7 +103,7 @@ public fun maxOf(a: UInt, vararg other: UInt): UInt {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -114,7 +114,7 @@ public fun maxOf(a: ULong, vararg other: ULong): ULong {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -125,7 +125,7 @@ public fun maxOf(a: UByte, vararg other: UByte): UByte {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -212,7 +212,7 @@ public inline fun minOf(a: UShort, b: UShort, c: UShort): UShort {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -223,7 +223,7 @@ public fun minOf(a: UInt, vararg other: UInt): UInt {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -234,7 +234,7 @@ public fun minOf(a: ULong, vararg other: ULong): ULong {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -245,7 +245,7 @@ public fun minOf(a: UByte, vararg other: UByte): UByte {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
