@@ -41,7 +41,7 @@ import kotlin.math.abs
  * A new instance of this class can be created for each request, however, it's recommended to use stable instance, since
  * [NameSuggestion] supports caching.
  */
-class NameSuggestion(val bindingContext: BindingContext) {
+class NameSuggestion {
     private val cache: MutableMap<DeclarationDescriptor, SuggestedName?> = Collections.synchronizedMap(WeakHashMap())
 
     /**
@@ -63,12 +63,15 @@ class NameSuggestion(val bindingContext: BindingContext) {
      * list consists of exactly one string for any declaration except for package. Package name lists
      * have at least one string.
      */
-    fun suggest(descriptor: DeclarationDescriptor) = cache.getOrPut(descriptor) { generate(descriptor.original) }
+    fun suggest(descriptor: DeclarationDescriptor, bindingContext: BindingContext) =
+        cache.getOrPut(descriptor) { generate(descriptor.original, bindingContext) }
 
-    private fun generate(descriptor: DeclarationDescriptor): SuggestedName? {
-        // Members of companion objects of classes are treated as static members of these classes
+    private fun generate(descriptor: DeclarationDescriptor, bindingContext: BindingContext): SuggestedName? {
+        fun suggest(d: DeclarationDescriptor) = suggest(d, bindingContext)
+
+            // Members of companion objects of classes are treated as static members of these classes
         if (isNativeObject(descriptor) && isCompanionObject(descriptor)) {
-            return suggest(descriptor.containingDeclaration!!)
+            return suggest(descriptor.containingDeclaration!!, bindingContext)
         }
 
         if (descriptor is FunctionDescriptor && descriptor.isSuspend) {
@@ -139,10 +142,10 @@ class NameSuggestion(val bindingContext: BindingContext) {
                 }
         }
 
-        return generateDefault(descriptor)
+        return generateDefault(descriptor, bindingContext)
     }
 
-    private fun generateDefault(descriptor: DeclarationDescriptor): SuggestedName {
+    private fun generateDefault(descriptor: DeclarationDescriptor, bindingContext: BindingContext): SuggestedName {
         // For any non-local declaration suggest its own suggested name and put it in scope of its containing declaration.
         // For local declaration get a sequence for names of all containing functions and join their names with '$' symbol,
         // and use container of topmost function, i.e.
@@ -180,7 +183,7 @@ class NameSuggestion(val bindingContext: BindingContext) {
             getSuggestedName(fixedDescriptor)
         }
         if (current.containingDeclaration is FunctionDescriptor && current !is TypeParameterDescriptor) {
-            val outerFunctionName = suggest(current.containingDeclaration as FunctionDescriptor)!!
+            val outerFunctionName = suggest(current.containingDeclaration as FunctionDescriptor, bindingContext)!!
             parts += outerFunctionName.names.single()
             current = outerFunctionName.scope
         }

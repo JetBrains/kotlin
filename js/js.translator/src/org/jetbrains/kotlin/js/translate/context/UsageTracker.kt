@@ -177,7 +177,7 @@ class UsageTracker(
 
             // Append 'closure$' prefix to avoid name clash between closure and member fields in case of local classes
             else -> {
-                val mangled = NameSuggestion.sanitizeName(NameSuggestion(bindingContext).suggest(this)!!.names.last())
+                val mangled = NameSuggestion.sanitizeName(NameSuggestion().suggest(this, bindingContext)!!.names.last())
                 "closure\$$mangled"
             }
         }

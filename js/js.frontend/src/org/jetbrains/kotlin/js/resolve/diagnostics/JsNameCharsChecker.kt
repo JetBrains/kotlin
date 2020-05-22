@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 
-class JsNameCharsChecker : DeclarationChecker {
+class JsNameCharsChecker(private val suggestion: NameSuggestion) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val bindingContext = context.trace.bindingContext
 
@@ -27,8 +27,7 @@ class JsNameCharsChecker : DeclarationChecker {
             AnnotationsUtils.isExportedObject(descriptor, bindingContext)
         ) return
 
-        val suggestion = NameSuggestion(bindingContext)
-        val suggestedName = suggestion.suggest(descriptor) ?: return
+        val suggestedName = suggestion.suggest(descriptor, bindingContext) ?: return
         if (suggestedName.stable && suggestedName.names.any { NameSuggestion.sanitizeName(it) != it }) {
             context.trace.report(ErrorsJs.NAME_CONTAINS_ILLEGAL_CHARS.on(declaration))
         }

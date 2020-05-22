@@ -151,7 +151,7 @@ public final class Namer {
             qualifier = fqNameParent.asString();
         }
 
-        SuggestedName suggestedName = new NameSuggestion(bindingContext).suggest(functionDescriptor);
+        SuggestedName suggestedName = new NameSuggestion().suggest(functionDescriptor, bindingContext);
         assert suggestedName != null : "Suggested name can be null only for module descriptors: " + functionDescriptor;
         String mangledName = suggestedName.getNames().get(0);
         return StringUtil.join(Arrays.asList(moduleName, qualifier, mangledName), ".");
