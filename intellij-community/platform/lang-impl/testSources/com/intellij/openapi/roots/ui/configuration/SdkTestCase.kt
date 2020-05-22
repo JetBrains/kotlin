@@ -99,7 +99,7 @@ abstract class SdkTestCase : LightPlatformTestCase() {
     }
   }
 
-  fun withRegisteredSdk(sdk: TestSdk, isProjectSdk: Boolean, action: () -> Unit) {
+  fun withRegisteredSdk(sdk: TestSdk, isProjectSdk: Boolean = false, action: () -> Unit) {
     withRegisteredSdks(sdk) {
       when (isProjectSdk) {
         true -> withProjectSdk(sdk, action)
