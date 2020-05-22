@@ -1,6 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.ide.actions.searcheverywhere;
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.ide.actions.searcheverywhere.mixed;
 
+import com.intellij.ide.actions.searcheverywhere.SearchEverywhereContributor;
+import com.intellij.ide.actions.searcheverywhere.SearchEverywhereFoundElementInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +17,7 @@ import java.util.function.BiConsumer;
  * <br>
  * Not thread-safe and should be notified only in EDT
  */
-class ThrottlingListenerWrapper implements MultiThreadSearcher.Listener {
+class ThrottlingListenerWrapper implements SESearcher.Listener {
 
   public final int myThrottlingDelay;
 
@@ -28,7 +30,7 @@ class ThrottlingListenerWrapper implements MultiThreadSearcher.Listener {
   private final Alarm flushAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
   private boolean flushScheduled;
 
-  ThrottlingListenerWrapper(int throttlingDelay, MultiThreadSearcher.Listener delegateListener, Executor delegateExecutor) {
+  ThrottlingListenerWrapper(int throttlingDelay, SESearcher.Listener delegateListener, Executor delegateExecutor) {
     myThrottlingDelay = throttlingDelay;
     myDelegateListener = delegateListener;
     myDelegateExecutor = delegateExecutor;

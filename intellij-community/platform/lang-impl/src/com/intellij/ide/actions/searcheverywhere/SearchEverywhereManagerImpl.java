@@ -2,12 +2,15 @@
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.codeWithMe.ClientId;
+import com.intellij.ide.actions.BigPopupUI;
+import com.intellij.ide.actions.searcheverywhere.mixed.SearchEverywhereUIMixedResults;
 import com.intellij.ide.actions.searcheverywhere.statistics.SearchEverywhereUsageTriggerCollector;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -47,7 +50,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
   private final Project myProject;
 
   private JBPopup myBalloon;
-  private SearchEverywhereUI mySearchEverywhereUI;
+  private SearchEverywhereUIBase mySearchEverywhereUI;
   private Dimension myBalloonFullSize;
 
   private final SearchHistoryList myHistoryList = new SearchHistoryList();
@@ -144,7 +147,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
       myBalloonFullSize = null;
     });
 
-    if (mySearchEverywhereUI.getViewType() == SearchEverywhereUI.ViewType.SHORT) {
+    if (mySearchEverywhereUI.getViewType() == BigPopupUI.ViewType.SHORT) {
       myBalloonFullSize = WindowStateService.getInstance(myProject).getSize(LOCATION_SETTINGS_KEY);
       Dimension prefSize = mySearchEverywhereUI.getPreferredSize();
       myBalloon.setSize(prefSize);
@@ -156,7 +159,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     Point savedLocation = WindowStateService.getInstance(myProject).getLocation(LOCATION_SETTINGS_KEY);
 
     //for first show and short mode popup should be shifted to the top screen half
-    if (savedLocation == null && mySearchEverywhereUI.getViewType() == SearchEverywhereUI.ViewType.SHORT) {
+    if (savedLocation == null && mySearchEverywhereUI.getViewType() == BigPopupUI.ViewType.SHORT) {
       Window window = project != null
                       ? WindowManager.getInstance().suggestParentWindow(project)
                       : KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusedWindow();
@@ -226,9 +229,11 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     myEverywhere = everywhere;
   }
 
-  private SearchEverywhereUI createView(Project project,
+  private SearchEverywhereUIBase createView(Project project,
                                         List<? extends SearchEverywhereContributor<?>> contributors) {
-    SearchEverywhereUI view = new SearchEverywhereUI(project, contributors, myTabsShortcutsMap::get);
+    SearchEverywhereUIBase view = Experiments.getInstance().isFeatureEnabled("search.everywhere.mixed.results")
+                                  ? new SearchEverywhereUIMixedResults(project, contributors, myTabsShortcutsMap::get)
+                                  : new SearchEverywhereUI(project, contributors, myTabsShortcutsMap::get);
 
     view.setSearchFinishedHandler(() -> {
       if (isShown()) {
@@ -248,7 +253,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
         JBInsets.addTo(minSize, myBalloon.getContent().getInsets());
         myBalloon.setMinimumSize(minSize);
 
-        if (viewType == SearchEverywhereUI.ViewType.SHORT) {
+        if (viewType == BigPopupUI.ViewType.SHORT) {
           myBalloonFullSize = myBalloon.getSize();
           JBInsets.removeFrom(myBalloonFullSize, myBalloon.getContent().getInsets());
           myBalloon.pack(false, true);
@@ -294,12 +299,12 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
   }
 
   @Nullable
-  Object getPrevSelection(String contributorID) {
+  public Object getPrevSelection(String contributorID) {
     return myPrevSelections.remove(contributorID);
   }
 
   private void saveSize() {
-    if (mySearchEverywhereUI.getViewType() == SearchEverywhereUI.ViewType.SHORT) {
+    if (mySearchEverywhereUI.getViewType() == BigPopupUI.ViewType.SHORT) {
       WindowStateService.getInstance(myProject).putSize(LOCATION_SETTINGS_KEY, myBalloonFullSize);
     }
   }

@@ -21,7 +21,9 @@ public class PsiElementsEqualityProvider implements SEResultsEqualityProvider {
     }
 
     if (Objects.equals(newElementPsi, alreadyFoundPsi)) {
-      return newItemInfo.priority > alreadyFoundItemInfo.priority ? SEEqualElementsActionType.REPLACE : SEEqualElementsActionType.SKIP;
+      return SearchEverywhereFoundElementInfo.COMPARATOR.compare(newItemInfo, alreadyFoundItemInfo) > 0
+             ? SEEqualElementsActionType.REPLACE
+             : SEEqualElementsActionType.SKIP;
     }
 
     return SEEqualElementsActionType.DO_NOTHING;

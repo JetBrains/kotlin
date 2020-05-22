@@ -16,7 +16,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.*;
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereManager;
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereManagerImpl;
-import com.intellij.ide.actions.searcheverywhere.SearchEverywhereUI;
+import com.intellij.ide.actions.searcheverywhere.SearchEverywhereUIBase;
 import com.intellij.ide.actions.searcheverywhere.statistics.SearchEverywhereUsageTriggerCollector;
 import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.structureView.StructureView;
@@ -983,7 +983,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       super(false, "SearchEveryWhereHistory");
       JTextField editor = getTextEditor();
       editor.setOpaque(false);
-      editor.putClientProperty(SearchEverywhereUI.SEARCH_EVERYWHERE_SEARCH_FILED_KEY, true);
+      editor.putClientProperty(SearchEverywhereUIBase.SEARCH_EVERYWHERE_SEARCH_FILED_KEY, true);
       editor.putClientProperty("JTextField.Search.noBorderRing", Boolean.TRUE);
 
       if (StartupUiUtil.isUnderDarcula()) {

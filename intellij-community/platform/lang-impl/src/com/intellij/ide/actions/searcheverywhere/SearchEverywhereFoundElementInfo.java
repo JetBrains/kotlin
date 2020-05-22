@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.searcheverywhere;
 
+import java.util.Comparator;
+
 /**
  * Class containing info about found elements
  */
@@ -26,4 +28,11 @@ public class SearchEverywhereFoundElementInfo {
   public SearchEverywhereContributor<?> getContributor() {
     return contributor;
   }
+
+  public static final Comparator<SearchEverywhereFoundElementInfo> COMPARATOR = (o1, o2) -> {
+    int res = Integer.compare(o1.priority, o2.priority);
+    if (res != 0) return res;
+
+    return -Integer.compare(o1.contributor.getSortWeight(), o2.contributor.getSortWeight());
+  };
 }

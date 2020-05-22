@@ -11,7 +11,9 @@ public class TrivialElementsEqualityProvider implements SEResultsEqualityProvide
   @Override
   public SEEqualElementsActionType compareItems(@NotNull SearchEverywhereFoundElementInfo newItem, @NotNull SearchEverywhereFoundElementInfo alreadyFoundItem) {
     if (Objects.equals(newItem.getElement(), alreadyFoundItem.getElement())) {
-      return newItem.getPriority() > alreadyFoundItem.getPriority() ? SEEqualElementsActionType.REPLACE : SEEqualElementsActionType.SKIP;
+      return SearchEverywhereFoundElementInfo.COMPARATOR.compare(newItem, alreadyFoundItem) > 0
+             ? SEEqualElementsActionType.REPLACE
+             : SEEqualElementsActionType.SKIP;
     }
     return SEEqualElementsActionType.DO_NOTHING;
   }

@@ -219,7 +219,7 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
         }
       });
     }
-    result.add(new SearchEverywhereUI.FiltersAction(filter, onChanged));
+    result.add(new SearchEverywhereUIBase.FiltersAction(filter, onChanged));
     return result;
   }
 

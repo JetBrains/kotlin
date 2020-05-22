@@ -1,17 +1,15 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.ide.actions.searcheverywhere;
+package com.intellij.ide.actions.searcheverywhere.mixed;
 
 import com.google.common.collect.Lists;
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.SearchTopHitProvider;
-import com.intellij.ide.actions.BigPopupUI;
 import com.intellij.ide.actions.SearchEverywhereClassifier;
-import com.intellij.ide.actions.bigPopup.ShowFilterAction;
+import com.intellij.ide.actions.searcheverywhere.*;
 import com.intellij.ide.actions.searcheverywhere.statistics.SearchEverywhereUsageTriggerCollector;
 import com.intellij.ide.actions.searcheverywhere.statistics.SearchFieldStatisticsCollector;
-import com.intellij.ide.util.ElementsChooser;
 import com.intellij.ide.util.gotoByName.GotoActionModel;
 import com.intellij.ide.util.gotoByName.QuickSearchComponent;
 import com.intellij.ide.util.gotoByName.SearchEverywhereConfiguration;
@@ -86,8 +84,8 @@ import java.util.stream.IntStream;
  * @author Konstantin Bulenkov
  * @author Mikhail.Sokolov
  */
-public final class SearchEverywhereUI extends SearchEverywhereUIBase implements DataProvider, QuickSearchComponent {
-  private static final Logger LOG = Logger.getInstance(SearchEverywhereUI.class);
+public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase implements DataProvider, QuickSearchComponent {
+  private static final Logger LOG = Logger.getInstance(SearchEverywhereUIMixedResults.class);
 
   public static final int SINGLE_CONTRIBUTOR_ELEMENTS_LIMIT = 30;
   public static final int MULTIPLE_CONTRIBUTORS_ELEMENTS_LIMIT = 15;
@@ -117,12 +115,12 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
   private final PersistentSearchEverywhereContributorFilter<String> myContributorsFilter;
   private ActionToolbar myToolbar;
 
-  public SearchEverywhereUI(@NotNull Project project,
+  public SearchEverywhereUIMixedResults(@NotNull Project project,
                             @NotNull List<? extends SearchEverywhereContributor<?>> contributors) {
     this(project, contributors, s -> null);
   }
 
-  public SearchEverywhereUI(@NotNull Project project,
+  public SearchEverywhereUIMixedResults(@NotNull Project project,
                             @NotNull List<? extends SearchEverywhereContributor<?>> contributors,
                             @NotNull Function<String, String> shortcutSupplier) {
     super(project);
@@ -594,8 +592,8 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
       if (!commands.isEmpty()) {
         if (rawPattern.contains(" ")) {
           contributorsMap.keySet().retainAll(commands.stream()
-                                   .map(SearchEverywhereCommandInfo::getContributor)
-                                   .collect(Collectors.toSet()));
+                                               .map(SearchEverywhereCommandInfo::getContributor)
+                                               .collect(Collectors.toSet()));
         }
         else {
           myListModel.clear();
@@ -666,14 +664,14 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
       triggerTabSwitched(e);
     });
     registerAction(SearchEverywhereActions.NAVIGATE_TO_NEXT_GROUP, e -> {
-      fetchGroups(true);
+      scrollList(true);
       FeatureUsageData data = SearchEverywhereUsageTriggerCollector
         .createData(null)
         .addInputEvent(e);
       featureTriggered(SearchEverywhereUsageTriggerCollector.GROUP_NAVIGATE, data);
     });
-    registerAction(SearchEverywhereActions.NAVIGATE_TO_PREV_GROUP, e -> {
-      fetchGroups(false);
+    registerAction(SearchEverywhereActions.NAVIGATE_TO_NEXT_GROUP, e -> {
+      scrollList(false);
       FeatureUsageData data = SearchEverywhereUsageTriggerCollector
         .createData(null)
         .addInputEvent(e);
@@ -739,7 +737,7 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
       @Override
       public void focusLost(FocusEvent e) {
         Component oppositeComponent = e.getOppositeComponent();
-        if (!isHintComponent(oppositeComponent) && !UIUtil.haveCommonOwner(SearchEverywhereUI.this, oppositeComponent)) {
+        if (!isHintComponent(oppositeComponent) && !UIUtil.haveCommonOwner(SearchEverywhereUIMixedResults.this, oppositeComponent)) {
           closePopup();
         }
       }
@@ -818,18 +816,13 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     featureTriggered(SearchEverywhereUsageTriggerCollector.TAB_SWITCHED, data);
   }
 
-  private void fetchGroups(boolean down) {
-    int index = myResultsList.getSelectedIndex();
-    do {
-      index += down ? 1 : -1;
-    }
-    while (index >= 0 &&
-           index < myListModel.getSize() &&
-           !myListModel.isGroupFirstItem(index) &&
-           !myListModel.isMoreElement(index));
-    if (index >= 0 && index < myListModel.getSize()) {
-      myResultsList.setSelectedIndex(index);
-      ScrollingUtil.ensureIndexIsVisible(myResultsList, index, 0);
+  private void scrollList(boolean down) {
+    int newIndex = down ? myListModel.getSize() - 1 : 0;
+    int currentIndex = myResultsList.getSelectedIndex();
+
+    if (newIndex != currentIndex) {
+      myResultsList.setSelectedIndex(newIndex);
+      ScrollingUtil.ensureIndexIsVisible(myResultsList, newIndex, 0);
     }
   }
 
@@ -886,8 +879,7 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
 
   private void elementsSelected(int[] indexes, int modifiers) {
     if (indexes.length == 1 && myListModel.isMoreElement(indexes[0])) {
-      SearchEverywhereContributor contributor = myListModel.getContributorForIndex(indexes[0]);
-      showMoreElements(contributor);
+      showMoreElements();
       return;
     }
 
@@ -927,14 +919,17 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     }
   }
 
-  private void showMoreElements(SearchEverywhereContributor contributor) {
+  private void showMoreElements() {
     featureTriggered(SearchEverywhereUsageTriggerCollector.MORE_ITEM_SELECTED, null);
+
+    myListModel.clearMoreItem();
     Map<SearchEverywhereContributor<?>, Collection<SearchEverywhereFoundElementInfo>> found = myListModel.getFoundElementsMap();
-    int limit = myListModel.getItemsForContributor(contributor)
-                + (mySelectedTab.getContributor().isPresent()
-                   ? SINGLE_CONTRIBUTOR_ELEMENTS_LIMIT
-                   : MULTIPLE_CONTRIBUTORS_ELEMENTS_LIMIT);
-    mySearchProgressIndicator = mySearcher.findMoreItems(found, getSearchPattern(), contributor, limit);
+    int limitAdditional = isAllTabSelected() ? MULTIPLE_CONTRIBUTORS_ELEMENTS_LIMIT : SINGLE_CONTRIBUTOR_ELEMENTS_LIMIT;
+    Map<SearchEverywhereContributor<?>, Integer> contributorsAndLimits = found.entrySet().stream()
+      .filter(entry -> myListModel.hasMoreElements(entry.getKey()))
+      .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue().size() + limitAdditional));
+
+    mySearchProgressIndicator = mySearcher.findMoreItems(found, contributorsAndLimits, getSearchPattern());
   }
 
   private void stopSearching() {
@@ -999,9 +994,6 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
       }
       AppUIUtil.targetToDevice(component, list);
       component.setPreferredSize(UIUtil.updateListRowHeight(component.getPreferredSize()));
-      if (isAllTabSelected() && myListModel.isGroupFirstItem(index)) {
-        component = myGroupTitleRenderer.withDisplayedData(contributor.getFullGroupName(), component);
-      }
 
       return component;
     }
@@ -1041,45 +1033,12 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     }
   };
 
-
-  private final GroupTitleRenderer myGroupTitleRenderer = new GroupTitleRenderer();
-
-  private static class GroupTitleRenderer extends CellRendererPanel {
-
-    final SimpleColoredComponent titleLabel = new SimpleColoredComponent();
-
-    GroupTitleRenderer() {
-      setLayout(new BorderLayout());
-      SeparatorComponent separatorComponent = new SeparatorComponent(
-        titleLabel.getPreferredSize().height / 2, JBUI.CurrentTheme.BigPopup.listSeparatorColor(), null);
-
-      JPanel topPanel = JBUI.Panels.simplePanel(5, 0)
-        .addToCenter(separatorComponent)
-        .addToLeft(titleLabel)
-        .withBorder(JBUI.Borders.empty(1, 7))
-        .withBackground(UIUtil.getListBackground());
-      add(topPanel, BorderLayout.NORTH);
-    }
-
-    public GroupTitleRenderer withDisplayedData(String title, Component itemContent) {
-      titleLabel.clear();
-      titleLabel.append(title, SMALL_LABEL_ATTRS);
-      Component prevContent = ((BorderLayout)getLayout()).getLayoutComponent(BorderLayout.CENTER);
-      if (prevContent != null) {
-        remove(prevContent);
-      }
-      add(itemContent, BorderLayout.CENTER);
-      accessibleContext = itemContent.getAccessibleContext();
-
-      return this;
-    }
-  }
-
   public static class SearchListModel extends AbstractListModel<Object> {
 
     static final Object MORE_ELEMENT = new Object();
 
     private final List<SearchEverywhereFoundElementInfo> listElements = new ArrayList<>();
+    private final Map<SearchEverywhereContributor<?>, Boolean> hasMoreContributors = new HashMap<>();
 
     private boolean resultsExpired = false;
 
@@ -1112,117 +1071,72 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
         .collect(Collectors.toList());
     }
 
-    public boolean hasMoreElements(SearchEverywhereContributor contributor) {
-      return listElements.stream()
-        .anyMatch(info -> info.getElement() == MORE_ELEMENT && info.getContributor() == contributor);
+    public boolean hasMoreElements(SearchEverywhereContributor<?> contributor) {
+      return hasMoreContributors.get(contributor);
     }
 
     public void addElements(List<? extends SearchEverywhereFoundElementInfo> items) {
       if (items.isEmpty()) {
         return;
       }
-      Map<SearchEverywhereContributor<?>, List<SearchEverywhereFoundElementInfo>> itemsMap = new HashMap<>();
-      items.forEach(info -> {
-        List<SearchEverywhereFoundElementInfo> list = itemsMap.computeIfAbsent(info.getContributor(), contributor -> new ArrayList<>());
-        list.add(info);
-      });
-      itemsMap.forEach((contributor, list) -> list.sort(Comparator.comparingInt(SearchEverywhereFoundElementInfo::getPriority).reversed()));
+
+      items = items.stream()
+        .sorted(SearchEverywhereFoundElementInfo.COMPARATOR.reversed())
+        .collect(Collectors.toList());
 
       if (resultsExpired) {
-        retainContributors(itemsMap.keySet());
-        clearMoreItems();
+        clearMoreItem();
 
-        itemsMap.forEach((contributor, list) -> {
-          Object[] oldItems = ArrayUtil.toObjectArray(getFoundItems(contributor));
-          Object[] newItems = list.stream()
-            .map(SearchEverywhereFoundElementInfo::getElement)
-            .toArray();
-          try {
-            Diff.Change change = Diff.buildChanges(oldItems, newItems);
-            applyChange(change, contributor, list);
-          }
-          catch (FilesTooBigForDiffException e) {
-            LOG.error("Cannot calculate diff for updated search results");
-          }
-        });
+        Object[] oldItems = ArrayUtil.toObjectArray(getItems());
+        Object[] newItems = items.stream()
+          .map(SearchEverywhereFoundElementInfo::getElement)
+          .toArray();
+        try {
+          Diff.Change change = Diff.buildChanges(oldItems, newItems);
+          applyChange(change, items);
+        }
+        catch (FilesTooBigForDiffException e) {
+          LOG.error("Cannot calculate diff for updated search results");
+        }
+
         resultsExpired = false;
       }
       else {
-        itemsMap.forEach((contributor, list) -> {
-          int startIndex = contributors().indexOf(contributor);
-          int insertionIndex = getInsertionPoint(contributor);
-          int endIndex = insertionIndex + list.size() - 1;
-          listElements.addAll(insertionIndex, list);
-          fireIntervalAdded(this, insertionIndex, endIndex);
+        int startIndex = listElements.size();
+        listElements.addAll(items);
+        int endIndex = listElements.size() - 1;
+        fireIntervalAdded(this, startIndex, endIndex);
 
-          // there were items for this contributor before update
-          if (startIndex >= 0) {
-            listElements.subList(startIndex, endIndex + 1)
-              .sort(Comparator.comparingInt(SearchEverywhereFoundElementInfo::getPriority).reversed());
-            fireContentsChanged(this, startIndex, endIndex);
-          }
-        });
-      }
-    }
-
-    private void retainContributors(Collection<SearchEverywhereContributor<?>> retainContributors) {
-      Iterator<SearchEverywhereFoundElementInfo> iterator = listElements.iterator();
-      int startInterval = 0;
-      int endInterval = -1;
-      while (iterator.hasNext()) {
-        SearchEverywhereFoundElementInfo item = iterator.next();
-        if (retainContributors.contains(item.getContributor())) {
-          if (startInterval <= endInterval) {
-            fireIntervalRemoved(this, startInterval, endInterval);
-            startInterval = endInterval + 2;
-          }
-          else {
-            startInterval++;
-          }
-        }
-        else {
-          iterator.remove();
-        }
-        endInterval++;
-      }
-
-      if (startInterval <= endInterval) {
-        fireIntervalRemoved(this, startInterval, endInterval);
-      }
-    }
-
-    private void clearMoreItems() {
-      ListIterator<SearchEverywhereFoundElementInfo> iterator = listElements.listIterator();
-      while (iterator.hasNext()) {
-        int index = iterator.nextIndex();
-        if (iterator.next().getElement() == MORE_ELEMENT) {
-          iterator.remove();
-          fireContentsChanged(this, index, index);
+        // there were items for this contributor before update
+        if (startIndex > 0) {
+          listElements.sort(SearchEverywhereFoundElementInfo.COMPARATOR.reversed());
+          fireContentsChanged(this, 0, endIndex);
         }
       }
     }
 
-    private void applyChange(Diff.Change change,
-                             SearchEverywhereContributor<?> contributor,
-                             List<SearchEverywhereFoundElementInfo> newItems) {
-      int firstItemIndex = contributors().indexOf(contributor);
-      if (firstItemIndex < 0) {
-        firstItemIndex = getInsertionPoint(contributor);
-      }
+    public void clearMoreItem() {
+      if (listElements.isEmpty()) return;
 
+      int lastItemIndex = listElements.size() - 1;
+      SearchEverywhereFoundElementInfo lastItem = listElements.get(lastItemIndex);
+      if (lastItem.getElement() == MORE_ELEMENT) {
+        listElements.remove(lastItemIndex);
+        fireIntervalRemoved(this, lastItemIndex, lastItemIndex);
+      }
+    }
+
+    private void applyChange(Diff.Change change, List<? extends SearchEverywhereFoundElementInfo> newItems) {
       for (Diff.Change ch : toRevertedList(change)) {
         if (ch.deleted > 0) {
-          for (int i = ch.deleted - 1; i >= 0; i--) {
-            int index = firstItemIndex + ch.line0 + i;
-            listElements.remove(index);
-          }
-          fireIntervalRemoved(this, firstItemIndex + ch.line0, firstItemIndex + ch.line0 + ch.deleted - 1);
+          listElements.subList(ch.line0, ch.line0 + ch.deleted).clear();
+          fireIntervalRemoved(this, ch.line0, ch.line0 + ch.deleted - 1);
         }
 
         if (ch.inserted > 0) {
-          List<SearchEverywhereFoundElementInfo> addedItems = newItems.subList(ch.line1, ch.line1 + ch.inserted);
-          listElements.addAll(firstItemIndex + ch.line0, addedItems);
-          fireIntervalAdded(this, firstItemIndex + ch.line0, firstItemIndex + ch.line0 + ch.inserted - 1);
+          List<? extends SearchEverywhereFoundElementInfo> addedItems = newItems.subList(ch.line1, ch.line1 + ch.inserted);
+          listElements.addAll(ch.line0, addedItems);
+          fireIntervalAdded(this, ch.line0, ch.line0 + ch.inserted - 1);
         }
       }
     }
@@ -1236,44 +1150,45 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
       return res;
     }
 
-    public void removeElement(@NotNull Object item, SearchEverywhereContributor contributor) {
-      int index = contributors().indexOf(contributor);
-      if (index < 0) {
-        return;
-      }
+    public void removeElement(@NotNull Object item, SearchEverywhereContributor<?> contributor) {
+      if (listElements.isEmpty()) return;
 
-      while (index < listElements.size() && listElements.get(index).getContributor() == contributor) {
-        if (item.equals(listElements.get(index).getElement())) {
-          listElements.remove(index);
-          fireIntervalRemoved(this, index, index);
+      for (int i = 0; i < listElements.size(); i++){
+        SearchEverywhereFoundElementInfo info = listElements.get(i);
+        if (info.getContributor() == contributor && info.getElement().equals(item)) {
+          listElements.remove(i);
+          fireIntervalRemoved(this, i, i);
           return;
         }
-        index++;
       }
     }
 
-    public void setHasMore(SearchEverywhereContributor<?> contributor, boolean newVal) {
-      int index = contributors().lastIndexOf(contributor);
-      if (index < 0) {
+    public void setHasMore(SearchEverywhereContributor<?> contributor, boolean contributorHasMore) {
+      hasMoreContributors.put(contributor, contributorHasMore);
+
+      int lasItemIndex = listElements.size() - 1;
+      if (lasItemIndex < 0) {
         return;
       }
 
-      boolean alreadyHas = isMoreElement(index);
-      if (alreadyHas && !newVal) {
-        listElements.remove(index);
-        fireIntervalRemoved(this, index, index);
+      boolean hasMore = hasMoreContributors.values().stream().anyMatch(val -> val);
+      boolean alreadyHas = isMoreElement(lasItemIndex);
+      if (alreadyHas && !hasMore) {
+        listElements.remove(lasItemIndex);
+        fireIntervalRemoved(this, lasItemIndex, lasItemIndex);
       }
 
-      if (!alreadyHas && newVal) {
-        index += 1;
-        listElements.add(index, new SearchEverywhereFoundElementInfo(MORE_ELEMENT, 0, contributor));
-        fireIntervalAdded(this, index, index);
+      if (!alreadyHas && hasMore) {
+        listElements.add(new SearchEverywhereFoundElementInfo(MORE_ELEMENT, 0, null));
+        lasItemIndex += 1;
+        fireIntervalAdded(this, lasItemIndex, lasItemIndex);
       }
     }
 
     public void clear() {
       int index = listElements.size() - 1;
       listElements.clear();
+      hasMoreContributors.clear();
       if (index >= 0) {
         fireIntervalRemoved(this, 0, index);
       }
@@ -1292,20 +1207,6 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
       return (SearchEverywhereContributor<Item>)listElements.get(index).getContributor();
     }
 
-    public boolean isGroupFirstItem(int index) {
-      return index == 0 || listElements.get(index).getContributor() != listElements.get(index - 1).getContributor();
-    }
-
-    public int getItemsForContributor(SearchEverywhereContributor<?> contributor) {
-      List<SearchEverywhereContributor> contributorsList = contributors();
-      int first = contributorsList.indexOf(contributor);
-      int last = contributorsList.lastIndexOf(contributor);
-      if (isMoreElement(last)) {
-        last -= 1;
-      }
-      return last - first + 1;
-    }
-
     public Map<SearchEverywhereContributor<?>, Collection<SearchEverywhereFoundElementInfo>> getFoundElementsMap() {
       return listElements.stream()
         .filter(info -> info.element != MORE_ELEMENT)
@@ -1313,28 +1214,8 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     }
 
     @NotNull
-    private List<SearchEverywhereContributor> contributors() {
-      return Lists.transform(listElements, info -> info.getContributor());
-    }
-
-    @NotNull
     private List<Object> values() {
       return Lists.transform(listElements, info -> info.getElement());
-    }
-
-    private int getInsertionPoint(SearchEverywhereContributor contributor) {
-      if (listElements.isEmpty()) {
-        return 0;
-      }
-
-      List<SearchEverywhereContributor> list = contributors();
-      int index = list.lastIndexOf(contributor);
-      if (index >= 0) {
-        return isMoreElement(index) ? index : index + 1;
-      }
-
-      index = Collections.binarySearch(list, contributor, Comparator.comparingInt(SearchEverywhereContributor::getSortWeight));
-      return -index - 1;
     }
   }
 
