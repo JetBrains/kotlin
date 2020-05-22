@@ -309,11 +309,9 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
     run {
       val model = createModifiableModel(module)
       val entry = model.addLibraryEntry(a)
-      assertThat(entry.library).isEqualTo(a)
       assertThat(entry.libraryName).isEqualTo("a")
       val committed = commitModifiableRootModel(model)
       val libraryEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
-      assertThat(libraryEntry.library).isEqualTo(a)
       assertThat(libraryEntry.libraryName).isEqualTo("a")
     }
     runWriteActionAndWait { libraryTableModel.commit() }
@@ -329,7 +327,6 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
     val a = createLibrary("a", libraryTableModel)
     val model = createModifiableModel(module)
     val entry = model.addLibraryEntry(a)
-    assertThat(entry.library).isEqualTo(a)
     assertThat(entry.libraryName).isEqualTo("a")
     runWriteActionAndWait { libraryTableModel.commit() }
     val committed = commitModifiableRootModel(model)
@@ -352,7 +349,6 @@ abstract class LibrariesFromLibraryTableInRootModelTestCase {
       assertThat(entry.library).isEqualTo(a)
       val committed = commitModifiableRootModel(model)
       val libraryEntry = dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry
-      assertThat(libraryEntry.library).isEqualTo(a)
       assertThat(libraryEntry.libraryName).isEqualTo("a")
     }
     runWriteActionAndWait { libraryTableModel.commit() }

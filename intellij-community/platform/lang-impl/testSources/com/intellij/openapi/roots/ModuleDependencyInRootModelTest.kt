@@ -268,11 +268,9 @@ class ModuleDependencyInRootModelTest {
     run {
       val model = createModifiableModel(mainModule)
       val entry = model.addModuleOrderEntry(a)
-      assertThat(entry.module).isEqualTo(a)
       assertThat(entry.moduleName).isEqualTo("a")
       val committed = commitModifiableRootModel(model)
       val moduleEntry = dropModuleSourceEntry(committed, 1).single() as ModuleOrderEntry
-      assertThat(moduleEntry.module).isEqualTo(a)
       assertThat(moduleEntry.moduleName).isEqualTo("a")
     }
     runWriteActionAndWait { moduleModel.commit() }
@@ -289,11 +287,9 @@ class ModuleDependencyInRootModelTest {
     run {
       val model = createModifiableModel(mainModule)
       val entry = model.addModuleOrderEntry(a)
-      assertThat(entry.module).isEqualTo(a)
       assertThat(entry.moduleName).isEqualTo("a")
       val committed = commitModifiableRootModel(model)
       val moduleEntry = dropModuleSourceEntry(committed, 1).single() as ModuleOrderEntry
-      assertThat(moduleEntry.module).isEqualTo(a)
       assertThat(moduleEntry.moduleName).isEqualTo("a")
     }
     runWriteActionAndWait { moduleModel.dispose() }
