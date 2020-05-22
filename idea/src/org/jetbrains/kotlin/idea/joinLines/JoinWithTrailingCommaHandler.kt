@@ -12,7 +12,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.core.util.containsLineBreakInRange
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaState
 import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedForThis
+import org.jetbrains.kotlin.idea.formatter.trailingComma.existsOrMissing
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -27,7 +29,7 @@ class JoinWithTrailingCommaHandler : JoinLinesHandlerDelegate {
             ?.findLast { it.addTrailingCommaIsAllowedForThis() } as? KtElement
             ?: return CANNOT_JOIN
 
-        if (TrailingCommaHelper.needComma(commaOwner, null, true)) return CANNOT_JOIN
+        if (TrailingCommaState.stateForElement(commaOwner).existsOrMissing) return CANNOT_JOIN
         val result = CodeStyleManager.getInstance(file.project).reformat(commaOwner) as KtElement
         return TrailingCommaHelper.elementAfterLastElement(result)?.startOffset ?: end - 1
     }

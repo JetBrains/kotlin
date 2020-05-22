@@ -19,15 +19,16 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.trailingCommaExistsOrCanExist
 import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedFor
-import org.jetbrains.kotlin.idea.formatter.trailingComma.needTrailingComma
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.containsLineBreakInThis
+import org.jetbrains.kotlin.idea.util.isMultiline
+import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
@@ -568,36 +569,31 @@ abstract class KotlinCommonBlock(
                         additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR),
                     )
                     FUNCTION_TYPE -> return defaultTrailingCommaWrappingStrategy(LPAR, RPAR)
-                    FUNCTION_LITERAL -> {
-                        if (nodePsi.parent?.safeAs<KtFunctionLiteral>()?.needTrailingComma(settings) == true) {
-                            val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
-                            return { childElement ->
-                                createWrapAlwaysIf(getSiblingWithoutWhitespaceAndComments(childElement) == null || check(childElement))
-                            }
+                    FUNCTION_LITERAL -> if (trailingCommaExistsOrCanExist(nodePsi.parent, settings)) {
+                        val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
+                        return { childElement ->
+                            createWrapAlwaysIf(getSiblingWithoutWhitespaceAndComments(childElement) == null || check(childElement))
                         }
                     }
                 }
             }
 
-            elementType === FUNCTION_LITERAL -> {
-                if (nodePsi.cast<KtFunctionLiteral>().needTrailingComma(settings))
-                    return trailingCommaWrappingStrategy(leftAnchor = LBRACE, rightAnchor = ARROW)
+            elementType === FUNCTION_LITERAL -> if (trailingCommaExistsOrCanExist(nodePsi, settings)) {
+                return trailingCommaWrappingStrategy(leftAnchor = LBRACE, rightAnchor = ARROW)
             }
 
-            elementType === WHEN_ENTRY -> {
-                // with argument
-                if (nodePsi.cast<KtWhenEntry>().needTrailingComma(settings)) {
-                    val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
-                    return trailingCommaWrappingStrategy(rightAnchor = ARROW) {
-                        getSiblingWithoutWhitespaceAndComments(it, true) != null && check(it)
-                    }
+            // with argument
+            elementType === WHEN_ENTRY -> if (trailingCommaExistsOrCanExist(nodePsi, settings)) {
+                val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
+                return trailingCommaWrappingStrategy(rightAnchor = ARROW) {
+                    getSiblingWithoutWhitespaceAndComments(it, true) != null && check(it)
                 }
             }
 
             elementType === DESTRUCTURING_DECLARATION -> {
                 nodePsi as KtDestructuringDeclaration
                 if (nodePsi.valOrVarKeyword == null) return defaultTrailingCommaWrappingStrategy(LPAR, RPAR)
-                else if (nodePsi.needTrailingComma(settings)) {
+                else if (trailingCommaExistsOrCanExist(nodePsi, settings)) {
                     val check = thisOrPrevIsMultiLineElement(COMMA, LPAR, RPAR)
                     return trailingCommaWrappingStrategy(leftAnchor = LPAR, rightAnchor = RPAR, filter = { it.elementType !== EQ }) {
                         getSiblingWithoutWhitespaceAndComments(it, true) != null && check(it)

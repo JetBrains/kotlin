@@ -9,59 +9,14 @@ import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
-import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
-import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
-import org.jetbrains.kotlin.idea.util.containsLineBreakInThis
-import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-
-fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings?, checkExistingTrailingComma: Boolean = true): Boolean =
-    needTrailingComma(
-        settings = settings,
-        trailingComma = { if (checkExistingTrailingComma) valueParameterList?.trailingComma else null },
-        globalStartOffset = { valueParameterList?.startOffset },
-        globalEndOffset = { arrow?.endOffset },
-    )
-
-fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings?, checkExistingTrailingComma: Boolean = true): Boolean = needTrailingComma(
-    settings = settings,
-    trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
-    additionalCheck = { !isElse && parent.cast<KtWhenExpression>().leftParenthesis != null },
-    globalEndOffset = { arrow?.endOffset },
-)
-
-fun KtDestructuringDeclaration.needTrailingComma(settings: CodeStyleSettings?, checkExistingTrailingComma: Boolean = true): Boolean =
-    needTrailingComma(
-        settings = settings,
-        trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
-        globalStartOffset = { lPar?.startOffset },
-        globalEndOffset = { rPar?.endOffset },
-    )
-
-private fun <T : PsiElement> T.needTrailingComma(
-    settings: CodeStyleSettings?,
-    trailingComma: T.() -> PsiElement?,
-    additionalCheck: () -> Boolean = { true },
-    globalStartOffset: T.() -> Int? = PsiElement::startOffset,
-    globalEndOffset: T.() -> Int? = PsiElement::endOffset,
-): Boolean {
-    if (trailingComma() == null && settings?.kotlinCustomSettings?.addTrailingCommaIsAllowedFor(this) == false) return false
-    if (!additionalCheck()) return false
-
-    val startOffset = globalStartOffset() ?: return false
-    val endOffset = globalEndOffset() ?: return false
-    return containsLineBreakInThis(startOffset, endOffset)
-}
 
 fun trailingCommaIsAllowedOnCallSite(): Boolean = Registry.`is`("kotlin.formatter.allowTrailingCommaOnCallSite")
 
