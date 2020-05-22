@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="com.github.luben:zstd" type="repository">
+    <properties include-transitive-deps="false" maven-id="com.github.luben:zstd-jni:1.4.4-11" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/luben/zstd-jni/1.4.4-11/zstd-jni-1.4.4-11.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/luben/zstd-jni/1.4.4-11/zstd-jni-1.4.4-11-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/luben/zstd-jni/1.4.4-11/zstd-jni-1.4.4-11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
