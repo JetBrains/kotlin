@@ -10,7 +10,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
-import org.jetbrains.kotlin.idea.util.addTrailingCommaIsAllowedForThis
+import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedForThis
 import org.jetbrains.kotlin.psi.KtElement
 
 class TrailingCommaIntention : SelfTargetingIntention<KtElement>(
