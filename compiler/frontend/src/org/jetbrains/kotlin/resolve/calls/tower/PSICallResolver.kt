@@ -110,10 +110,6 @@ class PSICallResolver(
             return OverloadResolutionResultsImpl.nameNotFound()
         }
 
-        result = candidateInterceptor.interceptResolvedCandidates(
-            result, context, kotlinCallResolver, name, resolutionKind, tracingStrategy
-        )
-
         val overloadResolutionResults = convertToOverloadResolutionResults<D>(context, result, tracingStrategy)
         return overloadResolutionResults.also {
             clearCacheForApproximationResults()
@@ -407,13 +403,46 @@ class PSICallResolver(
             }
         }
 
-        override fun interceptCandidates(
+        override fun interceptFunctionCandidates(
             resolutionScope: ResolutionScope,
             name: Name,
             initialResults: Collection<FunctionDescriptor>,
-            location: LookupLocation
+            location: LookupLocation,
+            dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+            extensionReceiver: ReceiverValueWithSmartCastInfo?
         ): Collection<FunctionDescriptor> {
-            return candidateInterceptor.interceptCandidates(initialResults, this, context, resolutionScope, null, name, location)
+            return candidateInterceptor.interceptFunctionCandidates(
+                initialResults,
+                this,
+                context,
+                resolutionScope,
+                this@PSICallResolver,
+                name,
+                location,
+                dispatchReceiver,
+                extensionReceiver
+            )
+        }
+
+        override fun interceptVariableCandidates(
+            resolutionScope: ResolutionScope,
+            name: Name,
+            initialResults: Collection<VariableDescriptor>,
+            location: LookupLocation,
+            dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+            extensionReceiver: ReceiverValueWithSmartCastInfo?
+        ): Collection<VariableDescriptor> {
+            return candidateInterceptor.interceptVariableCandidates(
+                initialResults,
+                this,
+                context,
+                resolutionScope,
+                this@PSICallResolver,
+                name,
+                location,
+                dispatchReceiver,
+                extensionReceiver
+            )
         }
     }
 

@@ -44,12 +44,23 @@ interface ImplicitScopeTower {
 
     val typeApproximator: TypeApproximator
 
-    fun interceptCandidates(
+    fun interceptFunctionCandidates(
         resolutionScope: ResolutionScope,
         name: Name,
         initialResults: Collection<FunctionDescriptor>,
-        location: LookupLocation
+        location: LookupLocation,
+        dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<FunctionDescriptor>
+
+    fun interceptVariableCandidates(
+        resolutionScope: ResolutionScope,
+        name: Name,
+        initialResults: Collection<VariableDescriptor>,
+        location: LookupLocation,
+        dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<VariableDescriptor>
 }
 
 interface ScopeTowerLevel {
