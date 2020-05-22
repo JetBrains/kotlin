@@ -16,13 +16,12 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessorHelper
-import com.intellij.psi.util.PsiUtil.getElementType
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.findInvalidCommas
-import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.needComma
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.trailingCommaOrLastElement
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaState
+import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedFor
 import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespace
 import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -52,25 +51,26 @@ private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : 
     private fun processCommaOwner(parent: KtElement) {
         if (!postFormatIsEnable(parent)) return
 
-        val lastElement = trailingCommaOrLastElement(parent) ?: return
-        val elementType = getElementType(lastElement)
+        val lastElementOrComma = trailingCommaOrLastElement(parent) ?: return
         updatePsi(parent) {
+            val stateForElement = TrailingCommaState.stateForElement(parent)
             when {
-                needComma(parent, settings, false) -> {
+                stateForElement == TrailingCommaState.MISSING && settings.kotlinCustomSettings.addTrailingCommaIsAllowedFor(parent) -> {
                     // add a missing comma
-                    if (elementType != KtTokens.COMMA && trailingCommaAllowedInModule(parent)) {
-                        lastElement.addCommaAfter(KtPsiFactory(parent))
+                    if (trailingCommaAllowedInModule(parent)) {
+                        lastElementOrComma.addCommaAfter(KtPsiFactory(parent))
                     }
 
                     correctCommaPosition(parent)
                 }
-                needComma(parent, settings) -> {
+                stateForElement == TrailingCommaState.EXISTS -> {
                     correctCommaPosition(parent)
                 }
-                elementType == KtTokens.COMMA -> {
+                stateForElement == TrailingCommaState.REDUNDANT -> {
                     // remove redundant comma
-                    lastElement.delete()
+                    lastElementOrComma.delete()
                 }
+                else -> Unit
             }
         }
     }

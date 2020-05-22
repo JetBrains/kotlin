@@ -11,10 +11,15 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.isComma
+import org.jetbrains.kotlin.idea.util.isLineBreak
+import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespace
+import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 object TrailingCommaHelper {
@@ -24,26 +29,6 @@ object TrailingCommaHelper {
         ?.filter {
             it.prevLeaf(true)?.isLineBreak() == true || it.leafIgnoringWhitespace(false) != it.leafIgnoringWhitespaceAndComments(false)
         }?.toList().orEmpty()
-
-    fun needComma(
-        commaOwner: KtElement,
-        settings: CodeStyleSettings?,
-        checkExistingTrailingComma: Boolean = true,
-    ): Boolean = when {
-        commaOwner is KtWhenEntry ->
-            commaOwner.needTrailingComma(settings, checkExistingTrailingComma)
-
-        commaOwner.parent is KtFunctionLiteral ->
-            commaOwner.parent.cast<KtFunctionLiteral>().needTrailingComma(settings, checkExistingTrailingComma)
-
-        commaOwner is KtDestructuringDeclaration ->
-            commaOwner.needTrailingComma(settings, checkExistingTrailingComma)
-
-        else -> (checkExistingTrailingComma &&
-                trailingCommaOrLastElement(commaOwner)?.isComma == true ||
-                settings?.kotlinCustomSettings?.addTrailingCommaIsAllowedFor(commaOwner) != false) &&
-                commaOwner.isMultiline()
-    }
 
     fun trailingCommaExistsOrCanExist(psiElement: PsiElement, settings: CodeStyleSettings): Boolean =
         TrailingCommaContext.create(psiElement).commaExistsOrMayExist(settings.kotlinCustomSettings)
@@ -98,46 +83,4 @@ object TrailingCommaHelper {
             is KtDestructuringDeclaration -> rPar
             else -> lastChild
         }
-}
-
-private fun KtFunctionLiteral.needTrailingComma(settings: CodeStyleSettings?, checkExistingTrailingComma: Boolean = true): Boolean =
-    needTrailingComma(
-        settings = settings,
-        trailingComma = { if (checkExistingTrailingComma) valueParameterList?.trailingComma else null },
-        globalStartOffset = { valueParameterList?.startOffset },
-        globalEndOffset = { arrow?.endOffset },
-    )
-
-private fun KtWhenEntry.needTrailingComma(settings: CodeStyleSettings?, checkExistingTrailingComma: Boolean = true): Boolean =
-    needTrailingComma(
-        settings = settings,
-        trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
-        additionalCheck = { !isElse && parent.cast<KtWhenExpression>().leftParenthesis != null },
-        globalEndOffset = { arrow?.endOffset },
-    )
-
-private fun KtDestructuringDeclaration.needTrailingComma(
-    settings: CodeStyleSettings?,
-    checkExistingTrailingComma: Boolean = true
-): Boolean =
-    needTrailingComma(
-        settings = settings,
-        trailingComma = { if (checkExistingTrailingComma) trailingComma else null },
-        globalStartOffset = { lPar?.startOffset },
-        globalEndOffset = { rPar?.endOffset },
-    )
-
-private fun <T : PsiElement> T.needTrailingComma(
-    settings: CodeStyleSettings?,
-    trailingComma: T.() -> PsiElement?,
-    additionalCheck: () -> Boolean = { true },
-    globalStartOffset: T.() -> Int? = PsiElement::startOffset,
-    globalEndOffset: T.() -> Int? = PsiElement::endOffset,
-): Boolean {
-    if (trailingComma() == null && settings?.kotlinCustomSettings?.addTrailingCommaIsAllowedFor(this) == false) return false
-    if (!additionalCheck()) return false
-
-    val startOffset = globalStartOffset() ?: return false
-    val endOffset = globalEndOffset() ?: return false
-    return containsLineBreakInThis(startOffset, endOffset)
 }
