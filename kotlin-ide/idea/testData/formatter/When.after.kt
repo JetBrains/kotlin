@@ -37,4 +37,11 @@ fun some(x: Any) {
     }
 }
 
+val a = when {
+    true && true && true -> {
+    }
+    else -> {
+    }
+}
+
 // SET_FALSE: ALIGN_IN_COLUMNS_CASE_BRANCH

@@ -7,48 +7,49 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedForThis
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaContext
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaState
 import org.jetbrains.kotlin.psi.*
 
 abstract class TrailingCommaVisitor : KtTreeVisitorVoid() {
     override fun visitParameterList(list: KtParameterList) {
         super.visitParameterList(list)
-        runProcessIfAllowed(list)
+        runProcessIfApplicable(list)
     }
 
     override fun visitValueArgumentList(list: KtValueArgumentList) {
         super.visitValueArgumentList(list)
-        runProcessIfAllowed(list)
+        runProcessIfApplicable(list)
     }
 
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
         super.visitArrayAccessExpression(expression)
-        runProcessIfAllowed(expression.indicesNode)
+        runProcessIfApplicable(expression.indicesNode)
     }
 
     override fun visitTypeParameterList(list: KtTypeParameterList) {
         super.visitTypeParameterList(list)
-        runProcessIfAllowed(list)
+        runProcessIfApplicable(list)
     }
 
     override fun visitTypeArgumentList(typeArgumentList: KtTypeArgumentList) {
         super.visitTypeArgumentList(typeArgumentList)
-        runProcessIfAllowed(typeArgumentList)
+        runProcessIfApplicable(typeArgumentList)
     }
 
     override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression) {
         super.visitCollectionLiteralExpression(expression)
-        runProcessIfAllowed(expression)
+        runProcessIfApplicable(expression)
     }
 
     override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
         super.visitWhenEntry(jetWhenEntry)
-        runProcessIfAllowed(jetWhenEntry)
+        runProcessIfApplicable(jetWhenEntry)
     }
 
     override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
         super.visitDestructuringDeclaration(destructuringDeclaration)
-        runProcessIfAllowed(destructuringDeclaration)
+        runProcessIfApplicable(destructuringDeclaration)
     }
 
     override fun visitElement(element: PsiElement) {
@@ -57,13 +58,17 @@ abstract class TrailingCommaVisitor : KtTreeVisitorVoid() {
         if (recursively) super.visitElement(element)
     }
 
-    private fun runProcessIfAllowed(element: KtElement) {
-        if (element.addTrailingCommaIsAllowedForThis()) {
-            process(element)
+    private fun runProcessIfApplicable(element: KtElement) {
+        val context = TrailingCommaContext.create(element)
+        if (context.state != TrailingCommaState.NOT_APPLICABLE) {
+            process(context)
         }
     }
 
-    protected abstract fun process(commaOwner: KtElement)
+    /**
+     * [trailingCommaContext] doesn't contain a state [TrailingCommaState.NOT_APPLICABLE]
+     */
+    protected abstract fun process(trailingCommaContext: TrailingCommaContext)
 
     protected open val recursively: Boolean = true
 }
