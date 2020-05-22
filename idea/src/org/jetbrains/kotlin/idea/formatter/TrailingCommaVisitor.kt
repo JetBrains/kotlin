@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.util.addTrailingCommaIsAllowedForThis
+import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedForThis
 import org.jetbrains.kotlin.psi.*
 
 abstract class TrailingCommaVisitor : KtTreeVisitorVoid() {

@@ -19,6 +19,8 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
+import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedFor
+import org.jetbrains.kotlin.idea.formatter.trailingComma.needTrailingComma
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
