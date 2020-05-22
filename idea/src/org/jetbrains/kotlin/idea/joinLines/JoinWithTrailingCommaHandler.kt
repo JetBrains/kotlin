@@ -13,8 +13,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.core.util.containsLineBreakInRange
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaState
-import org.jetbrains.kotlin.idea.formatter.trailingComma.canAddTrailingCommaWithRegistryCheck
-import org.jetbrains.kotlin.idea.formatter.trailingComma.existsOrMissing
+import org.jetbrains.kotlin.idea.formatter.trailingComma.canAddTrailingComma
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -26,12 +25,22 @@ class JoinWithTrailingCommaHandler : JoinLinesHandlerDelegate {
         val commaOwner = file.findElementAt(start)
             ?.parentsWithSelf
             ?.filter { !document.containsLineBreakInRange(it.textRange) }
-            ?.findLast { it.canAddTrailingCommaWithRegistryCheck() } as? KtElement
+            ?.findLast { it.canAddTrailingComma() } as? KtElement
             ?: return CANNOT_JOIN
 
-        if (TrailingCommaState.stateForElement(commaOwner).existsOrMissing) return CANNOT_JOIN
-        val result = CodeStyleManager.getInstance(file.project).reformat(commaOwner) as KtElement
-        return TrailingCommaHelper.elementAfterLastElement(result)?.startOffset ?: end - 1
+        return when (TrailingCommaState.stateForElement(commaOwner)) {
+            TrailingCommaState.REDUNDANT, TrailingCommaState.NOT_EXISTS -> {
+                val oldLen = commaOwner.textLength
+                val result = CodeStyleManager.getInstance(file.project).reformat(commaOwner) as KtElement
+                if (oldLen != result.textLength)
+                    TrailingCommaHelper.elementAfterLastElement(result)?.startOffset ?: end - 1
+                else
+                    CANNOT_JOIN
+            }
+
+            else ->
+                CANNOT_JOIN
+        }
     }
 
 }
