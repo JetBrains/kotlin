@@ -301,6 +301,11 @@ public inline fun String.Companion.format(locale: Locale?, format: String, varar
 
 /**
  * Splits this char sequence around matches of the given regular expression.
+ *
+ * This function has two notable differences from the method [Pattern.split]:
+ *   - the function returns the result as a `List<String>` rather than an `Array<String>`;
+ *   - when the [limit] is not specified or specified as 0,
+ *   this function doesn't drop trailing empty strings from the result.
 
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
