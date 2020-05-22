@@ -7,13 +7,16 @@ import com.intellij.find.FindUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.EditorSettings;
+import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager;
-import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
+import com.intellij.openapi.fileEditor.impl.text.QuickDefinitionProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -332,7 +335,7 @@ public class ImplementationViewComponent extends JPanel {
 
     final FileEditorProvider[] providers = FileEditorProviderManager.getInstance().getProviders(project, vFile);
     for (FileEditorProvider provider : providers) {
-      if (provider instanceof TextEditorProvider) {
+      if (provider instanceof QuickDefinitionProvider) {
         updateTextElement(foundElement);
         myBinarySwitch.show(myViewingPanel, TEXT_PAGE_KEY);
         break;
