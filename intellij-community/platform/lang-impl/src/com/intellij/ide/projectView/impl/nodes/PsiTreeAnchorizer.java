@@ -45,7 +45,7 @@ public class PsiTreeAnchorizer extends TreeAnchorizer {
   @Nullable
   public Object retrieveElement(@NotNull final Object pointer) {
     if (pointer instanceof SmartPsiElementPointer) {
-      return ReadAction.compute(() -> ((SmartPsiElementPointer)pointer).getElement());
+      return ReadAction.compute(() -> ((SmartPsiElementPointer<?>)pointer).getElement());
     }
 
     return super.retrieveElement(pointer);
@@ -55,7 +55,7 @@ public class PsiTreeAnchorizer extends TreeAnchorizer {
   public void freeAnchor(final Object element) {
     if (element instanceof SmartPsiElementPointer) {
       ApplicationManager.getApplication().runReadAction(() -> {
-        SmartPsiElementPointer pointer = (SmartPsiElementPointer)element;
+        SmartPsiElementPointer<?> pointer = (SmartPsiElementPointer<?>)element;
         Project project = pointer.getProject();
         if (!project.isDisposed()) {
           SmartPointerManager.getInstance(project).removePointer(pointer);
