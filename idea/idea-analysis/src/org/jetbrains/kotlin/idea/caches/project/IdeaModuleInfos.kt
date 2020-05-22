@@ -56,6 +56,8 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.NativePlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
@@ -138,17 +140,6 @@ private fun ideaModelDependencies(
     forProduction: Boolean,
     platform: TargetPlatform
 ): List<IdeaModuleInfo> {
-    fun TargetPlatform.canDependOn(other: TargetPlatform): Boolean {
-        return if (module.isHMPPEnabled) {
-            other.componentPlatforms.containsAll(this.componentPlatforms)
-        } else {
-            this.isJvm() && other.isJvm() ||
-                    this.isJs() && other.isJs() ||
-                    this.isNative() && other.isNative() ||
-                    this.isCommon() && other.isCommon()
-        }
-    }
-
     //NOTE: lib dependencies can be processed several times during recursive traversal
     val result = LinkedHashSet<IdeaModuleInfo>()
     val dependencyEnumerator = ModuleRootManager.getInstance(module).orderEntries().compileOnly().recursively().exportedOnly()
@@ -161,7 +152,23 @@ private fun ideaModelDependencies(
         }
         true
     }
-    return result.filterNot { it is LibraryInfo && !platform.canDependOn(it.platform) }
+    return result.filterNot { it is LibraryInfo && !platform.canDependOn(it.platform, module.isHMPPEnabled) }
+}
+
+private fun TargetPlatform.canDependOn(other: TargetPlatform, isHmppEnabled: Boolean): Boolean {
+    if (isHmppEnabled) {
+        val platformsWhichAreNotContainedInOther = this.componentPlatforms - other.componentPlatforms
+        if (platformsWhichAreNotContainedInOther.isEmpty()) return true
+
+        // unspecifiedNativePlatform is effectively a wildcard for NativePlatform
+        return platformsWhichAreNotContainedInOther.all { it is NativePlatform } &&
+                NativePlatforms.unspecifiedNativePlatform.componentPlatforms.single() in other.componentPlatforms
+    } else {
+        return this.isJvm() && other.isJvm() ||
+                this.isJs() && other.isJs() ||
+                this.isNative() && other.isNative() ||
+                this.isCommon() && other.isCommon()
+    }
 }
 
 interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
