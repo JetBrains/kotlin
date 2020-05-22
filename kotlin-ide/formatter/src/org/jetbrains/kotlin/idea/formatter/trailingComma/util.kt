@@ -40,14 +40,18 @@ private val TYPES_WITH_TRAILING_COMMA = TokenSet.orSet(
     TYPES_WITH_TRAILING_COMMA_ON_CALL_SITE,
 )
 
-fun UserDataHolder.addTrailingCommaIsAllowedForThis(): Boolean {
+fun PsiElement.canAddTrailingCommaWithRegistryCheck(): Boolean {
     val type = elementType(this) ?: return false
     return type in TYPES_WITH_TRAILING_COMMA_ON_DECLARATION_SITE ||
             trailingCommaIsAllowedOnCallSite() && type in TYPES_WITH_TRAILING_COMMA_ON_CALL_SITE
 }
 
-fun KotlinCodeStyleSettings.addTrailingCommaIsAllowedFor(element: UserDataHolder): Boolean =
-    ALLOW_TRAILING_COMMA && element.addTrailingCommaIsAllowedForThis()
+fun KotlinCodeStyleSettings.addTrailingCommaIsAllowedFor(element: UserDataHolder): Boolean = when (elementType(element)) {
+    null -> false
+    in TYPES_WITH_TRAILING_COMMA_ON_DECLARATION_SITE -> ALLOW_TRAILING_COMMA
+    in TYPES_WITH_TRAILING_COMMA_ON_CALL_SITE -> ALLOW_TRAILING_COMMA_ON_CALL_SITE || trailingCommaIsAllowedOnCallSite()
+    else -> false
+}
 
 private fun elementType(userDataHolder: UserDataHolder): IElementType? = when (userDataHolder) {
     is ASTNode -> PsiUtilCore.getElementType(userDataHolder)

@@ -10,7 +10,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
-import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedForThis
+import org.jetbrains.kotlin.idea.formatter.trailingComma.canAddTrailingCommaWithRegistryCheck
 import org.jetbrains.kotlin.psi.KtElement
 
 class TrailingCommaIntention : SelfTargetingIntention<KtElement>(
@@ -22,7 +22,7 @@ class TrailingCommaIntention : SelfTargetingIntention<KtElement>(
         kotlinCustomSettings.ALLOW_TRAILING_COMMA = !kotlinCustomSettings.ALLOW_TRAILING_COMMA
     }
 
-    override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean = element.addTrailingCommaIsAllowedForThis().also {
+    override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean = element.canAddTrailingCommaWithRegistryCheck().also {
         val actionNumber = 1.takeIf { CodeStyle.getSettings(element.project).kotlinCustomSettings.ALLOW_TRAILING_COMMA } ?: 0
         setTextGetter(KotlinBundle.lazyMessage("intention.trailing.comma.custom.text", actionNumber))
     }

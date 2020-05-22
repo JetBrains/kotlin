@@ -125,7 +125,7 @@ public abstract class AbstractFormatterTest extends LightIdeaTestCase {
     }
 
     public void doTestInvertedCallSite(@NotNull String expectedFileNameWithExtension) throws Exception {
-        doTest(expectedFileNameWithExtension, true, true);
+        doTest(expectedFileNameWithExtension, true, false);
     }
 
     public void doTestCallSite(@NotNull String expectedFileNameWithExtension) throws Exception {
@@ -138,7 +138,7 @@ public abstract class AbstractFormatterTest extends LightIdeaTestCase {
         String originalFileText = FileUtil.loadFile(new File(testFileName + testFileExtension), true);
 
         CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(getProject());
-        RegistryValue registryValue = Registry.get("kotlin.formatter.allowTrailingCommaOnCallSite");
+        KotlinCodeStyleSettings customSettings = codeStyleSettings.getCustomSettings(KotlinCodeStyleSettings.class);
         try {
             Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
             if (rightMargin != null) {
@@ -147,7 +147,7 @@ public abstract class AbstractFormatterTest extends LightIdeaTestCase {
 
             Boolean trailingComma = InTextDirectivesUtils.getPrefixedBoolean(originalFileText, "// TRAILING_COMMA: ");
             if (trailingComma != null) {
-                codeStyleSettings.getCustomSettings(KotlinCodeStyleSettings.class).ALLOW_TRAILING_COMMA = trailingComma;
+                customSettings.ALLOW_TRAILING_COMMA = trailingComma;
             }
 
             SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);
@@ -158,12 +158,11 @@ public abstract class AbstractFormatterTest extends LightIdeaTestCase {
                 configurator.configureInvertedSettings();
             }
 
-            registryValue.setValue(callSite);
+            customSettings.ALLOW_TRAILING_COMMA_ON_CALL_SITE = callSite;
             doTextTest(originalFileText, new File(expectedFileNameWithExtension), testFileExtension);
         }
         finally {
             codeStyleSettings.clearCodeStyleSettings();
-            registryValue.resetToDefault();
         }
     }
 }

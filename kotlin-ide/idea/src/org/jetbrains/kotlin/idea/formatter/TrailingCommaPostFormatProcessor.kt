@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.fin
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.trailingCommaOrLastElement
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaState
 import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedFor
-import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedForThis
 import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespace
 import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.KtElement
@@ -40,12 +39,8 @@ class TrailingCommaPostFormatProcessor : PostFormatProcessor {
 private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : TrailingCommaVisitor() {
     private val myPostProcessor = PostFormatProcessorHelper(settings.kotlinCommonSettings)
 
-    override fun process(trailingCommaContext: TrailingCommaContext) {
-        val ktElement = trailingCommaContext.ktElement
-        if (!ktElement.addTrailingCommaIsAllowedForThis()) return
-        processIfInRange(ktElement) {
-            processCommaOwner(trailingCommaContext)
-        }
+    override fun process(trailingCommaContext: TrailingCommaContext) = processIfInRange(trailingCommaContext.ktElement) {
+        processCommaOwner(trailingCommaContext)
     }
 
     private fun processIfInRange(element: KtElement, block: () -> Unit = {}) {

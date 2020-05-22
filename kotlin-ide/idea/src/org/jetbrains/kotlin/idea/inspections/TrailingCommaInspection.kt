@@ -40,7 +40,7 @@ class TrailingCommaInspection(
 
         override fun process(trailingCommaContext: TrailingCommaContext) {
             val element = trailingCommaContext.ktElement
-            if (!element.addTrailingCommaIsAllowedForThis()) return
+            if (!element.canAddTrailingCommaWithRegistryCheck()) return
 
             useTrailingComma = CodeStyle.getSettings(element.project).kotlinCustomSettings.ALLOW_TRAILING_COMMA
             when (trailingCommaContext.state) {
