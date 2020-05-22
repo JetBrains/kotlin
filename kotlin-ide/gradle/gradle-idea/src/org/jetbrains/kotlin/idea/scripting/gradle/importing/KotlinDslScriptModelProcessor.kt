@@ -21,11 +21,6 @@ import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-var Project.kotlinGradleDslSync: MutableMap<ExternalSystemTaskId, KotlinDslGradleBuildSync>
-        by NotNullableUserDataProperty<Project, MutableMap<ExternalSystemTaskId, KotlinDslGradleBuildSync>>(
-            Key("Kotlin DSL Scripts Models"), ConcurrentHashMap()
-        )
-
 fun processScriptModel(
     resolverCtx: ProjectResolverContext,
     model: KotlinDslScriptsModel,
@@ -40,7 +35,13 @@ fun processScriptModel(
         val project = task.findProject() ?: return
         val models = model.toListOfScriptModels(project)
 
-        project.kotlinGradleDslSync[task]?.models?.addAll(models)
+        val tasks = KotlinDslSyncListener.instance.tasks
+        val sync = synchronized(tasks) { tasks[task] }
+        if (sync != null) {
+            synchronized(sync) {
+                sync.models.addAll(models)
+            }
+        }
 
         if (models.containsErrors()) {
             throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
@@ -106,14 +107,16 @@ class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSyste
 }
 
 fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {
-    val errorReporter = KotlinGradleDslErrorReporter(project, build.taskId)
+    synchronized(build) {
+        val errorReporter = KotlinGradleDslErrorReporter(project, build.taskId)
 
-    build.models.forEach { model ->
-        errorReporter.reportError(File(model.file), model)
+        build.models.forEach { model ->
+            errorReporter.reportError(File(model.file), model)
+        }
+
+        // todo: use real info about projects
+        build.projectRoots.addAll(build.models.map { toSystemIndependentName(File(it.file).parent) })
+
+        GradleBuildRootsManager.getInstance(project).update(build)
     }
-
-    // todo: use real info about projects
-    build.projectRoots.addAll(build.models.map { toSystemIndependentName(File(it.file).parent) })
-
-    GradleBuildRootsManager.getInstance(project).update(build)
 }
