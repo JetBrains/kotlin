@@ -361,13 +361,4 @@ private fun KtExpression.insertSafeCalls(factory: KtPsiFactory): KtExpression {
     return replaced
 }
 
-// Returns -1 if cannot obtain a document
-internal fun KtExpression.lineCount(): Int {
-    val file = containingFile?.virtualFile ?: return -1
-    val document = FileDocumentManager.getInstance().getDocument(file) ?: return -1
-    return document.getLineNumber(textRange.endOffset) - document.getLineNumber(textRange.startOffset) + 1
-}
-
-internal fun KtExpression.isOneLiner(): Boolean = lineCount() == 1
-
 internal fun KtExpression.isElseIf() = parent.node.elementType == KtNodeTypes.ELSE
