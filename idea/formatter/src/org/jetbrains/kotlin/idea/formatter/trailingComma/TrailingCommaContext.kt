@@ -7,8 +7,14 @@ package org.jetbrains.kotlin.idea.formatter.trailingComma
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.psi.KtElement
 
 class TrailingCommaContext private constructor(val element: PsiElement, val state: TrailingCommaState) {
+    /**
+     * Return [KtElement] if [state] != [TrailingCommaState.NOT_APPLICABLE]
+     */
+    val ktElement: KtElement get() = element as? KtElement ?: error("State is NOT_APPLICABLE")
+
     companion object {
         fun create(element: PsiElement): TrailingCommaContext = TrailingCommaContext(
             element,

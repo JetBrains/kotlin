@@ -1,7 +1,7 @@
 fun some(x: Any) {
     when (x) {
         is Number -> 0
-        else -> 1
+        else      -> 1
     }
     when {
     }
@@ -34,6 +34,13 @@ fun some(x: Any) {
     }
 
     when {
+    }
+}
+
+val a = when {
+    true && true && true -> {
+    }
+    else                 -> {
     }
 }
 
