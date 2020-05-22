@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
-    private inline fun <reified T> getTreeElement(): T? =  when (val element = myMatchingVisitor.element) {
+    private inline fun <reified T> getTreeElement(): T? = when (val element = myMatchingVisitor.element) {
         is KtParenthesizedExpression -> {
-            if(element is T) { // actually retrieving KtParenthesizedExpression so don't deparenthesize
+            if (element is T) { // actually retrieving KtParenthesizedExpression so don't deparenthesize
                 element
             } else {
                 val deparenthesized = element.deparenthesize()
-                if(deparenthesized is T) deparenthesized else {
+                if (deparenthesized is T) deparenthesized else {
                     myMatchingVisitor.result = false
                     null
                 }

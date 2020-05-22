@@ -8,9 +8,7 @@ class KotlinCompiledPattern : CompiledPattern() {
         strategy = KotlinMatchingStrategy
     }
 
-    override fun getTypedVarPrefixes(): Array<String> {
-        return arrayOf(TYPED_VAR_PREFIX)
-    }
+    override fun getTypedVarPrefixes(): Array<String> = arrayOf(TYPED_VAR_PREFIX)
 
     override fun isTypedVar(str: String): Boolean = when {
         str.isEmpty() -> false
@@ -19,6 +17,6 @@ class KotlinCompiledPattern : CompiledPattern() {
     }
 
     companion object {
-        const val TYPED_VAR_PREFIX = "_____"
+        const val TYPED_VAR_PREFIX: String = "_____"
     }
 }

@@ -1,7 +1,6 @@
 package com.jetbrains.kotlin.structuralsearch.impl.matcher
 
 import com.intellij.psi.PsiComment
-import com.intellij.psi.TokenType
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object KotlinMatchUtil {
