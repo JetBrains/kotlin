@@ -77,10 +77,8 @@ class ScriptClassRootsBuilder(
             storage.project,
             storage.classpath.toMutableSet(),
             storage.sources.toMutableSet(),
-        ).also { roots ->
-            storage.sdks.forEach {
-                roots.sdks.addSdkByName(it)
-            }
+        ).also {
+            it.sdks.fromStorage(storage)
         }
     }
 }
