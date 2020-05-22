@@ -14,6 +14,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -61,9 +62,10 @@ private fun elementType(userDataHolder: UserDataHolder): IElementType? = when (u
 
 fun ASTNode.canAddTrailingComma(): Boolean = psi?.canAddTrailingComma() == true
 fun PsiElement.canAddTrailingComma(): Boolean =
-    if (this is KtWhenEntry && (isElse || parent.cast<KtWhenExpression>().leftParenthesis == null))
-        false
-    else
-        canAddTrailingComma(this)
+    when {
+        this is KtWhenEntry && (isElse || parent.cast<KtWhenExpression>().leftParenthesis == null) -> false
+        this is KtFunctionLiteral && arrow == null -> false
+        else -> canAddTrailingComma(this)
+    }
 
 private fun canAddTrailingComma(userDataHolder: UserDataHolder): Boolean = elementType(userDataHolder) in TYPES_WITH_TRAILING_COMMA
