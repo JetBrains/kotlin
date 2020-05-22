@@ -6,7 +6,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.impl.libraries.LibraryTableImplUtil
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.assertions.Assertions.assertThat
@@ -180,6 +180,7 @@ class ModuleLevelLibrariesInRootModelTest {
     libraryModel.addRoot(classesRoot, OrderRootType.CLASSES)
     assertThat(libraryModel.getFiles(OrderRootType.CLASSES)).containsExactly(classesRoot)
     assertThat((dropModuleSourceEntry(model, 1).single() as LibraryOrderEntry).getRootFiles(OrderRootType.CLASSES)).isEmpty()
+    Disposer.dispose(libraryModel)
     val committed = commitModifiableRootModel(model)
     assertThat((dropModuleSourceEntry(committed, 1).single() as LibraryOrderEntry).getRootFiles(OrderRootType.CLASSES)).isEmpty()
   }
