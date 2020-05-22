@@ -29,6 +29,7 @@ fun ASTBlock.requireNode() = node ?: error("ASTBlock.getNode() returned null")
  */
 val isDefaultOfficialCodeStyle by lazy { !KotlinCodeStyleSettings.defaultSettings().CONTINUATION_INDENT_FOR_CHAINED_CALLS }
 
+// Copied from idea-core
 fun PsiElement.getLineCount(): Int {
     val doc = containingFile?.let { PsiDocumentManager.getInstance(project).getDocument(it) }
     if (doc != null) {
@@ -36,13 +37,13 @@ fun PsiElement.getLineCount(): Int {
 
         if (spaceRange.endOffset <= doc.textLength && spaceRange.startOffset < spaceRange.endOffset) {
             val startLine = doc.getLineNumber(spaceRange.startOffset)
-            val endLine = doc.getLineNumber(spaceRange.endOffset - 1)
+            val endLine = doc.getLineNumber(spaceRange.endOffset)
 
             return endLine - startLine + 1
         }
     }
 
-    return StringUtil.getLineBreakCount(text ?: "") + 1
+    return StringUtil.getLineBreakCount(text ?: error("Cannot count number of lines")) + 1
 }
 
 fun PsiElement.isMultiline() = getLineCount() > 1

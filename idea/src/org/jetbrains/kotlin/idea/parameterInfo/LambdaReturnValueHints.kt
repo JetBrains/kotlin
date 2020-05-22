@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.parameterInfo
 import com.intellij.codeInsight.hints.InlayInfo
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
+import org.jetbrains.kotlin.idea.core.util.isOneLiner
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
