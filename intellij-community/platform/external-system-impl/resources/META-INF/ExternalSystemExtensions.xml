@@ -65,7 +65,6 @@
         implementation="com.intellij.openapi.externalSystem.service.project.settings.InspectionsProfileConfigurationHandler"/>
     <externalSystemConfigurationHandler
         implementation="com.intellij.openapi.externalSystem.service.project.settings.DetectionExcludesConfigImporter"/>
-    <externalSystem.beforeRunTaskImporter implementation="com.intellij.openapi.externalSystem.service.project.settings.BuildArtifactsTaskImporter"/>
 
     <!--Tool window services-->
     <externalSystemViewContributor id="default" order="last"
