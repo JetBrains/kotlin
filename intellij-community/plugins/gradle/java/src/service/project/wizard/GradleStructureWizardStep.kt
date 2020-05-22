@@ -1,13 +1,18 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project.wizard
 
+import com.intellij.ide.highlighter.ModuleFileType
+import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard.getNewProjectJdk
 import com.intellij.ide.util.projectWizard.WizardContext
+import com.intellij.openapi.components.StorageScheme
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.service.project.wizard.MavenizedStructureWizardStep
 import com.intellij.openapi.externalSystem.util.ui.DataView
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.layout.*
 import icons.GradleIcons
 import org.jetbrains.plugins.gradle.util.GradleBundle
@@ -57,6 +62,25 @@ class GradleStructureWizardStep(
     builder.isInheritVersion = parentData?.version == version
     builder.name = entityName
     builder.contentEntryPath = location
+
+    builder.moduleFilePath = getModuleFilePath()
+    builder.isCreatingNewProject = context.isCreatingNewProject
+    builder.moduleJdk = builder.moduleJdk ?: getNewProjectJdk(context)
+  }
+
+  private fun getModuleFilePath(): String {
+    val moduleFileDirectory = getModuleFileDirectory()
+    val moduleFilePath = FileUtil.join(moduleFileDirectory, artifactId + ModuleFileType.DOT_DEFAULT_EXTENSION)
+    return FileUtil.toCanonicalPath(moduleFilePath)
+  }
+
+  private fun getModuleFileDirectory(): String {
+    val projectPath = context.project?.basePath ?: location
+    return when (context.projectStorageFormat) {
+      StorageScheme.DEFAULT -> location
+      StorageScheme.DIRECTORY_BASED -> FileUtil.join(projectPath, Project.DIRECTORY_STORE_FOLDER, "modules")
+      else -> projectPath
+    }
   }
 
   override fun _init() {

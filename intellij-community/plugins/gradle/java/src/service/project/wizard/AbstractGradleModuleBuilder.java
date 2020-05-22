@@ -4,14 +4,12 @@ package org.jetbrains.plugins.gradle.service.project.wizard;
 import com.intellij.application.options.CodeStyle;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.ide.projectWizard.ProjectSettingsStep;
 import com.intellij.ide.util.EditorHelper;
 import com.intellij.ide.util.projectWizard.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
@@ -33,7 +31,6 @@ import com.intellij.openapi.module.*;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdkType;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.projectRoots.impl.DependentSdkType;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -70,7 +67,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.intellij.ide.util.newProjectWizard.AbstractProjectWizard.getNewProjectJdk;
 import static com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.MODAL_SYNC;
 import static com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.setupCreatedProject;
 import static org.jetbrains.plugins.gradle.service.project.open.GradleProjectImportUtil.setupGradleSettings;
@@ -101,8 +97,6 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   private static final Key<BuildScriptDataBuilder> BUILD_SCRIPT_DATA =
     Key.create("gradle.module.buildScriptData");
 
-  private WizardContext myWizardContext;
-
   @Nullable
   private ProjectData myParentProject;
   private boolean myInheritGroupId;
@@ -110,6 +104,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   private ProjectId myProjectId;
   private String rootProjectPath;
   private boolean myUseKotlinDSL;
+  private boolean isCreatingNewProject;
 
   public AbstractGradleModuleBuilder() {
     super(GradleConstants.SYSTEM_ID, new GradleProjectSettings());
@@ -120,31 +115,12 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   public Module createModule(@NotNull ModifiableModuleModel moduleModel)
     throws InvalidDataException, ConfigurationException {
     LOG.assertTrue(getName() != null);
-    final String originModuleFilePath = getModuleFilePath();
-    LOG.assertTrue(originModuleFilePath != null);
+    final String moduleFilePath = getModuleFilePath();
+    LOG.assertTrue(moduleFilePath != null);
 
-    String moduleName = myProjectId == null ? getName() : myProjectId.getArtifactId();
-    Project contextProject = myWizardContext.getProject();
-    String projectFileDirectory = null;
-    if (myWizardContext.isCreatingNewProject() || contextProject == null || contextProject.getBasePath() == null) {
-      projectFileDirectory = myWizardContext.getProjectFileDirectory();
-    }
-    else if (myWizardContext.getProjectStorageFormat() == StorageScheme.DEFAULT) {
-      String moduleFileDirectory = getModuleFileDirectory();
-      if (moduleFileDirectory != null) {
-        projectFileDirectory = moduleFileDirectory;
-      }
-    }
-    if (projectFileDirectory == null) {
-      projectFileDirectory = contextProject.getBasePath();
-    }
-    if (myWizardContext.getProjectStorageFormat() == StorageScheme.DIRECTORY_BASED) {
-      projectFileDirectory += "/.idea/modules";
-    }
-    String moduleFilePath = projectFileDirectory + "/" + moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION;
     deleteModuleFile(moduleFilePath);
-    final ModuleType moduleType = getModuleType();
-    final Module module = moduleModel.newModule(moduleFilePath, moduleType.getId());
+    String moduleTypeId = getModuleType().getId();
+    Module module = moduleModel.newModule(moduleFilePath, moduleTypeId);
     setupModule(module);
     return module;
   }
@@ -164,29 +140,22 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     }
 
     modifiableRootModel.addContentEntry(modelContentRootDir);
-    // todo this should be moved to generic ModuleBuilder
-    if (myJdk != null) {
-      modifiableRootModel.setSdk(myJdk);
-    }
-    else {
-      modifiableRootModel.inheritSdk();
-    }
 
-    final Project project = modifiableRootModel.getProject();
+    Project project = modifiableRootModel.getProject();
+    Module module = modifiableRootModel.getModule();
     if (myParentProject != null) {
       rootProjectPath = myParentProject.getLinkedExternalProjectPath();
     }
     else {
-      rootProjectPath =
-        FileUtil.toCanonicalPath(myWizardContext.isCreatingNewProject() ? project.getBasePath() : modelContentRootDir.getPath());
+      rootProjectPath = FileUtil.toCanonicalPath(isCreatingNewProject ? project.getBasePath() : modelContentRootDir.getPath());
     }
     assert rootProjectPath != null;
 
     final VirtualFile gradleBuildFile = setupGradleBuildFile(modelContentRootDir);
     setupGradleSettingsFile(
-      rootProjectPath, modelContentRootDir, modifiableRootModel.getProject().getName(),
-      myProjectId == null ? modifiableRootModel.getModule().getName() : myProjectId.getArtifactId(),
-      myWizardContext.isCreatingNewProject() || myParentProject == null,
+      rootProjectPath, modelContentRootDir, project.getName(),
+      myProjectId == null ? module.getName() : myProjectId.getArtifactId(),
+      isCreatingNewProject || myParentProject == null,
       myUseKotlinDSL
     );
 
@@ -224,7 +193,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     if (myParentProject == null) {
       setupAndLinkGradleProject(project, gradleVersion);
     }
-    if (myWizardContext.isCreatingNewProject()) {
+    if (isCreatingNewProject) {
       project.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, Boolean.TRUE);
       // Needed to ignore postponed project refresh
       project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, Boolean.TRUE);
@@ -232,7 +201,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
 
     // execute when current dialog is closed
     ApplicationManager.getApplication().invokeLater(() -> {
-      if (myWizardContext.isCreatingNewProject()) {
+      if (isCreatingNewProject) {
         // update external projects data to be able to add child modules before the initial import finish
         loadPreviewProject(project);
       }
@@ -314,16 +283,6 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     PsiFile psiFile = psiManager.findFile(buildScriptFile);
     if (psiFile == null) return;
     EditorHelper.openInEditor(psiFile);
-  }
-
-  protected void setWizardContext(@NotNull WizardContext wizardContext) {
-    myWizardContext = wizardContext;
-  }
-
-  @Override
-  public void cleanup() {
-    super.cleanup();
-    myWizardContext = null;
   }
 
   @Override
@@ -515,6 +474,19 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     myProjectId = projectId;
   }
 
+  protected boolean isCreatingNewProject() {
+    return isCreatingNewProject;
+  }
+
+  protected void setCreatingNewProject(boolean creatingNewProject) {
+    isCreatingNewProject = creatingNewProject;
+  }
+
+  @Override
+  public void cleanup() {
+    myJdk = null;
+  }
+
   @Nullable
   @Override
   public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
@@ -573,9 +545,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
 
     ConfigureGradleModuleCallback(@NotNull ImportSpecBuilder importSpecBuilder) {
       this.defaultCallback = new ImportSpecBuilder.DefaultProjectRefreshCallback(importSpecBuilder.build());
-
-      Sdk sdk = ObjectUtils.chooseNotNull(getModuleJdk(), getNewProjectJdk(myWizardContext));
-      this.sdkName = sdk == null ? null : sdk.getName();
+      this.sdkName = ObjectUtils.doIfNotNull(myJdk, it -> it.getName());
       this.externalConfigPath = FileUtil.toCanonicalPath(getContentEntryPath());
     }
 
