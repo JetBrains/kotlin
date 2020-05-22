@@ -61,14 +61,13 @@ public class UsageSerializable implements WorkingSetSerializable<UsageInfo, Inva
       append(os, "-1");
       os.append(separator);
       append(os, "-1");
-      os.append(separator);
     }
     else {
       append(os, String.valueOf(rangeInElement.getStartOffset()));
       os.append(separator);
       append(os, String.valueOf(rangeInElement.getEndOffset()));
-      os.append(separator);
     }
+    os.append(separator);
     append(os, String.valueOf(info.isNonCodeUsage()));
     os.append(separator);
     append(os, String.valueOf(info.isDynamicUsage()));
