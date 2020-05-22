@@ -174,6 +174,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(KOTLIN_NATIVE_ENABLE_PARALLEL_EXECUTION_CHECK) ?: true
 
     /**
+     * Allows a user to specify additional arguments of a JVM executing KLIB commonizer.
+     */
+    val commonizerJvmArgs: String?
+        get() = property("kotlin.commonizer.jvmArgs")
+
+    /**
      * Dependencies caching strategy. The default is static.
      */
     val nativeCacheKind: NativeCacheKind
