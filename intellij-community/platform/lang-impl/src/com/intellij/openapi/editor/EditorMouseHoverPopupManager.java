@@ -68,6 +68,7 @@ import org.jetbrains.concurrency.CancellablePromise;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.lang.ref.WeakReference;
@@ -123,8 +124,12 @@ public final class EditorMouseHoverPopupManager implements Disposable {
     LaterInvocator.addModalityStateListener(entering -> {
       cancelProcessingAndCloseHint();
     }, this);
-    IdeEventQueue.getInstance().addActivityListener(() -> {
-      cancelCurrentProcessing();
+    IdeEventQueue.getInstance().addDispatcher(event -> {
+      int eventID = event.getID();
+      if (eventID == KeyEvent.KEY_PRESSED || eventID == KeyEvent.KEY_TYPED) {
+        cancelCurrentProcessing();
+      }
+      return false;
     }, this);
     ApplicationManager.getApplication().getMessageBus().connect(this).subscribe(AnActionListener.TOPIC, new MyActionListener());
   }
