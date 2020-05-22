@@ -130,11 +130,11 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
             val withTrailingComma = lastElementOnFirstLine.parent
                 ?.safeAs<KtElement>()
                 ?.let {
-                    TrailingCommaHelper.needComma(it, CodeStyle.getSettings(it.project), true)
+                    TrailingCommaHelper.trailingCommaExistsOrCanExist(it, CodeStyle.getSettings(it.project))
                 } == true
 
             fixCommaIfNeeded(lastElementOnFirstLine, down && isLastOfItsKind(lastElementOnSecondLine, true), withTrailingComma)
-            fixCommaIfNeeded(lastElementOnSecondLine, !down && isLastOfItsKind(lastElementOnFirstLine, true),withTrailingComma)
+            fixCommaIfNeeded(lastElementOnSecondLine, !down && isLastOfItsKind(lastElementOnFirstLine, true), withTrailingComma)
             editor.project?.let { PsiDocumentManager.getInstance(it).doPostponedOperationsAndUnblockDocument(editor.document) }
         }
     }
