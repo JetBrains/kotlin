@@ -7,7 +7,6 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 initscript {
   dependencies {
-    classpath localGroovy()
     classpath files(${EXTENSIONS_JARS_PATH})
   }
 }
