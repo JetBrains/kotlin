@@ -225,7 +225,7 @@ private class ParameterValuesPage(
       c.insets = Insets(0, 4, 0, 0)
       val documentManager = PsiDocumentManager.getInstance(project)
       val document = documentManager.getDocument(data.valueFragment)!!
-      val textField = MyTextField(language, project, document).apply {
+      val textField = MyTextField(language, project, document, data.placeholderText).apply {
         setPreferredWidth(textFieldWidth)
 
         ComponentValidator(this@ParameterValuesPage)
@@ -306,12 +306,12 @@ private class ParameterValuesPage(
     }
   }
 
-  private class MyTextField(language: Language, project: Project, document: Document)
+  private class MyTextField(language: Language, project: Project, document: Document, private val placeholderText: String?)
     : LanguageTextField(language, project, "", { _, _, _ -> document }, true)
   {
     override fun createEditor(): EditorEx {
       return super.createEditor().apply {
-        setPlaceholder(RefactoringBundle.message("suggested.refactoring.parameter.values.placeholder"))
+        setPlaceholder(placeholderText ?: RefactoringBundle.message("suggested.refactoring.parameter.values.placeholder"))
         setShowPlaceholderWhenFocused(true)
       }
     }
