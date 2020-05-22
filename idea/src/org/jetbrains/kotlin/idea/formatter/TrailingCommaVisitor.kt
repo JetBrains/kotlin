@@ -9,47 +9,18 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaContext
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaState
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.idea.formatter.trailingComma.canAddTrailingComma
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
 abstract class TrailingCommaVisitor : KtTreeVisitorVoid() {
-    override fun visitParameterList(list: KtParameterList) {
-        super.visitParameterList(list)
-        runProcessIfApplicable(list)
-    }
-
-    override fun visitValueArgumentList(list: KtValueArgumentList) {
-        super.visitValueArgumentList(list)
-        runProcessIfApplicable(list)
-    }
-
-    override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
-        super.visitArrayAccessExpression(expression)
-        runProcessIfApplicable(expression.indicesNode)
-    }
-
-    override fun visitTypeParameterList(list: KtTypeParameterList) {
-        super.visitTypeParameterList(list)
-        runProcessIfApplicable(list)
-    }
-
-    override fun visitTypeArgumentList(typeArgumentList: KtTypeArgumentList) {
-        super.visitTypeArgumentList(typeArgumentList)
-        runProcessIfApplicable(typeArgumentList)
-    }
-
-    override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression) {
-        super.visitCollectionLiteralExpression(expression)
-        runProcessIfApplicable(expression)
-    }
-
-    override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
-        super.visitWhenEntry(jetWhenEntry)
-        runProcessIfApplicable(jetWhenEntry)
-    }
-
-    override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
-        super.visitDestructuringDeclaration(destructuringDeclaration)
-        runProcessIfApplicable(destructuringDeclaration)
+    override fun visitKtElement(element: KtElement) {
+        super.visitKtElement(element)
+        // because KtFunctionLiteral contains KtParameterList
+        if (element !is KtFunctionLiteral && element.canAddTrailingComma()) {
+            runProcessIfApplicable(element)
+        }
     }
 
     override fun visitElement(element: PsiElement) {
