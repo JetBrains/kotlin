@@ -4,11 +4,11 @@ import com.intellij.dupLocator.util.NodeFilter
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
-import com.intellij.psi.impl.DebugUtil
-import com.intellij.structuralsearch.DocumentBasedReplaceHandler
-import com.intellij.structuralsearch.MalformedPatternException
-import com.intellij.structuralsearch.StructuralSearchProfile
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.structuralsearch.*
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
@@ -23,6 +23,7 @@ import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompili
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTryExpression
 
@@ -60,7 +61,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             is PsiComment -> getNonWhitespaceChildren(fragment).drop(1)
             else -> getNonWhitespaceChildren(fragment.firstChild).drop(1)
         }
-        for (element in elements) print(DebugUtil.psiToString(element, false))
+        //for (element in elements) print(DebugUtil.psiToString(element, false))
 
         return when {
             elements.isEmpty() -> PsiElement.EMPTY_ARRAY
@@ -68,15 +69,17 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         }
     }
 
-    override fun checkSearchPattern(pattern: CompiledPattern) {
-        val visitor = object : KotlinRecursiveElementVisitor() {
-            override fun visitErrorElement(element: PsiErrorElement) {
-                super.visitErrorElement(element)
-                if (shouldShowProblem(element)) {
-                    throw MalformedPatternException(element.text)
-                }
+    inner class KotlinVaildator : KotlinRecursiveElementVisitor() {
+        override fun visitErrorElement(element: PsiErrorElement) {
+            super.visitErrorElement(element)
+            if (shouldShowProblem(element)) {
+                throw MalformedPatternException(element.text)
             }
         }
+    }
+
+    override fun checkSearchPattern(pattern: CompiledPattern) {
+        val visitor = KotlinVaildator()
         val nodes = pattern.nodes
         while (nodes.hasNext()) {
             nodes.current().accept(visitor)
@@ -95,7 +98,24 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         return true
     }
 
-    override fun checkReplacementPattern(project: Project, options: ReplaceOptions) {}
+    override fun checkReplacementPattern(project: Project, options: ReplaceOptions) {
+        val matchOptions = options.matchOptions
+        val fileType = matchOptions.fileType
+        val dialect = matchOptions.dialect
+        val searchIsExpression = isProbableExpression(matchOptions.searchPattern, fileType, dialect, project)
+        val replacementIsExpression = isProbableExpression(options.replacement, fileType, dialect, project)
+        if(searchIsExpression != replacementIsExpression) {
+            throw UnsupportedPatternException(
+                if (searchIsExpression) SSRBundle.message("replacement.template.is.not.expression.error.message")
+                else SSRBundle.message("search.template.is.not.expression.error.message")
+            )
+        }
+    }
+
+    private fun isProbableExpression(pattern: String, fileType: LanguageFileType, dialect: Language, project: Project): Boolean {
+        val searchElements = createPatternTree(pattern, PatternTreeContext.Block, fileType, dialect, null, project, false)
+        return searchElements.size == 1 && searchElements[0] is KtExpression
+    }
 
     override fun getReplaceHandler(project: Project, replaceOptions: ReplaceOptions): DocumentBasedReplaceHandler =
         DocumentBasedReplaceHandler(project)
