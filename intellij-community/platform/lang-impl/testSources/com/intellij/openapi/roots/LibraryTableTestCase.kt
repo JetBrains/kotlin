@@ -82,7 +82,6 @@ abstract class LibraryTableTestCase {
       val library = createLibrary("a", it)
       assertThat(it.isChanged).isTrue()
       it.removeLibrary(library)
-      assertThat(it.isChanged).isFalse()
       library
     }
     assertThat(libraryTable.libraries).isEmpty()
