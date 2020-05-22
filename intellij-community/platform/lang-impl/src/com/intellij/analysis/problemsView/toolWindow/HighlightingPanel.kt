@@ -18,13 +18,13 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState) : P
     })
   }
 
-  public override fun getDisplayName() = ProblemsViewBundle.message("problems.view.highlighting")
+  override fun getDisplayName() = ProblemsViewBundle.message("problems.view.highlighting")
 
-  public override fun getShowErrors(): Option? = null
+  override fun getShowErrors(): Option? = null
+  override fun getSortFoldersFirst(): Option? = null
+  override fun getSortBySeverity(): Option? = null
 
-  public override fun getSortFoldersFirst(): Option? = null
-
-  public override fun selectionChangedTo(selected: Boolean) {
+  override fun selectionChangedTo(selected: Boolean) {
     super.selectionChangedTo(selected)
     if (selected) updateCurrentFile()
   }

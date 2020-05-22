@@ -315,7 +315,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   Comparator<Node> createComparator() {
     return new NodeComparator(
       isNullableOrSelected(getSortFoldersFirst()),
-      isNotNullAndSelected(getSortBySeverity()),
+      isNullableOrSelected(getSortBySeverity()),
       isNotNullAndSelected(getSortByName()));
   }
 
