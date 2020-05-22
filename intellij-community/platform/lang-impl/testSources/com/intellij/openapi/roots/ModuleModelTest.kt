@@ -105,7 +105,6 @@ class ModuleModelTest {
     val a = edit { model ->
       val a = projectModel.createModule("a", model)
       model.disposeModule(a)
-      assertThat(model.isChanged).isFalse()
       assertThat(model.modules).isEmpty()
       assertThat(model.findModuleByName("a")).isNull()
       a
