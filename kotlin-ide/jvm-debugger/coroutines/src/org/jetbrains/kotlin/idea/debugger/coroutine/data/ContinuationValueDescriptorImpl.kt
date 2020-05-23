@@ -12,13 +12,19 @@ import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
 import com.intellij.openapi.project.Project
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.Value
+import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
-class ContinuationValueDescriptorImpl(
-    project: Project,
+class ContinuationVariableValueDescriptorImpl(
+    val defaultExecutionContext: DefaultExecutionContext,
     val continuation: ObjectReference,
     val fieldName: String,
     private val variableName: String
-) : ValueDescriptorImpl(project) {
+) : ValueDescriptorImpl(defaultExecutionContext.project) {
+
+    init {
+        setContext(defaultExecutionContext.evaluationContext)
+    }
+
     override fun calcValueName() = variableName
 
     override fun calcValue(evaluationContext: EvaluationContextImpl?): Value? {
@@ -26,6 +32,9 @@ class ContinuationValueDescriptorImpl(
         return continuation.getValue(field)
     }
 
+    /**
+     * @TODO implement
+     */
     override fun getDescriptorEvaluation(context: DebuggerContext?) =
         throw EvaluateException("Spilled variable evaluation is not supported")
 }
