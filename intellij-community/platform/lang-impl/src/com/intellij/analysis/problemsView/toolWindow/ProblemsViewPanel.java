@@ -203,7 +203,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   abstract @NotNull String getDisplayName();
 
   final void updateDisplayName() {
-    ToolWindow window = ProblemsView.getToolWindow(myProject);
+    ToolWindow window = ProblemsView.getToolWindow(getProject());
     if (window == null) return;
     Content content = window.getContentManager().getContent(this);
     if (content == null) return;
