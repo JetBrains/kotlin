@@ -1,20 +1,8 @@
-/*
- * Copyright 2000-2010 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.generation;
 
+import com.intellij.lang.CodeDocumentationAwareCommenter;
+import com.intellij.lang.Commenter;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
@@ -22,35 +10,64 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Maxim.Mossienko
+ * Commenter that may provide a complex commenting logic. For simple wrapping/prefixing cases may be enough to use {@link com.intellij.lang.Commenter}
+ *
+ * @see Commenter
+ * @see EscapingCommenter
+ * @see CodeDocumentationAwareCommenter
+ * @see IndentedCommenter
+ * @see CommenterWithLineSuffix
+ * @see SelfManagingCommenterUtil
  */
 public interface SelfManagingCommenter<T extends CommenterDataHolder> {
+
   @Nullable T createLineCommentingState(int startLine, int endLine, @NotNull Document document, @NotNull PsiFile file);
+
   @Nullable T createBlockCommentingState(int selectionStart, int selectionEnd, @NotNull Document document, @NotNull PsiFile file);
-  
+
   void commentLine(int line, int offset, @NotNull Document document, @NotNull T data);
 
   void uncommentLine(int line, int offset, @NotNull Document document, @NotNull T data);
 
   boolean isLineCommented(int line, int offset, @NotNull Document document, @NotNull T data);
 
-  @Nullable
-  String getCommentPrefix(int line, @NotNull Document document, @NotNull T data);
+  /**
+   * @see Commenter#getLineCommentPrefix()
+   */
+  @Nullable String getCommentPrefix(int line, @NotNull Document document, @NotNull T data);
 
+  /**
+   * @see SelfManagingCommenterUtil#getBlockCommentRange(int, int, com.intellij.openapi.editor.Document, java.lang.String, java.lang.String)
+   */
   @Nullable TextRange getBlockCommentRange(int selectionStart, int selectionEnd, @NotNull Document document, @NotNull T data);
+
+  /**
+   * @see Commenter#getBlockCommentPrefix()
+   */
   @Nullable String getBlockCommentPrefix(int selectionStart, @NotNull Document document, @NotNull T data);
 
+  /**
+   * @see Commenter#getBlockCommentSuffix()
+   */
   @Nullable String getBlockCommentSuffix(int selectionEnd, @NotNull Document document, @NotNull T data);
 
+  /**
+   * @see SelfManagingCommenterUtil#uncommentBlockComment(int, int, com.intellij.openapi.editor.Document, java.lang.String, java.lang.String)
+   */
   void uncommentBlockComment(int startOffset,
                              int endOffset,
                              Document document,
                              T data);
 
+  /**
+   * @return text range from opener start till the closer end.
+   * @see SelfManagingCommenterUtil#insertBlockComment(int, int, com.intellij.openapi.editor.Document, java.lang.String, java.lang.String)
+   */
   @NotNull TextRange insertBlockComment(int startOffset,
-                          int endOffset,
-                          Document document,
-                          T data);
+                                        int endOffset,
+                                        Document document,
+                                        T data);
 
-  CommenterDataHolder EMPTY_STATE = new CommenterDataHolder() {};  
+  CommenterDataHolder EMPTY_STATE = new CommenterDataHolder() {
+  };
 }
