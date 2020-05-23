@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -25,8 +27,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
-import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
+import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -111,9 +112,13 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
             ) return false
         } else {
             if (calleeDescriptor.valueParameters.size != callableArgumentsCount) return false
-            val lambdaMustReturnUnit =
-                if (lambdaParameterType?.isFunctionType == true) lambdaParameterType.getReturnTypeFromFunctionType().isUnit() else false
-            if (lambdaMustReturnUnit) {
+            val lambdaParent = lambdaExpression.parent
+            val specifiedType = if (lambdaParent is KtProperty) {
+                lambdaParent.typeReference?.let { lambdaParent.analyze(BodyResolveMode.PARTIAL)[TYPE, it] }
+            } else {
+                lambdaParameterType
+            }
+            if (specifiedType?.isFunctionType == true && specifiedType.getReturnTypeFromFunctionType().isUnit()) {
                 calleeDescriptor.returnType.let {
                     // If Unit required, no references to non-Unit callables
                     if (it == null || !it.isUnit()) return false
@@ -197,6 +202,13 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
 
         val lambdaArgument = element.parentValueArgument() as? KtLambdaArgument
         if (lambdaArgument == null) {
+            if (parent is KtProperty && parent.typeReference == null) {
+                val propertyType = (parent.descriptor as? VariableDescriptor)?.type
+                val functionDescriptor = element.singleStatementOrNull()?.resolveToCall()?.resultingDescriptor as? FunctionDescriptor
+                if (propertyType != null && functionDescriptor != null && functionDescriptor.overloadedFunctions().size > 1) {
+                    parent.setType(propertyType)
+                }
+            }
             // Without lambda argument syntax, just replace lambda with reference
             val callableReferenceExpr = factory.createCallableReferenceExpression(referenceName) ?: return
             (element.replace(callableReferenceExpr) as? KtElement)?.let { ShortenReferences.RETAIN_COMPANION.process(it) }

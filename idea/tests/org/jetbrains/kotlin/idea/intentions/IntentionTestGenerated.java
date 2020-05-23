@@ -5300,6 +5300,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/object.kt");
         }
 
+        @TestMetadata("overloadedFunctions.kt")
+        public void testOverloadedFunctions() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/overloadedFunctions.kt");
+        }
+
+        @TestMetadata("overloadedFunctions2.kt")
+        public void testOverloadedFunctions2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/overloadedFunctions2.kt");
+        }
+
+        @TestMetadata("overloadedFunctions3.kt")
+        public void testOverloadedFunctions3() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/overloadedFunctions3.kt");
+        }
+
         @TestMetadata("platformType.kt")
         public void testPlatformType() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/platformType.kt");
@@ -5413,6 +5428,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("unit2.kt")
         public void testUnit2() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/unit2.kt");
+        }
+
+        @TestMetadata("unitWithOverloadedFunctions.kt")
+        public void testUnitWithOverloadedFunctions() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/unitWithOverloadedFunctions.kt");
         }
 
         @TestMetadata("unwrap.kt")
