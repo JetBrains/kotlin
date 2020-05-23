@@ -1,5 +1,6 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
 // IGNORE_BACKEND: JS_IR, JS, NATIVE
+// IGNORE_BACKEND: JS_IR_ES6
 // WITH_REFLECT
 
 import kotlin.test.assertEquals

@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 // EXPECTED_REACHABLE_NODES: 1343
 private inline fun typeOf(x: dynamic): String = js("typeof x").unsafeCast<String>()
 

@@ -1,5 +1,6 @@
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 var global = 0;
 
 class C {
