@@ -60,13 +60,13 @@ public interface SelfManagingCommenter<T extends CommenterDataHolder> {
                              T data);
 
   /**
-   * @return text range from opener start till the closer end.
+   * @return text range from opener start till the closer end or null if wrapping failed for some reason
    * @see SelfManagingCommenterUtil#insertBlockComment(int, int, com.intellij.openapi.editor.Document, java.lang.String, java.lang.String)
    */
-  @NotNull TextRange insertBlockComment(int startOffset,
-                                        int endOffset,
-                                        Document document,
-                                        T data);
+  @Nullable TextRange insertBlockComment(int startOffset,
+                                         int endOffset,
+                                         Document document,
+                                         T data);
 
   CommenterDataHolder EMPTY_STATE = new CommenterDataHolder() {
   };
