@@ -10,6 +10,8 @@ import kotlin.internal.InlineOnly
 
 /**
  * Interface representing a continuation after a suspension point that returns a value of type `T`.
+ *
+ * @sample samples.coroutines.Coroutines.completableFuture
  */
 @SinceKotlin("1.3")
 public interface Continuation<in T> {
@@ -29,6 +31,8 @@ public interface Continuation<in T> {
  * Classes and interfaces marked with this annotation are restricted when used as receivers for extension
  * `suspend` functions. These `suspend` extensions can only invoke other member or extension `suspend` functions on this particular
  * receiver and are restricted from calling arbitrary suspension functions.
+ *
+ * @sample samples.coroutines.Coroutines.restrictsSuspension
  */
 @SinceKotlin("1.3")
 @Target(AnnotationTarget.CLASS)
@@ -37,6 +41,8 @@ public annotation class RestrictsSuspension
 
 /**
  * Resumes the execution of the corresponding coroutine passing [value] as the return value of the last suspension point.
+ *
+ * @sample samples.coroutines.Coroutines.completableFuture
  */
 @SinceKotlin("1.3")
 @InlineOnly
@@ -46,6 +52,8 @@ public inline fun <T> Continuation<T>.resume(value: T): Unit =
 /**
  * Resumes the execution of the corresponding coroutine so that the [exception] is re-thrown right after the
  * last suspension point.
+ *
+ * @sample samples.coroutines.Coroutines.completableFuture
  */
 @SinceKotlin("1.3")
 @InlineOnly
@@ -55,6 +63,8 @@ public inline fun <T> Continuation<T>.resumeWithException(exception: Throwable):
 
 /**
  * Creates a [Continuation] instance with the given [context] and implementation of [resumeWith] method.
+ *
+ * @sample samples.coroutines.Coroutines.codeFlow
  */
 @SinceKotlin("1.3")
 @InlineOnly
@@ -77,6 +87,8 @@ public inline fun <T> Continuation(
  * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
  * The [completion] continuation is invoked when the coroutine completes with a result or an exception.
  * Subsequent invocation of any resume function on the resulting continuation will produce an [IllegalStateException].
+ *
+ * @sample samples.coroutines.Coroutines.codeFlow
  */
 @SinceKotlin("1.3")
 @Suppress("UNCHECKED_CAST")
@@ -105,6 +117,8 @@ public fun <R, T> (suspend R.() -> T).createCoroutine(
  * Starts a coroutine without a receiver and with result type [T].
  * This function creates and starts a new, fresh instance of suspendable computation every time it is invoked.
  * The [completion] continuation is invoked when the coroutine completes with a result or an exception.
+ *
+ * @sample samples.coroutines.Coroutines.completableFuture
  */
 @SinceKotlin("1.3")
 @Suppress("UNCHECKED_CAST")
@@ -135,6 +149,9 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
  * In this function both [Continuation.resume] and [Continuation.resumeWithException] can be used either synchronously in
  * the same stack-frame where the suspension function is run or asynchronously later in the same thread or
  * from a different thread of execution. Subsequent invocation of any resume function will produce an [IllegalStateException].
+ *
+ * @sample samples.coroutines.Coroutines.completableFuture
+ * @sample samples.coroutines.Coroutines.codeFlow
  */
 @SinceKotlin("1.3")
 @InlineOnly
@@ -147,6 +164,8 @@ public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<
 
 /**
  * Returns the context of the current coroutine.
+ *
+ * @sample samples.coroutines.Coroutines.auth
  */
 @SinceKotlin("1.3")
 @Suppress("WRONG_MODIFIER_TARGET")

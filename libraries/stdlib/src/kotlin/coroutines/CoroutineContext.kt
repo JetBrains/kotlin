@@ -9,6 +9,8 @@ package kotlin.coroutines
  * Persistent context for the coroutine. It is an indexed set of [Element] instances.
  * An indexed set is a mix between a set and a map.
  * Every element in this set has a unique [Key].
+ *
+ * @sample samples.coroutines.Coroutines.auth
  */
 @SinceKotlin("1.3")
 public interface CoroutineContext {
