@@ -4,6 +4,7 @@
 
 // Legacy export, wrong types
 // DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
 
 open class A
 

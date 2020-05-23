@@ -2,6 +2,7 @@
 // !API_VERSION: 1.0
 // IGNORE_BACKEND: NATIVE
 // DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
 
 fun box(): String {
     val plusZero: Any = 0.0

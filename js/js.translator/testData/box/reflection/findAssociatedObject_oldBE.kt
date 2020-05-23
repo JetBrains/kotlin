@@ -1,5 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1321
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 import kotlin.reflect.*
 

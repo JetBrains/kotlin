@@ -1,4 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
 // EXPECTED_REACHABLE_NODES: 1430
 
 // Not targeting JS_IR because it's too implementaion-specific

@@ -1,5 +1,6 @@
 // !LANGUAGE: -ProperIeee754Comparisons
 // DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
 
 fun less1(a: Double, b: Double) = a < b
 
