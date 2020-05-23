@@ -5,6 +5,23 @@
 
 package kotlin.collections
 
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
+    return HashMap<K, V>().apply(builderAction).build()
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <K, V> buildMapInternal(capacity: Int, builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
+    return HashMap<K, V>(capacity).apply(builderAction).build()
+}
+
+
 // creates a singleton copy of map, if there is specialization available in target platform, otherwise returns itself
 @Suppress("NOTHING_TO_INLINE")
 internal inline actual fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = toSingletonMap()
@@ -19,14 +36,3 @@ internal actual fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
  */
 @PublishedApi
 internal actual fun mapCapacity(expectedSize: Int) = expectedSize
-
-/**
- * Checks a collection builder function capacity argument.
- * Does nothing, capacity is validated in List/Set/Map constructor
- */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@PublishedApi
-internal actual fun checkBuilderCapacity(capacity: Int) {
-    require(capacity >= 0) { "capacity must be non-negative." }
-}

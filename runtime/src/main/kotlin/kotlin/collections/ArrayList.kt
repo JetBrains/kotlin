@@ -9,50 +9,44 @@ actual class ArrayList<E> private constructor(
         private var array: Array<E>,
         private var offset: Int,
         private var length: Int,
-        private val backing: ArrayList<E>?
-) : MutableList<E>, RandomAccess, AbstractMutableCollection<E>() {
+        private var isReadOnly: Boolean,
+        private val backing: ArrayList<E>?,
+        private val root: ArrayList<E>?
+) : MutableList<E>, RandomAccess, AbstractMutableList<E>() {
 
     actual constructor() : this(10)
 
     actual constructor(initialCapacity: Int) : this(
-            arrayOfUninitializedElements(initialCapacity), 0, 0, null)
+            arrayOfUninitializedElements(initialCapacity), 0, 0, false, null, null)
 
     actual constructor(elements: Collection<E>) : this(elements.size) {
         addAll(elements)
     }
 
-    override actual val size : Int
+    @PublishedApi
+    internal fun build(): List<E> {
+        if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
+        checkIsMutable()
+        isReadOnly = true
+        return this
+    }
+
+    override actual val size: Int
         get() = length
 
     override actual fun isEmpty(): Boolean = length == 0
 
     override actual fun get(index: Int): E {
-        checkIndex(index)
+        checkElementIndex(index)
         return array[offset + index]
     }
 
     override actual operator fun set(index: Int, element: E): E {
-        checkIndex(index)
+        checkIsMutable()
+        checkElementIndex(index)
         val old = array[offset + index]
         array[offset + index] = element
         return old
-    }
-
-    override actual fun contains(element: E): Boolean {
-        var i = 0
-        while (i < length) {
-            if (array[offset + i] == element) return true
-            i++
-        }
-        return false
-    }
-
-    override actual fun containsAll(elements: Collection<E>): Boolean {
-        val it = elements.iterator()
-        while (it.hasNext()) {
-            if (!contains(it.next()))return false
-        }
-        return true
     }
 
     override actual fun indexOf(element: E): Int {
@@ -77,60 +71,68 @@ actual class ArrayList<E> private constructor(
     override actual fun listIterator(): MutableListIterator<E> = Itr(this, 0)
 
     override actual fun listIterator(index: Int): MutableListIterator<E> {
-        checkInsertIndex(index)
+        checkPositionIndex(index)
         return Itr(this, index)
     }
 
     override actual fun add(element: E): Boolean {
+        checkIsMutable()
         addAtInternal(offset + length, element)
         return true
     }
 
     override actual fun add(index: Int, element: E) {
-        checkInsertIndex(index)
+        checkIsMutable()
+        checkPositionIndex(index)
         addAtInternal(offset + index, element)
     }
 
     override actual fun addAll(elements: Collection<E>): Boolean {
+        checkIsMutable()
         val n = elements.size
         addAllInternal(offset + length, elements, n)
         return n > 0
     }
 
     override actual fun addAll(index: Int, elements: Collection<E>): Boolean {
-        checkInsertIndex(index)
+        checkIsMutable()
+        checkPositionIndex(index)
         val n = elements.size
         addAllInternal(offset + index, elements, n)
         return n > 0
     }
 
     override actual fun clear() {
+        checkIsMutable()
         removeRangeInternal(offset, length)
     }
 
     override actual fun removeAt(index: Int): E {
-        checkIndex(index)
+        checkIsMutable()
+        checkElementIndex(index)
         return removeAtInternal(offset + index)
     }
 
     override actual fun remove(element: E): Boolean {
+        checkIsMutable()
         val i = indexOf(element)
         if (i >= 0) removeAt(i)
         return i >= 0
     }
 
     override actual fun removeAll(elements: Collection<E>): Boolean {
+        checkIsMutable()
         return retainOrRemoveAllInternal(offset, length, elements, false) > 0
     }
 
     override actual fun retainAll(elements: Collection<E>): Boolean {
+        checkIsMutable()
         return retainOrRemoveAllInternal(offset, length, elements, true) > 0
     }
 
     override actual fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
-        checkInsertIndex(fromIndex)
-        checkInsertIndexFrom(toIndex, fromIndex)
-        return ArrayList(array, offset + fromIndex, toIndex - fromIndex, this)
+        checkRangeIndexes(fromIndex, toIndex)
+        return ArrayList(array, offset + fromIndex, toIndex - fromIndex, isReadOnly, this, root ?: this)
     }
 
     actual fun trimToSize() {
@@ -139,12 +141,11 @@ actual class ArrayList<E> private constructor(
             array = array.copyOfUninitializedElements(length)
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     final actual fun ensureCapacity(minCapacity: Int) {
         if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
         if (minCapacity > array.size) {
-            var newSize = array.size * 3 / 2
-            if (minCapacity > newSize)
-                newSize = minCapacity
+            val newSize = ArrayDeque.newCapacity(array.size, minCapacity)
             array = array.copyOfUninitializedElements(newSize)
         }
     }
@@ -155,47 +156,46 @@ actual class ArrayList<E> private constructor(
     }
 
     override fun hashCode(): Int {
-        var result = 1
-        var i = 0
-        while (i < length) {
-            val nextElement = array[offset + i]
-            val nextHash = if (nextElement != null) nextElement.hashCode() else 0
-            result = result * 31 + nextHash
-            i++
-        }
-        return result
+        return array.subarrayContentHashCode(offset, length)
     }
 
     override fun toString(): String {
-        return this.array.subarrayContentToString(offset, length)
+        return array.subarrayContentToString(offset, length)
     }
 
     // ---------------------------- private ----------------------------
+
+    private fun checkElementIndex(index: Int) {
+        if (index < 0 || index >= length) {
+            throw IndexOutOfBoundsException("index: $index, size: $length")
+        }
+    }
+
+    private fun checkPositionIndex(index: Int) {
+        if (index < 0 || index > length) {
+            throw IndexOutOfBoundsException("index: $index, size: $length")
+        }
+    }
+
+    private fun checkRangeIndexes(fromIndex: Int, toIndex: Int) {
+        if (fromIndex < 0 || toIndex > length) {
+            throw IndexOutOfBoundsException("fromIndex: $fromIndex, toIndex: $toIndex, size: $length")
+        }
+        if (fromIndex > toIndex) {
+            throw IllegalArgumentException("fromIndex: $fromIndex > toIndex: $toIndex")
+        }
+    }
+
+    private fun checkIsMutable() {
+        if (isReadOnly || root != null && root.isReadOnly) throw UnsupportedOperationException()
+    }
 
     private fun ensureExtraCapacity(n: Int) {
         ensureCapacity(length + n)
     }
 
-    private fun checkIndex(index: Int) {
-        if (index < 0 || index >= length) throw IndexOutOfBoundsException()
-    }
-
-    private fun checkInsertIndex(index: Int) {
-        if (index < 0 || index > length) throw IndexOutOfBoundsException()
-    }
-
-    private fun checkInsertIndexFrom(index: Int, fromIndex: Int) {
-        if (index < fromIndex || index > length) throw IndexOutOfBoundsException()
-    }
-
     private fun contentEquals(other: List<*>): Boolean {
-        if (length != other.size) return false
-        var i = 0
-        while (i < length) {
-            if (array[offset + i] != other[i]) return false
-            i++
-        }
-        return true
+        return array.subarrayContentEquals(offset, length, other)
     }
 
     private fun insertAtInternal(i: Int, n: Int) {
@@ -309,8 +309,8 @@ actual class ArrayList<E> private constructor(
         }
 
         override fun set(element: E) {
-            list.checkIndex(lastIndex)
-            list.array[list.offset + lastIndex] = element
+            check(lastIndex != -1) { "Call next() or previous() before replacing element from the iterator." }
+            list.set(lastIndex, element)
         }
 
         override fun add(element: E) {
@@ -325,4 +325,25 @@ actual class ArrayList<E> private constructor(
             lastIndex = -1
         }
     }
+}
+
+private fun <T> Array<T>.subarrayContentHashCode(offset: Int, length: Int): Int {
+    var result = 1
+    var i = 0
+    while (i < length) {
+        val nextElement = this[offset + i]
+        result = result * 31 + nextElement.hashCode()
+        i++
+    }
+    return result
+}
+
+private fun <T> Array<T>.subarrayContentEquals(offset: Int, length: Int, other: List<*>): Boolean {
+    if (length != other.size) return false
+    var i = 0
+    while (i < length) {
+        if (this[offset + i] != other[i]) return false
+        i++
+    }
+    return true
 }

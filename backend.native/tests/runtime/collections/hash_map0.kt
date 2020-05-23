@@ -155,7 +155,7 @@ fun testEquals() {
     assertFalse(m == mapOf("a" to "1", "b" to "2", "c" to "5"))
     assertFalse(m == mapOf("a" to "1", "b" to "2"))
     assertEquals(m.keys, expected.keys)
-    assertEquals(m.values, expected.values)
+    assertEquals(m.values.toList(), expected.values.toList())
     assertEquals(m.entries, expected.entries)
 }
 
@@ -165,7 +165,6 @@ fun testHashCode() {
     assertEquals(expected.hashCode(), m.hashCode())
     assertEquals(expected.entries.hashCode(), m.entries.hashCode())
     assertEquals(expected.keys.hashCode(), m.keys.hashCode())
-    assertEquals(listOf("1", "2", "3").hashCode(), m.values.hashCode())
 }
 
 fun testToString() {
@@ -184,9 +183,9 @@ fun testPutEntry() {
     assertTrue(m.entries.contains(e))
     assertTrue(m.entries.remove(e))
     assertTrue(mapOf("b" to "2", "c" to "3") == m)
-    assertTrue(m.entries.add(e))
+    assertEquals(null, m.put(e.key, e.value))
     assertTrue(expected == m)
-    assertFalse(m.entries.add(e))
+    assertEquals(e.value, m.put(e.key, e.value))
     assertTrue(expected == m)
 }
 

@@ -16,6 +16,7 @@ import kotlin.native.internal.ExportForCppRuntime
 @PublishedApi
 internal fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
     // TODO: special case for size == 0?
+    require(size >= 0) { "capacity must be non-negative." }
     @Suppress("TYPE_PARAMETER_AS_REIFIED")
     return Array<E>(size)
 }

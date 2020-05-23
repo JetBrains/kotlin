@@ -41,6 +41,23 @@ public interface MutableIterable<out T> : Iterable<T> {
 }
 
 
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <E> buildListInternal(builderAction: MutableList<E>.() -> Unit): List<E> {
+    return ArrayList<E>().apply(builderAction).build()
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: MutableList<E>.() -> Unit): List<E> {
+    return ArrayList<E>(capacity).apply(builderAction).build()
+}
+
+
 /**
  * Replaces each element in the list with a result of a transformation specified.
  */
