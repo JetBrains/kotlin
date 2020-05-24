@@ -1,0 +1,38 @@
+<idea-plugin>
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKind"
+                    interface="org.jetbrains.kotlin.platform.IdePlatformKind"/>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindTooling"
+                    interface="org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling"/>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindResolution"
+                    interface="org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <sdkType implementation="org.jetbrains.kotlin.idea.framework.KotlinSdkType"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.framework.CreateKotlinSdkActivity"/>
+    <facetType implementation="org.jetbrains.kotlin.idea.facet.KotlinFacetTypeImpl"/>
+    <library.type implementation="org.jetbrains.kotlin.idea.framework.CommonLibraryType"/>
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"
+        serviceImplementation="org.jetbrains.kotlin.platform.impl.IdeaDefaultIdeTargetPlatformKindProvider"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.config.KotlinFacetSettingsProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.facet.KotlinFacetSettingsProviderImpl"/>
+  </extensions>
+
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind"/>
+    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.JsIdePlatformKind"/>
+    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind"/>
+
+    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JvmIdePlatformKindTooling"/>
+    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JsIdePlatformKindTooling"/>
+    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling"/>
+
+    <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformKindResolution"/>
+    <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution"/>
+    <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformKindResolution"/>
+  </extensions>
+</idea-plugin>
