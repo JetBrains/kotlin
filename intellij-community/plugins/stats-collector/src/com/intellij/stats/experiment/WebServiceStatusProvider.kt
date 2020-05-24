@@ -41,10 +41,7 @@ open class WebServiceStatusProvider : WebServiceStatus {
 
   override fun isServerOk(): Boolean = serverStatus.equals("ok", ignoreCase = true)
 
-  override fun isExperimentOnCurrentIDE(): Boolean {
-    val version = experimentVersion()
-    return (version == EmulatedExperiment.GROUP_A_EXPERIMENT_VERSION || version == EmulatedExperiment.GROUP_B_EXPERIMENT_VERSION)
-  }
+  override fun isExperimentOnCurrentIDE(): Boolean = EmulatedExperiment.isInsideExperiment(experimentVersion())
 
   override fun updateStatus() {
     serverStatus = ""

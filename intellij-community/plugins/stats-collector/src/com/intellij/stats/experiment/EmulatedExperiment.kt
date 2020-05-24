@@ -7,7 +7,6 @@ import com.intellij.internal.statistic.eventLog.EventLogConfiguration
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.util.PlatformUtils
 
 /*
  * For now, we decide about AB experiment inside IDE using bucket
@@ -18,6 +17,13 @@ class EmulatedExperiment {
         const val GROUP_B_EXPERIMENT_VERSION: Int = 8
         const val GROUP_KT_WITH_DIFF_EXPERIMENT_VERSION: Int = 9
         const val GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION: Int = 10
+
+        private val ALL_GROUPS: Set<Int> = setOf(
+          GROUP_A_EXPERIMENT_VERSION,
+          GROUP_B_EXPERIMENT_VERSION,
+          GROUP_KT_WITH_DIFF_EXPERIMENT_VERSION,
+          GROUP_PY_WITH_DIFF_EXPERIMENT_VERSION
+        )
 
         const val DIFF_ENABLED_PROPERTY_KEY = "ml.completion.diff.registry.was.enabled"
 
@@ -33,6 +39,8 @@ class EmulatedExperiment {
         }
 
         private fun Language.isKotlin() = this.id == "Kotlin"
+
+        fun isInsideExperiment(experimentVersion: Int): Boolean = experimentVersion in ALL_GROUPS
     }
 
     fun emulate(experimentVersion: Int, performExperiment: Boolean, salt: String): Int? {
