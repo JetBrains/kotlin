@@ -852,6 +852,12 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
+    testGroup("frontend-fir/test", "frontend-fir/testData") {
+        testClass<AbstractKtDeclarationAndFirDeclarationEqualityChecker> {
+            model("ktDeclarationAndFirDeclarationEqualityChecker")
+        }
+    }
+
     testGroup("fir", testDataPath = "../idea/testData") {
         testClass<AbstractFirMultiModuleResolveTest> {
             model("fir/multiModule", isRecursive = false, pattern = DIRECTORY)

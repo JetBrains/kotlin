@@ -9,6 +9,7 @@ import com.intellij.codeHighlighting.*
 import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil
+import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.AnnotationSession
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -32,7 +33,7 @@ class KotlinBeforeResolveHighlightingPass(
     override fun doCollectInformation(progress: ProgressIndicator) {
         val annotationHolder = AnnotationHolderImpl(AnnotationSession(file))
         val visitor = BeforeResolveHighlightingVisitor(annotationHolder)
-        val extensions = EP_NAME.extensionList
+        val extensions = EP_NAME.extensionList.map { it.createVisitor(annotationHolder) }
         file.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 super.visitElement(element)
@@ -72,6 +73,10 @@ class KotlinBeforeResolveHighlightingPass(
     }
 
     companion object {
-        val EP_NAME = ExtensionPointName.create<HighlightingVisitor>("org.jetbrains.kotlin.beforeResolveHighlightingVisitor")
+        val EP_NAME = ExtensionPointName.create<BeforeResolveHighlightingExtension>("org.jetbrains.kotlin.beforeResolveHighlightingVisitor")
     }
+}
+
+interface BeforeResolveHighlightingExtension {
+    fun createVisitor(holder: AnnotationHolder): HighlightingVisitor
 }
