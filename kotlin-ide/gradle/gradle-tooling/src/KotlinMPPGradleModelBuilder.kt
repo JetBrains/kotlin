@@ -148,9 +148,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val androidDeps = buildAndroidDeps(kotlinExt.javaClass.classLoader, project)
 
         // Some performance optimisation: do not build metadata dependencies if source set is not common
-        val doBuildMetadataDependencies =
+        val doBuildMetadataDependencies = try {
             project.properties["build_metadata_dependencies_for_actualised_source_sets"]?.toString()?.toBoolean()
-                ?: DEFAULT_BUILD_METADATA_DEPENDENCIES_FOR_ACTUALISED_SOURCE_SETS
+        } catch (_: Exception) {
+            null
+        } ?: DEFAULT_BUILD_METADATA_DEPENDENCIES_FOR_ACTUALISED_SOURCE_SETS
         val allSourceSetsProtos = sourceSets.mapNotNull { buildSourceSet(it, dependencyResolver, project, dependencyMapper, androidDeps) }
         val allSourceSets = if (doBuildMetadataDependencies) {
             allSourceSetsProtos.map { proto -> proto.buildKotlinSourceSetImpl(true) }
@@ -176,7 +178,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun buildAndroidDeps(classLoader: ClassLoader, project: Project): Map<String, List<Any>>? {
-        val includeAndroidDeps = project.properties["kotlin.include.android.dependencies"]?.toString()?.toBoolean() == true
+        val includeAndroidDeps = try {
+            project.properties["kotlin.include.android.dependencies"]?.toString()?.toBoolean() == true
+        } catch (_: Exception) {
+            false
+        }
         if (includeAndroidDeps) {
             try {
                 val resolverClass = classLoader.loadClass("org.jetbrains.kotlin.gradle.targets.android.internal.AndroidDependencyResolver")
