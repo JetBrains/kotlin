@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.invokeLater
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.suspendContextImpl
 import org.jetbrains.kotlin.idea.debugger.invokeInManagerThread
+import org.jetbrains.kotlin.idea.decompiler.classFile.isKotlinInternalCompiledFile
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
@@ -70,10 +71,15 @@ class XDebuggerTreeSelectedNodeListener(val session: XDebugSession, val tree: XD
         return false
     }
 
-    fun setCurrentStackFrame(executionStack: XExecutionStack, stackFrame: XStackFrame) =
-        invokeLater(tree) {
-            session.setCurrentStackFrame(executionStack, stackFrame, false)
+    fun setCurrentStackFrame(executionStack: XExecutionStack, stackFrame: XStackFrame) {
+        val fileToNavigate = stackFrame.sourcePosition?.file ?: return
+        val isKotlinInternalCompiledFile = isKotlinInternalCompiledFile(fileToNavigate)
+        if (!isKotlinInternalCompiledFile) {
+            invokeLater(tree) {
+                session.setCurrentStackFrame(executionStack, stackFrame, false)
+            }
         }
+    }
 }
 
 fun createExecutionStack(threadReference: ThreadReferenceProxyImpl, debugProcess: DebugProcessImpl): JavaExecutionStack? =
