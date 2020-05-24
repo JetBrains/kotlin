@@ -6,7 +6,7 @@ description = "Kotlin Compiler Infrastructure for Scripting for embeddable compi
 
 val packedJars by configurations.creating
 dependencies {
-    packedJars(project(":kotlin-scripting-compiler-impl")) { isTransitive = false }
+    packedJars(project(":kotlin-scripting-compiler-impl-unshaded")) { isTransitive = false }
     runtime(project(":kotlin-scripting-common"))
     runtime(project(":kotlin-scripting-jvm"))
     runtime(kotlinStdlib())

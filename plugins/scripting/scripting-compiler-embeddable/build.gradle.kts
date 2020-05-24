@@ -6,8 +6,8 @@ description = "Kotlin Scripting Compiler Plugin for embeddable compiler"
 
 val packedJars by configurations.creating
 dependencies {
-    packedJars(project(":kotlin-scripting-compiler")) { isTransitive = false }
-    runtime(project(":kotlin-scripting-compiler-impl-embeddable"))
+    packedJars(project(":kotlin-scripting-compiler-unshaded")) { isTransitive = false }
+    runtime(project(":kotlin-scripting-compiler-impl"))
     runtime(kotlinStdlib())
 }
 

@@ -126,8 +126,8 @@ tasks.withType<Test> {
         ":kotlin-script-runtime:install",
         ":kotlin-scripting-common:install",
         ":kotlin-scripting-jvm:install",
-        ":kotlin-scripting-compiler-embeddable:install",
-        ":kotlin-scripting-compiler-impl-embeddable:install",
+        ":kotlin-scripting-compiler:install",
+        ":kotlin-scripting-compiler-impl:install",
         ":kotlin-test-js-runner:install",
         ":kotlin-source-map-loader:install"
     )

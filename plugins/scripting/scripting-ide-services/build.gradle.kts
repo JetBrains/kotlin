@@ -16,12 +16,12 @@ dependencies {
     compileOnly(project(":idea:ide-common"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-jvm"))
-    compileOnly(project(":kotlin-scripting-compiler"))
+    compileOnly(project(":kotlin-scripting-compiler-unshaded"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     publishedRuntime(project(":kotlin-compiler"))
-    publishedRuntime(project(":kotlin-scripting-compiler"))
+    publishedRuntime(project(":kotlin-scripting-compiler-unshaded"))
     publishedRuntime(project(":kotlin-reflect"))
     publishedRuntime(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 }

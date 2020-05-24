@@ -14,15 +14,15 @@ val embeddableTestRuntime by configurations.creating {
 
 dependencies {
     allTestsRuntime(commonDep("junit"))
-    testCompile(project(":kotlin-scripting-ide-services"))
-    testCompile(project(":kotlin-scripting-compiler"))
+    testCompile(project(":kotlin-scripting-ide-services-unshaded"))
+    testCompile(project(":kotlin-scripting-compiler-unshaded"))
     testCompile(project(":compiler:cli-common"))
 
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     testRuntimeOnly(project(":idea:ide-common")) { isTransitive = false }
 
-    embeddableTestRuntime(project(":kotlin-scripting-ide-services-embeddable"))
+    embeddableTestRuntime(project(":kotlin-scripting-ide-services"))
     embeddableTestRuntime(project(":kotlin-compiler-embeddable"))
     embeddableTestRuntime(testSourceSet.output)
 }

@@ -18,7 +18,7 @@ dependencies {
     compile(project(":kotlin-scripting-js"))
     compile(project(":kotlin-util-klib"))
     compile(project(":kotlin-scripting-jvm"))
-    compile(project(":kotlin-scripting-compiler-impl"))
+    compile(project(":kotlin-scripting-compiler-impl-unshaded"))
     compile(kotlinStdlib())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 

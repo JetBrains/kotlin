@@ -262,22 +262,22 @@ include ":kotlin-build-common",
         ':kotlin-scripting-js',
         ':kotlin-scripting-js-test',
         ":kotlin-scripting-jvm",
-        ":kotlin-scripting-jvm-host",
+        ":kotlin-scripting-jvm-host-unshaded",
         ":kotlin-scripting-jvm-host-test",
-        ":kotlin-scripting-jvm-host-embeddable",
+        ":kotlin-scripting-jvm-host",
         ":kotlin-scripting-intellij",
+        ":kotlin-scripting-compiler-unshaded",
         ":kotlin-scripting-compiler",
-        ":kotlin-scripting-compiler-embeddable",
+        ":kotlin-scripting-compiler-impl-unshaded",
         ":kotlin-scripting-compiler-impl",
-        ":kotlin-scripting-compiler-impl-embeddable",
-        ":kotlin-scripting-ide-services",
+        ":kotlin-scripting-ide-services-unshaded",
         ":kotlin-scripting-ide-services-test",
-        ":kotlin-scripting-ide-services-embeddable",
+        ":kotlin-scripting-ide-services",
         ":kotlin-scripting-dependencies",
         ":kotlin-scripting-dependencies-maven",
-        ":kotlin-scripting-jsr223",
+        ":kotlin-scripting-jsr223-unshaded",
         ":kotlin-scripting-jsr223-test",
-        ":kotlin-scripting-jsr223-embeddable",
+        ":kotlin-scripting-jsr223",
         ":kotlin-scripting-idea",
         ":kotlin-main-kts",
         ":kotlin-main-kts-test",
@@ -479,22 +479,22 @@ project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/c
 project(':kotlin-scripting-js').projectDir = "$rootDir/libraries/scripting/js" as File
 project(':kotlin-scripting-js-test').projectDir = "$rootDir/libraries/scripting/js-test" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
-project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
+project(':kotlin-scripting-jvm-host-unshaded').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
 project(':kotlin-scripting-jvm-host-test').projectDir = "$rootDir/libraries/scripting/jvm-host-test" as File
-project(':kotlin-scripting-jvm-host-embeddable').projectDir = "$rootDir/libraries/scripting/jvm-host-embeddable" as File
+project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host-embeddable" as File
 project(':kotlin-scripting-dependencies').projectDir = "$rootDir/libraries/scripting/dependencies" as File
 project(':kotlin-scripting-dependencies-maven').projectDir = "$rootDir/libraries/scripting/dependencies-maven" as File
-project(':kotlin-scripting-jsr223').projectDir = "$rootDir/libraries/scripting/jsr223" as File
+project(':kotlin-scripting-jsr223-unshaded').projectDir = "$rootDir/libraries/scripting/jsr223" as File
 project(':kotlin-scripting-jsr223-test').projectDir = "$rootDir/libraries/scripting/jsr223-test" as File
-project(':kotlin-scripting-jsr223-embeddable').projectDir = "$rootDir/libraries/scripting/jsr223-embeddable" as File
+project(':kotlin-scripting-jsr223').projectDir = "$rootDir/libraries/scripting/jsr223-embeddable" as File
 project(':kotlin-scripting-intellij').projectDir = "$rootDir/libraries/scripting/intellij" as File
-project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-compiler" as File
-project(':kotlin-scripting-compiler-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-compiler-embeddable" as File
-project(':kotlin-scripting-compiler-impl').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl" as File
-project(':kotlin-scripting-compiler-impl-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl-embeddable" as File
-project(':kotlin-scripting-ide-services').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File
+project(':kotlin-scripting-compiler-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-compiler" as File
+project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-compiler-embeddable" as File
+project(':kotlin-scripting-compiler-impl-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl" as File
+project(':kotlin-scripting-compiler-impl').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl-embeddable" as File
+project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File
 project(':kotlin-scripting-ide-services-test').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-test" as File
-project(':kotlin-scripting-ide-services-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-embeddable" as File
+project(':kotlin-scripting-ide-services').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-embeddable" as File
 project(':kotlin-scripting-idea').projectDir = "$rootDir/plugins/scripting/scripting-idea" as File
 project(':kotlin-main-kts').projectDir = "$rootDir/libraries/tools/kotlin-main-kts" as File
 project(':kotlin-main-kts-test').projectDir = "$rootDir/libraries/tools/kotlin-main-kts-test" as File

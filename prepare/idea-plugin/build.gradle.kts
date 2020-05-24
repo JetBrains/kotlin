@@ -115,7 +115,7 @@ val libraryProjects = listOf(
     ":kotlin-script-runtime",
     ":kotlin-script-util",
     ":kotlin-scripting-common",
-    ":kotlin-scripting-compiler-impl",
+    ":kotlin-scripting-compiler-impl-unshaded",
     ":kotlin-scripting-intellij",
     ":kotlin-scripting-jvm",
     ":kotlin-util-io",

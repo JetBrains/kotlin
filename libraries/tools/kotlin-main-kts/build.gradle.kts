@@ -27,15 +27,15 @@ val embedded by configurations
 dependencies {
     compileOnly("org.apache.ivy:ivy:2.5.0")
     compileOnly(project(":compiler:cli-common"))
-    compileOnly(project(":kotlin-scripting-jvm-host"))
+    compileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     compileOnly(project(":kotlin-scripting-dependencies"))
     runtime(project(":kotlin-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-jvm-host-embeddable"))
+    runtime(project(":kotlin-scripting-compiler"))
+    runtime(project(":kotlin-scripting-jvm-host"))
     runtime(project(":kotlin-reflect"))
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
-    embedded(project(":kotlin-scripting-jvm-host")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-jvm-host-unshaded")) { isTransitive = false }
     embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
     embedded("org.apache.ivy:ivy:2.5.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }

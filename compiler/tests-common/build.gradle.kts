@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    testCompile(project(":kotlin-scripting-compiler"))
+    testCompile(project(":kotlin-scripting-compiler-unshaded"))
     testCompile(project(":core:descriptors"))
     testCompile(project(":core:descriptors.jvm"))
     testCompile(project(":core:deserialization"))
@@ -42,7 +42,7 @@ dependencies {
     testCompileOnly(project(":plugins:android-extensions-compiler"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common-jvm6"))
-    testCompile(project(":kotlin-scripting-compiler-impl"))
+    testCompile(project(":kotlin-scripting-compiler-impl-unshaded"))
     testCompile(commonDep("junit:junit"))
     testCompile(androidDxJar()) { isTransitive = false }
     testCompile(commonDep("com.android.tools:r8"))

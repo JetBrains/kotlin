@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    testCompile(project(":kotlin-scripting-compiler"))
+    testCompile(project(":kotlin-scripting-compiler-unshaded"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(projectTests(":generators:test-generator"))

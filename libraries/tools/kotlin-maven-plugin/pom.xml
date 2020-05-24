@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-scripting-compiler</artifactId>
+            <artifactId>kotlin-scripting-compiler-unshaded</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

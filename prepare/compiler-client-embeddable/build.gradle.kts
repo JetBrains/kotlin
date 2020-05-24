@@ -22,7 +22,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompilerClasspath(project(":kotlin-compiler"))
-    testCompilerClasspath(project(":kotlin-scripting-compiler"))
+    testCompilerClasspath(project(":kotlin-scripting-compiler-unshaded"))
     testCompilerClasspath(project(":kotlin-daemon"))
     testCompilationClasspath(kotlinStdlib())
     testCompilationClasspath(project(":kotlin-script-runtime"))

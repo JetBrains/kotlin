@@ -12,7 +12,7 @@ dependencies {
 
     testCompile(project(":kotlin-scripting-js"))
     testCompile(project(":compiler:plugin-api"))
-    testCompile(project(":kotlin-scripting-compiler"))
+    testCompile(project(":kotlin-scripting-compiler-unshaded"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:backend.js"))
     testCompile(project(":js:js.engines"))

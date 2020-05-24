@@ -18,7 +18,7 @@ dependencies {
     compile(project(":idea:idea-jps-common"))
     compile(project(":kotlin-util-klib-metadata"))
     compile(project(":plugins:android-extensions-compiler"))
-    compile(project(":kotlin-scripting-compiler-impl"))
+    compile(project(":kotlin-scripting-compiler-impl-unshaded"))
     compile(project(":compiler:fir:raw-fir:psi2fir"))
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:fir:resolve"))

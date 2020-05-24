@@ -9,14 +9,14 @@ plugins { java }
 val packedJars by configurations.creating
 
 dependencies {
-    packedJars(project(":kotlin-scripting-jsr223")) { isTransitive = false }
+    packedJars(project(":kotlin-scripting-jsr223-unshaded")) { isTransitive = false }
     runtime(project(":kotlin-script-runtime"))
     runtime(kotlinStdlib())
     runtime(project(":kotlin-scripting-common"))
     runtime(project(":kotlin-scripting-jvm"))
-    runtime(project(":kotlin-scripting-jvm-host-embeddable"))
+    runtime(project(":kotlin-scripting-jvm-host"))
     runtime(project(":kotlin-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-compiler-embeddable"))
+    runtime(project(":kotlin-scripting-compiler"))
 }
 
 sourceSets {
