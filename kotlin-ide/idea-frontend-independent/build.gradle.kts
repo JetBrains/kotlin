@@ -12,6 +12,7 @@ dependencies {
      */
 
     compileOnly(project(":compiler:frontend")) // we need caches form here to work with ModuleInfo :(
+    compileOnly(project(":idea:idea-jps-common"))
 
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":kotlin-reflect-api"))

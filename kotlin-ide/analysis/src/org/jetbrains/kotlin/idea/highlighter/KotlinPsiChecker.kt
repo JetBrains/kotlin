@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.codeInsight.daemon.impl.HighlightRangeExtension
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.colors.CodeInsightColors
@@ -17,7 +15,6 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Key
 import com.intellij.psi.MultiRangeReference
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
@@ -27,36 +24,23 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
-import org.jetbrains.kotlin.idea.fir.FirResolution
-import org.jetbrains.kotlin.idea.fir.firResolveState
-import org.jetbrains.kotlin.idea.fir.getOrBuildFirWithDiagnostics
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.reflect.*
 import java.util.*
 
-open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
+open class KotlinPsiChecker : AbstractKotlinPsiChecker() {
+    override fun shouldHighlight(file: KtFile): Boolean = KotlinHighlightingUtil.shouldHighlight(file)
 
-    override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        val file = element.containingFile as? KtFile ?: return
-
-        if (!KotlinHighlightingUtil.shouldHighlight(file)) return
-
-        //todo move all fir stuff to fir plugin
-        if (FirResolution.enabled) {
-            annotateElementUsingFrontendIR(element, file, holder)
-        } else {
-            annotateElement(element, file, holder)
-        }
-    }
-
-    private fun annotateElement(
+    override fun annotateElement(
         element: PsiElement,
         containingFile: KtFile,
         holder: AnnotationHolder
@@ -71,29 +55,6 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
         getAfterAnalysisVisitor(holder, bindingContext).forEach { visitor -> element.accept(visitor) }
 
         annotateElement(element, holder, bindingContext.diagnostics)
-    }
-
-    private fun annotateElementUsingFrontendIR(
-        element: PsiElement,
-        containingFile: KtFile,
-        holder: AnnotationHolder
-    ) {
-        if (element !is KtElement) return
-        val state = containingFile.firResolveState()
-        containingFile.getOrBuildFirWithDiagnostics(state)
-
-        val diagnostics = state.getDiagnostics(element)
-        if (diagnostics.isEmpty()) return
-
-        if (KotlinHighlightingUtil.shouldHighlightErrors(element)) {
-            ElementAnnotator(element, holder) { param ->
-                shouldSuppressUnusedParameter(param)
-            }.registerDiagnosticsAnnotations(diagnostics)
-        }
-    }
-
-    override fun isForceHighlightParents(file: PsiFile): Boolean {
-        return file is KtFile
     }
 
     protected open fun shouldSuppressUnusedParameter(parameter: KtParameter): Boolean = false
