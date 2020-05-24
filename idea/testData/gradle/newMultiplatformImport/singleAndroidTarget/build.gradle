@@ -3,7 +3,7 @@ buildscript {
         {{kotlin_plugin_repositories}}
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.5.2'
     }
 }
 repositories {
