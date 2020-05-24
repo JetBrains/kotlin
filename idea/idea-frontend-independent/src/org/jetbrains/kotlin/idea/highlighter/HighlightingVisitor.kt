@@ -10,6 +10,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
 abstract class HighlightingVisitor protected constructor(
@@ -40,5 +41,9 @@ abstract class HighlightingVisitor protected constructor(
         if (NameHighlighter.namesHighlightingEnabled) {
             createInfoAnnotation(textRange, attributesKey, message)
         }
+    }
+
+    protected fun highlightNamedDeclaration(declaration: KtNamedDeclaration, attributesKey: TextAttributesKey) {
+        declaration.nameIdentifier?.let { highlightName(it, attributesKey) }
     }
 }

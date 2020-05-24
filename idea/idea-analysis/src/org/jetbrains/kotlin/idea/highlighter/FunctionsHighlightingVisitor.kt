@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,21 +27,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
     AfterAnalysisHighlightingVisitor(holder, bindingContext) {
-
-    override fun visitNamedFunction(function: KtNamedFunction) {
-        function.nameIdentifier?.let { highlightName(it, FUNCTION_DECLARATION) }
-
-        super.visitNamedFunction(function)
-    }
-
-    override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
-        val calleeExpression = call.calleeExpression
-        val typeElement = calleeExpression.typeReference?.typeElement
-        if (typeElement is KtUserType) {
-            typeElement.referenceExpression?.let { highlightName(it, CONSTRUCTOR_CALL) }
-        }
-        super.visitSuperTypeCallEntry(call)
-    }
 
     override fun visitBinaryExpression(expression: KtBinaryExpression) {
         if (expression.operationReference.getIdentifier() != null) {
