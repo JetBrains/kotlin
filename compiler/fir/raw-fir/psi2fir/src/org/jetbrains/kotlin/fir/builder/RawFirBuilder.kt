@@ -55,6 +55,10 @@ class RawFirBuilder(
         return file.accept(Visitor(), Unit) as FirFile
     }
 
+    fun buildTypeReference(reference: KtTypeReference): FirTypeRef {
+        return reference.accept(Visitor(), Unit) as FirTypeRef
+    }
+
     override fun PsiElement.toFirSourceElement(): FirPsiSourceElement<*> {
         return this.toFirPsiSourceElement()
     }
