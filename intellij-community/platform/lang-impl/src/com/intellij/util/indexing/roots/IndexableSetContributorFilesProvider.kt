@@ -39,7 +39,7 @@ internal class IndexableSetContributorFilesProvider(private val indexableSetCont
     val allRoots = runReadAction {
       indexableSetContributor.getAdditionalProjectRootsToIndex(project) + indexableSetContributor.additionalRootsToIndex
     }
-    return IndexableFilesIterationMethods.iterateNonProjectRoots(allRoots, fileIterator, visitedFileSet)
+    return IndexableFilesIterationMethods.iterateNonExcludedRoots(project, allRoots, fileIterator, visitedFileSet)
   }
 
 }

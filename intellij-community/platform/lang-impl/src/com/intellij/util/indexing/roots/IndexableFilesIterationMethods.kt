@@ -24,30 +24,45 @@ object IndexableFilesIterationMethods {
     visitedFileSet: ConcurrentBitSet
   ): Boolean {
     val projectFileIndex = ProjectFileIndex.getInstance(project)
-    val acceptFilter = VirtualFileFilter { file ->
-      runReadAction { !projectFileIndex.isExcluded(file) }
+    val filters = IndexableFilesFilter.EP_NAME.extensionList
+    val rootsSet = roots.toSet()
+    val fileFilter = VirtualFileFilter { file ->
+      file is VirtualFileWithId && file.id > 0 && !visitedFileSet.set(file.id)
+    }.and { shouldIndexFile(it, projectFileIndex, filters, rootsSet) }
+    return roots.all { root ->
+      VfsUtilCore.iterateChildrenRecursively(root, fileFilter, contentIterator)
     }
-    return iterateAllRoots(roots, acceptFilter, contentIterator, visitedFileSet)
   }
 
-  fun iterateNonProjectRoots(
-    roots: Iterable<VirtualFile>,
-    contentIterator: ContentIterator,
-    visitedFileSet: ConcurrentBitSet
-  ): Boolean = iterateAllRoots(roots, VirtualFileFilter.ALL, contentIterator, visitedFileSet)
-
-  private fun iterateAllRoots(
-    roots: Iterable<VirtualFile>,
-    fileFilter: VirtualFileFilter,
-    contentIterator: ContentIterator,
-    visitedFileSet: ConcurrentBitSet
+  private fun shouldIndexFile(
+    file: VirtualFile,
+    projectFileIndex: ProjectFileIndex,
+    filters: List<IndexableFilesFilter>,
+    rootsSet: Set<VirtualFile>
   ): Boolean {
-    val finalFilter = fileFilter
-      .and { it is VirtualFileWithId && it.id > 0 && !visitedFileSet.set(it.id) }
-      .and { IndexableFilesFilter.EP_NAME.extensionList.let { fs -> fs.isEmpty() || fs.any { e -> e.shouldIndex(it) } } }
-    return roots.all { root ->
-      val options = if (followSymlinks) emptyArray<VirtualFileVisitor.Option>() else arrayOf(VirtualFileVisitor.NO_FOLLOW_SYMLINKS)
-      VfsUtilCore.iterateChildrenRecursively(root, finalFilter, contentIterator, *options)
+    if (file.`is`(VFileProperty.SYMLINK)) {
+      if (!followSymlinks) {
+        return false
+      }
+      val targetFile = file.canonicalFile
+      if (targetFile == null || targetFile.`is`(VFileProperty.SYMLINK)) {
+        // Broken or recursive symlink. The second check should not happen but let's guarantee no StackOverflowError.
+        return false
+      }
+      if (file in rootsSet) {
+        return true
+      }
+      return shouldIndexFile(targetFile, projectFileIndex, filters, rootsSet)
     }
+    if (file !is VirtualFileWithId || file.id <= 0) {
+      return false
+    }
+    if (runReadAction { projectFileIndex.isExcluded(file) }) {
+      return false
+    }
+    if (filters.isNotEmpty() && filters.none { it.shouldIndex(file) }) {
+      return false
+    }
+    return true
   }
 }
