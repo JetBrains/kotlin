@@ -137,10 +137,6 @@
                         serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastResolveProviderService"/>
 
         <applicationService
-            serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"
-            serviceImplementation="org.jetbrains.kotlin.platform.impl.IdeaDefaultIdeTargetPlatformKindProvider"/>
-
-        <applicationService
             serviceInterface="org.jetbrains.kotlin.idea.j2k.J2KPostProcessingRegistrar"
             serviceImplementation="org.jetbrains.kotlin.idea.j2k.J2KPostProcessingRegistrarImpl"/>
 

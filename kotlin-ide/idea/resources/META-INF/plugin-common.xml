@@ -2,6 +2,7 @@
 
   <xi:include href="inspections.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="indexes.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="jps.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <actions>
     <action id="Kotlin.NewFile" class="org.jetbrains.kotlin.idea.actions.NewKotlinFileAction">
@@ -277,9 +278,6 @@
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.IdeLightClassInheritanceHelper"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.config.KotlinFacetSettingsProvider"
-                    serviceImplementation="org.jetbrains.kotlin.idea.facet.KotlinFacetSettingsProviderImpl"/>
-
     <projectService serviceInterface="org.jetbrains.kotlin.idea.framework.LibraryEffectiveKindProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.framework.LibraryEffectiveKindProviderImpl"/>
 
@@ -340,7 +338,6 @@
     <compiler.task execute="BEFORE" implementation="org.jetbrains.kotlin.idea.internal.makeBackup.MakeBackupCompileTask"/>
     <jps.plugin />
 
-    <library.type implementation="org.jetbrains.kotlin.idea.framework.CommonLibraryType"/>
     <lang.syntaxHighlighterFactory key="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinSyntaxHighlighterFactory"/>
     <syntaxHighlighter factoryClass="org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinSyntaxHighlighterProviderForDecompiledBuiltIns"/>
     <lang.braceMatcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.KotlinPairMatcher"/>
@@ -748,8 +745,6 @@
 
     <usageToPsiElementProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinUsageToPsiElementProvider"/>
 
-    <facetType implementation="org.jetbrains.kotlin.idea.facet.KotlinFacetTypeImpl"/>
-
     <lang.sliceProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.slicer.KotlinSliceProvider"/>
 
     <usageContextPanelProvider implementation="org.jetbrains.kotlin.idea.slicer.KotlinUsageContextDataInflowPanel$Provider"/>
@@ -766,10 +761,6 @@
     <lang.jvm.actions.jvmElementActionsFactory implementation="org.jetbrains.kotlin.idea.quickfix.crossLanguage.KotlinElementActionsFactory"/>
 
     <resolveScopeEnlarger implementation="org.jetbrains.kotlin.idea.CommonModuleResolveScopeEnlarger"/>
-
-    <sdkType implementation="org.jetbrains.kotlin.idea.framework.KotlinSdkType"/>
-
-    <postStartupActivity implementation="org.jetbrains.kotlin.idea.framework.CreateKotlinSdkActivity"/>
 
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.statistics.KotlinGradleFUSLogger"/>
 
@@ -830,13 +821,6 @@
     <codeInsight.inlayProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.codevision.KotlinCodeVisionProvider"/>
   </extensions>
 
-  <extensions defaultExtensionNs="org.jetbrains.kotlin">
-    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind"/>
-    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.JsIdePlatformKind"/>
-
-    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JvmIdePlatformKindTooling"/>
-    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JsIdePlatformKindTooling"/>
-  </extensions>
   <resource-bundle>messages.KotlinBundle</resource-bundle>
 
 </idea-plugin>

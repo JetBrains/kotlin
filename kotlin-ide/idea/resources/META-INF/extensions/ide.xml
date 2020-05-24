@@ -7,9 +7,6 @@
                         interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
                         area="IDEA_PROJECT"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindResolution"
-                        interface="org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution"/>
-
         <extensionPoint qualifiedName="org.jetbrains.kotlin.highlighterExtension"
                         interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"/>
 
@@ -34,10 +31,6 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.buildSystemTypeDetector"
                         interface="org.jetbrains.kotlin.idea.configuration.BuildSystemTypeDetector"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKind"
-                        interface="org.jetbrains.kotlin.platform.IdePlatformKind"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindTooling"
-                        interface="org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptAdditionalIdeaDependenciesProvider"
                         interface="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDependenciesProvider"
@@ -104,10 +97,6 @@
 
         <scriptDefinitionsProvider id="MainKtsScriptDefinitionSource"
                                    implementation="org.jetbrains.kotlin.idea.script.MainKtsScriptDefinitionSource"/>
-
-        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformKindResolution"/>
-        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution"/>
-        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformKindResolution"/>
 
         <scratchFileLanguageProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileLanguageProvider"/>
         <scriptAdditionalIdeaDependenciesProvider implementation="org.jetbrains.kotlin.idea.scratch.ScratchAdditionalIdeaDependenciesProvider"/>
