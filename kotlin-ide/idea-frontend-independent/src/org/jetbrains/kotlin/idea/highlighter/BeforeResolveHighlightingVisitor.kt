@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtExpressionWithLabel
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -73,7 +70,7 @@ internal class BeforeResolveHighlightingVisitor(holder: AnnotationHolder) : High
         val argumentName = argument.getArgumentName() ?: return
         val eq = argument.equalsToken ?: return
         createInfoAnnotation(TextRange(argumentName.startOffset, eq.endOffset), null).textAttributes =
-            if(argument.parent.parent is KtAnnotationEntry)
+            if (argument.parent.parent is KtAnnotationEntry)
                 KotlinHighlightingColors.ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES
             else
                 KotlinHighlightingColors.NAMED_ARGUMENT
@@ -84,5 +81,25 @@ internal class BeforeResolveHighlightingVisitor(holder: AnnotationHolder) : High
         if (targetLabel != null) {
             highlightName(targetLabel, KotlinHighlightingColors.LABEL)
         }
+    }
+
+    override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
+        val calleeExpression = call.calleeExpression
+        val typeElement = calleeExpression.typeReference?.typeElement
+        if (typeElement is KtUserType) {
+            typeElement.referenceExpression?.let { highlightName(it, KotlinHighlightingColors.CONSTRUCTOR_CALL) }
+        }
+        super.visitSuperTypeCallEntry(call)
+    }
+
+
+    override fun visitTypeParameter(parameter: KtTypeParameter) {
+        parameter.nameIdentifier?.let { highlightName(it, KotlinHighlightingColors.TYPE_PARAMETER) }
+        super.visitTypeParameter(parameter)
+    }
+
+    override fun visitNamedFunction(function: KtNamedFunction) {
+        highlightNamedDeclaration(function, KotlinHighlightingColors.FUNCTION_DECLARATION)
+        super.visitNamedFunction(function)
     }
 }

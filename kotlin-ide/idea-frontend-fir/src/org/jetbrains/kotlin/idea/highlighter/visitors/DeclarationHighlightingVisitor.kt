@@ -6,57 +6,53 @@
 package org.jetbrains.kotlin.idea.highlighter.visitors
 
 import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.psi.util.elementType
-import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
-import org.jetbrains.kotlin.idea.highlighter.textAttributesKeyForPropertyDeclaration
-import org.jetbrains.kotlin.idea.highlighter.textAttributesKeyForTypeDeclaration
+import com.intellij.psi.util.PsiUtilCore
+import org.jetbrains.kotlin.idea.highlighter.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors as Colors
 
-internal class DeclarationHighlightingVisitor(
-    analysisSession: FrontendAnalysisSession,
-    holder: AnnotationHolder
-) : FirAfterResolveHighlightingVisitor(analysisSession, holder) {
-    override fun visitNamedFunction(function: KtNamedFunction) {
-        highlightNamedDeclaration(function, Colors.FUNCTION_DECLARATION)
-        super.visitNamedFunction(function)
-    }
-
+internal class DeclarationHighlightingVisitor(holder: AnnotationHolder) : HighlightingVisitor(holder) {
     override fun visitTypeAlias(typeAlias: KtTypeAlias) {
         highlightNamedDeclaration(typeAlias, Colors.TYPE_ALIAS)
         super.visitTypeAlias(typeAlias)
     }
 
-    override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-        textAttributesKeyForTypeDeclaration(classOrObject)?.let { attributes -> highlightNamedDeclaration(classOrObject, attributes) }
-        super.visitClassOrObject(classOrObject)
+    override fun visitObjectDeclaration(declaration: KtObjectDeclaration) {
+        highlightNamedDeclaration(declaration, Colors.OBJECT)
+        super.visitObjectDeclaration(declaration)
     }
 
-    override fun visitTypeParameter(parameter: KtTypeParameter) {
-        highlightNamedDeclaration(parameter, Colors.TYPE_PARAMETER)
-        super.visitTypeParameter(parameter)
+    override fun visitClass(klass: KtClass) {
+        highlightNamedDeclaration(klass, textAttributesForClass(klass))
+        super.visitClass(klass)
     }
 
-    override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
-        if (declaration is KtValVarKeywordOwner) {
-            textAttributesKeyForPropertyDeclaration(declaration)?.let { attributes ->
-                highlightNamedDeclaration(declaration, attributes)
-            }
-            if (declaration.valOrVarKeyword?.elementType == KtTokens.VAR_KEYWORD) {
-                highlightNamedDeclaration(declaration, Colors.MUTABLE_VARIABLE)
-            }
+    override fun visitProperty(property: KtProperty) {
+        textAttributesForKtPropertyDeclaration(property)?.let { attributes ->
+            highlightNamedDeclaration(property, attributes)
         }
-        super.visitNamedDeclaration(declaration)
+        highlightMutability(property)
+        super.visitProperty(property)
     }
 
-
-    override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
-        val calleeExpression = call.calleeExpression
-        val typeElement = calleeExpression.typeReference?.typeElement
-        if (typeElement is KtUserType) {
-            typeElement.referenceExpression?.let { highlightName(it, Colors.CONSTRUCTOR_CALL) }
+    override fun visitParameter(parameter: KtParameter) {
+        textAttributesForKtParameterDeclaration(parameter)?.let { attributes ->
+            highlightNamedDeclaration(parameter, attributes)
         }
-        super.visitSuperTypeCallEntry(call)
+        highlightMutability(parameter)
+        super.visitParameter(parameter)
     }
+
+
+    private fun <D> highlightMutability(declaration: D) where D : KtValVarKeywordOwner, D : KtNamedDeclaration {
+        if (PsiUtilCore.getElementType(declaration.valOrVarKeyword) == KtTokens.VAR_KEYWORD) {
+            highlightNamedDeclaration(declaration, Colors.MUTABLE_VARIABLE)
+        }
+    }
+}
+
+class DeclarationHighlightingExtension : BeforeResolveHighlightingExtension {
+    override fun createVisitor(holder: AnnotationHolder): HighlightingVisitor =
+        DeclarationHighlightingVisitor(holder)
 }

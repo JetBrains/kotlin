@@ -13,7 +13,6 @@ import com.intellij.lang.annotation.AnnotationSession
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -21,7 +20,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class KotlinBeforeResolveHighlightingPass(
     private val file: KtFile,
@@ -34,10 +32,12 @@ class KotlinBeforeResolveHighlightingPass(
     override fun doCollectInformation(progress: ProgressIndicator) {
         val annotationHolder = AnnotationHolderImpl(AnnotationSession(file))
         val visitor = BeforeResolveHighlightingVisitor(annotationHolder)
+        val extensions = EP_NAME.extensionList
         file.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 super.visitElement(element)
                 element.accept(visitor)
+                extensions.forEach(element::accept)
             }
         })
         this.annotationHolder = annotationHolder
@@ -71,7 +71,7 @@ class KotlinBeforeResolveHighlightingPass(
         }
     }
 
-//    companion object {
-//        val EP_NAME = ExtensionPointName.create<HighlightingVisitor>("org.jetbrains.kotlin.beforeResolveHighlightingVisitor")
-//    }
+    companion object {
+        val EP_NAME = ExtensionPointName.create<HighlightingVisitor>("org.jetbrains.kotlin.beforeResolveHighlightingVisitor")
+    }
 }

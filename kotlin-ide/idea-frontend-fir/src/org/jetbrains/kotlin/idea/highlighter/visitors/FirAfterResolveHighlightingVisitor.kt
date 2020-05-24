@@ -14,17 +14,12 @@ abstract class FirAfterResolveHighlightingVisitor(
     protected val holder: AnnotationHolder
 ) : HighlightingVisitor(holder) {
 
-    protected fun highlightNamedDeclaration(declaration: KtNamedDeclaration, key: TextAttributesKey) {
-        declaration.nameIdentifier?.let { highlightName(it, key) }
-    }
-
     companion object {
         fun createListOfVisitors(
             analysisSession: FrontendAnalysisSession,
             holder: AnnotationHolder
         ): List<FirAfterResolveHighlightingVisitor> = listOf(
             TypeHighlightingVisitor(analysisSession, holder),
-            DeclarationHighlightingVisitor(analysisSession, holder),
             FunctionCallHighlightingVisitor(analysisSession, holder),
             ExpressionsSmartcastHighlightingVisitor(analysisSession, holder),
             VariableReferenceHighlightingVisitor(analysisSession, holder),
