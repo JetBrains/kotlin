@@ -40,6 +40,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   static final NotNullLazyValue<ExtensionPoint<TemplateContextType>> TEMPLATE_CONTEXT_EP =
     NotNullLazyValue.createValue(() -> TemplateContextType.EP_NAME.getPoint());
 
+  @NotNull
   private final Project myProject;
   private static final Key<Boolean> ourTemplateTesting = Key.create("TemplateTesting");
 
@@ -178,7 +179,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
       else {
         editor.getSelectionModel().removeSelection();
       }
-      templateState.start((TemplateImpl)template, processor, predefinedVarValues);
+      templateState.start(substituteTemplate((TemplateImpl)template, editor), processor, predefinedVarValues);
       myEventPublisher.templateStarted(templateState);
     };
     if (inSeparateCommand) {
@@ -442,6 +443,17 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
     startTemplateWithPrefix(editor, template, startOffset, processor, argument);
   }
 
+  @NotNull
+  private TemplateImpl substituteTemplate(@NotNull TemplateImpl template, @NotNull Editor editor) {
+    for (TemplateSubstitutor substitutor : TemplateSubstitutor.EP_NAME.getExtensionList()) {
+      final TemplateImpl substituted = substitutor.substituteTemplate(new TemplateSubstitutionContext(myProject, editor), template);
+      if (substituted != null) {
+        template = substituted;
+      }
+    }
+    return template;
+  }
+
   public void startTemplateWithPrefix(final Editor editor,
                                       final TemplateImpl template,
                                       final int templateStart,
@@ -460,7 +472,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
         predefinedVarValues = new HashMap<>();
         predefinedVarValues.put(TemplateImpl.ARG, argument);
       }
-      templateState.start(template, processor, predefinedVarValues);
+      templateState.start(substituteTemplate(template, editor), processor, predefinedVarValues);
       myEventPublisher.templateStarted(templateState);
     }, CodeInsightBundle.message("insert.code.template.command"), null);
   }

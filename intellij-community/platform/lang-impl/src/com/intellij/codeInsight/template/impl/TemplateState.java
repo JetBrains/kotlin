@@ -349,8 +349,7 @@ public final class TemplateState implements Disposable {
     myStarted = true;
 
     PsiFile file = getPsiFile();
-    myTemplate = substituteTemplate(Objects.requireNonNull(file), myEditor.getCaretModel().getOffset(), template);
-
+    myTemplate = template;
     myProcessor = processor;
 
     MyBasicUndoableAction undoableAction = new MyBasicUndoableAction(this, myDocument);
@@ -379,17 +378,6 @@ public final class TemplateState implements Disposable {
     LiveTemplateRunLogger.log(myProject, template, file.getLanguage());
 
     processAllExpressions(myTemplate);
-  }
-
-  @NotNull
-  private static TemplateImpl substituteTemplate(@NotNull PsiFile file, int caretOffset, @NotNull TemplateImpl template) {
-    for (TemplateSubstitutor substitutor : TemplateSubstitutor.EP_NAME.getExtensionList()) {
-      final TemplateImpl substituted = substitutor.substituteTemplate(file, caretOffset, template);
-      if (substituted != null) {
-        template = substituted;
-      }
-    }
-    return template;
   }
 
   private void preprocessTemplate(final PsiFile file, int caretOffset, final String textToInsert) {
