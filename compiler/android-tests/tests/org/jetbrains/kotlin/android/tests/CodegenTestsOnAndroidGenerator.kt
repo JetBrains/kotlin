@@ -100,9 +100,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         File("./gradlew.bat").copyTo(File(projectRoot, "gradlew.bat"));
         val file = File(target, "gradle-wrapper.properties")
         file.readLines().map {
-            if (it.startsWith("distributionUrl"))
-                "distributionUrl=https\\://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip"
-            else it
+            when {
+                it.startsWith("distributionUrl") -> "distributionUrl=https\\://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip"
+                it.startsWith("distributionSha256Sum") -> "distributionSha256Sum=$GRADLE_SHA_256"
+                else -> it
+            }
         }.let { lines ->
             FileWriter(file).use { fw ->
                 lines.forEach { line ->
@@ -315,7 +317,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         CodegenTestCase.createTestFilesFromFile(file, expectedText, "kotlin.coroutines", false, TargetBackend.JVM)
 
     companion object {
-        const val GRADLE_VERSION = "5.6.4"
+        const val GRADLE_VERSION = "5.6.4" // update GRADLE_SHA_256 on change
+        const val GRADLE_SHA_256 = "1f3067073041bc44554d0efe5d402a33bc3d3c93cc39ab684f308586d732a80d"
         const val testClassPackage = "org.jetbrains.kotlin.android.tests"
         const val testClassName = "CodegenTestCaseOnAndroid"
         const val baseTestClassPackage = "org.jetbrains.kotlin.android.tests"
