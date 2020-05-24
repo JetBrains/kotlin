@@ -8,7 +8,7 @@ import com.intellij.stats.storage.factors.LookupStorage
 import com.intellij.stats.storage.factors.MutableLookupStorage
 
 object SessionFactorsUtils {
-  const val SESSION_FACTOR_PREFIX = "session_"
+  private const val SESSION_FACTOR_PREFIX = "session_"
 
   private val lookupFactors: List<SessionFactor.LookupBased> = listOf(
     lookupFactor("visible_size") { it.getVisibleSize() },
@@ -41,8 +41,8 @@ object SessionFactorsUtils {
     val lookupFactors = calculateLookupFactors(sessionFactors)
     lookupStorage.sessionFactors.updateLastUsedFactors(lookupFactors)
     items.forEachIndexed { i, item ->
-      val storage = lookupStorage.getItemStorage(item.idString())
-      storage.sessionFactors.updateUsedSessionFactors(i, calculateElementFactors(storage.sessionFactors))
+      val factorsStorage = lookupStorage.getItemStorage(item.idString()).sessionFactors
+      factorsStorage.computeSessionFactors(i) { calculateFactors(it, elementFactors) }
     }
 
     return lookupFactors
@@ -58,9 +58,6 @@ object SessionFactorsUtils {
 
   private fun calculateLookupFactors(lookupStorage: LookupSessionFactorsStorage): Map<String, Any> =
     calculateFactors(lookupStorage, lookupFactors)
-
-  private fun calculateElementFactors(elementStorage: ElementSessionFactorsStorage): Map<String, Any> =
-    calculateFactors(elementStorage, elementFactors)
 
   private fun <S> calculateFactors(storage: S, factors: Iterable<SessionFactor<S>>): Map<String, Any> {
     val result = mutableMapOf<String, Any>()

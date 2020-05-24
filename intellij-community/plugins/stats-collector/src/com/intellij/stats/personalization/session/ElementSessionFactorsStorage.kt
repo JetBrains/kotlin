@@ -12,8 +12,8 @@ class ElementSessionFactorsStorage {
 
   val selectionTracker: CompletionSelectionTrackerImpl = CompletionSelectionTrackerImpl()
 
-  fun updateUsedSessionFactors(visiblePosition: Int, elementFactors: Map<String, Any>) {
+  fun computeSessionFactors(visiblePosition: Int, compute: (ElementSessionFactorsStorage) -> Map<String, Any>) {
     this.visiblePosition = visiblePosition
-    this.elementFactors = elementFactors
+    this.elementFactors = compute(this)
   }
 }
