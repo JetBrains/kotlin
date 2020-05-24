@@ -28,10 +28,11 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
             if (extension.isReferenceTo(this, element)) return true
         }
 
-        return super.isReferenceTo(element)
+        return isReferenceToWithoutExtensionChecking(element)
     }
 
     protected abstract fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean
+    protected abstract fun isReferenceToWithoutExtensionChecking(candidateTarget: PsiElement): Boolean
 
     override fun getRangeInElement(): TextRange {
         val element = element.getReferencedNameElement()

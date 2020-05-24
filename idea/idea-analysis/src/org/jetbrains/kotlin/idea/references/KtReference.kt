@@ -24,9 +24,6 @@ import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.fir.FirResolution
-import org.jetbrains.kotlin.idea.fir.firResolveState
-import org.jetbrains.kotlin.idea.fir.getOrBuildFir
 import org.jetbrains.kotlin.idea.util.application.runWithCancellationCheck
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -66,10 +63,6 @@ object KotlinDescriptorsBasedReferenceResolver : ResolveCache.PolyVariantResolve
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
 
     private fun resolveToPsiElements(ref: KtDescriptorsBasedReference): Collection<PsiElement> {
-        if (FirResolution.enabled) {
-            @Suppress("UNCHECKED_CAST")
-            return FirReferenceResolveHelper.resolveToPsiElements(ref as AbstractKtReference<KtElement>)
-        }
         val bindingContext = ref.element.analyze(BodyResolveMode.PARTIAL)
         return resolveToPsiElements(ref, bindingContext, ref.getTargetDescriptors(bindingContext))
     }

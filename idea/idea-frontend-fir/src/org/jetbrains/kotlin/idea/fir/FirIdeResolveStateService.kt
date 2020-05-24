@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.fir
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
@@ -60,5 +59,5 @@ class FirIdeResolveStateServiceImpl(val project: Project) : FirIdeResolveStateSe
     }
 
     override val fallbackModificationTracker: ModificationTracker? =
-        KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker
+        org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker
 }

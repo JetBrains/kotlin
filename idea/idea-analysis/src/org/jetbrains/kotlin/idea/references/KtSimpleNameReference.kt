@@ -45,6 +45,9 @@ class KtSimpleNameReferenceDescriptorsImpl(
     override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean =
         canBeReferenceTo(candidateTarget)
 
+    override fun isReferenceToWithoutExtensionChecking(candidateTarget: PsiElement): Boolean =
+        matchesTarget(candidateTarget)
+
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         return SmartList<DeclarationDescriptor>().apply {
             // Replace Java property with its accessor(s)
