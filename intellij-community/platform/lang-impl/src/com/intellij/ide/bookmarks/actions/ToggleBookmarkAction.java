@@ -6,6 +6,7 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.ide.bookmarks.BookmarkManager;
 import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +55,13 @@ public class ToggleBookmarkAction extends BookmarksAction implements DumbAware, 
       BookmarkManager.getInstance(project).removeBookmark(info.getBookmarkAtPlace());
     }
     else {
-      BookmarkManager.getInstance(project).addTextBookmark(info.getFile(), info.getLine(), "");
+      Editor editor = e.getData(CommonDataKeys.EDITOR);
+      if (editor != null) {
+        BookmarkManager.getInstance(project).addEditorBookmark(editor, info.getLine());
+      }
+      else {
+        BookmarkManager.getInstance(project).addTextBookmark(info.getFile(), info.getLine(), "");
+      }
     }
   }
 
