@@ -65,7 +65,7 @@ object FirReferenceResolveHelper {
         }
     }
 
-    fun resolveToPsiElements(ref: AbstractKtReference<KtElement>): Collection<PsiElement> {
+    fun resolveToPsiElements(ref: AbstractKtReference<*>): Collection<PsiElement> {
         val expression = ref.expression
         val state = expression.firResolveState()
         val session = state.getSession(expression)
