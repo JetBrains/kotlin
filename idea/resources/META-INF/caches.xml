@@ -1,0 +1,32 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <fileType.fileViewProviderFactory filetype="kotlin_builtins" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
+    <filetype.stubBuilder filetype="kotlin_builtins" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
+    <filetype.decompiler filetype="kotlin_builtins" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.caches.FileAttributeService"
+                        serviceImplementation="org.jetbrains.kotlin.idea.caches.FileAttributeServiceImpl"/>
+
+    <!-- since 192 use light service @Service instead of this declaration -->
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.trackers.KotlinIDEModificationTrackerService"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.caches.resolve.KotlinCacheService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheServiceImpl"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCacheImpl"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.SdkInfoCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.SdkInfoCacheImpl"/>
+
+    <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.idea.caches.KotlinPackageStatementPsiTreeChangePreprocessor"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
+
+  </extensions>
+</idea-plugin>
