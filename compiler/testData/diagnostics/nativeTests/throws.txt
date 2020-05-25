@@ -12,15 +12,37 @@ package
 @kotlin.Throws(exceptionClasses = {kotlin.IllegalStateException::class}) public suspend fun suspendThrowsIllegalStateException1(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {Exception2::class, kotlin.IllegalStateException::class}) public suspend fun suspendThrowsIllegalStateException2(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.IllegalStateException::class}) public suspend fun suspendThrowsIllegalStateExceptionTypealias(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsNamedArrayOfUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsNamedEmptyArrayOf(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsNamedEmptyLiteral(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsNamedLiteralWithUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsNamedUnresolved(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsNothing(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.RuntimeException::class}) public suspend fun suspendThrowsRuntimeException1(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.RuntimeException::class, Exception3::class}) public suspend fun suspendThrowsRuntimeException2(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.RuntimeException::class}) public suspend fun suspendThrowsRuntimeExceptionTypealias(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsSpreadArrayOfUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsSpreadEmptyArrayOf(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsSpreadEmptyLiteral(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsSpreadLiteralWithUnresolved(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.Throwable::class}) public suspend fun suspendThrowsThrowable1(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.Throwable::class, Exception2::class}) public suspend fun suspendThrowsThrowable2(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.Throwable::class, kotlin.coroutines.cancellation.CancellationException::class}) public suspend fun suspendThrowsThrowable3(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {kotlin.Throwable::class}) public suspend fun suspendThrowsThrowableTypealias(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsTypealiasToUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public suspend fun suspendThrowsUnresolved(): kotlin.Unit
 @kotlin.Throws(exceptionClasses = {}) public fun throwsEmptyParens(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsNamedArrayOfUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsNamedEmptyArrayOf(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsNamedEmptyLiteral(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsNamedLiteralWithUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsNamedUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsSpreadArrayOfUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsSpreadEmptyArrayOf(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsSpreadEmptyLiteral(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsSpreadLiteralWithUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsTypealiasToUnresolved(): kotlin.Unit
+@kotlin.Throws(exceptionClasses = {}) public fun throwsUnresolved(): kotlin.Unit
 public fun withLocalClass(): kotlin.Unit
 
 public interface Base0 {
@@ -411,6 +433,7 @@ public typealias ExceptionAlias = kotlin.Exception
 public typealias IllegalStateExceptionAlias = kotlin.IllegalStateException
 public typealias RuntimeExceptionAlias = kotlin.RuntimeException
 public typealias ThrowableAlias = kotlin.Throwable
+public typealias UEAlias = [ERROR : UE]
 
 package kotlin {
 

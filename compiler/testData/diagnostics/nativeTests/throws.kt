@@ -37,6 +37,41 @@ fun foo() {}
 <!THROWS_LIST_EMPTY!>@Throws()<!>
 fun throwsEmptyParens() {}
 
+@Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
+fun throwsUnresolved() {}
+
+@Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
+fun throwsNamedUnresolved() {}
+
+<!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = [])<!>
+fun throwsNamedEmptyLiteral() {}
+
+<!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = arrayOf())<!>
+fun throwsNamedEmptyArrayOf() {}
+
+<!THROWS_LIST_EMPTY!>@Throws(*[])<!>
+fun throwsSpreadEmptyLiteral() {}
+
+<!THROWS_LIST_EMPTY!>@Throws(*arrayOf())<!>
+fun throwsSpreadEmptyArrayOf() {}
+
+@Throws(exceptionClasses = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>]<!>)
+fun throwsNamedLiteralWithUnresolved() {}
+
+@Throws(exceptionClasses = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)<!>)
+fun throwsNamedArrayOfUnresolved() {}
+
+@Throws(*<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>]<!>)
+fun throwsSpreadLiteralWithUnresolved() {}
+
+@Throws(*<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)<!>)
+fun throwsSpreadArrayOfUnresolved() {}
+
+typealias UEAlias = <!UNRESOLVED_REFERENCE!>UE<!>
+
+@Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>UEAlias::class<!>)
+fun throwsTypealiasToUnresolved() {}
+
 interface Base0 {
     fun foo()
 }
@@ -243,6 +278,39 @@ suspend fun suspendDoesNotThrowCancellationException1() {}
 
 <!MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND!>@Throws(Exception1::class, Exception2::class)<!>
 suspend fun suspendDoesNotThrowCancellationException2() {}
+
+@Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)
+suspend fun suspendThrowsUnresolved() {}
+
+@Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)
+suspend fun suspendThrowsNamedUnresolved() {}
+
+<!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = [])<!>
+suspend fun suspendThrowsNamedEmptyLiteral() {}
+
+<!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = arrayOf())<!>
+suspend fun suspendThrowsNamedEmptyArrayOf() {}
+
+<!THROWS_LIST_EMPTY!>@Throws(*[])<!>
+suspend fun suspendThrowsSpreadEmptyLiteral() {}
+
+<!THROWS_LIST_EMPTY!>@Throws(*arrayOf())<!>
+suspend fun suspendThrowsSpreadEmptyArrayOf() {}
+
+@Throws(exceptionClasses = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>]<!>)
+suspend fun suspendThrowsNamedLiteralWithUnresolved() {}
+
+@Throws(exceptionClasses = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)<!>)
+suspend fun suspendThrowsNamedArrayOfUnresolved() {}
+
+@Throws(*<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>]<!>)
+suspend fun suspendThrowsSpreadLiteralWithUnresolved() {}
+
+@Throws(*<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)<!>)
+suspend fun suspendThrowsSpreadArrayOfUnresolved() {}
+
+@Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>UEAlias::class<!>)
+suspend fun suspendThrowsTypealiasToUnresolved() {}
 
 @Throws(Exception1::class, CancellationException::class)
 suspend fun suspendThrowsCancellationException1() {}
