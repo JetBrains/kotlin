@@ -10,6 +10,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.CompilerMessage;
+import com.intellij.openapi.externalSystem.service.remote.ExternalSystemProgressNotificationManagerImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -173,6 +174,7 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
       () -> EdtTestUtil.runInEdtAndWait(() -> tearDownFixtures()),
       () -> myProject = null,
       () -> PathKt.delete(myTestDir.toPath()),
+      () -> ExternalSystemProgressNotificationManagerImpl.assertListenersReleased(null),
       () -> super.tearDown(),
       () -> resetClassFields(getClass())
     ).run();

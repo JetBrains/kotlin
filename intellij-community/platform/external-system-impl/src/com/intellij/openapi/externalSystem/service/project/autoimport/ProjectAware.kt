@@ -11,7 +11,6 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType.RES
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import java.util.concurrent.atomic.AtomicReference
@@ -33,11 +32,7 @@ class ProjectAware(
 
   override fun subscribe(listener: ExternalSystemProjectRefreshListener, parentDisposable: Disposable) {
     val progressManager = ExternalSystemProgressNotificationManager.getInstance()
-    val notificationListener = TaskNotificationListener(listener)
-    progressManager.addNotificationListener(notificationListener)
-    Disposer.register(parentDisposable, Disposable {
-      progressManager.removeNotificationListener(notificationListener)
-    })
+    progressManager.addNotificationListener(TaskNotificationListener(listener), parentDisposable)
   }
 
   override fun reloadProject(context: ExternalSystemProjectReloadContext) {

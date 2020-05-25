@@ -158,9 +158,6 @@ public abstract class AbstractExternalSystemTask extends UserDataHolderBase impl
       setState(ExternalSystemTaskState.FAILED);
     }
     finally {
-      for (ExternalSystemTaskNotificationListener listener : listeners) {
-        progressManager.removeNotificationListener(listener);
-      }
       processingManager.release(getId());
     }
   }
@@ -198,11 +195,8 @@ public abstract class AbstractExternalSystemTask extends UserDataHolderBase impl
     }
 
     if (!compareAndSetState(currentTaskState, ExternalSystemTaskState.CANCELING)) return false;
-
-    boolean result = false;
     try {
-      result = doCancel();
-      return result;
+      return doCancel();
     }
     catch (NotSupportedException e) {
       NotificationData notification =
@@ -215,12 +209,7 @@ public abstract class AbstractExternalSystemTask extends UserDataHolderBase impl
       myError.set(e);
       LOG.warn(e);
     }
-    finally {
-      for (ExternalSystemTaskNotificationListener listener : listeners) {
-        progressManager.removeNotificationListener(listener);
-      }
-    }
-    return result;
+    return false;
   }
 
   protected abstract boolean doCancel() throws Exception;

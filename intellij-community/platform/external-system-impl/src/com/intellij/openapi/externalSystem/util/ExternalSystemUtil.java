@@ -514,8 +514,7 @@ public final class ExternalSystemUtil {
 
           LOG.info("External project [" + externalProjectPath + "] resolution task started");
           final long startTS = System.currentTimeMillis();
-          resolveProjectTask
-            .execute(indicator, ArrayUtil.prepend(taskListener, ExternalSystemTaskNotificationListener.EP_NAME.getExtensions()));
+          resolveProjectTask.execute(indicator, taskListener);
           LOG.info("External project [" + externalProjectPath + "] resolution task executed in " +
                    (System.currentTimeMillis() - startTS) + " ms.");
           handExecutionResult(externalSystemTaskActivator, eventDispatcher, finishSyncEventSupplier);
@@ -597,7 +596,7 @@ public final class ExternalSystemUtil {
       }
 
       private void cancelImport() {
-        resolveProjectTask.cancel(ExternalSystemTaskNotificationListener.EP_NAME.getExtensions());
+        resolveProjectTask.cancel();
       }
     };
 

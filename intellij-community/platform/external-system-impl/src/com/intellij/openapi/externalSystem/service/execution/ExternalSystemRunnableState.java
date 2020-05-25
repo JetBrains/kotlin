@@ -27,7 +27,6 @@ import com.intellij.openapi.externalSystem.execution.ExternalSystemExecutionCons
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationEvent;
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter;
 import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemBuildEvent;
 import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemTaskExecutionEvent;
@@ -40,7 +39,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.net.NetUtils;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.xdebugger.XDebugProcess;
@@ -248,7 +246,7 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
             processHandler.notifyProcessTerminated(0);
           }
         };
-        task.execute(ArrayUtil.prepend(taskListener, ExternalSystemTaskNotificationListener.EP_NAME.getExtensions()));
+        task.execute(taskListener);
         Throwable taskError = task.getError();
         if (taskError != null && !(taskError instanceof Exception)) {
           FinishBuildEventImpl failureEvent = new FinishBuildEventImpl(task.getId(), null, System.currentTimeMillis(),
