@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.projectModel.*
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.types.typeUtil.closure
@@ -213,7 +215,8 @@ private val platformNames = mapOf(
     listOf("java", "jvm") to JvmPlatforms.defaultJvmPlatform,
     listOf("java8", "jvm8") to JvmPlatforms.jvm18,
     listOf("java6", "jvm6") to JvmPlatforms.jvm16,
-    listOf("js", "javascript") to JsPlatforms.defaultJsPlatform
+    listOf("js", "javascript") to JsPlatforms.defaultJsPlatform,
+    listOf("native") to NativePlatforms.unspecifiedNativePlatform
 )
 
 private fun parseDirName(dir: File): RootInfo {
@@ -279,6 +282,7 @@ private val TargetPlatform.presentableName: String
         isCommon() -> "Common"
         isJvm() -> "JVM"
         isJs() -> "JS"
+        isNative() -> "Native"
         else -> error("Unknown platform $this")
     }
 
