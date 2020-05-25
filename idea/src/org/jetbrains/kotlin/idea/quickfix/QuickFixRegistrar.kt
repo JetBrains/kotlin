@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
+import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative.INCOMPATIBLE_THROWS_OVERRIDE
 import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative.MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND
 import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative.THROWS_LIST_EMPTY
 
@@ -656,5 +657,6 @@ class QuickFixRegistrar : QuickFixContributor {
 
         MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND.registerFactory(AddExceptionToThrowsFix)
         THROWS_LIST_EMPTY.registerFactory(RemoveAnnotationFix)
+        INCOMPATIBLE_THROWS_OVERRIDE.registerFactory(RemoveAnnotationFix)
     }
 }

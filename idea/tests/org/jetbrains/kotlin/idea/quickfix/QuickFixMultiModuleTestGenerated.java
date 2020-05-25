@@ -830,6 +830,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         public void testRemoveEmptyThrows() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors/removeEmptyThrows/");
         }
+
+        @TestMetadata("removeThrowsOnIncompatibleOverride")
+        public void testRemoveThrowsOnIncompatibleOverride() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors/removeThrowsOnIncompatibleOverride/");
+        }
     }
 
     @TestMetadata("idea/testData/multiModuleQuickFix/makeOverridenMemberOpen")

@@ -1,0 +1,12 @@
+// "Remove annotation" "true"
+
+class MyException : Throwable()
+
+interface Base {
+    @Throws(Throwable::class)
+    fun foo()
+}
+
+class Derived : Base {
+    override fun foo() {}
+}
