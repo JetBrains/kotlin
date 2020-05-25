@@ -241,7 +241,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
       return getMatchingDegree() + " " + getValueText();
     }
 
-    private int getMatchingDegree() {
+    public int getMatchingDegree() {
       String text = getValueText();
       if (text != null) {
         int degree = getRank(text);

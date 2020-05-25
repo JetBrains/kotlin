@@ -8,25 +8,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class PsiElementsEqualityProvider implements SEResultsEqualityProvider {
+public class PsiElementsEqualityProvider extends AbstractEqualityProvider {
 
-  @NotNull
   @Override
-  public SEEqualElementsActionType compareItems(@NotNull SearchEverywhereFoundElementInfo newItemInfo, @NotNull SearchEverywhereFoundElementInfo alreadyFoundItemInfo) {
+  public boolean areEqual(@NotNull SearchEverywhereFoundElementInfo newItemInfo, @NotNull SearchEverywhereFoundElementInfo alreadyFoundItemInfo) {
     PsiElement newElementPsi = toPsi(newItemInfo.getElement());
     PsiElement alreadyFoundPsi = toPsi(alreadyFoundItemInfo.getElement());
 
-    if (newElementPsi == null || alreadyFoundPsi == null) {
-      return SEEqualElementsActionType.DO_NOTHING;
-    }
-
-    if (Objects.equals(newElementPsi, alreadyFoundPsi)) {
-      return SearchEverywhereFoundElementInfo.COMPARATOR.compare(newItemInfo, alreadyFoundItemInfo) > 0
-             ? SEEqualElementsActionType.REPLACE
-             : SEEqualElementsActionType.SKIP;
-    }
-
-    return SEEqualElementsActionType.DO_NOTHING;
+    return newElementPsi != null && alreadyFoundPsi != null
+           && Objects.equals(newElementPsi, alreadyFoundPsi);
   }
 
   @Nullable

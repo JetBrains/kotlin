@@ -35,7 +35,7 @@ import java.util.Optional;
 import static com.intellij.openapi.keymap.KeymapUtil.getActiveKeymapShortcuts;
 import static com.intellij.openapi.keymap.KeymapUtil.getFirstKeyboardShortcutText;
 
-public class ActionSearchEverywhereContributor implements SearchEverywhereContributor<GotoActionModel.MatchedValue> {
+public class ActionSearchEverywhereContributor implements WeightedSearchEverywhereContributor<GotoActionModel.MatchedValue> {
 
   private static final Logger LOG = Logger.getInstance(ActionSearchEverywhereContributor.class);
 
@@ -81,9 +81,10 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
   }
 
   @Override
-  public void fetchElements(@NotNull String pattern,
-                            @NotNull ProgressIndicator progressIndicator,
-                            @NotNull Processor<? super GotoActionModel.MatchedValue> consumer) {
+  public void fetchWeightedElements(@NotNull String pattern,
+                                    @NotNull ProgressIndicator progressIndicator,
+                                    @NotNull Processor<? super FoundItemDescriptor<GotoActionModel.MatchedValue>> consumer) {
+
     if (StringUtil.isEmptyOrSpaces(pattern)) {
       return;
     }
@@ -102,7 +103,8 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
         return true;
       }
 
-      return consumer.process(element);
+      FoundItemDescriptor<GotoActionModel.MatchedValue> descriptor = new FoundItemDescriptor<>(element, element.getMatchingDegree());
+      return consumer.process(descriptor);
     });
   }
 

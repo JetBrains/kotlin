@@ -4,6 +4,7 @@ package com.intellij.ide.util.gotoByName;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.SearchTopHitProvider;
 import com.intellij.ide.actions.ApplyIntentionAction;
+import com.intellij.ide.actions.searcheverywhere.FoundItemDescriptor;
 import com.intellij.ide.ui.OptionsSearchTopHitProvider;
 import com.intellij.ide.ui.OptionsTopHitProvider;
 import com.intellij.ide.ui.search.ActionFromOptionDescriptorProvider;
@@ -38,7 +39,7 @@ import static com.intellij.ide.util.gotoByName.GotoActionModel.*;
 /**
  * @author peter
  */
-public final class GotoActionItemProvider implements ChooseByNameItemProvider {
+public final class GotoActionItemProvider implements ChooseByNameWeightedItemProvider {
   private final ActionManager myActionManager = ActionManager.getInstance();
   private final GotoActionModel myModel;
   private final NotNullLazyValue<Map<String, ApplyIntentionAction>> myIntentions;
@@ -60,11 +61,20 @@ public final class GotoActionItemProvider implements ChooseByNameItemProvider {
                                 boolean everywhere,
                                 @NotNull ProgressIndicator cancelled,
                                 @NotNull final Processor<Object> consumer) {
+    return filterElementsWithWeights(base, pattern, everywhere, cancelled, descriptor -> consumer.process(descriptor.getItem()));
+  }
+
+  @Override
+  public boolean filterElementsWithWeights(@NotNull ChooseByNameBase base,
+                                           @NotNull String pattern,
+                                           boolean everywhere,
+                                           @NotNull ProgressIndicator indicator,
+                                           @NotNull Processor<? super FoundItemDescriptor<?>> consumer) {
     return filterElements(pattern, value -> {
       if (!everywhere && value.value instanceof ActionWrapper && !((ActionWrapper)value.value).isAvailable()) {
         return true;
       }
-      return consumer.process(value);
+      return consumer.process(new FoundItemDescriptor<>(value, value.getMatchingDegree()));
     });
   }
 
