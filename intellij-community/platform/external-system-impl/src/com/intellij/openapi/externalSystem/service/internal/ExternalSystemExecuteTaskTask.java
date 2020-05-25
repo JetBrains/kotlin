@@ -132,11 +132,6 @@ public class ExternalSystemExecuteTaskTask extends AbstractExternalSystemTask {
         executionAware.prepareExecution(this, projectPath, false, progressNotificationListener, getIdeProject());
       }
 
-      boolean a = false;
-      boolean b = false;
-      a |= b;
-
-
       final ExternalSystemFacadeManager manager = ServiceManager.getService(ExternalSystemFacadeManager.class);
       settings = ExternalSystemApiUtil.getExecutionSettings(getIdeProject(),
                                                             projectPath,
