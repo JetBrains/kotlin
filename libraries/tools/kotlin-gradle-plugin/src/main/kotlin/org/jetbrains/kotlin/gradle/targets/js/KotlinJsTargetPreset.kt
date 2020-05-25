@@ -31,6 +31,8 @@ open class KotlinJsTargetPreset(
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
 
+    override fun useDisambiguitionClassifierAsSourcesetNamePreffix() = false
+
     override fun instantiateTarget(name: String): KotlinJsTarget {
         return project.objects.newInstance(
             KotlinJsTarget::class.java,
@@ -94,8 +96,6 @@ class KotlinJsSingleTargetPreset(
 ) {
     override val isMpp: Boolean
         get() = false
-
-    override fun useDisambiguitionClassifierAsSourcesetNamePreffix() = false
 
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? =
