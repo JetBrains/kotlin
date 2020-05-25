@@ -7,21 +7,9 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereManager;
 import com.intellij.ide.actions.searcheverywhere.statistics.SearchEverywhereUsageTriggerCollector;
-import com.intellij.ide.util.gotoByName.ChooseByNameFilter;
-import com.intellij.ide.util.gotoByName.ChooseByNameItemProvider;
-import com.intellij.ide.util.gotoByName.ChooseByNameModel;
-import com.intellij.ide.util.gotoByName.ChooseByNameModelEx;
-import com.intellij.ide.util.gotoByName.ChooseByNamePopup;
-import com.intellij.ide.util.gotoByName.ChooseByNamePopupComponent;
-import com.intellij.ide.util.gotoByName.DefaultChooseByNameItemProvider;
+import com.intellij.ide.util.gotoByName.*;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -43,17 +31,15 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SearchTextField;
 import com.intellij.ui.speedSearch.SpeedSearchSupply;
 import com.intellij.util.containers.ContainerUtil;
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import javax.swing.JComponent;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import java.awt.*;
+import java.util.List;
+import java.util.*;
 
 /**
  * Author: msk
@@ -340,12 +326,18 @@ public abstract class GotoActionBase extends AnAction {
     }.registerCustomShortcutSet(SearchTextField.SHOW_HISTORY_SHORTCUT, editor);
   }
 
+  /**
+   * @deprecated if you have to use this method perhaps your Action better should extend
+   * {@link SearchEverywhereBaseAction} instead of {@link GotoActionBase}.
+   * Method is going to be removed in 2021.1
+   */
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
+  @Deprecated
   protected void showInSearchEverywherePopup(@NotNull String searchProviderID,
                                              @NotNull AnActionEvent event,
                                              boolean useEditorSelection,
                                              boolean sendStatistics) {
     Project project = event.getProject();
-    if (project == null) return;
     SearchEverywhereManager seManager = SearchEverywhereManager.getInstance(project);
     FeatureUsageTracker.getInstance().triggerFeatureUsed(IdeActions.ACTION_SEARCH_EVERYWHERE);
 

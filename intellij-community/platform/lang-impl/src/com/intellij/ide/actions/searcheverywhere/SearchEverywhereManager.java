@@ -13,7 +13,8 @@ import org.jetbrains.annotations.Nullable;
 public interface SearchEverywhereManager {
 
   static SearchEverywhereManager getInstance(Project project) {
-    return ServiceManager.getService(project, SearchEverywhereManager.class);
+    return project != null ? ServiceManager.getService(project, SearchEverywhereManager.class)
+                           : ServiceManager.getService(SearchEverywhereManager.class);
   }
 
   boolean isShown();

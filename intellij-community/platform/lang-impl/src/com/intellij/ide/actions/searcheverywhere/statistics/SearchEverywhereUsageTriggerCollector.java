@@ -32,11 +32,11 @@ public class SearchEverywhereUsageTriggerCollector {
   public static final String TYPED_SYMBOL_KEYS = "typedSymbolKeys";
   public static final String TYPED_NAVIGATION_KEYS = "typedNavigationKeys";
 
-  public static void trigger(@NotNull Project project, @NotNull String feature) {
+  public static void trigger(@Nullable Project project, @NotNull String feature) {
     trigger(project, feature, new FeatureUsageData());
   }
 
-  public static void trigger(@NotNull Project project, @NotNull String feature, @NotNull FeatureUsageData data) {
+  public static void trigger(@Nullable Project project, @NotNull String feature, @NotNull FeatureUsageData data) {
     FUCounterUsageLogger.getInstance().logEvent(project, "searchEverywhere", feature, data);
   }
 

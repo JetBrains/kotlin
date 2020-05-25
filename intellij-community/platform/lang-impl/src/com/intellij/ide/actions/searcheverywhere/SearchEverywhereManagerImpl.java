@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.WindowStateService;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.wm.WindowManager;
@@ -58,6 +59,11 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
   private HistoryIterator myHistoryIterator;
   private boolean myEverywhere;
 
+  public SearchEverywhereManagerImpl() {
+    myProject = null;
+    myTabsShortcutsMap = Collections.emptyMap();
+  }
+
   public SearchEverywhereManagerImpl(Project project) {
     myProject = project;
     myTabsShortcutsMap = createShortcutsMap();
@@ -71,20 +77,8 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
 
     Project project = initEvent.getProject();
     Component contextComponent = initEvent.getData(PlatformDataKeys.CONTEXT_COMPONENT);
-    List<SearchEverywhereContributor<?>> serviceContributors = Arrays.asList(
-      new TopHitSEContributor(project, contextComponent, s ->
-        mySearchEverywhereUI.getSearchField().setText(s)),
-      new RecentFilesSEContributor(initEvent),
-      new RunConfigurationsSEContributor(project, contextComponent, () -> mySearchEverywhereUI.getSearchField().getText())
-    );
 
-    List<SearchEverywhereContributor<?>> contributors = new ArrayList<>(serviceContributors);
-    for (SearchEverywhereContributorFactory<?> factory : SearchEverywhereContributor.EP_NAME.getExtensionList()) {
-      SearchEverywhereContributor<?> contributor = factory.createContributor(initEvent);
-      contributors.add(contributor);
-    }
-    contributors.sort(Comparator.comparingInt(SearchEverywhereContributor::getSortWeight));
-
+    List<SearchEverywhereContributor<?>> contributors = createContributors(initEvent, project, contextComponent);
     mySearchEverywhereUI = createView(myProject, contributors);
     contributors.forEach(c -> Disposer.register(mySearchEverywhereUI, c));
     mySearchEverywhereUI.switchToContributor(contributorID);
@@ -127,36 +121,64 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     JBInsets.addTo(size, myBalloon.getContent().getInsets());
     myBalloon.setMinimumSize(size);
 
-    ConcurrentHashMap<ClientId, JBPopup> map = myProject.getUserData(SEARCH_EVERYWHERE_POPUP);
-    if (map == null) {
-      map = new ConcurrentHashMap<>();
-      myProject.putUserData(SEARCH_EVERYWHERE_POPUP, map);
-    }
-    map.put(ClientId.getCurrent(), myBalloon);
-
     if (searchText != null && !searchText.isEmpty()) {
       mySearchEverywhereUI.getSearchField().setText(searchText);
       mySearchEverywhereUI.getSearchField().selectAll();
     }
 
+    UserDataHolder dataHolder = myProject != null ? project : ApplicationManager.getApplication();
+    ConcurrentHashMap<ClientId, JBPopup> map = dataHolder.getUserData(SEARCH_EVERYWHERE_POPUP);
+    if (map == null) {
+      map = new ConcurrentHashMap<>();
+      dataHolder.putUserData(SEARCH_EVERYWHERE_POPUP, map);
+    }
+    map.put(ClientId.getCurrent(), myBalloon);
+
     Disposer.register(myBalloon, () -> {
       saveSize();
-      Objects.requireNonNull(myProject.getUserData(SEARCH_EVERYWHERE_POPUP)).remove(ClientId.getCurrent());
+      Objects.requireNonNull(dataHolder.getUserData(SEARCH_EVERYWHERE_POPUP)).remove(ClientId.getCurrent());
       mySearchEverywhereUI = null;
       myBalloon = null;
       myBalloonFullSize = null;
     });
 
     if (mySearchEverywhereUI.getViewType() == BigPopupUI.ViewType.SHORT) {
-      myBalloonFullSize = WindowStateService.getInstance(myProject).getSize(LOCATION_SETTINGS_KEY);
+      myBalloonFullSize = getStateService().getSize(LOCATION_SETTINGS_KEY);
       Dimension prefSize = mySearchEverywhereUI.getPreferredSize();
       myBalloon.setSize(prefSize);
     }
     calcPositionAndShow(project, myBalloon);
   }
 
+  private WindowStateService getStateService() {
+    return myProject != null ? WindowStateService.getInstance(myProject) : WindowStateService.getInstance();
+  }
+
+  private List<SearchEverywhereContributor<?>> createContributors(@NotNull AnActionEvent initEvent, Project project, Component contextComponent) {
+    if (project == null) {
+      ActionSearchEverywhereContributor.Factory factory = new ActionSearchEverywhereContributor.Factory();
+      return Collections.singletonList(factory.createContributor(initEvent));
+    }
+
+    List<SearchEverywhereContributor<?>> serviceContributors = Arrays.asList(
+      new TopHitSEContributor(project, contextComponent, s ->
+        mySearchEverywhereUI.getSearchField().setText(s)),
+      new RecentFilesSEContributor(initEvent),
+      new RunConfigurationsSEContributor(project, contextComponent, () -> mySearchEverywhereUI.getSearchField().getText())
+    );
+
+    List<SearchEverywhereContributor<?>> contributors = new ArrayList<>(serviceContributors);
+    for (SearchEverywhereContributorFactory<?> factory : SearchEverywhereContributor.EP_NAME.getExtensionList()) {
+      SearchEverywhereContributor<?> contributor = factory.createContributor(initEvent);
+      contributors.add(contributor);
+    }
+    contributors.sort(Comparator.comparingInt(SearchEverywhereContributor::getSortWeight));
+
+    return contributors;
+  }
+
   private void calcPositionAndShow(Project project, JBPopup balloon) {
-    Point savedLocation = WindowStateService.getInstance(myProject).getLocation(LOCATION_SETTINGS_KEY);
+    Point savedLocation = getStateService().getLocation(LOCATION_SETTINGS_KEY);
 
     //for first show and short mode popup should be shifted to the top screen half
     if (savedLocation == null && mySearchEverywhereUI.getViewType() == BigPopupUI.ViewType.SHORT) {
@@ -305,7 +327,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
 
   private void saveSize() {
     if (mySearchEverywhereUI.getViewType() == BigPopupUI.ViewType.SHORT) {
-      WindowStateService.getInstance(myProject).putSize(LOCATION_SETTINGS_KEY, myBalloonFullSize);
+      getStateService().putSize(LOCATION_SETTINGS_KEY, myBalloonFullSize);
     }
   }
 

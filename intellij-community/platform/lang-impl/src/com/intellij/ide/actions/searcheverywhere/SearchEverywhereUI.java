@@ -114,12 +114,12 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
   private final PersistentSearchEverywhereContributorFilter<String> myContributorsFilter;
   private ActionToolbar myToolbar;
 
-  public SearchEverywhereUI(@NotNull Project project,
+  public SearchEverywhereUI(@Nullable Project project,
                             @NotNull List<? extends SearchEverywhereContributor<?>> contributors) {
     this(project, contributors, s -> null);
   }
 
-  public SearchEverywhereUI(@NotNull Project project,
+  public SearchEverywhereUI(@Nullable Project project,
                             @NotNull List<? extends SearchEverywhereContributor<?>> contributors,
                             @NotNull Function<String, String> shortcutSupplier) {
     super(project);
@@ -130,10 +130,12 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     myShownContributors = contributors;
     myShortcutSupplier = shortcutSupplier;
     Map<String, String> namesMap = ContainerUtil.map2Map(contributors, c -> Pair.create(c.getSearchProviderId(), c.getFullGroupName()));
-    myContributorsFilter = new PersistentSearchEverywhereContributorFilter<>(
-      ContainerUtil.map(contributors, c -> c.getSearchProviderId()),
-      SearchEverywhereConfiguration.getInstance(project),
-      namesMap::get, c -> null);
+    myContributorsFilter = isAllTabNeeded()
+                           ? new PersistentSearchEverywhereContributorFilter<>(
+                                ContainerUtil.map(contributors, c -> c.getSearchProviderId()),
+                                SearchEverywhereConfiguration.getInstance(project),
+                                namesMap::get, c -> null)
+                           : null;
 
     init();
 
@@ -180,6 +182,10 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     mySelectedTab.everywhereAction.setEverywhere(
       !mySelectedTab.everywhereAction.isEverywhere());
     myToolbar.updateActionsImmediately();
+  }
+
+  private boolean isAllTabNeeded() {
+    return myShownContributors.size() > 1;
   }
 
   private void setEverywhereAuto(boolean everywhere) {
@@ -364,7 +370,10 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
         return mySelectedTab.actions.toArray(EMPTY_ARRAY);
       }
     });
-    actionGroup.addAction(new ShowInFindToolWindowAction());
+
+    if (myProject != null) {
+      actionGroup.addAction(new ShowInFindToolWindowAction());
+    }
 
     myToolbar = ActionManager.getInstance().createActionToolbar("search.everywhere.toolbar", actionGroup, true);
     myToolbar.setLayoutPolicy(ActionToolbar.NOWRAP_LAYOUT_POLICY);
@@ -430,9 +439,11 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     JPanel contributorsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
     contributorsPanel.setOpaque(false);
 
-    SETab allTab = new SETab(null);
-    contributorsPanel.add(allTab);
-    myTabs.add(allTab);
+    if (isAllTabNeeded()) {
+      SETab allTab = new SETab(null);
+      contributorsPanel.add(allTab);
+      myTabs.add(allTab);
+    }
 
     myShownContributors.stream()
       .filter(SearchEverywhereContributor::isShownInSeparateTab)
@@ -568,18 +579,24 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
       contributorsMap.putAll(getAllTabContributors().stream().collect(Collectors.toMap(c -> c, c -> MULTIPLE_CONTRIBUTORS_ELEMENTS_LIMIT)));
     }
 
-    List<SearchEverywhereContributor<?>> contributors = DumbService.getInstance(myProject).filterByDumbAwareness(contributorsMap.keySet());
-    if (contributors.isEmpty() && DumbService.isDumb(myProject)) {
-      myResultsList.setEmptyText(IdeBundle.message("searcheverywhere.indexing.mode.not.supported",
-                                                   mySelectedTab.getText(),
-                                                   ApplicationNamesInfo.getInstance().getFullProductName()));
-      myListModel.clear();
-      return;
+    List<SearchEverywhereContributor<?>> contributors;
+    if (myProject != null) {
+      contributors = DumbService.getInstance(myProject).filterByDumbAwareness(contributorsMap.keySet());
+      if (contributors.isEmpty() && DumbService.isDumb(myProject)) {
+        myResultsList.setEmptyText(IdeBundle.message("searcheverywhere.indexing.mode.not.supported",
+                                                     mySelectedTab.getText(),
+                                                     ApplicationNamesInfo.getInstance().getFullProductName()));
+        myListModel.clear();
+        return;
+      }
+      if (contributors.size() != contributorsMap.size()) {
+        myResultsList.setEmptyText(IdeBundle.message("searcheverywhere.indexing.incomplete.results",
+                                                     mySelectedTab.getText(),
+                                                     ApplicationNamesInfo.getInstance().getFullProductName()));
+      }
     }
-    if (contributors.size() != contributorsMap.size()) {
-      myResultsList.setEmptyText(IdeBundle.message("searcheverywhere.indexing.incomplete.results",
-                                                   mySelectedTab.getText(),
-                                                   ApplicationNamesInfo.getInstance().getFullProductName()));
+    else {
+      contributors = new ArrayList<>(contributorsMap.keySet());
     }
 
     myListModel.expireResults();
@@ -709,8 +726,11 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
       showDescriptionForIndex(myResultsList.getSelectedIndex());
     });
 
-    MessageBusConnection projectBusConnection = myProject.getMessageBus().connect(this);
-    projectBusConnection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
+    MessageBusConnection busConnection = myProject != null
+                                                ? myProject.getMessageBus().connect(this)
+                                                : ApplicationManager.getApplication().getMessageBus().connect(this);
+
+    busConnection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
       @Override
       public void exitDumbMode() {
         ApplicationManager.getApplication().invokeLater(() -> {
@@ -719,7 +739,7 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
         });
       }
     });
-    projectBusConnection.subscribe(AnActionListener.TOPIC, new AnActionListener() {
+    busConnection.subscribe(AnActionListener.TOPIC, new AnActionListener() {
       @Override
       public void afterActionPerformed(@NotNull AnAction action, @NotNull DataContext dataContext, @NotNull AnActionEvent event) {
         if (action == mySelectedTab.everywhereAction && event.getInputEvent() != null) {
@@ -727,11 +747,7 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
         }
       }
     });
-
-    ApplicationManager.getApplication()
-      .getMessageBus()
-      .connect(this)
-      .subscribe(ProgressWindow.TOPIC, pw -> Disposer.register(pw, () -> myResultsList.repaint()));
+    busConnection.subscribe(ProgressWindow.TOPIC, pw -> Disposer.register(pw, () -> myResultsList.repaint()));
 
     mySearchField.addFocusListener(new FocusAdapter() {
       @Override
@@ -1473,6 +1489,11 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
 
     @Override
     public void update(@NotNull AnActionEvent e) {
+      if (myProject == null) {
+        e.getPresentation().setEnabled(false);
+        return;
+      }
+
       SearchEverywhereContributor<?> contributor = mySelectedTab == null ? null : mySelectedTab.contributor;
       e.getPresentation().setEnabled(contributor == null || contributor.showInFindResults());
       e.getPresentation().setIcon(ToolWindowManager.getInstance(myProject).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab));

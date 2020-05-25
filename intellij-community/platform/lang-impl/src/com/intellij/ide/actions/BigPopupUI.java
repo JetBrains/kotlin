@@ -33,7 +33,8 @@ import java.util.Optional;
 public abstract class BigPopupUI extends BorderLayoutPanel implements Disposable {
   private static final int MINIMAL_SUGGESTIONS_LIST_HEIGHT= 100;
 
-  protected final Project myProject;
+  @Nullable protected final Project myProject;
+
   protected ExtendableTextField mySearchField;
   protected JPanel suggestionsPanel;
   protected JBList<Object> myResultsList;
@@ -43,7 +44,7 @@ public abstract class BigPopupUI extends BorderLayoutPanel implements Disposable
   protected ViewType myViewType = ViewType.SHORT;
   protected JLabel myHintLabel;
 
-  public BigPopupUI(Project project) {
+  public BigPopupUI(@Nullable Project project) {
     myProject = project;
   }
 

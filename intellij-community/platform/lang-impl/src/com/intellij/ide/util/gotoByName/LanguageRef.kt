@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util.gotoByName
 
-import com.intellij.ide.actions.GotoFileAction
 import com.intellij.lang.DependentLanguage
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageUtil
@@ -37,7 +36,7 @@ data class FileTypeRef(val name: String, val icon: Icon?) {
     @JvmStatic
     fun forAllFileTypes(): List<FileTypeRef> {
       return FileTypeManager.getInstance().registeredFileTypes
-        .sortedWith(GotoFileAction.FileTypeComparator.INSTANCE)
+        .sortedWith(FileTypeComparator.INSTANCE)
         .map { forFileType(it) }
     }
   }
