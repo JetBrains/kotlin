@@ -2583,6 +2583,59 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
     }
 
+    @TestMetadata("nj2k/testData/newJ2k/functionalInterfaces")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FunctionalInterfaces extends AbstractNewJavaToKotlinConverterSingleFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("AbstractGetter1.java")
+        public void testAbstractGetter1() throws Exception {
+            runTest("nj2k/testData/newJ2k/functionalInterfaces/AbstractGetter1.java");
+        }
+
+        @TestMetadata("AbstractGetter2.java")
+        public void testAbstractGetter2() throws Exception {
+            runTest("nj2k/testData/newJ2k/functionalInterfaces/AbstractGetter2.java");
+        }
+
+        @TestMetadata("AbstractGetterNoFunctionalInterfaceAnnotation.java")
+        public void testAbstractGetterNoFunctionalInterfaceAnnotation() throws Exception {
+            runTest("nj2k/testData/newJ2k/functionalInterfaces/AbstractGetterNoFunctionalInterfaceAnnotation.java");
+        }
+
+        public void testAllFilesPresentInFunctionalInterfaces() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("nj2k/testData/newJ2k/functionalInterfaces"), Pattern.compile("^([^\\.]+)\\.java$"), null, true);
+        }
+
+        @TestMetadata("InterfacesHierarchy.java")
+        public void testInterfacesHierarchy() throws Exception {
+            runTest("nj2k/testData/newJ2k/functionalInterfaces/InterfacesHierarchy.java");
+        }
+
+        @TestMetadata("MyRunnable.java")
+        public void testMyRunnable() throws Exception {
+            runTest("nj2k/testData/newJ2k/functionalInterfaces/MyRunnable.java");
+        }
+
+        @TestMetadata("NoFunctionalInterfaceAnnotation.java")
+        public void testNoFunctionalInterfaceAnnotation() throws Exception {
+            runTest("nj2k/testData/newJ2k/functionalInterfaces/NoFunctionalInterfaceAnnotation.java");
+        }
+
+        @TestMetadata("NoFunctionalInterfaceConversionEnabled.java")
+        public void testNoFunctionalInterfaceConversionEnabled() throws Exception {
+            runTest("nj2k/testData/newJ2k/functionalInterfaces/NoFunctionalInterfaceConversionEnabled.java");
+        }
+
+        @TestMetadata("SamMethodWithGenerics.java")
+        public void testSamMethodWithGenerics() throws Exception {
+            runTest("nj2k/testData/newJ2k/functionalInterfaces/SamMethodWithGenerics.java");
+        }
+    }
+
     @TestMetadata("nj2k/testData/newJ2k/identifier")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

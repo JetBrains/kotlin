@@ -24,6 +24,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.j2k.*
@@ -161,7 +162,8 @@ class NewJavaToKotlinConverter(
             inConversionContext,
             importStorage,
             JKElementInfoStorage(),
-            externalCodeProcessing
+            externalCodeProcessing,
+            languageVersion.supportsFeature(LanguageFeature.FunctionalInterfaceConversion)
         )
         ConversionsRunner.doApply(asts.withIndex().mapNotNull { (i, ast) ->
             processor.updateState(i, 1, phaseDescription)
