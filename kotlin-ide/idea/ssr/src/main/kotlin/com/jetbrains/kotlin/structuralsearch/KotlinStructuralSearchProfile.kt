@@ -8,6 +8,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.*
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
@@ -61,7 +62,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             is PsiComment -> getNonWhitespaceChildren(fragment).drop(1)
             else -> getNonWhitespaceChildren(fragment.firstChild).drop(1)
         }
-        //for (element in elements) print(DebugUtil.psiToString(element, false))
+        for (element in elements) print(DebugUtil.psiToString(element, false))
 
         return when {
             elements.isEmpty() -> PsiElement.EMPTY_ARRAY

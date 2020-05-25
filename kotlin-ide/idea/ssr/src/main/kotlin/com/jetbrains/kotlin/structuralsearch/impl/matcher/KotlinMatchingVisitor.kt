@@ -17,28 +17,25 @@ import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
-    private inline fun <reified T> getTreeElement(): T? = when (val element = myMatchingVisitor.element) {
+    /** Gets the next element in the query tree and removes unnecessary parentheses. */
+    private inline fun <reified T> getTreeElementDepar(): T? = when (val element = myMatchingVisitor.element) {
         is KtParenthesizedExpression -> {
-            if (element is T) { // actually retrieving KtParenthesizedExpression so don't deparenthesize
-                element
-            } else {
-                val deparenthesized = element.deparenthesize()
-                if (deparenthesized is T) deparenthesized else {
-                    myMatchingVisitor.result = false
-                    null
-                }
+            val deparenthesized = element.deparenthesize()
+            if (deparenthesized is T) deparenthesized else {
+                myMatchingVisitor.result = false
+                null
             }
         }
+        else -> getTreeElement<T>()
+    }
+
+    /** Gets the next element in the tree */
+    private inline fun <reified T> getTreeElement(): T? = when (val element = myMatchingVisitor.element) {
         is T -> element
         else -> {
             myMatchingVisitor.result = false
             null
         }
-    }
-
-    private fun KtExpression.countParenthesize(initial: Int = 0): Int {
-        val parentheses = children.firstOrNull { it is KtParenthesizedExpression } as KtExpression?
-        return parentheses?.countParenthesize(initial + 1) ?: initial
     }
 
     private fun GlobalMatchingVisitor.matchSequentially(elements: List<PsiElement?>, elements2: List<PsiElement?>) =
@@ -58,96 +55,85 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
-        val other = getTreeElement<KtArrayAccessExpression>() ?: return
+        val other = getTreeElementDepar<KtArrayAccessExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.arrayExpression, other.arrayExpression)
                 && myMatchingVisitor.matchSons(expression.indicesNode, other.indicesNode)
     }
 
     override fun visitBinaryExpression(expression: KtBinaryExpression) {
-        val other = getTreeElement<KtBinaryExpression>() ?: return
+        val other = getTreeElementDepar<KtBinaryExpression>() ?: return
         myMatchingVisitor.result = expression.operationToken == other.operationToken
                 && myMatchingVisitor.match(expression.left, other.left)
                 && myMatchingVisitor.match(expression.right, other.right)
     }
 
     override fun visitBlockExpression(expression: KtBlockExpression) {
-        val other = getTreeElement<KtBlockExpression>() ?: return
+        val other = getTreeElementDepar<KtBlockExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSons(expression, other)
     }
 
     override fun visitUnaryExpression(expression: KtUnaryExpression) {
-        val other = getTreeElement<KtUnaryExpression>() ?: return
+        val other = getTreeElementDepar<KtUnaryExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.baseExpression, other.baseExpression)
                 && myMatchingVisitor.match(expression.operationReference, other.operationReference)
     }
 
     override fun visitParenthesizedExpression(expression: KtParenthesizedExpression) {
+        fun KtExpression.countParenthesize(initial: Int = 0): Int {
+            val parentheses = children.firstOrNull { it is KtParenthesizedExpression } as KtExpression?
+            return parentheses?.countParenthesize(initial + 1) ?: initial
+        }
+
         val other = getTreeElement<KtParenthesizedExpression>() ?: return
         if (!myMatchingVisitor.setResult(expression.countParenthesize() == other.countParenthesize())) return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.deparenthesize(), other.deparenthesize())
     }
 
     override fun visitConstantExpression(expression: KtConstantExpression) {
-        val other = getTreeElement<KtConstantExpression>() ?: return
+        val other = getTreeElementDepar<KtConstantExpression>() ?: return
         myMatchingVisitor.result = expression.text == other.text
     }
 
+
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-        val context = myMatchingVisitor.matchContext
-        val pattern = context.pattern
-        val referencedNameElement = expression.getReferencedNameElement()
-
-        var handler = pattern.getHandlerSimple(referencedNameElement)
-        if (handler == null) {
-            handler = pattern.getHandlerSimple(expression)
-        }
-
-        val other = myMatchingVisitor.element
-        if (handler is SubstitutionHandler) {
-            val validated = when (other) {
-                // For labels, get rid of the starting '@'
-                is KtSimpleNameExpression -> handler.validate(other.getReferencedNameElement(), context)
-                else -> handler.validate(other, context)
-            }
-            if (myMatchingVisitor.setResult(validated)) {
-                handler.addResult(other, context)
-            }
+        val other = getTreeElementDepar<KtExpression>() ?: return
+        if (other is KtSimpleNameExpression) {
+            myMatchingVisitor.result =
+                matchTextOrVariable(expression.getReferencedNameElement(), other.getReferencedNameElement())
         } else {
-            if (other is KtSimpleNameExpression) {
-                myMatchingVisitor.result = myMatchingVisitor.matchText(referencedNameElement, other.getReferencedNameElement())
-            }
+            myMatchingVisitor.result = matchTextOrVariable(expression.getReferencedNameElement(), other)
         }
     }
 
-    private inline fun <reified T : KtExpressionWithLabel> matchExpressionWithLabel(
-        patternElement: T,
-        treeElement: KtExpressionWithLabel
-    ) {
-        myMatchingVisitor.result = treeElement is T
-                && myMatchingVisitor.match(patternElement.getTargetLabel(), treeElement.getTargetLabel())
+    override fun visitContinueExpression(expression: KtContinueExpression) {
+        val other = getTreeElementDepar<KtContinueExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.getTargetLabel(), other.getTargetLabel())
     }
 
-    override fun visitExpressionWithLabel(expression: KtExpressionWithLabel) {
-        val other = getTreeElement<KtExpressionWithLabel>() ?: return
-        when (expression) {
-            is KtBreakExpression -> matchExpressionWithLabel(expression, other)
-            is KtContinueExpression -> matchExpressionWithLabel(expression, other)
-            is KtThisExpression -> matchExpressionWithLabel(expression, other)
-            is KtSuperExpression -> {
-                myMatchingVisitor.result = other is KtSuperExpression
-                        && myMatchingVisitor.match(expression.getTargetLabel(), other.getTargetLabel())
-                        && myMatchingVisitor.match(expression.superTypeQualifier, other.superTypeQualifier)
-            }
-            is KtReturnExpression -> {
-                myMatchingVisitor.result = other is KtReturnExpression
-                        && myMatchingVisitor.match(expression.getTargetLabel(), other.getTargetLabel())
-                        && myMatchingVisitor.match(expression.returnedExpression, other.returnedExpression)
-            }
-        }
+    override fun visitBreakExpression(expression: KtBreakExpression) {
+        val other = getTreeElementDepar<KtBreakExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.getTargetLabel(), other.getTargetLabel())
+    }
+
+    override fun visitThisExpression(expression: KtThisExpression) {
+        val other = getTreeElementDepar<KtThisExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.getTargetLabel(), other.getTargetLabel())
+    }
+
+    override fun visitSuperExpression(expression: KtSuperExpression) {
+        val other = getTreeElementDepar<KtSuperExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.getTargetLabel(), other.getTargetLabel())
+                && myMatchingVisitor.match(expression.superTypeQualifier, other.superTypeQualifier)
+    }
+
+    override fun visitReturnExpression(expression: KtReturnExpression) {
+        val other = getTreeElementDepar<KtReturnExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.getTargetLabel(), other.getTargetLabel())
+                && myMatchingVisitor.match(expression.returnedExpression, other.returnedExpression)
     }
 
     override fun visitFunctionType(type: KtFunctionType) {
-        val other = getTreeElement<KtFunctionType>() ?: return
+        val other = getTreeElementDepar<KtFunctionType>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(type.receiverTypeReference, other.receiverTypeReference)
                 && myMatchingVisitor.matchSequentially(type.parameters, other.parameters)
     }
@@ -162,7 +148,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitNullableType(nullableType: KtNullableType) {
-        val other = getTreeElement<KtNullableType>() ?: return
+        val other = getTreeElementDepar<KtNullableType>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSons(nullableType, other)
     }
 
@@ -181,12 +167,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitTypeReference(typeReference: KtTypeReference) {
-        val other = getTreeElement<KtTypeReference>() ?: return
+        val other = getTreeElementDepar<KtTypeReference>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSons(typeReference, other)
     }
 
     override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
-        val other = getTreeElement<KtQualifiedExpression>() ?: return
+        val other = getTreeElementDepar<KtQualifiedExpression>() ?: return
         myMatchingVisitor.result = expression.operationSign == other.operationSign
                 && myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
                 && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
@@ -214,23 +200,23 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
-        val other = getTreeElement<KtLambdaExpression>() ?: return
+        val other = getTreeElementDepar<KtLambdaExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(lambdaExpression.valueParameters, other.valueParameters)
                 && myMatchingVisitor.match(lambdaExpression.bodyExpression, other.bodyExpression)
     }
 
     override fun visitTypeProjection(typeProjection: KtTypeProjection) {
-        val other = getTreeElement<KtTypeProjection>() ?: return
+        val other = getTreeElementDepar<KtTypeProjection>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(typeProjection.typeReference, other.typeReference)
     }
 
     override fun visitTypeArgumentList(typeArgumentList: KtTypeArgumentList) {
-        val other = getTreeElement<KtTypeArgumentList>() ?: return
+        val other = getTreeElementDepar<KtTypeArgumentList>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSequentially(typeArgumentList.arguments, other.arguments)
     }
 
     override fun visitArgument(argument: KtValueArgument) {
-        val other = getTreeElement<KtValueArgument>() ?: return
+        val other = getTreeElementDepar<KtValueArgument>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(argument.getArgumentExpression(), other.getArgumentExpression())
                 && (!argument.isNamed() || !other.isNamed() || matchTextOrVariable(
             argument.getArgumentName(), other.getArgumentName()
@@ -293,27 +279,27 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitCallExpression(expression: KtCallExpression) {
-        val other = getTreeElement<KtCallExpression>() ?: return
+        val other = getTreeElementDepar<KtCallExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(expression.typeArgumentList, other.typeArgumentList)
                 && matchValueArgumentList(expression.valueArguments, other.valueArguments)
     }
 
     override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression) {
-        val other = getTreeElement<KtCallableReferenceExpression>() ?: return
+        val other = getTreeElementDepar<KtCallableReferenceExpression>() ?: return
         myMatchingVisitor.match(expression.callableReference, other.callableReference)
                 && myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
     }
 
     override fun visitTypeParameter(parameter: KtTypeParameter) {
-        val other = getTreeElement<KtTypeParameter>() ?: return
+        val other = getTreeElementDepar<KtTypeParameter>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(parameter.firstChild, other.firstChild) // match generic identifier
                 && myMatchingVisitor.match(parameter.extendsBound, other.extendsBound)
                 && parameter.variance == other.variance
     }
 
     override fun visitParameter(parameter: KtParameter) {
-        val other = getTreeElement<KtParameter>() ?: return
+        val other = getTreeElementDepar<KtParameter>() ?: return
 
         val typeMatched = when (other.parent.parent) {
             is KtFunctionType, is KtCatchClause -> myMatchingVisitor.match(parameter.typeReference, other.typeReference)
@@ -326,24 +312,24 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitTypeParameterList(list: KtTypeParameterList) {
-        val other = getTreeElement<KtTypeParameterList>() ?: return
+        val other = getTreeElementDepar<KtTypeParameterList>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSequentially(list.parameters, other.parameters)
     }
 
     override fun visitParameterList(list: KtParameterList) {
-        val other = getTreeElement<KtParameterList>() ?: return
+        val other = getTreeElementDepar<KtParameterList>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSequentially(list.parameters, other.parameters)
     }
 
     override fun visitConstructorDelegationCall(call: KtConstructorDelegationCall) {
-        val other = getTreeElement<KtConstructorDelegationCall>() ?: return
+        val other = getTreeElementDepar<KtConstructorDelegationCall>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(call.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(call.typeArgumentList, other.typeArgumentList)
                 && matchValueArgumentList(call.valueArgumentList?.arguments, other.valueArgumentList?.arguments)
     }
 
     override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
-        val other = getTreeElement<KtSecondaryConstructor>() ?: return
+        val other = getTreeElementDepar<KtSecondaryConstructor>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(constructor.modifierList, other.modifierList)
                 && myMatchingVisitor.match(constructor.typeParameterList, other.typeParameterList)
                 && myMatchingVisitor.match(constructor.valueParameterList, other.valueParameterList)
@@ -352,34 +338,34 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
-        val other = getTreeElement<KtPrimaryConstructor>() ?: return
+        val other = getTreeElementDepar<KtPrimaryConstructor>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(constructor.modifierList, other.modifierList)
                 && myMatchingVisitor.match(constructor.typeParameterList, other.typeParameterList)
                 && myMatchingVisitor.match(constructor.valueParameterList, other.valueParameterList)
     }
 
     override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer) {
-        val other = getTreeElement<KtAnonymousInitializer>() ?: return
+        val other = getTreeElementDepar<KtAnonymousInitializer>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(initializer.body, other.body)
     }
 
     override fun visitClassBody(classBody: KtClassBody) {
-        val other = getTreeElement<KtClassBody>() ?: return
+        val other = getTreeElementDepar<KtClassBody>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSonsInAnyOrder(classBody, other)
     }
 
     override fun visitSuperTypeListEntry(specifier: KtSuperTypeListEntry) {
-        val other = getTreeElement<KtSuperTypeListEntry>() ?: return
+        val other = getTreeElementDepar<KtSuperTypeListEntry>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(specifier, other)
     }
 
     override fun visitSuperTypeList(list: KtSuperTypeList) {
-        val other = getTreeElement<KtSuperTypeList>() ?: return
+        val other = getTreeElementDepar<KtSuperTypeList>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSonsInAnyOrder(list, other)
     }
 
     override fun visitClass(klass: KtClass) {
-        val other = getTreeElement<KtClass>() ?: return
+        val other = getTreeElementDepar<KtClass>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
                 && matchTextOrVariable(klass.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
@@ -395,12 +381,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
-        val other = getTreeElement<KtObjectLiteralExpression>() ?: return
+        val other = getTreeElementDepar<KtObjectLiteralExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.objectDeclaration, other.objectDeclaration)
     }
 
     override fun visitObjectDeclaration(declaration: KtObjectDeclaration) {
-        val other = getTreeElement<KtObjectDeclaration>() ?: return
+        val other = getTreeElementDepar<KtObjectDeclaration>() ?: return
         val otherIdentifier = if (other.isCompanion()) (other.parent.parent as KtClass).nameIdentifier else other.nameIdentifier
         myMatchingVisitor.result = matchTextOrVariable(declaration.nameIdentifier, otherIdentifier)
                 && myMatchingVisitor.match(declaration.modifierList, other.modifierList)
@@ -409,16 +395,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     private fun getSingleExpression(expression: KtExpression?): KtExpression? {
-        return if(expression is KtBlockExpression && expression.statements.size == 1) {
+        return if (expression is KtBlockExpression && expression.statements.size == 1) {
             val firstStatement = expression.firstStatement
-            if(firstStatement is KtReturnExpression) {
+            if (firstStatement is KtReturnExpression) {
                 firstStatement.returnedExpression
             } else null
         } else expression
     }
 
     override fun visitNamedFunction(function: KtNamedFunction) {
-        val other = getTreeElement<KtNamedFunction>() ?: return
+        val other = getTreeElementDepar<KtNamedFunction>() ?: return
         val funExpr = getSingleExpression(function.bodyExpression)
         val othExpr = getSingleExpression(other.bodyExpression)
         myMatchingVisitor.result = matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
@@ -426,7 +412,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)
                 && matchTypeReferenceWithDeclaration(function.typeReference, other)
                 && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
-                && if(funExpr == null || othExpr == null) { // both bodies are not single expression
+                && if (funExpr == null || othExpr == null) { // both bodies are not single expression
             myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
         } else myMatchingVisitor.match(funExpr, othExpr)
         if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(function.nameIdentifier)) {
@@ -437,30 +423,30 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitElement(element: PsiElement) {
         when (element) {
             is LeafPsiElement -> {
-                val other = getTreeElement<LeafPsiElement>() ?: return
+                val other = getTreeElementDepar<LeafPsiElement>() ?: return
                 myMatchingVisitor.result = element.elementType.index == other.elementType.index
             }
             is KDoc -> {
-                val other = getTreeElement<KDoc>() ?: return
+                val other = getTreeElementDepar<KDoc>() ?: return
                 myMatchingVisitor.result = myMatchingVisitor.matchSequentially(
                     element.getChildrenOfType<KDocSection>(),
                     other.getChildrenOfType<KDocSection>()
                 )
             }
             is KDocSection -> {
-                val other = getTreeElement<KDocSection>() ?: return
+                val other = getTreeElementDepar<KDocSection>() ?: return
                 myMatchingVisitor.result = myMatchingVisitor.matchText(element, other)
             }
         }
     }
 
     override fun visitModifierList(list: KtModifierList) {
-        val other = getTreeElement<KtModifierList>() ?: return
+        val other = getTreeElementDepar<KtModifierList>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSons(list, other)
     }
 
     override fun visitIfExpression(expression: KtIfExpression) {
-        val other = getTreeElement<KtIfExpression>() ?: return
+        val other = getTreeElementDepar<KtIfExpression>() ?: return
         val elseBranch = expression.`else`
         myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
                 && myMatchingVisitor.match(expression.then, other.then)
@@ -468,79 +454,79 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitForExpression(expression: KtForExpression) {
-        val other = getTreeElement<KtForExpression>() ?: return
+        val other = getTreeElementDepar<KtForExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.loopParameter, other.loopParameter)
                 && myMatchingVisitor.match(expression.loopRange, other.loopRange)
                 && myMatchingVisitor.match(expression.body, other.body)
     }
 
     override fun visitWhileExpression(expression: KtWhileExpression) {
-        val other = getTreeElement<KtWhileExpression>() ?: return
+        val other = getTreeElementDepar<KtWhileExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
                 && myMatchingVisitor.match(expression.body, other.body)
     }
 
     override fun visitDoWhileExpression(expression: KtDoWhileExpression) {
-        val other = getTreeElement<KtDoWhileExpression>() ?: return
+        val other = getTreeElementDepar<KtDoWhileExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
                 && myMatchingVisitor.match(expression.body, other.body)
     }
 
     override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {
-        val other = getTreeElement<KtWhenConditionInRange>() ?: return
+        val other = getTreeElementDepar<KtWhenConditionInRange>() ?: return
         myMatchingVisitor.result = condition.isNegated == other.isNegated
                 && myMatchingVisitor.match(condition.rangeExpression, other.rangeExpression)
     }
 
     override fun visitWhenConditionIsPattern(condition: KtWhenConditionIsPattern) {
-        val other = getTreeElement<KtWhenConditionIsPattern>() ?: return
+        val other = getTreeElementDepar<KtWhenConditionIsPattern>() ?: return
         myMatchingVisitor.result = condition.isNegated == other.isNegated
                 && myMatchingVisitor.match(condition.typeReference, other.typeReference)
     }
 
     override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
-        val other = getTreeElement<KtWhenConditionWithExpression>() ?: return
+        val other = getTreeElementDepar<KtWhenConditionWithExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(condition.expression, other.expression)
     }
 
     override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
-        val other = getTreeElement<KtWhenEntry>() ?: return
+        val other = getTreeElementDepar<KtWhenEntry>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(jetWhenEntry.conditions, other.conditions)
                 && myMatchingVisitor.match(jetWhenEntry.expression, other.expression)
     }
 
     override fun visitWhenExpression(expression: KtWhenExpression) {
-        val other = getTreeElement<KtWhenExpression>() ?: return
+        val other = getTreeElementDepar<KtWhenExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.subjectExpression, other.subjectExpression)
                 && myMatchingVisitor.matchInAnyOrder(expression.entries, other.entries)
     }
 
     override fun visitFinallySection(finallySection: KtFinallySection) {
-        val other = getTreeElement<KtFinallySection>() ?: return
+        val other = getTreeElementDepar<KtFinallySection>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(finallySection.finalExpression, other.finalExpression)
     }
 
     override fun visitCatchSection(catchClause: KtCatchClause) {
-        val other = getTreeElement<KtCatchClause>() ?: return
+        val other = getTreeElementDepar<KtCatchClause>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(catchClause.parameterList, other.parameterList)
                 && myMatchingVisitor.match(catchClause.catchBody, other.catchBody)
     }
 
     override fun visitTryExpression(expression: KtTryExpression) {
-        val other = getTreeElement<KtTryExpression>() ?: return
+        val other = getTreeElementDepar<KtTryExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.tryBlock, other.tryBlock)
                 && myMatchingVisitor.matchInAnyOrder(expression.catchClauses, other.catchClauses)
                 && myMatchingVisitor.match(expression.finallyBlock, other.finallyBlock)
     }
 
     override fun visitTypeAlias(typeAlias: KtTypeAlias) {
-        val other = getTreeElement<KtTypeAlias>() ?: return
+        val other = getTreeElementDepar<KtTypeAlias>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(typeAlias.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(typeAlias.getTypeReference(), other.getTypeReference())
     }
 
     override fun visitConstructorCalleeExpression(constructorCalleeExpression: KtConstructorCalleeExpression) {
-        val other = getTreeElement<KtConstructorCalleeExpression>() ?: return
+        val other = getTreeElementDepar<KtConstructorCalleeExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(constructorCalleeExpression.typeReference, other.typeReference)
                 && myMatchingVisitor.match(
             constructorCalleeExpression.constructorReferenceExpression, other.constructorReferenceExpression
@@ -548,14 +534,14 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry) {
-        val other = getTreeElement<KtAnnotationEntry>() ?: return
+        val other = getTreeElementDepar<KtAnnotationEntry>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(annotationEntry.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(annotationEntry.typeArgumentList, other.typeArgumentList)
                 && matchValueArgumentList(annotationEntry.valueArgumentList?.arguments, other.valueArgumentList?.arguments)
     }
 
     override fun visitProperty(property: KtProperty) {
-        val other = getTreeElement<KtProperty>() ?: return
+        val other = getTreeElementDepar<KtProperty>() ?: return
         myMatchingVisitor.result = matchTypeReferenceWithDeclaration(property.typeReference, other)
                 && myMatchingVisitor.match(property.modifierList, other.modifierList)
                 && property.isVar == other.isVar
@@ -570,7 +556,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
-        val other = getTreeElement<KtStringTemplateExpression>() ?: return
+        val other = getTreeElementDepar<KtStringTemplateExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSequentially(expression.entries, other.entries)
     }
 
@@ -594,38 +580,38 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitBlockStringTemplateEntry(entry: KtBlockStringTemplateEntry) {
-        val other = getTreeElement<KtBlockStringTemplateEntry>() ?: return
+        val other = getTreeElementDepar<KtBlockStringTemplateEntry>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(entry.expression, other.expression)
     }
 
     override fun visitEscapeStringTemplateEntry(entry: KtEscapeStringTemplateEntry) {
-        val other = getTreeElement<KtEscapeStringTemplateEntry>() ?: return
+        val other = getTreeElementDepar<KtEscapeStringTemplateEntry>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(entry, other)
     }
 
     override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS) {
-        val other = getTreeElement<KtBinaryExpressionWithTypeRHS>() ?: return
+        val other = getTreeElementDepar<KtBinaryExpressionWithTypeRHS>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.operationReference, other.operationReference)
                 && myMatchingVisitor.match(expression.left, other.left)
                 && myMatchingVisitor.match(expression.right, other.right)
     }
 
     override fun visitIsExpression(expression: KtIsExpression) {
-        val other = getTreeElement<KtIsExpression>() ?: return
+        val other = getTreeElementDepar<KtIsExpression>() ?: return
         myMatchingVisitor.result = expression.isNegated == other.isNegated
                 && myMatchingVisitor.match(expression.leftHandSide, other.leftHandSide)
                 && myMatchingVisitor.match(expression.typeReference, other.typeReference)
     }
 
     override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
-        val other = getTreeElement<KtDestructuringDeclaration>() ?: return
+        val other = getTreeElementDepar<KtDestructuringDeclaration>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSequentially(destructuringDeclaration.entries, other.entries)
                 && myMatchingVisitor.match(destructuringDeclaration.initializer, other.initializer)
                 && myMatchingVisitor.match(destructuringDeclaration.docComment, other.docComment)
     }
 
     override fun visitDestructuringDeclarationEntry(multiDeclarationEntry: KtDestructuringDeclarationEntry) {
-        val other = getTreeElement<KtDestructuringDeclarationEntry>() ?: return
+        val other = getTreeElementDepar<KtDestructuringDeclarationEntry>() ?: return
         myMatchingVisitor.result = matchTypeReferenceWithDeclaration(multiDeclarationEntry.typeReference, other)
                 && myMatchingVisitor.match(multiDeclarationEntry.modifierList, other.modifierList)
                 && multiDeclarationEntry.isVar == other.isVar
@@ -633,10 +619,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitComment(comment: PsiComment) {
-        val other = getTreeElement<PsiComment>() ?: return
-
+        val other = getTreeElementDepar<PsiComment>() ?: return
         if (!myMatchingVisitor.setResult(comment.tokenType == other.tokenType)) return
-
         when (val handler = comment.getUserData(CompiledPattern.HANDLER_KEY)) {
             is LiteralWithSubstitutionHandler -> {
                 myMatchingVisitor.result = handler.match(comment, other, myMatchingVisitor.matchContext)
@@ -649,5 +633,4 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             }
         }
     }
-
 }

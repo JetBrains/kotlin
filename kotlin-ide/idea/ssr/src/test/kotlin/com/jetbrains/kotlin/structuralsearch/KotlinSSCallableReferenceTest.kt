@@ -6,4 +6,6 @@ class KotlinSSCallableReferenceTest : KotlinSSTest() {
     fun testCallableReference() { doTest("::'_") }
 
     fun testExtensionFun() { doTest("List<Int>::'_") }
+
+    fun testPropertyReference() { doTest("::'_.name") }
 }
