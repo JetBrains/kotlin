@@ -31,6 +31,7 @@ class JavaMapForEachInspection : AbstractApplicabilityBasedInspection<KtDotQuali
         val callExpression = element.callExpression ?: return false
         val calleeExpression = callExpression.calleeExpression ?: return false
         if (calleeExpression.text != "forEach") return false
+        if (callExpression.valueArguments.size != 1) return false
 
         val lambda = callExpression.lambda() ?: return false
         val lambdaParameters = lambda.valueParameters
