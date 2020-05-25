@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.intellij.formatting.InitialInfoBuilder.prepareToBuildBlocksSequentially;
 
@@ -169,7 +170,7 @@ public class FormatProcessor {
   }
 
   public IndentInfo getIndentAt(final int offset) {
-    LeafBlockWrapper current = processBlocksBefore(offset);
+    LeafBlockWrapper current = adjustAtLanguageBorder(processBlocksBefore(offset), offset);
     AbstractBlockWrapper parent = getParentFor(offset, current);
     if (parent == null) {
       final LeafBlockWrapper previousBlock = current.getPreviousBlock();
@@ -189,7 +190,21 @@ public class FormatProcessor {
     }
 
     IndentAdjuster adjuster = myWrapState.getIndentAdjuster();
-    return adjuster.adjustLineIndent(info);
+    return adjuster.adjustLineIndent(info, current);
+  }
+
+  private static @NotNull LeafBlockWrapper adjustAtLanguageBorder(@NotNull LeafBlockWrapper current, final int offset) {
+    if (!current.contains(offset)) {
+      final LeafBlockWrapper previousBlock = current.getPreviousBlock();
+      if (previousBlock != null && !previousBlock.contains(offset) &&
+          !Objects.equals(previousBlock.getLanguage(), current.getLanguage())) {
+        AbstractBlockWrapper prevParent = getParentFor(offset, (AbstractBlockWrapper)previousBlock);
+        if (prevParent != null && prevParent.getEndOffset() <= current.getStartOffset()) {
+          return previousBlock;
+        }
+      }
+    }
+    return current;
   }
 
   @Nullable
