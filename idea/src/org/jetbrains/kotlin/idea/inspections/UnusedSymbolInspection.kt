@@ -108,9 +108,9 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             this is KtNamedDeclaration && checkAnnotatedUsingPatterns(this, KOTLIN_ADDITIONAL_ANNOTATIONS)
 
         fun isEntryPoint(declaration: KtNamedDeclaration): Boolean =
-            isEntryPoint(declaration, isCheapEnoughToSearchUsages(declaration))
+            isEntryPoint(declaration, lazy(LazyThreadSafetyMode.NONE) { isCheapEnoughToSearchUsages(declaration) })
 
-        private fun isEntryPoint(declaration: KtNamedDeclaration, isCheapEnough: SearchCostResult): Boolean {
+        private fun isEntryPoint(declaration: KtNamedDeclaration, isCheapEnough: Lazy<SearchCostResult>): Boolean {
             if (declaration.hasKotlinAdditionalAnnotation()) return true
             if (declaration is KtClass && declaration.declarations.any { it.hasKotlinAdditionalAnnotation() }) return true
 
@@ -136,7 +136,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
             if (lightElement == null) return false
 
-            if (isCheapEnough == TOO_MANY_OCCURRENCES) return false
+            if (isCheapEnough.value == TOO_MANY_OCCURRENCES) return false
 
             return javaInspection.isEntryPoint(lightElement)
         }
@@ -275,7 +275,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             // More expensive, resolve-based checks
             val descriptor = declaration.resolveToDescriptorIfAny() ?: return
             if (descriptor is FunctionDescriptor && descriptor.isOperator) return
-            val isCheapEnough by lazy {
+            val isCheapEnough = lazy(LazyThreadSafetyMode.NONE) {
                 isCheapEnoughToSearchUsages(declaration)
             }
             if (isEntryPoint(declaration, isCheapEnough)) return
@@ -328,17 +328,17 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun hasNonTrivialUsages(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor? = null): Boolean {
-        val isCheapEnough by lazy { isCheapEnoughToSearchUsages(declaration) }
+        val isCheapEnough = lazy(LazyThreadSafetyMode.NONE) { isCheapEnoughToSearchUsages(declaration) }
         return hasNonTrivialUsages(declaration, isCheapEnough, descriptor)
     }
 
-    private fun hasNonTrivialUsages(declaration: KtNamedDeclaration, enoughToSearchUsages: SearchCostResult, descriptor: DeclarationDescriptor? = null): Boolean {
+    private fun hasNonTrivialUsages(declaration: KtNamedDeclaration, enoughToSearchUsages: Lazy<SearchCostResult>, descriptor: DeclarationDescriptor? = null): Boolean {
         val project = declaration.project
         val psiSearchHelper = PsiSearchHelper.getInstance(project)
 
         val useScope = psiSearchHelper.getUseScope(declaration)
         val restrictedScope = if (useScope is GlobalSearchScope) {
-            val zeroOccurrences = when (enoughToSearchUsages) {
+            val zeroOccurrences = when (enoughToSearchUsages.value) {
                 ZERO_OCCURRENCES -> true
                 FEW_OCCURRENCES -> false
                 TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used
