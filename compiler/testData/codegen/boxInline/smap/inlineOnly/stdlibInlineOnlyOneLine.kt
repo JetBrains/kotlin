@@ -26,5 +26,5 @@ _2Kt
 kotlin/jvm/internal/FakeKt
 *L
 1#1,9:1
-65100#2:10
+1#2:10
 *E
