@@ -95,7 +95,7 @@ public final class ProblemsView implements DumbAware, ToolWindowFactory {
     state.setShowToolbar(isToolbarVisible(window, PropertiesComponent.getInstance(project)));
     ContentManager manager = window.getContentManager();
     createContent(manager, new HighlightingPanel(project, state));
-    //TODO:createContent(manager, new ProjectProblemsViewPanel(project, state));
+    createContent(manager, new ProjectErrorsPanel(project, state));
     selectContent(manager, state.getSelectedIndex());
     selectionChanged(true, manager.getSelectedContent());
     manager.addContentManagerListener(new ContentManagerListener() {

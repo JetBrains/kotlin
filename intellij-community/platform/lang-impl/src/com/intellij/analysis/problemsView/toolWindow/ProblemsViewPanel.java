@@ -156,9 +156,10 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     myProject = project;
     myState = state;
 
+    myTreeModel.setComparator(createComparator());
+    myTreeModel.setFilter(createFilter());
     myTree = new Tree(new AsyncTreeModel(myTreeModel, this));
     myTree.setRootVisible(false);
-    myTree.setShowsRootHandles(false);
     myTree.getSelectionModel().setSelectionMode(SINGLE_TREE_SELECTION);
     myTree.addTreeSelectionListener(new RestoreSelectionListener());
     myTree.addTreeSelectionListener(event -> {
@@ -253,14 +254,16 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   }
 
   void selectionChangedTo(boolean selected) {
-    myTreeModel.setComparator(createComparator());
-    myTreeModel.setFilter(createFilter());
-    updatePreview(getSelectedDescriptor());
+    if (selected) {
+      myTreeModel.setComparator(createComparator());
+      myTreeModel.setFilter(createFilter());
+      updatePreview(getSelectedDescriptor());
 
-    ToolWindow window = ProblemsView.getToolWindow(getProject());
-    if (window instanceof ToolWindowEx) {
-      ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction("ProblemsView.ToolWindow.SecondaryActions");
-      ((ToolWindowEx)window).setAdditionalGearActions(group);
+      ToolWindow window = ProblemsView.getToolWindow(getProject());
+      if (window instanceof ToolWindowEx) {
+        ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction("ProblemsView.ToolWindow.SecondaryActions");
+        ((ToolWindowEx)window).setAdditionalGearActions(group);
+      }
     }
   }
 
@@ -319,14 +322,14 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     return new TreeVisitor.ByTreePath<>(node.getPath(), o -> o);
   }
 
-  Comparator<Node> createComparator() {
+  @NotNull Comparator<Node> createComparator() {
     return new NodeComparator(
       isNullableOrSelected(getSortFoldersFirst()),
       isNullableOrSelected(getSortBySeverity()),
       isNotNullAndSelected(getSortByName()));
   }
 
-  Predicate<Node> createFilter() {
+  @NotNull Predicate<Node> createFilter() {
     return new NodeFilter(
       isNullableOrSelected(getShowErrors()),
       isNotNullAndSelected(getShowWarnings()),

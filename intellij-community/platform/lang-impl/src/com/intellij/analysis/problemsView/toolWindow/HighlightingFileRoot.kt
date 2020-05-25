@@ -2,13 +2,14 @@
 package com.intellij.analysis.problemsView.toolWindow
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
+import com.intellij.lang.annotation.HighlightSeverity.INFORMATION
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 
 internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualFile) : Root(panel) {
 
   private val problems = FileProblems(file)
-  private val watcher = HighlightingWatcher(this, file, 0)
+  private val watcher = HighlightingWatcher(this, file, INFORMATION.myVal + 1)
 
   init {
     Disposer.register(this, watcher)

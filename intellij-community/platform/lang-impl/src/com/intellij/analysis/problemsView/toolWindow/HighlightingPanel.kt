@@ -8,18 +8,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.tree.TreeUtil.promiseSelectFirstLeaf
 
-internal class HighlightingPanel(project: Project, state: ProblemsViewState) : ProblemsViewPanel(project, state) {
+internal class HighlightingPanel(project: Project, state: ProblemsViewState)
+  : ProblemsViewPanel(project, state), FileEditorManagerListener {
 
   init {
-    project.messageBus.connect(this).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
-      override fun fileOpened(manager: FileEditorManager, file: VirtualFile) = updateCurrentFile()
-      override fun fileClosed(manager: FileEditorManager, file: VirtualFile) = updateCurrentFile()
-      override fun selectionChanged(event: FileEditorManagerEvent) = updateCurrentFile()
-    })
+    tree.showsRootHandles = false
+    project.messageBus.connect(this)
+      .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, this)
   }
 
   override fun getDisplayName() = ProblemsViewBundle.message("problems.view.highlighting")
-
   override fun getShowErrors(): Option? = null
   override fun getSortFoldersFirst(): Option? = null
   override fun getSortBySeverity(): Option? = null
@@ -31,9 +29,12 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState) : P
 
   fun selectHighlightInfo(info: HighlightInfo) {
     val root = treeModel.root as? HighlightingFileRoot
-    val node = root?.findProblemNode(info)
-    if (node != null) select(node)
+    root?.findProblemNode(info)?.let { select(it) }
   }
+
+  override fun fileOpened(manager: FileEditorManager, file: VirtualFile) = updateCurrentFile()
+  override fun fileClosed(manager: FileEditorManager, file: VirtualFile) = updateCurrentFile()
+  override fun selectionChanged(event: FileEditorManagerEvent) = updateCurrentFile()
 
   private fun updateCurrentFile() {
     val file = findCurrentFile()
