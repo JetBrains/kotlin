@@ -24,24 +24,17 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.*
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 fun String.parseCharacter(): Char? {
     // Strip the quotes
@@ -449,18 +442,6 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     }
                 }
             )
-        }
-    }
-}
-
-fun FirTypeRef.convertToArrayType(): FirUserTypeRef = buildUserTypeRef {
-    source = this@convertToArrayType.source
-    isMarkedNullable = false
-    qualifier += FirQualifierPartImpl(StandardClassIds.Array.shortClassName).apply {
-        typeArguments += buildTypeProjectionWithVariance {
-            source = this@convertToArrayType.source
-            typeRef = this@convertToArrayType
-            variance = Variance.OUT_VARIANCE
         }
     }
 }
