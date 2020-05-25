@@ -415,8 +415,9 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
 ) {
     val candidateExpectedType = candidateParameter?.let { argument.getExpectedType(it, callComponents.languageVersionSettings) }
 
+    val isReceiver = receiverInfo.isReceiver
     val conversionDataBeforeSubtyping =
-        if (candidateParameter == null || candidateExpectedType == null) {
+        if (isReceiver || candidateParameter == null || candidateExpectedType == null) {
             null
         } else {
             TypeConversions.performCompositeConversionBeforeSubtyping(
@@ -440,6 +441,7 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
 
     if (candidateExpectedType == null || // Nothing to convert
         convertedExpectedType != null || // Type is already converted
+        isReceiver || // Receivers don't participate in conversions
         conversionDataBeforeSubtyping?.wasConversion == true || // We tried to convert type but failed
         conversionDataBeforeSubtyping?.conversionDefinitelyNotNeeded == true ||
         csBuilder.hasContradiction
