@@ -9,6 +9,7 @@ import samples.Sample
 import samples.assertPrints
 import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.*
+import kotlin.test.assertTrue
 
 class Coroutines {
 
@@ -90,28 +91,27 @@ class Coroutines {
         assertPrints(receiver.result, "foo")
     }
 
-    /**
-     * Unfortunately, this class cannot be a local class in a function because of the companion object.
-     * However, the companion object is crucial for the idiomatic definition of a coroutine context element.
-     * Hence this class is included as a comment in sample [auth].
-     */
-    class AuthUser(val name: String) : AbstractCoroutineContextElement(AuthUser) {
-        companion object Key : CoroutineContext.Key<AuthUser>
-    }
-
     @Sample
     fun auth() {
-        /*
-         * Assume that we have defined the following class:
-         * class AuthUser(val name: String) : AbstractCoroutineContextElement(AuthUser) {
-         *     companion object Key : CoroutineContext.Key<AuthUser>
-         * }
-         */
-        val block: suspend () -> String = {
-            coroutineContext[AuthUser]?.name ?: throw SecurityException("unauthorized")
+        abstract class AuthElement(val name: String) : CoroutineContext.Element
+
+        val domainFoo = object : CoroutineContext.Key<AuthElement> {}
+        val domainBar = object : CoroutineContext.Key<AuthElement> {}
+
+        class AuthFoo(name: String) : AuthElement(name) {
+            override val key get() = domainFoo
         }
-        block.startCoroutine(Continuation(AuthUser("admin")) { result ->
-            assertPrints(result.getOrThrow(), "admin")
+
+        class AuthBar(name: String) : AuthElement(name) {
+            override val key get() = domainBar
+        }
+
+        val authorize: suspend () -> Boolean = {
+            listOf(domainFoo, domainBar).any { coroutineContext[it]?.name == "admin" }
+        }
+        val combinedAuth = AuthFoo("user") + AuthBar("admin")
+        authorize.startCoroutine(Continuation(combinedAuth) { isAuthorized ->
+            assertTrue(isAuthorized.getOrDefault(false))
         })
     }
 

@@ -10,8 +10,12 @@ import kotlin.coroutines.CoroutineContext.Key
 
 /**
  * Base class for [CoroutineContext.Element] implementations.
- *
- * @sample samples.coroutines.Coroutines.auth
+ * Example:
+ * ```
+ * class AuthUser(val name: String) : AbstractCoroutineContextElement(AuthUser) {
+ *     companion object Key : CoroutineContext.Key<AuthUser>
+ * }
+ * ```
  */
 @SinceKotlin("1.3")
 public abstract class AbstractCoroutineContextElement(public override val key: Key<*>) : Element
