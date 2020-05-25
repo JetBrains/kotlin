@@ -4,95 +4,117 @@ package com.intellij.openapi.externalSystem.service.remote
 import com.intellij.execution.rmi.RemoteObject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationEvent
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Disposer
-import com.intellij.util.containers.MultiMap
+import com.intellij.util.EventDispatcher
+import com.intellij.util.containers.DisposableWrapperList
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.TestOnly
+import java.util.concurrent.ConcurrentHashMap
 
 class ExternalSystemProgressNotificationManagerImpl : RemoteObject(), ExternalSystemProgressNotificationManager, RemoteExternalSystemProgressNotificationManager {
-  private val myListeners: MultiMap<Any, ExternalSystemTaskNotificationListener> = MultiMap.createConcurrentSet()
+  private val myListeners: ConcurrentHashMap<Any, EventDispatcher<ExternalSystemTaskNotificationListener>> = ConcurrentHashMap()
+
   override fun addNotificationListener(listener: ExternalSystemTaskNotificationListener): Boolean {
-    if (listener in myListeners[ALL_TASKS_KEY]) return false
-    myListeners.putValue(ALL_TASKS_KEY, listener)
-    return true
+    return addListener(ALL_TASKS_KEY, listener)
   }
 
-  override fun addNotificationListener(listener: ExternalSystemTaskNotificationListener,
-                                       parentDisposable: Disposable): Boolean {
-    Disposer.register(parentDisposable, Disposable { removeNotificationListener(listener) })
-    return addNotificationListener(listener)
+  override fun addNotificationListener(listener: ExternalSystemTaskNotificationListener, parentDisposable: Disposable): Boolean {
+    return addListener(ALL_TASKS_KEY, listener, parentDisposable)
   }
 
-  override fun addNotificationListener(taskId: ExternalSystemTaskId,
-                                       listener: ExternalSystemTaskNotificationListener): Boolean {
-    if (listener in myListeners[taskId]) return false
-    myListeners.putValue(taskId, listener)
-    return true
+  override fun addNotificationListener(taskId: ExternalSystemTaskId, listener: ExternalSystemTaskNotificationListener): Boolean {
+    return addListener(taskId, listener)
   }
 
   override fun removeNotificationListener(listener: ExternalSystemTaskNotificationListener): Boolean {
-    var removed = false
-    myListeners.entrySet().forEach { removed = removed or it.value.remove(listener) }
-    return removed
+    synchronized(myListeners) {
+      var removed = false
+      for ((taskId, dispatcher) in myListeners) {
+        removed = removed or dispatcher.listeners.remove(listener)
+        if (!dispatcher.hasListeners()) {
+          myListeners.remove(taskId)
+        }
+      }
+      return removed
+    }
   }
 
   override fun onStart(id: ExternalSystemTaskId, workingDir: String) {
-    forEachListenerSafe(id) { it.onStart(id, workingDir) }
+    forEachListener(id) { it.onStart(id, workingDir) }
   }
 
   override fun onStatusChange(event: ExternalSystemTaskNotificationEvent) {
-    forEachListenerSafe(event.id) { it.onStatusChange(event) }
+    forEachListener(event.id) { it.onStatusChange(event) }
   }
 
   override fun onTaskOutput(id: ExternalSystemTaskId, text: String, stdOut: Boolean) {
-    forEachListenerSafe(id) { it.onTaskOutput(id, text, stdOut) }
+    forEachListener(id) { it.onTaskOutput(id, text, stdOut) }
   }
 
   override fun onEnd(id: ExternalSystemTaskId) {
-    forEachListenerSafe(id) { it.onEnd(id) }
-    myListeners.remove(id)
+    try {
+      forEachListener(id) { it.onEnd(id) }
+    }
+    finally {
+      synchronized(myListeners) {
+        myListeners[id]?.listeners?.clear()
+        myListeners.remove(id)
+      }
+    }
   }
 
   override fun onSuccess(id: ExternalSystemTaskId) {
-    forEachListenerSafe(id) { it.onSuccess(id) }
+    forEachListener(id) { it.onSuccess(id) }
   }
 
   override fun onFailure(id: ExternalSystemTaskId, e: Exception) {
-    forEachListenerSafe(id) { it.onFailure(id, e) }
+    forEachListener(id) { it.onFailure(id, e) }
   }
 
   override fun beforeCancel(id: ExternalSystemTaskId) {
-    forEachListenerSafe(id) { it.beforeCancel(id) }
+    forEachListener(id) { it.beforeCancel(id) }
   }
 
   override fun onCancel(id: ExternalSystemTaskId) {
-    forEachListenerSafe(id) { it.onCancel(id) }
+    forEachListener(id) { it.onCancel(id) }
   }
 
-  private fun forEachListenerSafe(taskId: ExternalSystemTaskId, action: (ExternalSystemTaskNotificationListener) -> Unit) {
-    val listeners = myListeners[taskId].asSequence() + myListeners[ALL_TASKS_KEY].asSequence()
-    for (listener in listeners) {
-      try {
-        action.invoke(listener)
+  private fun addListener(tasksKey: Any, listener: ExternalSystemTaskNotificationListener, parentDisposable: Disposable? = null): Boolean {
+    synchronized(myListeners) {
+      val dispatcher = myListeners[tasksKey]
+      if (dispatcher != null && listener in dispatcher.listeners) return false
+      myListeners.computeIfAbsent(tasksKey) {
+        EventDispatcher.create(ExternalSystemTaskNotificationListener::class.java)
+      }.apply {
+        if (parentDisposable == null) {
+          addListener(listener)
+        }
+        else {
+          val disposable = (listeners as DisposableWrapperList).add(listener, parentDisposable)
+          Disposer.register(disposable, Disposable {
+            synchronized(myListeners) {
+              if (listeners.size == 1) {
+                myListeners.remove(tasksKey)
+              }
+            }
+          })
+        }
       }
-      catch (e: ProcessCanceledException) {
-        throw e
-      }
-      catch (e: java.lang.Exception) {
-        LOG.error(e)
-      }
+      return true
     }
+  }
+
+  private fun forEachListener(taskId: ExternalSystemTaskId, action: (ExternalSystemTaskNotificationListener) -> Unit) {
+    myListeners[taskId]?.multicaster?.run { action(this) }
+    myListeners[ALL_TASKS_KEY]?.multicaster?.run { action(this) }
     ExternalSystemTaskNotificationListener.EP_NAME.forEachExtensionSafe(action::invoke)
   }
 
   companion object {
-    private val LOG = logger<ExternalSystemProgressNotificationManagerImpl>()
     private val ALL_TASKS_KEY = Any()
 
     @JvmStatic
@@ -106,11 +128,12 @@ class ExternalSystemProgressNotificationManagerImpl : RemoteObject(), ExternalSy
     @ApiStatus.Internal
     fun assertListenersReleased(taskId: Any? = null) {
       val listeners = getInstanceImpl().myListeners
-      if (taskId == null && !listeners.isEmpty) {
-        throw AssertionError("Leaked listeners: $listeners")
+      if (taskId == null && listeners.isNotEmpty()) {
+        val listenersMap = listeners.mapValues { it.value.listeners }
+        throw AssertionError("Leaked listeners: $listenersMap")
       }
-      if (taskId != null && listeners.get(taskId).isNotEmpty()) {
-        throw AssertionError("Leaked listeners for task '$taskId': ${listeners.get(taskId)}")
+      if (taskId != null && listeners[taskId]?.hasListeners() == true) {
+        throw AssertionError("Leaked listeners for task '$taskId': ${listeners[taskId]?.listeners}")
       }
     }
   }
