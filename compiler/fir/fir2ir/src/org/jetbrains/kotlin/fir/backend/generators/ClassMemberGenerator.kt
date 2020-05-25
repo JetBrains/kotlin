@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -73,9 +74,20 @@ internal class ClassMemberGenerator(
                 processedCallableNames += DataClassMembersGenerator(components).generateDataClassMembers(klass, irClass)
             }
             with(fakeOverrideGenerator) { irClass.addFakeOverrides(klass, processedCallableNames) }
-            klass.declarations.forEach {
-                if (it !is FirTypeAlias && (it !is FirConstructor || !it.isPrimary)) {
-                    it.accept(visitor, null)
+            klass.declarations.forEach { declaration ->
+                when {
+                    declaration is FirTypeAlias -> {
+                    }
+                    declaration is FirConstructor && declaration.isPrimary -> {
+                    }
+                    declaration is FirRegularClass && declaration.visibility == Visibilities.LOCAL -> {
+                        val irNestedClass = classifierStorage.getCachedIrClass(declaration)!!
+                        irNestedClass.parent = irClass
+                        conversionScope.withParent(irNestedClass) {
+                            convertClassContent(irNestedClass, declaration)
+                        }
+                    }
+                    else -> declaration.accept(visitor, null)
                 }
             }
             annotationGenerator.generate(irClass, klass)
