@@ -10,7 +10,6 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.perf.util.DefaultProfile
 import org.jetbrains.kotlin.idea.perf.util.PerformanceSuite
 import org.jetbrains.kotlin.idea.perf.util.PerformanceSuite.TypingConfig
-import org.jetbrains.kotlin.idea.perf.util.ProjectProfile
 import org.jetbrains.kotlin.idea.perf.util.suite
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
@@ -26,7 +25,7 @@ class PerformanceStressTest : UsefulTestCase() {
 
         suite(
             suiteName = "Lots of overloaded method project",
-            config = PerformanceSuite.StatsScopeConfig(name = "kt-35135 project", warmup = 8, iterations = 15)
+            config = PerformanceSuite.StatsScopeConfig(name = "kt-35135 project")
         ) {
             app {
                 warmUpProject()
@@ -75,6 +74,11 @@ class PerformanceStressTest : UsefulTestCase() {
                             insertString = "override fun foo(): String = TODO()",
                             delayMs = 50
                         )
+
+                        with(config) {
+                            warmup = 8
+                            iterations = 15
+                        }
 
                         measure<List<HighlightInfo>>("type override fun foo()", fixture = fixture) {
                             before = {
