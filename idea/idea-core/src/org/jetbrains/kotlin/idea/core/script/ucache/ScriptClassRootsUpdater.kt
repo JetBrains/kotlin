@@ -133,11 +133,12 @@ class ScriptClassRootsUpdater(
     private val syncLock = ReentrantLock()
     private var scheduledUpdate: ProgressIndicator? = null
 
+    @Suppress("IncorrectParentDisposable")
     @Synchronized
     private fun ensureUpdateScheduled() {
         scheduledUpdate?.cancel()
         runReadAction {
-            if (project.isDisposed && !Disposer.isDisposing(project)) {
+            if (!Disposer.isDisposing(project)) {
                 scheduledUpdate = BackgroundTaskUtil.executeOnPooledThread(project) {
                     doUpdate()
                 }
