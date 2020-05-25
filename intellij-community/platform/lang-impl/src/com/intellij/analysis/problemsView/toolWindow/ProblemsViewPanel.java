@@ -4,6 +4,7 @@ package com.intellij.analysis.problemsView.toolWindow;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -43,6 +44,7 @@ import static com.intellij.util.OpenSourceUtil.navigate;
 import static javax.swing.tree.TreeSelectionModel.SINGLE_TREE_SELECTION;
 
 abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable, DataProvider {
+  private static final Logger LOG = Logger.getInstance(ProblemsViewPanel.class);
   private final Project myProject;
   private final ProblemsViewState myState;
   private final ProblemsTreeModel myTreeModel = new ProblemsTreeModel(this);
@@ -270,7 +272,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   }
 
   private @Nullable OpenFileDescriptor getDescriptor(@NotNull FileNode node) {
-    return getDescriptor(node.getFile(), 0);
+    return getDescriptor(node.getFile(), -1);
   }
 
   private @Nullable OpenFileDescriptor getDescriptor(@NotNull ProblemNode node) {
@@ -279,7 +281,12 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
 
   private @Nullable OpenFileDescriptor getDescriptor(@NotNull VirtualFile file, int offset) {
     Document document = ProblemsView.getDocument(getProject(), file);
-    return document == null ? null : new OpenFileDescriptor(getProject(), file, offset);
+    if (document == null) return null;
+    if (offset < 0) return new OpenFileDescriptor(getProject(), file);
+    int length = document.getTextLength();
+    if (offset <= length) return new OpenFileDescriptor(getProject(), file, offset);
+    LOG.warn("offset is bigger then document length: " + file);
+    return new OpenFileDescriptor(getProject(), file, length);
   }
 
   private void updateAutoscroll(@Nullable OpenFileDescriptor descriptor) {
