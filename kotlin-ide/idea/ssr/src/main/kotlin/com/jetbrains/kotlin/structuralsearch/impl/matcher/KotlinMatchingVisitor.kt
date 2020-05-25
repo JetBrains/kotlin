@@ -179,25 +179,20 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-        val other = myMatchingVisitor.element
-
-        // Regular matching
-        if (other is KtDotQualifiedExpression) {
-            visitQualifiedExpression(expression)
-            return
+        val other = getTreeElementDepar<KtExpression>() ?: return
+        if (other is KtDotQualifiedExpression) { // Regular matching
+            myMatchingVisitor.result = myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
+                    && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
+        } else { // Match '_?.'_
+            val handler = myMatchingVisitor.matchContext.pattern.getHandler(expression.receiverExpression)
+            myMatchingVisitor.result = handler is SubstitutionHandler
+                    && handler.minOccurs == 0
+                    && other.parent !is KtDotQualifiedExpression
+                    && other.parent !is KtReferenceExpression
+                    && myMatchingVisitor.match(expression.selectorExpression, other)
         }
-
-        val context = myMatchingVisitor.matchContext
-        val pattern = context.pattern
-        val handler = pattern.getHandler(expression.receiverExpression)
-
-        // Match "'_?.'_"-like patterns
-        myMatchingVisitor.result = handler is SubstitutionHandler
-                && handler.minOccurs == 0
-                && other.parent !is KtDotQualifiedExpression
-                && other.parent !is KtReferenceExpression
-                && myMatchingVisitor.match(expression.selectorExpression, other)
     }
+
 
     override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
         val other = getTreeElementDepar<KtLambdaExpression>() ?: return
@@ -578,6 +573,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             else -> false
         }
     }
+
+
 
     override fun visitBlockStringTemplateEntry(entry: KtBlockStringTemplateEntry) {
         val other = getTreeElementDepar<KtBlockStringTemplateEntry>() ?: return
