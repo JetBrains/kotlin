@@ -1,4 +1,6 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <xi:include href="ide-frontend-independent.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.projectConfigurator" interface="org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator"/>
@@ -18,8 +20,7 @@
             <with attribute="implementationClass" implements="org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider"/>
         </extensionPoint>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.binaryExtension"
-                        interface="org.jetbrains.kotlin.idea.util.KotlinBinaryExtension"/>
+
         <extensionPoint qualifiedName="org.jetbrains.kotlin.facetValidatorCreator"
                         interface="org.jetbrains.kotlin.idea.facet.KotlinFacetValidatorCreator"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.clearBuildState"
@@ -28,8 +29,6 @@
                         interface="org.jetbrains.kotlin.idea.actions.NewKotlinFileHook"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.completionExtension"
                         interface="org.jetbrains.kotlin.idea.completion.KotlinCompletionExtension"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.buildSystemTypeDetector"
-                        interface="org.jetbrains.kotlin.idea.configuration.BuildSystemTypeDetector"/>
 
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptAdditionalIdeaDependenciesProvider"

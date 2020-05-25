@@ -1,0 +1,9 @@
+<idea-plugin>
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.beforeResolveHighlightingVisitor"
+                    interface="org.jetbrains.kotlin.idea.highlighter.BeforeResolveHighlightingExtension"/>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.binaryExtension" interface="org.jetbrains.kotlin.idea.util.KotlinBinaryExtension"/>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.buildSystemTypeDetector"
+                    interface="org.jetbrains.kotlin.idea.configuration.BuildSystemTypeDetector"/>
+  </extensionPoints>
+</idea-plugin>
