@@ -73,8 +73,8 @@ class ScriptClassRootsBuilder(
     }
 
     companion object {
-        fun fromStorage(storage: ScriptClassRootsStorage) = ScriptClassRootsBuilder(
-            storage.project,
+        fun fromStorage(project: Project, storage: ScriptClassRootsStorage) = ScriptClassRootsBuilder(
+            project,
             storage.classpath.toMutableSet(),
             storage.sources.toMutableSet(),
         ).also {
