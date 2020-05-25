@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonFunction
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunction
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunction
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirFunctionFactory
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 
 class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirFunction>(cache) {
     private val annotations = AnnotationsCommonizer()
@@ -16,25 +16,27 @@ class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropert
     private var hasStableParameterNames = true
     private var hasSynthesizedParameterNames = false
 
-    override fun commonizationResult() = CirCommonFunction(
+    override fun commonizationResult() = CirFunctionFactory.create(
         annotations = annotations.result,
         name = name,
-        modality = modality.result,
+        typeParameters = typeParameters.result,
         visibility = visibility.result,
+        modality = modality.result,
+        containingClassDetails = null,
+        valueParameters = valueParameters.result,
+        hasStableParameterNames = hasStableParameterNames,
+        hasSynthesizedParameterNames = hasSynthesizedParameterNames,
+        isExternal = false,
         extensionReceiver = extensionReceiver.result,
         returnType = returnType.result,
         kind = kind,
-        modifiers = modifiers.result,
-        valueParameters = valueParameters.result,
-        typeParameters = typeParameters.result,
-        hasStableParameterNames = hasStableParameterNames,
-        hasSynthesizedParameterNames = hasSynthesizedParameterNames
+        modifiers = modifiers.result
     )
 
     override fun doCommonizeWith(next: CirFunction): Boolean {
         val result = super.doCommonizeWith(next)
                 && annotations.commonizeWith(next.annotations)
-                && modifiers.commonizeWith(next)
+                && modifiers.commonizeWith(next.modifiers)
                 && valueParameters.commonizeWith(next.valueParameters)
 
         if (result) {

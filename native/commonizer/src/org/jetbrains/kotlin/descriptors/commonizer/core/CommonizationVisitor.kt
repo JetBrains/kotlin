@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.fqNameWithTypeParameters
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 
 internal class CommonizationVisitor(
@@ -57,7 +59,7 @@ internal class CommonizationVisitor(
     }
 
     override fun visitClassNode(node: CirClassNode, data: Unit) {
-        val commonClass = node.common() as CirCommonClass? // commonize class
+        val commonClass = node.common() // commonized class
 
         node.constructors.forEach { constructor ->
             constructor.accept(this, Unit)
@@ -99,7 +101,7 @@ internal class CommonizationVisitor(
             for ((_, supertypesGroup) in supertypesMap) {
                 val commonSupertype = commonize(supertypesGroup.toList(), TypeCommonizer(root.cache))
                 if (commonSupertype != null)
-                    commonClass.supertypes += commonSupertype
+                    commonClass.supertypes.add(commonSupertype)
             }
         }
     }

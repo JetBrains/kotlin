@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.junit.Test
-import kotlin.test.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 abstract class AbstractCommonizerTest<T, R> {
 

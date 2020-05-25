@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestFunctionModifiers.Companion.areEqual
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionModifiers
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionModifiers
 import org.junit.Test
 
 class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifiers, CirFunctionModifiers>() {
@@ -162,22 +161,20 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
     )
 
     override fun createCommonizer() = FunctionModifiersCommonizer()
-    override fun isEqual(a: CirFunctionModifiers?, b: CirFunctionModifiers?) = (a === b) || (a != null && b != null && areEqual(a, b))
 }
 
-private typealias mockFunctionModifiers = CirTestFunctionModifiers
-
-private data class CirTestFunctionModifiers(
-    override val isOperator: Boolean = false,
-    override val isInfix: Boolean = false,
-    override val isInline: Boolean = false,
-    override val isTailrec: Boolean = false,
-    override val isSuspend: Boolean = false,
-    override val isExternal: Boolean = false
-) : CirFunctionModifiers {
-    companion object {
-        fun areEqual(a: CirFunctionModifiers, b: CirFunctionModifiers) =
-            a.isOperator == b.isOperator && a.isInfix == b.isInfix && a.isInline == b.isInline
-                    && a.isTailrec == b.isTailrec && a.isSuspend == b.isSuspend && a.isExternal == b.isExternal
-    }
-}
+private fun mockFunctionModifiers(
+    isOperator: Boolean = false,
+    isInfix: Boolean = false,
+    isInline: Boolean = false,
+    isTailrec: Boolean = false,
+    isSuspend: Boolean = false,
+    isExternal: Boolean = false
+) = CirFunctionModifiers(
+    isOperator = isOperator,
+    isInfix = isInfix,
+    isInline = isInline,
+    isTailrec = isTailrec,
+    isSuspend = isSuspend,
+    isExternal = isExternal
+)

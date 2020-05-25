@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionModifiers
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionModifiers
 
 class FunctionModifiersCommonizer : Commonizer<CirFunctionModifiers, CirFunctionModifiers> {
-    private var modifiers: CirFunctionModifiersImpl? = null
+    private var modifiers: CirFunctionModifiers? = null
     private var error = false
 
     override val result: CirFunctionModifiers
@@ -20,7 +20,7 @@ class FunctionModifiersCommonizer : Commonizer<CirFunctionModifiers, CirFunction
 
         val modifiers = modifiers
         if (modifiers == null)
-            this.modifiers = CirFunctionModifiersImpl(next)
+            this.modifiers = next.copy() // TODO: inline?
         else {
             if (modifiers.isSuspend != next.isSuspend)
                 error = true
@@ -34,23 +34,5 @@ class FunctionModifiersCommonizer : Commonizer<CirFunctionModifiers, CirFunction
         }
 
         return !error
-    }
-
-    private data class CirFunctionModifiersImpl(
-        override var isOperator: Boolean,
-        override var isInfix: Boolean,
-        override var isInline: Boolean,
-        override var isTailrec: Boolean,
-        override var isSuspend: Boolean,
-        override var isExternal: Boolean
-    ) : CirFunctionModifiers {
-        constructor(function: CirFunctionModifiers) : this(
-            function.isOperator,
-            function.isInfix,
-            function.isInline,
-            function.isTailrec,
-            function.isSuspend,
-            function.isExternal
-        )
     }
 }

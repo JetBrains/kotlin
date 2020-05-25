@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirDeclarationWithVisibility
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclarationWithVisibility
 import org.junit.Test
 
 class EqualizingVisibilityCommonizerTest : AbstractCommonizerTest<CirDeclarationWithVisibility, Visibility>() {

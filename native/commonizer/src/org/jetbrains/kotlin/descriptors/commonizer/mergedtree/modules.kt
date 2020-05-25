@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirModuleNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildModuleNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope

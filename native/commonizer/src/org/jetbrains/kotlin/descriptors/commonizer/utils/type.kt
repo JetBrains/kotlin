@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import kotlin.collections.HashSet
 
 internal inline val KotlinType.declarationDescriptor: ClassifierDescriptor
     get() = (constructor.declarationDescriptor ?: error("No declaration descriptor found for $constructor"))

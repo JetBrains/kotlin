@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSimpleTypeKind.Companion.areCompatible
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind.Companion.areCompatible
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.cirSimpleTypeKind
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.descriptors.commonizer.utils.resolveClassOrTypeAliasByFqName
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -160,7 +161,7 @@ internal fun findClassOrTypeAlias(
 }
 
 private fun checkClassifier(classifier: ClassifierDescriptor, kind: CirSimpleTypeKind, strict: Boolean) {
-    val classifierKind = CirSimpleTypeKind.determineKind(classifier)
+    val classifierKind = classifier.cirSimpleTypeKind
 
     if (strict) {
         check(kind == classifierKind) {

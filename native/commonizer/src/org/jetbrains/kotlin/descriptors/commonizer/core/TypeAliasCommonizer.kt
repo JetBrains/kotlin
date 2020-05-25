@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAlias
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 import org.jetbrains.kotlin.name.Name
 
 class TypeAliasCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirClass>() {
@@ -15,15 +19,20 @@ class TypeAliasCommonizer(cache: CirClassifiersCache) : AbstractStandardCommoniz
     private val underlyingType = TypeCommonizer(cache)
     private val visibility = VisibilityCommonizer.lowering(allowPrivate = true)
 
-    override fun commonizationResult() = CirCommonClass(
+    override fun commonizationResult() = CirClassFactory.create(
+        annotations = emptyList(),
         name = name,
         typeParameters = emptyList(),
-        kind = ClassKind.CLASS,
-        modality = Modality.FINAL,
         visibility = visibility.result,
+        modality = Modality.FINAL,
+        kind = ClassKind.CLASS,
+        companion = null,
         isCompanion = false,
+        isData = false,
         isInline = false,
-        isInner = false
+        isInner = false,
+        isExternal = false,
+        supertypes = mutableListOf()
     )
 
     override fun initialize(first: CirTypeAlias) {

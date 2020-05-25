@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.ClassifiersCacheImpl
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildClassNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildTypeAliasNode
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.ClassifiersCacheImpl
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildClassNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockTAType
@@ -412,8 +413,8 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         prepareCache(variants)
 
         doTestSuccess(
-            expected = CirType.create(expected),
-            variants = *variants.map(CirType.Companion::create).toTypedArray()
+            expected = CirTypeFactory.create(expected),
+            variants = variants.map(CirTypeFactory::create).toTypedArray()
         )
     }
 
@@ -421,7 +422,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         prepareCache(variants)
 
         doTestFailure(
-            variants = *variants.map(CirType.Companion::create).toTypedArray(),
+            variants = variants.map(CirTypeFactory::create).toTypedArray(),
             shouldFailOnFirstVariant = shouldFailOnFirstVariant
         )
     }

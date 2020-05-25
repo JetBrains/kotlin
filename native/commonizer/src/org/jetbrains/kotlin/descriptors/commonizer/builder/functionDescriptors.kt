@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunction
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunction
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirFunctionNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 
@@ -52,12 +52,12 @@ private fun CirFunction.buildDescriptor(
         SourceElement.NO_SOURCE
     )
 
-    functionDescriptor.isOperator = isOperator
-    functionDescriptor.isInfix = isInfix
-    functionDescriptor.isInline = isInline
-    functionDescriptor.isTailrec = isTailrec
-    functionDescriptor.isSuspend = isSuspend
-    functionDescriptor.isExternal = isExternal
+    functionDescriptor.isOperator = modifiers.isOperator
+    functionDescriptor.isInfix = modifiers.isInfix
+    functionDescriptor.isInline = modifiers.isInline
+    functionDescriptor.isTailrec = modifiers.isTailrec
+    functionDescriptor.isSuspend = modifiers.isSuspend
+    functionDescriptor.isExternal = modifiers.isExternal
 
     functionDescriptor.isExpect = isExpect
     functionDescriptor.isActual = isActual

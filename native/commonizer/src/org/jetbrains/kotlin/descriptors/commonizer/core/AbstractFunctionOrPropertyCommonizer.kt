@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionOrProperty
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.isNonAbstractMemberInInterface
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
+import org.jetbrains.kotlin.descriptors.commonizer.cir.isNonAbstractMemberInInterface
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
@@ -32,7 +32,7 @@ abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
     override fun doCommonizeWith(next: T): Boolean =
         !next.isNonAbstractMemberInInterface() // non-abstract callable members declared in interface can't be commonized
                 && next.kind != DELEGATION // delegated members should not be commonized
-                && (next.kind != SYNTHESIZED || next.containingClassIsData != true) // synthesized members of data classes should not be commonized
+                && (next.kind != SYNTHESIZED || next.containingClassDetails?.isData != true) // synthesized members of data classes should not be commonized
                 && kind == next.kind
                 && modality.commonizeWith(next.modality)
                 && visibility.commonizeWith(next)

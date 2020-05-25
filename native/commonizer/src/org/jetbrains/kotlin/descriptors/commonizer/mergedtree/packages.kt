@@ -9,9 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirPackageNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildPackageNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.FqName

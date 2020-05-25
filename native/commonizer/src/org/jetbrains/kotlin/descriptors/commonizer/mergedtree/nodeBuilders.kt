@@ -1,14 +1,17 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
+package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.ClassifiersCacheImpl
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.ClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
@@ -25,7 +28,7 @@ internal fun buildRootNode(
 ): CirRootNode = buildNode(
     storageManager = storageManager,
     descriptors = targetProviders,
-    targetDeclarationProducer = { CirRoot(it.target, it.builtInsClass.name, it.builtInsProvider) },
+    targetDeclarationProducer = { CirRootFactory.create(it.target, it.builtInsClass.name, it.builtInsProvider) },
     commonValueProducer = { commonize(it, RootCommonizer()) },
     recursionMarker = null,
     nodeProducer = ::CirRootNode
@@ -37,7 +40,7 @@ internal fun buildModuleNode(
 ): CirModuleNode = buildNode(
     storageManager = storageManager,
     descriptors = modules,
-    targetDeclarationProducer = ::CirModule,
+    targetDeclarationProducer = CirModuleFactory::create,
     commonValueProducer = { commonize(it, ModuleCommonizer()) },
     recursionMarker = null,
     nodeProducer = ::CirModuleNode
@@ -51,8 +54,8 @@ internal fun buildPackageNode(
 ): CirPackageNode = buildNode(
     storageManager = storageManager,
     descriptors = packageMemberScopes,
-    targetDeclarationProducer = { CirPackage(packageFqName) },
-    commonValueProducer = { CirPackage(packageFqName) },
+    targetDeclarationProducer = { CirPackageFactory.create(packageFqName) },
+    commonValueProducer = { CirPackageFactory.create(packageFqName) },
     recursionMarker = null,
     nodeProducer = ::CirPackageNode
 ).also { node ->
@@ -68,7 +71,7 @@ internal fun buildPropertyNode(
 ): CirPropertyNode = buildNode(
     storageManager = storageManager,
     descriptors = properties,
-    targetDeclarationProducer = ::CirPropertyImpl,
+    targetDeclarationProducer = CirPropertyFactory::create,
     commonValueProducer = { commonize(containingDeclarationCommon, it, PropertyCommonizer(cache)) },
     recursionMarker = null,
     nodeProducer = ::CirPropertyNode
@@ -82,7 +85,7 @@ internal fun buildFunctionNode(
 ): CirFunctionNode = buildNode(
     storageManager = storageManager,
     descriptors = functions,
-    targetDeclarationProducer = ::CirFunctionImpl,
+    targetDeclarationProducer = CirFunctionFactory::create,
     commonValueProducer = { commonize(containingDeclarationCommon, it, FunctionCommonizer(cache)) },
     recursionMarker = null,
     nodeProducer = ::CirFunctionNode
@@ -96,7 +99,7 @@ internal fun buildClassNode(
 ): CirClassNode = buildNode(
     storageManager = storageManager,
     descriptors = classes,
-    targetDeclarationProducer = ::CirClassImpl,
+    targetDeclarationProducer = CirClassFactory::create,
     commonValueProducer = { commonize(containingDeclarationCommon, it, ClassCommonizer(cacheRW)) },
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = ::CirClassNode
@@ -115,7 +118,7 @@ internal fun buildClassConstructorNode(
 ): CirClassConstructorNode = buildNode(
     storageManager = storageManager,
     descriptors = constructors,
-    targetDeclarationProducer = ::CirClassConstructorImpl,
+    targetDeclarationProducer = CirClassConstructorFactory::create,
     commonValueProducer = { commonize(containingDeclarationCommon, it, ClassConstructorCommonizer(cache)) },
     recursionMarker = null,
     nodeProducer = ::CirClassConstructorNode
@@ -128,7 +131,7 @@ internal fun buildTypeAliasNode(
 ): CirTypeAliasNode = buildNode(
     storageManager = storageManager,
     descriptors = typeAliases,
-    targetDeclarationProducer = ::CirTypeAliasImpl,
+    targetDeclarationProducer = CirTypeAliasFactory::create,
     commonValueProducer = { commonize(it, TypeAliasCommonizer(cacheRW)) },
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = ::CirTypeAliasNode

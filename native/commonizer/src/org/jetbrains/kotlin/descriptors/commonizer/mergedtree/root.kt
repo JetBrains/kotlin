@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name

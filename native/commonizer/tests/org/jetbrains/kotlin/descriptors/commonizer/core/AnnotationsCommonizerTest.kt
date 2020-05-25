@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirAnnotationFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -279,17 +280,13 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
     )
 
     override fun createCommonizer() = AnnotationsCommonizer()
-
-    override fun isEqual(a: List<CirAnnotation>?, b: List<CirAnnotation>?): Boolean {
-        return super.isEqual(a, b)
-    }
 }
 
 private fun mockAnnotation(
     fqName: String,
     constantValueArguments: Map<Name, ConstantValue<*>> = emptyMap(),
     annotationValueArguments: Map<Name, CirAnnotation> = emptyMap()
-): CirAnnotation = CirAnnotation.create(
+): CirAnnotation = CirAnnotationFactory.create(
     fqName = FqName(fqName),
     constantValueArguments = constantValueArguments,
     annotationValueArguments = annotationValueArguments

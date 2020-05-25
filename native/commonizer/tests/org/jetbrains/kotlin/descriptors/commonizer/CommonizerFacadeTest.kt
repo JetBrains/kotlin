@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import kotlin.test.*
-import org.junit.Test
 import org.jetbrains.kotlin.descriptors.commonizer.AbstractCommonizationFromSourcesTest.Companion.eachModuleAsTarget
 import org.jetbrains.kotlin.descriptors.commonizer.utils.assertCommonizationPerformed
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockEmptyModule
+import org.junit.Test
 import kotlin.contracts.ExperimentalContracts
+import kotlin.test.assertEquals
 
 @ExperimentalContracts
 class CommonizerFacadeTest {

@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.core.Commonizer
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.fqNameWithTypeParameters
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isBlacklistedDarwinFunction
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isDeprecatedTopLevelFunction
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isKniBridgeFunction
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 

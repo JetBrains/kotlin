@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
 import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
 import org.jetbrains.kotlin.descriptors.commonizer.OutputTarget
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRoot
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirRootFactory
 
 class RootCommonizer : AbstractStandardCommonizer<CirRoot, CirRoot>() {
     private val inputTargets = mutableSetOf<InputTarget>()
     private var konanBuiltInsProvider: BuiltInsProvider? = null
 
-    override fun commonizationResult() = CirRoot(
+    override fun commonizationResult() = CirRootFactory.create(
         target = OutputTarget(inputTargets),
         builtInsClass = if (konanBuiltInsProvider != null) KonanBuiltIns::class.java.name else DefaultBuiltIns::class.java.name,
         builtInsProvider = konanBuiltInsProvider ?: BuiltInsProvider.wrap(DefaultBuiltIns.Instance)

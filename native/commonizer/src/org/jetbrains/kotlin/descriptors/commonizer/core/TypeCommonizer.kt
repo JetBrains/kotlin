@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFlexibleType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 
@@ -24,6 +29,7 @@ class TypeCommonizer(private val cache: CirClassifiersCache) : AbstractStandardC
 /**
  * See also [AbstractStrictEqualityTypeChecker].
  */
+@Suppress("IntroduceWhenSubject")
 internal fun areTypesEqual(cache: CirClassifiersCache, a: CirType, b: CirType): Boolean = when {
     a is CirSimpleType -> (b is CirSimpleType) && areSimpleTypesEqual(cache, a, b)
     a is CirFlexibleType -> (b is CirFlexibleType)

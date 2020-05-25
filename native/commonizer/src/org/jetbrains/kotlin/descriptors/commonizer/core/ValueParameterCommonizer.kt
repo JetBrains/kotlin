@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirValueParameterFactory
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isNull
 import org.jetbrains.kotlin.name.Name
 
@@ -19,10 +19,12 @@ class ValueParameterCommonizer(cache: CirClassifiersCache) : AbstractStandardCom
     private var isCrossinline = true
     private var isNoinline = true
 
-    override fun commonizationResult() = CirCommonValueParameter(
+    override fun commonizationResult() = CirValueParameterFactory.create(
+        annotations = emptyList(),
         name = name,
         returnType = returnType.result,
         varargElementType = varargElementType,
+        declaresDefaultValue = false,
         isCrossinline = isCrossinline,
         isNoinline = isNoinline
     )
