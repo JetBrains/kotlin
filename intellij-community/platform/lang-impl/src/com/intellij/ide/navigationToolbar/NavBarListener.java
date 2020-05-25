@@ -4,6 +4,8 @@ package com.intellij.ide.navigationToolbar;
 import com.intellij.ProjectTopics;
 import com.intellij.ide.actions.CopyAction;
 import com.intellij.ide.actions.CutAction;
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.LafManagerListener;
 import com.intellij.openapi.Disposable;
@@ -50,7 +52,7 @@ import java.util.List;
 public final class NavBarListener
   implements ProblemListener, FocusListener, FileStatusListener, AnActionListener, FileEditorManagerListener,
              PsiTreeChangeListener, ModuleRootListener, NavBarModelListener, PropertyChangeListener, KeyListener, WindowFocusListener,
-             LafManagerListener {
+             LafManagerListener, DynamicPluginListener {
   private static final String LISTENER = "NavBarListener";
   private static final String BUS = "NavBarMessageBus";
   private final NavBarPanel myPanel;
@@ -74,6 +76,7 @@ public final class NavBarListener
     connection.subscribe(NavBarModelListener.NAV_BAR, listener);
     connection.subscribe(ProblemListener.TOPIC, listener);
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, listener);
+    connection.subscribe(DynamicPluginListener.TOPIC, listener);
     panel.putClientProperty(BUS, connection);
     panel.addKeyListener(listener);
 
@@ -379,4 +382,9 @@ public final class NavBarListener
 
   @Override
   public void childRemoved(@NotNull PsiTreeChangeEvent event) {}
+
+  @Override
+  public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+    myPanel.getNavBarUI().clearItems();
+  }
 }
