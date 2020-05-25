@@ -31,9 +31,8 @@ import java.util.*
 
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
 
-    private val externalPackageFragmentSymbol = IrExternalPackageFragmentSymbolImpl(context.internalPackageFragmentDescriptor)
-    val externalPackageFragment = IrExternalPackageFragmentImpl(
-        externalPackageFragmentSymbol, context.internalPackageFragmentDescriptor.fqName
+    val externalPackageFragment = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+        context.builtIns.builtInsModule, FqName("kotlin.js.internal")
     )
 
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
