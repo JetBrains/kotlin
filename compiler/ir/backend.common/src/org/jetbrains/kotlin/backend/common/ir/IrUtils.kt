@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -44,13 +43,10 @@ import java.io.StringWriter
 
 fun ir2string(ir: IrElement?): String = ir?.render() ?: ""
 
-fun ir2stringWhole(ir: IrElement?, withDescriptors: Boolean = false): String {
+// NB: this function is used in native
+fun ir2stringWhole(ir: IrElement?): String {
     val strWriter = StringWriter()
-
-    if (withDescriptors)
-        ir?.accept(DumpIrTreeWithDescriptorsVisitor(strWriter), "")
-    else
-        ir?.accept(DumpIrTreeVisitor(strWriter), "")
+    ir?.accept(DumpIrTreeVisitor(strWriter), "")
     return strWriter.toString()
 }
 
