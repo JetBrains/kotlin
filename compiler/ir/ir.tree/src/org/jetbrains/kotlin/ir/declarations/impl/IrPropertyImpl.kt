@@ -47,29 +47,6 @@ class IrPropertyImpl(
     IrProperty,
     PropertyCarrier {
 
-    @Deprecated(
-        "This constructor is left for native compilation purpose only. " +
-                "It takes property attributes from symbol.descriptor " +
-                "Please either provide property attributes or its descriptor explicitly"
-    )
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrPropertySymbol,
-        name: Name
-    ) : this(
-        startOffset, endOffset, origin, symbol, name,
-        visibility = symbol.descriptor.visibility,
-        modality = symbol.descriptor.modality,
-        isVar = symbol.descriptor.isVar,
-        isConst = symbol.descriptor.isConst,
-        isLateinit = symbol.descriptor.isLateInit,
-        isDelegated = symbol.descriptor.isDelegated,
-        isExternal = symbol.descriptor.isExternal,
-        isExpect = symbol.descriptor.isExpect
-    )
-
     @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
     constructor(
         startOffset: Int,

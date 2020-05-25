@@ -39,31 +39,6 @@ class IrFunctionImpl(
     IrSimpleFunction,
     FunctionCarrier {
 
-    @Deprecated(
-        "This constructor is left for native compilation purpose only. " +
-                "It takes function attributes from symbol.descriptor " +
-                "Please either provide function attributes or its descriptor explicitly"
-    )
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrSimpleFunctionSymbol,
-        returnType: IrType
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        name = symbol.descriptor.name,
-        visibility = symbol.descriptor.visibility,
-        modality = symbol.descriptor.modality,
-        returnType = returnType,
-        isInline = symbol.descriptor.isInline,
-        isExternal = symbol.descriptor.isExternal,
-        isTailrec = symbol.descriptor.isTailrec,
-        isSuspend = symbol.descriptor.isSuspend,
-        isOperator = symbol.descriptor.isOperator,
-        isExpect = symbol.descriptor.isExpect
-    )
-
     constructor(
         startOffset: Int,
         endOffset: Int,

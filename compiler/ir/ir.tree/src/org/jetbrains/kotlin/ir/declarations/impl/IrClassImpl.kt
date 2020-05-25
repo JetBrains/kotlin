@@ -51,31 +51,6 @@ class IrClassImpl(
     IrClass,
     ClassCarrier {
 
-    @Deprecated(
-        "This constructor is left for native compilation purpose only. " +
-                "It takes class attributes from symbol.descriptor " +
-                "Please either provide class attributes or its descriptor explicitly"
-    )
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrClassSymbol
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        name = symbol.descriptor.name,
-        kind = symbol.descriptor.kind,
-        visibility = symbol.descriptor.visibility,
-        modality = symbol.descriptor.modality,
-        isCompanion = symbol.descriptor.isCompanionObject,
-        isInner = symbol.descriptor.isInner,
-        isData = symbol.descriptor.isData,
-        isExternal = symbol.descriptor.isExternal,
-        isInline = symbol.descriptor.isInline,
-        isExpect = symbol.descriptor.isExpect,
-        isFun = symbol.descriptor.isFun
-    )
-
     constructor(
         startOffset: Int,
         endOffset: Int,

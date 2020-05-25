@@ -46,28 +46,6 @@ class IrValueParameterImpl(
     IrValueParameter,
     ValueParameterCarrier {
 
-    @Deprecated(
-        "This constructor is left for native compilation purpose only. " +
-                "It takes value parameter attributes from symbol.descriptor " +
-                "Please either provide parameter attributes or its descriptor explicitly"
-    )
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrValueParameterSymbol,
-        type: IrType,
-        varargElementType: IrType?
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        name = symbol.descriptor.name,
-        index = symbol.descriptor.safeAs<ValueParameterDescriptor>()?.index ?: -1,
-        type = type,
-        varargElementType = varargElementType,
-        isCrossinline = symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isCrossinline == true,
-        isNoinline = symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isNoinline == true
-    )
-
     constructor(
         startOffset: Int,
         endOffset: Int,
