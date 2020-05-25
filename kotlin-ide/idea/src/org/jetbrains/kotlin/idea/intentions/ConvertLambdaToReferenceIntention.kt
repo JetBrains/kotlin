@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.render
@@ -30,9 +31,12 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -53,11 +57,6 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
     constructor() : this(KotlinBundle.lazyMessage("convert.lambda.to.reference"))
 
     open fun buildReferenceText(element: KtLambdaExpression) = buildReferenceText(lambdaExpression = element, shortTypes = false)
-
-    private fun KtLambdaArgument.outerCalleeDescriptor(): FunctionDescriptor? {
-        val outerCallExpression = parent as? KtCallExpression ?: return null
-        return outerCallExpression.resolveToCall()?.resultingDescriptor as? FunctionDescriptor
-    }
 
     private fun isConvertibleCallInLambda(
         callableExpression: KtExpression,
@@ -173,6 +172,15 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val referenceName = buildReferenceText(element) ?: return
         val factory = KtPsiFactory(element)
+        val parent = element.parent
+
+        val outerCallExpression = parent.getStrictParentOfType<KtCallExpression>()
+        val outerCallContext = outerCallExpression?.analyze(BodyResolveMode.PARTIAL)
+        val resolvedOuterCall = outerCallContext?.let { outerCallExpression.getResolvedCall(it) }
+        if (parent is KtValueArgument && resolvedOuterCall != null) {
+            outerCallExpression.addTypeArgumentsIfNeeded(element, parent, resolvedOuterCall, outerCallContext)
+        }
+
         val lambdaArgument = element.parentValueArgument() as? KtLambdaArgument
         if (lambdaArgument == null) {
             // Without lambda argument syntax, just replace lambda with reference
@@ -180,8 +188,7 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
             (element.replace(callableReferenceExpr) as? KtElement)?.let { ShortenReferences.RETAIN_COMPANION.process(it) }
         } else {
             // Otherwise, replace the whole argument list for lambda argument-using call
-            val outerCallExpression = lambdaArgument.parent as? KtCallExpression ?: return
-            val outerCalleeDescriptor = lambdaArgument.outerCalleeDescriptor() ?: return
+            val outerCalleeDescriptor = resolvedOuterCall?.resultingDescriptor ?: return
             // Parameters with default value
             val valueParameters = outerCalleeDescriptor.valueParameters
             val arguments = outerCallExpression.valueArguments.filter { it !is KtLambdaArgument }
@@ -217,6 +224,39 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
                 lambdaArgument.delete()
             }
         }
+    }
+
+    private fun KtCallExpression.addTypeArgumentsIfNeeded(
+        lambda: KtLambdaExpression,
+        valueArgument: KtValueArgument,
+        resolvedCall: ResolvedCall<out CallableDescriptor>,
+        context: BindingContext,
+    ) {
+        val parameter = resolvedCall.getParameterForArgument(valueArgument) ?: return
+        val parameterType = if (parameter.isVararg) {
+            parameter.original.type.arguments.firstOrNull()?.type
+        } else {
+            parameter.original.type
+        } ?: return
+        if (parameterType.arguments.none { it.type.isTypeParameter() }) return
+
+        val calledFunctionInLambda = lambda.singleStatementOrNull()
+            ?.getResolvedCall(context)?.resultingDescriptor as? FunctionDescriptor ?: return
+        val overloadedFunctions = calledFunctionInLambda.overloadedFunctions()
+        if (overloadedFunctions.count { it.valueParameters.size == calledFunctionInLambda.valueParameters.size } < 2) return
+
+        if (InsertExplicitTypeArgumentsIntention.isApplicableTo(this, context)) {
+            InsertExplicitTypeArgumentsIntention.applyTo(this)
+        }
+    }
+
+    private fun FunctionDescriptor.overloadedFunctions(): Collection<SimpleFunctionDescriptor> {
+        val memberScope = when (val containingDeclaration = this.containingDeclaration) {
+            is ClassDescriptor -> containingDeclaration.unsubstitutedMemberScope
+            is LazyPackageDescriptor -> containingDeclaration.getMemberScope()
+            else -> null
+        }
+        return memberScope?.getContributedFunctions(name, NoLookupLocation.FROM_IDE).orEmpty()
     }
 
     companion object {
