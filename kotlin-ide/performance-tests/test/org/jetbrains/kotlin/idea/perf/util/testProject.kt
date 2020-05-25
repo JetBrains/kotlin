@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.idea.perf.util
 
 import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction
 
-/**
- * @author Vladimir Ilmov
- */
 class ExternalProject(val path: String, val openWith: ProjectOpenAction) {
     companion object {
         const val KOTLIN_PROJECT_PATH = "../perfTestProject"

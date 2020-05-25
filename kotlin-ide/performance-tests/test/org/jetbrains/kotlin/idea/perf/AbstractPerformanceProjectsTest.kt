@@ -58,7 +58,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         super.setUp()
 
         myApplication = initApp(testRootDisposable)
-        initSdk(testRootDisposable)
+        jdk18 = initSdk(testRootDisposable)
     }
 
     internal fun warmUpProject(stats: Stats, vararg filesToHighlight: String, openProject: () -> Project) {

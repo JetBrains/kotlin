@@ -45,9 +45,6 @@ import org.jetbrains.kotlin.idea.testFramework.TestApplicationManager
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import java.io.File
 
-/**
- * @author Vladimir Ilmov
- */
 class PerformanceSuite {
     companion object {
 
