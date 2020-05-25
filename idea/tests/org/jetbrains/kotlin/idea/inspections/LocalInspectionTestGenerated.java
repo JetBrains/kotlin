@@ -5160,6 +5160,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testKotlin2() throws Exception {
             runTest("idea/testData/inspectionsLocal/javaMapForEach/kotlin2.kt");
         }
+
+        @TestMetadata("notSingleArgument.kt")
+        public void testNotSingleArgument() throws Exception {
+            runTest("idea/testData/inspectionsLocal/javaMapForEach/notSingleArgument.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/kdocMissingDocumentation")
