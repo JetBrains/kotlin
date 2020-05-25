@@ -412,8 +412,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val RENDER_DIAGNOSTICS_FULL_TEXT = "RENDER_DIAGNOSTICS_FULL_TEXT"
 
         val DIAGNOSTIC_IN_TESTDATA_PATTERN = Regex("<!>|<!(.*?(\\(\".*?\"\\)|\\(\\))??)+(?<!<)!>")
-        val SPEC_LINKS_IN_TESTDATA_PATTERN =
+        val SPEC_LINKED_TESTDATA_PATTERN =
             Regex("""\/\*\s+? \* KOTLIN (PSI|DIAGNOSTICS|CODEGEN BOX) SPEC TEST \((POSITIVE|NEGATIVE)\)\n([\s\S]*?\n)\s+\*\/\n""")
+
+        val SPEC_NOT_LINED_TESTDATA_PATTERN =
+            Regex("""\/\*\s+? \* KOTLIN (PSI|DIAGNOSTICS|CODEGEN BOX) NOT LINKED SPEC TEST \((POSITIVE|NEGATIVE)\)\n([\s\S]*?\n)\s+\*\/\n""")
+
 
         fun parseDiagnosticFilterDirective(
             directiveMap: Directives,
