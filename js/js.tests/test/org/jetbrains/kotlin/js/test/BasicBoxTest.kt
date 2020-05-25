@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -881,7 +881,7 @@ abstract class BasicBoxTest(
 
     companion object {
         val METADATA_CACHE = (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
-            KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
+            KotlinJavascriptMetadataUtils.loadMetadata(path, ::error).map { metadata ->
                 val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
                 JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
             }
