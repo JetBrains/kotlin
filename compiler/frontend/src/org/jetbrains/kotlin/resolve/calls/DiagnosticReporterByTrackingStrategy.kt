@@ -200,9 +200,14 @@ class DiagnosticReporterByTrackingStrategy(
                 val parameterIndex = unknownParameterTypeDiagnostic.parameterIndex
 
                 val argumentExpression = KtPsiUtil.deparenthesize(lambdaArgument.psiCallArgument.valueArgument.getArgumentExpression())
-                if (argumentExpression !is KtLambdaExpression) return
 
-                val parameter = argumentExpression.valueParameters.getOrNull(parameterIndex)
+                val valueParameters = when (argumentExpression) {
+                    is KtLambdaExpression -> argumentExpression.valueParameters
+                    is KtNamedFunction -> argumentExpression.valueParameters // for anonymous functions
+                    else -> return
+                }
+
+                val parameter = valueParameters.getOrNull(parameterIndex)
                 if (parameter != null) {
                     trace.report(CANNOT_INFER_PARAMETER_TYPE.on(parameter))
                 }
