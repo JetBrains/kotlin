@@ -78,6 +78,8 @@ object ConversionsRunner {
         LiteralConversion(context),
         StaticMemberAccessConversion(context),
         RemoveRedundantQualifiersForCallsConversion(context),
+        FunctionalInterfacesConverter(context),
+
         FilterImportsConversion(context),
         MoveInitBlocksToTheEndConversion(context),
         AddElementsInfoConversion(context)

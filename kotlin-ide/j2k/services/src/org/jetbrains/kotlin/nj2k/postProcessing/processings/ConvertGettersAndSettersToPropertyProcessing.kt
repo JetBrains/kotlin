@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.KotlinType
@@ -383,15 +385,18 @@ private class ConvertGettersAndSettersToPropertyStatefulProcessing(
                 val realProperty = group.firstIsInstanceOrNull<RealProperty>()
                 val name = realGetter?.name ?: realSetter?.name!!
 
-                val superDeclarationOwner = (realGetter?.function ?: realSetter?.function)
+                val functionDescriptor = (realGetter?.function ?: realSetter?.function)
                     ?.resolveToDescriptorIfAny(resolutionFacade)
+
+                if (functionDescriptor != null && isSamDescriptor(functionDescriptor)) return@mapNotNull null
+
+                val superDeclarationOwner = functionDescriptor
                     ?.overriddenDescriptors
                     ?.firstOrNull()
                     ?.findPsi()
                     ?.safeAs<KtDeclaration>()
                     ?.containingClassOrObject
 
-                collectingState.propertyNameToSuperType[superDeclarationOwner to name]
                 val type = collectingState.propertyNameToSuperType[superDeclarationOwner to name]
                     ?: calculatePropertyType(
                         realGetter?.function,
@@ -406,6 +411,11 @@ private class ConvertGettersAndSettersToPropertyStatefulProcessing(
                     type
                 )
             }
+    }
+
+    private fun KtClassOrObject.isSamDescriptor(functionDescriptor: FunctionDescriptor): Boolean {
+        val classDescriptor = descriptor as? ClassDescriptor ?: return false
+        return getSingleAbstractMethodOrNull(classDescriptor) == functionDescriptor
     }
 
     private fun List<PropertyData>.filterGettersAndSetters(
