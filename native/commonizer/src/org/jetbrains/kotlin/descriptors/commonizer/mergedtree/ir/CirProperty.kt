@@ -62,7 +62,8 @@ class CirPropertyImpl(original: PropertyDescriptor) : CirFunctionOrPropertyImpl<
         compileTimeInitializer?.let { compileTimeInitializer ->
             checkConstantSupportedInCommonization(
                 constantValue = compileTimeInitializer,
-                owner = original
+                owner = original,
+                allowAnnotationValues = false
             )
         }
     }
