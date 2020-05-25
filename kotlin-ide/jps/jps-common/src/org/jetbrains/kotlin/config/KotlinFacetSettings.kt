@@ -237,13 +237,17 @@ class KotlinFacetSettings {
     var languageLevel: LanguageVersion?
         get() = compilerArguments?.languageVersion?.let { LanguageVersion.fromFullVersionString(it) }
         set(value) {
-            compilerArguments!!.languageVersion = value?.versionString
+            compilerArguments?.apply {
+                languageVersion = value?.versionString
+            }
         }
 
     var apiLevel: LanguageVersion?
         get() = compilerArguments?.apiVersion?.let { LanguageVersion.fromFullVersionString(it) }
         set(value) {
-            compilerArguments!!.apiVersion = value?.versionString
+            compilerArguments?.apply {
+                apiVersion = value?.versionString
+            }
         }
 
     var targetPlatform: TargetPlatform? = null
