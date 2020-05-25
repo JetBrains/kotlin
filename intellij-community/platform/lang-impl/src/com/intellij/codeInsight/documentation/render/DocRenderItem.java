@@ -169,7 +169,8 @@ public class DocRenderItem {
     if (task.getAsBoolean()) keeper.restorePosition(false);
   }
 
-  static DocRenderItem getItemAroundOffset(@NotNull Editor editor, int offset) {
+  @Nullable
+  public static DocRenderItem getItemAroundOffset(@NotNull Editor editor, int offset) {
     Collection<DocRenderItem> items = editor.getUserData(OUR_ITEMS);
     if (items == null || items.isEmpty()) return null;
     Document document = editor.getDocument();
@@ -378,6 +379,11 @@ public class DocRenderItem {
   private void repaintGutter(int startY) {
     JComponent gutter = (JComponent)editor.getGutter();
     gutter.repaint(0, startY, gutter.getWidth(), startY + editor.getLineHeight());
+  }
+
+  @Nullable
+  public String getTextToRender() {
+    return textToRender;
   }
 
   private static class RelevantOffsets {
