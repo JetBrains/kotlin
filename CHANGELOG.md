@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+## Version 0.3.1
+
+_2020-05-25_
+
+ * Fix: Do not include wrapper class for top-level function in Gradle plugin
+ default function.
+
 ## Version 0.3.0
 
 _2020-03-07_
