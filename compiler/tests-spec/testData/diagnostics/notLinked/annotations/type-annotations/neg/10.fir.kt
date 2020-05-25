@@ -1,14 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: annotations, type-annotations
- * NUMBER: 10
- * DESCRIPTION: Type annotations on a lambda type with unresolved reference in parameters.
- * ISSUES: KT-28424
- */
-
 // TESTCASE NUMBER: 1, 2
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)

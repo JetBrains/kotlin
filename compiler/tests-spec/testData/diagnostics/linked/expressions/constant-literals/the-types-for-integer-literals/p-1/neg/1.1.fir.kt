@@ -1,12 +1,3 @@
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, constant-literals, the-types-for-integer-literals -> paragraph 1 -> sentence 1
- * NUMBER: 1
- * DESCRIPTION: Binary and hexadecimal integer literals with a long literal mark only.
- */
-
 // TESTCASE NUMBER: 1
 val value_1 = <!ILLEGAL_CONST_EXPRESSION!>0bl<!>
 

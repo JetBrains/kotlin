@@ -1,15 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: contracts, analysis, controlFlow, unreachableCode
- * NUMBER: 1
- * DESCRIPTION: Using not allowed break and continue inside lambda of contract function
- * HELPERS: contractFunctions
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Boolean) {
     while (value_1) {

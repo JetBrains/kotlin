@@ -1,15 +1,5 @@
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, constant-literals, the-types-for-integer-literals -> paragraph 1 -> sentence 2
- * NUMBER: 1
- * DESCRIPTION: Various integer literals with not allowed long literal mark in lower case (type checking).
- * HELPERS: checkType
- */
-
 // TESTCASE NUMBER: 1
 fun case_1() {
     0l checkType { check<Long>() }

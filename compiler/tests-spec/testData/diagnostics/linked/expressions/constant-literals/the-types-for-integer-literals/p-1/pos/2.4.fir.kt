@@ -1,15 +1,5 @@
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, constant-literals, the-types-for-integer-literals -> paragraph 1 -> sentence 2
- * NUMBER: 4
- * DESCRIPTION: Type checking of binary integer literals.
- * HELPERS: checkType
- */
-
 // TESTCASE NUMBER: 1
 fun case_1() {
     0b0 checkType { check<Int>() }

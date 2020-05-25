@@ -2,15 +2,6 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
- *
- * SECTIONS: dfa
- * NUMBER: 1
- * DESCRIPTION: Raw data flow analysis test
- * HELPERS: classes, objects, functions, typealiases, properties, enumClasses
- */
-
 // FILE: other_package.kt
 
 package otherpackage

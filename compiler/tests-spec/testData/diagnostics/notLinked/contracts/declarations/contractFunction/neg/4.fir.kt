@@ -1,15 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: contracts, declarations, contractFunction
- * NUMBER: 4
- * DESCRIPTION: Check that fun with contract and CallsInPlace effect is an inline function.
- * ISSUES: KT-27090
- */
-
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

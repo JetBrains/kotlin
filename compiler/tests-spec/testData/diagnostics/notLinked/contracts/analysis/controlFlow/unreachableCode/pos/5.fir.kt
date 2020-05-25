@@ -1,15 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
- *
- * SECTIONS: contracts, analysis, controlFlow, unreachableCode
- * NUMBER: 5
- * DESCRIPTION: Unreachable code detection using contract functions with complex control flow inside
- * HELPERS: contractFunctions
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(b: Boolean?) {
     funWithExactlyOnceCallsInPlace {

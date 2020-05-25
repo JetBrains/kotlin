@@ -2,17 +2,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-313
- * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, infix-function-call -> paragraph 2 -> sentence 1
- * PRIMARY LINKS: overload-resolution, building-the-overload-candidate-set-ocs, infix-function-call -> paragraph 2 -> sentence 2
- * overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 1
- * NUMBER: 1
- * DESCRIPTION: Implicitly imported extension callable without infix modifier
- */
-
 // FILE: Extensions.kt
 package libPackage
 

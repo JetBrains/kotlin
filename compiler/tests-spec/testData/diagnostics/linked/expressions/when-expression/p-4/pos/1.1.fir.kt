@@ -3,15 +3,6 @@
 // SKIP_TXT
 // FULL_JDK
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
- *
- * SPEC VERSION: 0.1-313
- * MAIN LINK: expressions, when-expression -> paragraph 4 -> sentence 1
- * NUMBER: 1
- * DESCRIPTION:  it is possible to  replace the else condition with an always-true condition
- */
-
 // FILE: JavaEnum.java
 
 enum JavaEnum {

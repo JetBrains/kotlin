@@ -1,15 +1,5 @@
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 10
- * NUMBER: 3
- * DESCRIPTION: Exhaustive when using subclasses of the nullable sealed class.
- * HELPERS: sealedClasses
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(value_1: SealedClass?): Int = when (value_1) {
     is SealedChild1 -> value_1.number

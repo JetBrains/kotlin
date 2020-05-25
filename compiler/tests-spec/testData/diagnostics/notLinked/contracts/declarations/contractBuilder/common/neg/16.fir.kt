@@ -1,15 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: contracts, declarations, contractBuilder, common
- * NUMBER: 16
- * DESCRIPTION: Contract isn't in the first position.
- * ISSUES: KT-26191
- */
-
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

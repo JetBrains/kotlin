@@ -1,14 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: contracts, declarations, contractBuilder, common
- * NUMBER: 1
- * DESCRIPTION: Contract isn't first statement.
- */
-
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

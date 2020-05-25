@@ -1,15 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
- *
- * SECTIONS: contracts, analysis, smartcasts
- * NUMBER: 13
- * DESCRIPTION: Check smartcast to upper bound of the types in disjunction.
- * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-1982
- */
-
 // FILE: contracts.kt
 
 package contracts

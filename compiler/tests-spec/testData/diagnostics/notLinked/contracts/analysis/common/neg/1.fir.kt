@@ -1,14 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !WITH_NEW_INFERENCE
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: contracts, analysis, common
- * NUMBER: 1
- * DESCRIPTION: Analysis by contracts with mixed CallsInPlace and Returns effects.
- */
-
 // FILE: contracts.kt
 
 package contracts

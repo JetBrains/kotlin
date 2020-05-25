@@ -1,15 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
- *
- * SECTIONS: contracts, analysis, controlFlow, initialization
- * NUMBER: 3
- * DESCRIPTION: val/var assignments or subsequent usages with compelx control flow inside/outside lambda of contract function with CallsInPlace effect
- * HELPERS: enumClasses, contractFunctions
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(value_1: EnumClass?) {
     val value_2: Int

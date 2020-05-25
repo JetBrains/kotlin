@@ -2,14 +2,6 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !WITH_NEW_INFERENCE
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: contracts, declarations, contractBuilder, common
- * NUMBER: 5
- * DESCRIPTION: contracts with not allowed expressions in implies.
- */
-
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

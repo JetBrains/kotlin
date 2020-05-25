@@ -1,15 +1,5 @@
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, constant-literals, the-types-for-integer-literals -> paragraph 1 -> sentence 2
- * NUMBER: 5
- * DESCRIPTION: Check of integer type selection depends on the context (incopatible types).
- * HELPERS: checkType
- */
-
 // FILE: functions.kt
 
 package functions

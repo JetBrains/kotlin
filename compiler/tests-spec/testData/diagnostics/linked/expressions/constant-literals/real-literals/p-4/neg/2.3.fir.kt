@@ -1,13 +1,4 @@
 // FIR_IGNORE
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 4 -> sentence 2
- * NUMBER: 3
- * DESCRIPTION: Real literals with underscores around an exponent mark.
- */
-
 // TESTCASE NUMBER: 1
 val value_1 = <!ILLEGAL_UNDERSCORE!>.0__e_0<!>
 

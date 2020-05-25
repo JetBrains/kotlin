@@ -1,13 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: contracts, declarations, contractBuilder, effects, returns
- * NUMBER: 6
- * DESCRIPTION: Contract on the extension function with smartcast to Boolean.
- */
-
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1

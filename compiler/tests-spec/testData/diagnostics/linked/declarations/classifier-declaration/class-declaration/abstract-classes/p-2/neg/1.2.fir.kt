@@ -2,15 +2,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-213
- * MAIN LINK: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
- * NUMBER: 2
- * DESCRIPTION: Abstract classes may contain abstract members, which should be implemented in an anonymous class that inherits from that abstract type
- */
-
 // TESTCASE NUMBER: 1
 private abstract class Base {
 

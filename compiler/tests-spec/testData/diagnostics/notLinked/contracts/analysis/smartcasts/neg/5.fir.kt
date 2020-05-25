@@ -1,14 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !WITH_NEW_INFERENCE
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: contracts, analysis, smartcasts
- * NUMBER: 5
- * DESCRIPTION: Smartcasts using Returns effects with complex (conjunction/disjunction) type checking and not-null conditions on receiver inside contract.
- */
-
 // FILE: contracts.kt
 
 package contracts

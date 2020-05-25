@@ -1,15 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
- *
- * SECTIONS: contracts, analysis, controlFlow, unreachableCode
- * NUMBER: 6
- * DESCRIPTION: Check for lack of unreachable code report when in complex control flow of contract function lambda not all branches are doing non-local return
- * HELPERS: contractFunctions
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(b: Boolean?, c: Boolean) {
     funWithExactlyOnceCallsInPlace {

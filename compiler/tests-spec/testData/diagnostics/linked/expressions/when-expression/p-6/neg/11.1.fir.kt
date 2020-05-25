@@ -2,15 +2,6 @@
 // !DIAGNOSTICS: -UNUSED_VALUE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-201
- * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 11
- * NUMBER: 1
- * DESCRIPTION: 'When' with bound value and non-expressions in 'when condition'.
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int, value_2: List<Int>): String {
     when (value_1) {

@@ -1,15 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // !WITH_NEW_INFERENCE
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: annotations, type-annotations
- * NUMBER: 6
- * DESCRIPTION: Type annotations inside type check and cast expression with unresolved reference in parameters.
- * ISSUES: KT-28424
- */
-
 // TESTCASE NUMBER: 1, 2
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)

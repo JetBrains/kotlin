@@ -3,17 +3,6 @@
 // SKIP_TXT
 // FULL_JDK
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-213
- * MAIN LINK: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
- * PRIMARY LINKS: inheritance, overriding -> paragraph 7 -> sentence 1
- * NUMBER: 10
- * DESCRIPTION: Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class
- * ISSUES: KT-27825
- */
-
 // TESTCASE NUMBER: 1
 class Case1() : BaseCase1(), InterfaceCase1 {}
 

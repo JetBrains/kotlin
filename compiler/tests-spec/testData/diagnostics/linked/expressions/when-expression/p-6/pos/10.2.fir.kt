@@ -1,15 +1,5 @@
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
- *
- * SPEC VERSION: 0.1-201
- * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 10
- * NUMBER: 2
- * DESCRIPTION: 'When' with different variants of the arithmetic expressions (additive expression and multiplicative expression) in 'when condition'.
- * HELPERS: typesProvider, classes, functions
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     when (value_1) {

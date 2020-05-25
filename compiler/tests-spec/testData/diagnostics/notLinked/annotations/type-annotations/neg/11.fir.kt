@@ -1,15 +1,5 @@
 // !WITH_NEW_INFERENCE
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: annotations, type-annotations
- * NUMBER: 11
- * DESCRIPTION: Type annotations with invalid target.
- * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-28449
- */
-
 // TESTCASE NUMBER: 1, 2, 3, 4, 5
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.PROPERTY_GETTER)

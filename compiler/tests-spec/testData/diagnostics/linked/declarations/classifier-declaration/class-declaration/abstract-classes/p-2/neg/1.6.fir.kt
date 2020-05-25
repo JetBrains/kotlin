@@ -3,17 +3,6 @@
 // SKIP_TXT
 // FULL_JDK
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-213
- * MAIN LINK: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
- * NUMBER: 6
- * DESCRIPTION: Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class
- * ISSUES: KT-27825
- */
-
-
 // FILE: base/BaseJava.java
 package base;
 

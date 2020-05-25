@@ -1,16 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !WITH_NEW_INFERENCE
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: contracts, analysis, smartcasts
- * NUMBER: 10
- * DESCRIPTION: Check smartcasts using double negation (returnsFalse/invert type checking/not operator).
- * ISSUES: KT-26176
- * HELPERS: contractFunctions
- */
-
 // FILE: contracts.kt
 
 package contracts

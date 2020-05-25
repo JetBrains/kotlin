@@ -2,15 +2,6 @@
 // !DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_VARIABLE -UNUSED_PARAMETER -FINAL_UPPER_BOUND
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-296
- * MAIN LINK: expressions, try-expression -> paragraph 8 -> sentence 1
- * PRIMARY LINKS: expressions, try-expression -> paragraph 9 -> sentence 1
- * NUMBER: 1
- * DESCRIPTION: The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks
- */
 fun throwExceptionA(b: Boolean) = run { if (b) throw ExcA() }
 
 open class A<T>(var data: T) {

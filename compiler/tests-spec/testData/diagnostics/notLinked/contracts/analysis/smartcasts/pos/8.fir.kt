@@ -1,15 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !WITH_NEW_INFERENCE
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
- *
- * SECTIONS: contracts, analysis, smartcasts
- * NUMBER: 8
- * DESCRIPTION: Smartcasts using some Returns effects.
- * HELPERS: contractFunctions
- */
-
 // FILE: contracts.kt
 
 package contracts

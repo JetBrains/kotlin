@@ -1,15 +1,6 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: contracts, analysis, controlFlow, initialization
- * NUMBER: 5
- * DESCRIPTION: CallsInPlace contract functions with invalid lambda passing to function parameter.
- * HELPERS: contractFunctions
- */
-
 // TESTCASE NUMBER: 1
 fun case_1() {
     val value_1: Int

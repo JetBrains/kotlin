@@ -1,15 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 1
- * NUMBER: 2
- * DESCRIPTION: Non-exhaustive when, with bound value, without else branch.
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int): String = when (value_1) {
     1 -> ""

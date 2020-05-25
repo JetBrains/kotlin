@@ -1,16 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
- *
- * SECTIONS: contracts, analysis, controlFlow, initialization
- * NUMBER: 6
- * DESCRIPTION: Check the lack of CallsInPlace effect on the lambda in the parentheses.
- * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-26229
- * HELPERS: contractFunctions
- */
-
 // FILE: contracts.kt
 
 package contracts

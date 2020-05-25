@@ -1,12 +1,3 @@
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, constant-literals, integer-literals, binary-integer-literals -> paragraph 1 -> sentence 2
- * NUMBER: 1
- * DESCRIPTION: Binary integer literals with an underscore after the prefix.
- */
-
 // TESTCASE NUMBER: 1
 val value_1 = 0b_1110100000
 

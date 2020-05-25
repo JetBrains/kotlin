@@ -1,12 +1,3 @@
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, constant-literals, the-types-for-integer-literals -> paragraph 1 -> sentence 1
- * NUMBER: 3
- * DESCRIPTION: Various integer literals with not allowed long literal mark in lower case.
- */
-
 // TESTCASE NUMBER: 1
 val value_1 = 0l
 

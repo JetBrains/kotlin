@@ -1,12 +1,3 @@
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 1 -> sentence 1
- * NUMBER: 1
- * DESCRIPTION: Real literals separeted by comments.
- */
-
 // TESTCASE NUMBER: 1
 val value_1 = 0./**/99901
 

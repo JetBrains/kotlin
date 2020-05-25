@@ -1,13 +1,4 @@
 // FIR_IGNORE
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 3 -> sentence 1
- * NUMBER: 2
- * DESCRIPTION: Real literals with omitted a whole-number part, suffixed by f/F (float suffix) followed by an exponent mark without digits.
- */
-
 // TESTCASE NUMBER: 1
 val value_1 = <!FLOAT_LITERAL_OUT_OF_RANGE!>.0EF<!>
 

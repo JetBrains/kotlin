@@ -3,15 +3,6 @@
 // SKIP_TXT
 
 /*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
- *
- * SECTIONS: dfa
- * NUMBER: 70
- * DESCRIPTION: Raw data flow analysis test
- * HELPERS: classes
- */
-
-/*
  * TESTCASE NUMBER: 1
  * ISSUES: KT-11727
  */

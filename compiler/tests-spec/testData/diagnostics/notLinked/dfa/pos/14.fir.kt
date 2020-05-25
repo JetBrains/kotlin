@@ -2,14 +2,6 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
- *
- * SECTIONS: dfa
- * NUMBER: 14
- * DESCRIPTION: Raw data flow analysis test
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(vararg x: Int?) {
     if (x != null) {

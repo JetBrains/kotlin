@@ -2,16 +2,6 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -DEBUG_INFO_SMARTCAST
 // SKIP_TXT
 
-/*
- * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
- *
- * SPEC VERSION: 0.1-100
- * MAIN LINK: expressions, when-expression -> paragraph 2 -> sentence 1
- * NUMBER: 1
- * DESCRIPTION: When without bound value, various expressions in the control structure body.
- * HELPERS: typesProvider, classes, functions
- */
-
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int) {
     when {

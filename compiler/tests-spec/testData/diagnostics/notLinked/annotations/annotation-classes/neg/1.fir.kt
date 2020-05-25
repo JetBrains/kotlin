@@ -1,13 +1,3 @@
-/*
- * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
- *
- * SECTIONS: annotations, annotation-classes
- * NUMBER: 1
- * DESCRIPTION: Annotation classes with forbidden `JvmOverloads` annotation on its constructor.
- * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-25702
- */
-
 // TESTCASE NUMBER: 2, 3, 4
 @Target(AnnotationTarget.CONSTRUCTOR)
 annotation class Case12_1
