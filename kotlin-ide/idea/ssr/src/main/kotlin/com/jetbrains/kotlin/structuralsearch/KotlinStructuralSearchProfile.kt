@@ -4,10 +4,7 @@ import com.intellij.dupLocator.util.NodeFilter
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.*
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
@@ -24,9 +21,7 @@ import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompili
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtTryExpression
+import org.jetbrains.kotlin.psi.*
 
 class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     override fun getLexicalNodesFilter(): NodeFilter = NodeFilter { element -> element is PsiWhiteSpace }
@@ -46,6 +41,12 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
 
     override fun compile(elements: Array<out PsiElement>?, globalVisitor: GlobalCompilingVisitor) {
         KotlinCompilingVisitor(globalVisitor).compile(elements)
+    }
+
+    override fun getPresentableElement(element: PsiElement?): PsiElement {
+        val pElement = super.getPresentableElement(element)
+        val parent = pElement.parent
+        return if(parent is KtProperty || parent is KtNamedFunction || parent is KtClass) parent else pElement
     }
 
     override fun createPatternTree(
