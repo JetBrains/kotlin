@@ -299,6 +299,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && matchValueArgumentList(expression.valueArguments, other.valueArguments)
     }
 
+    override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression) {
+        val other = getTreeElement<KtCallableReferenceExpression>() ?: return
+        myMatchingVisitor.match(expression.callableReference, other.callableReference)
+                && myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
+    }
+
     override fun visitTypeParameter(parameter: KtTypeParameter) {
         val other = getTreeElement<KtTypeParameter>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(parameter.firstChild, other.firstChild) // match generic identifier
