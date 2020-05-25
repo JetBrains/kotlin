@@ -131,7 +131,7 @@ public final class CodeFoldingManagerImpl extends CodeFoldingManager implements 
     }
 
 
-    final List<FoldingUpdate.RegionInfo> regionInfos = FoldingUpdate.getFoldingsFor(file, document, true);
+    List<FoldingUpdate.RegionInfo> regionInfos = FoldingUpdate.getFoldingsFor(file, true);
 
     return editor -> {
       ApplicationManager.getApplication().assertIsDispatchThread();
