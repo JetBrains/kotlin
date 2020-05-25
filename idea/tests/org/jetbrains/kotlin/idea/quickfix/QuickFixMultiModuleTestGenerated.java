@@ -825,6 +825,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         public void testAllFilesPresentInFixNativeThrowsErrors() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
+
+        @TestMetadata("removeEmptyThrows")
+        public void testRemoveEmptyThrows() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors/removeEmptyThrows/");
+        }
     }
 
     @TestMetadata("idea/testData/multiModuleQuickFix/makeOverridenMemberOpen")
