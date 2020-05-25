@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
@@ -46,12 +49,15 @@ internal interface DescriptorToIrTranslationMixin {
      * Additional elements are passed via [builder] callback.
      */
     fun createClass(descriptor: ClassDescriptor, builder: (IrClass) -> Unit): IrClass =
-            symbolTable.declareClass(
+            symbolTable.declareClass(descriptor) {
+                IrClassImpl(
                     startOffset = SYNTHETIC_OFFSET,
                     endOffset = SYNTHETIC_OFFSET,
                     origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+                    symbol = it,
                     descriptor = descriptor
-            ).also { irClass ->
+                )
+            }.also { irClass ->
                 symbolTable.withScope(descriptor) {
                     irClass.superTypes += descriptor.typeConstructor.supertypes.map {
                         it.toIrType()
@@ -78,10 +84,13 @@ internal interface DescriptorToIrTranslationMixin {
     }
 
     fun createConstructor(constructorDescriptor: ClassConstructorDescriptor): IrConstructor {
-        val irConstructor = symbolTable.declareConstructor(
+        val irConstructor = symbolTable.declareConstructor(constructorDescriptor) {
+            IrConstructorImpl(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, constructorDescriptor
-        )
+                IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+                it, IrUninitializedType, constructorDescriptor
+            )
+        }
         irConstructor.valueParameters += constructorDescriptor.valueParameters.map { valueParameterDescriptor ->
             symbolTable.declareValueParameter(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED,

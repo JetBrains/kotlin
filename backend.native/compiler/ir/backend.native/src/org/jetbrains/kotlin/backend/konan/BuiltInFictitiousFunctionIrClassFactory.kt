@@ -42,7 +42,11 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
     override fun getDeclaration(symbol: IrSymbol) =
             (symbol.descriptor as? FunctionClassDescriptor)?.let { descriptor ->
-                buildClass(descriptor) { declareClass(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, descriptor) }
+                buildClass(descriptor) {
+                    declareClass(descriptor) {
+                        IrClassImpl(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, it, descriptor)
+                    }
+                }
             }
 
     var module: IrModuleFragment? = null
@@ -122,24 +126,19 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                     )
 
     private fun createSimpleFunction(
-            descriptor: FunctionDescriptor,
-            origin: IrDeclarationOrigin,
-            returnType: IrType
-    ) = symbolTable?.declareSimpleFunction(
-            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin,
-            descriptor
-    ) {
+        descriptor: FunctionDescriptor,
+        origin: IrDeclarationOrigin,
+        returnType: IrType
+    ) = symbolTable?.declareSimpleFunction(descriptor) {
         IrFunctionImpl(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin,
-                it,
-                returnType
+            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin,
+            it, returnType, descriptor
         )
-    }
-            ?: IrFunctionImpl(
-                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin,
-                    descriptor,
-                    returnType
-            )
+    } ?: IrFunctionImpl(
+        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin,
+        descriptor,
+        returnType
+    )
 
     private val createClassLambda =
             { s: IrClassSymbol -> IrClassImpl(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, s) }
@@ -169,7 +168,9 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                         }
                         val superTypeSymbol = when (val superTypeDescriptor = superType.constructor.declarationDescriptor) {
                             is FunctionClassDescriptor -> buildClass(superTypeDescriptor) {
-                                declareClass(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, superTypeDescriptor)
+                                declareClass(superTypeDescriptor) {
+                                    IrClassImpl(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, it, superTypeDescriptor)
+                                }
                             }.symbol
                             functionSymbol.descriptor -> functionSymbol
                             kFunctionSymbol.descriptor -> kFunctionSymbol
@@ -278,7 +279,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                 }
             }
 
-            val newFunction = symbolTable?.declareSimpleFunction(offset, offset, memberOrigin, descriptor, functionDeclare)
+            val newFunction = symbolTable?.declareSimpleFunction(descriptor, functionDeclare)
                     ?: functionDeclare(IrSimpleFunctionSymbolImpl(descriptor))
 
             newFunction.parent = this
