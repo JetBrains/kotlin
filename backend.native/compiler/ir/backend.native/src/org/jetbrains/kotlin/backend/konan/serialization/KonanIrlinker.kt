@@ -163,7 +163,7 @@ internal class KonanIrLinker(
             val fqn = packageFragment.fqName
             return packageToFileMap.getOrPut(packageFragment.fqName) {
                 val fileSymbol = IrFileSymbolImpl(packageFragment)
-                IrFileImpl(NaiveSourceBasedFileEntryImpl("forward declarations for $fqn"), fileSymbol).also {
+                IrFileImpl(NaiveSourceBasedFileEntryImpl("forward declarations for $fqn"), fileSymbol, packageFragment.fqName).also {
                     moduleFragment.files.add(it)
                 }
             }
@@ -174,7 +174,7 @@ internal class KonanIrLinker(
             val irFile = getIrFile(packageDescriptor)
 
             val klass = symbolTable.declareClassFromLinker(descriptor, idSig) { s ->
-                IrClassImpl(offset, offset, FORWARD_DECLARATION_ORIGIN, s)
+                IrClassImpl(offset, offset, FORWARD_DECLARATION_ORIGIN, s, descriptor)
             }
 
             klass.parent = irFile

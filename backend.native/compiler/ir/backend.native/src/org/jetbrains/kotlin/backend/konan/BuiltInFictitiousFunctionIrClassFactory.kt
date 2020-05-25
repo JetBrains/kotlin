@@ -140,11 +140,14 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
         returnType
     )
 
-    private val createClassLambda =
-            { s: IrClassSymbol -> IrClassImpl(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, s) }
+    private val createClassLambda = { s: IrClassSymbol, d: ClassDescriptor ->
+        IrClassImpl(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, s, d)
+    }
 
     private fun createClass(descriptor: FunctionClassDescriptor, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
-        return symbolTable?.declarator(createClassLambda) ?: createClassLambda(IrClassSymbolImpl(descriptor))
+        return symbolTable?.declarator {
+            IrClassImpl(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, it, descriptor)
+        } ?: createClassLambda(IrClassSymbolImpl(descriptor), descriptor)
     }
 
     private fun buildClass(descriptor: FunctionClassDescriptor, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
@@ -254,9 +257,12 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                 offset,
                 offset,
                 memberOrigin,
-                symbol,
+                descriptor,
                 toIrType(descriptor.type),
-                varargType?.let { toIrType(it) }).also {
+                varargType?.let { toIrType(it) },
+                descriptor.name,
+                symbol
+        ).also {
             it.parent = this
         }
     }
@@ -294,7 +300,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
         fun createFakeOverrideProperty(descriptor: PropertyDescriptor): IrProperty {
             val propertyDeclare = { s: IrPropertySymbol ->
-                IrPropertyImpl(offset, offset, memberOrigin, s, descriptor.name)
+                IrPropertyImpl(offset, offset, memberOrigin, descriptor, s, descriptor.name)
             }
             val property = symbolTable?.declareProperty(offset, offset, memberOrigin, descriptor, propertyFactory = propertyDeclare)
                     ?: propertyDeclare(IrPropertySymbolImpl(descriptor))
