@@ -175,8 +175,7 @@ class GradleTestRunnerViewTest : GradleImportingTestCase() {
       console.text
     }
 
-    val consoleTextWithoutFirstLine = consoleText.substringAfter("\n")
-    assertThat(consoleTextWithoutFirstLine).contains(testOutputText)
+    assertThat(consoleText).contains(testOutputText)
     val expectedText = if (SystemInfo.isWindows) {
       scriptOutputText + scriptOutputTextWOEol + "\n"
     } else {
@@ -185,6 +184,6 @@ class GradleTestRunnerViewTest : GradleImportingTestCase() {
       "text\n" +
       "text w/o eol\n"
     }
-    assertEquals(expectedText, consoleTextWithoutFirstLine.substringBefore(testOutputText))
+    assertEquals(expectedText, consoleText.substringBefore(testOutputText))
   }
 }
