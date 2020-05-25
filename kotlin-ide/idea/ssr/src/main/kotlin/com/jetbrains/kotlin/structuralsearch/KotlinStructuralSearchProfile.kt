@@ -70,7 +70,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         }
     }
 
-    inner class KotlinVaildator : KotlinRecursiveElementVisitor() {
+    inner class KotlinValidator : KotlinRecursiveElementVisitor() {
         override fun visitErrorElement(element: PsiErrorElement) {
             super.visitErrorElement(element)
             if (shouldShowProblem(element)) {
@@ -80,7 +80,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     }
 
     override fun checkSearchPattern(pattern: CompiledPattern) {
-        val visitor = KotlinVaildator()
+        val visitor = KotlinValidator()
         val nodes = pattern.nodes
         while (nodes.hasNext()) {
             nodes.current().accept(visitor)
