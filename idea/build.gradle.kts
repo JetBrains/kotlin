@@ -6,6 +6,9 @@ plugins {
 }
 
 val kotlinVersion: String by rootProject.extra
+val isFirPlugin: Boolean
+    get() = rootProject.findProperty("idea.fir.plugin") == "true"
+
 
 repositories {
     maven("https://jetbrains.bintray.com/markdown")
@@ -25,6 +28,11 @@ sourceSets {
             "idea-repl/resources",
             "resources-en"
         )
+        if (isFirPlugin) {
+            resources.srcDir("resources-fir")
+        } else {
+            resources.srcDir("resources-descriptors")
+        }
     }
     "test" {
         projectDefault()
