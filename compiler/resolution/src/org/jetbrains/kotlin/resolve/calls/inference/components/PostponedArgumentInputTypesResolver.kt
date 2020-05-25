@@ -304,7 +304,7 @@ class PostponedArgumentInputTypesResolver(
             else -> parameterTypesInfo.annotations
         }
 
-        val nexExpectedType = KotlinTypeFactory.simpleType(
+        val newExpectedType = KotlinTypeFactory.simpleType(
             annotations,
             functionalConstructor,
             variablesForParameterTypes + variableForReturnType.defaultType.asTypeProjection(),
@@ -312,12 +312,12 @@ class PostponedArgumentInputTypesResolver(
         )
 
         getBuilder().addSubtypeConstraint(
-            nexExpectedType,
+            newExpectedType,
             expectedType,
             ArgumentConstraintPosition(argument.atom)
         )
 
-        return nexExpectedType
+        return newExpectedType
     }
 
     fun collectParameterTypesAndBuildNewExpectedTypes(
@@ -325,7 +325,7 @@ class PostponedArgumentInputTypesResolver(
         postponedArguments: List<PostponedAtomWithRevisableExpectedType>,
         completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
         dependencyProvider: TypeVariableDependencyInformationProvider
-    ) {
+    ): Boolean {
         // We can collect parameter types from declaration in any mode, they can't change during completion.
         val postponedArgumentsToCollectTypesFromDeclaredParameters = postponedArguments
             .filterIsInstance<LambdaWithTypeVariableAsExpectedTypeAtom>()
@@ -349,27 +349,24 @@ class PostponedArgumentInputTypesResolver(
                 postponedArguments
             }
 
-        do {
-            val wasTransformedSomePostponedArgument =
-                postponedArgumentsToCollectParameterTypesAndBuildNewExpectedType.filter { it.revisedExpectedType == null }.any { argument ->
-                    val parameterTypesInfo =
-                        c.extractParameterTypesInfo(argument, postponedArguments, dependencyProvider) ?: return@any false
-                    val newExpectedType =
-                        c.buildNewFunctionalExpectedType(argument, parameterTypesInfo) ?: return@any false
+        return postponedArgumentsToCollectParameterTypesAndBuildNewExpectedType.filter { it.revisedExpectedType == null }.any { argument ->
+            val parameterTypesInfo =
+                c.extractParameterTypesInfo(argument, postponedArguments, dependencyProvider) ?: return@any false
+            val newExpectedType =
+                c.buildNewFunctionalExpectedType(argument, parameterTypesInfo) ?: return@any false
 
-                    argument.revisedExpectedType = newExpectedType
+            argument.revisedExpectedType = newExpectedType
 
-                    true
-                }
-        } while (wasTransformedSomePostponedArgument)
+            true
+        }
     }
 
     fun transformToAtomWithNewFunctionalExpectedType(
         c: Context,
         argument: PostponedAtomWithRevisableExpectedType,
         diagnosticsHolder: KotlinDiagnosticsHolder
-    ) {
-        val revisedExpectedType = argument.revisedExpectedType?.takeIf { it.isFunctionOrKFunctionTypeWithAnySuspendability } ?: return
+    ): Boolean {
+        val revisedExpectedType = argument.revisedExpectedType?.takeIf { it.isFunctionOrKFunctionTypeWithAnySuspendability } ?: return false
 
         when (argument) {
             is PostponedCallableReferenceAtom ->
@@ -380,6 +377,8 @@ class PostponedArgumentInputTypesResolver(
                 argument.transformToResolvedLambda(c.getBuilder(), diagnosticsHolder, revisedExpectedType)
             else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
         }
+
+        return true
     }
 
     private fun getAllDeeplyRelatedTypeVariables(

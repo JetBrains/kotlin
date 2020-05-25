@@ -111,9 +111,12 @@ class KotlinConstraintSystemCompleter(
                 TypeVariableDependencyInformationProvider(notFixedTypeVariables, postponedArguments, topLevelType, this)
 
             // Stage 2: collect parameter types for postponed arguments
-            postponedArgumentInputTypesResolver.collectParameterTypesAndBuildNewExpectedTypes(
+            val wasBuiltNewExpectedTypeForSomeArgument = postponedArgumentInputTypesResolver.collectParameterTypesAndBuildNewExpectedTypes(
                 asPostponedArgumentInputTypesResolverContext(), postponedArgumentsWithRevisableType, completionMode, dependencyProvider
             )
+
+            if (wasBuiltNewExpectedTypeForSomeArgument)
+                continue
 
             if (completionMode == ConstraintSystemCompletionMode.FULL) {
                 // Stage 3: fix variables for parameter types of all postponed arguments
@@ -133,32 +136,29 @@ class KotlinConstraintSystemCompleter(
 
                 // Stage 4: create atoms with revised expected types if needed
                 for (argument in postponedArgumentsWithRevisableType) {
-                    postponedArgumentInputTypesResolver.transformToAtomWithNewFunctionalExpectedType(
+                    val wasTransformedSomeArgument = postponedArgumentInputTypesResolver.transformToAtomWithNewFunctionalExpectedType(
                         asPostponedArgumentInputTypesResolverContext(), argument, diagnosticsHolder
                     )
+
+                    if (wasTransformedSomeArgument)
+                        continue@completion
                 }
             }
 
-            /*
-             * We should get not analyzed postponed arguments again because they can be changed by
-             * the stage of fixation type variables for parameters or analysing postponed arguments with fixed parameter types (see stage #1 and #4)
-             */
-            val revisedPostponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
-
             // Stage 5: analyze the next ready postponed argument
-            if (analyzeNextReadyPostponedArgument(revisedPostponedArguments, completionMode, analyze))
+            if (analyzeNextReadyPostponedArgument(postponedArguments, completionMode, analyze))
                 continue
 
             // Stage 6: fix type variables – fix if possible or report not enough information (if completion mode is full)
             val wasFixedSomeVariable = fixVariablesOrReportNotEnoughInformation(
-                completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, revisedPostponedArguments, diagnosticsHolder
+                completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments, diagnosticsHolder
             )
             if (wasFixedSomeVariable)
                 continue
 
             // Stage 7: force analysis of remaining not analyzed postponed arguments and rerun stages if there are
             if (completionMode == ConstraintSystemCompletionMode.FULL) {
-                if (analyzeRemainingNotAnalyzedPostponedArgument(revisedPostponedArguments, analyze))
+                if (analyzeRemainingNotAnalyzedPostponedArgument(postponedArguments, analyze))
                     continue
             }
 
