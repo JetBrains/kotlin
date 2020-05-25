@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.*
@@ -90,12 +91,16 @@ internal object StoreReceiver : FirTransformer<FirExpression>() {
 
 internal fun FirValueParameter.transformVarargTypeToArrayType() {
     if (isVararg) {
-        val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
-        transformReturnTypeRef(
-            StoreType,
-            returnTypeRef.withReplacedConeType(ConeKotlinTypeProjectionOut(returnType).createArrayOf())
-        )
+        this.transformTypeToArrayType()
     }
+}
+
+internal fun FirTypedDeclaration.transformTypeToArrayType() {
+    val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+    transformReturnTypeRef(
+        StoreType,
+        returnTypeRef.withReplacedConeType(ConeKotlinTypeProjectionOut(returnType).createArrayOf())
+    )
 }
 
 inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {

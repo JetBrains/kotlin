@@ -349,9 +349,6 @@ class RawFirBuilder(
         private fun KtParameter.toFirProperty(firParameter: FirValueParameter): FirProperty {
             require(hasValOrVar())
             var type = typeReference.toFirOrErrorType()
-            if (firParameter.isVararg) {
-                type = type.convertToArrayType()
-            }
             val status = FirDeclarationStatusImpl(visibility, modality).apply {
                 isExpect = hasExpectModifier()
                 isActual = hasActualModifier()
@@ -390,6 +387,8 @@ class RawFirBuilder(
                     visibility
                 ) else null
                 extractAnnotationsTo(this)
+            }.apply {
+                isFromVararg = firParameter.isVararg
             }
         }
 

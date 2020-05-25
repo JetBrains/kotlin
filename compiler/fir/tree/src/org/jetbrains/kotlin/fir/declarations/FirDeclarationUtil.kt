@@ -108,3 +108,6 @@ fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
         else -> throw IllegalStateException()
     }
 }
+
+private object IsFromVarargKey: FirDeclarationDataKey()
+var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
