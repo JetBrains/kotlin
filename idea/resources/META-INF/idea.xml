@@ -1,0 +1,104 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinIconProviderService"
+                        serviceImplementation="org.jetbrains.kotlin.idea.KotlinIdeFileIconProviderService"/>
+
+    <lang.syntaxHighlighterFactory key="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinSyntaxHighlighterFactory"/>
+    <syntaxHighlighter factoryClass="org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinSyntaxHighlighterProviderForDecompiledBuiltIns"/>
+    <lang.braceMatcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.KotlinPairMatcher"/>
+    <lang.parserDefinition language="kotlin" implementationClass="org.jetbrains.kotlin.parsing.KotlinParserDefinition"/>
+    <lang.commenter language="kotlin" implementationClass="org.jetbrains.kotlin.idea.KotlinCommenter"/>
+    <lang.psiStructureViewFactory language="kotlin"
+                                  implementationClass="org.jetbrains.kotlin.idea.structureView.KotlinStructureViewFactory"/>
+    <structureViewBuilder order="first" key="CLASS"
+                          factoryClass="org.jetbrains.kotlin.idea.structureView.KtClsStructureViewBuilderProvider"/>
+    <editor.linePainter order="first" implementation="org.jetbrains.kotlin.idea.parameterInfo.custom.ReturnHintLinePainter"/>
+
+    <lang.formatter language="kotlin" implementationClass="org.jetbrains.kotlin.idea.formatter.KotlinFormattingModelBuilder"/>
+    <preFormatProcessor implementation="org.jetbrains.kotlin.idea.formatter.KotlinPreFormatProcessor"/>
+    <postFormatProcessor implementation="org.jetbrains.kotlin.idea.formatter.TrailingCommaPostFormatProcessor"/>
+
+    <internalFileTemplate name="Kotlin File"/>
+    <internalFileTemplate name="Kotlin Class"/>
+    <internalFileTemplate name="Kotlin Enum"/>
+    <internalFileTemplate name="Kotlin Interface"/>
+    <internalFileTemplate name="Kotlin Worksheet"/>
+    <internalFileTemplate name="Kotlin Script"/>
+
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinStatementGroupSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinCodeBlockSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinDocCommentSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinCallExpressionWithLambdaSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinDeclarationSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinListSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinStringLiteralSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinInvokedExpressionSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinTypeSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinSuperTypeSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinBracketsSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinLabeledReturnSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinClassMemberSelectioner"/>
+    <extendWordSelectionHandler implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinEscapedIdentifierSelectioner"/>
+    <basicWordSelectionFilter implementation="org.jetbrains.kotlin.idea.editor.wordSelection.KotlinWordSelectionFilter"/>
+
+    <problemHighlightFilter implementation="org.jetbrains.kotlin.idea.highlighter.KotlinProblemHighlightFilter"/>
+    <problemFileHighlightFilter implementation="org.jetbrains.kotlin.idea.projectView.KotlinProblemFileHighlightFilter"/>
+
+    <defaultHighlightingSettingProvider language="kotlin"
+                                        implementation="org.jetbrains.kotlin.idea.highlighter.KotlinDefaultHighlightingSettingsProvider"/>
+
+    <importFilteringRule implementation="org.jetbrains.kotlin.idea.findUsages.KotlinImportFilteringRule"/>
+
+    <quoteHandler fileType="Kotlin" className="org.jetbrains.kotlin.idea.editor.KotlinQuoteHandler"/>
+
+    <colorSettingsPage implementation="org.jetbrains.kotlin.idea.highlighter.KotlinColorSettingsPage"/>
+    <additionalTextAttributes scheme="Default" file="colorScheme/Default_Kotlin.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorScheme/Darcula_Kotlin.xml"/>
+
+    <declarationRangeHandler key="org.jetbrains.kotlin.psi.KtClassOrObject"
+                             implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinClassDeclarationRangeHandler"/>
+
+    <declarationRangeHandler key="org.jetbrains.kotlin.psi.KtDeclarationWithBody"
+                             implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinFunDeclarationRangeHandler"/>
+
+    <iconProvider implementation="org.jetbrains.kotlin.idea.KotlinIconProvider"/>
+
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtFunctionPresenter"
+                              forClass="org.jetbrains.kotlin.psi.KtFunction"/>
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
+                              forClass="org.jetbrains.kotlin.psi.KtClass"/>
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
+                              forClass="org.jetbrains.kotlin.psi.KtObjectDeclaration"/>
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
+                              forClass="org.jetbrains.kotlin.psi.KtProperty"/>
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
+                              forClass="org.jetbrains.kotlin.psi.KtParameter"/>
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
+                              forClass="org.jetbrains.kotlin.psi.KtTypeAlias"/>
+
+    <enterHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinEnterHandler"
+                          id="KotlinEnterHandler" order="before EnterBetweenBracesHandler"/>
+    <enterHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinMultilineStringEnterHandler"
+                          id="KotlinMultilineStringEnterHandler" order="before EnterBetweenBracesHandler"/>
+    <lang.smartEnterProcessor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler"/>
+    <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinBackspaceHandler"/>
+    <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinStringTemplateBackspaceHandler"/>
+    <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinRawStringBackspaceHandler"/>
+
+    <spellchecker.support implementationClass="org.jetbrains.kotlin.idea.codeInsight.spellchecker.KotlinSpellcheckingStrategy"
+                          language="kotlin"/>
+
+    <langCodeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinLanguageCodeStyleSettingsProvider"/>
+    <codeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinGenerationSettingsProvider"/>
+    <predefinedCodeStyle implementation="org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle"/>
+    <predefinedCodeStyle implementation="org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle"/>
+
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Generic"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$TopLevel"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Statement"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Class"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Expression"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Comment"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$ObjectDeclaration"/>
+  </extensions>
+</idea-plugin>
