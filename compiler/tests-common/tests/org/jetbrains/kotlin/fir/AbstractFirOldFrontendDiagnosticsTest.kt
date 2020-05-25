@@ -21,7 +21,7 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
 
     private fun prepareTestDataFile(originalFilePath: String, firTestDataFile: File) {
         if (!firTestDataFile.exists()) {
-            KotlinTestUtils.assertEqualsToFile(firTestDataFile, loadTestDataWithoutDiagnostics(File(originalFilePath)))
+            KotlinTestUtils.assertEqualsToFile(firTestDataFile, loadTestDataWithDiagnostics(File(originalFilePath)))
         }
     }
 

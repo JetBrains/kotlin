@@ -29,8 +29,8 @@ abstract class AbstractFirDiagnosticsTestSpec : AbstractFirOldFrontendDiagnostic
 
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
         val testFilePath = testDataFile.canonicalPath
-
-        specTest = CommonParser.parseSpecTest(testFilePath, files.associate { Pair(it.fileName, it.clearText) }).first
+        val testWithMetaInfoPath = if (!testFilePath.contains(".fir.kt")) testFilePath else testFilePath.replace(".fir.kt", ".kt")
+        specTest = CommonParser.parseSpecTest(testWithMetaInfoPath, files.associate { Pair(it.fileName, it.clearText) }).first
 
         super.analyzeAndCheck(testDataFile, files)
     }
