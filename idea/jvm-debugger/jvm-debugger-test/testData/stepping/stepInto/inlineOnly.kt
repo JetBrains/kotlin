@@ -27,4 +27,4 @@ inline fun forEach(s: () -> Unit) {
     }
 }
 
-// STEP_INTO: 10
+// STEP_INTO: 14
