@@ -26,6 +26,7 @@ import com.intellij.util.containers.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.CancellablePromise;
+import org.jetbrains.concurrency.Promises;
 
 import java.awt.*;
 import java.util.List;
@@ -155,7 +156,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
 
   @NotNull
   CancellablePromise<?> handle(@NotNull ServiceEvent e) {
-    return getInvoker().invoke(() -> {
+    Runnable handler = () -> {
       LOG.debug("Handle event: " + e);
       switch (e.type) {
         case SERVICE_ADDED:
@@ -182,7 +183,12 @@ class ServiceModel implements Disposable, InvokerSupplier {
       for (ServiceModelEventListener listener : myListeners) {
         listener.eventProcessed(e);
       }
-    });
+    };
+    if (e.type != ServiceEventListener.EventType.SYNC_RESET) {
+      return getInvoker().invoke(handler);
+    }
+    handler.run();
+    return Promises.resolvedCancellablePromise(null);
   }
 
   private void reset(Class<?> contributorClass) {

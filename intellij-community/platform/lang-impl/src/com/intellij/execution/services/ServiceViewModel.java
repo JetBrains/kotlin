@@ -128,9 +128,15 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier, ServiceM
     }
   }
 
+  protected void notifyListeners(ServiceEvent e) {
+    for (ServiceViewModelListener listener : myListeners) {
+      listener.eventProcessed(e);
+    }
+  }
+
   protected void notifyListeners() {
     for (ServiceViewModelListener listener : myListeners) {
-      listener.rootsChanged();
+      listener.structureChanged();
     }
   }
 
@@ -314,7 +320,11 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier, ServiceM
   }
 
   interface ServiceViewModelListener {
-    void rootsChanged();
+    default void eventProcessed(@NotNull ServiceEvent e) {
+      structureChanged();
+    }
+
+    void structureChanged();
   }
 
   static class AllServicesModel extends ServiceViewModel {
@@ -336,7 +346,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier, ServiceM
 
     @Override
     public void eventProcessed(ServiceEvent e) {
-      notifyListeners();
+      notifyListeners(e);
     }
 
     @Override
@@ -370,7 +380,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier, ServiceM
     @Override
     public void eventProcessed(ServiceEvent e) {
       if (e.contributorClass.isInstance(myContributor)) {
-        notifyListeners();
+        notifyListeners(e);
       }
     }
 
@@ -419,7 +429,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier, ServiceM
       if (group == null || !e.contributorClass.isInstance(group.getRootContributor())) return;
 
       myGroupRef.set((ServiceGroupNode)findItem(group, myModel.getRoots()));
-      notifyListeners();
+      notifyListeners(e);
     }
 
     @Override
@@ -463,7 +473,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier, ServiceM
       if (service == null || !e.contributorClass.isInstance(service.getRootContributor())) return;
 
       myServiceRef.set(findItem(service));
-      notifyListeners();
+      notifyListeners(e);
     }
 
     @Override
@@ -523,7 +533,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier, ServiceM
       myRoots.removeAll(toRemove);
 
       if (update) {
-        notifyListeners();
+        notifyListeners(e);
       }
     }
 

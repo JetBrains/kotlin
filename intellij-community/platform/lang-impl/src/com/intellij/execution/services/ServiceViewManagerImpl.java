@@ -52,6 +52,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.concurrency.Promise;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -470,14 +471,18 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       ServiceViewItem item = viewModel.getService();
       if (item != null && !viewModel.getChildren(item).isEmpty() && contentManager != null) {
         AppUIExecutor.onUiThread().expireWith(myProject).submit(() -> {
+          ServiceViewItem viewItem = viewModel.getService();
+          if (viewItem == null) return;
+
           int index = contentManager.getIndexOfContent(content);
           if (index < 0) return;
 
           contentManager.removeContent(content, true);
-          ServiceListModel listModel = new ServiceListModel(myModel, myModelFilter, new SmartList<>(item),
+          ServiceListModel listModel = new ServiceListModel(myModel, myModelFilter, new SmartList<>(viewItem),
                                                             viewModel.getFilter().getParent());
           ServiceView listView = ServiceView.createView(myProject, listModel, prepareViewState(new ServiceViewState()));
-          Content listContent = addServiceContent(contentManager, listView, item.getViewDescriptor().getContentPresentation(), true, index);
+          Content listContent =
+            addServiceContent(contentManager, listView, viewItem.getViewDescriptor().getContentPresentation(), true, index);
           extractList(listModel, listContent);
         });
       }
@@ -545,8 +550,12 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   private static void updateContentTab(ServiceViewItem item, Content content) {
     if (item != null) {
+      WeakReference<ServiceViewItem> itemRef = new WeakReference<>(item);
       AppUIExecutor.onUiThread().expireWith(content).submit(() -> {
-        ItemPresentation itemPresentation = item.getViewDescriptor().getContentPresentation();
+        ServiceViewItem viewItem = itemRef.get();
+        if (viewItem == null) return;
+
+        ItemPresentation itemPresentation = viewItem.getViewDescriptor().getContentPresentation();
         content.setDisplayName(ServiceViewDragHelper.getDisplayName(itemPresentation));
         content.setIcon(itemPresentation.getIcon(false));
       });
@@ -910,22 +919,20 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
     @Override
     public void extensionRemoved(@NotNull ServiceViewContributor<?> extension, @NotNull PluginDescriptor pluginDescriptor) {
-      ServiceEvent e = ServiceEvent.createResetEvent(extension.getClass());
+      ServiceEvent e = ServiceEvent.createSyncResetEvent(extension.getClass());
       myModel.handle(e).onProcessed(o -> {
         eventHandled(e);
 
-        AppUIExecutor.onUiThread().expireWith(myProject).submit(() -> {
-          for (Map.Entry<String, Collection<ServiceViewContributor<?>>> entry : myGroups.entrySet()) {
-            if (entry.getValue().remove(extension)) {
-              if (entry.getValue().isEmpty()) {
-                unregisterToolWindow(entry.getKey());
-              }
-              break;
+        for (Map.Entry<String, Collection<ServiceViewContributor<?>>> entry : myGroups.entrySet()) {
+          if (entry.getValue().remove(extension)) {
+            if (entry.getValue().isEmpty()) {
+              unregisterToolWindow(entry.getKey());
             }
+            break;
           }
+        }
 
-          unregisterActivateByContributorActions(extension);
-        });
+        unregisterActivateByContributorActions(extension);
       });
     }
 

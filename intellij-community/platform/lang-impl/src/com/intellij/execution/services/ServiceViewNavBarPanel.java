@@ -70,6 +70,10 @@ class ServiceViewNavBarPanel extends NavBarPanel {
     hideHint(true);
   }
 
+  void hidePopup() {
+    hideHint(false);
+  }
+
   private static class ServiceViewNavBarModel extends NavBarModel {
     private ServiceViewModel myViewModel;
     private final ServiceViewNavBarRoot myRoot = new ServiceViewNavBarRoot();

@@ -6,7 +6,6 @@ import com.intellij.execution.services.ServiceModel.ServiceViewItem;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.dnd.DnDManager;
 import com.intellij.ide.navigationToolbar.NavBarModel;
-import com.intellij.ide.navigationToolbar.NavBarPanel;
 import com.intellij.ide.util.treeView.TreeState;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.AppUIExecutor;
@@ -19,6 +18,7 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.RestoreSelectionListener;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.util.ArrayUtil;
@@ -39,6 +39,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
@@ -52,7 +53,7 @@ class ServiceTreeView extends ServiceView {
   private final ServiceViewTreeModel myTreeModel;
   private final ServiceViewModel.ServiceViewModelListener myListener;
 
-  private final NavBarPanel myNavBarPanel;
+  private final ServiceViewNavBarPanel myNavBarPanel;
 
   private volatile ServiceViewItem myLastSelection;
   private boolean mySelected;
@@ -64,7 +65,7 @@ class ServiceTreeView extends ServiceView {
     myTreeModel = new ServiceViewTreeModel(model);
     myTree = new ServiceViewTree(myTreeModel, this);
 
-    myListener = this::rootsChanged;
+    myListener = new ServiceViewTreeModelListener();
     model.addModelListener(myListener);
 
     ServiceViewActionProvider actionProvider = ServiceViewActionProvider.getInstance();
@@ -230,15 +231,22 @@ class ServiceTreeView extends ServiceView {
     myUi.setDetailsComponent(newDescriptor == null ? null : newDescriptor.getContentComponent());
   }
 
-  private void rootsChanged() {
-    updateSelectionPaths();
-    updateNavBar();
-    updateLastSelection();
+  private void selectFirstItemIfNeeded() {
+    AppUIExecutor.onUiThread().expireWith(getProject()).submit(() -> {
+      List<ServiceViewItem> selected = getSelectedItems();
+      if (selected.isEmpty()) {
+        ServiceViewItem item = ContainerUtil.getFirstItem(getModel().getRoots());
+        if (item != null) {
+          select(item.getValue(), item.getRootContributor().getClass());
+        }
+      }
+    });
   }
 
   private void updateLastSelection() {
     ServiceViewItem lastSelection = myLastSelection;
-    ServiceViewItem updatedItem = lastSelection == null ? null : getModel().findItem(lastSelection);
+    WeakReference<ServiceViewItem> itemRef =
+      new WeakReference<>(lastSelection == null ? null : getModel().findItem(lastSelection));
     AppUIExecutor.onUiThread().expireWith(getProject()).submit(() -> {
       List<ServiceViewItem> selected = getSelectedItems();
       if (selected.isEmpty()) {
@@ -249,6 +257,7 @@ class ServiceTreeView extends ServiceView {
         }
       }
 
+      ServiceViewItem updatedItem = itemRef.get();
       ServiceViewItem newSelection = ContainerUtil.getOnlyItem(selected);
       if (Comparing.equal(newSelection, updatedItem)) {
         newSelection = updatedItem;
@@ -271,12 +280,20 @@ class ServiceTreeView extends ServiceView {
       ServiceViewItem item = getNavBarItem();
       if (item == null) return;
 
+      WeakReference<ServiceViewItem> itemRef = new WeakReference<>(item);
       getModel().getInvoker().invoke(() -> {
-        ServiceViewItem updatedItem = getModel().findItem(item);
+        ServiceViewItem viewItem = itemRef.get();
+        if (viewItem == null) return;
+
+        ServiceViewItem updatedItem = getModel().findItem(viewItem);
         if (updatedItem != null) {
+          WeakReference<ServiceViewItem> updatedRef = new WeakReference<>(updatedItem);
           AppUIExecutor.onUiThread().expireWith(getProject()).submit(() -> {
+            ServiceViewItem updatedViewItem = updatedRef.get();
+            if (updatedViewItem == null) return;
+
             ServiceViewItem navBarItem = getNavBarItem();
-            if (updatedItem.equals(navBarItem) && !updatedItem.isRemoved()) {
+            if (updatedViewItem.equals(navBarItem) && !updatedViewItem.isRemoved()) {
               myNavBarPanel.getModel().updateModel(updatedItem);
             }
           });
@@ -434,7 +451,6 @@ class ServiceTreeView extends ServiceView {
     for (TreePath path : paths) {
       Object[] items = path.getPath();
       for (int i = 1; i < items.length; i++) {
-        //noinspection SuspiciousMethodCalls
         if (roots.contains(items[i])) {
           Object[] adjustedItems = new Object[items.length - i + 1];
           adjustedItems[0] = treeRoot;
@@ -445,6 +461,38 @@ class ServiceTreeView extends ServiceView {
       }
     }
     return result;
+  }
+
+  private class ServiceViewTreeModelListener implements ServiceViewModel.ServiceViewModelListener {
+    @Override
+    public void eventProcessed(ServiceEventListener.@NotNull ServiceEvent e) {
+      if (e.type == ServiceEventListener.EventType.SYNC_RESET) {
+        myTree.setModel(null);
+        AsyncTreeModel asyncTreeModel = new AsyncTreeModel(myTreeModel, ServiceTreeView.this);
+        myTree.setModel(asyncTreeModel);
+        myNavBarPanel.hidePopup();
+        myNavBarPanel.getModel().updateModel(null);
+        myNavBarPanel.getUpdateQueue().rebuildUi();
+        updateLastSelection();
+      }
+      else {
+        updateNavBar();
+        ServiceViewItem lastSelection = myLastSelection;
+        if (lastSelection != null && lastSelection.getRootContributor().getClass().equals(e.contributorClass)) {
+          updateLastSelection();
+        }
+        else {
+          selectFirstItemIfNeeded();
+        }
+      }
+      updateSelectionPaths();
+    }
+
+    @Override
+    public void structureChanged() {
+      selectFirstItemIfNeeded();
+      updateSelectionPaths();
+    }
   }
 
   private static class PathSelectionVisitor implements TreeVisitor {
