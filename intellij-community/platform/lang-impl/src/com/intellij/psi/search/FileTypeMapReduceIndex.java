@@ -10,6 +10,7 @@ import com.intellij.util.indexing.impl.MapInputDataDiffBuilder;
 import com.intellij.util.indexing.impl.storage.VfsAwareMapReduceIndex;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.PersistentStringEnumerator;
+import com.intellij.util.io.StorageLockContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -74,7 +75,7 @@ class FileTypeMapReduceIndex extends VfsAwareMapReduceIndex<FileType, Void> {
 
   @NotNull
   private static PersistentStringEnumerator createFileTypeNameEnumerator() throws IOException {
-    return new PersistentStringEnumerator(getFileTypeNameEnumeratorPath(),  true);
+    return new PersistentStringEnumerator(getFileTypeNameEnumeratorPath(),  128, true, new StorageLockContext(true));
   }
 
   @NotNull
