@@ -13,6 +13,7 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.*
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.normalizePath
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.toCanonicalPath
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
 import com.intellij.openapi.externalSystem.util.Order
@@ -203,45 +204,41 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 else -> emptyList()
             }
 
+        private fun getOrCreateAffiliatedArtifactsMap(ideProject: DataNode<ProjectData>): Map<String, List<String>>? {
+            val mppArtifacts = ideProject.getUserData(MPP_CONFIGURATION_ARTIFACTS) ?: return null
+            val configArtifacts = ideProject.getUserData(CONFIGURATION_ARTIFACTS) ?: return null
+            // All MPP modules are already known, we can fill configurations map
+            return /*ideProject.getUserData(MPP_AFFILATED_ARTIFACTS) ?:*/ HashMap<String, MutableList<String>>().also { newMap ->
+                mppArtifacts.forEach { (filePath, moduleIds) ->
+                    val list2add = ArrayList<String>()
+                    newMap[filePath] = list2add
+                    for ((index, module) in moduleIds.withIndex()) {
+                        if (index == 0) {
+                            configArtifacts[filePath] = module
+                        } else {
+                            val affiliatedFileName = "$filePath-MPP-$index"
+                            configArtifacts[affiliatedFileName] = module
+                            list2add.add(affiliatedFileName)
+                        }
+                    }
+                }
+                //ideProject.putUserData(MPP_AFFILATED_ARTIFACTS, newMap)
+            }
+        }
+
         private fun Collection<ExternalDependency>.modifyDependenciesOnMppModules(
             ideProject: DataNode<ProjectData>,
             resolverCtx: ProjectResolverContext
         ) {
             // Add mpp-artifacts into map used for dependency substitution
-            val mppArtifacts = ideProject.getUserData(MPP_CONFIGURATION_ARTIFACTS)
-            val configArtifacts = ideProject.getUserData(CONFIGURATION_ARTIFACTS)
-            if (mppArtifacts != null && configArtifacts != null) {
-                val reverseConfigArtifacts = HashMap(configArtifacts.map { it.value to it.key }.toMap())
-                // processing case when one artifact could be produced by several (actualized!)source sets
-                if (mppArtifacts.isNotEmpty() && resolverCtx.isResolveModulePerSourceSet) {
-                    //Note! Should not use MultiValuesMap as it contains Set of values, but we need comparision === instead of ==
-                    val artifactToDependency = HashMap<String, MutableCollection<ExternalDependency>>()
-                    this.forEach { dependency ->
-                        dependency.getDependencyArtifacts().map { toCanonicalPath(it.absolutePath) }
-                            .filter { mppArtifacts.keys.contains(it) }.forEach { filePath ->
-                                (artifactToDependency[filePath] ?: ArrayList<ExternalDependency>().also { newCollection ->
-                                    artifactToDependency[filePath] = newCollection
-                                }).add(dependency)
-                            }
-                    }
-                    // create 'fake' dependency artifact files and put them into dependency substitution map
-                    mppArtifacts.forEach { (filePath, moduleIds) ->
-                        moduleIds.firstOrNull()?.also { configArtifacts[filePath] = it }
-                        artifactToDependency[filePath]?.forEach { externalDependency ->
-                            for ((index, module) in moduleIds.withIndex()) {
-                                if (index != 0) {
-                                    val fakeArtifact = if (reverseConfigArtifacts.containsKey(module)) {
-                                        reverseConfigArtifacts[module]
-                                    } else {
-                                        val result = "$filePath-MPP-$index"
-                                        configArtifacts[result] = module
-                                        reverseConfigArtifacts[module] = result
-                                        result
-                                    }
-                                    externalDependency.addDependencyArtifactInternal(File(fakeArtifact))
-                                }
-                            }
-                        }
+            val affiliatedArtifacts = getOrCreateAffiliatedArtifactsMap(ideProject)
+            if (affiliatedArtifacts != null) {
+                this.forEach { dependency ->
+                    val existingArtifactDependencies = dependency.getDependencyArtifacts().map { normalizePath(it.absolutePath) }
+                    val dependencies2add = existingArtifactDependencies.flatMap { affiliatedArtifacts[it] ?: emptyList() }
+                        .filter { !existingArtifactDependencies.contains(it) }
+                    dependencies2add.forEach {
+                        dependency.addDependencyArtifactInternal(File(it))
                     }
                 }
             }
@@ -278,7 +275,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
 
             val jdkName = gradleModule.jdkNameIfAny
 
-            // save artefacts locations.
+            // save artifacts locations.
             val userData = projectDataNode.getUserData(MPP_CONFIGURATION_ARTIFACTS) ?: HashMap<String, MutableList<String>>().apply {
                 projectDataNode.putUserData(MPP_CONFIGURATION_ARTIFACTS, this)
             }
@@ -389,10 +386,6 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 }
 
                 targetData.moduleIds = compilationIds
-            }
-
-            sourceSetMap.values.forEach {
-                it.getSecond().dependencies?.modifyDependenciesOnMppModules(projectDataNode, resolverCtx)
             }
 
             val ignoreCommonSourceSets by lazy { externalProject.notImportedCommonSourceSets() }
