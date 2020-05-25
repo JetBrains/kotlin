@@ -547,35 +547,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.9")
-    fun testCommonImportByPlatformPlugin_SingleModule() {
-        configureByFiles()
-        importProjectUsingSingeModulePerGradleProject()
-
-        with(facetSettings("project")) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
-            Assert.assertTrue(targetPlatform.isCommon())
-        }
-
-        val rootManager = ModuleRootManager.getInstance(getModule("project"))
-        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().mapTo(HashSet()) { it.library }.single()
-        assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
-
-        Assert.assertEquals(
-            listOf(
-                "file:///src/main/java" to SourceKotlinRootType,
-                "file:///src/main/kotlin" to SourceKotlinRootType,
-                "file:///src/test/java" to TestSourceKotlinRootType,
-                "file:///src/test/kotlin" to TestSourceKotlinRootType,
-                "file:///src/main/resources" to ResourceKotlinRootType,
-                "file:///src/test/resources" to TestResourceKotlinRootType
-            ),
-            getSourceRootInfos("project")
-        )
-    }
-
-    @Test
     fun testJvmImportByKotlinPlugin() {
         configureByFiles()
         importProject()
