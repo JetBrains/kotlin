@@ -14,10 +14,6 @@ rootProject.apply {
 repositories {
     teamcityServer {
         setUrl("https://buildserver.labs.intellij.net")
-        credentials {
-            username = "guest"
-            password = "guest"
-        }
     }
 }
 
