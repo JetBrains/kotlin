@@ -94,7 +94,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = expression.text == other.text
     }
 
-
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         val other = getTreeElementDepar<KtExpression>() ?: return
         if (other is KtSimpleNameExpression) {

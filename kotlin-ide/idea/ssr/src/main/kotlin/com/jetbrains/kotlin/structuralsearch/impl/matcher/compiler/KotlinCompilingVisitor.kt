@@ -60,6 +60,13 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitConstantExpression(expression: KtConstantExpression) {
+        super.visitConstantExpression(expression)
+        getHandler(expression).setFilter {
+            it is KtConstantExpression || it is KtParenthesizedExpression
+        }
+    }
+
     override fun visitReferenceExpression(expression: KtReferenceExpression) {
         visitElement(expression)
         super.visitReferenceExpression(expression)
