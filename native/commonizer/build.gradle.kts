@@ -12,6 +12,10 @@ val mavenCompileScope by configurations.creating {
         .addMapping(0, this, COMPILE)
 }
 
+configurations {
+    runtimeOnly.get().extendsFrom(compileOnly.get())
+}
+
 description = "Kotlin KLIB Library Commonizer"
 
 dependencies {
@@ -25,13 +29,10 @@ dependencies {
     // This dependency is necessary to keep the right dependency record inside of POM file:
     mavenCompileScope(project(":kotlin-compiler"))
 
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
 
-    testCompile(commonDep("junit:junit"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":native:frontend.native"))
-
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testImplementation(commonDep("junit:junit"))
+    testImplementation(projectTests(":compiler:tests-common"))
 }
 
 val runCommonizer by tasks.registering(NoDebugJavaExec::class) {
@@ -40,10 +41,7 @@ val runCommonizer by tasks.registering(NoDebugJavaExec::class) {
 }
 
 sourceSets {
-    "main" {
-        projectDefault()
-        runtimeClasspath += configurations.compileOnly
-    }
+    "main" { projectDefault() }
     "test" { projectDefault() }
 }
 
