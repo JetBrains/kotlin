@@ -482,7 +482,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         build()
 
-        rename("${workDir}/src/Test.java", "${workDir}/src/Test1.java")
+        rename("${workDir}/src/Test.java", "Test1.java")
         build()
     }
 
