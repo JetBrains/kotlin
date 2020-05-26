@@ -1108,6 +1108,10 @@ public final class TemplateState implements Disposable {
     return myDocument == null;
   }
 
+  public boolean isLastVariable() {
+    return getNextVariableNumber(getCurrentVariableNumber()) < 0;
+  }
+
   private int getNextVariableNumber(int currentVariableNumber) {
     for (int i = currentVariableNumber + 1; i < myTemplate.getVariableCount(); i++) {
       if (checkIfTabStop(i)) {
