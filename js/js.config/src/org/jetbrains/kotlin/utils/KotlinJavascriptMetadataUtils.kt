@@ -65,11 +65,8 @@ object KotlinJavascriptMetadataUtils {
         "\"${Base64.getEncoder().encodeToString(content)}\");\n"
 
     @JvmStatic
-    fun loadMetadata(file: File, onError: (message: String) -> Unit = ::error): List<KotlinJavascriptMetadata> {
-        if (!file.exists()) {
-            onError("Library $file not found")
-            return emptyList()
-        }
+    fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
+        assert(file.exists()) { "Library $file not found" }
         val metadataList = arrayListOf<KotlinJavascriptMetadata>()
         JsLibraryUtils.traverseJsLibrary(file) { library ->
             parseMetadata(library.content, metadataList)
@@ -79,7 +76,7 @@ object KotlinJavascriptMetadataUtils {
     }
 
     @JvmStatic
-    fun loadMetadata(path: String, onError: (message: String) -> Unit): List<KotlinJavascriptMetadata> = loadMetadata(File(path), onError)
+    fun loadMetadata(path: String): List<KotlinJavascriptMetadata> = loadMetadata(File(path))
 
     @JvmStatic
     fun parseMetadata(text: CharSequence, metadataList: MutableList<KotlinJavascriptMetadata>) {
