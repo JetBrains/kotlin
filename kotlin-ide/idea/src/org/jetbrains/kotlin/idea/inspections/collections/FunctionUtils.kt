@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ReceiverKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaAtom
+import org.jetbrains.kotlin.resolve.calls.model.unwrap
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.receiverValue
@@ -76,7 +77,7 @@ fun ResolvedCall<*>.hasLastFunctionalParameterWithResult(context: BindingContext
     if (this is NewResolvedCallImpl<*>) {
         // TODO: looks like hack
         resolvedCallAtom.subResolvedAtoms?.firstOrNull { it is ResolvedLambdaAtom }.safeAs<ResolvedLambdaAtom>()?.let { lambdaAtom ->
-            return lambdaAtom.resultArgumentsInfo.nonErrorArguments.filterIsInstance<ReceiverKotlinCallArgument>().all {
+            return lambdaAtom.unwrap().resultArgumentsInfo!!.nonErrorArguments.filterIsInstance<ReceiverKotlinCallArgument>().all {
                 val type = it.receiverValue?.type ?: return@all false
                 predicate(type)
             }
