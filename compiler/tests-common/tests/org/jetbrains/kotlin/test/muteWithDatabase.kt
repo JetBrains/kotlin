@@ -235,18 +235,6 @@ private inline fun RunNotifier.withMuteFailureListener(
     }
 }
 
-class RunnerWithIgnoreInDatabase(klass: Class<*>?) : BlockJUnit4ClassRunner(klass) {
-    override fun isIgnored(child: FrameworkMethod): Boolean {
-        return super.isIgnored(child) || isIgnoredInDatabaseWithLog(child)
-    }
-
-    override fun runChild(method: FrameworkMethod, notifier: RunNotifier) {
-        notifier.withMuteFailureListener(method.declaringClass, method.name) {
-            super.runChild(method, notifier)
-        }
-    }
-}
-
 fun isIgnoredInDatabaseWithLog(child: FrameworkMethod): Boolean {
     if (isMutedInDatabase(child.declaringClass, child.name)) {
         System.err.println(mutedMessage(testKey(child.declaringClass, child.name)))
