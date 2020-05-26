@@ -27,8 +27,6 @@ buildscript {
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 def projectVersions = file("../gradle/versions.properties").text
 
-BuildCacheKt.setupBuildCache(settings)
-
 include "prepare-deps"
 
 def target_AppCode_Clion = buildProperties.includeCidrPlugins && !projectVersions.contains("versions.androidStudioRelease")
