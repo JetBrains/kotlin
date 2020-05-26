@@ -62,11 +62,6 @@ class FirJavaModuleBasedSession(
         )
 
         registerComponent(
-            FirCorrespondingSupertypesCache::class,
-            FirCorrespondingSupertypesCache(this)
-        )
-
-        registerComponent(
             ConeCallConflictResolverFactory::class,
             JvmCallConflictResolverFactory
         )
@@ -114,28 +109,7 @@ class FirLibrarySession private constructor(
                     javaSymbolProvider,
                     FirDependenciesSymbolProviderImpl(this)
                 )
-            ) as FirSymbolProvider
-        )
-        registerComponent(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
-
-        registerComponent(
-            FirCorrespondingSupertypesCache::class,
-            FirCorrespondingSupertypesCache(this)
-        )
-
-        registerComponent(
-            FirExtensionService::class,
-            FirExtensionService(this)
-        )
-
-        registerComponent(
-            FirRegisteredPluginAnnotations::class,
-            FirRegisteredPluginAnnotations.create(this)
-        )
-
-        registerComponent(
-            FirPredicateBasedProvider::class,
-            FirPredicateBasedProvider.create(this)
+            )
         )
 
         sessionProvider.sessionCache[moduleInfo] = this

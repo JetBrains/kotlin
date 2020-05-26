@@ -20,10 +20,6 @@ abstract class FirModuleBasedSession(override val moduleInfo: ModuleInfo, sessio
     init {
         registerComponent(FirQualifierResolver::class, FirQualifierResolverImpl(this))
         registerComponent(FirTypeResolver::class, FirTypeResolverImpl(this))
-        registerComponent(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
-        registerComponent(FirExtensionService::class, FirExtensionService(this))
-        registerComponent(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.create(this))
-        registerComponent(FirPredicateBasedProvider::class, FirPredicateBasedProvider.create(this))
     }
 }
 
