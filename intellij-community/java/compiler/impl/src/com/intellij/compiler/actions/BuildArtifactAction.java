@@ -15,6 +15,7 @@
  */
 package com.intellij.compiler.actions;
 
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.lang.IdeLanguageCustomization;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
@@ -23,7 +24,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonShortcuts;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.compiler.JavaCompilerBundle;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -68,7 +68,7 @@ public class BuildArtifactAction extends DumbAwareAction {
     final Project project = getEventProject(e);
     final Presentation presentation = e.getPresentation();
     boolean enabled = project != null && !ArtifactUtil.getArtifactWithOutputPaths(project).isEmpty();
-    if (IdeLanguageCustomization.getInstance().getPrimaryIdeLanguages().contains(StdFileTypes.JAVA.getLanguage())
+    if (IdeLanguageCustomization.getInstance().getPrimaryIdeLanguages().contains(JavaFileType.INSTANCE.getLanguage())
         && ActionPlaces.MAIN_MENU.equals(e.getPlace())) {
       //building artifacts is a valuable functionality for Java IDEs, let's not hide 'Build Artifacts' item from the main menu
       presentation.setEnabled(enabled);

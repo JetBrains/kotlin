@@ -3,13 +3,13 @@ package com.intellij.compiler.impl;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.compiler.CompilerMessageImpl;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerMessage;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
@@ -40,7 +40,7 @@ public class MessagesContainer {
 
   private static int getTabSize(@NotNull Project project) {
     try {
-      return CodeStyle.getSettings(project).getTabSize(StdFileTypes.JAVA);
+      return CodeStyle.getSettings(project).getTabSize(JavaFileType.INSTANCE);
     }
     catch (ProcessCanceledException e) {
       throw e;

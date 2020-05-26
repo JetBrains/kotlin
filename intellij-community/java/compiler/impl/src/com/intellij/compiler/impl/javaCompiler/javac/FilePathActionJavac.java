@@ -16,11 +16,12 @@
 package com.intellij.compiler.impl.javaCompiler.javac;
 
 import com.intellij.compiler.OutputParser;
+import com.intellij.ide.highlighter.JavaClassFileType;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,11 +53,11 @@ public class FilePathActionJavac extends JavacParserAction {
     final String name = index >= 0 ? filePath.substring(index + 1) : filePath;
 
     final FileType fileType = FileTypeManager.getInstance().getFileTypeByFileName(name);
-    if (StdFileTypes.JAVA.equals(fileType)) {
+    if (JavaFileType.INSTANCE.equals(fileType)) {
       callback.fileProcessed(filePath);
       callback.setProgressText(JavaCompilerBundle.message("progress.parsing.file", name));
     }
-    else if (StdFileTypes.CLASS.equals(fileType)) {
+    else if (JavaClassFileType.INSTANCE.equals(fileType)) {
       callback.fileGenerated(filePath);
     }
   }

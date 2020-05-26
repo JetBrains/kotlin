@@ -2,7 +2,7 @@
 package com.intellij.compiler.backwardRefs.view;
 
 import com.intellij.compiler.backwardRefs.CompilerReferenceServiceImpl;
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -25,6 +25,6 @@ public class TestCompilerRefInheritanceAction extends TestCompilerHierarchyBaseA
   protected CompilerReferenceHierarchyTestInfo getHierarchy(@NotNull PsiElement element,
                                                             @NotNull CompilerReferenceServiceImpl refService,
                                                             @NotNull GlobalSearchScope scope) {
-    return refService.getTestHierarchy((PsiNamedElement)element, scope, StdFileTypes.JAVA);
+    return refService.getTestHierarchy((PsiNamedElement)element, scope, JavaFileType.INSTANCE);
   }
 }
