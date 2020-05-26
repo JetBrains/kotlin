@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.CALL
 import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -79,17 +80,20 @@ fun <D : CallableDescriptor> ResolvedCall<D>.usesDefaultArguments(): Boolean {
 
 // call
 
-fun <C : ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionContext<C>): Boolean {
+fun <C : ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionContext<C>): Boolean =
+    hasUnresolvedArguments(context.trace.bindingContext, context.statementFilter)
+
+fun Call.hasUnresolvedArguments(bindingContext: BindingContext, statementFilter: StatementFilter): Boolean {
     val arguments = valueArguments.map { it.getArgumentExpression() }
     return arguments.any(fun(argument: KtExpression?): Boolean {
-        if (argument == null || ArgumentTypeResolver.isFunctionLiteralOrCallableReference(argument, context)) return false
+        if (argument == null || ArgumentTypeResolver.isFunctionLiteralOrCallableReference(argument, statementFilter)) return false
 
-        when (val resolvedCall = argument.getResolvedCall(context.trace.bindingContext)) {
+        when (val resolvedCall = argument.getResolvedCall(bindingContext)) {
             is MutableResolvedCall<*> -> if (!resolvedCall.hasInferredReturnType()) return false
             is NewResolvedCallImpl<*> -> if (resolvedCall.resultingDescriptor.returnType?.isError == true) return false
         }
 
-        val expressionType = context.trace.bindingContext.getType(argument)
+        val expressionType = bindingContext.getType(argument)
         return expressionType == null || expressionType.isError
     })
 }
