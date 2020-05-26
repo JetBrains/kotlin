@@ -5,15 +5,11 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.codeInspection.ex.ScopeToolState;
 import com.intellij.ide.impl.ProjectUtil;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker;
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.project.ExternalStorageConfigurationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerListener;
-import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -185,26 +181,11 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
                          "</component>");
     FileUtil.copyDir(new File(getProjectPath(), "gradle"), new File(getProjectPath(), "foo/gradle"));
 
-    // run forceLoadSchemes before project startup activities
-    // because one of them can define default inspection profile and forceLoadSchemes will do nothing later
-    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(myProject);
-    connection.subscribe(ProjectLifecycleListener.TOPIC, new ProjectLifecycleListener() {
-      @Override
-      public void beforeProjectLoaded(@NotNull Project project) {
-        MessageBusConnection busConnection = project.getMessageBus().connect();
-        busConnection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
-          @Override
-          public void projectOpened(@NotNull Project project) {
-            ProjectInspectionProfileManager.getInstance(project).forceLoadSchemes();
-          }
-        });
-      }
-    });
-
     Project fooProject = null;
     try {
       fooProject = EdtTestUtilKt.runInEdtAndGet(() -> {
         final Project project = ProjectUtil.openOrImport(foo.getPath(), null, true);
+        ProjectInspectionProfileManager.getInstance(project).forceLoadSchemes();
         UIUtil.dispatchAllInvocationEvents();
         return project;
       });
@@ -218,7 +199,6 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
       // assertModules(fooProject, "foo", "foo_main", "foo_test");
     }
     finally {
-      connection.disconnect();
       if (fooProject != null) {
         Project finalFooProject = fooProject;
         edt(() -> closeProject(finalFooProject));
