@@ -51,8 +51,8 @@ data class JsonTimeStats(
       val s = buildString {
         append("max: ${value.maxTime.presentableDuration()}; ")
         append("mean: ${value.meanTime.presentableDuration()}; ")
-        append("median: ${value.medianTime.presentableDuration()} ")
-        append("min: ${value.minTime.presentableDuration()}; ")
+        append("median: ${value.medianTime.presentableDuration()}; ")
+        append("min: ${value.minTime.presentableDuration()}")
       }
       gen.writeString(s)
     }
