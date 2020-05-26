@@ -128,7 +128,7 @@ public final class IndexUpdateRunner {
   }
 
   private void indexOneFileOfJob(@NotNull IndexingJob indexingJob) throws ProcessCanceledException {
-    long contentLoadingStartTime = System.nanoTime();
+    long contentLoadingTime = System.nanoTime();
     ContentLoadingResult loadingResult;
     try {
       loadingResult = loadNextContent(indexingJob, indexingJob.myIndicator);
@@ -144,7 +144,7 @@ public final class IndexUpdateRunner {
       return;
     }
     finally {
-      indexingJob.myStatistics.addContentLoadingTime(System.nanoTime() - contentLoadingStartTime);
+      contentLoadingTime = System.nanoTime() - contentLoadingTime;
     }
 
     if (loadingResult == null) {
@@ -154,12 +154,9 @@ public final class IndexUpdateRunner {
 
     CachedFileContent fileContent = loadingResult.cachedFileContent;
     try {
-      long indexingStartTime = System.nanoTime();
-      try {
-        indexOneFileOfJob(indexingJob, fileContent);
-      }
-      finally {
-        indexingJob.myStatistics.addIndexingTime(System.nanoTime() - indexingStartTime);
+      FileIndexingStatistics fileIndexingStatistics = indexOneFileOfJob(indexingJob, fileContent);
+      if (fileIndexingStatistics != null) {
+        indexingJob.myStatistics.addFileStatistics(fileIndexingStatistics, contentLoadingTime);
       }
       indexingJob.oneMoreFileProcessed();
     }
@@ -257,8 +254,9 @@ public final class IndexUpdateRunner {
     }
   }
 
-  private void indexOneFileOfJob(@NotNull IndexingJob indexingJob,
-                                 @NotNull CachedFileContent fileContent) throws ProcessCanceledException {
+  @Nullable
+  private FileIndexingStatistics indexOneFileOfJob(@NotNull IndexingJob indexingJob,
+                                                   @NotNull CachedFileContent fileContent) throws ProcessCanceledException {
     Project project = indexingJob.myProject;
     if (project.isDisposed() || indexingJob.myIndicator.isCanceled()) {
       throw new ProcessCanceledException();
@@ -267,12 +265,11 @@ public final class IndexUpdateRunner {
     indexingJob.setLocationBeingIndexed(fileContent.getVirtualFile());
     if (!fileContent.isDirectory() && !Boolean.TRUE.equals(fileContent.getUserData(FAILED_TO_INDEX))) {
       try {
-        FileIndexingStatistics fileStatistics = ReadAction
+        return ReadAction
           .nonBlocking(() -> myFileBasedIndex.indexFileContent(project, fileContent))
           .expireWith(project)
           .wrapProgress(indexingJob.myIndicator)
           .executeSynchronously();
-        indexingJob.myStatistics.addFileStatistics(fileStatistics);
       }
       catch (ProcessCanceledException e) {
         throw e;
@@ -283,6 +280,7 @@ public final class IndexUpdateRunner {
                                      "To reindex this file IDEA has to be restarted", e);
       }
     }
+    return null;
   }
 
   @NotNull

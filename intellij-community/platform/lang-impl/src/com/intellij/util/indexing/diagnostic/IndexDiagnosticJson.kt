@@ -63,32 +63,37 @@ data class JsonFileProviderIndexStatistics(
   val providerName: String,
   // <total time> = <content loading time> + <indexing time> + <time spent on waiting for other indexing tasks to complete>
   val totalTime: JsonTime,
-  val indexingTimePerFile: JsonTimeStats,
-  val contentLoadingTimePerFile: JsonTimeStats,
-  val numberOfFilesPerFileType: List<FilesNumberPerFileType>,
-  val timesPerFileType: List<TimePerFileType>,
+  val numberOfFilesPerFileType: List<NumberOfFilesPerFileType>,
+  val indexingTimePerFileType: List<IndexingTimePerFileType>,
+  val contentLoadingTimePerFileType: List<ContentLoadingTimePerFileType>,
   val timesPerIndexer: List<TimePerIndexer>
 ) {
 
+  data class NumberOfFilesPerFileType(val fileType: String, val filesNumber: Int)
+  data class IndexingTimePerFileType(val fileType: String, val time: JsonTimeStats)
+  data class ContentLoadingTimePerFileType(val fileType: String, val time: JsonTimeStats)
   data class TimePerIndexer(val indexId: String, val time: JsonTimeStats)
-  data class TimePerFileType(val fileType: String, val time: JsonTimeStats)
-  data class FilesNumberPerFileType(val fileType: String, val filesNumber: Int)
 }
 
 fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics? {
   return JsonFileProviderIndexStatistics(
     providerDebugName,
     JsonTime(totalTime),
-    indexingStatistics.indexingTime.toTimeStats() ?: return null,
-    indexingStatistics.contentLoadingTime.toTimeStats() ?: return null,
     indexingStatistics.numberOfFilesPerFileType
-      .map { JsonFileProviderIndexStatistics.FilesNumberPerFileType(it.key, it.value) }
+      .map { JsonFileProviderIndexStatistics.NumberOfFilesPerFileType(it.key, it.value) }
       .sortedByDescending { it.filesNumber }
     ,
-    indexingStatistics.timesPerFileType
+    indexingStatistics.indexingTimesPerFileType
       .mapNotNull {
         val timeStats = it.value.toTimeStats() ?: return@mapNotNull null
-        JsonFileProviderIndexStatistics.TimePerFileType(it.key, timeStats)
+        JsonFileProviderIndexStatistics.IndexingTimePerFileType(it.key, timeStats)
+      }
+      .sortedByDescending { it.time.maxTime.nano }
+    ,
+    indexingStatistics.contentLoadingTimesPerFileType
+      .mapNotNull {
+        val timeStats = it.value.toTimeStats() ?: return@mapNotNull null
+        JsonFileProviderIndexStatistics.ContentLoadingTimePerFileType(it.key, timeStats)
       }
       .sortedByDescending { it.time.maxTime.nano }
     ,
