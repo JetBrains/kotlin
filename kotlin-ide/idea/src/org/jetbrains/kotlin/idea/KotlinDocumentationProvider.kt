@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.kdoc.KDocTemplate.DescriptionBodyTemplate
 import org.jetbrains.kotlin.idea.references.KtDescriptorsBasedReference
 import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -142,10 +143,11 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
 
     override fun getDocumentationElementForLink(psiManager: PsiManager, link: String, context: PsiElement?): PsiElement? {
         val navElement = context?.navigationElement as? KtElement ?: return null
-        val bindingContext = navElement.analyze(BodyResolveMode.PARTIAL)
+        val resolutionFacade = navElement.getResolutionFacade()
+        val bindingContext = navElement.analyze(resolutionFacade, BodyResolveMode.PARTIAL)
         val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, navElement] ?: return null
         val descriptors = resolveKDocLink(
-            bindingContext, navElement.getResolutionFacade(),
+            bindingContext, resolutionFacade,
             contextDescriptor, null, link.split('.')
         )
         val target = descriptors.firstOrNull() ?: return null
@@ -318,7 +320,8 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
         }
 
         private fun buildKotlinDeclaration(declaration: KtExpression, quickNavigation: Boolean): KDocTemplate {
-            val context = declaration.analyze(BodyResolveMode.PARTIAL)
+            val resolutionFacade = declaration.getResolutionFacade()
+            val context = declaration.analyze(resolutionFacade, BodyResolveMode.PARTIAL)
             val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
 
             if (declarationDescriptor == null) {
@@ -330,29 +333,32 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                 }
             }
 
-            return buildKotlin(context, declarationDescriptor, quickNavigation, declaration)
+            return buildKotlin(context, declarationDescriptor, quickNavigation, declaration, resolutionFacade)
         }
 
         private fun renderKotlinImplicitLambdaParameter(element: KtReferenceExpression, quickNavigation: Boolean): String? {
-            val context = element.analyze(BodyResolveMode.PARTIAL)
+            val resolutionFacade = element.getResolutionFacade()
+            val context = element.analyze(resolutionFacade, BodyResolveMode.PARTIAL)
             val target = element.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return null
-            return renderKotlin(context, target, quickNavigation, element)
+            return renderKotlin(context, target, quickNavigation, element, resolutionFacade)
         }
 
         private fun renderKotlin(
             context: BindingContext,
             declarationDescriptor: DeclarationDescriptor,
             quickNavigation: Boolean,
-            ktElement: KtElement
+            ktElement: KtElement,
+            resolutionFacade: ResolutionFacade,
         ) = buildString {
-            insert(buildKotlin(context, declarationDescriptor, quickNavigation, ktElement)) {}
+            insert(buildKotlin(context, declarationDescriptor, quickNavigation, ktElement, resolutionFacade)) {}
         }
 
         private fun buildKotlin(
             context: BindingContext,
             declarationDescriptor: DeclarationDescriptor,
             quickNavigation: Boolean,
-            ktElement: KtElement
+            ktElement: KtElement,
+            resolutionFacade: ResolutionFacade,
         ): KDocTemplate {
             @Suppress("NAME_SHADOWING")
             var declarationDescriptor = declarationDescriptor
@@ -363,7 +369,7 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                 }
             }
 
-            val deprecationProvider = ktElement.getResolutionFacade().frontendService<DeprecationResolver>()
+            val deprecationProvider = resolutionFacade.frontendService<DeprecationResolver>()
 
             return KDocTemplate().apply {
                 definition {
