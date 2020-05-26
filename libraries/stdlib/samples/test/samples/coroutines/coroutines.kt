@@ -116,7 +116,6 @@ class Coroutines {
     }
 
     @Sample
-    @Suppress("UNCHECKED_CAST")
     fun interceptor() {
         class LoggingContinuation<T>(
             val cont: Continuation<T>,
