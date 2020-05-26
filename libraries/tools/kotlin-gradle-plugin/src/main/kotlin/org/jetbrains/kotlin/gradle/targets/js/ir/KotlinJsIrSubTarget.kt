@@ -106,7 +106,7 @@ abstract class KotlinJsIrSubTarget(
             ).single().linkTask
 
             testJs.inputFileProperty.set(
-                testExecutableTask.map { it.outputFileProperty.get() }
+                testExecutableTask.flatMap { it.outputFileProperty }
             )
 
             testJs.dependsOn(nodeJs.npmInstallTask, nodeJs.nodeJsSetupTask)

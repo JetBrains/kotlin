@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,7 +35,7 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
             .all { developmentExecutable ->
                 val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
                     group = taskGroupName
-                    inputFileProperty.set(developmentExecutable.linkTask.map { it.outputFileProperty.get() })
+                    inputFileProperty.set(developmentExecutable.linkTask.flatMap { it.outputFileProperty })
                 }
 
                 target.runTask.dependsOn(runTaskHolder)
