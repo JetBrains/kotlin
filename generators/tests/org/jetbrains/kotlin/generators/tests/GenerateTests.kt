@@ -947,11 +947,10 @@ fun main(args: Array<String>) {
                 model("checker/regression")
                 model("checker/recovery")
                 model("checker/rendering")
-                model("checker/duplicateJvmSignature")
                 model("checker/infos")
-                model("checker/diagnosticsMessage")
-            }
+            model("checker/diagnosticsMessage")
         }
+    }
 
         testGroup("idea/scripting-support/test", "idea/scripting-support/testData") {
             testClass<AbstractScratchRunActionTest> {
