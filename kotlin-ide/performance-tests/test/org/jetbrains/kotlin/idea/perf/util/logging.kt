@@ -9,7 +9,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 
 inline fun gradleMessage(block: () -> String) {
-    //print("#gradle ${block()}")
+    print("#gradle ${block()}")
 }
 
 inline fun logMessage(message: () -> String) {

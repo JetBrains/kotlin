@@ -24,8 +24,11 @@ interface GradleProcessOutputInterceptor {
         fun install(parentDisposable: Disposable) {
             val installedExtensions = EP.extensions
 
+            val actual = installedExtensions.firstIsInstanceOrNull<GradleProcessOutputInterceptor>()
+            if (actual is GradleProcessOutputInterceptorImpl) return
+
             assertNull(
-                installedExtensions.firstIsInstanceOrNull<GradleProcessOutputInterceptor>(),
+                actual,
                 "Another ${GradleProcessOutputInterceptor::class.java.simpleName} is already installed"
             )
 
