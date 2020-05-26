@@ -8172,6 +8172,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/generic.kt");
             }
 
+            @TestMetadata("genericDelegateWithNoAdditionalInfo.kt")
+            public void testGenericDelegateWithNoAdditionalInfo() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/genericDelegateWithNoAdditionalInfo.kt");
+            }
+
             @TestMetadata("hostCheck.kt")
             public void testHostCheck() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/hostCheck.kt");
@@ -11121,6 +11126,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
         @TestMetadata("kt34268.kt")
         public void testKt34268() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt34268.kt");
+        }
+
+        @TestMetadata("kt34902.kt")
+        public void testKt34902() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt34902.kt");
         }
 
         @TestMetadata("kt37998.kt")
