@@ -28,12 +28,8 @@ import com.intellij.openapi.editor.impl.EditorMarkupModelImpl;
 import com.intellij.openapi.editor.impl.event.MarkupModelListener;
 import com.intellij.openapi.editor.markup.*;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.options.ex.ConfigurableExtensionPointUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -41,7 +37,6 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.profile.codeInspection.ui.ErrorsConfigurableProvider;
 import com.intellij.psi.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
@@ -621,24 +616,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     private @NotNull List<AnAction> initActions() {
         List<AnAction> result = new ArrayList<>();
-        result.add(new DumbAwareAction(EditorBundle.message("iw.configure.inspections")) {
-          @Override
-          public void update(@NotNull AnActionEvent e) {
-            e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isHighlightingAvailable(getPsiFile()));
-          }
-
-          @Override
-          public void actionPerformed(@NotNull AnActionEvent e) {
-            if (!getProject().isDisposed()) {
-              Configurable projectConfigurable = ConfigurableExtensionPointUtil.createProjectConfigurableForProvider(getProject(),
-                                                                                                         ErrorsConfigurableProvider.class);
-              if (projectConfigurable != null) {
-                ShowSettingsUtil.getInstance().editConfigurable(getProject(), projectConfigurable);
-              }
-            }
-          }
-        });
-
+        result.add(new ConfigureInspectionsAction());
         result.add(DaemonEditorPopup.createGotoGroup());
 
         result.add(Separator.create());

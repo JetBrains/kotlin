@@ -2,6 +2,7 @@
 
 package com.intellij.codeInsight.daemon.impl;
 
+import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightLevelUtil;
@@ -119,7 +120,7 @@ class HectorComponentImpl extends JPanel implements HectorComponent {
     gc.gridy = GridBagConstraints.RELATIVE;
     gc.weighty = 0;
 
-    final HyperlinkLabel configurator = new HyperlinkLabel(EditorBundle.message("iw.configure.inspections"));
+    HyperlinkLabel configurator = new HyperlinkLabel(DaemonBundle.message("popup.action.configure.inspections"));
     gc.insets.right = 5;
     gc.insets.bottom = 10;
     gc.weightx = 0;
