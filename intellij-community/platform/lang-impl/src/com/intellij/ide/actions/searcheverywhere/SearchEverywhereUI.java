@@ -175,6 +175,7 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     return new JBList<>(myListModel);
   }
 
+  @Override
   public void toggleEverywhereFilter() {
     myEverywhereAutoSet = false;
     if (mySelectedTab.everywhereAction == null) return;
@@ -206,6 +207,7 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     return mySelectedTab.everywhereAction.canToggleEverywhere();
   }
 
+  @Override
   public void switchToContributor(@NotNull String contributorID) {
     SETab selectedTab = myTabs.stream()
       .filter(tab -> tab.getID().equals(contributorID))
@@ -275,10 +277,12 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
     }
   }
 
+  @Override
   public String getSelectedContributorID() {
     return mySelectedTab.getID();
   }
 
+  @Override
   @Nullable
   public Object getSelectionIdentity() {
     Object value = myResultsList.getSelectedValue();
