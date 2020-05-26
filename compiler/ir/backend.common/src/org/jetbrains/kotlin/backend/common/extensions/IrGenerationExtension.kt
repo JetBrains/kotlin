@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 interface IrGenerationExtension {
     companion object :
         ProjectExtensionDescriptor<IrGenerationExtension>(
-            "org.jetbrains.kotlin.rGenerationExtension", IrGenerationExtension::class.java
+            "org.jetbrains.kotlin.irGenerationExtension", IrGenerationExtension::class.java
         )
 
     fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext)
