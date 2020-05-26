@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner>(
+    override val signature: IdSignature,
     private val containerSource: DeserializedContainerSource? = null
 ) : IrBindableSymbol<D, B> {
 
@@ -31,9 +32,6 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
     }
 
     override val isPublicApi: Boolean = false
-
-    override val signature: IdSignature
-        get() = error("IdSignature is allowed only for PublicApi symbols")
 
     override val isBound: Boolean
         get() = _owner != null
