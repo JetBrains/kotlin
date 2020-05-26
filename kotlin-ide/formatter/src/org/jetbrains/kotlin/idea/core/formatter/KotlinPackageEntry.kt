@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.core.formatter
 
 import com.intellij.openapi.application.ApplicationBundle
-import org.jetbrains.kotlin.resolve.ImportPath
 
 class KotlinPackageEntry(
     packageName: String,
