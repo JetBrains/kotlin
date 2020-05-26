@@ -25,7 +25,7 @@ internal data class NodeComparator(
 
   private fun compare(problem1: Problem, problem2: Problem): Int {
     if (sortBySeverity) {
-      val result = problem1.severity.compareTo(problem2.severity)
+      val result = problem2.severity.compareTo(problem1.severity)
       if (result != 0) return result
     }
     return if (sortByName) {

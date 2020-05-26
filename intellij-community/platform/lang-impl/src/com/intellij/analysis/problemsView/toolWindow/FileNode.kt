@@ -27,14 +27,8 @@ internal class FileNode(parent: Node, val file: VirtualFile) : Node(parent) {
       presentation.addText("  ${getLocationRelativeToUserHome(url)}", GRAYED_ATTRIBUTES)
     }
     val root = findAncestor(Root::class.java)
-    if (root != null) {
-      val errors = root.getProblemsCount(file, Severity.ERROR)
-      if (errors > 0) presentation.addText("  $errors errors", GRAYED_ATTRIBUTES)
-      val warnings = root.getProblemsCount(file, Severity.WARNING)
-      if (warnings > 0) presentation.addText("  $warnings warnings", GRAYED_ATTRIBUTES)
-      val info = root.getProblemsCount(file, Severity.INFORMATION)
-      if (info > 0) presentation.addText("  $warnings info", GRAYED_ATTRIBUTES)
-    }
+    val count = root?.getProblemsCount(file) ?: 0
+    if (count > 0) presentation.addText("  $count problems", GRAYED_ATTRIBUTES)
   }
 
   override fun getChildren(): Collection<Node> {

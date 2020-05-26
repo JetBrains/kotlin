@@ -30,7 +30,7 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualF
 
   override fun getProblemsCount() = synchronized(problems) { problems.count() }
 
-  override fun getProblemsCount(file: VirtualFile, severity: Severity) = synchronized(problems) { problems.count(severity) }
+  override fun getProblemsCount(file: VirtualFile) = synchronized(problems) { problems.count() }
 
   override fun addProblem(file: VirtualFile, problem: Problem) {
     synchronized(problems) { problems.add(problem) }

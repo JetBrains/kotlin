@@ -2,10 +2,12 @@
 package com.intellij.analysis.problemsView.toolWindow
 
 import com.intellij.openapi.actionSystem.AnAction
+import javax.swing.Icon
 
 interface Problem {
+  val icon: Icon
   val description: String
-  val severity: Severity
+  val severity: Int
   val offset: Int
 
   fun hasQuickFixActions() = false

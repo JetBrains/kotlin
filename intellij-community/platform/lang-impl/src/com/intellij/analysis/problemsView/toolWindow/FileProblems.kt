@@ -55,6 +55,4 @@ internal class FileProblems(val file: VirtualFile) {
   }
 
   fun count() = problems.size
-
-  fun count(severity: Severity) = problems.count { it.severity == severity }
 }

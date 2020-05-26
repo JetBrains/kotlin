@@ -32,8 +32,8 @@ internal open class Root(val panel: ProblemsViewPanel) : Node(panel.project), Di
     allProblems.values.sumBy { it.count() }
   }
 
-  open fun getProblemsCount(file: VirtualFile, severity: Severity): Int = synchronized(allProblems) {
-    allProblems[file]?.count(severity) ?: 0
+  open fun getProblemsCount(file: VirtualFile): Int = synchronized(allProblems) {
+    allProblems[file]?.count() ?: 0
   }
 
   open fun addProblem(file: VirtualFile, problem: Problem) {

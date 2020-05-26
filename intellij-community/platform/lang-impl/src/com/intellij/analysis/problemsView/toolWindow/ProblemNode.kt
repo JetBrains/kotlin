@@ -16,7 +16,7 @@ internal class ProblemNode(parent: FileNode, val problem: Problem) : Node(parent
   override fun getName() = problem.description
 
   override fun update(project: Project, presentation: PresentationData) {
-    presentation.setIcon(problem.severity.icon)
+    presentation.setIcon(problem.icon)
     val document = ProblemsView.getDocument(project, file) ?: return // add nothing if no document
     if (!isValidOffset(problem.offset, document)) return
     val line = document.getLineNumber(problem.offset) + 1
