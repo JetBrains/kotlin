@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
@@ -17,7 +15,6 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.calls.isExtensionFunctionType
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -183,11 +180,12 @@ internal class CallAndReferenceGenerator(
             when (symbol) {
                 is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
                 is IrSimpleFunctionSymbol -> {
-                    IrCallImpl(
-                        startOffset, endOffset, type, symbol,
-                        origin = qualifiedAccess.calleeReference.statementOrigin(),
-                        superQualifierSymbol = superQualifierSymbol
-                    )
+                    (qualifiedAccess as? FirFunctionCall)?.toSamConversionIfSamConstructor()
+                        ?: IrCallImpl(
+                            startOffset, endOffset, type, symbol,
+                            origin = qualifiedAccess.calleeReference.statementOrigin(),
+                            superQualifierSymbol = superQualifierSymbol
+                        )
                 }
                 is IrPropertySymbol -> {
                     val getter = symbol.owner.getter
@@ -433,6 +431,32 @@ internal class CallAndReferenceGenerator(
         // On the other hand, the actual type should be a functional type.
         return argument.isFunctional(session)
     }
+
+    private fun FirFunctionCall.toSamConversionIfSamConstructor(): IrExpression? {
+        if (!isSamConstructorCall) {
+            return null
+        }
+        val samType = typeRef.toIrType()
+        if (!samType.isSamType) {
+            return null
+        }
+        val irArgument = visitor.convertToIrExpression(argument)
+        return convertWithOffsets { startOffset, endOffset ->
+            IrTypeOperatorCallImpl(startOffset, endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType, irArgument)
+        }
+    }
+
+    private val FirFunctionCall.isSamConstructorCall: Boolean
+        get() {
+            if (calleeReference !is FirResolvedNamedReference) {
+                return false
+            }
+            val reference = calleeReference as FirResolvedNamedReference
+            if (reference.resolvedSymbol.fir !is FirSimpleFunction) {
+                return false
+            }
+            return reference.resolvedSymbol.fir.origin == FirDeclarationOrigin.SamConstructor
+        }
 
     private fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {
         return when (this) {
