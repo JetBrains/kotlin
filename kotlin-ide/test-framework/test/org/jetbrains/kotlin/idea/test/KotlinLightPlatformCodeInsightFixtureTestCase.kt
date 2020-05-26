@@ -13,11 +13,16 @@ import org.jetbrains.kotlin.test.TestMetadataUtil
 import java.io.File
 
 abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCodeInsightFixtureTestCase() {
+    protected open fun isFirPlugin(): Boolean = false
+
     override fun setUp() {
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
         VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, KotlinTestUtils.getHomeDirectory())
-        invalidateLibraryCache(project)
+
+        if (!isFirPlugin()) {
+            invalidateLibraryCache(project)
+        }
     }
 
     override fun tearDown() = runAll(
