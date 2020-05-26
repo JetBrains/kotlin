@@ -43,20 +43,18 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                 if (expressionParent is KtDotQualifiedExpression || expressionParent is KtPackageDirective || expressionParent is KtImportDirective) return
                 val expressionForAnalyze = expression.firstExpressionWithoutReceiver() ?: return
 
-                val parent = expressionForAnalyze.parent
-                @Suppress("USELESS_CAST") val originalExpression = if (parent is KtClassLiteralExpression)
-                    parent as KtExpression
-                else
-                    expressionForAnalyze
+                val originalExpression: KtExpression = expressionForAnalyze.parent as? KtClassLiteralExpression ?: expressionForAnalyze
 
                 val receiverReference = expressionForAnalyze.receiverExpression.let {
                     it.safeAs<KtQualifiedExpression>()?.receiverExpression ?: it
                 }.mainReference?.resolve()
+
                 val parentEnumEntry = expressionForAnalyze.getStrictParentOfType<KtEnumEntry>()
                 if (parentEnumEntry != null) {
                     val companionObject = (receiverReference as? KtObjectDeclaration)?.takeIf { it.isCompanion() }
                     if (companionObject?.containingClass() == parentEnumEntry.getStrictParentOfType<KtClass>()) return
                 }
+
                 if (receiverReference?.safeAs<KtClass>()?.isEnum() == true
                     && expressionForAnalyze.getParentOfTypesAndPredicate(true, KtClass::class.java) { it.isEnum() } != receiverReference
                     && (expressionForAnalyze.isEnumStaticMethodCall() || expressionForAnalyze.isCompanionObjectReference())
@@ -68,11 +66,10 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                     ?.mainReference?.resolveToDescriptors(context)
                     ?.firstOrNull() ?: return
 
-                val applicableExpression = expressionForAnalyze.firstApplicableExpression(validator = {
-                    applicableExpression(originalExpression, context, originalDescriptor)
-                }) {
-                    firstChild as? KtDotQualifiedExpression
-                } ?: return
+                val applicableExpression = expressionForAnalyze.firstApplicableExpression(
+                    validator = { applicableExpression(originalExpression, context, originalDescriptor) },
+                    generator = { firstChild as? KtDotQualifiedExpression }
+                ) ?: return
 
                 reportProblem(holder, applicableExpression)
             }
@@ -81,9 +78,10 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                 if (type.parent is KtUserType) return
 
                 val context = type.analyze()
-                val applicableExpression = type.firstApplicableExpression(validator = { applicableExpression(context) }) {
-                    firstChild as? KtUserType
-                } ?: return
+                val applicableExpression = type.firstApplicableExpression(
+                    validator = { applicableExpression(context) },
+                    generator = { firstChild as? KtUserType }
+                ) ?: return
 
                 reportProblem(holder, applicableExpression)
             }
@@ -110,11 +108,10 @@ private fun KtDotQualifiedExpression.applicableExpression(
     oldContext: BindingContext,
     originalDescriptor: DeclarationDescriptor
 ): KtDotQualifiedExpression? {
-    if (!receiverExpression.isApplicableReceiver(oldContext) || !ShortenReferences.canBePossibleToDropReceiver(
-            this,
-            oldContext
-        )
-    ) return null
+    if (!receiverExpression.isApplicableReceiver(oldContext) || !ShortenReferences.canBePossibleToDropReceiver(this, oldContext)) {
+        return null
+    }
+
     val expressionText = originalExpression.text.substring(lastChild.startOffset - originalExpression.startOffset)
     val newExpression = KtPsiFactory(originalExpression).createExpressionIfPossible(expressionText) ?: return null
     val newContext = newExpression.analyzeAsReplacement(originalExpression, oldContext)
@@ -187,7 +184,7 @@ class RemoveRedundantQualifierNameQuickFix : LocalQuickFix {
         }
 
         val substring = file.text.substring(range.first, range.last)
-        Regex.fromLiteral(substring).findAll(file.text, file.importList?.endOffset ?: 0).toList().reversed().forEach {
+        Regex.fromLiteral(substring).findAll(file.text, file.importList?.endOffset ?: 0).toList().asReversed().forEach {
             ShortenReferences.DEFAULT.process(file, it.range.first, it.range.last + 1)
         }
     }
