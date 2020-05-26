@@ -207,7 +207,7 @@ class Stats(
                         if (k == TEST_KEY) continue
                         TeamCity.statValue("$n $k", v)
                         (v as? Number)?.let {
-                            TeamCity.testMetadata(n, k, it)
+                            TeamCity.metadata(n, k, it)
                         }
                     }
                 }
