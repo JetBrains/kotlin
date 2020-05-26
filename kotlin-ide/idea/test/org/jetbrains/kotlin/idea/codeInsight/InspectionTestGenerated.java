@@ -366,29 +366,14 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("testData/inspections/suspiciousEqualsCombination/inspectionData/inspections.test");
         }
 
-        @TestMetadata("trailingCommaOffWithCodeStyle/inspectionData/inspections.test")
-        public void testTrailingCommaOffWithCodeStyle_inspectionData_Inspections_test() throws Exception {
-            runTest("testData/inspections/trailingCommaOffWithCodeStyle/inspectionData/inspections.test");
+        @TestMetadata("trailingCommaOff/inspectionData/inspections.test")
+        public void testTrailingCommaOff_inspectionData_Inspections_test() throws Exception {
+            runTest("testData/inspections/trailingCommaOff/inspectionData/inspections.test");
         }
 
-        @TestMetadata("trailingCommaOffWithoutCodeStyle/inspectionData/inspections.test")
-        public void testTrailingCommaOffWithoutCodeStyle_inspectionData_Inspections_test() throws Exception {
-            runTest("testData/inspections/trailingCommaOffWithoutCodeStyle/inspectionData/inspections.test");
-        }
-
-        @TestMetadata("trailingCommaOnWithCodeStyleAndCallSite/inspectionData/inspections.test")
-        public void testTrailingCommaOnWithCodeStyleAndCallSite_inspectionData_Inspections_test() throws Exception {
-            runTest("testData/inspections/trailingCommaOnWithCodeStyleAndCallSite/inspectionData/inspections.test");
-        }
-
-        @TestMetadata("trailingCommaOnWithCodeStyle/inspectionData/inspections.test")
-        public void testTrailingCommaOnWithCodeStyle_inspectionData_Inspections_test() throws Exception {
-            runTest("testData/inspections/trailingCommaOnWithCodeStyle/inspectionData/inspections.test");
-        }
-
-        @TestMetadata("trailingCommaOnWithoutCodeStyle/inspectionData/inspections.test")
-        public void testTrailingCommaOnWithoutCodeStyle_inspectionData_Inspections_test() throws Exception {
-            runTest("testData/inspections/trailingCommaOnWithoutCodeStyle/inspectionData/inspections.test");
+        @TestMetadata("trailingCommaOn/inspectionData/inspections.test")
+        public void testTrailingCommaOn_inspectionData_Inspections_test() throws Exception {
+            runTest("testData/inspections/trailingCommaOn/inspectionData/inspections.test");
         }
 
         @TestMetadata("twoSetOfTypeparameters/inspectionData/inspections.test")
