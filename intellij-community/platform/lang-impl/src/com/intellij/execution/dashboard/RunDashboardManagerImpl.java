@@ -25,7 +25,9 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -84,11 +86,37 @@ public final class RunDashboardManagerImpl implements RunDashboardManager, Persi
 
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
   private void initExtensionPointListeners() {
-    Runnable dashboardUpdater = () -> updateDashboard(true);
-    CUSTOMIZER_EP_NAME.addChangeListener(dashboardUpdater, myProject);
-    GROUPING_RULE_EP_NAME.addChangeListener(dashboardUpdater, myProject);
-    DEFAULT_TYPES_PROVIDER_EP_NAME.addChangeListener(() -> setTypes(new HashSet<>(getTypes())), myProject);
+    ExtensionPointListener dashboardUpdater = new ExtensionPointListener() {
+      @Override
+      public void extensionAdded(@NotNull Object extension, @NotNull PluginDescriptor pluginDescriptor) {
+        updateDashboard(true);
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull Object extension, @NotNull PluginDescriptor pluginDescriptor) {
+        myProject.getMessageBus().syncPublisher(ServiceEventListener.TOPIC).handle(
+          ServiceEventListener.ServiceEvent.createSyncResetEvent(RunDashboardServiceViewContributor.class));
+      }
+    };
+    CUSTOMIZER_EP_NAME.addExtensionPointListener(dashboardUpdater, myProject);
+    GROUPING_RULE_EP_NAME.addExtensionPointListener(dashboardUpdater, myProject);
+
+    ExtensionPointListener typeUpdater = new ExtensionPointListener() {
+      @Override
+      public void extensionAdded(@NotNull Object extension, @NotNull PluginDescriptor pluginDescriptor) {
+        setTypes(new HashSet<>(getTypes()));
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull Object extension, @NotNull PluginDescriptor pluginDescriptor) {
+        setTypes(new HashSet<>(getTypes()));
+        dashboardUpdater.extensionRemoved(extension, pluginDescriptor);
+      }
+    };
+    DEFAULT_TYPES_PROVIDER_EP_NAME.addExtensionPointListener(typeUpdater, myProject);
+    ConfigurationType.CONFIGURATION_TYPE_EP.addExtensionPointListener(typeUpdater, myProject);
   }
 
   private void initServiceContentListeners() {
