@@ -141,7 +141,7 @@ fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory =
   JsonProjectIndexingHistory(
     projectName,
     times.convertToJson(),
-    providerStatistics.sortedByDescending { it.indexingTimePerFile.meanTime.nano }
+    providerStatistics.sortedByDescending { it.totalTime.nano }
   )
 
 data class JsonIndexDiagnosticAppInfo(
