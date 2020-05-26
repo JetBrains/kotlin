@@ -391,10 +391,6 @@ fun main() {
             model("type/binding")
         }
 
-        testClass<AbstractLineNumberTest> {
-            model("lineNumber")
-        }
-
         testClass<AbstractSteppingTest>(useJunit4 = true) {
             model("debug/stepping", targetBackend = TargetBackend.JVM)
         }
@@ -483,10 +479,6 @@ fun main() {
                 targetBackend = TargetBackend.JVM_IR
             )
             model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava", targetBackend = TargetBackend.JVM_IR)
-        }
-
-        testClass<AbstractIrLineNumberTest> {
-            model("lineNumber", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrSteppingTest>(useJunit4 = true) {
