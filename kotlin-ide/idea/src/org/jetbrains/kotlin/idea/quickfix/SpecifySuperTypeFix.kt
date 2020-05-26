@@ -94,7 +94,7 @@ class SpecifySuperTypeFix(
                 val fqName = kotlinType.fqName ?: return@mapNotNull null
                 val fqNameAsString = fqName.asString()
                 val name = if (typeElement.text.startsWith(fqNameAsString)) fqNameAsString else fqName.shortName().asString()
-                val newQualifiedExpression = psiFactory.createExpressionByPattern("super<$name>.$0", selectorExpression)
+                val newQualifiedExpression = psiFactory.createExpressionByPattern("super<$name>.$0", selectorExpression, reformat = false)
                 val newContext = newQualifiedExpression.analyzeAsReplacement(qualifiedExpression, context)
                 if (newQualifiedExpression.getResolvedCall(newContext)?.resultingDescriptor == null) return@mapNotNull null
                 if (newContext.diagnostics.noSuppression().forElement(newQualifiedExpression).isNotEmpty()) return@mapNotNull null
