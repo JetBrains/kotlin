@@ -7,12 +7,14 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.dnd.DnDManager;
 import com.intellij.ide.navigationToolbar.NavBarModel;
 import com.intellij.ide.util.treeView.TreeState;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.AutoScrollToSourceHandler;
@@ -35,6 +37,7 @@ import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
 
 import javax.swing.*;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -467,6 +470,10 @@ class ServiceTreeView extends ServiceView {
     @Override
     public void eventProcessed(ServiceEventListener.@NotNull ServiceEvent e) {
       if (e.type == ServiceEventListener.EventType.SYNC_RESET) {
+        TreeModel model = myTree.getModel();
+        if (model instanceof Disposable) {
+          Disposer.dispose((Disposable)model);
+        }
         myTree.setModel(null);
         AsyncTreeModel asyncTreeModel = new AsyncTreeModel(myTreeModel, ServiceTreeView.this);
         myTree.setModel(asyncTreeModel);
