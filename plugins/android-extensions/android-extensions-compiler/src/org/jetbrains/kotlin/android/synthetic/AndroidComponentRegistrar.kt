@@ -104,10 +104,7 @@ class AndroidComponentRegistrar : ComponentRegistrar {
     companion object {
         fun registerParcelExtensions(project: Project) {
             ExpressionCodegenExtension.registerExtension(project, ParcelableCodegenExtension())
-            @Suppress("DEPRECATION_ERROR")
-            org.jetbrains.kotlin.backend.common.extensions.PureIrGenerationExtension.registerExtension(
-                project, ParcelableIrGeneratorExtension()
-            )
+            IrGenerationExtension.registerExtension(project, ParcelableIrGeneratorExtension())
             SyntheticResolveExtension.registerExtension(project, ParcelableResolveExtension())
             ClassBuilderInterceptorExtension.registerExtension(project, ParcelableClinitClassBuilderInterceptorExtension())
         }
