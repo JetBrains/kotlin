@@ -38,18 +38,17 @@ class HighlightWholeProjectPerformanceTest : UsefulTestCase() {
     fun testHighlightAllKtFilesInProject() {
         val emptyProfile = System.getProperty("emptyProfile", "false").toBoolean()
         val projectSpecs = projectSpecs()
-        for (projectSpec in projectSpecs) {
-            val projectName = projectSpec.name
-            val projectPath = projectSpec.path
+        suite(suiteName = "allKtFilesInProject") {
+            app {
+                warmUpProject()
 
-            suite(suiteName = "$projectName project") {
-                app {
-                    warmUpProject()
-
-                    with(config) {
-                        warmup = 1
-                        iterations = 3
-                    }
+                with(config) {
+                    warmup = 1
+                    iterations = 3
+                }
+                for (projectSpec in projectSpecs) {
+                    val projectName = projectSpec.name
+                    val projectPath = projectSpec.path
 
                     try {
                         project(ExternalProject(projectPath, ProjectOpenAction.GRADLE_PROJECT), refresh = true) {
@@ -93,7 +92,6 @@ class HighlightWholeProjectPerformanceTest : UsefulTestCase() {
                         // nothing as it is already caught by perfTest
                     }
                 }
-
             }
         }
     }
