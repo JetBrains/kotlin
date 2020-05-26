@@ -115,6 +115,7 @@ import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingT
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptDefinitionsOrderTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerLeafGroupingTest
+import org.jetbrains.kotlin.idea.slicer.AbstractSlicerMultiplatformTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerNullnessGroupingTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerTreeTest
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
@@ -826,6 +827,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractSlicerNullnessGroupingTest> {
             model("slicer/inflow", flatten = true)
+        }
+
+        testClass<AbstractSlicerMultiplatformTest> {
+            model("navigationToolbar", isRecursive = false)
         }
     }
 
