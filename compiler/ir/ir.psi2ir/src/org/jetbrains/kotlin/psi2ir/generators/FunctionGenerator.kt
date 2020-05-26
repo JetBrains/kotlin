@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -218,7 +219,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             if (
                 primaryConstructorDescriptor.isExpect ||
                 DescriptorUtils.isAnnotationClass(primaryConstructorDescriptor.constructedClass) ||
-                primaryConstructorDescriptor.constructedClass.isExternal
+                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal()
             )
                 null
             else
@@ -229,7 +230,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
         return declareConstructor(ktConstructor, ktConstructor, constructorDescriptor) {
             when {
-                constructorDescriptor.constructedClass.isExternal ->
+                constructorDescriptor.constructedClass.isEffectivelyExternal() ->
                     null
 
                 ktConstructor.isConstructorDelegatingToSuper(context.bindingContext) ->
