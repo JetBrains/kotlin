@@ -26,22 +26,38 @@ private fun TimeMillis.toNano(): TimeNano = this * 1_000_000
 data class JsonTime(val nano: Long) {
   companion object : JsonSerializer<JsonTime>() {
     override fun serialize(value: JsonTime, gen: JsonGenerator, serializers: SerializerProvider?) {
-      val duration = if (value.nano < TimeUnit.MILLISECONDS.toNanos(1)) {
-        "< 1 ms"
-      } else {
-        StringUtil.formatDuration(value.nano.toMillis())
-      }
-      gen.writeString(duration)
+      gen.writeString(value.presentableDuration())
     }
   }
+
+  fun presentableDuration(): String =
+    if (nano < TimeUnit.MILLISECONDS.toNanos(1)) {
+      "< 1 ms"
+    }
+    else {
+      StringUtil.formatDuration(nano.toMillis())
+    }
 }
 
+@JsonSerialize(using = JsonTimeStats.Companion::class)
 data class JsonTimeStats(
   val minTime: JsonTime,
   val maxTime: JsonTime,
   val meanTime: JsonTime,
   val medianTime: JsonTime
-)
+) {
+  companion object : JsonSerializer<JsonTimeStats>() {
+    override fun serialize(value: JsonTimeStats, gen: JsonGenerator, serializers: SerializerProvider?) {
+      val s = buildString {
+        append("max: ${value.maxTime.presentableDuration()}; ")
+        append("mean: ${value.meanTime.presentableDuration()}; ")
+        append("median: ${value.medianTime.presentableDuration()} ")
+        append("min: ${value.minTime.presentableDuration()}; ")
+      }
+      gen.writeString(s)
+    }
+  }
+}
 
 fun MaxNTimeBucket.toTimeStats(): JsonTimeStats? {
   if (isEmpty) {
