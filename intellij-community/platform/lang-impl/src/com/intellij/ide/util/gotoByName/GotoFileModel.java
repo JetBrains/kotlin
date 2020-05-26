@@ -23,7 +23,6 @@ import com.intellij.psi.codeStyle.MinusculeMatcher;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.ui.IdeUICustomization;
 import com.intellij.util.containers.JBIterable;
-import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -204,7 +203,7 @@ public class GotoFileModel extends FilteringGotoByModel<FileTypeRef> implements 
       String sanitized = GotoFileItemProvider
         .getSanitizedPattern(((MinusculeMatcher)defaultMatchers.nameMatcher).getPattern(), model);
       for (int i = sanitized.lastIndexOf('/') + 1; i < sanitized.length() - 1; i++) {
-        MinusculeMatcher nameMatcher = FixingLayoutMatcherUtil.buildLayoutFixingMatcher("*" + sanitized.substring(i), NameUtil.MatchingCaseSensitivity.NONE);
+        MinusculeMatcher nameMatcher = NameUtil.buildMatcher("*" + sanitized.substring(i), NameUtil.MatchingCaseSensitivity.NONE);
         if (nameMatcher.matches(shortName)) {
           String locationPattern = FileUtil.toSystemDependentName(StringUtil.trimEnd(sanitized.substring(0, i), "/"));
           return new PsiElementListCellRenderer.ItemMatchers(nameMatcher, GotoFileItemProvider.getQualifiedNameMatcher(locationPattern));

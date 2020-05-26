@@ -34,12 +34,12 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.MinusculeMatcher;
+import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.*;
 import com.intellij.ui.docking.DockManager;
 import com.intellij.ui.speedSearch.SpeedSearchSupply;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -483,6 +483,6 @@ public class FileStructureDialog extends DialogWrapper {
 
   @NotNull
   public static MinusculeMatcher createFileStructureMatcher(@NotNull String pattern) {
-    return FixingLayoutMatcherUtil.buildLayoutFixingMatcher(pattern).withSeparators(" ()").build();
+    return NameUtil.buildMatcher(pattern).withSeparators(" ()").build();
   }
 }

@@ -1487,7 +1487,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
 
   @NotNull
   private static Matcher buildPatternMatcher(@NotNull String pattern) {
-    return FixingLayoutMatcherUtil.buildLayoutFixingMatcher(pattern, NameUtil.MatchingCaseSensitivity.NONE);
+    return NameUtil.buildMatcher(pattern, NameUtil.MatchingCaseSensitivity.NONE);
   }
 
   private static class HintLabel extends JLabel {

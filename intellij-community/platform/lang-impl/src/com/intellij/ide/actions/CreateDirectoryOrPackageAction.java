@@ -35,13 +35,13 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.codeStyle.MinusculeMatcher;
+import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.ui.*;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FList;
-import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -375,7 +375,7 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
         protected void textChanged(@NotNull DocumentEvent e) {
           if (!locked) {
             String input = myTextField.getText();
-            currentMatcher = FixingLayoutMatcherUtil.buildLayoutFixingMatcher("*" + input).build();
+            currentMatcher = NameUtil.buildMatcher("*" + input).build();
 
             List<CompletionItem> filtered =
               ContainerUtil.filter(items, item -> currentMatcher.matches(item.displayText));

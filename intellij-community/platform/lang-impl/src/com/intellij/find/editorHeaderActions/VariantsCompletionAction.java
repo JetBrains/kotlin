@@ -16,7 +16,6 @@ import com.intellij.ui.popup.util.PopupState;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.text.Matcher;
 import com.intellij.util.ui.GraphicsUtil;
-import com.intellij.util.ui.KeyboardLayoutUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +70,7 @@ public class VariantsCompletionAction extends DumbAwareAction implements LightEd
   }
 
   private static String[] calcWords(final String prefix, Editor editor) {
-    final Matcher matcher = NameUtil.buildMatcher(prefix, 0, true, true, KeyboardLayoutUtil::getAsciiForChar);
+    final Matcher matcher = NameUtil.buildMatcher(prefix, 0, true, true);
     final Set<String> words = new HashSet<>();
     CharSequence chars = editor.getDocument().getCharsSequence();
 

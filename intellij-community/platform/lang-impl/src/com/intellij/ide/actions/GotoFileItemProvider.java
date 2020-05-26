@@ -31,8 +31,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FList;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.indexing.FindSymbolParameters;
-import com.intellij.util.ui.FixingLayoutMatcherUtil;
-import com.intellij.util.ui.KeyboardLayoutUtil;
 import one.util.streamex.IntStreamEx;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
@@ -85,7 +83,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
       if (!processItemsForPattern(base, parameters, consumer, indicator)) {
         return false;
       }
-      String fixedPattern = FixingLayoutMatcher.fixLayout(pattern, KeyboardLayoutUtil::getAsciiForChar);
+      String fixedPattern = FixingLayoutMatcher.fixLayout(pattern);
       return fixedPattern == null || processItemsForPattern(base, parameters.withCompletePattern(fixedPattern), consumer, indicator);
     }
     finally {
@@ -148,7 +146,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
   public static MinusculeMatcher getQualifiedNameMatcher(@NotNull String pattern) {
     pattern = "*" + StringUtil.replace(StringUtil.replace(pattern, "\\", "*\\*"), "/", "*/*");
 
-    return FixingLayoutMatcherUtil.buildLayoutFixingMatcher(pattern)
+    return NameUtil.buildMatcher(pattern)
       .withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE)
       .preferringStartMatches()
       .build();
@@ -328,8 +326,7 @@ public class GotoFileItemProvider extends DefaultChooseByNameItemProvider {
       boolean preferStartMatches = from == 0 && !patternSuffix.startsWith("*");
       String matchPattern = (from > 0 ? " " : "*") + patternSuffix;
 
-      NameUtil.MatcherBuilder builder = FixingLayoutMatcherUtil.buildLayoutFixingMatcher(matchPattern)
-        .withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE);
+      NameUtil.MatcherBuilder builder = NameUtil.buildMatcher(matchPattern).withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE);
       if (preferStartMatches) {
         builder.preferringStartMatches();
       }

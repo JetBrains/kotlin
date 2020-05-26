@@ -18,6 +18,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.icons.RowIcon;
@@ -28,7 +29,6 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FList;
 import com.intellij.util.ui.EmptyIcon;
-import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.accessibility.AccessibleContextUtil;
@@ -371,7 +371,7 @@ public final class LookupCellRenderer implements ListCellRenderer<LookupElement>
   }
 
   public static FList<TextRange> getMatchingFragments(String prefix, String name) {
-    return FixingLayoutMatcherUtil.buildLayoutFixingMatcher("*" + prefix).build().matchingFragments(name);
+    return NameUtil.buildMatcher("*" + prefix).build().matchingFragments(name);
   }
 
   private int setTypeTextLabel(LookupElement item,

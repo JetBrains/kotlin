@@ -16,7 +16,6 @@ import com.intellij.psi.codeStyle.MinusculeMatcher;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -63,7 +62,7 @@ public class RecentFilesSEContributor extends FileSearchEverywhereContributor {
 
     String searchString = filterControlSymbols(pattern);
     boolean preferStartMatches = !searchString.startsWith("*");
-    NameUtil.MatcherBuilder builder = FixingLayoutMatcherUtil.buildLayoutFixingMatcher("*" + searchString);
+    NameUtil.MatcherBuilder builder = NameUtil.buildMatcher("*" + searchString);
     if (preferStartMatches) {
       builder = builder.preferringStartMatches();
     }

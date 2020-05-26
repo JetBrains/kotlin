@@ -28,7 +28,6 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.text.Matcher;
-import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -232,7 +231,7 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
 
   @NotNull
   static Matcher buildMatcher(String pattern) {
-    return pattern.contains(" ") ? new WordPrefixMatcher(pattern) : FixingLayoutMatcherUtil.buildLayoutFixingMatcher("*" + pattern, NameUtil.MatchingCaseSensitivity.NONE);
+    return pattern.contains(" ") ? new WordPrefixMatcher(pattern) : NameUtil.buildMatcher("*" + pattern, NameUtil.MatchingCaseSensitivity.NONE);
   }
 
   private boolean processIntentions(String pattern, Processor<? super MatchedValue> consumer, DataContext dataContext) {

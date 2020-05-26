@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.util.Function;
-import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +20,7 @@ import java.util.Optional;
  */
 public abstract class RunAnythingGroup {
   public static final Function<String, NameUtil.MatcherBuilder> RUN_ANYTHING_MATCHER_BUILDER =
-    pattern -> FixingLayoutMatcherUtil.buildLayoutFixingMatcher("*" + pattern);
+    pattern -> NameUtil.buildMatcher("*" + pattern);
 
   /**
    * {@link #myMoreIndex} is a group's 'load more..' index in the main list.

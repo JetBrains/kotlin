@@ -52,6 +52,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.codeStyle.MinusculeMatcher;
+import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.*;
@@ -70,7 +71,6 @@ import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.text.TextRangeUtil;
-import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.TextTransferable;
 import com.intellij.util.ui.UIUtil;
@@ -253,7 +253,7 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
       @NotNull
       @Override
       protected MinusculeMatcher createMatcher(@NotNull String pattern) {
-        return FixingLayoutMatcherUtil.buildLayoutFixingMatcher(pattern).withSeparators(" ()").build();
+        return NameUtil.buildMatcher(pattern).withSeparators(" ()").build();
       }
     });
 

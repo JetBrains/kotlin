@@ -16,12 +16,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.psi.codeStyle.MinusculeMatcher;
+import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
-import com.intellij.util.ui.FixingLayoutMatcherUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.intellij.lang.annotations.MagicConstant;
@@ -120,7 +120,7 @@ public class RunConfigurationsSEContributor implements SearchEverywhereContribut
     if (StringUtil.isEmptyOrSpaces(pattern)) return;
 
     pattern = filterString(pattern);
-    MinusculeMatcher matcher = FixingLayoutMatcherUtil.buildLayoutFixingMatcher(pattern).build();
+    MinusculeMatcher matcher = NameUtil.buildMatcher(pattern).build();
     for (ChooseRunConfigurationPopup.ItemWrapper wrapper : ChooseRunConfigurationPopup.createFlatSettingsList(myProject)) {
       if (matcher.matches(wrapper.getText()) && !consumer.process(wrapper)) {
         return;
