@@ -44,9 +44,33 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("beforeGotoToWhileStart.kt")
+    public void testBeforeGotoToWhileStart() throws Exception {
+        runTest("compiler/testData/debug/stepping/beforeGotoToWhileStart.kt");
+    }
+
+    @Test
+    @TestMetadata("callWithCallInArguments.kt")
+    public void testCallWithCallInArguments() throws Exception {
+        runTest("compiler/testData/debug/stepping/callWithCallInArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("callWithReceiver.kt")
+    public void testCallWithReceiver() throws Exception {
+        runTest("compiler/testData/debug/stepping/callWithReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("callableReference.kt")
     public void testCallableReference() throws Exception {
         runTest("compiler/testData/debug/stepping/callableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("chainCall.kt")
+    public void testChainCall() throws Exception {
+        runTest("compiler/testData/debug/stepping/chainCall.kt");
     }
 
     @Test
@@ -59,6 +83,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     @TestMetadata("classObject.kt")
     public void testClassObject() throws Exception {
         runTest("compiler/testData/debug/stepping/classObject.kt");
+    }
+
+    @Test
+    @TestMetadata("compileTimeConstant.kt")
+    public void testCompileTimeConstant() throws Exception {
+        runTest("compiler/testData/debug/stepping/compileTimeConstant.kt");
     }
 
     @Test
@@ -86,6 +116,24 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("functionCallWithDefault.kt")
+    public void testFunctionCallWithDefault() throws Exception {
+        runTest("compiler/testData/debug/stepping/functionCallWithDefault.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithInlinedLambdaParam.kt")
+    public void testFunctionCallWithInlinedLambdaParam() throws Exception {
+        runTest("compiler/testData/debug/stepping/functionCallWithInlinedLambdaParam.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithLambdaParam.kt")
+    public void testFunctionCallWithLambdaParam() throws Exception {
+        runTest("compiler/testData/debug/stepping/functionCallWithLambdaParam.kt");
+    }
+
+    @Test
     @TestMetadata("functionInAnotherFile.kt")
     public void testFunctionInAnotherFile() throws Exception {
         runTest("compiler/testData/debug/stepping/functionInAnotherFile.kt");
@@ -104,6 +152,24 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("ifThen.kt")
+    public void testIfThen() throws Exception {
+        runTest("compiler/testData/debug/stepping/ifThen.kt");
+    }
+
+    @Test
+    @TestMetadata("ifThenElse.kt")
+    public void testIfThenElse() throws Exception {
+        runTest("compiler/testData/debug/stepping/ifThenElse.kt");
+    }
+
+    @Test
+    @TestMetadata("ifThenElseFalse.kt")
+    public void testIfThenElseFalse() throws Exception {
+        runTest("compiler/testData/debug/stepping/ifThenElseFalse.kt");
+    }
+
+    @Test
     @TestMetadata("IfTrueThenFalse.kt")
     public void testIfTrueThenFalse() throws Exception {
         runTest("compiler/testData/debug/stepping/IfTrueThenFalse.kt");
@@ -113,6 +179,18 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     @TestMetadata("iincStepping.kt")
     public void testIincStepping() throws Exception {
         runTest("compiler/testData/debug/stepping/iincStepping.kt");
+    }
+
+    @Test
+    @TestMetadata("inTheEndOfLambdaArgumentOfInlineCall.kt")
+    public void testInTheEndOfLambdaArgumentOfInlineCall() throws Exception {
+        runTest("compiler/testData/debug/stepping/inTheEndOfLambdaArgumentOfInlineCall.kt");
+    }
+
+    @Test
+    @TestMetadata("initBlocks.kt")
+    public void testInitBlocks() throws Exception {
+        runTest("compiler/testData/debug/stepping/initBlocks.kt");
     }
 
     @Test
@@ -158,6 +236,18 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("multilineFunctionCall.kt")
+    public void testMultilineFunctionCall() throws Exception {
+        runTest("compiler/testData/debug/stepping/multilineFunctionCall.kt");
+    }
+
+    @Test
+    @TestMetadata("multilineInfixCall.kt")
+    public void testMultilineInfixCall() throws Exception {
+        runTest("compiler/testData/debug/stepping/multilineInfixCall.kt");
+    }
+
+    @Test
     @TestMetadata("namedCallableReference.kt")
     public void testNamedCallableReference() throws Exception {
         runTest("compiler/testData/debug/stepping/namedCallableReference.kt");
@@ -167,6 +257,18 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     @TestMetadata("nestedInline.kt")
     public void testNestedInline() throws Exception {
         runTest("compiler/testData/debug/stepping/nestedInline.kt");
+    }
+
+    @Test
+    @TestMetadata("noParametersArgumentCallInExpression.kt")
+    public void testNoParametersArgumentCallInExpression() throws Exception {
+        runTest("compiler/testData/debug/stepping/noParametersArgumentCallInExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("primitiveNullChecks.kt")
+    public void testPrimitiveNullChecks() throws Exception {
+        runTest("compiler/testData/debug/stepping/primitiveNullChecks.kt");
     }
 
     @Test
@@ -212,6 +314,30 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("smapInlineAsArgument.kt")
+    public void testSmapInlineAsArgument() throws Exception {
+        runTest("compiler/testData/debug/stepping/smapInlineAsArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("smapInlineAsInfixArgument.kt")
+    public void testSmapInlineAsInfixArgument() throws Exception {
+        runTest("compiler/testData/debug/stepping/smapInlineAsInfixArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("smapInlineAsInlineArgument.kt")
+    public void testSmapInlineAsInlineArgument() throws Exception {
+        runTest("compiler/testData/debug/stepping/smapInlineAsInlineArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("smapInlineInIntrinsicArgument.kt")
+    public void testSmapInlineInIntrinsicArgument() throws Exception {
+        runTest("compiler/testData/debug/stepping/smapInlineInIntrinsicArgument.kt");
+    }
+
+    @Test
     @TestMetadata("throwException.kt")
     public void testThrowException() throws Exception {
         runTest("compiler/testData/debug/stepping/throwException.kt");
@@ -236,9 +362,39 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("tryCatchExpression.kt")
+    public void testTryCatchExpression() throws Exception {
+        runTest("compiler/testData/debug/stepping/tryCatchExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatchFinally.kt")
+    public void testTryCatchFinally() throws Exception {
+        runTest("compiler/testData/debug/stepping/tryCatchFinally.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally.kt")
+    public void testTryFinally() throws Exception {
+        runTest("compiler/testData/debug/stepping/tryFinally.kt");
+    }
+
+    @Test
     @TestMetadata("voidLambdaStepInline.kt")
     public void testVoidLambdaStepInline() throws Exception {
         runTest("compiler/testData/debug/stepping/voidLambdaStepInline.kt");
+    }
+
+    @Test
+    @TestMetadata("when.kt")
+    public void testWhen() throws Exception {
+        runTest("compiler/testData/debug/stepping/when.kt");
+    }
+
+    @Test
+    @TestMetadata("whenSubject.kt")
+    public void testWhenSubject() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenSubject.kt");
     }
 
     @Test

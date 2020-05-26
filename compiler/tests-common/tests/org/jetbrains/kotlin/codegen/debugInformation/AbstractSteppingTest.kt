@@ -9,6 +9,7 @@ import com.sun.jdi.VirtualMachine
 import com.sun.jdi.event.Event
 import com.sun.jdi.event.LocatableEvent
 import junit.framework.TestCase
+import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.AfterClass
 import org.junit.BeforeClass
@@ -51,38 +52,11 @@ abstract class AbstractSteppingTest : AbstractDebugTest() {
         loggedItems.add(event)
     }
 
-    data class SteppingExpectations(val forceStepInto: Boolean, val lineNumbers: String)
-
-    private fun readExpectations(wholeFile: File): SteppingExpectations {
-        val expected = mutableListOf<String>()
-        val lines = wholeFile.readLines().dropWhile {
-            !it.startsWith(LINENUMBERS_MARKER) && !it.startsWith(FORCE_STEP_INTO_MARKER)
-        }
-        var forceStepInto = false
-        var currentBackend = TargetBackend.ANY
-        for (line in lines) {
-            if (line.trim() == FORCE_STEP_INTO_MARKER) {
-                forceStepInto = true
-                continue
-            }
-            if (line.startsWith(LINENUMBERS_MARKER)) {
-                currentBackend = when (line) {
-                    LINENUMBERS_MARKER -> TargetBackend.ANY
-                    JVM_LINENUMBER_MARKER -> TargetBackend.JVM
-                    JVM_IR_LINENUMBER_MARKER -> TargetBackend.JVM_IR
-                    else -> error("Expected JVM backend")
-                }
-                continue
-            }
-            if (currentBackend == TargetBackend.ANY || currentBackend == backend) {
-                expected.add(line.drop(3).trim())
-            }
-        }
-        return SteppingExpectations(forceStepInto, expected.joinToString("\n"))
-    }
-
     override fun checkResult(wholeFile: File, loggedItems: List<Any>) {
-        val (forceStepInto, expectedLineNumbers) = readExpectations(wholeFile)
+        val actual = mutableListOf<String>()
+        val lines = wholeFile.readLines()
+        val forceStepInto = lines.any { it.startsWith(FORCE_STEP_INTO_MARKER) }
+
         val actualLineNumbers = loggedItems
             .filter {
                 val location = (it as LocatableEvent).location()
@@ -93,9 +67,40 @@ abstract class AbstractSteppingTest : AbstractDebugTest() {
             .map { event ->
                 val location = (event as LocatableEvent).location()
                 val synthetic = if (location.method().isSynthetic) " (synthetic)" else ""
-                "${location.sourceName()}:${location.lineNumber()} ${location.method().name()}$synthetic"
+                "// ${location.sourceName()}:${location.lineNumber()} ${location.method().name()}$synthetic"
             }
-        TestCase.assertEquals(expectedLineNumbers, actualLineNumbers.joinToString("\n"))
+        val actualLineNumbersIterator = actualLineNumbers.iterator()
+
+        val lineIterator = lines.iterator()
+        for (line in lineIterator) {
+            actual.add(line)
+            if (line.startsWith(LINENUMBERS_MARKER) || line.startsWith(FORCE_STEP_INTO_MARKER)) break
+        }
+
+        var currentBackend = TargetBackend.ANY
+        for (line in lineIterator) {
+            if (line.startsWith(LINENUMBERS_MARKER)) {
+                actual.add(line)
+                currentBackend = when (line) {
+                    LINENUMBERS_MARKER -> TargetBackend.ANY
+                    JVM_LINENUMBER_MARKER -> TargetBackend.JVM
+                    JVM_IR_LINENUMBER_MARKER -> TargetBackend.JVM_IR
+                    else -> error("Expected JVM backend")
+                }
+                continue
+            }
+            if (currentBackend == TargetBackend.ANY || currentBackend == backend) {
+                if (actualLineNumbersIterator.hasNext()) {
+                    actual.add(actualLineNumbersIterator.next())
+                }
+            } else {
+                actual.add(line)
+            }
+        }
+
+        actualLineNumbersIterator.forEach { actual.add(it) }
+
+        assertEqualsToFile(wholeFile, actual.joinToString("\n"))
     }
 }
 
