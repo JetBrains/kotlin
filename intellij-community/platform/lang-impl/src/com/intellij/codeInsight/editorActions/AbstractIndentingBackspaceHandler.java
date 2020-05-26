@@ -22,6 +22,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.codeInsight.editorActions.BackspaceHandler.getLanguageAtCursorPosition;
+
 abstract class AbstractIndentingBackspaceHandler extends BackspaceHandlerDelegate {
   private final SmartBackspaceMode myMode;
   private boolean myEnabled;
@@ -36,7 +38,8 @@ abstract class AbstractIndentingBackspaceHandler extends BackspaceHandlerDelegat
     if (editor.isColumnMode() || !StringUtil.isWhiteSpace(c)) {
       return;
     }
-    SmartBackspaceMode mode = getBackspaceMode(file.getLanguage());
+    Language language = getLanguageAtCursorPosition(file, editor);
+    SmartBackspaceMode mode = getBackspaceMode(language);
     if (mode != myMode) {
       return;
     }

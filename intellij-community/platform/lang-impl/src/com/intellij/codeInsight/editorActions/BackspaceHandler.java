@@ -7,6 +7,7 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.highlighting.BraceMatcher;
 import com.intellij.codeInsight.highlighting.BraceMatchingUtil;
 import com.intellij.injected.editor.EditorWindow;
+import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -24,7 +25,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.DocumentUtil;
 import org.jetbrains.annotations.NotNull;
@@ -156,6 +160,20 @@ public class BackspaceHandler extends EditorWriteActionHandler {
     return editables.size() == 1 && editables.get(0).equals(rangeToEdit);
   }
 
+  public static @NotNull Language getLanguageAtCursorPosition(final PsiFile file, final Editor editor) {
+    PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
+    if (element instanceof LeafPsiElement) {
+      element = element.getParent();
+    }
+    if (element != null) {
+      Language language = element.getLanguage();
+      if (language != Language.ANY) {
+        return language;
+      }
+    }
+    return file.getLanguage();
+  }
+
   @Nullable
   public static LogicalPosition getBackspaceUnindentPosition(final PsiFile file, final Editor editor) {
     if (editor.getSelectionModel().hasSelection()) return null;
@@ -168,8 +186,16 @@ public class BackspaceHandler extends EditorWriteActionHandler {
       return null;
     }
 
+    // Determine indent size
+    CommonCodeStyleSettings.IndentOptions fileIndentOptions = CodeStyle.getIndentOptions(file);
+    int indent = fileIndentOptions.INDENT_SIZE;
+    if (!fileIndentOptions.isOverrideLanguageOptions()) {
+      Language language = getLanguageAtCursorPosition(file, editor);
+      if (language != file.getLanguage()) {
+        indent = CodeStyle.getSettings(file).getLanguageIndentOptions(language).INDENT_SIZE;
+      }
+    }
     // Decrease column down to indentation * n
-    final int indent = CodeStyle.getIndentOptions(file).INDENT_SIZE;
     int column = indent > 0 ? (caretPos.column - 1) / indent * indent : 0;
     return new LogicalPosition(caretPos.line, column);
   }
