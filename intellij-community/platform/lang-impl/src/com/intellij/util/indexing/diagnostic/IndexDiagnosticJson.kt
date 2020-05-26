@@ -226,6 +226,7 @@ data class JsonProjectIndexingHistory(
   data class StatsPerFileType(
     val fileType: String,
     val partOfTotalIndexingTime: JsonPercentages,
+    val partOfTotalContentLoadingTime: JsonPercentages,
     val totalNumberOfFiles: Int
   )
 }
@@ -247,6 +248,13 @@ fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory {
     calculatePart(fileTypeIndexingTime, overallIndexingTime)
   }
 
+  @Suppress("DuplicatedCode")
+  val overallContentLoadingTime = fileTypeToAllStats.values.flatten().map { it.contentLoadingTimeStats.cumulativeTime }.sum()
+  val fileTypeToContentLoadingTimePart = fileTypeToAllStats.mapValues { (_, stats) ->
+    val fileTypeIndexingTime = stats.map { it.contentLoadingTimeStats.cumulativeTime }.sum()
+    calculatePart(fileTypeIndexingTime, overallContentLoadingTime)
+  }
+
   val numberOfFilesPerFileType = fileTypeToAllStats.mapValues { (_, stats) -> stats.map { it.numberOfFiles }.sum() }
   return JsonProjectIndexingHistory(
     projectName,
@@ -254,7 +262,13 @@ fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory {
     times.convertToJson(),
     numberOfFilesPerFileType.map { (fileType, totalNumberOfFiles) ->
       val partOfTotalIndexingTime = fileTypeToIndexingTimePart.getValue(fileType)
-      JsonProjectIndexingHistory.StatsPerFileType(fileType, JsonPercentages(partOfTotalIndexingTime), totalNumberOfFiles)
+      val partOfTotalContentLoadingTime = fileTypeToContentLoadingTimePart.getValue(fileType)
+      JsonProjectIndexingHistory.StatsPerFileType(
+        fileType,
+        JsonPercentages(partOfTotalIndexingTime),
+        JsonPercentages(partOfTotalContentLoadingTime),
+        totalNumberOfFiles
+      )
     }.sortedByDescending { it.totalNumberOfFiles },
     providerStatistics.sortedByDescending { it.totalIndexingTime.nano }
   )
