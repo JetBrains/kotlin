@@ -77,20 +77,25 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     override fun setUp() {
         super.setUp()
-
         enableKotlinOfficialCodeStyle(project)
-        // We do it here to avoid possible initialization problems
-        // UnusedSymbolInspection() calls IDEA UnusedDeclarationInspection() in static initializer,
-        // which in turn registers some extensions provoking "modifications aren't allowed during highlighting"
-        // when done lazily
-        UnusedSymbolInspection()
+
+        if (!isFirPlugin) {
+            // We do it here to avoid possible initialization problems
+            // UnusedSymbolInspection() calls IDEA UnusedDeclarationInspection() in static initializer,
+            // which in turn registers some extensions provoking "modifications aren't allowed during highlighting"
+            // when done lazily
+            UnusedSymbolInspection()
+        }
+
 
         runPostStartupActivitiesOnce(project)
         VfsRootAccess.allowRootAccess(project, KotlinTestUtils.getHomeDirectory())
 
         editorTrackerProjectOpened(project)
 
-        invalidateLibraryCache(project)
+        if (!isFirPlugin) {
+            invalidateLibraryCache(project)
+        }
 
         if (captureExceptions) {
             LoggedErrorProcessor.setNewInstance(object : LoggedErrorProcessor() {

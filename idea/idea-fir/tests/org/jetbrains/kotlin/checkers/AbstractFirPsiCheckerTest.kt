@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
 abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
+    override fun isFirPlugin(): Boolean = true
+
     override fun setUp() {
         super.setUp()
         FirResolution.enabled = true

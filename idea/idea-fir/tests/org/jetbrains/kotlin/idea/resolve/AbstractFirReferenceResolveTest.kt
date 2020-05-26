@@ -5,11 +5,20 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
+import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.fir.FirResolution
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() {
+    override fun isFirPlugin(): Boolean = true
+
+    override fun getProjectDescriptor(): KotlinLightProjectDescriptor =
+        KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+
     override fun setUp() {
         super.setUp()
         FirResolution.enabled = true

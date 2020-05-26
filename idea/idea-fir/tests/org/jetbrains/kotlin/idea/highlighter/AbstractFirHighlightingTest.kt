@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 abstract class AbstractFirHighlightingTest : AbstractHighlightingTest() {
     override fun getDefaultProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 
+    override fun isFirPlugin() = true
+
     override fun checkHighlighting(fileText: String) {
         val checkInfos = !InTextDirectivesUtils.isDirectiveDefined(fileText, NO_CHECK_INFOS_PREFIX);
 
