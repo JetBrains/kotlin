@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -65,17 +65,33 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     }
 
     override fun configureMain(compilation: KotlinJsCompilation) {
-        val dceTaskProvider = configureDce(compilation)
+        val dceTaskProvider = configureDce(
+            compilation = compilation,
+            dev = false
+        )
 
-        configureRun(compilation, dceTaskProvider)
-        configureBuild(compilation, dceTaskProvider)
+        val devDceTaskProvider = configureDce(
+            compilation = compilation,
+            dev = true
+        )
+
+        configureRun(
+            compilation = compilation,
+            dceTaskProvider = dceTaskProvider,
+            devDceTaskProvider = devDceTaskProvider
+        )
+        configureBuild(
+            compilation = compilation,
+            dceTaskProvider = dceTaskProvider,
+            devDceTaskProvider = devDceTaskProvider
+        )
     }
 
     private fun configureRun(
         compilation: KotlinJsCompilation,
-        dceTaskProvider: TaskProvider<KotlinJsDceTask>
+        dceTaskProvider: TaskProvider<KotlinJsDceTask>,
+        devDceTaskProvider: TaskProvider<KotlinJsDceTask>
     ) {
-
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
@@ -111,20 +127,20 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                     it.outputs.upToDateWhen { false }
 
-                    when (type) {
-                        KotlinJsBinaryType.PRODUCTION -> {
-                            // Breaking of Task Configuration Avoidance is not so critical
-                            // because this task is dependent on DCE task
-                            it.entry = dceTaskProvider.get()
-                                .destinationDir
-                                .resolve(compileKotlinTask.outputFile.name)
-                            it.resolveFromModulesFirst = true
-                            it.dependsOn(dceTaskProvider)
-                        }
-                        KotlinJsBinaryType.DEVELOPMENT -> {
-                            it.dependsOn(compileKotlinTask)
-                        }
+                    val actualDceTaskProvider = when (type) {
+                        KotlinJsBinaryType.PRODUCTION -> dceTaskProvider
+                        KotlinJsBinaryType.DEVELOPMENT -> devDceTaskProvider
                     }
+
+                    // Breaking of Task Configuration Avoidance is not so critical
+                    // because this task is dependent on DCE task
+                    it.entry = actualDceTaskProvider.get()
+                        .destinationDir
+                        .resolve(compileKotlinTask.outputFile.name)
+
+                    it.dependsOn(actualDceTaskProvider)
+
+                    it.resolveFromModulesFirst = true
 
                     commonRunConfigurations.forEach { configure ->
                         it.configure()
@@ -142,7 +158,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
     private fun configureBuild(
         compilation: KotlinJsCompilation,
-        dceTaskProvider: TaskProvider<KotlinJsDceTask>
+        dceTaskProvider: TaskProvider<KotlinJsDceTask>,
+        devDceTaskProvider: TaskProvider<KotlinJsDceTask>
     ) {
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
@@ -186,20 +203,18 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     it.description = "build webpack ${type.name.toLowerCase()} bundle"
                     it._destinationDirectory = distribution.directory
 
-                    when (type) {
-                        KotlinJsBinaryType.PRODUCTION -> {
-                            // Breaking of Task Configuration Avoidance is not so critical
-                            // because this task is dependent on DCE task
-                            it.entry = dceTaskProvider.get()
-                                .destinationDir
-                                .resolve(compileKotlinTask.outputFile.name)
-                            it.resolveFromModulesFirst = true
-                            it.dependsOn(dceTaskProvider)
-                        }
-                        KotlinJsBinaryType.DEVELOPMENT -> {
-                            it.dependsOn(compileKotlinTask)
-                        }
+                    val actualDceTaskProvider = when (type) {
+                        KotlinJsBinaryType.PRODUCTION -> dceTaskProvider
+                        KotlinJsBinaryType.DEVELOPMENT -> devDceTaskProvider
                     }
+
+                    // Breaking of Task Configuration Avoidance is not so critical
+                    // because this task is dependent on DCE task
+                    it.entry = actualDceTaskProvider.get()
+                        .destinationDir
+                        .resolve(compileKotlinTask.outputFile.name)
+
+                    it.dependsOn(actualDceTaskProvider)
 
                     commonWebpackConfigurations.forEach { configure ->
                         it.configure()
@@ -223,11 +238,15 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             }
     }
 
-    private fun configureDce(compilation: KotlinJsCompilation): TaskProvider<KotlinJsDceTask> {
+    private fun configureDce(
+        compilation: KotlinJsCompilation,
+        dev: Boolean
+    ): TaskProvider<KotlinJsDceTask> {
         val project = compilation.target.project
 
         val dceTaskName = lowerCamelCaseName(
             DCE_TASK_PREFIX,
+            if (dev) DCE_DEV_PART else null,
             compilation.target.disambiguationClassifier,
             compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
             DCE_TASK_SUFFIX
@@ -236,8 +255,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val kotlinTask = compilation.compileKotlinTask
 
         return project.registerTask(dceTaskName) {
-            dceConfigurations.forEach { configure ->
-                it.configure()
+            if (dev) {
+                it.dceOptions.devMode = true
+            } else {
+                dceConfigurations.forEach { configure ->
+                    it.configure()
+                }
             }
 
             it.dependsOn(kotlinTask)
@@ -246,7 +269,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
             it.classpath = project.configurations.getByName(compilation.runtimeDependencyConfigurationName)
             it.destinationDir = it.dceOptions.outputDirectory?.let { File(it) }
-                ?: compilation.npmProject.dir.resolve(DCE_DIR)
+                ?: compilation.npmProject.dir.resolve(if (dev) DCE_DEV_DIR else DCE_DIR)
 
             it.source(kotlinTask.outputFile)
         }
@@ -277,9 +300,11 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
     companion object {
         const val DCE_TASK_PREFIX = "processDce"
+        private const val DCE_DEV_PART = "dev"
         const val DCE_TASK_SUFFIX = "kotlinJs"
 
         const val DCE_DIR = "kotlin-dce"
+        const val DCE_DEV_DIR = "kotlin-dce-dev"
 
         const val PRODUCTION = "production"
         const val DEVELOPMENT = "development"
