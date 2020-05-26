@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.LOWER
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.UPPER
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
@@ -56,7 +55,7 @@ class ConstraintInjector(
     }
 
     fun addInitialEqualityConstraint(c: Context, a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) {
-        val initialConstraint = InitialConstraint(a, b, ConstraintKind.EQUALITY, position)
+        val initialConstraint = InitialConstraint(a, b, EQUALITY, position)
         c.addInitialConstraint(initialConstraint)
         updateAllowedTypeDepth(c, a)
         updateAllowedTypeDepth(c, b)
@@ -81,8 +80,11 @@ class ConstraintInjector(
         typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
         var constraintsFromIsSubtype = true
 
-        while (possibleNewConstraints != null) {
+        if (incorporatePosition.from is FixVariableConstraintPosition && lowerType == incorporatePosition.initialConstraint.a) {
+            c.incorporateEqualityConstraintForFixingTypeVariable(incorporatePosition, typeCheckerContext)
+        }
 
+        while (possibleNewConstraints != null) {
             val constraintsToProcess = possibleNewConstraints
             possibleNewConstraints = null
             for ((typeVariable, constraint) in constraintsToProcess!!) {
@@ -103,7 +105,7 @@ class ConstraintInjector(
             if (possibleNewConstraints == null ||
                 (contextOps != null && c.notFixedTypeVariables.all { typeVariable ->
                     typeVariable.value.constraints.any { constraint ->
-                        constraint.kind == ConstraintKind.EQUALITY && contextOps.isProperType(constraint.type)
+                        constraint.kind == EQUALITY && contextOps.isProperType(constraint.type)
                     }
                 })
             ) {
@@ -115,6 +117,29 @@ class ConstraintInjector(
 
     private fun updateAllowedTypeDepth(c: Context, initialType: KotlinTypeMarker) = with(c) {
         c.maxTypeDepthFromInitialConstraints = max(c.maxTypeDepthFromInitialConstraints, initialType.typeDepth())
+    }
+
+    private fun Context.incorporateEqualityConstraintForFixingTypeVariable(
+        incorporatePosition: IncorporationConstraintPosition,
+        typeCheckerContext: TypeCheckerContext
+    ) {
+        if (incorporatePosition.from !is FixVariableConstraintPosition) return
+
+        val typeToIncorporate = incorporatePosition.initialConstraint.b
+
+        if (typeToIncorporate.isUninferredParameter() || typeToIncorporate.isError()) return
+
+        constraintIncorporator.incorporateIntoOtherConstraints(
+            typeCheckerContext,
+            incorporatePosition.from.variable,
+            Constraint(
+                EQUALITY,
+                typeToIncorporate,
+                incorporatePosition,
+                derivedFrom = setOf(),
+                isNullabilityConstraint = false
+            )
+        )
     }
 
     private fun Context.shouldWeSkipConstraint(

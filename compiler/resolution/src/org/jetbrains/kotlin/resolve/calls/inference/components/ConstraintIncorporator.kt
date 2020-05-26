@@ -38,6 +38,9 @@ class ConstraintIncorporator(
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
     }
 
+    fun incorporateIntoOtherConstraints(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) =
+        c.insideOtherConstraint(typeVariable, constraint)
+
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
     fun incorporate(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
         // we shouldn't incorporate recursive constraint -- It is too dangerous
