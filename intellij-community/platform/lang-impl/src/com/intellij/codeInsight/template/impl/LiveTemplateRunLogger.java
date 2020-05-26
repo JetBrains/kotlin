@@ -55,6 +55,7 @@ class LiveTemplateRunLogger {
       data.addPluginInfo(plugin);
     }
     data.addData("key", keyGroupPluginToLog.getFirst());
+    data.addData("changedByUser", TemplateSettings.getInstance().differsFromDefault(template));
     return data;
   }
 

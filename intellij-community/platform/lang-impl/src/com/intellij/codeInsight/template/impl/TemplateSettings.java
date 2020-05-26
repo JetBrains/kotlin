@@ -300,13 +300,13 @@ public final class TemplateSettings implements PersistentStateComponent<Template
     return ServiceManager.getService(TemplateSettings.class);
   }
 
-  private boolean differsFromDefault(TemplateImpl t) {
+  boolean differsFromDefault(@NotNull TemplateImpl t) {
     TemplateImpl def = getDefaultTemplate(t);
     return def == null || !t.equals(def) || !t.contextsEqual(def);
   }
 
   @Nullable
-  public TemplateImpl getDefaultTemplate(TemplateImpl t) {
+  public TemplateImpl getDefaultTemplate(@NotNull TemplateImpl t) {
     return myDefaultTemplates.get(TemplateKey.keyOf(t));
   }
 
