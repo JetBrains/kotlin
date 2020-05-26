@@ -58,7 +58,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection() {
         return propertyVisitor(fun(property: KtProperty) {
             if (property.receiverTypeReference != null) {
                 val nameElement = property.nameIdentifier ?: return
-                val propertyDescriptor = property.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
+                val propertyDescriptor = property.resolveToDescriptorIfAny(resolutionFacade) as? PropertyDescriptor ?: return
 
                 val syntheticScopes = resolutionFacade.frontendService<SyntheticScopes>()
                 val conflictingExtension = conflictingSyntheticExtension(propertyDescriptor, syntheticScopes) ?: return

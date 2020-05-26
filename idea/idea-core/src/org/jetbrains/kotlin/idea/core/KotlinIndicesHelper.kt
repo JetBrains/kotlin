@@ -26,8 +26,7 @@ import com.intellij.util.indexing.IdFilter
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
-import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.forceEnableSamAdapters
@@ -264,7 +263,7 @@ class KotlinIndicesHelper(
     fun getKotlinEnumsByName(name: String): Collection<DeclarationDescriptor> {
         return KotlinClassShortNameIndex.getInstance()[name, project, scope]
             .filter { it is KtEnumEntry && it in scope }
-            .mapNotNull { it.unsafeResolveToDescriptor() }
+            .flatMap { it.resolveToDescriptors<DeclarationDescriptor>() }
             .filter(descriptorFilter)
             .toSet()
     }
@@ -367,10 +366,12 @@ class KotlinIndicesHelper(
         for (declaration in functions + properties) {
             ProgressManager.checkCanceled()
             if (!filter(declaration)) continue
-            val descriptor = declaration.descriptor as? CallableDescriptor ?: continue
-            if (!processed.add(descriptor)) continue
-            if (!descriptorFilter(descriptor)) continue
-            processor(descriptor)
+
+            for (descriptor in declaration.resolveToDescriptors<CallableDescriptor>()) {
+                if (!processed.add(descriptor)) continue
+                if (!descriptorFilter(descriptor)) continue
+                processor(descriptor)
+            }
         }
     }
 
@@ -489,7 +490,7 @@ class KotlinIndicesHelper(
             for (field in shortNamesCache.getFieldsByName(name, scopeWithoutKotlin).filterNot { it is KtLightElement<*, *> }) {
                 if (!field.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (filterOutPrivate && field.hasModifierProperty(PsiModifier.PRIVATE)) continue
-                val descriptor = field.getJavaMemberDescriptor() ?: continue
+                val descriptor = field.getJavaMemberDescriptor(resolutionFacade) ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
                     processor(descriptor)
                 }

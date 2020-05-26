@@ -35,9 +35,10 @@ class OverridingDeprecatedMemberInspection : AbstractKotlinInspection() {
             }
 
             private fun registerProblemIfNeeded(declaration: KtDeclaration, targetForProblem: PsiElement) {
-                val accessorDescriptor = declaration.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return
+                val resolutionFacade = declaration.getResolutionFacade()
+                val accessorDescriptor = declaration.resolveToDescriptorIfAny(resolutionFacade) as? CallableMemberDescriptor ?: return
 
-                val deprecationProvider = declaration.getResolutionFacade().frontendService<DeprecationResolver>()
+                val deprecationProvider = resolutionFacade.frontendService<DeprecationResolver>()
 
                 val message = deprecationProvider.getDeprecations(accessorDescriptor)
                     .firstOrNull()
