@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.formatter.trailingComma
 
 import com.intellij.lang.ASTNode
-import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
@@ -42,30 +41,26 @@ private val TYPES_WITH_TRAILING_COMMA = TokenSet.orSet(
 )
 
 fun PsiElement.canAddTrailingCommaWithRegistryCheck(): Boolean {
-    val type = elementType(this) ?: return false
+    val type = PsiUtilCore.getElementType(this) ?: return false
     return type in TYPES_WITH_TRAILING_COMMA_ON_DECLARATION_SITE ||
             trailingCommaIsAllowedOnCallSite() && type in TYPES_WITH_TRAILING_COMMA_ON_CALL_SITE
 }
 
-fun KotlinCodeStyleSettings.addTrailingCommaIsAllowedFor(element: UserDataHolder): Boolean = when (elementType(element)) {
+fun KotlinCodeStyleSettings.addTrailingCommaIsAllowedFor(node: ASTNode): Boolean =
+    addTrailingCommaIsAllowedFor(PsiUtilCore.getElementType(node))
+
+fun KotlinCodeStyleSettings.addTrailingCommaIsAllowedFor(element: PsiElement): Boolean =
+    addTrailingCommaIsAllowedFor(PsiUtilCore.getElementType(element))
+
+private fun KotlinCodeStyleSettings.addTrailingCommaIsAllowedFor(type: IElementType?): Boolean = when (type) {
     null -> false
     in TYPES_WITH_TRAILING_COMMA_ON_DECLARATION_SITE -> ALLOW_TRAILING_COMMA
     in TYPES_WITH_TRAILING_COMMA_ON_CALL_SITE -> ALLOW_TRAILING_COMMA_ON_CALL_SITE || trailingCommaIsAllowedOnCallSite()
     else -> false
 }
 
-private fun elementType(userDataHolder: UserDataHolder): IElementType? = when (userDataHolder) {
-    is ASTNode -> PsiUtilCore.getElementType(userDataHolder)
-    is PsiElement -> PsiUtilCore.getElementType(userDataHolder)
-    else -> null
+fun PsiElement.canAddTrailingComma(): Boolean = when {
+    this is KtWhenEntry && (isElse || parent.cast<KtWhenExpression>().leftParenthesis == null) -> false
+    this is KtFunctionLiteral && arrow == null -> false
+    else -> PsiUtilCore.getElementType(this) in TYPES_WITH_TRAILING_COMMA
 }
-
-fun ASTNode.canAddTrailingComma(): Boolean = psi?.canAddTrailingComma() == true
-fun PsiElement.canAddTrailingComma(): Boolean =
-    when {
-        this is KtWhenEntry && (isElse || parent.cast<KtWhenExpression>().leftParenthesis == null) -> false
-        this is KtFunctionLiteral && arrow == null -> false
-        else -> canAddTrailingComma(this)
-    }
-
-private fun canAddTrailingComma(userDataHolder: UserDataHolder): Boolean = elementType(userDataHolder) in TYPES_WITH_TRAILING_COMMA
