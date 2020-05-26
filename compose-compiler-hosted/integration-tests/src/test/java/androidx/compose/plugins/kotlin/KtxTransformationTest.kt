@@ -26,19 +26,14 @@ class KtxTransformationTest : AbstractCodegenTest() {
             import androidx.compose.*
             import androidx.ui.androidview.adapters.setOnClick
 
-            @Model
-            class FancyButtonData() {
-                var x = 0
-            }
-
             @Composable
             fun SimpleComposable() {
-                FancyButton(state=FancyButtonData())
+                FancyButton(state=mutableStateOf(0))
             }
 
             @Composable
-            fun FancyButton(state: FancyButtonData) {
-               Button(text=("Clicked "+state.x+" times"), onClick={state.x++}, id=42)
+            fun FancyButton(state: MutableState<Int>) {
+               Button(text=("Clicked "+state.value+" times"), onClick={state.value++}, id=42)
             }
         """
     ) }

@@ -25,12 +25,9 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import androidx.compose.plugins.kotlin.frames.analysis.FrameModelChecker
-import androidx.compose.plugins.kotlin.frames.analysis.FramePackageAnalysisHandlerExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 
 class ComposeCommandLineProcessor : CommandLineProcessor {
 
@@ -93,13 +90,6 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             CandidateInterceptor.registerExtension(
                 project,
                 ComposeCallResolutionInterceptorExtension()
-            )
-            StorageComponentContainerContributor.registerExtension(project,
-                FrameModelChecker()
-            )
-            AnalysisHandlerExtension.registerExtension(
-                project,
-                FramePackageAnalysisHandlerExtension()
             )
         }
     }

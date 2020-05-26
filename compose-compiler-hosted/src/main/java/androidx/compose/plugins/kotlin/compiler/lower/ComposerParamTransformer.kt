@@ -18,7 +18,6 @@ package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
-import androidx.compose.plugins.kotlin.frames.findTopLevel
 import androidx.compose.plugins.kotlin.generateSymbols
 import androidx.compose.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.plugins.kotlin.irTrace
@@ -30,8 +29,10 @@ import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -83,6 +84,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
@@ -695,3 +698,6 @@ class ComposerParamTransformer(
         return false
     }
 }
+
+private fun ModuleDescriptor.findTopLevel(name: FqName) =
+    findClassAcrossModuleDependencies(ClassId.topLevel(name)) ?: error("Could not find $name")
