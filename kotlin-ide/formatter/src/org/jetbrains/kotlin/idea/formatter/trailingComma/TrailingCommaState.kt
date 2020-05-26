@@ -59,12 +59,6 @@ enum class TrailingCommaState {
     }
 }
 
-val TrailingCommaState.existsOrMissing: Boolean
-    get() = when (this) {
-        TrailingCommaState.EXISTS, TrailingCommaState.MISSING -> true
-        else -> false
-    }
-
 private fun isMultiline(ktElement: KtElement): Boolean = when {
     ktElement.parent is KtFunctionLiteral -> isMultiline(ktElement.parent as KtElement)
 
