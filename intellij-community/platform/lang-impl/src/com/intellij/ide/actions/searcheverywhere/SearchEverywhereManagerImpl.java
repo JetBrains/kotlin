@@ -142,8 +142,8 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
       myBalloonFullSize = null;
     });
 
+    myBalloonFullSize = getStateService().getSize(LOCATION_SETTINGS_KEY);
     if (mySearchEverywhereUI.getViewType() == BigPopupUI.ViewType.SHORT) {
-      myBalloonFullSize = getStateService().getSize(LOCATION_SETTINGS_KEY);
       Dimension prefSize = mySearchEverywhereUI.getPreferredSize();
       myBalloon.setSize(prefSize);
     }
