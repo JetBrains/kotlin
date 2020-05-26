@@ -104,6 +104,7 @@ import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
 import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
 import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.navigation.*
+import org.jetbrains.kotlin.idea.navigationToolbar.AbstractKotlinNavBarTest
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.perf.*
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
@@ -901,6 +902,10 @@ fun main() {
         
         testClass<AbstractSlicerMultiplatformTest> {
             model("slicer/mpp", recursive = false, extension = null)
+        }
+
+        testClass<AbstractKotlinNavBarTest> {
+            model("navigationToolbar", recursive = false)
         }
     }
 

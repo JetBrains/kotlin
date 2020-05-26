@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.idea.navigationToolbar
 import com.intellij.ide.navigationToolbar.StructureAwareNavBarModelExtension
 import com.intellij.lang.Language
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinIconProvider
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.psi.KtFile
 
-// FIX ME WHEN BUNCH 201 REMOVED
+// FIX ME WHEN BUNCH 193 REMOVED
 abstract class AbstractNavBarModelExtensionCompatBase : StructureAwareNavBarModelExtension() {
 
     protected abstract fun adjustElementImpl(psiElement: PsiElement?): PsiElement?
@@ -20,4 +22,11 @@ abstract class AbstractNavBarModelExtensionCompatBase : StructureAwareNavBarMode
 
     override val language: Language
         get() = KotlinLanguage.INSTANCE
+
+    override fun acceptParentFromModel(psiElement: PsiElement?): Boolean {
+        if (psiElement is KtFile) {
+            return KotlinIconProvider.getSingleClass(psiElement) == null
+        }
+        return true
+    }
 }
