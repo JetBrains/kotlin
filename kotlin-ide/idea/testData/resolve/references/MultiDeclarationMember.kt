@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 package a
 
 class MyPair {
