@@ -15,7 +15,7 @@
     <orderEntry type="library" exported="" name="Slf4j" level="project" />
     <orderEntry type="library" exported="" name="Gradle" level="project" />
     <orderEntry type="module-library" exported="" scope="PROVIDED">
-      <library name="org.codehaus.groovy:groovy:2.4.17" type="repository">
+      <library name="org.codehaus.groovy:groovy:2.4.17 - Gradle Tooling" type="repository">
         <properties maven-id="org.codehaus.groovy:groovy:2.4.17" />
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy/2.4.17/groovy-2.4.17.jar!/" />
@@ -27,7 +27,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="" scope="PROVIDED">
-      <library name="org.codehaus.groovy:groovy-ant:2.4.17" type="repository">
+      <library name="org.codehaus.groovy:groovy-ant:2.4.17 - Gradle Tooling" type="repository">
         <properties maven-id="org.codehaus.groovy:groovy-ant:2.4.17">
           <exclude>
             <dependency maven-id="org.codehaus.groovy:groovy" />
