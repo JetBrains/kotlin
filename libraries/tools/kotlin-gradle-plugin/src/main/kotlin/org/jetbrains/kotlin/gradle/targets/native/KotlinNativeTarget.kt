@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.utils.setArchiveAppendixCompatible
+import org.jetbrains.kotlin.gradle.utils.setArchiveClassifierCompatible
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
@@ -60,8 +62,8 @@ open class KotlinNativeTarget @Inject constructor(
 
             if (hostSpecificSourceSets.isNotEmpty()) {
                 val hostSpecificMetadataJar = project.locateOrRegisterTask<Jar>(hostSpecificMetadataJarTaskName) {
-                    it.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCase() })
-                    it.archiveClassifier.set("metadata")
+                    it.setArchiveAppendixCompatible { disambiguationClassifier.orEmpty().toLowerCase() }
+                    it.setArchiveClassifierCompatible { "metadata" }
                 }
                 project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, hostSpecificMetadataJar)
 

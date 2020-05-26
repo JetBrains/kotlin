@@ -15,6 +15,7 @@ import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.utils.injected
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import javax.inject.Inject
 
 abstract class KotlinTest : AbstractTestTask() {
@@ -38,7 +39,7 @@ abstract class KotlinTest : AbstractTestTask() {
 
     @Suppress("DEPRECATION")
     val excludePatterns: Set<String>
-        @Input get() = excludes + filterExt.excludePatterns
+        @Input get() = excludes + if (isGradleVersionAtLeast(5, 0)) filterExt.excludePatterns else emptySet()
 
     @get:Inject
     open val fileResolver: FileResolver

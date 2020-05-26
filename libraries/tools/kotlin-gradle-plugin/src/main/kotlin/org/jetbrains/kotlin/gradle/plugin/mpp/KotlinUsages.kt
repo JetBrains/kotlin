@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
 object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
@@ -40,14 +41,15 @@ object KotlinUsages {
 
     internal fun producerApiUsage(target: KotlinTarget) = target.project.usageByName(
         when (target.platformType) {
-            in jvmPlatformTypes -> "java-api-jars"
+            in jvmPlatformTypes ->
+                if (isGradleVersionAtLeast(5, 3)) "java-api-jars" else JAVA_API
             else -> KOTLIN_API
         }
     )
 
     internal fun producerRuntimeUsage(target: KotlinTarget) = target.project.usageByName(
         when (target.platformType) {
-            in jvmPlatformTypes -> "java-runtime-jars"
+            in jvmPlatformTypes -> JAVA_RUNTIME_JARS
             else -> KOTLIN_RUNTIME
         }
     )
@@ -59,13 +61,13 @@ object KotlinUsages {
             when {
                 consumerValue?.name == KOTLIN_API && producerValue?.name.let { it == JAVA_API || it == "java-api-jars" } ->
                     compatible()
-                consumerValue?.name in values && producerValue?.name.let { it == JAVA_RUNTIME || it == "java-runtime-jars" } ->
+                consumerValue?.name in values && producerValue?.name.let { it == JAVA_RUNTIME || it == JAVA_RUNTIME_JARS } ->
                     compatible()
             }
         }
     }
 
-    private val javaUsagesForKotlinMetadataConsumers = listOf("java-api-jars", JAVA_API, "java-runtime-jars", JAVA_RUNTIME)
+    private val javaUsagesForKotlinMetadataConsumers = listOf("java-api-jars", JAVA_API, JAVA_RUNTIME_JARS, JAVA_RUNTIME)
 
     private class KotlinMetadataCompatibility : AttributeCompatibilityRule<Usage> {
         override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
@@ -105,7 +107,7 @@ object KotlinUsages {
             }
 
             val javaApiUsages = setOf(JAVA_API, "java-api-jars")
-            val javaRuntimeUsages = setOf("java-runtime-jars", JAVA_RUNTIME)
+            val javaRuntimeUsages = setOf(JAVA_RUNTIME_JARS, JAVA_RUNTIME)
 
             if (javaApiUsages.any { it in candidateNames } &&
                 javaRuntimeUsages.any { it in candidateNames } &&

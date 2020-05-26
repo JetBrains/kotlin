@@ -37,7 +37,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 
     @Test
     fun testCleanOutputWithEmptySources() {
-        with(Project("kotlin-js-nodejs-project")) {
+        with(Project("kotlin-js-nodejs-project", GradleVersionRequired.AtLeast("5.3"))) {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
             gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
@@ -512,7 +512,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
     }
 
     @Test
-    fun testNewKotlinJsPlugin() = with(Project("kotlin-js-plugin-project")) {
+    fun testNewKotlinJsPlugin() = with(Project("kotlin-js-plugin-project", GradleVersionRequired.AtLeast("5.3"))) {
         assumeFalse(irBackend) // TODO: Support IR version of kotlinx.html
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
@@ -558,7 +558,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
     }
 
     @Test
-    fun testYarnSetup() = with(Project("yarn-setup")) {
+    fun testYarnSetup() = with(Project("yarn-setup", GradleVersionRequired.AtLeast("5.3"))) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
@@ -589,7 +589,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
     }
 
     @Test
-    fun testNpmDependencies() = with(Project("npm-dependencies")) {
+    fun testNpmDependencies() = with(Project("npm-dependencies", GradleVersionRequired.AtLeast("5.3"))) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
@@ -603,7 +603,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
     }
 
     @Test
-    fun testBrowserDistribution() = with(Project("kotlin-js-browser-project")) {
+    fun testBrowserDistribution() = with(Project("kotlin-js-browser-project", GradleVersionRequired.AtLeast("5.3"))) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)

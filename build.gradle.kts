@@ -779,15 +779,15 @@ fun CopySpec.setExecutablePermissions() {
 
 val zipCompiler by task<Zip> {
     dependsOn(dist)
-    destinationDirectory.set(file(distDir))
-    archiveFileName.set("kotlin-compiler-$kotlinVersion.zip")
+    destinationDir = file(distDir)
+    archiveName = "kotlin-compiler-$kotlinVersion.zip"
 
     from(distKotlinHomeDir)
     into("kotlinc")
     setExecutablePermissions()
 
     doLast {
-        logger.lifecycle("Compiler artifacts packed to ${archiveFile.get().asFile.absolutePath}")
+        logger.lifecycle("Compiler artifacts packed to $archivePath")
     }
 }
 

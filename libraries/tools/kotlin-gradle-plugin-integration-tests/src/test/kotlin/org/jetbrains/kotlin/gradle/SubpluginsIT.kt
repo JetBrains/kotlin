@@ -149,14 +149,25 @@ class SubpluginsIT : BaseGradleIT() {
         var isFailed = false
         project.build("build", options = options) {
             val classesDir = kotlinClassesDir("app", "main")
-            assertSuccessful()
-            assertFileExists("${classesDir}World.class")
-            assertFileExists("${classesDir}Alice.class")
-            assertFileExists("${classesDir}Bob.class")
+            if (project.testGradleVersionAtLeast("5.0")) {
+                assertSuccessful()
+                assertFileExists("${classesDir}World.class")
+                assertFileExists("${classesDir}Alice.class")
+                assertFileExists("${classesDir}Bob.class")
 
-            if (withIC) {
-                // compile iterations are not logged when IC is disabled
-                assertCompiledKotlinSources(project.relativize(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt))
+                if (withIC) {
+                    // compile iterations are not logged when IC is disabled
+                    assertCompiledKotlinSources(project.relativize(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt))
+                }
+            } else {
+                val usedGradleVersion =
+                    GradleVersion.version(
+                        System.getProperty("kotlin.gradle.version.for.tests")
+                            ?: project.gradleVersionRequirement.minVersion
+                    )
+                assertEquals(true, usedGradleVersion.version.substringBefore('.').toIntOrNull()?.let { it < 5 }, "Expected gradle version < 5, got ${usedGradleVersion.version}")
+                assertContains("kotlin scripting plugin: incompatible Gradle version")
+                isFailed = true
             }
         }
 

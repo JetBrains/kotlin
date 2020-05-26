@@ -89,6 +89,8 @@ abstract class ExecutionStrategyIT : BaseGradleIT() {
     }
 
     private fun CompiledProject.checkCompileDaemon() {
+        val isGradleAtLeast50 = project.testGradleVersionAtLeast("5.0")
+
         val m = "Kotlin compile daemon JVM options: \\[(.*?)\\]".toRegex().find(output)
             ?: error("Could not find Kotlin compile daemon JVM options in Gradle's output")
         val kotlinDaemonJvmArgs = m.groupValues[1].split(",").mapTo(LinkedHashSet()) { it.trim() }
@@ -100,8 +102,11 @@ abstract class ExecutionStrategyIT : BaseGradleIT() {
             )
         }
 
-        // 256m is the default value for Gradle 5.0+
-        assertDaemonArgsContain("-XX:MaxMetaspaceSize=256m")
+        if (isGradleAtLeast50) {
+            // 256m is the default value for Gradle 5.0+
+            assertDaemonArgsContain("-XX:MaxMetaspaceSize=256m")
+        }
+
         assertDaemonArgsContain("-ea")
     }
 

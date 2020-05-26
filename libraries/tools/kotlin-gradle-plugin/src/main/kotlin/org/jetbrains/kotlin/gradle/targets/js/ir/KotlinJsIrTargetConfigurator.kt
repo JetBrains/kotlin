@@ -55,7 +55,8 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
 
     override fun createArchiveTasks(target: KotlinJsIrTarget): Zip {
         return super.createArchiveTasks(target).apply {
-            archiveExtension.set(KLIB_TYPE)
+            // not archiveExtension because it is since Gradle 5.1 only
+            extension = KLIB_TYPE
         }
     }
 

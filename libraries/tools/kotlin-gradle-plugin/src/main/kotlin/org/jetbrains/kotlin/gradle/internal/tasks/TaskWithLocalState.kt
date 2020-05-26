@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.gradle.internal.tasks
 
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.utils.outputsCompatible
 
 internal interface TaskWithLocalState : Task {
     fun localStateDirectories(): FileCollection
 }
 
 internal fun TaskWithLocalState.allOutputFiles(): FileCollection =
-    outputs.files + localStateDirectories()
+    outputsCompatible.files + localStateDirectories()

@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.setArchiveAppendixCompatible
+import org.jetbrains.kotlin.gradle.utils.setArchiveClassifierCompatible
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.util.concurrent.Callable
 
@@ -136,7 +138,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         if (target.project.isKotlinGranularMetadataEnabled) {
             target.project.locateTask<Jar>(target.artifactsTaskName)!!.configure {
                 if (!target.project.isCompatibilityMetadataVariantEnabled) {
-                    it.archiveClassifier.set("commonMain")
+                    it.setArchiveClassifierCompatible { "commonMain" }
                 }
                 it.onlyIf { target.project.isCompatibilityMetadataVariantEnabled }
             }
@@ -149,10 +151,10 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                 allMetadataJar.description = "Assembles a jar archive containing the metadata for all Kotlin source sets."
                 allMetadataJar.group = BasePlugin.BUILD_GROUP
 
-                allMetadataJar.archiveAppendix.set(target.name.toLowerCase())
+                allMetadataJar.setArchiveAppendixCompatible { target.name.toLowerCase() }
 
                 if (target.project.isCompatibilityMetadataVariantEnabled) {
-                    allMetadataJar.archiveClassifier.set("all")
+                    allMetadataJar.setArchiveClassifierCompatible { "all" }
                 }
             }
         }

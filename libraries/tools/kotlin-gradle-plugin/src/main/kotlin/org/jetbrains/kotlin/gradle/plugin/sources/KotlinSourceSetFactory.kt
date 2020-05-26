@@ -88,6 +88,6 @@ internal class DefaultKotlinSourceSetFactory(
     }
 
     override fun doCreateSourceSet(name: String): DefaultKotlinSourceSet {
-        return DefaultKotlinSourceSet(project, name)
+        return DefaultKotlinSourceSet(project, name, fileResolver)
     }
 }

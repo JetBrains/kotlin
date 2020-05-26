@@ -1,12 +1,15 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import org.jetbrains.kotlin.gradle.utils.patternLayoutCompatible
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.net.URI
@@ -37,12 +40,15 @@ open class NodeJsSetupTask : DefaultTask() {
             repo.name = "Node Distributions at ${settings.nodeDownloadBaseUrl}"
             repo.url = URI(settings.nodeDownloadBaseUrl)
 
-            repo.patternLayout {
-                it.artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-                it.ivy("v[revision]/ivy.xml")
+            repo.patternLayoutCompatible {
+                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                ivy("v[revision]/ivy.xml")
             }
             repo.metadataSources { it.artifact() }
-            repo.content { it.includeModule("org.nodejs", "node") }
+
+            if (isGradleVersionAtLeast(5, 1)) {
+                repo.content { it.includeModule("org.nodejs", "node") }
+            }
         }
 
         val dep = this.project.dependencies.create(ivyDependency)

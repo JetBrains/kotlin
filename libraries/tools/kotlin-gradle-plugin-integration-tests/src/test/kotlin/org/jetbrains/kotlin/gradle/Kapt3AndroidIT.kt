@@ -20,6 +20,9 @@ open class Kapt3Android33IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_3_2
 
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("5.2")
+
     @Test
     fun testAndroidxNavigationSafeArgs() = with(Project("androidx-navigation-safe-args", directoryPrefix = "kapt2")) {
         // KT-30735
@@ -69,18 +72,21 @@ open class Kapt3Android33IT : Kapt3AndroidIT() {
     }
 }
 
-class Kapt3Android34IT : Kapt3AndroidIT() {
+class Kapt3Android31IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_4_1
+        get() = AGPVersion.v3_1_0
 
     // there is a weird validation exception in testICWithAnonymousClasses with 5.0 todo: fix it
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("5.4.1")
+        get() = GradleVersionRequired.Until("4.10.2")
 }
 
 open class Kapt3AndroidIT : Kapt3BaseIT() {
     protected open val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_0_0
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.Until("4.10.2")
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
