@@ -66,7 +66,7 @@ data class JsonFileProviderIndexStatistics(
   val numberOfFilesPerFileType: List<NumberOfFilesPerFileType>,
   val indexingTimePerFileType: List<IndexingTimePerFileType>,
   val contentLoadingTimePerFileType: List<ContentLoadingTimePerFileType>,
-  val timesPerIndexer: List<TimePerIndexer>
+  val indexingTimePerIndexer: List<TimePerIndexer>
 ) {
 
   data class NumberOfFilesPerFileType(val fileType: String, val filesNumber: Int)
@@ -75,8 +75,8 @@ data class JsonFileProviderIndexStatistics(
   data class TimePerIndexer(val indexId: String, val time: JsonTimeStats)
 }
 
-fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics? {
-  return JsonFileProviderIndexStatistics(
+fun FileProviderIndexStatistics.convertToJson() =
+  JsonFileProviderIndexStatistics(
     providerDebugName,
     JsonTime(totalTime),
     indexingStatistics.numberOfFilesPerFileType
@@ -104,7 +104,6 @@ fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics
       }
       .sortedByDescending { it.time.maxTime.nano }
   )
-}
 
 typealias PresentableTime = String
 

@@ -1283,17 +1283,17 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         try {
           ProgressManager.checkCanceled();
           final ID<?, ?> indexId = affectedIndexCandidates.get(i);
-          long startTime = System.nanoTime();
-          try {
-            if (getInputFilter(indexId).acceptInput(file) && getIndexingState(fc, indexId).updateRequired()) {
-              ProgressManager.checkCanceled();
+          if (getInputFilter(indexId).acceptInput(file) && getIndexingState(fc, indexId).updateRequired()) {
+            ProgressManager.checkCanceled();
+            long startTime = System.nanoTime();
+            try {
               if (!updateSingleIndex(indexId, file, inputId, fc)) {
                 setIndexedStatus.set(Boolean.FALSE);
               }
-              currentIndexedStates.remove(indexId);
+            } finally {
+              perIndexerTimes.put(indexId, System.nanoTime() - startTime);
             }
-          } finally {
-            perIndexerTimes.put(indexId, System.nanoTime() - startTime);
+            currentIndexedStates.remove(indexId);
           }
         }
         catch (ProcessCanceledException e) {
@@ -1308,16 +1308,16 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
       for (ID<?, ?> indexId : currentIndexedStates) {
         ProgressManager.checkCanceled();
-        long startTime = System.nanoTime();
-        try {
-          if (getIndex(indexId).getIndexingStateForFile(inputId, fc).updateRequired()) {
-            ProgressManager.checkCanceled();
+        if (getIndex(indexId).getIndexingStateForFile(inputId, fc).updateRequired()) {
+          ProgressManager.checkCanceled();
+          long startTime = System.nanoTime();
+          try {
             if (!updateSingleIndex(indexId, file, inputId, null)) {
               setIndexedStatus.set(Boolean.FALSE);
             }
+          } finally {
+            perIndexerTimes.put(indexId, System.nanoTime() - startTime);
           }
-        } finally {
-          perIndexerTimes.put(indexId, System.nanoTime() - startTime);
         }
       }
     });
