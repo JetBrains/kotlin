@@ -39,9 +39,26 @@ data class JsonTime(val nano: Long) {
     }
 }
 
+@JsonSerialize(using = JsonPercentages.Companion::class)
+data class JsonPercentages(val percentages: Int) {
+  companion object : JsonSerializer<JsonPercentages>() {
+    override fun serialize(value: JsonPercentages, gen: JsonGenerator, serializers: SerializerProvider?) {
+      gen.writeString(value.presentablePercentages())
+    }
+  }
+
+  fun presentablePercentages(): String =
+    if (percentages < 1) {
+      "< 1%"
+    }
+    else {
+      "$percentages%"
+    }
+}
+
 @JsonSerialize(using = JsonTimeStats.Companion::class)
 data class JsonTimeStats(
-  val partOfTotal: Int, // Percentages: 0 to 100.
+  val partOfTotal: JsonPercentages,
   val minTime: JsonTime,
   val maxTime: JsonTime,
   val meanTime: JsonTime,
@@ -51,13 +68,7 @@ data class JsonTimeStats(
   companion object : JsonSerializer<JsonTimeStats>() {
     override fun serialize(value: JsonTimeStats, gen: JsonGenerator, serializers: SerializerProvider?) {
       val s = buildString {
-        append("part: ")
-        if (value.partOfTotal < 1) {
-          append("< 1%; ")
-        }
-        else {
-          append("${value.partOfTotal}%; ")
-        }
+        append("part of total: ${value.partOfTotal.presentablePercentages()}; ")
         append("max: ${value.maxTime.presentableDuration()}; ")
         append("mean: ${value.meanTime.presentableDuration()}; ")
         append("median: ${value.medianTime.presentableDuration()}; ")
@@ -73,7 +84,7 @@ fun TimeStats.toTimeStats(cumulativeTime: TimeNano): JsonTimeStats? {
     return null
   }
   return JsonTimeStats(
-    calculatePart(sumTime, cumulativeTime),
+    JsonPercentages(calculatePart(sumTime, cumulativeTime)),
     JsonTime(minTime),
     JsonTime(maxTime),
     JsonTime(meanTime.toLong()),
@@ -214,7 +225,7 @@ data class JsonProjectIndexingHistory(
 ) {
   data class StatsPerFileType(
     val fileType: String,
-    val partOfTotalIndexingTime: String, // Percentages: 0 to 100
+    val partOfTotalIndexingTime: JsonPercentages,
     val totalNumberOfFiles: Int
   )
 }
@@ -228,27 +239,22 @@ private fun calculatePart(part: Long, total: Long): Int =
   }
 
 fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory {
-  val fileTypeToIndexingStats = providerStatistics.flatMap { it.statsPerFileType }.groupBy({ it.fileType }, { it.indexingTimeStats })
-  val overallIndexingTime = fileTypeToIndexingStats.values.flatten().map { it.cumulativeTime }.sum()
-  val fileTypeToPart = fileTypeToIndexingStats.mapValues { (_, stats) ->
-    val fileTypeIndexingTime = stats.map { it.cumulativeTime }.sum()
+  val fileTypeToAllStats = providerStatistics.flatMap { it.statsPerFileType }.groupBy { it.fileType }
+
+  val overallIndexingTime = fileTypeToAllStats.values.flatten().map { it.indexingTimeStats.cumulativeTime }.sum()
+  val fileTypeToIndexingTimePart = fileTypeToAllStats.mapValues { (_, stats) ->
+    val fileTypeIndexingTime = stats.map { it.indexingTimeStats.cumulativeTime }.sum()
     calculatePart(fileTypeIndexingTime, overallIndexingTime)
   }
 
-  val numberOfFilesPerFileType = hashMapOf<String, Int>()
-  for (providerStatistic in providerStatistics) {
-    for (statPerFileType in providerStatistic.statsPerFileType) {
-      numberOfFilesPerFileType.compute(statPerFileType.fileType) { _, cnt -> (cnt ?: 0) + statPerFileType.numberOfFiles }
-    }
-  }
+  val numberOfFilesPerFileType = fileTypeToAllStats.mapValues { (_, stats) -> stats.map { it.numberOfFiles }.sum() }
   return JsonProjectIndexingHistory(
     projectName,
     providerStatistics.map { it.totalNumberOfFiles }.sum(),
     times.convertToJson(),
     numberOfFilesPerFileType.map { (fileType, totalNumberOfFiles) ->
-      val partOfTotalIndexingTime = fileTypeToPart.getValue(fileType)
-      val part = if (partOfTotalIndexingTime < 1) "< 1%" else "$partOfTotalIndexingTime%"
-      JsonProjectIndexingHistory.StatsPerFileType(fileType, part, totalNumberOfFiles)
+      val partOfTotalIndexingTime = fileTypeToIndexingTimePart.getValue(fileType)
+      JsonProjectIndexingHistory.StatsPerFileType(fileType, JsonPercentages(partOfTotalIndexingTime), totalNumberOfFiles)
     }.sortedByDescending { it.totalNumberOfFiles },
     providerStatistics.sortedByDescending { it.totalIndexingTime.nano }
   )
