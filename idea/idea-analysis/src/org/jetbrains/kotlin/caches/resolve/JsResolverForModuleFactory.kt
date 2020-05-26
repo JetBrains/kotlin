@@ -88,7 +88,7 @@ internal fun <M : ModuleInfo> createPackageFragmentProvider(
     }
     is LibraryModuleInfo -> {
         moduleInfo.getLibraryRoots()
-            .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) { msg -> LOG.error(msg) } }
+            .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it, LOG::error) }
             .filter { it.version.isCompatible() }
             .map { metadata ->
                 val (header, packageFragmentProtos) =
