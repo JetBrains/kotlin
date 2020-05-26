@@ -22,7 +22,6 @@ import androidx.compose.plugins.kotlin.compiler.lower.ComposerLambdaMemoization
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposableFunctionBodyTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeResolutionMetadataTransformer
-import androidx.compose.plugins.kotlin.frames.FrameIrTransformer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -47,9 +46,6 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
         // add metadata from the frontend onto IR Nodes so that the metadata will travel
         // with the ir nodes as they transform and get copied
         ComposeResolutionMetadataTransformer(pluginContext).lower(moduleFragment)
-
-        // transform @Model classes
-        FrameIrTransformer(pluginContext).lower(moduleFragment)
 
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(pluginContext, symbolRemapper, bindingTrace).lower(moduleFragment)

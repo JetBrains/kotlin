@@ -204,18 +204,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testModelOne(): Unit = ensureSetup {
-        codegen(
-            """
-                @Model
-                class ModelClass() {
-                    var x = 0
-                }
-            """, false
-        )
-    }
-
-    @Test
     fun testSetContent(): Unit = ensureSetup {
         codegen(
             """
@@ -260,19 +248,14 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 import androidx.compose.*
                 import androidx.ui.androidview.adapters.setOnClick
 
-                @Model
-                class FancyButtonData() {
-                    var x = 0
-                }
-
                 @Composable
                 fun SimpleComposable() {
-                    FancyButton(state=FancyButtonData())
+                    FancyButton(state=mutableStateOf(0))
                 }
 
                 @Composable
-                fun FancyButton(state: FancyButtonData) {
-                    Button(text=("Clicked "+state.x+" times"), onClick={state.x++}, id=42)
+                fun FancyButton(state: MutableState<Int>) {
+                    Button(text=("Clicked "+state.value+" times"), onClick={state.value++}, id=42)
                 }
             """,
             noParameters,
@@ -292,17 +275,12 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testObservableLambda(): Unit = ensureSetup {
         compose(
             """
-                @Model
-                class FancyButtonCount() {
-                    var count = 0
-                }
-
                 @Composable
-                fun SimpleComposable(state: FancyButtonCount) {
+                fun SimpleComposable(state: MutableState<Int>) {
                     FancyBox2 {
                         Button(
-                          text=("Button clicked "+state.count+" times"),
-                          onClick={state.count++},
+                          text=("Button clicked "+state.value+" times"),
+                          onClick={state.value++},
                           id=42
                         )
                     }
@@ -314,7 +292,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
             """,
             noParameters,
-            "SimpleComposable(state=remember { FancyButtonCount() })"
+            "SimpleComposable(state=state { 0 })"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
             button.performClick()
@@ -329,22 +307,17 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testObservableGenericFunction(): Unit = ensureSetup {
         compose("""
-            @Model
-            class Counter() {
-                var count = 0
-            }
-
             @Composable
-            fun <T> SimpleComposable(state: Counter, value: T) {
+            fun <T> SimpleComposable(state: MutableState<Int>, value: T) {
                 Button(
-                  text=("Button clicked "+state.count+" times: " + value),
-                  onClick={state.count++},
+                  text=("Button clicked "+state.value+" times: " + value),
+                  onClick={state.value++},
                   id=42
                 )
             }
         """,
             noParameters,
-            "SimpleComposable(state=remember { Counter() }, value=\"Value\")"
+            "SimpleComposable(state=state { 0 }, value=\"Value\")"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
             button.performClick()
@@ -359,21 +332,17 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testObservableExtension(): Unit = ensureSetup {
         compose("""
-            @Model
-            class Counter() {
-                var count = 0
-            }
 
             @Composable
-            fun Counter.Composable() {
+            fun MutableState<Int>.Composable() {
                 Button(
-                    text="Button clicked "+count+" times",
-                    onClick={count++},
+                    text="Button clicked "+value+" times",
+                    onClick={value++},
                     id=42
                 )
             }
 
-            val myCounter = Counter()
+            val myCounter = mutableStateOf(0)
             """,
             noParameters,
             "myCounter.Composable()"
@@ -391,23 +360,18 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testObserverableExpressionBody(): Unit = ensureSetup {
         compose("""
-            @Model
-            class Counter() {
-                var count = 0
-            }
-
             @Composable
-            fun SimpleComposable(counter: Counter) =
+            fun SimpleComposable(counter: MutableState<Int>) =
                 Button(
-                    text="Button clicked "+counter.count+" times",
-                    onClick={counter.count++},
+                    text="Button clicked "+counter.value+" times",
+                    onClick={counter.value++},
                     id=42
                 )
 
             @Composable
-            fun SimpleWrapper(counter: Counter) = SimpleComposable(counter = counter)
+            fun SimpleWrapper(counter: MutableState<Int>) = SimpleComposable(counter = counter)
 
-            val myCounter = Counter()
+            val myCounter = mutableStateOf(0)
             """,
             noParameters,
             "SimpleWrapper(counter = myCounter)"
@@ -425,13 +389,8 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testObservableInlineWrapper(): Unit = ensureSetup {
         compose("""
-            @Model
-            class Counter() {
-                var count = 0
-            }
-
             var inWrapper = false
-            val counter = Counter()
+            val counter = mutableStateOf(0)
 
             inline fun wrapper(block: () -> Unit) {
               inWrapper = true
@@ -443,11 +402,11 @@ class FcsCodegenTests : AbstractCodegenTest() {
             }
 
             @Composable
-            fun SimpleComposable(state: Counter) {
+            fun SimpleComposable(state: MutableState<Int>) {
                 wrapper {
                     Button(
-                      text=("Button clicked "+state.count+" times"),
-                      onClick={state.count++},
+                      text=("Button clicked "+state.value+" times"),
+                      onClick={state.value++},
                       id=42
                     )
                 }
@@ -469,18 +428,13 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testObservableDefaultParameter(): Unit = ensureSetup {
         compose("""
-            @Model
-            class Counter() {
-                var count = 0
-            }
-
-            val counter = Counter()
+            val counter = mutableStateOf(0)
 
             @Composable
-            fun SimpleComposable(state: Counter, a: Int = 1, b: Int = 2) {
+            fun SimpleComposable(state: MutableState<Int>, a: Int = 1, b: Int = 2) {
                 Button(
-                  text=("State: ${'$'}{state.count} a = ${'$'}a b = ${'$'}b"),
-                  onClick={state.count++},
+                  text=("State: ${'$'}{state.value} a = ${'$'}a b = ${'$'}b"),
+                  onClick={state.value++},
                   id=42
                 )
             }
@@ -501,22 +455,18 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testObservableEarlyReturn(): Unit = ensureSetup {
         compose("""
-            @Model
-            class Counter() {
-                var count = 0
-            }
 
-            val counter = Counter()
+            val counter = mutableStateOf(0)
 
             @Composable
-            fun SimpleComposable(state: Counter) {
+            fun SimpleComposable(state: MutableState<Int>) {
                 Button(
-                  text=("State: ${'$'}{state.count}"),
-                  onClick={state.count++},
+                  text=("State: ${'$'}{state.value}"),
+                  onClick={state.value++},
                   id=42
                 )
 
-                if (state.count > 2) return
+                if (state.value > 2) return
 
                 TextView(
                   text="Included text",
@@ -1629,12 +1579,10 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
                 import androidx.ui.androidview.adapters.*
 
-                @Model class MyState<T>(var value: T)
-
                 @Composable
                 fun Counter() {
                     Observe {
-                        var count = remember { MyState(0) }
+                        var count = state { 0 }
                         TextView(
                             text=("Count: " + count.value),
                             onClick={
@@ -2074,9 +2022,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testStableParameters_Various(): Unit = ensureSetup {
         val output = ArrayList<String>()
         compose("""
-            @Model
-            class M { var count = 0 }
-            val m = M()
+            val m = mutableStateOf(0)
 
             @Immutable
             data class ValueHolder(val value: Int)
@@ -2101,7 +2047,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             @Composable
             fun MemoInt(a: Int) {
               output.add("MemoInt a=${'$'}a")
-              Button(id=101, text="memo ${'$'}a", onClick={ m.count++ })
+              Button(id=101, text="memo ${'$'}a", onClick={ m.value++ })
             }
 
             @Composable
@@ -2164,7 +2110,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 h: MutableState<Int>,
                 i: State<Int>
             ) {
-              val am = a + m.count
+              val am = a + m.value
               output.add("TestSkipping a=${'$'}a am=${'$'}am")
               MemoInt(a=am)
               MemoFloat(a=b)
@@ -2231,9 +2177,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testStableParameters_Lambdas(): Unit = ensureSetup {
         val output = ArrayList<String>()
         compose("""
-            @Model
-            class M { var count = 0 }
-            val m = M()
+            val m = mutableStateOf(0)
 
             var output = ArrayList<String>()
             val unchanged: () -> Unit = { }
@@ -2267,7 +2211,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             @Composable
             fun Main(unchanged: () -> Unit) {
-              Button(id=101, text="model ${'$'}{m.count}", onClick={ m.count++ })
+              Button(id=101, text="model ${'$'}{m.value}", onClick={ m.value++ })
               TestSkipping(unchanged = unchanged, changed = forceNewLambda())
             }
         """, {
@@ -2305,9 +2249,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testRecomposeScope(): Unit = ensureSetup {
         compose("""
-             @Model
-            class M { var count = 0 }
-            val m = M()
+            val m = mutableStateOf(0)
 
             @Composable
             inline fun InlineContainer(children: @Composable () -> Unit) {
@@ -2334,7 +2276,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 val a = 1
                 val b = 2
                 Container {
-                    TextView(text = "value = ${'$'}{m.count}", id = 100)
+                    TextView(text = "value = ${'$'}{m.value}", id = 100)
                     Leaf(v = 1)
                     Leaf(v = a)
                     Leaf(v = b)
@@ -2343,7 +2285,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """,
             noParameters,
             """
-                Button(id=101, text="model ${'$'}{m.count}", onClick={ m.count++ })
+                Button(id=101, text="model ${'$'}{m.value}", onClick={ m.value++ })
                 Lambda()
             """
         ).then { activity ->
@@ -2358,9 +2300,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testRecomposeScope_ReceiverScope(): Unit = ensureSetup {
         compose("""
-            @Model
-            class M { var count = 0 }
-            val m = M()
+            val m = mutableStateOf(0)
 
             class Receiver { var r: Int = 0 }
 
@@ -2372,13 +2312,13 @@ class FcsCodegenTests : AbstractCodegenTest() {
             @Composable
             fun Lambda() {
                 Container {
-                    TextView(text = "value = ${'$'}{m.count}", id = 100)
+                    TextView(text = "value = ${'$'}{m.value}", id = 100)
                 }
             }
             """,
             noParameters,
             """
-                Button(id=101, text="model ${'$'}{m.count}", onClick={ m.count++ })
+                Button(id=101, text="model ${'$'}{m.value}", onClick={ m.value++ })
                 Lambda()
             """
         ).then { activity ->
@@ -2393,9 +2333,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     @Test
     fun testRecomposeScope_Method(): Unit = ensureSetup {
         compose("""
-            @Model
-            class M { var count = 0 }
-            val m = M()
+            val m = mutableStateOf(0)
 
             @Composable
             fun Leaf() { }
@@ -2406,7 +2344,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 @Composable
                 fun compose(f2: Int) {
                     TextView(
-                      text = "f1=${'$'}f1, f2=${'$'}f2, m=${'$'}{m.count*f1*f2}",
+                      text = "f1=${'$'}f1, f2=${'$'}f2, m=${'$'}{m.value*f1*f2}",
                       id = 100
                     )
                 }
@@ -2422,7 +2360,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """,
             noParameters,
             """
-                Button(id=101, text="model ${'$'}{m.count}", onClick={ m.count++ })
+                Button(id=101, text="model ${'$'}{m.value}", onClick={ m.value++ })
                 InvokeSelfCompose()
             """
         ).then { activity ->
