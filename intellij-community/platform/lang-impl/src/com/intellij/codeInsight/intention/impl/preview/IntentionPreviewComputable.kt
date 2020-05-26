@@ -16,8 +16,11 @@ import com.intellij.openapi.progress.DumbProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiRecursiveElementWalkingVisitor
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import java.util.concurrent.Callable
 
 internal class IntentionPreviewComputable(private val project: Project,
@@ -48,7 +51,7 @@ internal class IntentionPreviewComputable(private val project: Project,
       val manager = InjectedLanguageManager.getInstance(project)
       origFile = PsiFileFactory.getInstance(project).createFileFromText(
         origPair.first.name, origPair.first.fileType, manager.getUnescapedText(origPair.first))
-      caretOffset = origPair.second.caretModel.offset
+      caretOffset = mapInjectedOffsetToUnescaped(origPair.first, origPair.second.caretModel.offset) 
     } else {
       origFile = originalFile
       caretOffset = originalEditor.caretModel.offset
@@ -75,6 +78,26 @@ internal class IntentionPreviewComputable(private val project: Project,
       ComparisonManager.getInstance().compareLines(origFile.text, editorCopy.document.text, ComparisonPolicy.TRIM_WHITESPACES,
                                                    DumbProgressIndicator.INSTANCE)
     )
+  }
+
+  private fun mapInjectedOffsetToUnescaped(injectedFile: PsiFile, injectedOffset: Int): Int {
+    var unescapedOffset = 0
+    var escapedOffset = 0
+    injectedFile.accept(object : PsiRecursiveElementWalkingVisitor() {
+      override fun visitElement(element: PsiElement) {
+        val leafText = InjectedLanguageUtil.getUnescapedLeafText(element, false)
+        if (leafText != null) {
+          unescapedOffset += leafText.length
+          escapedOffset += element.textLength
+          if (escapedOffset >= injectedOffset) {
+            unescapedOffset -= escapedOffset - injectedOffset
+            stopWalking()
+          }
+        }
+        super.visitElement(element)
+      }
+    })
+    return unescapedOffset
   }
 
   companion object {
