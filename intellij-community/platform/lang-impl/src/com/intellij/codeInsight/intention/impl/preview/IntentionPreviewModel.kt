@@ -43,7 +43,7 @@ internal class IntentionPreviewModel {
       })
     }
 
-    fun createEditors(project: Project, originalFile: PsiFile, result: IntentionPreviewResult?): List<EditorEx> {
+    fun createEditors(project: Project, result: IntentionPreviewResult?): List<EditorEx> {
       if (result == null) return emptyList()
 
       val psiFileCopy: PsiFile? = result.psiFile
@@ -54,7 +54,7 @@ internal class IntentionPreviewModel {
       lines.forEach { lineFragment -> reformatRange(project, psiFileCopy, lineFragment) }
 
       val fileText = psiFileCopy.text
-      val origText = originalFile.text
+      val origText = result.origFile.text
       val diff = ComparisonManager.getInstance().compareLines(origText, fileText,
                                                               ComparisonPolicy.TRIM_WHITESPACES, DumbProgressIndicator.INSTANCE)
       var diffs = diff.mapNotNull { fragment ->
@@ -83,7 +83,7 @@ internal class IntentionPreviewModel {
       if (diffs.isNotEmpty()) {
         val last = diffs.last()
         val maxLine = last.startLine + last.length
-        return diffs.map { it.createEditor(project, originalFile.fileType, maxLine) }
+        return diffs.map { it.createEditor(project, result.origFile.fileType, maxLine) }
       }
       return emptyList()
     }

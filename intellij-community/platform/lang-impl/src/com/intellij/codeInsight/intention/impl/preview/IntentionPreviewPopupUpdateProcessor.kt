@@ -80,7 +80,7 @@ class IntentionPreviewPopupUpdateProcessor(private val project: Project,
   }
 
   private fun renderPreview(result: IntentionPreviewResult?) {
-    val editors = IntentionPreviewModel.createEditors(project, originalFile, result)
+    val editors = IntentionPreviewModel.createEditors(project, result)
     if (editors.isEmpty()) {
       select(NO_PREVIEW)
       return

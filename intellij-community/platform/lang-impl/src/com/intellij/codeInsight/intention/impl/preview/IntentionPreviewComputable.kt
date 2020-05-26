@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
 import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonPolicy
 import com.intellij.diff.fragments.LineFragment
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.DumbProgressIndicator
@@ -16,6 +17,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
 import java.util.concurrent.Callable
 
 internal class IntentionPreviewComputable(private val project: Project,
@@ -39,18 +41,28 @@ internal class IntentionPreviewComputable(private val project: Project,
   }
 
   fun generatePreview(): IntentionPreviewResult? {
-    val psiFileCopy = originalFile.copy() as PsiFile
+    val origPair = ShowIntentionActionsHandler.chooseFileForAction(originalFile, originalEditor, action) ?: return null
+    val origFile: PsiFile
+    val caretOffset: Int
+    if (origPair.first != originalFile) {
+      val manager = InjectedLanguageManager.getInstance(project)
+      origFile = PsiFileFactory.getInstance(project).createFileFromText(
+        origPair.first.name, origPair.first.fileType, manager.getUnescapedText(origPair.first))
+      caretOffset = origPair.second.caretModel.offset
+    } else {
+      origFile = originalFile
+      caretOffset = originalEditor.caretModel.offset
+    }
+    val psiFileCopy = origFile.copy() as PsiFile
     ProgressManager.checkCanceled()
-    val editorCopy = IntentionPreviewEditor(psiFileCopy, originalEditor.caretModel.offset)
+    val editorCopy = IntentionPreviewEditor(psiFileCopy, caretOffset)
     val action = findCopyIntention(project, editorCopy, psiFileCopy, action) ?: return null
-    val fileEditorPair = ShowIntentionActionsHandler.chooseFileForAction(psiFileCopy, editorCopy, action)
-                         ?: return null
 
     val writable = originalEditor.document.isWritable
     try {
       originalEditor.document.setReadOnly(true)
       ProgressManager.checkCanceled()
-      action.invoke(project, fileEditorPair.second, fileEditorPair.first)
+      action.invoke(project, editorCopy, psiFileCopy)
       ProgressManager.checkCanceled()
     }
     finally {
@@ -59,7 +71,8 @@ internal class IntentionPreviewComputable(private val project: Project,
 
     return IntentionPreviewResult(
       psiFileCopy,
-      ComparisonManager.getInstance().compareLines(originalFile.text, editorCopy.document.text, ComparisonPolicy.TRIM_WHITESPACES,
+      origFile,
+      ComparisonManager.getInstance().compareLines(origFile.text, editorCopy.document.text, ComparisonPolicy.TRIM_WHITESPACES,
                                                    DumbProgressIndicator.INSTANCE)
     )
   }
@@ -87,4 +100,4 @@ internal class IntentionPreviewComputable(private val project: Project,
   }
 }
 
-internal data class IntentionPreviewResult(val psiFile: PsiFile, val lineFragments: List<LineFragment>)
+internal data class IntentionPreviewResult(val psiFile: PsiFile, val origFile: PsiFile, val lineFragments: List<LineFragment>)
