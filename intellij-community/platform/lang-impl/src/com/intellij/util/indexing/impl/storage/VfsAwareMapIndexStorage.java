@@ -90,12 +90,22 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
     return myBaseStorageFile.resolveSibling(myBaseStorageFile.getFileName() + ".project");
   }
 
-  private <T extends Throwable> void withLock(ThrowableRunnable<T> r) throws T {
-    myKeyHashToVirtualFileMapping.lock();
+  private <T extends Throwable> void withLock(ThrowableRunnable<T> r, boolean read) throws T {
+    if (read) {
+      myKeyHashToVirtualFileMapping.lockRead();
+    }
+    else {
+      myKeyHashToVirtualFileMapping.lockWrite();
+    }
     try {
       r.run();
     } finally {
-      myKeyHashToVirtualFileMapping.unlock();
+      if (read) {
+        myKeyHashToVirtualFileMapping.unlockRead();
+      }
+      else {
+        myKeyHashToVirtualFileMapping.unlockWrite();
+      }
     }
   }
 
@@ -105,7 +115,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
     try {
       super.flush();
       if (myKeyHashToVirtualFileMapping != null && myKeyHashToVirtualFileMapping.isDirty()) {
-        withLock(() -> myKeyHashToVirtualFileMapping.force());
+        withLock(() -> myKeyHashToVirtualFileMapping.force(), false);
       }
     }
     finally {
@@ -129,7 +139,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
       try {
         withLock(() -> {
           myKeyHashToVirtualFileMapping.close();
-        });
+        }, false);
       }
       catch (IOException e) {
         throw new StorageException(e);
@@ -142,9 +152,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
     try {
       closeKeyHashToFileMapping();
     }
-    catch (RuntimeException e) {
-      LOG.info(e);
-    }
+    catch (Exception ignored) { }
     try {
       if (myKeyHashToVirtualFileMapping != null) IOUtil.deleteAllFilesStartingWith(getProjectFile().toFile());
     }
@@ -191,6 +199,8 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
           final TIntHashSet finalHashMaskSet = hashMaskSet;
           withLock(() -> {
             myKeyHashToVirtualFileMapping.force();
+          }, false);
+          withLock(() -> {
             ProgressManager.checkCanceled();
 
             myKeyHashToVirtualFileMapping.processAll(key -> {
@@ -199,7 +209,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
               finalHashMaskSet.add(key[0]);
               return true;
             });
-          });
+          }, true);
 
           if (useCachedHashIds) {
             saveHashedIds(hashMaskSet, id, effectiveFilteringScope);
@@ -296,7 +306,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   public void addValue(final Key key, final int inputId, final Value value) throws StorageException {
     try {
       if (myKeyHashToVirtualFileMapping != null) {
-        withLock(() -> myKeyHashToVirtualFileMapping.append(new int[] { myKeyDescriptor.getHashCode(key), inputId }));
+        withLock(() -> myKeyHashToVirtualFileMapping.append(new int[] { myKeyDescriptor.getHashCode(key), inputId }), false);
         int lastScannedId = myLastScannedId;
         if (lastScannedId != 0) { // we have write lock
           ourInvalidatedSessionIds.cacheOrGet(lastScannedId, Boolean.TRUE);
