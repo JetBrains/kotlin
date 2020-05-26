@@ -17,16 +17,20 @@ import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.objectTree.ThrowableInterner;
 import com.intellij.project.ProjectKt;
+import com.intellij.util.ReflectionUtil;
 import com.intellij.util.UriUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.lang.UrlClassLoader;
 import gnu.trove.THashSet;
+import org.apache.velocity.runtime.directive.Stop;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,6 +65,24 @@ class FileTemplatesLoader implements Disposable {
     });
     ApplicationManager.getApplication().getMessageBus().connect(this).
       subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+        @Override
+        public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+          // this shouldn't be necessary once we update to a new Velocity Engine with this leak fixed (IDEA-240449, IDEABKL-7932)
+          clearClassLeakViaStaticExceptionTrace();
+        }
+
+        private void clearClassLeakViaStaticExceptionTrace() {
+          Field field = ReflectionUtil.getDeclaredField(Stop.class, "STOP_ALL");
+          if (field != null) {
+            try {
+              ThrowableInterner.clearBacktrace((Throwable)field.get(null));
+            }
+            catch (Throwable e) {
+              LOG.info(e);
+            }
+          }
+        }
+
         @Override
         public void pluginLoaded(@NotNull IdeaPluginDescriptor pluginDescriptor) {
           myManagers.drop();
