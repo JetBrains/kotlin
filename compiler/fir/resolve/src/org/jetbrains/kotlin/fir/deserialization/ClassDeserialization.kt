@@ -83,7 +83,7 @@ fun deserializeClassToSymbol(
             defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session),
             containerSource
         )
-    buildClassImpl {
+    buildRegularClass {
         this.session = session
         origin = FirDeclarationOrigin.Library
         name = classId.shortClassName
@@ -183,7 +183,7 @@ private val ARRAY_CLASSES: Set<Name> = setOf(
 
 private val JAVA_IO_SERIALIZABLE = ClassId.topLevel(FqName("java.io.Serializable"))
 
-private fun AbstractFirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
+private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
     if (!JvmBuiltInsSettings.isSerializableInJava(classId.asSingleFqName().toUnsafe())) return
     superTypeRefs += buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(
@@ -194,7 +194,7 @@ private fun AbstractFirRegularClassBuilder.addSerializableIfNeeded(classId: Clas
     }
 }
 
-private fun AbstractFirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId) {
+private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId) {
     if (classId.packageFqName != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) return
     if (classId.shortClassName !in ARRAY_CLASSES) return
     superTypeRefs += buildResolvedTypeRef {

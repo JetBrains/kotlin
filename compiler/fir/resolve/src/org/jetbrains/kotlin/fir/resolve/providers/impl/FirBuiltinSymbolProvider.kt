@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildClassImpl
+import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
@@ -155,7 +155,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
             val arity = className.substring(prefix.length).toIntOrNull() ?: return null
             syntheticFunctionalInterfaceSymbols.getOrPut(SyntheticFunctionalInterfaceSymbolKey(kind, arity)) {
                 FirRegularClassSymbol(this).apply symbol@{
-                    buildClassImpl klass@{
+                    buildRegularClass klass@{
                         session = this@FirBuiltinSymbolProvider.session
                         origin = FirDeclarationOrigin.Synthetic
                         name = relativeClassName.shortName()

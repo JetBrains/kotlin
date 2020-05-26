@@ -31,11 +31,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(declarationStatus)
         noImpl(resolvedDeclarationStatus)
 
-        val regularClassConfig: ImplementationContext.() -> Unit = {
+        impl(regularClass) {
             defaultFalse("hasLazyNestedClassifiers", withGetter = true)
         }
-
-        impl(regularClass, "FirClassImpl", regularClassConfig)
 
         impl(anonymousObject)
 

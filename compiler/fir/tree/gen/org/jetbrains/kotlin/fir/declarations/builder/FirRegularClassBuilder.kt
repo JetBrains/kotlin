@@ -18,8 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
+import org.jetbrains.kotlin.fir.declarations.builder.FirClassBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterRefsOwnerBuilder
+import org.jetbrains.kotlin.fir.declarations.impl.FirRegularClassImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
@@ -35,24 +36,24 @@ import org.jetbrains.kotlin.name.Name
  */
 
 @FirBuilderDsl
-open class FirClassImplBuilder : AbstractFirRegularClassBuilder, FirAnnotationContainerBuilder {
+open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBuilder, FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override lateinit var session: FirSession
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    open var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
-    override lateinit var status: FirDeclarationStatus
+    open lateinit var status: FirDeclarationStatus
     override lateinit var classKind: ClassKind
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
     override lateinit var scopeProvider: FirScopeProvider
-    override lateinit var name: Name
-    override lateinit var symbol: FirRegularClassSymbol
-    override var companionObject: FirRegularClass? = null
+    open lateinit var name: Name
+    open lateinit var symbol: FirRegularClassSymbol
+    open var companionObject: FirRegularClass? = null
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
 
     override fun build(): FirRegularClass {
-        return FirClassImpl(
+        return FirRegularClassImpl(
             source,
             session,
             resolvePhase,
@@ -70,26 +71,12 @@ open class FirClassImplBuilder : AbstractFirRegularClassBuilder, FirAnnotationCo
         )
     }
 
-
-    @Deprecated("Modification of 'hasLazyNestedClassifiers' has no impact for FirClassImplBuilder", level = DeprecationLevel.HIDDEN)
-    override var hasLazyNestedClassifiers: Boolean
-        get() = throw IllegalStateException()
-        set(value) {
-            throw IllegalStateException()
-        }
-
-    @Deprecated("Modification of 'controlFlowGraphReference' has no impact for FirClassImplBuilder", level = DeprecationLevel.HIDDEN)
-    override var controlFlowGraphReference: FirControlFlowGraphReference
-        get() = throw IllegalStateException()
-        set(value) {
-            throw IllegalStateException()
-        }
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildClassImpl(init: FirClassImplBuilder.() -> Unit): FirRegularClass {
+inline fun buildRegularClass(init: FirRegularClassBuilder.() -> Unit): FirRegularClass {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirClassImplBuilder().apply(init).build()
+    return FirRegularClassBuilder().apply(init).build()
 }

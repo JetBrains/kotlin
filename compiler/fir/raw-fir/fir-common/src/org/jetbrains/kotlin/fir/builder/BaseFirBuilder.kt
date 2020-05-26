@@ -160,7 +160,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun T?.toDelegatedSelfType(firClass: AbstractFirRegularClassBuilder): FirResolvedTypeRef =
+    fun T?.toDelegatedSelfType(firClass: FirRegularClassBuilder): FirResolvedTypeRef =
         toDelegatedSelfType(firClass, firClass.symbol)
 
     fun T?.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef =
@@ -661,7 +661,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     inner class DataClassMembersGenerator(
         private val session: FirSession,
         private val source: T,
-        private val classBuilder: AbstractFirRegularClassBuilder,
+        private val classBuilder: FirRegularClassBuilder,
         private val primaryConstructor: FirConstructor,
         private val zippedParameters: List<Pair<T, FirProperty>>,
         private val packageFqName: FqName,

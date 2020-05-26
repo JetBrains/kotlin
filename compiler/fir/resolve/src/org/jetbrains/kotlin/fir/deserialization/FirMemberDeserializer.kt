@@ -263,7 +263,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         return simpleFunction
     }
 
-    fun loadConstructor(proto: ProtoBuf.Constructor, classBuilder: AbstractFirRegularClassBuilder): FirConstructor {
+    fun loadConstructor(proto: ProtoBuf.Constructor, classBuilder: FirRegularClassBuilder): FirConstructor {
         val flags = proto.flags
         val relativeClassName = c.relativeClassName!!
         val symbol = FirConstructorSymbol(CallableId(c.packageFqName, relativeClassName, relativeClassName.shortName()))

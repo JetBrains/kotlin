@@ -384,7 +384,7 @@ class DeclarationsConverter(
                     isInline = modifiers.isInlineClass()
                 }
 
-                buildClassImpl {
+                buildRegularClass {
                     source = classNode.toFirSourceElement()
                     session = baseSession
                     origin = FirDeclarationOrigin.Source

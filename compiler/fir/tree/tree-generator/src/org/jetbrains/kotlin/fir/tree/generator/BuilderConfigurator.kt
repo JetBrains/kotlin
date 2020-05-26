@@ -32,10 +32,11 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from klass without listOf("symbol", "resolvePhase", "attributes")
         }
 
-        val regularClassBuilder by builder("AbstractFirRegularClassBuilder") {
+        builder(regularClass) {
             parents += classBuilder
             parents += typeParameterRefsOwnerBuilder
-            fields from regularClass without "attributes"
+            defaultNull("companionObject")
+            openBuilder()
         }
 
         val qualifiedAccessBuilder by builder {
@@ -78,12 +79,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(field) {
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
-            openBuilder()
-        }
-
-        builder(regularClass) {
-            parents += regularClassBuilder
-            defaultNull("companionObject")
             openBuilder()
         }
 

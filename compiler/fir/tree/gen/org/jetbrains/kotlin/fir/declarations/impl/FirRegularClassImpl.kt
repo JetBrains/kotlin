@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirClassImpl(
+internal class FirRegularClassImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
@@ -62,7 +62,7 @@ internal class FirClassImpl(
         controlFlowGraphReference.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirClassImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         transformAnnotations(transformer, data)
         typeParameters.transformInplace(transformer, data)
         transformStatus(transformer, data)
@@ -73,32 +73,32 @@ internal class FirClassImpl(
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirClassImpl {
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         status = status.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirClassImpl {
+    override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         declarations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirClassImpl {
+    override fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         companionObject = companionObject?.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirClassImpl {
+    override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         superTypeRefs.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirClassImpl {
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
     }

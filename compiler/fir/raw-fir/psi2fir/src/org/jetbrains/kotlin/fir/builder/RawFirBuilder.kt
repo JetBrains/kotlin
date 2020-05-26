@@ -674,7 +674,7 @@ class RawFirBuilder(
                 withCapturedTypeParameters {
                     if (!status.isInner) context.capturedTypeParameters = context.capturedTypeParameters.clear()
 
-                    buildClassImpl {
+                    buildRegularClass {
                         source = classOrObject.toFirSourceElement()
                         session = baseSession
                         origin = FirDeclarationOrigin.Source

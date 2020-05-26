@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -29,7 +29,7 @@ private val ENUM_VALUES = Name.identifier("values")
 private val ENUM_VALUE_OF = Name.identifier("valueOf")
 private val VALUE = Name.identifier("value")
 
-fun AbstractFirRegularClassBuilder.generateValuesFunction(session: FirSession, packageFqName: FqName, classFqName: FqName) {
+fun FirRegularClassBuilder.generateValuesFunction(session: FirSession, packageFqName: FqName, classFqName: FqName) {
     declarations += buildSimpleFunction {
         source = this@generateValuesFunction.source
         origin = FirDeclarationOrigin.Source
@@ -54,7 +54,7 @@ fun AbstractFirRegularClassBuilder.generateValuesFunction(session: FirSession, p
     }
 }
 
-fun AbstractFirRegularClassBuilder.generateValueOfFunction(session: FirSession, packageFqName: FqName, classFqName: FqName) {
+fun FirRegularClassBuilder.generateValueOfFunction(session: FirSession, packageFqName: FqName, classFqName: FqName) {
     declarations += buildSimpleFunction {
         source = this@generateValueOfFunction.source
         origin = FirDeclarationOrigin.Source
