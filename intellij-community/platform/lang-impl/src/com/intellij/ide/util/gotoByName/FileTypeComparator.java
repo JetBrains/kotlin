@@ -14,11 +14,11 @@ import java.util.Comparator;
  * <li>File type with greater name is greater (case is ignored).</li>
  * </ol>
  */
-public class FileTypeComparator implements Comparator<FileType> {
+class FileTypeComparator implements Comparator<FileType> {
   /**
    * an instance of comparator
    */
-  public static final Comparator<FileType> INSTANCE = new FileTypeComparator();
+  static final Comparator<FileType> INSTANCE = new FileTypeComparator();
 
   /**
    * {@inheritDoc}
