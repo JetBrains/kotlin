@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
+import kotlin.jvm.internal.TypeParameterReference
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVariance
@@ -50,17 +51,6 @@ internal class KTypeParameterImpl(override val descriptor: TypeParameterDescript
     override fun hashCode() =
         descriptor.hashCode()
 
-    // TODO: this temporarily duplicates TypeParameterReference.toString to prevent JPS build failure until stdlib is bootstrapped
     override fun toString() =
-        // TypeParameterReference.toString(this)
-        buildString {
-            when (variance) {
-                KVariance.INVARIANT -> {
-                }
-                KVariance.IN -> append("in ")
-                KVariance.OUT -> append("out ")
-            }
-
-            append(name)
-        }
+        TypeParameterReference.toString(this)
 }

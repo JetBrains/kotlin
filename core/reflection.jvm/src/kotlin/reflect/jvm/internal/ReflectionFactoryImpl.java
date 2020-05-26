@@ -123,8 +123,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         return KClassifiers.createType(klass, arguments, isMarkedNullable, Collections.<Annotation>emptyList());
     }
 
-    // TODO: this is a temporary workaround for the JPS build
-    // @Override
+    @Override
     public KTypeParameter typeParameter(Object container, String name, KVariance variance, boolean isReified) {
         List<KTypeParameter> typeParameters;
         if (container instanceof KClass) {
@@ -140,7 +139,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         throw new IllegalArgumentException("Type parameter " + name + " is not found in container: " + container);
     }
 
-    // @Override
+    @Override
     public void setUpperBounds(KTypeParameter typeParameter, List<KType> bounds) {
         // Do nothing. KTypeParameterImpl implementation will load upper bounds from the metadata.
     }
