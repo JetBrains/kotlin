@@ -180,6 +180,7 @@ fun ProjectIndexingHistory.IndexingTimes.convertToJson(): JsonProjectIndexingHis
 data class JsonProjectIndexingHistory(
   val projectName: String,
   val indexingTimes: JsonProjectIndexingHistoryTimes,
+  val totalNumberOfFiles: Int,
   val fileProviderStatistics: List<JsonFileProviderIndexStatistics>
 )
 
@@ -187,6 +188,7 @@ fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory =
   JsonProjectIndexingHistory(
     projectName,
     times.convertToJson(),
+    providerStatistics.map { it.totalNumberOfFiles }.sum(),
     providerStatistics.sortedByDescending { it.totalIndexingTime.nano }
   )
 
