@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSCommentTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSCommentTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath() = "comment"
 
     /**

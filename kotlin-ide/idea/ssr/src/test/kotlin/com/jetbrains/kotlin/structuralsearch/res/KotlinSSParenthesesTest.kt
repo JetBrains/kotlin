@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSParenthesesTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSParenthesesTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "parentheses"
 
     fun testPostIncr() { doTest("++(('_))") }

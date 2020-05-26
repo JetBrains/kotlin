@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSBinaryExpressionTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSBinaryExpressionTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "binaryExpression"
 
     fun testBinaryExpression() { doTest("1 + 2 - 3") }

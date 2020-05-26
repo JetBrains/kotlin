@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSTryCatchExpressionTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSTryCatchExpressionTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "tryCatchExpression"
 
     fun testTryCatch() {

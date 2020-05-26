@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSLambdaExpressionTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSLambdaExpressionTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "lambdaExpression"
 
     fun testEmpty() { doTest("{}") }

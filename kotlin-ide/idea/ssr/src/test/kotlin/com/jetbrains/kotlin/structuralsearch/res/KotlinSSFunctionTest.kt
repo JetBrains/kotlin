@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSFunctionTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "function"
 
     fun testFun() { doTest("fun a() { '_* }") }

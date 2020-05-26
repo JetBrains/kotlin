@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSWhenExpressionTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSWhenExpressionTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "whenExpression"
 
     fun testWhenVariableSubject() {

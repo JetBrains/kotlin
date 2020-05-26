@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSPropertyTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSPropertyTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "property"
 
     fun testVar() { doTest("var '_") }

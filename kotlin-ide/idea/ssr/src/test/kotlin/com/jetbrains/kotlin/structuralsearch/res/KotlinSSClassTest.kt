@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSClassTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSClassTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "class"
 
     fun testClass() { doTest("class A") }

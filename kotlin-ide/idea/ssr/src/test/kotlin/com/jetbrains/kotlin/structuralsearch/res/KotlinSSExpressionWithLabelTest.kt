@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSExpressionWithLabelTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSExpressionWithLabelTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "expressionWithLabel"
 
     fun testBreak() { doTest("break") }

@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSAnotationTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSAnotationTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "annotation"
 
     fun testClassAnnotation() { doTest("@A class '_") }

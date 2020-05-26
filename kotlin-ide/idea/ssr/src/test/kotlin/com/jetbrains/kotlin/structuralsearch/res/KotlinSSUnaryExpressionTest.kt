@@ -1,6 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.res
 
-class KotlinSSUnaryExpressionTest : KotlinSSTest() {
+import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+
+class KotlinSSUnaryExpressionTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "unaryExpression"
 
     fun testPreIncrement() { doTest("++'_ ") }
