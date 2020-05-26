@@ -233,7 +233,12 @@ public class FoldingUpdate {
                                      @NotNull List<? super RegionInfo> elementsToFold,
                                      boolean quick) {
     final FileViewProvider viewProvider = file.getViewProvider();
-    Document document = Objects.requireNonNull(viewProvider.getDocument());
+    Document document = viewProvider.getDocument();
+    if (document == null) {
+      LOG.error("No document for " + viewProvider);
+      return;
+    }
+
     LOG.assertTrue(PsiDocumentManager.getInstance(file.getProject()).isCommitted(document));
 
     int textLength = document.getTextLength();
