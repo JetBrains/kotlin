@@ -254,6 +254,15 @@ abstract class BasicBoxTest(
                 if (runIrPir && !skipDceDriven) {
                     runGeneratedCode(pirAllJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
                 }
+            } else {
+                val ignored = InTextDirectivesUtils.isIgnoredTarget(
+                    targetBackend, file,
+                    InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX
+                )
+
+                if (ignored) {
+                    throw AssertionError("Ignored test hasn't been ran. Emulate its failing")
+                }
             }
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
