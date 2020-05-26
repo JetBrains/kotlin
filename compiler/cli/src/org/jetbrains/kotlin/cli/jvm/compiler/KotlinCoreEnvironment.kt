@@ -550,8 +550,6 @@ class KotlinCoreEnvironment private constructor(
             CollectAdditionalSourcesExtension.registerExtensionPoint(project)
             ExtraImportsProviderExtension.registerExtensionPoint(project)
             IrGenerationExtension.registerExtensionPoint(project)
-            @Suppress("DEPRECATION_ERROR")
-            org.jetbrains.kotlin.backend.common.extensions.PureIrGenerationExtension.registerExtensionPoint(project)
             ScriptEvaluationExtension.registerExtensionPoint(project)
             ShellExtension.registerExtensionPoint(project)
             TypeResolutionInterceptor.registerExtensionPoint(project)

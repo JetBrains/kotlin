@@ -120,11 +120,6 @@ object JvmBackendFacade {
             context.typeMapper.mapType(context.referenceClass(descriptor).defaultType)
         }
 
-        @Suppress("DEPRECATION_ERROR")
-        for (extension in org.jetbrains.kotlin.backend.common.extensions.PureIrGenerationExtension.getInstances(state.project)) {
-            extension.generate(irModuleFragment, context)
-        }
-
         JvmLower(context).lower(irModuleFragment)
 
         for (generateMultifileFacade in listOf(true, false)) {
