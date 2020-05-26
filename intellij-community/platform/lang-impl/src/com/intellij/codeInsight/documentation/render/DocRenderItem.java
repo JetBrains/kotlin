@@ -3,6 +3,7 @@ package com.intellij.codeInsight.documentation.render;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.documentation.DocFontSizePopup;
+import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.HelpTooltip;
 import com.intellij.ide.ui.LafManagerListener;
@@ -33,7 +34,6 @@ import com.intellij.psi.PsiDocCommentBase;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.AppExecutorUtil;
@@ -324,7 +324,7 @@ public class DocRenderItem {
       PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(Objects.requireNonNull(editor.getProject()));
       PsiFile file = psiDocumentManager.getPsiFile(editor.getDocument());
       if (file != null) {
-        return PsiTreeUtil.getParentOfType(file.findElementAt(highlighter.getStartOffset()), PsiDocCommentBase.class, false);
+        return DocumentationManager.getProviderFromElement(file).findDocComment(file, TextRange.create(highlighter));
       }
     }
     return null;
