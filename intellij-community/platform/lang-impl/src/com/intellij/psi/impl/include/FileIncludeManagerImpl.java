@@ -125,7 +125,7 @@ public final class FileIncludeManagerImpl extends FileIncludeManager implements 
     myPsiManager = PsiManager.getInstance(project);
     myPsiFileFactory = PsiFileFactory.getInstance(myProject);
 
-    FileIncludeProvider.EP_NAME.getPoint(null).addExtensionPointListener(new ExtensionPointListener<FileIncludeProvider>() {
+    FileIncludeProvider.EP_NAME.getPoint().addExtensionPointListener(new ExtensionPointListener<FileIncludeProvider>() {
       @Override
       public void extensionAdded(@NotNull FileIncludeProvider provider, @NotNull PluginDescriptor pluginDescriptor) {
         FileIncludeProvider old = myProviderMap.put(provider.getId(), provider);

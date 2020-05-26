@@ -17,7 +17,7 @@ class ProgramRunnerTest : BasePlatformTestCase() {
   fun testRunnerSettingsSurvivesRunnerUnload() {
     val programRunnerWithSettings = MockProgramRunnerWithSettings()
     val disposable = Disposer.newDisposable()
-    ProgramRunner.PROGRAM_RUNNER_EP.getPoint(null).registerExtension(programRunnerWithSettings, disposable)
+    ProgramRunner.PROGRAM_RUNNER_EP.getPoint().registerExtension(programRunnerWithSettings, disposable)
 
     val runManager = RunManager.getInstance(project)
     val runnerAndConfigurationSettings = runManager.createConfiguration("Test", FakeConfigurationFactory()) as RunnerAndConfigurationSettingsImpl
@@ -32,7 +32,7 @@ class ProgramRunnerTest : BasePlatformTestCase() {
 
     runnerAndConfigurationSettings.readExternal(element, false)
 
-    ProgramRunner.PROGRAM_RUNNER_EP.getPoint(null).registerExtension(programRunnerWithSettings, testRootDisposable)
+    ProgramRunner.PROGRAM_RUNNER_EP.getPoint().registerExtension(programRunnerWithSettings, testRootDisposable)
     val settingsAfterReload = runnerAndConfigurationSettings.getRunnerSettings(programRunnerWithSettings)
     assertEquals("myTest", settingsAfterReload!!.test)
   }

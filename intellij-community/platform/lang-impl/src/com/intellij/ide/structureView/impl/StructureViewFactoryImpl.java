@@ -84,7 +84,7 @@ public final class StructureViewFactoryImpl extends StructureViewFactoryEx imple
       return result;
     }
 
-    ExtensionPointImpl<StructureViewExtension> point = (ExtensionPointImpl<StructureViewExtension>)EXTENSION_POINT_NAME.getPoint(null);
+    ExtensionPointImpl<StructureViewExtension> point = (ExtensionPointImpl<StructureViewExtension>)EXTENSION_POINT_NAME.getPoint();
     Set<Class<? extends PsiElement>> visitedTypes = new HashSet<>();
     result = new ArrayList<>();
     for (StructureViewExtension extension : point.getExtensionList()) {

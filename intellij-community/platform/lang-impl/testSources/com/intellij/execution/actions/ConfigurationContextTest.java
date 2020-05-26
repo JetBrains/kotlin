@@ -35,7 +35,7 @@ public class ConfigurationContextTest extends BasePlatformTestCase {
     Assert.assertNull(context.findExisting());
 
     Disposable disposable = Disposer.newDisposable();
-    RunConfigurationProducer.EP_NAME.getPoint(null).registerExtension(new FakeRunConfigurationProducer(""), disposable);
+    RunConfigurationProducer.EP_NAME.getPoint().registerExtension(new FakeRunConfigurationProducer(""), disposable);
     List<RunnerAndConfigurationSettings> configs = getConfigurationsFromContext();
     Assert.assertEquals(1, configs.size());
     for (RunnerAndConfigurationSettings config : configs) {
@@ -54,7 +54,7 @@ public class ConfigurationContextTest extends BasePlatformTestCase {
   public void testPreferredExistingConfiguration() {
     myFixture.configureByText(FileTypes.PLAIN_TEXT, "hello,<caret>world");
     @SuppressWarnings("rawtypes")
-    ExtensionPoint<RunConfigurationProducer> ep = RunConfigurationProducer.EP_NAME.getPoint(null);
+    ExtensionPoint<RunConfigurationProducer> ep = RunConfigurationProducer.EP_NAME.getPoint();
     ep.registerExtension(new FakeRunConfigurationProducer("hello_"), getTestRootDisposable());
     ep.registerExtension(new FakeRunConfigurationProducer("world_"), getTestRootDisposable());
 

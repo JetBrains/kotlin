@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull
 
 internal class DynamicArtifactExtensionsLoader(private val artifactManager: ArtifactManagerImpl) {
   fun installListeners(disposable: Disposable) {
-    ArtifactType.EP_NAME.getPoint(null).addExtensionPointListener(object : ExtensionPointListener<ArtifactType> {
+    ArtifactType.EP_NAME.getPoint().addExtensionPointListener(object : ExtensionPointListener<ArtifactType> {
       override fun extensionAdded(extension: ArtifactType, pluginDescriptor: PluginDescriptor) {
         runWriteAction {
           reloadArtifacts(artifactManager.allArtifactsIncludingInvalid.filter {
@@ -29,7 +29,7 @@ internal class DynamicArtifactExtensionsLoader(private val artifactManager: Arti
       }
     }, false, disposable)
 
-    PackagingElementType.EP_NAME.getPoint(null).addExtensionPointListener(object : ExtensionPointListener<PackagingElementType<out PackagingElement<*>>> {
+    PackagingElementType.EP_NAME.getPoint().addExtensionPointListener(object : ExtensionPointListener<PackagingElementType<out PackagingElement<*>>> {
       override fun extensionAdded(extension: PackagingElementType<out PackagingElement<*>>, pluginDescriptor: PluginDescriptor) {
         runWriteAction {
           reloadArtifacts(artifactManager.allArtifactsIncludingInvalid.filter {
@@ -43,7 +43,7 @@ internal class DynamicArtifactExtensionsLoader(private val artifactManager: Arti
       }
     }, false, disposable)
 
-    ArtifactPropertiesProvider.EP_NAME.getPoint(null).addExtensionPointListener(object : ExtensionPointListener<ArtifactPropertiesProvider> {
+    ArtifactPropertiesProvider.EP_NAME.getPoint().addExtensionPointListener(object : ExtensionPointListener<ArtifactPropertiesProvider> {
       override fun extensionAdded(extension: ArtifactPropertiesProvider, pluginDescriptor: PluginDescriptor) {
         runWriteAction {
           reloadArtifacts(artifactManager.allArtifactsIncludingInvalid.filter { artifact ->

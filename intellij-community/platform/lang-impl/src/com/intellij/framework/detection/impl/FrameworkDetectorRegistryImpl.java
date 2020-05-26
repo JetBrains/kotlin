@@ -38,7 +38,7 @@ public final class FrameworkDetectorRegistryImpl extends FrameworkDetectorRegist
 
   public FrameworkDetectorRegistryImpl() {
     loadDetectors();
-    FrameworkDetector.EP_NAME.getPoint(null).addExtensionPointListener(new ExtensionPointListener<FrameworkDetector>() {
+    FrameworkDetector.EP_NAME.getPoint().addExtensionPointListener(new ExtensionPointListener<FrameworkDetector>() {
       @Override
       public void extensionAdded(@NotNull FrameworkDetector detector, @NotNull PluginDescriptor pluginDescriptor) {
         int id = myNextId.getAndIncrement();

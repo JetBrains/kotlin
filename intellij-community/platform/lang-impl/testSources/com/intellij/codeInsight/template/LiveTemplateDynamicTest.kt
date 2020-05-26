@@ -22,7 +22,7 @@ class LiveTemplateDynamicTest : LightPlatformCodeInsightTestCase() {
 
     val disposable = Disposer.newDisposable()
     Disposer.register(testRootDisposable, disposable)
-    Macro.EP_NAME.getPoint(null).registerExtension(FooBarMacro(), disposable)
+    Macro.EP_NAME.getPoint().registerExtension(FooBarMacro(), disposable)
     assertTrue(variable.expression is MacroCallNode)
     assertTrue(variable.defaultValueExpression is MacroCallNode)
 

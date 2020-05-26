@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class TemplateManagerImpl extends TemplateManager implements Disposable {
   static final NotNullLazyValue<ExtensionPoint<TemplateContextType>> TEMPLATE_CONTEXT_EP =
-    NotNullLazyValue.createValue(() -> TemplateContextType.EP_NAME.getPoint(null));
+    NotNullLazyValue.createValue(() -> TemplateContextType.EP_NAME.getPoint());
 
   private final Project myProject;
   private static final Key<Boolean> ourTemplateTesting = Key.create("TemplateTesting");

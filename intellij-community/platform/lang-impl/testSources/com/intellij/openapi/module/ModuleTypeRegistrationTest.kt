@@ -59,7 +59,7 @@ class ModuleTypeRegistrationTest : HeavyPlatformTestCase() {
     extension.setPluginDescriptor(DefaultPluginDescriptor("test"))
     extension.id = MockModuleType.ID
     extension.implementationClass = MockModuleType::class.qualifiedName
-    ModuleTypeManagerImpl.EP_NAME.getPoint(null).registerExtension(extension, moduleTypeDisposable)
+    ModuleTypeManagerImpl.EP_NAME.getPoint().registerExtension(extension, moduleTypeDisposable)
   }
 }
 

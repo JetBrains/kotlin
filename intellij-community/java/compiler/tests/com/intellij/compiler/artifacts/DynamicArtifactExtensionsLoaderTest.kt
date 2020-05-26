@@ -93,7 +93,7 @@ class DynamicArtifactExtensionsLoaderTest : HeavyPlatformTestCase() {
         Disposer.dispose(artifactTypeDisposable)
       }
     })
-    extensionPointName.getPoint(null).registerExtension(type, artifactTypeDisposable)
+    extensionPointName.getPoint().registerExtension(type, artifactTypeDisposable)
   }
 
   override fun setUp() {

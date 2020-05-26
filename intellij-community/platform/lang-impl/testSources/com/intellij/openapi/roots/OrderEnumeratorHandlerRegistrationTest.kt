@@ -53,7 +53,7 @@ class OrderEnumeratorHandlerRegistrationTest : HeavyPlatformTestCase() {
       }
       UIUtil.dispatchAllInvocationEvents()
     })
-    OrderEnumerationHandler.EP_NAME.getPoint(null).registerExtension(MockOrderEnumerationHandlerFactory(), orderEnumerationDisposable)
+    OrderEnumerationHandler.EP_NAME.getPoint().registerExtension(MockOrderEnumerationHandlerFactory(), orderEnumerationDisposable)
     UIUtil.dispatchAllInvocationEvents()
   }
 }

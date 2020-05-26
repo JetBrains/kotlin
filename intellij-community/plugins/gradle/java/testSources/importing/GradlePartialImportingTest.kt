@@ -28,8 +28,8 @@ class GradlePartialImportingTest : BuildViewMessagesImportingTestCase() {
   override fun setUp() {
     super.setUp()
     myProject.registerServiceInstance(ModelConsumer::class.java, ModelConsumer())
-    GradleProjectResolverExtension.EP_NAME.getPoint(null).registerExtension(TestPartialProjectResolverExtension(), testRootDisposable)
-    ProjectModelContributor.EP_NAME.getPoint(null).registerExtension(TestProjectModelContributor(), testRootDisposable)
+    GradleProjectResolverExtension.EP_NAME.getPoint().registerExtension(TestPartialProjectResolverExtension(), testRootDisposable)
+    ProjectModelContributor.EP_NAME.getPoint().registerExtension(TestProjectModelContributor(), testRootDisposable)
   }
 
 

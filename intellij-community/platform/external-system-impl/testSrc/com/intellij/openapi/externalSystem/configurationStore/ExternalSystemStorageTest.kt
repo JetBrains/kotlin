@@ -112,8 +112,8 @@ class ExternalSystemStorageTest {
   @Before
   fun registerFacetType() {
     WriteAction.runAndWait<RuntimeException> {
-      FacetType.EP_NAME.getPoint(null).registerExtension(MockFacetType(), disposableRule.disposable)
-      FacetType.EP_NAME.getPoint(null).registerExtension(MockSubFacetType(), disposableRule.disposable)
+      FacetType.EP_NAME.getPoint().registerExtension(MockFacetType(), disposableRule.disposable)
+      FacetType.EP_NAME.getPoint().registerExtension(MockSubFacetType(), disposableRule.disposable)
     }
   }
 

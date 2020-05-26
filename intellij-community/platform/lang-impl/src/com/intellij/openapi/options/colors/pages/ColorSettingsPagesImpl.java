@@ -25,7 +25,7 @@ final class ColorSettingsPagesImpl extends ColorSettingsPages implements Disposa
 
   @Override
   public void registerPage(ColorSettingsPage page) {
-    ColorSettingsPage.EP_NAME.getPoint(null).registerExtension(page);
+    ColorSettingsPage.EP_NAME.getPoint().registerExtension(page);
   }
 
   @Override

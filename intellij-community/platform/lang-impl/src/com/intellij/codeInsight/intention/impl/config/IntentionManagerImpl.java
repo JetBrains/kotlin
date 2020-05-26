@@ -43,7 +43,7 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
   private boolean myIntentionsDisabled;
 
   public IntentionManagerImpl() {
-    List<IntentionAction> actions = new ArrayList<>(EP_INTENTION_ACTIONS.getPoint(null).size() + 1);
+    List<IntentionAction> actions = new ArrayList<>(EP_INTENTION_ACTIONS.getPoint().size() + 1);
     actions.add(new EditInspectionToolsSettingsInSuppressedPlaceIntention());
     EP_INTENTION_ACTIONS.forEachExtensionSafe(extension -> actions.add(new IntentionActionWrapper(extension)));
     myActions = ContainerUtil.createLockFreeCopyOnWriteList(actions);
