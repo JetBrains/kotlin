@@ -4,31 +4,31 @@ package com.intellij.util.indexing.diagnostic
 class IndexingJobStatistics {
   private val timeBucketSize = 128
 
-  val timesPerIndexer: Map<String /* ID.name() */, MaxNTimeBucket>
+  val timesPerIndexer: Map<String /* ID.name() */, TimeStats>
     get() = _timesPerIndexer
 
-  val indexingTimesPerFileType: Map<String /* File type name */, MaxNTimeBucket>
+  val indexingTimesPerFileType: Map<String /* File type name */, TimeStats>
     get() = _indexingTimesPerFileType
 
-  val contentLoadingTimesPerFileType: Map<String /* File type name */, MaxNTimeBucket>
+  val contentLoadingTimesPerFileType: Map<String /* File type name */, TimeStats>
     get() = _contentLoadingTimesPerFileType
 
   val numberOfFilesPerFileType: Map<String /* File type name */, Int>
     get() = _numberOfFilesPerFileType
 
-  private val _timesPerIndexer = hashMapOf<String, MaxNTimeBucket>()
-  private val _indexingTimesPerFileType = hashMapOf<String, MaxNTimeBucket>()
-  private val _contentLoadingTimesPerFileType = hashMapOf<String, MaxNTimeBucket>()
+  private val _timesPerIndexer = hashMapOf<String, TimeStats>()
+  private val _indexingTimesPerFileType = hashMapOf<String, TimeStats>()
+  private val _contentLoadingTimesPerFileType = hashMapOf<String, TimeStats>()
   private val _numberOfFilesPerFileType = hashMapOf<String, Int>()
 
   @Synchronized
   fun addFileStatistics(fileStatistics: FileIndexingStatistics, contentLoadingTime: Long) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
-      _timesPerIndexer.getOrPut(indexId.name) { MaxNTimeBucket(timeBucketSize) }.addTime(time)
+      _timesPerIndexer.getOrPut(indexId.name) { TimeStats(timeBucketSize) }.addTime(time)
     }
     val fileTypeName = fileStatistics.fileType.name
     _numberOfFilesPerFileType.compute(fileTypeName) { _, currentNumber -> (currentNumber ?: 0) + 1 }
-    _indexingTimesPerFileType.computeIfAbsent(fileTypeName) { MaxNTimeBucket(timeBucketSize) }.addTime(fileStatistics.indexingTime)
-    _contentLoadingTimesPerFileType.computeIfAbsent(fileTypeName) { MaxNTimeBucket(timeBucketSize) }.addTime(contentLoadingTime)
+    _indexingTimesPerFileType.computeIfAbsent(fileTypeName) { TimeStats(timeBucketSize) }.addTime(fileStatistics.indexingTime)
+    _contentLoadingTimesPerFileType.computeIfAbsent(fileTypeName) { TimeStats(timeBucketSize) }.addTime(contentLoadingTime)
   }
 }

@@ -59,7 +59,7 @@ data class JsonTimeStats(
   }
 }
 
-fun MaxNTimeBucket.toTimeStats(): JsonTimeStats? {
+fun TimeStats.toTimeStats(): JsonTimeStats? {
   if (isEmpty) {
     return null
   }

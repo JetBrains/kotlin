@@ -7,7 +7,7 @@ import java.util.*
  * Bucket of times with size of at most [sizeLimit].
  * Maintains exact min, max, mean of all added times.
  */
-class MaxNTimeBucket(private val sizeLimit: Int) {
+class TimeStats(private val sizeLimit: Int) {
 
   private val _maxNTimes: PriorityQueue<TimeNano> = PriorityQueue()
   private var _count: Long? = null

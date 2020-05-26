@@ -3,14 +3,14 @@ package com.intellij.util.indexing
 
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.testFramework.assertions.Assertions.assertThatThrownBy
-import com.intellij.util.indexing.diagnostic.MaxNTimeBucket
+import com.intellij.util.indexing.diagnostic.TimeStats
 import org.junit.Test
 import kotlin.random.Random
 
-class MaxNTimeBucketTest {
+class TimeStatsTest {
   @Test
   fun `empty bucket`() {
-    val bucket = MaxNTimeBucket(1)
+    val bucket = TimeStats(1)
     assertThat(bucket.isEmpty)
     assertThatThrownBy { bucket.minTime }
     assertThatThrownBy { bucket.maxTime }
@@ -20,7 +20,7 @@ class MaxNTimeBucketTest {
 
   @Test
   fun `one time`() {
-    val bucket = MaxNTimeBucket(1)
+    val bucket = TimeStats(1)
     val time = 42L
     bucket.addTime(time)
     assertThat(!bucket.isEmpty)
@@ -32,7 +32,7 @@ class MaxNTimeBucketTest {
 
   @Test
   fun `two times`() {
-    val bucket = MaxNTimeBucket(2)
+    val bucket = TimeStats(2)
     val one = 10L
     val two = 20L
     bucket.addTime(one)
@@ -48,7 +48,7 @@ class MaxNTimeBucketTest {
   fun limit() {
     val numberOfTimes = 1000
     val bucketSize = 10
-    val bucket = MaxNTimeBucket(bucketSize)
+    val bucket = TimeStats(bucketSize)
     val times = arrayListOf<Long>()
     repeat(numberOfTimes) {
       val time = Random.nextLong()
