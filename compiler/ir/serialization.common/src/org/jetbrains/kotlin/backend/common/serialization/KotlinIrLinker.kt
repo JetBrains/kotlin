@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
@@ -497,6 +496,10 @@ abstract class KotlinIrLinker(
 
     protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
 
+    private fun IrElement.isExpectMember(): Boolean =
+        this is IrSymbolDeclaration<*> &&
+                (this.isExpect || (this.parent as? IrDeclaration)?.isExpect == true)
+
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
 
         if (!symbol.isPublicApi) {
@@ -512,7 +515,7 @@ abstract class KotlinIrLinker(
         }
 
         // TODO: we do have serializations for those, but let's just create a stub for now.
-        if (!symbol.isBound && (symbol.descriptor.isExpectMember || symbol.descriptor.containingDeclaration?.isExpectMember == true))
+        if (!symbol.isBound && symbol.owner.isExpectMember())
             return null
 
         assert(symbol.isBound) {
