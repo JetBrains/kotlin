@@ -27,8 +27,8 @@ class KotlinStructureViewModel(ktFile: KtFile, editor: Editor?) :
     override fun isSuitable(element: PsiElement?): Boolean = element is KtDeclaration &&
             element !is KtPropertyAccessor &&
             element !is KtFunctionLiteral &&
-            !(element is KtProperty && element.containingClassOrObject !is KtNamedDeclaration) &&
-            !(element is KtFunction && element.containingClassOrObject !is KtNamedDeclaration)
+            !(element is KtProperty && element.parent !is KtFile && element.containingClassOrObject !is KtNamedDeclaration) &&
+            !(element is KtFunction && element.parent !is KtFile && element.containingClassOrObject !is KtNamedDeclaration)
 
     override fun getNodeProviders() = NODE_PROVIDERS
 
