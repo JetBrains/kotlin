@@ -4158,6 +4158,7 @@
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="StringEqualsEmptyString" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="SUPPRESS_FOR_VALUES_WHICH_COULD_BE_NULL" value="true" />
       <scope name="android" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="StringEqualsIgnoreCase" enabled="false" level="WARNING" enabled_by_default="false">

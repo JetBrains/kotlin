@@ -907,8 +907,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" filepath="$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/langs/fleet.langs.iml" filepath="$PROJECT_DIR$/intellij/fleet/langs/fleet.langs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/fleet.noria.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/fleet.noria.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/engine/fleet.noria.engine.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/engine/fleet.noria.engine.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/compiler-plugin/fleet.noria.plugin.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/compiler-plugin/fleet.noria.plugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/rt/fleet.noria.rt.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/rt/fleet.noria.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/ui/fleet.noria.ui.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/ui/fleet.noria.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/preferences/fleet.preferences.iml" filepath="$PROJECT_DIR$/intellij/fleet/preferences/fleet.preferences.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/protocol/fleet.protocol.iml" filepath="$PROJECT_DIR$/intellij/fleet/protocol/fleet.protocol.iml" />
@@ -1038,6 +1038,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-modulemap-language/intellij.cidr.modulemap.language.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-modulemap-language/intellij.cidr.modulemap.language.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-boost/intellij.cidr.test.boost.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-boost/intellij.cidr.test.boost.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-catch/intellij.cidr.test.catch.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-catch/intellij.cidr.test.catch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-doctest/intellij.cidr.test.doctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-doctest/intellij.cidr.test.doctest.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-google/intellij.cidr.test.google.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-google/intellij.cidr.test.google.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-toolchains/intellij.cidr.toolchains.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-toolchains/intellij.cidr.toolchains.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-tools/intellij.cidr.tools.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-tools/intellij.cidr.tools.iml" />
@@ -1052,7 +1053,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client-model-generated/intellij.client.model.generated.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client-model-generated/intellij.client.model.generated.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client-model/src/intellij.client.model.sources.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client-model/src/intellij.client.model.sources.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client/plugins/terminal/intellij.client.terminal.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client/plugins/terminal/intellij.client.terminal.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client/plugins/textmate/intellij.client.textmate.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client/plugins/textmate/intellij.client.textmate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client-testFramework/intellij.client.testFramework.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client-testFramework/intellij.client.testFramework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client-tests/intellij.client.tests.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client-tests/intellij.client.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion/intellij.clion.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion/intellij.clion.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-build/intellij.clion.build.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-build/intellij.clion.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-compdb/intellij.clion.compdb.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-compdb/intellij.clion.compdb.iml" />
@@ -1066,6 +1068,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-swift/intellij.clion.swift.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-swift/intellij.clion.swift.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-test-boost/intellij.clion.test.boost.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-test-boost/intellij.clion.test.boost.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-test-catch/intellij.clion.test.catch.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-test-catch/intellij.clion.test.catch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-test-doctest/intellij.clion.test.doctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-test-doctest/intellij.clion.test.doctest.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-test-google/intellij.clion.test.google.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-test-google/intellij.clion.test.google.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-testFramework/intellij.clion.testFramework.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-testFramework/intellij.clion.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-webDeployment/intellij.clion.webDeployment.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-webDeployment/intellij.clion.webDeployment.iml" />
@@ -1092,7 +1095,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.plugin.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.plugin.main.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.plugin.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/plugins/rdserver-terminal/intellij.codeWithMe.plugin.terminal.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/plugins/rdserver-terminal/intellij.codeWithMe.plugin.terminal.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdclient-test-framework/intellij.codeWithMe.testFramework.iml" filepath="$PROJECT_DIR$/intellij/platform/rdclient-test-framework/intellij.codeWithMe.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/codeception/intellij.codeception.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/codeception/intellij.codeception.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-core/intellij.coffeescript.iml" filepath="$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-core/intellij.coffeescript.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-tests/intellij.coffeescript.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-tests/intellij.coffeescript.tests.iml" />
@@ -1171,9 +1173,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/uml/intellij.diagram.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/uml/intellij.diagram.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/dql/intellij.dql.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/dql/intellij.dql.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/drupal/intellij.drupal.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/drupal/intellij.drupal.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/ds/intellij.ds.iml" filepath="$PROJECT_DIR$/intellij/ds/intellij.ds.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/ds/build/intellij.dside.build.iml" filepath="$PROJECT_DIR$/intellij/ds/build/intellij.dside.build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/ds/intellij.dside.main.iml" filepath="$PROJECT_DIR$/intellij/ds/intellij.dside.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/eclipse/intellij.eclipse.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/eclipse/intellij.eclipse.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/eclipse/common-eclipse-util/intellij.eclipse.common.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/eclipse/common-eclipse-util/intellij.eclipse.common.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/eclipse/jps-plugin/intellij.eclipse.jps.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/eclipse/jps-plugin/intellij.eclipse.jps.iml" />
@@ -1283,6 +1282,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/tests/integrationIdeaTests/intellij.idea.integrationTests.iml" filepath="$PROJECT_DIR$/intellij/tests/integrationIdeaTests/intellij.idea.integrationTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/tests/integrationTests/intellij.idea.tests.integrationTests.iml" filepath="$PROJECT_DIR$/intellij/tests/integrationTests/intellij.idea.tests.integrationTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/tests/lombokIntegrationTests/intellij.idea.tests.lombokIntegrationTests.iml" filepath="$PROJECT_DIR$/intellij/tests/lombokIntegrationTests/intellij.idea.tests.lombokIntegrationTests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/build/launch/intellij.idea.tools.launch.iml" filepath="$PROJECT_DIR$/intellij/community/build/launch/intellij.idea.tools.launch.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/build/scripts/intellij.idea.ultimate.build.iml" filepath="$PROJECT_DIR$/intellij/build/scripts/intellij.idea.ultimate.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/codeInsight/intellij.idea.ultimate.codeInsight.tests.iml" filepath="$PROJECT_DIR$/intellij/codeInsight/intellij.idea.ultimate.codeInsight.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ultimate/ultimate-guitests/intellij.idea.ultimate.guiTests.iml" filepath="$PROJECT_DIR$/intellij/ultimate/ultimate-guitests/intellij.idea.ultimate.guiTests.iml" />
@@ -1697,6 +1697,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/projectModel-impl/intellij.platform.projectModel.impl.iml" filepath="$PROJECT_DIR$/intellij/community/platform/projectModel-impl/intellij.platform.projectModel.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/rd-platform/intellij.platform.rd.iml" filepath="$PROJECT_DIR$/intellij/platform/rd-platform/intellij.platform.rd.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdclient/intellij.platform.rd.client.iml" filepath="$PROJECT_DIR$/intellij/platform/rdclient/intellij.platform.rd.client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdclient-test-framework/intellij.platform.rd.client.testFramework.iml" filepath="$PROJECT_DIR$/intellij/platform/rdclient-test-framework/intellij.platform.rd.client.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/rd-platform-community/intellij.platform.rd.community.iml" filepath="$PROJECT_DIR$/intellij/community/platform/rd-platform-community/intellij.platform.rd.community.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/refactoring/intellij.platform.refactoring.tests.iml" filepath="$PROJECT_DIR$/intellij/refactoring/intellij.platform.refactoring.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/remote-servers/api/intellij.platform.remoteServers.iml" filepath="$PROJECT_DIR$/intellij/community/platform/remote-servers/api/intellij.platform.remoteServers.iml" />
@@ -1735,9 +1736,12 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/usageView/intellij.platform.usageView.iml" filepath="$PROJECT_DIR$/intellij/community/platform/usageView/intellij.platform.usageView.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util/intellij.platform.util.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util/intellij.platform.util.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util-class-loader/intellij.platform.util.classLoader.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util-class-loader/intellij.platform.util.classLoader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util/collections/intellij.platform.util.collections.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util/collections/intellij.platform.util.collections.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util-ex/intellij.platform.util.ex.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util-ex/intellij.platform.util.ex.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util-rt/intellij.platform.util.rt.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util-rt/intellij.platform.util.rt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util/strings/intellij.platform.util.strings.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util/strings/intellij.platform.util.strings.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util/testSrc/intellij.platform.util.tests.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util/testSrc/intellij.platform.util.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util/text-matching/intellij.platform.util.text.matching.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util/text-matching/intellij.platform.util.text.matching.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util/intellij.platform.util.ui.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util/intellij.platform.util.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/vcs-api/intellij.platform.vcs.iml" filepath="$PROJECT_DIR$/intellij/community/platform/vcs-api/intellij.platform.vcs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/vcs-api/vcs-api-core/intellij.platform.vcs.core.iml" filepath="$PROJECT_DIR$/intellij/community/platform/vcs-api/vcs-api-core/intellij.platform.vcs.core.iml" />
