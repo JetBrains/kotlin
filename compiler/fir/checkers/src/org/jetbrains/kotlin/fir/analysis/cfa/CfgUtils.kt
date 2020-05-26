@@ -31,6 +31,7 @@ fun <D> ControlFlowGraph.traverse(
     stack.addFirst(initialNode)
     while (stack.isNotEmpty()) {
         val node = stack.removeFirst()
+        visitedNodes.add(node)
         val previousNodes = when (direction) {
             TraverseDirection.Forward -> node.previousNodes
             TraverseDirection.Backward -> node.followingNodes
@@ -49,9 +50,7 @@ fun <D> ControlFlowGraph.traverse(
             TraverseDirection.Backward -> node.previousNodes
         }
 
-        followingNodes.forEach {
-            stack.addFirst(it)
-        }
+        followingNodes.filterNot { visitedNodes.contains(it) }.forEach { stack.addFirst(it) }
     }
 }
 
