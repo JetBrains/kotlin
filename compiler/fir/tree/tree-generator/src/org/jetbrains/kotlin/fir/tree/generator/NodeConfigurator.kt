@@ -253,10 +253,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +controlFlowGraphReferenceField
         }
 
-        sealedClass.configure {
-            +fieldList("inheritors", classIdType, withReplace = true)
-        }
-
         typeAlias.configure {
             +typeParameters
             parentArg(classLikeDeclaration, "F", typeAlias)

@@ -23,10 +23,6 @@ class DeclarationCheckersDiagnosticComponent(collector: AbstractDiagnosticCollec
         runCheck { checkers.memberDeclarationCheckers.check(regularClass, data, it) }
     }
 
-    override fun visitSealedClass(sealedClass: FirSealedClass, data: CheckerContext) {
-        runCheck { checkers.memberDeclarationCheckers.check(sealedClass, data, it) }
-    }
-
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {
         runCheck { checkers.memberDeclarationCheckers.check(simpleFunction, data, it) }
     }

@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
+import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -59,7 +62,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                 val klass = lookupTag.toSymbol(bodyResolveComponents.session)?.fir as? FirRegularClass ?: return null
                 when {
                     klass.classKind == ClassKind.ENUM_CLASS -> checkEnumExhaustiveness(whenExpression, klass, nullable)
-                    klass.modality == Modality.SEALED -> checkSealedClassExhaustiveness(whenExpression, klass as FirSealedClass, nullable)
+                    klass.modality == Modality.SEALED -> checkSealedClassExhaustiveness(whenExpression, klass, nullable)
                     else -> return null
                 }
             }
@@ -118,11 +121,16 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
     // ------------------------ Sealed class exhaustiveness ------------------------
 
-    private fun checkSealedClassExhaustiveness(whenExpression: FirWhenExpression, sealedClass: FirSealedClass, nullable: Boolean): Boolean {
-        if (sealedClass.inheritors.isEmpty()) return true
+    private fun checkSealedClassExhaustiveness(
+        whenExpression: FirWhenExpression,
+        sealedClass: FirRegularClass,
+        nullable: Boolean
+    ): Boolean {
+        val inheritors = sealedClass.sealedInheritors
+        if (inheritors.isNullOrEmpty()) return true
         val data = SealedExhaustivenessData(
             sealedClass.session.firSymbolProvider,
-            sealedClass.inheritors.toMutableSet(),
+            inheritors.toMutableSet(),
             !nullable
         )
         for (branch in whenExpression.branches) {

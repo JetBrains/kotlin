@@ -87,11 +87,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             openBuilder()
         }
 
-        builder(sealedClass) {
-            parents += regularClassBuilder
-            defaultNull("companionObject")
-        }
-
         builder(anonymousObject) {
             parents += classBuilder
         }

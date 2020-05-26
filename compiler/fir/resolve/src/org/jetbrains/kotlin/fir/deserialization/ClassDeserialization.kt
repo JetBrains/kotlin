@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.generateValueOfFunction
 import org.jetbrains.kotlin.fir.generateValuesFunction
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirClonableSymbolProvider.Companion.CLONABLE_CLASS_ID
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirClonableSymbolProvider.Companion.CLONE
+import org.jetbrains.kotlin.fir.resolve.transformers.sealedInheritors
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -70,7 +71,6 @@ fun deserializeClassToSymbol(
         isInline = Flags.IS_INLINE_CLASS.get(classProto.flags)
     }
     val isSealed = modality == Modality.SEALED
-    val classBuilder = if (isSealed) FirSealedClassBuilder() else FirClassImplBuilder()
     val context =
         parentContext?.childContext(
             classProto.typeParameterList,
@@ -83,7 +83,7 @@ fun deserializeClassToSymbol(
             defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session),
             containerSource
         )
-    classBuilder.apply {
+    buildClassImpl {
         this.session = session
         origin = FirDeclarationOrigin.Library
         name = classId.shortClassName
@@ -154,13 +154,16 @@ fun deserializeClassToSymbol(
         }
 
         if (isSealed) {
-            classProto.sealedSubclassFqNameList.mapTo((this as FirSealedClassBuilder).inheritors) {
-                ClassId.fromString(nameResolver.getQualifiedClassName(it))
-            }
+
         }
         addCloneForArrayIfNeeded(classId)
         addSerializableIfNeeded(classId)
-    }.build().also {
+    }.also {
+        if (isSealed) {
+            it.sealedInheritors = classProto.sealedSubclassFqNameList.map { nameIndex ->
+                ClassId.fromString(nameResolver.getQualifiedClassName(nameIndex))
+            }
+        }
         (it.annotations as MutableList<FirAnnotationCall>) += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
     }
 }

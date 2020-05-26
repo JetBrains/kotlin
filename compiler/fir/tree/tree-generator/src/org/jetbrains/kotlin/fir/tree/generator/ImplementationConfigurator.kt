@@ -37,8 +37,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(regularClass, "FirClassImpl", regularClassConfig)
 
-        impl(sealedClass, config = regularClassConfig)
-
         impl(anonymousObject)
 
         impl(typeAlias)

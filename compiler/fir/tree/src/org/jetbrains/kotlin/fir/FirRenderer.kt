@@ -341,10 +341,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         regularClass.declarations.renderDeclarations()
     }
 
-    override fun visitSealedClass(sealedClass: FirSealedClass) {
-        visitRegularClass(sealedClass)
-    }
-
     override fun visitEnumEntry(enumEntry: FirEnumEntry) {
         enumEntry.annotations.renderAnnotations()
         visitCallableDeclaration(enumEntry)

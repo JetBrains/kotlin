@@ -46,7 +46,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val classLikeDeclaration = element("ClassLikeDeclaration", Declaration, annotatedDeclaration, statement, symbolOwner)
     val klass = element("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner)
     val regularClass = element("RegularClass", Declaration, memberDeclaration, typeParameterRefsOwner, klass)
-    val sealedClass = element("SealedClass", Declaration, regularClass)
     val typeAlias = element("TypeAlias", Declaration, classLikeDeclaration, memberDeclaration, typeParametersOwner)
 
     val function = element("Function", Declaration, callableDeclaration, targetElement, typeParameterRefsOwner, statement)

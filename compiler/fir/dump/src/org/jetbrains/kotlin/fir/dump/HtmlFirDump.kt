@@ -376,10 +376,6 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
                     visitElement(regularClass)
                 }
 
-                override fun visitSealedClass(sealedClass: FirSealedClass) {
-                    visitRegularClass(sealedClass)
-                }
-
                 fun indexDeclaration(symbolOwner: FirSymbolOwner<*>) {
                     symbols[symbolOwner.symbol] = location
                     symbolIds[symbolOwner.symbol] = symbolCounter++

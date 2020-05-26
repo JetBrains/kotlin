@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
@@ -262,10 +261,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformRegularClass(regularClass: FirRegularClass, data: D): CompositeTransformResult<FirStatement> {
         return transformElement(regularClass, data)
-    }
-
-    open fun transformSealedClass(sealedClass: FirSealedClass, data: D): CompositeTransformResult<FirStatement> {
-        return transformElement(sealedClass, data)
     }
 
     open fun transformTypeAlias(typeAlias: FirTypeAlias, data: D): CompositeTransformResult<FirDeclaration> {
@@ -742,10 +737,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitRegularClass(regularClass: FirRegularClass, data: D): CompositeTransformResult<FirStatement> {
         return transformRegularClass(regularClass, data)
-    }
-
-    final override fun visitSealedClass(sealedClass: FirSealedClass, data: D): CompositeTransformResult<FirStatement> {
-        return transformSealedClass(sealedClass, data)
     }
 
     final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): CompositeTransformResult<FirDeclaration> {

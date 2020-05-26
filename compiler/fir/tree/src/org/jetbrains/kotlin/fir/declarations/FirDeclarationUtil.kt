@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuil
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirSealedClassImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import java.lang.IllegalStateException
 
 fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = false) {
     if (bounds.isEmpty()) {
@@ -104,7 +102,6 @@ fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
     @Suppress("LiftReturnOrAssignment")
     when (this) {
         is FirClassImpl -> declarations += declaration
-        is FirSealedClassImpl -> declarations += declaration
         else -> throw IllegalStateException()
     }
 }

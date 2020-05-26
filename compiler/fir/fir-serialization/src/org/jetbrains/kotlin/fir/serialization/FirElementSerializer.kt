@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.sealedInheritors
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
@@ -155,8 +156,10 @@ class FirElementSerializer private constructor(
             }
         }
 
-        if (klass is FirSealedClass) {
-            for (inheritorId in klass.inheritors) {
+        if (klass is FirRegularClass && klass.modality == Modality.SEALED) {
+            val inheritors = klass.sealedInheritors
+            requireNotNull(inheritors)
+            for (inheritorId in inheritors) {
                 builder.addSealedSubclassFqName(stringTable.getQualifiedClassNameIndex(inheritorId))
             }
         }

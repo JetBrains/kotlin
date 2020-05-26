@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -384,13 +384,7 @@ class DeclarationsConverter(
                     isInline = modifiers.isInlineClass()
                 }
 
-                val classBuilder = if (status.modality == Modality.SEALED) {
-                    FirSealedClassBuilder()
-                } else {
-                    FirClassImplBuilder()
-                }
-
-                classBuilder.apply {
+                buildClassImpl {
                     source = classNode.toFirSourceElement()
                     session = baseSession
                     origin = FirDeclarationOrigin.Source
@@ -443,7 +437,7 @@ class DeclarationsConverter(
 
                     val secondaryConstructors = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR)
                     val classWrapper = ClassWrapper(
-                        className, modifiers, classKind, classBuilder,
+                        className, modifiers, classKind, this,
                         hasPrimaryConstructor = primaryConstructor != null,
                         hasSecondaryConstructor = secondaryConstructors.isNotEmpty(),
                         hasDefaultConstructor = if (primaryConstructor != null) !primaryConstructor!!.hasValueParameters()
@@ -489,7 +483,7 @@ class DeclarationsConverter(
                         generateValuesFunction(baseSession, context.packageFqName, context.className)
                         generateValueOfFunction(baseSession, context.packageFqName, context.className)
                     }
-                }.build()
+                }
             }
         }
     }

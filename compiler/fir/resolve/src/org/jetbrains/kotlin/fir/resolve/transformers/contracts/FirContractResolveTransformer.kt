@@ -155,10 +155,6 @@ class FirContractResolveTransformer(
             return owner.compose()
         }
 
-        override fun transformSealedClass(sealedClass: FirSealedClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-            return transformRegularClass(sealedClass, data)
-        }
-
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
             regularClass.updatePhase()
             context.storeClassIfNotNested(regularClass)

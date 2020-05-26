@@ -45,19 +45,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import kotlin.collections.MutableList
-import kotlin.collections.any
 import kotlin.collections.contains
-import kotlin.collections.filterIsInstance
-import kotlin.collections.first
-import kotlin.collections.firstOrNull
-import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
-import kotlin.collections.lastOrNull
-import kotlin.collections.plusAssign
-import kotlin.collections.reverse
-import kotlin.collections.withIndex
-import kotlin.collections.zip
 
 class RawFirBuilder(
     session: FirSession, val baseScopeProvider: FirScopeProvider, val stubMode: Boolean
@@ -686,8 +674,7 @@ class RawFirBuilder(
                 withCapturedTypeParameters {
                     if (!status.isInner) context.capturedTypeParameters = context.capturedTypeParameters.clear()
 
-                    val classBuilder = if (status.modality == Modality.SEALED) FirSealedClassBuilder() else FirClassImplBuilder()
-                    classBuilder.apply {
+                    buildClassImpl {
                         source = classOrObject.toFirSourceElement()
                         session = baseSession
                         origin = FirDeclarationOrigin.Source
@@ -725,7 +712,7 @@ class RawFirBuilder(
                                     delegatedSuperType,
                                     delegatedSelfType,
                                     classOrObject,
-                                    classBuilder, hasPrimaryConstructor = primaryConstructor != null,
+                                    this, hasPrimaryConstructor = primaryConstructor != null,
                                     typeParameters
                                 ),
                             )
@@ -750,7 +737,7 @@ class RawFirBuilder(
                             generateValuesFunction(baseSession, context.packageFqName, context.className)
                             generateValueOfFunction(baseSession, context.packageFqName, context.className)
                         }
-                    }.build()
+                    }
                 }
             }
         }
