@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver
 import com.intellij.openapi.util.registry.Registry
@@ -18,6 +19,12 @@ import kotlin.coroutines.resume
 
 class UnknownSdkInspectionCommandLineConfigurator : CommandLineInspectionProjectConfigurator {
   private val LOG: Logger = logger<UnknownSdkInspectionCommandLineConfigurator>()
+
+  override fun getName() = "sdk"
+
+  override fun getDescription(): String {
+    return ProjectBundle.message("config.unknown.sdk.commandline.configure")
+  }
 
   override fun isApplicable(context: CommandLineInspectionProjectConfigurator.ConfiguratorContext): Boolean {
     return !ApplicationManager.getApplication().isUnitTestMode

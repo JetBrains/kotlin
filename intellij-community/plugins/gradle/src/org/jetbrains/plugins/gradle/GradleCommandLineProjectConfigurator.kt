@@ -14,12 +14,16 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.io.exists
 import org.jetbrains.plugins.gradle.settings.GradleImportHintService
 import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 
 private val LOG = Logger.getInstance(GradleManager::class.java)
 
 class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigurator {
+  override fun getName() = "gradle"
+
+  override fun getDescription(): String = GradleBundle.message("gradle.commandline.description")
 
   override fun configureEnvironment(context: ConfiguratorContext) = context.run {
     Registry.get("external.system.auto.import.disabled").setValue(true)
