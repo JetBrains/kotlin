@@ -45,6 +45,15 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
   public boolean filterElements(@NotNull ChooseByNameBase base,
                                 @NotNull String pattern,
                                 boolean everywhere,
+                                @NotNull ProgressIndicator cancelled,
+                                @NotNull Processor<Object> consumer) {
+    return filterElements((ChooseByNameViewModel)base, pattern, everywhere, cancelled, consumer);
+  }
+
+  @Override
+  public boolean filterElements(@NotNull ChooseByNameViewModel base,
+                                @NotNull String pattern,
+                                boolean everywhere,
                                 @NotNull ProgressIndicator indicator,
                                 @NotNull Processor<Object> consumer) {
     return filterElementsWithWeights(base, createParameters(base, pattern, everywhere), indicator,
@@ -53,6 +62,14 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
 
   @Override
   public boolean filterElements(@NotNull ChooseByNameBase base,
+                                @NotNull FindSymbolParameters parameters,
+                                @NotNull ProgressIndicator indicator,
+                                @NotNull Processor<Object> consumer) {
+    return filterElements((ChooseByNameViewModel)base, parameters, indicator, consumer);
+  }
+
+  @Override
+  public boolean filterElements(@NotNull ChooseByNameViewModel base,
                                 @NotNull FindSymbolParameters parameters,
                                 @NotNull ProgressIndicator indicator,
                                 @NotNull Processor<Object> consumer) {
@@ -65,6 +82,15 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
                                            boolean everywhere,
                                            @NotNull ProgressIndicator indicator,
                                            @NotNull Processor<? super FoundItemDescriptor<?>> consumer) {
+    return filterElementsWithWeights((ChooseByNameViewModel)base, pattern, everywhere, indicator, consumer);
+  }
+
+  @Override
+  public boolean filterElementsWithWeights(@NotNull ChooseByNameViewModel base,
+                                           @NotNull String pattern,
+                                           boolean everywhere,
+                                           @NotNull ProgressIndicator indicator,
+                                           @NotNull Processor<? super FoundItemDescriptor<?>> consumer) {
     return filterElementsWithWeights(base, createParameters(base, pattern, everywhere), indicator, consumer);
   }
 
@@ -73,9 +99,17 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
                                            @NotNull FindSymbolParameters parameters,
                                            @NotNull ProgressIndicator indicator,
                                            @NotNull Processor<? super FoundItemDescriptor<?>> consumer) {
+    return filterElementsWithWeights((ChooseByNameViewModel)base, parameters, indicator, consumer);
+  }
+
+  @Override
+  public boolean filterElementsWithWeights(@NotNull ChooseByNameViewModel base,
+                                           @NotNull FindSymbolParameters parameters,
+                                           @NotNull ProgressIndicator indicator,
+                                           @NotNull Processor<? super FoundItemDescriptor<?>> consumer) {
     return ProgressManager.getInstance().computePrioritized(
       () -> filterElements(base, indicator, myContext == null ? null : myContext.getElement(),
-                           () -> base.getNames(parameters.isSearchInLibraries()), consumer, parameters));
+                           () -> base.getModel().getNames(parameters.isSearchInLibraries()), consumer, parameters));
   }
 
   /**
@@ -333,9 +367,14 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
     return matchName(fullMatcher, fullName);
   }
 
+  @Override
+  public @NotNull List<String> filterNames(@NotNull ChooseByNameBase base, String @NotNull [] names, @NotNull String pattern) {
+    return filterNames((ChooseByNameViewModel)base, names, pattern);
+  }
+
   @NotNull
   @Override
-  public List<String> filterNames(@NotNull ChooseByNameBase base, String @NotNull [] names, @NotNull String pattern) {
+  public List<String> filterNames(@NotNull ChooseByNameViewModel base, String @NotNull [] names, @NotNull String pattern) {
     boolean preferStartMatches = pattern.startsWith("*");
     pattern = convertToMatchingPattern(base, pattern);
     if (pattern.isEmpty() && !base.canShowListForEmptyPattern()) return Collections.emptyList();

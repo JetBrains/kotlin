@@ -4,6 +4,7 @@ package com.intellij.ide.util.gotoByName;
 import com.intellij.ide.actions.searcheverywhere.FoundItemDescriptor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.util.Processor;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public interface ChooseByNameWeightedItemProvider extends ChooseByNameItemProvider {
@@ -23,8 +24,22 @@ public interface ChooseByNameWeightedItemProvider extends ChooseByNameItemProvid
    * stopped and method will return {@code false}
    *
    * @see FoundItemDescriptor
+   *
+   * @deprecated this method is used only for compatibility issues.
+   * Please use {@link ChooseByNameWeightedItemProvider#filterElementsWithWeights(ChooseByNameViewModel, String, boolean, ProgressIndicator, Processor)} instead.
+   * Please avoid any implementations of this method except  calling of
+   * {@link ChooseByNameWeightedItemProvider#filterElementsWithWeights(ChooseByNameViewModel, String, boolean, ProgressIndicator, Processor)} method.
+   * Method going to be removed in version 2021.1
    */
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
+  @Deprecated
   boolean filterElementsWithWeights(@NotNull ChooseByNameBase base,
+                                    @NotNull String pattern,
+                                    boolean everywhere,
+                                    @NotNull ProgressIndicator indicator,
+                                    @NotNull Processor<? super FoundItemDescriptor<?>> consumer);
+
+  boolean filterElementsWithWeights(@NotNull ChooseByNameViewModel base,
                                     @NotNull String pattern,
                                     boolean everywhere,
                                     @NotNull ProgressIndicator indicator,

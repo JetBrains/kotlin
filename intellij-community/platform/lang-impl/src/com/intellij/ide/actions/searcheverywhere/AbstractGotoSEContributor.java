@@ -32,7 +32,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
@@ -264,36 +263,32 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
       if (progressIndicator.isCanceled()) return;
 
       PsiElement context = myPsiContext != null ? myPsiContext.getElement() : null;
-      ChooseByNamePopup popup = ChooseByNamePopup.createPopup(myProject, model, context);
-      try {
-        ChooseByNameItemProvider provider = popup.getProvider();
-        GlobalSearchScope scope = Registry.is("search.everywhere.show.scopes")
-                                  ? (GlobalSearchScope)Objects.requireNonNull(myScopeDescriptor.getScope())
-                                  : null;
+      ChooseByNameItemProvider provider = ChooseByNameModelEx.getItemProvider(model, context);
+      GlobalSearchScope scope = Registry.is("search.everywhere.show.scopes")
+                                ? (GlobalSearchScope)Objects.requireNonNull(myScopeDescriptor.getScope())
+                                : null;
 
-        boolean everywhere = scope == null ? myEverywhere : scope.isSearchInLibraries();
-        if (scope != null && provider instanceof ChooseByNameInScopeItemProvider) {
-          FindSymbolParameters parameters = FindSymbolParameters.wrap(pattern, scope);
-          ((ChooseByNameInScopeItemProvider)provider).filterElementsWithWeights(popup, parameters, progressIndicator,
-                                                                                item -> processElement(progressIndicator, consumer, model,
-                                                                                                       item.getItem(), item.getWeight())
-          );
-        }
-        else if (provider instanceof ChooseByNameWeightedItemProvider) {
-          ((ChooseByNameWeightedItemProvider)provider).filterElementsWithWeights(popup, pattern, everywhere, progressIndicator,
-                                                                                 item -> processElement(progressIndicator, consumer, model,
-                                                                                                        item.getItem(), item.getWeight())
-          );
-        }
-        else {
-          provider.filterElements(popup, pattern, everywhere, progressIndicator,
-                                  element -> processElement(progressIndicator, consumer, model, element,
-                                                            getElementPriority(element, pattern))
-          );
-        }
+      boolean everywhere = scope == null ? myEverywhere : scope.isSearchInLibraries();
+      ChooseByNameViewModel viewModel = new MyViewModel(myProject, model);
+
+      if (scope != null && provider instanceof ChooseByNameInScopeItemProvider) {
+        FindSymbolParameters parameters = FindSymbolParameters.wrap(pattern, scope);
+        ((ChooseByNameInScopeItemProvider)provider).filterElementsWithWeights(viewModel, parameters, progressIndicator,
+                                                                              item -> processElement(progressIndicator, consumer, model,
+                                                                                                     item.getItem(), item.getWeight())
+        );
       }
-      finally {
-        Disposer.dispose(popup);
+      else if (provider instanceof ChooseByNameWeightedItemProvider) {
+        ((ChooseByNameWeightedItemProvider)provider).filterElementsWithWeights(viewModel, pattern, everywhere, progressIndicator,
+                                                                               item -> processElement(progressIndicator, consumer, model,
+                                                                                                      item.getItem(), item.getWeight())
+        );
+      }
+      else {
+        provider.filterElements(viewModel, pattern, everywhere, progressIndicator,
+                                element -> processElement(progressIndicator, consumer, model, element,
+                                                          getElementPriority(element, pattern))
+        );
       }
     };
 
@@ -606,6 +601,46 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
       //noinspection unchecked
       popup.getList().setCellRenderer(renderer);
       popup.showUnderneathOf(button);
+    }
+  }
+
+  private class MyViewModel implements ChooseByNameViewModel {
+    private final Project myProject;
+    private final ChooseByNameModel myModel;
+
+    private MyViewModel(Project project, ChooseByNameModel model) {
+      myProject = project;
+      myModel = model;
+    }
+
+    @Override
+    public Project getProject() {
+      return myProject;
+    }
+
+    @Override
+    public @NotNull ChooseByNameModel getModel() {
+      return myModel;
+    }
+
+    @Override
+    public boolean isSearchInAnyPlace() {
+      return myModel.useMiddleMatching();
+    }
+
+    @Override
+    public @NotNull String transformPattern(@NotNull String pattern) {
+      return ChooseByNamePopup.getTransformedPattern(pattern, myModel);
+    }
+
+    @Override
+    public boolean canShowListForEmptyPattern() {
+      return false;
+    }
+
+    @Override
+    public int getMaximumListSizeLimit() {
+      return 0;
     }
   }
 }
