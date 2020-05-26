@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Commenter that may provide a complex commenting logic. For simple wrapping/prefixing cases may be enough to use {@link com.intellij.lang.Commenter}
+ * Commenter that may provide a complex commenting logic. For simple wrapping/prefixing cases may be enough to use {@link Commenter}
  *
  * @see Commenter
  * @see EscapingCommenter
@@ -37,7 +37,7 @@ public interface SelfManagingCommenter<T extends CommenterDataHolder> {
   @Nullable String getCommentPrefix(int line, @NotNull Document document, @NotNull T data);
 
   /**
-   * @see SelfManagingCommenterUtil#getBlockCommentRange(int, int, com.intellij.openapi.editor.Document, java.lang.String, java.lang.String)
+   * @see SelfManagingCommenterUtil#getBlockCommentRange(int, int, Document, String, String)
    */
   @Nullable TextRange getBlockCommentRange(int selectionStart, int selectionEnd, @NotNull Document document, @NotNull T data);
 
@@ -52,7 +52,7 @@ public interface SelfManagingCommenter<T extends CommenterDataHolder> {
   @Nullable String getBlockCommentSuffix(int selectionEnd, @NotNull Document document, @NotNull T data);
 
   /**
-   * @see SelfManagingCommenterUtil#uncommentBlockComment(int, int, com.intellij.openapi.editor.Document, java.lang.String, java.lang.String)
+   * @see SelfManagingCommenterUtil#uncommentBlockComment(int, int, Document, String, String)
    */
   void uncommentBlockComment(int startOffset,
                              int endOffset,
@@ -61,7 +61,7 @@ public interface SelfManagingCommenter<T extends CommenterDataHolder> {
 
   /**
    * @return text range from opener start till the closer end or null if wrapping failed for some reason
-   * @see SelfManagingCommenterUtil#insertBlockComment(int, int, com.intellij.openapi.editor.Document, java.lang.String, java.lang.String)
+   * @see SelfManagingCommenterUtil#insertBlockComment(int, int, Document, String, String)
    */
   @Nullable TextRange insertBlockComment(int startOffset,
                                          int endOffset,
