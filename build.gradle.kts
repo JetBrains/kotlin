@@ -482,7 +482,7 @@ allprojects {
             }
 
             configurations.findByName("kotlinCompilerPluginClasspath")
-                ?.exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable")
+                ?.exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler")
         }
 
         apply(from = "$rootDir/gradle/cacheRedirector.gradle.kts")
