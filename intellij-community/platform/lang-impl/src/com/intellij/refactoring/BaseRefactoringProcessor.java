@@ -70,7 +70,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.function.BiConsumer;
 
 public abstract class BaseRefactoringProcessor implements Runnable {
   private static final Logger LOG = Logger.getInstance(BaseRefactoringProcessor.class);
@@ -172,9 +171,13 @@ public abstract class BaseRefactoringProcessor implements Runnable {
   protected abstract void performRefactoring(UsageInfo @NotNull [] usages);
 
   @ApiStatus.Experimental
-  @Nullable
-  protected BiConsumer<UsageInfo @NotNull [], ModelBranch> performRefactoringInBranch() {
-    return null;
+  protected boolean canPerformRefactoringInBranch() {
+    return false;
+  }
+
+  @ApiStatus.Experimental
+  protected void performRefactoringInBranch(UsageInfo @NotNull [] usages, ModelBranch branch) {
+    throw new UnsupportedOperationException();
   }
 
   @NotNull
@@ -494,12 +497,10 @@ public abstract class BaseRefactoringProcessor implements Runnable {
 
       ProgressManager.getInstance().runProcessWithProgressSynchronously(prepareHelpersRunnable,
                                                                         RefactoringBundle.message("refactoring.prepare.progress"), false, myProject);
-      BiConsumer<UsageInfo @NotNull [], ModelBranch> inBranch =
-        Registry.is("run.refactorings.in.model.branch") ? performRefactoringInBranch() : null;
 
       ApplicationEx app = ApplicationManagerEx.getApplicationEx();
-      if (inBranch != null) {
-        performInBranch(writableUsageInfos, inBranch);
+      if (Registry.is("run.refactorings.in.model.branch") && canPerformRefactoringInBranch()) {
+        callPerformRefactoring(writableUsageInfos, () -> performInBranch(writableUsageInfos));
       }
       else if (Registry.is("run.refactorings.under.progress")) {
         app.runWriteActionWithNonCancellableProgressInDispatchThread(commandName, myProject, null,
@@ -565,21 +566,17 @@ public abstract class BaseRefactoringProcessor implements Runnable {
     }
   }
 
-  private void performInBranch(UsageInfo[] usageInfos, BiConsumer<UsageInfo @NotNull [], ModelBranch> refactoring) {
-    callPerformRefactoring(usageInfos, () -> {
-      ThrowableComputable<ModelPatch, RuntimeException> computable = () -> ReadAction.compute(() -> {
-        return ModelBranch.performInBranch(myProject, branch -> {
-          refactoring.accept(usageInfos, branch);
-        });
-      });
-      ModelPatch patch = ProgressManager.getInstance().runProcessWithProgressSynchronously(
-        computable, getCommandName(), true, myProject);
-
-      if (!ApplicationManager.getApplication().isUnitTestMode() && isPreviewUsages()) {
-        displayPreview(patch);
-      }
-      WriteAction.run(() -> patch.applyBranchChanges());
+  private void performInBranch(UsageInfo[] usageInfos) {
+    ThrowableComputable<ModelPatch, RuntimeException> computable = () -> ReadAction.compute(() -> {
+      return ModelBranch.performInBranch(myProject, branch -> performRefactoringInBranch(usageInfos, branch));
     });
+    ModelPatch patch = ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      computable, getCommandName(), true, myProject);
+
+    if (!ApplicationManager.getApplication().isUnitTestMode() && isPreviewUsages()) {
+      displayPreview(patch);
+    }
+    WriteAction.run(() -> patch.applyBranchChanges());
   }
 
   private void displayPreview(ModelPatch patch) throws ProcessCanceledException {
@@ -740,7 +737,7 @@ public abstract class BaseRefactoringProcessor implements Runnable {
 
   @NotNull
   protected ConflictsDialog createConflictsDialog(@NotNull MultiMap<PsiElement, String> conflicts, final UsageInfo @Nullable [] usages) {
-    return new ConflictsDialog(myProject, conflicts, usages == null ? null : (Runnable)() -> execute(usages), false, true);
+    return new ConflictsDialog(myProject, conflicts, usages == null ? null : () -> execute(usages), false, true);
   }
 
   @NotNull
