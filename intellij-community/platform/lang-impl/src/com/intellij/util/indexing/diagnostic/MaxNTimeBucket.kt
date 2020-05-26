@@ -5,36 +5,35 @@ import java.util.*
 
 /**
  * Bucket of times with size of at most [sizeLimit].
- * The first added time is `firstTime`.
  * Maintains exact min, max, mean of all added times.
- * Maintains median of [sizeLimit] max times.
  */
-class MaxNTimeBucket(private val sizeLimit: Int, firstTime: TimeNano) {
+class MaxNTimeBucket(private val sizeLimit: Int) {
 
-  private val _maxNTimes: PriorityQueue<TimeNano> = PriorityQueue(setOf(firstTime))
-  private var _count: Long = 1
-  private var _minTime: TimeNano = firstTime
-  private var _maxTime: TimeNano = firstTime
-  private var _sum: TimeNano = firstTime
+  private val _maxNTimes: PriorityQueue<TimeNano> = PriorityQueue()
+  private var _count: Long? = null
+  private var _minTime: TimeNano? = null
+  private var _maxTime: TimeNano? = null
+  private var _sum: TimeNano? = null
 
   @Synchronized
   fun addTime(time: TimeNano) {
     _maxNTimes += time
 
-    if (_maxTime < time) _maxTime = time
-    if (_minTime > time) _minTime = time
-    _sum += time
-    _count++
+    if (_maxTime == null || _maxTime!! < time) _maxTime = time
+    if (_minTime == null || _minTime!! > time) _minTime = time
+    _sum = (_sum ?: 0) + time
+    _count = (_count ?: 0) + 1
 
     while (_maxNTimes.size > sizeLimit) {
       _maxNTimes.poll()
     }
   }
 
-  val count: Long @Synchronized get() = _count
-  val totalTime: TimeNano @Synchronized get() = _sum
-  val minTime: TimeNano @Synchronized get() = _minTime
-  val maxTime: TimeNano @Synchronized get() = _maxTime
-  val meanTime: Double @Synchronized get() = _sum.toDouble() / _count
-  val maxNTimes: List<TimeNano> @Synchronized get() = _maxNTimes.toList()
+  private fun failEmpty(): Nothing = throw IllegalStateException("No times have been added yet")
+
+  val isEmpty: Boolean @Synchronized get() =  _maxNTimes.isEmpty()
+  val minTime: TimeNano @Synchronized get() = _minTime ?: failEmpty()
+  val maxTime: TimeNano @Synchronized get() = _maxTime ?: failEmpty()
+  val meanTime: Double @Synchronized get() = (_sum ?: failEmpty()).toDouble() / (_count ?: failEmpty())
+  val maxNTimes: List<TimeNano> @Synchronized get() = _maxNTimes.takeUnless { isEmpty }?.toList() ?: failEmpty()
 }

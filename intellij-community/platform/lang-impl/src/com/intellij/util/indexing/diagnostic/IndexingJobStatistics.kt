@@ -22,17 +22,17 @@ class IndexingJobStatistics {
   private val _timesPerIndexer = hashMapOf<String, MaxNTimeBucket>()
   private val _timesPerFileType = hashMapOf<String, MaxNTimeBucket>()
   private val _numberOfFilesPerFileType = hashMapOf<String, Int>()
-  private val _contentLoadingTime = MaxNTimeBucket(timeBucketSize, 0)
-  private val _indexingTime = MaxNTimeBucket(timeBucketSize, 0)
+  private val _contentLoadingTime = MaxNTimeBucket(timeBucketSize)
+  private val _indexingTime = MaxNTimeBucket(timeBucketSize)
 
   @Synchronized
   fun addFileStatistics(fileStatistics: FileIndexingStatistics) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
-      _timesPerIndexer.getOrPut(indexId.name) { MaxNTimeBucket(timeBucketSize, time) }.addTime(time)
+      _timesPerIndexer.getOrPut(indexId.name) { MaxNTimeBucket(timeBucketSize) }.addTime(time)
     }
     val fileTypeName = fileStatistics.fileType.name
     _numberOfFilesPerFileType.compute(fileTypeName) { _, currentNumber -> (currentNumber ?: 0) + 1 }
-    _timesPerFileType.computeIfAbsent(fileTypeName) { MaxNTimeBucket(timeBucketSize, fileStatistics.totalTime) }.addTime(fileStatistics.totalTime)
+    _timesPerFileType.computeIfAbsent(fileTypeName) { MaxNTimeBucket(timeBucketSize) }.addTime(fileStatistics.totalTime)
   }
 
   @Synchronized

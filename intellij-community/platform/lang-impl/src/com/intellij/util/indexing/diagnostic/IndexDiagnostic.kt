@@ -11,7 +11,7 @@ data class ProjectIndexingHistory(val projectName: String) {
 
   fun addProviderStatistics(statistics: FileProviderIndexStatistics) {
     // Convert to Json to release memory occupied by statistic values.
-    providerStatistics += statistics.convertToJson()
+    providerStatistics += statistics.convertToJson() ?: return
   }
 
   data class IndexingTimes(

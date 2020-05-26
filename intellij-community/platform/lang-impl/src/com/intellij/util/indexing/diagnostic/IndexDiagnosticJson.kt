@@ -36,13 +36,17 @@ data class JsonTimeStats(
   val medianTime: JsonTime
 )
 
-fun MaxNTimeBucket.toTimeStats(): JsonTimeStats =
-  JsonTimeStats(
+fun MaxNTimeBucket.toTimeStats(): JsonTimeStats? {
+  if (isEmpty) {
+    return null
+  }
+  return JsonTimeStats(
     JsonTime(minTime),
     JsonTime(maxTime),
     JsonTime(meanTime.toLong()),
     JsonTime(getMedianOfArray(maxNTimes).toLong())
   )
+}
 
 private fun <N : Number> getMedianOfArray(elements: Collection<N>): Double {
   require(elements.isNotEmpty())
@@ -71,24 +75,31 @@ data class JsonFileProviderIndexStatistics(
   data class FilesNumberPerFileType(val fileType: String, val filesNumber: Int)
 }
 
-fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics =
-  JsonFileProviderIndexStatistics(
+fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics? {
+  return JsonFileProviderIndexStatistics(
     providerDebugName,
     JsonTime(totalTime),
-    indexingStatistics.indexingTime.toTimeStats(),
-    indexingStatistics.contentLoadingTime.toTimeStats(),
+    indexingStatistics.indexingTime.toTimeStats() ?: return null,
+    indexingStatistics.contentLoadingTime.toTimeStats() ?: return null,
     indexingStatistics.numberOfFilesPerFileType
       .map { JsonFileProviderIndexStatistics.FilesNumberPerFileType(it.key, it.value) }
       .sortedByDescending { it.filesNumber }
     ,
     indexingStatistics.timesPerFileType
-      .map { JsonFileProviderIndexStatistics.TimePerFileType(it.key, it.value.toTimeStats()) }
-      .sortedByDescending { it.time.meanTime.nano }
+      .mapNotNull {
+        val timeStats = it.value.toTimeStats() ?: return@mapNotNull null
+        JsonFileProviderIndexStatistics.TimePerFileType(it.key, timeStats)
+      }
+      .sortedByDescending { it.time.maxTime.nano }
     ,
     indexingStatistics.timesPerIndexer
-      .map { JsonFileProviderIndexStatistics.TimePerIndexer(it.key, it.value.toTimeStats()) }
-      .sortedByDescending { it.time.meanTime.nano }
+      .mapNotNull {
+        val timeStats = it.value.toTimeStats() ?: return@mapNotNull null
+        JsonFileProviderIndexStatistics.TimePerIndexer(it.key, timeStats)
+      }
+      .sortedByDescending { it.time.maxTime.nano }
   )
+}
 
 typealias PresentableTime = String
 
