@@ -104,11 +104,11 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val matchOptions = options.matchOptions
         val fileType = matchOptions.fileType
         val dialect = matchOptions.dialect
-        val searchIsExpression = isProbableExpression(matchOptions.searchPattern, fileType, dialect, project)
-        val replacementIsExpression = isProbableExpression(options.replacement, fileType, dialect, project)
-        if(searchIsExpression != replacementIsExpression) {
+        val searchIsDeclaration = isProbableExpression(matchOptions.searchPattern, fileType, dialect, project)
+        val replacementIsDeclaration = isProbableExpression(options.replacement, fileType, dialect, project)
+        if(searchIsDeclaration != replacementIsDeclaration) {
             throw UnsupportedPatternException(
-                if (searchIsExpression) SSRBundle.message("replacement.template.is.not.expression.error.message")
+                if (searchIsDeclaration) SSRBundle.message("replacement.template.is.not.expression.error.message")
                 else SSRBundle.message("search.template.is.not.expression.error.message")
             )
         }
@@ -116,7 +116,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
 
     private fun isProbableExpression(pattern: String, fileType: LanguageFileType, dialect: Language, project: Project): Boolean {
         val searchElements = createPatternTree(pattern, PatternTreeContext.Block, fileType, dialect, null, project, false)
-        return searchElements.size == 1 && searchElements[0] is KtExpression
+        return searchElements[0] is KtDeclaration
     }
 
     override fun getReplaceHandler(project: Project, replaceOptions: ReplaceOptions): DocumentBasedReplaceHandler =
