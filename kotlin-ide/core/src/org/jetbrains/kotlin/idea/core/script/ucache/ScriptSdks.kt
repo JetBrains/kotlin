@@ -12,15 +12,12 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import java.io.File
 
-class ScriptSdks(val project: Project, private val sdks: Map<String?, Sdk?>) {
+class ScriptSdks(val project: Project, private val sdks: Map<SdkId, Sdk?>) {
     fun rebuild(remove: Sdk?): ScriptSdks {
         val builder = ScriptSdksBuilder(project, remove = remove)
-        sdks.keys.forEach { home ->
-            if (home != null) {
-                builder.addSdk(File(home))
-            }
+        sdks.keys.forEach { id ->
+            builder.addSdk(id)
         }
         return builder.build()
     }
@@ -29,7 +26,8 @@ class ScriptSdks(val project: Project, private val sdks: Map<String?, Sdk?>) {
     val nonIndexedSourceRoots = mutableSetOf<VirtualFile>()
 
     val first: Sdk? = sdks.values.firstOrNull()
-    operator fun get(sdkHome: String?) = sdks[sdkHome]
+
+    operator fun get(sdkId: SdkId) = sdks[sdkId]
 
     init {
         val nonIndexedSdks = sdks.values.filterNotNullTo(mutableSetOf())

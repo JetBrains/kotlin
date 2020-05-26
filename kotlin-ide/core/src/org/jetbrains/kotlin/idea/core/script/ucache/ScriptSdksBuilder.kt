@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.LOG
@@ -19,22 +18,28 @@ import java.io.File
 
 class ScriptSdksBuilder(
     val project: Project,
-    private val sdks: MutableMap<String?, Sdk?> = mutableMapOf(),
+    private val sdks: MutableMap<SdkId, Sdk?> = mutableMapOf(),
     private val remove: Sdk? = null
 ) {
     private val defaultSdk by lazy { getScriptDefaultSdk() }
 
     fun build() = ScriptSdks(project, sdks)
 
+    @Deprecated("Don't use, used only from DefaultScriptingSupport for saving to storage")
     fun addAll(other: ScriptSdksBuilder) {
         sdks.putAll(other.sdks)
+    }
+
+    // add sdk by home path with checking for removed sdk
+    fun addSdk(sdkId: SdkId): Sdk? {
+        val canonicalPath = sdkId.homeDirectory ?: return addDefaultSdk()
+        return addSdk(File(canonicalPath))
     }
 
     fun addSdk(javaHome: File?): Sdk? {
         if (javaHome == null) return addDefaultSdk()
 
-        val canonicalPath = FileUtil.toSystemIndependentName(javaHome.canonicalPath)
-        return sdks.getOrPut(canonicalPath) {
+        return sdks.getOrPut(SdkId(javaHome)) {
             getScriptSdkByJavaHome(javaHome) ?: defaultSdk
         }
     }
@@ -52,7 +57,7 @@ class ScriptSdksBuilder(
     }
 
     fun addDefaultSdk(): Sdk? =
-        sdks.getOrPut(null) { defaultSdk }
+        sdks.getOrPut(SdkId.default) { defaultSdk }
 
     fun addSdkByName(sdkName: String) {
         val sdk = getProjectJdkTableSafe().allJdks
@@ -60,7 +65,7 @@ class ScriptSdksBuilder(
             ?.takeIf { it.canBeUsedForScript() }
             ?: defaultSdk ?: return
         val homePath = sdk.homePath ?: return
-        sdks[homePath] = sdk
+        sdks[SdkId(homePath)] = sdk
     }
 
     private fun getScriptDefaultSdk(): Sdk? {
@@ -85,7 +90,7 @@ class ScriptSdksBuilder(
 
     fun toStorage(storage: ScriptClassRootsStorage) {
         storage.sdks = sdks.values.mapNotNullTo(mutableSetOf()) { it?.name }
-        storage.defaultSdkUsed = sdks.containsKey(null)
+        storage.defaultSdkUsed = sdks.containsKey(SdkId.default)
     }
 
     fun fromStorage(storage: ScriptClassRootsStorage) {
