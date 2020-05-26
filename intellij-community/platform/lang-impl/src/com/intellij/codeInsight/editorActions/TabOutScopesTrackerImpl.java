@@ -25,21 +25,29 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
 
   @Override
   public void registerEmptyScope(@NotNull Editor editor, int offset, int tabOutOffset) {
+    registerScopeRange(editor, offset, offset, tabOutOffset);
+  }
+
+  @Override
+  public void registerScopeRange(@NotNull Editor editor, int rangeStart, int rangeEnd, int tabOutOffset) {
     ApplicationManager.getApplication().assertIsDispatchThread();
+
     if (editor.isDisposed()) throw new IllegalArgumentException("Editor is already disposed");
-    if (tabOutOffset <= offset) throw new IllegalArgumentException("tabOutOffset should be larger than offset");
+    if (tabOutOffset <= rangeEnd) throw new IllegalArgumentException("tabOutOffset should be larger than the end of the region");
 
     if (!CodeInsightSettings.getInstance().TAB_EXITS_BRACKETS_AND_QUOTES) return;
 
     if (editor instanceof EditorWindow) {
       DocumentWindow documentWindow = ((EditorWindow)editor).getDocument();
-      offset = documentWindow.injectedToHost(offset);
+      rangeStart = documentWindow.injectedToHost(rangeStart);
+      rangeEnd = documentWindow.injectedToHost(rangeEnd);
+      tabOutOffset = documentWindow.injectedToHost(tabOutOffset);
       editor = ((EditorWindow)editor).getDelegate();
     }
     if (!(editor instanceof EditorImpl)) return;
 
     Tracker tracker = Tracker.forEditor((EditorImpl)editor, true);
-    tracker.registerScope(offset, tabOutOffset - offset);
+    tracker.registerScope(rangeStart, rangeEnd, tabOutOffset - rangeEnd);
   }
 
   @Override
@@ -100,8 +108,8 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
       return result;
     }
 
-    private void registerScope(int offset, int caretShift) {
-      RangeMarker marker = myEditor.getDocument().createRangeMarker(offset, offset);
+    private void registerScope(final int offsetStart, final int offsetEnd, final int caretShift) {
+      RangeMarker marker = myEditor.getDocument().createRangeMarker(offsetStart, offsetEnd);
       marker.setGreedyToLeft(true);
       marker.setGreedyToRight(true);
       if (caretShift > 1) marker.putUserData(CARET_SHIFT, caretShift);
