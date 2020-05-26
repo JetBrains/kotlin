@@ -198,7 +198,7 @@ internal class InsertImplicitCasts(
 
     override fun visitSetVariable(expression: IrSetVariable): IrExpression =
         expression.transformPostfix {
-            value = value.cast(expression.symbol.descriptor.type)
+            value = value.cast(expression.symbol.owner.type)
         }
 
     override fun visitGetField(expression: IrGetField): IrExpression =
@@ -215,7 +215,7 @@ internal class InsertImplicitCasts(
 
     override fun visitVariable(declaration: IrVariable): IrVariable =
         declaration.transformPostfix {
-            initializer = initializer?.cast(declaration.descriptor.type)
+            initializer = initializer?.cast(declaration.type)
         }
 
     override fun visitField(declaration: IrField): IrStatement {
