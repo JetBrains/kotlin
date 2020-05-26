@@ -82,8 +82,7 @@ class IrInlineCodegen(
             super.genValueAndPut(irValueParameter, argumentExpression, parameterType, codegen, blockInfo)
         }
 
-        // after transformation inlinable lambda parameter with default value would have nullable type: check default value type first
-        val isInlineParameter = irValueParameter.isInlineParameter(irValueParameter.defaultValue?.expression?.type ?: irValueParameter.type)
+        val isInlineParameter = irValueParameter.isInlineParameter()
         if (isInlineParameter && isInlineIrExpression(argumentExpression)) {
             val irReference: IrFunctionReference =
                 (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
