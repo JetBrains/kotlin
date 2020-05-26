@@ -49,7 +49,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val context = myMatchingVisitor.matchContext
         val pattern = context.pattern
         return when (val handler = pattern.getHandler(el1)) {
-            is SubstitutionHandler -> handler.validate(el2, context)
+            is SubstitutionHandler -> handler.handle(el2, context)
             else -> myMatchingVisitor.matchText(el1, el2)
         }
     }
