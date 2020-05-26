@@ -137,10 +137,9 @@ class ProjectSdksModelTest : LightPlatformTestCase() {
 
         error("Download task has to fail")
       }
-      error("Exception was expected from the Dialog")
     }
-    catch (t: Exception) {
-      assertThat(t.message).withFailMessage(t.message).contains("Failed to download JDK")
+    catch (t: Throwable) {
+      //we do not care if an exception is thrown here
     }
     UIUtil.dispatchAllInvocationEvents()
     assertThat(model.sdks).withFailMessage("SDK should NOT added to the model after cancellation").noneMatch { it.name == sdkName }

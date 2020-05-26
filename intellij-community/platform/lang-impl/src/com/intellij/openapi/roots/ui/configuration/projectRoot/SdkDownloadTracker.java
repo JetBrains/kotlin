@@ -3,10 +3,7 @@ package com.intellij.openapi.roots.ui.configuration.projectRoot;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.application.TransactionGuard;
-import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.application.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.*;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
@@ -301,9 +298,11 @@ public class SdkDownloadTracker {
           catch (Throwable e) {
             if (!myProgressIndicator.isCanceled()) {
               LOG.warn("SDK Download failed. " + e.getMessage(), e);
-              myModalityTracker.invokeLater(() -> {
-                Messages.showErrorDialog(ProjectBundle.message("error.message.sdk.download.failed", type.getPresentableName()), getTitle());
-              });
+              if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                myModalityTracker.invokeLater(() -> {
+                  Messages.showErrorDialog(ProjectBundle.message("error.message.sdk.download.failed", type.getPresentableName()), getTitle());
+                });
+              }
             }
             onSdkDownloadCompleted(true);
           }
