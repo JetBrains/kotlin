@@ -33,11 +33,20 @@ final class ServiceViewState {
   public int parentView = -1;
 
   @Transient
-  public TreeState treeState = TreeState.createFrom(null);
+  public TreeState treeState;
   @Transient
-  public List<TreePath> expandedPaths = new SmartList<>();
+  public List<TreePath> expandedPaths;
+  {
+    clearTreeState();
+  }
+
   @Transient
   public boolean showServicesTree = true;
+
+  void clearTreeState() {
+    treeState = TreeState.createFrom(null);
+    expandedPaths = new SmartList<>();
+  }
 
   public static final class ServiceState {
     public List<String> path;

@@ -603,6 +603,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       mainState.groupId = holder.toolWindowId;
       mainState.treeStateElement = new Element("root");
       mainState.treeState.writeExternal(mainState.treeStateElement);
+      mainState.clearTreeState();
 
       List<ServiceView> processedViews = new SmartList<>();
       for (Content content : holder.contentManager.getContents()) {
@@ -632,6 +633,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
         viewState.treeStateElement = new Element("root");
         viewState.treeState.writeExternal(viewState.treeStateElement);
+        viewState.clearTreeState();
       }
     }
 
