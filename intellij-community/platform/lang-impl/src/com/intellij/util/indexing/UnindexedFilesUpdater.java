@@ -166,9 +166,11 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
 
     projectIndexingHistory.getTimes().setEndIndexing(nowMillis());
 
-    NonUrgentExecutor.getInstance().execute(() -> {
-      IndexDiagnosticDumper.INSTANCE.dumpProjectIndexingHistoryToLogSubdirectory(projectIndexingHistory);
-    });
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      NonUrgentExecutor.getInstance().execute(() -> {
+        IndexDiagnosticDumper.INSTANCE.dumpProjectIndexingHistoryToLogSubdirectory(projectIndexingHistory);
+      });
+    }
 
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Unindexed files update");
 
