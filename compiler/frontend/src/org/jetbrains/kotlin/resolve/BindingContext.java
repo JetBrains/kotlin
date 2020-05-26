@@ -179,6 +179,7 @@ public interface BindingContext {
     WritableSlice<KtElement, Boolean> USED_AS_RESULT_OF_LAMBDA = Slices.createSimpleSetSlice();
 
     WritableSlice<VariableDescriptor, CaptureKind> CAPTURED_IN_CLOSURE = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<PropertyDescriptor, Boolean> FIELD_CAPTURED_IN_EXACLY_ONCE_CLOSURE = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtDeclaration, PreliminaryDeclarationVisitor> PRELIMINARY_VISITOR = new BasicWritableSlice<>(DO_NOTHING);
 
     WritableSlice<Box<DeferredType>, Boolean> DEFERRED_TYPE = Slices.createCollectiveSetSlice();
