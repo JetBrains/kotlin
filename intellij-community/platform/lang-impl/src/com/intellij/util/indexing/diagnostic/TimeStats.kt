@@ -32,6 +32,7 @@ class TimeStats(private val sizeLimit: Int) {
   private fun failEmpty(): Nothing = throw IllegalStateException("No times have been added yet")
 
   val isEmpty: Boolean @Synchronized get() =  _maxNTimes.isEmpty()
+  val sumTime: TimeNano @Synchronized get() = _sum ?: failEmpty()
   val minTime: TimeNano @Synchronized get() = _minTime ?: failEmpty()
   val maxTime: TimeNano @Synchronized get() = _maxTime ?: failEmpty()
   val meanTime: Double @Synchronized get() = (_sum ?: failEmpty()).toDouble() / (_count ?: failEmpty())

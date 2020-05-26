@@ -7,19 +7,17 @@ class IndexingJobStatistics {
   val timesPerIndexer: Map<String /* ID.name() */, TimeStats>
     get() = _timesPerIndexer
 
-  val indexingTimesPerFileType: Map<String /* File type name */, TimeStats>
-    get() = _indexingTimesPerFileType
+  val statsPerFileType: Map<String /* File type name */, StatsPerFileType>
+    get() = _statsPerFileType
 
-  val contentLoadingTimesPerFileType: Map<String /* File type name */, TimeStats>
-    get() = _contentLoadingTimesPerFileType
-
-  val numberOfFilesPerFileType: Map<String /* File type name */, Int>
-    get() = _numberOfFilesPerFileType
+  data class StatsPerFileType(
+    val indexingTime: TimeStats,
+    val contentLoadingTime: TimeStats,
+    var numberOfFiles: Int
+  )
 
   private val _timesPerIndexer = hashMapOf<String, TimeStats>()
-  private val _indexingTimesPerFileType = hashMapOf<String, TimeStats>()
-  private val _contentLoadingTimesPerFileType = hashMapOf<String, TimeStats>()
-  private val _numberOfFilesPerFileType = hashMapOf<String, Int>()
+  private val _statsPerFileType = hashMapOf<String, StatsPerFileType>()
 
   @Synchronized
   fun addFileStatistics(fileStatistics: FileIndexingStatistics, contentLoadingTime: Long) {
@@ -27,8 +25,11 @@ class IndexingJobStatistics {
       _timesPerIndexer.getOrPut(indexId.name) { TimeStats(timeBucketSize) }.addTime(time)
     }
     val fileTypeName = fileStatistics.fileType.name
-    _numberOfFilesPerFileType.compute(fileTypeName) { _, currentNumber -> (currentNumber ?: 0) + 1 }
-    _indexingTimesPerFileType.computeIfAbsent(fileTypeName) { TimeStats(timeBucketSize) }.addTime(fileStatistics.indexingTime)
-    _contentLoadingTimesPerFileType.computeIfAbsent(fileTypeName) { TimeStats(timeBucketSize) }.addTime(contentLoadingTime)
+    val stats = _statsPerFileType.computeIfAbsent(fileTypeName) {
+      StatsPerFileType(TimeStats(timeBucketSize), TimeStats(timeBucketSize), 0)
+    }
+    stats.contentLoadingTime.addTime(contentLoadingTime)
+    stats.indexingTime.addTime(fileStatistics.indexingTime)
+    stats.numberOfFiles++
   }
 }

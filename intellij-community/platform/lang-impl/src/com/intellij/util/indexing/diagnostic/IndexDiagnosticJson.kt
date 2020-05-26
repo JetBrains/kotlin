@@ -41,6 +41,7 @@ data class JsonTime(val nano: Long) {
 
 @JsonSerialize(using = JsonTimeStats.Companion::class)
 data class JsonTimeStats(
+  val partOfTotal: Int, // Percentages: 0 to 100.
   val minTime: JsonTime,
   val maxTime: JsonTime,
   val meanTime: JsonTime,
@@ -49,6 +50,13 @@ data class JsonTimeStats(
   companion object : JsonSerializer<JsonTimeStats>() {
     override fun serialize(value: JsonTimeStats, gen: JsonGenerator, serializers: SerializerProvider?) {
       val s = buildString {
+        append("part: ")
+        if (value.partOfTotal < 1) {
+          append("< 1%; ")
+        }
+        else {
+          append("${value.partOfTotal}%; ")
+        }
         append("max: ${value.maxTime.presentableDuration()}; ")
         append("mean: ${value.meanTime.presentableDuration()}; ")
         append("median: ${value.medianTime.presentableDuration()}; ")
@@ -59,11 +67,18 @@ data class JsonTimeStats(
   }
 }
 
-fun TimeStats.toTimeStats(): JsonTimeStats? {
+fun TimeStats.toTimeStats(totalTime: TimeNano): JsonTimeStats? {
   if (isEmpty) {
     return null
   }
+  val partOfTotal = if (totalTime == 0L) {
+    100
+  }
+  else {
+    ((sumTime.toDouble() / totalTime) * 100).toInt()
+  }
   return JsonTimeStats(
+    partOfTotal,
     JsonTime(minTime),
     JsonTime(maxTime),
     JsonTime(meanTime.toLong()),
@@ -85,7 +100,6 @@ private fun <N : Number> getMedianOfArray(elements: Collection<N>): Double {
 data class JsonFileProviderIndexStatistics(
   val providerName: String,
   val totalNumberOfFiles: Int,
-  // <total time> = <content loading time> + <indexing time> + <time spent on waiting for other indexing tasks to complete>
   val totalIndexingTime: JsonTime,
   val statsPerFileType: List<StatsPerFileType>,
   val statsPerIndexer: List<StatsPerIndexer>,
@@ -110,17 +124,35 @@ data class JsonFileProviderIndexStatistics(
 }
 
 fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics {
-  val statsPerFileType = indexingStatistics.numberOfFilesPerFileType
-    .mapNotNull { (fileTypeName, numberOfFiles) ->
-      val indexingTimeStats = indexingStatistics.indexingTimesPerFileType[fileTypeName]?.toTimeStats() ?: return@mapNotNull null
-      val contentLoadingTimeStats = indexingStatistics.contentLoadingTimesPerFileType[fileTypeName]?.toTimeStats() ?: return@mapNotNull null
-      JsonFileProviderIndexStatistics.StatsPerFileType(fileTypeName, numberOfFiles, indexingTimeStats, contentLoadingTimeStats)
+  val totalCpuIndexingTime = indexingStatistics.statsPerFileType.values
+    .filterNot { it.indexingTime.isEmpty }
+    .map { it.indexingTime.sumTime }
+    .sum()
+
+  val totalCpuLoadingTime = indexingStatistics.statsPerFileType.values
+    .filterNot { it.contentLoadingTime.isEmpty }
+    .map { it.contentLoadingTime.sumTime }
+    .sum()
+
+  val totalCpuIndexingTimePerIndexer = indexingStatistics.timesPerIndexer.values
+    .filterNot { it.isEmpty }
+    .map { it.sumTime }
+    .sum()
+
+  val statsPerFileType = indexingStatistics.statsPerFileType
+    .mapNotNull { (fileTypeName, stats) ->
+      JsonFileProviderIndexStatistics.StatsPerFileType(
+        fileTypeName,
+        stats.numberOfFiles,
+        stats.indexingTime.toTimeStats(totalCpuIndexingTime) ?: return@mapNotNull null,
+        stats.contentLoadingTime.toTimeStats(totalCpuLoadingTime) ?: return@mapNotNull null
+      )
     }
 
   val totalNumberOfFiles = statsPerFileType.asSequence().map { it.numberOfFiles }.sum()
   val allStatsPerIndexer = indexingStatistics.timesPerIndexer
     .mapNotNull {
-      val timeStats = it.value.toTimeStats() ?: return@mapNotNull null
+      val timeStats = it.value.toTimeStats(totalCpuIndexingTimePerIndexer) ?: return@mapNotNull null
       JsonFileProviderIndexStatistics.StatsPerIndexer(it.key, timeStats)
     }
     .sortedByDescending { it.indexingTimeStats.maxTime.nano }
