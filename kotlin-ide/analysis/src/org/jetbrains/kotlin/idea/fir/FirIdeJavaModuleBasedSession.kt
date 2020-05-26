@@ -34,15 +34,8 @@ class FirIdeJavaModuleBasedSession(
     init {
         val firIdeProvider = FirIdeProvider(project, scope, this, KotlinScopeProvider(::wrapScopeWithJvmMapped))
 
-        registerComponent(
-            FirProvider::class,
-            firIdeProvider
-        )
-
-        registerComponent(
-            FirIdeProvider::class,
-            firIdeProvider
-        )
+        registerComponent(FirProvider::class, firIdeProvider)
+        registerComponent(FirIdeProvider::class, firIdeProvider)
 
         registerComponent(
             FirSymbolProvider::class,
@@ -53,11 +46,6 @@ class FirIdeJavaModuleBasedSession(
                     FirIdeModuleDependenciesSymbolProvider(this)
                 )
             ) as FirSymbolProvider
-        )
-
-        registerComponent(
-            FirCorrespondingSupertypesCache::class,
-            FirCorrespondingSupertypesCache(this)
         )
 
         registerComponent(
