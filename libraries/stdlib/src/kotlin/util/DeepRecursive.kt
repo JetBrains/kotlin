@@ -67,6 +67,7 @@ import kotlin.coroutines.intrinsics.*
  * @param block the function body.
  */
 @SinceKotlin("1.4")
+@ExperimentalStdlibApi
 public class DeepRecursiveFunction<T, R>(
     internal val block: suspend DeepRecursiveScope<T, R>.(T) -> R
 )
@@ -79,6 +80,7 @@ public class DeepRecursiveFunction<T, R>(
  * [callRecursive][DeepRecursiveScope.callRecursive].
  */
 @SinceKotlin("1.4")
+@ExperimentalStdlibApi
 public operator fun <T, R> DeepRecursiveFunction<T, R>.invoke(value: T): R =
     DeepRecursiveScopeImpl<T, R>(block, value).runCallLoop()
 
@@ -91,6 +93,7 @@ public operator fun <T, R> DeepRecursiveFunction<T, R>.invoke(value: T): R =
  */
 @RestrictsSuspension
 @SinceKotlin("1.4")
+@ExperimentalStdlibApi
 public sealed class DeepRecursiveScope<T, R> {
     /**
      * Makes recursive call to this [DeepRecursiveFunction] function putting the call activation frame on the heap,
@@ -118,11 +121,13 @@ public sealed class DeepRecursiveScope<T, R> {
 
 // ================== Implementation ==================
 
+@ExperimentalStdlibApi
 private typealias DeepRecursiveFunctionBlock = suspend DeepRecursiveScope<*, *>.(Any?) -> Any?
 
 private val UNDEFINED_RESULT = Result.success(COROUTINE_SUSPENDED)
 
 @Suppress("UNCHECKED_CAST")
+@ExperimentalStdlibApi
 private class DeepRecursiveScopeImpl<T, R>(
     block: suspend DeepRecursiveScope<T, R>.(T) -> R,
     value: T
