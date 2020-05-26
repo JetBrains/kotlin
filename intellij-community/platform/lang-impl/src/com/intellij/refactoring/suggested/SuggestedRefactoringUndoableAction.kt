@@ -16,7 +16,8 @@ class SuggestedRefactoringUndoableAction private constructor(
   private val oldImportsText: String?,
   private val oldSignature: SuggestedRefactoringSupport.Signature,
   private val newSignature: SuggestedRefactoringSupport.Signature,
-  private val disappearedParameters: Map<String, Any>
+  private val disappearedParameters: Map<String, Any>,
+  private val additionalData: SuggestedRefactoringState.AdditionalData
 ) : UndoableAction
 {
   companion object {
@@ -24,7 +25,7 @@ class SuggestedRefactoringUndoableAction private constructor(
       val signatureRange = state.refactoringSupport.signatureRange(state.declaration)!!
       return SuggestedRefactoringUndoableAction(
         document, state.declaration.project, signatureRange, state.oldDeclarationText, state.oldImportsText,
-        state.oldSignature, state.newSignature, state.disappearedParameters
+        state.oldSignature, state.newSignature, state.disappearedParameters, state.additionalData
       )
     }
   }
@@ -46,7 +47,7 @@ class SuggestedRefactoringUndoableAction private constructor(
     val state = SuggestedRefactoringState(
       declaration, refactoringSupport, SuggestedRefactoringState.ErrorLevel.NO_ERRORS,
       oldDeclarationText, oldImportsText, oldSignature, newSignature,
-      refactoringSupport.stateChanges.parameterMarkers(declaration, newSignature), disappearedParameters
+      refactoringSupport.stateChanges.parameterMarkers(declaration, newSignature), disappearedParameters, additionalData = additionalData
     )
 
     SuggestedRefactoringProviderImpl.getInstance(project).undoToState(state, signatureRange)
