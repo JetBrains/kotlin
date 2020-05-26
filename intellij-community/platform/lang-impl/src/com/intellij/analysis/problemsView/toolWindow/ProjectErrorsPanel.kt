@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -24,11 +25,13 @@ internal class ProjectErrorsPanel(project: Project, state: ProblemsViewState)
     private val LOG = Logger.getInstance(ProjectErrorsPanel::class.java)
   }
 
-  public override fun getDisplayName() = ProblemsViewBundle.message("problems.view.project")
-  public override fun getShowErrors(): Option? = null
-  public override fun getShowWarnings(): Option? = null
-  public override fun getShowInformation(): Option? = null
-  public override fun getSortFoldersFirst(): Option? = null
+  override fun getDisplayName() = ProblemsViewBundle.message("problems.view.project")
+  override fun getShowErrors(): Option? = null
+  override fun getShowWarnings(): Option? = null
+  override fun getShowInformation(): Option? = null
+  override fun getSortFoldersFirst(): Option? = null
+
+  override fun getToolWindowIcon(count: Int) = if (count > 0) AllIcons.Toolwindows.Problems else super.getToolWindowIcon(count)
 
   override fun problemsAppeared(file: VirtualFile) {
     LOG.debug("problemsAppeared: ", file)

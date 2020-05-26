@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option;
@@ -17,6 +18,7 @@ import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.RestoreSelectionListener;
 import com.intellij.ui.tree.TreeVisitor;
@@ -37,6 +39,7 @@ import java.util.function.Predicate;
 
 import static com.intellij.openapi.application.ApplicationManager.getApplication;
 import static com.intellij.openapi.application.ModalityState.stateForComponent;
+import static com.intellij.ui.AppUIUtil.invokeLaterIfProjectAlive;
 import static com.intellij.ui.ColorUtil.toHtmlColor;
 import static com.intellij.ui.ScrollPaneFactory.createScrollPane;
 import static com.intellij.ui.scale.JBUIScale.scale;
@@ -205,20 +208,30 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
 
   abstract @NotNull String getDisplayName();
 
-  final void updateDisplayName() {
-    ToolWindow window = ProblemsView.getToolWindow(getProject());
-    if (window == null) return;
-    Content content = window.getContentManager().getContent(this);
-    if (content == null) return;
+  final void updateToolWindowContent() {
+    invokeLaterIfProjectAlive(getProject(), () -> {
+      ToolWindow window = ProblemsView.getToolWindow(getProject());
+      if (window == null) return;
+      ContentManager manager = window.getContentManagerIfCreated();
+      if (manager == null) return;
+      Content content = manager.getContent(this);
+      if (content == null) return;
 
+      Root root = myTreeModel.getRoot();
+      int count = root == null ? 0 : root.getProblemsCount();
+      content.setDisplayName(getContentDisplayName(count));
+      window.setIcon(getToolWindowIcon(count));
+    });
+  }
+
+  @NotNull Icon getToolWindowIcon(int count) {
+    return AllIcons.Toolwindows.ProblemsEmpty;
+  }
+
+  @NotNull String getContentDisplayName(int count) {
     String name = getDisplayName();
-    Root root = myTreeModel.getRoot();
-    int count = root == null ? 0 : root.getProblemsCount();
-    if (count > 0) {
-      //noinspection HardCodedStringLiteral
-      name = "<html><body>" + name + " <font color='" + toHtmlColor(UIUtil.getInactiveTextColor()) + "'>" + count + "</font></body></html>";
-    }
-    content.setDisplayName(name);
+    if (count <= 0) return name;
+    return "<html><body>" + name + " <font color='" + toHtmlColor(UIUtil.getInactiveTextColor()) + "'>" + count + "</font></body></html>";
   }
 
   @Override

@@ -56,7 +56,7 @@ internal open class Root(val panel: ProblemsViewPanel) : Node(panel.project), Di
     val model = panel.treeModel
     if (model.isRoot(this)) {
       model.structureChanged(node)
-      panel.updateDisplayName()
+      panel.updateToolWindowContent()
     }
   }
 

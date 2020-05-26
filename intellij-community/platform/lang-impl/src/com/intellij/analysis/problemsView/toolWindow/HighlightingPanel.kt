@@ -48,7 +48,7 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
       treeModel.root = HighlightingFileRoot(this, file)
       promiseSelectFirstLeaf(tree)
     }
-    updateDisplayName()
+    updateToolWindowContent()
   }
 
   private fun findCurrentFile(): VirtualFile? {

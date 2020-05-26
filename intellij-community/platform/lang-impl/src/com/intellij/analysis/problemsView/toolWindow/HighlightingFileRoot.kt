@@ -51,7 +51,7 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualF
     val model = panel.treeModel
     if (model.isRoot(this)) {
       model.structureChanged()
-      panel.updateDisplayName()
+      panel.updateToolWindowContent()
     }
   }
 }
