@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.psi.impl.source.codeStyle;
 
@@ -517,10 +517,9 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
    * </ol>
    * </pre>
    * <p/>
-   * This method inserts that dummy comment (fallback to identifier {@code xxx}, see {@link CodeStyleManagerImpl#createDummy(Project, Language)})
+   * This method inserts that dummy comment (fallback to identifier {@code xxx}, see {@link CodeStyleManagerImpl#createMarker(PsiFile, int)})
    * if necessary.
    * <p/>
-
    * <b>Note:</b> it's expected that the whole white space region that contains given offset is processed in a way that all
    * {@link RangeMarker range markers} registered for the given offset are expanded to the whole white space region.
    * E.g. there is a possible case that particular range marker serves for defining formatting range, hence, its start/end offsets
@@ -553,17 +552,23 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
       }
     }
 
+    String marker = createMarker(file, offset);
+    document.insertString(offset, marker);
+    return new TextRange(offset, offset + marker.length());
+  }
+
+  private static @NotNull String createMarker(@NotNull PsiFile file, int offset) {
     Project project = file.getProject();
     PsiElement injectedElement = InjectedLanguageManager.getInstance(project).findInjectedElementAt(file, offset);
     Language language = injectedElement != null ? injectedElement.getLanguage() : PsiUtilCore.getLanguageAtOffset(file, offset);
 
     setSequentialProcessingAllowed(false);
-    String dummy = createDummy(project, language);
-    document.insertString(offset, dummy);
-    return new TextRange(offset, offset + dummy.length());
-  }
+    NewLineIndentMarkerProvider markerProvider = NewLineIndentMarkerProvider.EP.forLanguage(language);
+    String marker = markerProvider == null ? null : markerProvider.createMarker(file, offset);
+    if (marker != null) {
+      return marker;
+    }
 
-  private static @NotNull String createDummy(@NotNull Project project, @NotNull Language language) {
     PsiComment comment = null;
     try {
       comment = PsiParserFacade.SERVICE.getInstance(project).createLineOrBlockCommentFromText(language, "");
