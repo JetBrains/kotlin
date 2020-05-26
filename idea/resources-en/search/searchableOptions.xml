@@ -618,6 +618,11 @@
     <option name="continuation" path="Tabs and Indents" hit="Continuation indent:"/>
     <option name="indent" path="Tabs and Indents" hit="Continuation indent:"/>
     <option name="disable" hit="Disable"/>
+    <option name="import" path="Imports" hit="Import Layout"/>
+    <option name="layout" path="Imports" hit="Import Layout"/>
+    <option name="aliases" path="Imports" hit="Import aliases separately"/>
+    <option name="import" path="Imports" hit="Import aliases separately"/>
+    <option name="separately" path="Imports" hit="Import aliases separately"/>
     <option name="imports" path="Imports" hit="Imports"/>
     <option name="code" path="Blank Lines" hit="In code:"/>
     <option name="in" path="Blank Lines" hit="In code:"/>
@@ -664,6 +669,11 @@
     <option name="lines" path="Blank Lines" hit="Minimum Blank Lines"/>
     <option name="minimum" path="Blank Lines" hit="Minimum Blank Lines"/>
     <option name="other" path="Imports" hit="Other"/>
+    <option name="import" path="Imports" hit="Packages to Use Import with '*'"/>
+    <option name="packages" path="Imports" hit="Packages to Use Import with '*'"/>
+    <option name="to" path="Imports" hit="Packages to Use Import with '*'"/>
+    <option name="use" path="Imports" hit="Packages to Use Import with '*'"/>
+    <option name="with" path="Imports" hit="Packages to Use Import with '*'"/>
     <option name="scheme" hit="Scheme:"/>
     <option name="from" hit="Set from..."/>
     <option name="set" hit="Set from..."/>
@@ -677,6 +687,8 @@
     <option name="tabs" path="Tabs and Indents" hit="Tabs and Indents"/>
     <option name="symbols" path="Imports" hit="Top-level Symbols"/>
     <option name="top-level" path="Imports" hit="Top-level Symbols"/>
+    <option name="comma" path="Other" hit="Trailing comma"/>
+    <option name="trailing" path="Other" hit="Trailing comma"/>
     <option name="defaults" path="Load/Save" hit="Use defaults from:"/>
     <option name="from" path="Load/Save" hit="Use defaults from:"/>
     <option name="use" path="Load/Save" hit="Use defaults from:"/>
@@ -696,6 +708,9 @@
     <option name="character" path="Tabs and Indents" hit="Use tab character"/>
     <option name="tab" path="Tabs and Indents" hit="Use tab character"/>
     <option name="use" path="Tabs and Indents" hit="Use tab character"/>
+    <option name="comma" path="Other" hit="Use trailing comma"/>
+    <option name="trailing" path="Other" hit="Use trailing comma"/>
+    <option name="use" path="Other" hit="Use trailing comma"/>
     <option name="and" path="Wrapping and Braces" hit="Wrapping and Braces"/>
     <option name="braces" path="Wrapping and Braces" hit="Wrapping and Braces"/>
     <option name="wrapping" path="Wrapping and Braces" hit="Wrapping and Braces"/>
@@ -1044,9 +1059,6 @@
     <option name="in" path="Wrapping and Braces" hit="Use continuation indent in conditions"/>
     <option name="indent" path="Wrapping and Braces" hit="Use continuation indent in conditions"/>
     <option name="use" path="Wrapping and Braces" hit="Use continuation indent in conditions"/>
-    <option name="comma" path="Wrapping and Braces" hit="Use trailing comma"/>
-    <option name="trailing" path="Wrapping and Braces" hit="Use trailing comma"/>
-    <option name="use" path="Wrapping and Braces" hit="Use trailing comma"/>
     <option name="guides" path="Wrapping and Braces" hit="Visual guides"/>
     <option name="visual" path="Wrapping and Braces" hit="Visual guides"/>
     <option name="after" path="Wrapping and Braces" hit="Wrap after modifier list"/>

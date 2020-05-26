@@ -172,8 +172,6 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     KotlinBundle.message("formatter.title.function.parentheses")
                 )
 
-                showCustomOption(KotlinCodeStyleSettings::ALLOW_TRAILING_COMMA, "Use trailing comma")
-
                 showCustomOption(
                     KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,
                     KotlinBundle.message("formatter.title.align.when.branches.in.columns"),
