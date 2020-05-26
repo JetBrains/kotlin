@@ -96,7 +96,6 @@ class KotlinResolutionCallbacksImpl(
         expectedReturnType: UnwrappedType?,
         annotations: Annotations,
         stubsForPostponedVariables: Map<NewTypeVariable, StubType>,
-        shouldRunInIndependentContext: Boolean
     ): ReturnArgumentsAnalysisResult {
         val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
         val outerCallContext = psiCallArgument.outerCallContext
@@ -138,7 +137,7 @@ class KotlinResolutionCallbacksImpl(
 
         val lambdaInfo = LambdaInfo(
             expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
-            if (expectedReturnType != null || shouldRunInIndependentContext) ContextDependency.INDEPENDENT else ContextDependency.DEPENDENT
+            if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT
         )
 
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
@@ -198,10 +197,8 @@ class KotlinResolutionCallbacksImpl(
         val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
         (temporaryTrace ?: trace).record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
 
-        val inferedReturnType = functionTypeInfo.type?.arguments?.last()?.type?.takeIf { functionTypeInfo.type?.isFunctionTypeOrSubtype == true }
-
         if (coroutineSession?.hasInapplicableCall() == true) {
-            return ReturnArgumentsAnalysisResult(ReturnArgumentsInfo.empty, coroutineSession, inferedReturnType, hasInapplicableCallForBuilderInference = true)
+            return ReturnArgumentsAnalysisResult(ReturnArgumentsInfo.empty, coroutineSession, hasInapplicableCallForBuilderInference = true)
         } else {
             temporaryTrace?.commit()
         }
@@ -249,7 +246,6 @@ class KotlinResolutionCallbacksImpl(
                 returnArgumentFound
             ),
             coroutineSession,
-            inferedReturnType
         )
     }
 

@@ -105,7 +105,9 @@ class KotlinCallCompleter(
 
         val newAtoms = mutableMapOf<KotlinResolutionCandidate, ResolvedLambdaAtom>()
         for ((candidate, atom) in lambdas.entries) {
-            newAtoms[candidate] = kotlinConstraintSystemCompleter.prepareLambdaAtomForFactoryPattern(atom, candidate, candidate)
+            val newAtom = kotlinConstraintSystemCompleter.prepareLambdaAtomForFactoryPattern(atom, candidate, candidate)
+            newAtoms[candidate] = newAtom
+            candidate.addResolvedKtPrimitive(newAtom)
         }
 
         val diagnosticHolderForLambda = KotlinDiagnosticsHolder.SimpleHolder()
@@ -116,18 +118,16 @@ class KotlinCallCompleter(
             resolutionCallbacks,
             firstAtom,
             diagnosticHolderForLambda,
-            shouldRunInIndependentContext = true
         )
-
-        val lambdaReturnType = results.lambdaReturnType ?: return candidates
-        lambdas.getValue(firstCandidate).setAnalyzedResults(results.returnArgumentsInfo, listOf(firstAtom))
-        firstCandidate.csBuilder.addSubtypeConstraint(lambdaReturnType, firstAtom.returnType, LambdaArgumentConstraintPosition(firstAtom))
 
         while (iterator.hasNext()) {
             val (candidate, atom) = iterator.next()
-            atom.setAnalyzedResults(results.returnArgumentsInfo, firstAtom.subResolvedAtoms!!)
-            lambdas.getValue(candidate).setAnalyzedResults(results.returnArgumentsInfo, listOf(atom))
-            candidate.csBuilder.addSubtypeConstraint(lambdaReturnType, atom.returnType, LambdaArgumentConstraintPosition(atom))
+            postponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem(
+                candidate.getSystem().asPostponedArgumentsAnalyzerContext(),
+                atom,
+                results,
+                diagnosticHolderForLambda
+            )
         }
 
         val errorCandidates = mutableSetOf<KotlinResolutionCandidate>()

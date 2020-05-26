@@ -135,11 +135,17 @@ class ResolvedLambdaAtom(
     val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?,
     override val expectedType: UnwrappedType?
 ) : PostponedResolvedAtom() {
-    lateinit var resultArgumentsInfo: ReturnArgumentsInfo
+    /**
+     * [resultArgumentsInfo] can be null only if lambda was analyzed in process of resolve
+     *   ambiguity by lambda return type
+     * There is a contract that [resultArgumentsInfo] will be not null for unwrapped lambda atom
+     *   (see [unwrap])
+     */
+    var resultArgumentsInfo: ReturnArgumentsInfo? = null
         private set
 
     fun setAnalyzedResults(
-        resultArguments: ReturnArgumentsInfo,
+        resultArguments: ReturnArgumentsInfo?,
         subResolvedAtoms: List<ResolvedAtom>
     ) {
         this.resultArgumentsInfo = resultArguments
@@ -148,6 +154,10 @@ class ResolvedLambdaAtom(
 
     override val inputTypes: Collection<UnwrappedType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: UnwrappedType get() = returnType
+}
+
+fun ResolvedLambdaAtom.unwrap(): ResolvedLambdaAtom {
+    return if (resultArgumentsInfo != null) this else subResolvedAtoms!!.single() as ResolvedLambdaAtom
 }
 
 abstract class ResolvedCallableReferenceAtom(

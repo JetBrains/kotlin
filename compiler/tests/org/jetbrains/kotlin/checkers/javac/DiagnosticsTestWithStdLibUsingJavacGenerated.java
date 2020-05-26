@@ -2830,6 +2830,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/multipleOverloads_2.kt");
         }
 
+        @TestMetadata("multipleOverloads_3.kt")
+        public void testMultipleOverloads_3() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/multipleOverloads_3.kt");
+        }
+
         @TestMetadata("overloadByLambdaReturnType_disabled.kt")
         public void testOverloadByLambdaReturnType_disabled() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/overloadByLambdaReturnType_disabled.kt");

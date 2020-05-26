@@ -226,16 +226,16 @@ fun ResolvedLambdaAtom.transformToResolvedLambda(
     expectedType: UnwrappedType,
     returnTypeVariable: TypeVariableForLambdaReturnType? = null
 ): ResolvedLambdaAtom {
-    val resolvedLambdaAtom = preprocessLambdaArgument(
+    return preprocessLambdaArgument(
         csBuilder,
         atom,
         expectedType,
         diagnosticsHolder,
         forceResolution = true,
         returnTypeVariable = returnTypeVariable
-    ) as ResolvedLambdaAtom
-
-    return resolvedLambdaAtom
+    ).also {
+        this.setAnalyzedResults(null, listOf(it))
+    } as ResolvedLambdaAtom
 }
 
 private fun preprocessCallableReference(

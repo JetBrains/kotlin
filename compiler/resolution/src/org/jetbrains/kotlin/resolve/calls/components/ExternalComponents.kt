@@ -59,7 +59,6 @@ data class ReturnArgumentsInfo(
 data class ReturnArgumentsAnalysisResult(
     val returnArgumentsInfo: ReturnArgumentsInfo,
     val inferenceSession: InferenceSession?,
-    val lambdaReturnType: KotlinType? = null,
     val hasInapplicableCallForBuilderInference: Boolean = false
 )
 
@@ -73,7 +72,6 @@ interface KotlinResolutionCallbacks {
         expectedReturnType: UnwrappedType?, // null means, that return type is not proper i.e. it depends on some type variables
         annotations: Annotations,
         stubsForPostponedVariables: Map<NewTypeVariable, StubType>,
-        shouldRunInIndependentContext: Boolean = false
     ): ReturnArgumentsAnalysisResult
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)

@@ -181,6 +181,8 @@ class ResolvedAtomCompleter(
 
     private val ResolvedLambdaAtom.isCoercedToUnit: Boolean
         get() {
+            val resultArgumentsInfo = this.resultArgumentsInfo
+                ?: return (subResolvedAtoms!!.single() as ResolvedLambdaAtom).isCoercedToUnit
             val returnTypes =
                 resultArgumentsInfo.nonErrorArguments.map {
                     val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@map null
@@ -199,6 +201,8 @@ class ResolvedAtomCompleter(
         }
 
     private fun completeLambda(lambda: ResolvedLambdaAtom) {
+        val lambda = lambda.unwrap()
+        val resultArgumentsInfo = lambda.resultArgumentsInfo!!
         val returnType = if (lambda.isCoercedToUnit) {
             builtIns.unitType
         } else {
@@ -213,7 +217,7 @@ class ResolvedAtomCompleter(
             )
         updateTraceForLambda(lambda, topLevelTrace, approximatedReturnType)
 
-        for (lambdaResult in lambda.resultArgumentsInfo.nonErrorArguments) {
+        for (lambdaResult in resultArgumentsInfo.nonErrorArguments) {
             val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
             val newContext =
                 topLevelCallContext.replaceDataFlowInfo(resultValueArgument.dataFlowInfoAfterThisArgument)
