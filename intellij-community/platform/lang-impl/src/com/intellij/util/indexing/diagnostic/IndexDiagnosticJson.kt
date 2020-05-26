@@ -179,18 +179,32 @@ fun ProjectIndexingHistory.IndexingTimes.convertToJson(): JsonProjectIndexingHis
 
 data class JsonProjectIndexingHistory(
   val projectName: String,
-  val indexingTimes: JsonProjectIndexingHistoryTimes,
   val totalNumberOfFiles: Int,
+  val indexingTimes: JsonProjectIndexingHistoryTimes,
+  val totalStatsPerFileType: List<StatsPerFileType>,
   val fileProviderStatistics: List<JsonFileProviderIndexStatistics>
-)
+) {
+  data class StatsPerFileType(
+    val fileType: String,
+    val totalNumberOfFiles: Int
+  )
+}
 
-fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory =
-  JsonProjectIndexingHistory(
+fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory {
+  val numberOfFilesPerFileType = hashMapOf<String, Int>()
+  for (providerStatistic in providerStatistics) {
+    for (statPerFileType in providerStatistic.statsPerFileType) {
+      numberOfFilesPerFileType.compute(statPerFileType.fileType) { _, cnt -> (cnt ?: 0) + statPerFileType.numberOfFiles }
+    }
+  }
+  return JsonProjectIndexingHistory(
     projectName,
-    times.convertToJson(),
     providerStatistics.map { it.totalNumberOfFiles }.sum(),
+    times.convertToJson(),
+    numberOfFilesPerFileType.map { JsonProjectIndexingHistory.StatsPerFileType(it.key, it.value) },
     providerStatistics.sortedByDescending { it.totalIndexingTime.nano }
   )
+}
 
 data class JsonIndexDiagnosticAppInfo(
   val build: String,
