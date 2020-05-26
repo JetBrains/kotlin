@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.formatter
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.actionSystem.ShortcutSet
-import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.*
 import com.intellij.ui.components.JBCheckBox
@@ -166,7 +165,7 @@ open class BaseKotlinImportLayoutPanel(title: String) : JPanel(BorderLayout()) {
     }
 }
 
-class KotlinStarImportLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBundle.message("title.packages.to.use.import.with")) {
+class KotlinStarImportLayoutPanel : BaseKotlinImportLayoutPanel(KotlinBundle.message("title.packages.to.use.import.with")) {
     init {
         val importLayoutPanel = ToolbarDecorator.createDecorator(layoutTable)
             .setAddAction { addPackage() }
@@ -182,7 +181,7 @@ class KotlinStarImportLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBundl
     }
 }
 
-class KotlinImportOrderLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBundle.message("title.import.layout")) {
+class KotlinImportOrderLayoutPanel : BaseKotlinImportLayoutPanel(KotlinBundle.message("title.import.layout")) {
     private val cbImportAliasesSeparately = JBCheckBox(KotlinBundle.message("codestyle.layout.import.aliases.separately"))
 
     init {
@@ -190,7 +189,7 @@ class KotlinImportOrderLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBund
 
         val importLayoutPanel = ToolbarDecorator.createDecorator(layoutTable)
             .addExtraAction(
-                object : DumbAwareActionButton(ApplicationBundle.message("button.add.package"), IconUtil.getAddPackageIcon()) {
+                object : DumbAwareActionButton(KotlinBundle.message("button.add.package"), IconUtil.getAddPackageIcon()) {
                     override fun actionPerformed(event: AnActionEvent) {
                         addPackage()
                     }
@@ -257,7 +256,7 @@ class KotlinImportOrderLayoutPanel : BaseKotlinImportLayoutPanel(ApplicationBund
 }
 
 fun createTableForPackageEntries(packageTable: KotlinPackageEntryTable): JBTable {
-    val names = arrayOf(ApplicationBundle.message("listbox.import.package"), ApplicationBundle.message("listbox.import.with.subpackages"))
+    val names = arrayOf(KotlinBundle.message("listbox.import.package"), KotlinBundle.message("listbox.import.with.subpackages"))
     val packageNameColumnIndex = 0
     val withSubpackagesColumnIndex = 1
 
