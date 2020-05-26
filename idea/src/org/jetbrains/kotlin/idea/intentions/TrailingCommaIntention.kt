@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.formatter.trailingComma.canAddTrailingCommaWithRegistryCheck
@@ -20,6 +21,7 @@ class TrailingCommaIntention : SelfTargetingIntention<KtElement>(
     override fun applyTo(element: KtElement, editor: Editor?) {
         val kotlinCustomSettings = CodeStyle.getSettings(element.project).kotlinCustomSettings
         kotlinCustomSettings.ALLOW_TRAILING_COMMA = !kotlinCustomSettings.ALLOW_TRAILING_COMMA
+        CodeStyleSettingsManager.getInstance(element.project).notifyCodeStyleSettingsChanged()
     }
 
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean = element.canAddTrailingCommaWithRegistryCheck().also {
