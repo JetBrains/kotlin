@@ -166,8 +166,12 @@ fun IrFunction.hasPlatformDependent(): Boolean = propertyIfAccessor.hasAnnotatio
 fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =
     if (Visibilities.isPrivate(visibility) || isInlineOnly()) JavaVisibilities.PACKAGE_VISIBILITY else Visibilities.PUBLIC
 
-fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
-    index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype())
+fun IrValueParameter.isInlineParameter() =
+    index >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype()) &&
+            // Parameters with default values are always nullable, so check the expression too.
+            // Note that the frontend has a diagnostic for nullable inline parameters, so actually
+            // making this return `false` requires using `@Suppress`.
+            (!type.isNullable() || defaultValue?.expression?.type?.isNullable() == false)
 
 val IrType.isBoxedArray: Boolean
     get() = classOrNull?.owner?.fqNameWhenAvailable == KotlinBuiltIns.FQ_NAMES.array.toSafe()
