@@ -616,8 +616,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 gradleCompilation.name,
                 classifier
             )]?.dependencies?.map { dependencyMapper.getDependency(it) }?.filterNotNull() ?: emptySet()
-
-            makeConfigurationNamesDefault(dependencyMapper)
         }
     }
 
@@ -825,6 +823,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     ) {
         private val adjustmentMap = HashMap<ExternalDependency, List<ExternalDependency>>()
 
+        private val EXTRA_DEFAULT_CONFIGURATION_NAMES = listOf("metadataApiElements")
+
         private val projectDependencyTransformation =
             transformations.filter { it.projectPath != null }.associateBy { it.projectPath }
 
@@ -899,7 +899,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             return adjustmentMap.getOrPut(dependency) {
                 if (dependency !is ExternalProjectDependency)
                     return@getOrPut adjustLibraryDependency(dependency, parentScope)
-                if (dependency.configurationName != Dependency.DEFAULT_CONFIGURATION)
+                if (dependency.configurationName != Dependency.DEFAULT_CONFIGURATION &&
+                    !EXTRA_DEFAULT_CONFIGURATION_NAMES.contains(dependency.configurationName))
                     return@getOrPut listOf(dependency)
                 val artifacts = dependenciesByProjectPath[dependency.projectPath] ?: return@getOrPut listOf(dependency)
                 val artifactConfiguration = artifacts.mapTo(LinkedHashSet()) {
