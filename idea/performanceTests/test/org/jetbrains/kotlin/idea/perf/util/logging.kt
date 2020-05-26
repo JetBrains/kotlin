@@ -9,7 +9,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 
 inline fun gradleMessage(block: () -> String) {
-    print("#gradle ${block()}")
+    //print("#gradle ${block()}")
 }
 
 inline fun logMessage(message: () -> String) {
@@ -64,12 +64,16 @@ object TeamCity {
         message { "testStarted name='$testName'" }
     }
 
-    inline fun testMetadata(testName: String, name: String, value: Number) {
+    inline fun metadata(testName: String, name: String, value: Number) {
         message { "testMetadata testName='$testName' name='$name' type='number' value='$value'" }
     }
 
+    inline fun artifact(testName: String, name: String, artifactPath: String) {
+        message { "testMetadata testName='$testName' name='$name' type='artifact' value='$artifactPath'" }
+    }
+
     inline fun testFinished(testName: String, durationMs: Long? = null) {
-        message { "testFinished name='$testName'${durationMs?.let { " duration='$durationMs'" }}" }
+        message { "testFinished name='$testName'${durationMs?.let { " duration='$durationMs'" } ?: ""}" }
     }
 
     fun testFailed(testName: String, error: Throwable) = testFailed(testName, toDetails(listOf(error))!!)
