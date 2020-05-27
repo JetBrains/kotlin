@@ -54,12 +54,20 @@ public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFix
         });
     }
 
-    private static void withExpectedDuplicatedHighlighting(boolean expectedDuplicatedHighlighting, Runnable runnable) {
+    private void withExpectedDuplicatedHighlighting(boolean expectedDuplicatedHighlighting, Runnable runnable) {
         if (!expectedDuplicatedHighlighting) {
             runnable.run();
             return;
         }
 
-        ExpectedHighlightingData.expectedDuplicatedHighlighting(runnable);
+        try {
+            ExpectedHighlightingData.expectedDuplicatedHighlighting(runnable);
+        } catch (IllegalStateException e) {
+            if (isFirPlugin()) {
+                runnable.run();
+            } else {
+                throw e;
+            }
+        }
     }
 }

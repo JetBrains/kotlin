@@ -14,9 +14,18 @@ abstract class AbstractFirHighlightingTest : AbstractHighlightingTest() {
     override fun isFirPlugin() = true
 
     override fun checkHighlighting(fileText: String) {
+        val doComparison = !InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, "IGNORE_FIR")
         val checkInfos = !InTextDirectivesUtils.isDirectiveDefined(fileText, NO_CHECK_INFOS_PREFIX);
 
-        // warnings are not supported yet
-        myFixture.checkHighlighting(/* checkWarnings= */ false, checkInfos, /* checkWeakWarnings= */ false)
+        try {
+            // warnings are not supported yet
+            myFixture.checkHighlighting(/* checkWarnings= */ false, checkInfos, /* checkWeakWarnings= */ false)
+        } catch (e: Throwable) {
+            if (doComparison) throw e
+            return
+        }
+        if (!doComparison) {
+            throw AssertionError("Looks like test is passing, please remove IGNORE_FIR")
+        }
     }
 }
