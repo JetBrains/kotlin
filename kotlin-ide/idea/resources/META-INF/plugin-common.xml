@@ -166,21 +166,15 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker"
                         serviceImplementation="org.jetbrains.kotlin.idea.references.ReadWriteAccessCheckerDescriptorsImpl"/>
 
-   <applicationService serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
                         serviceImplementation="org.jetbrains.kotlin.idea.references.KotlinReferenceContributor"/>
 
-   <applicationService serviceInterface="org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts"
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts"
                         serviceImplementation="org.jetbrains.kotlin.idea.artifacts.ProductionKotlinArtifacts"
                         testServiceImplementation="org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts"/>
 
-    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
-
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
-
-
-    <!-- since 192 use light service @Service instead of this declaration -->
-    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
@@ -418,12 +412,12 @@
     <statistician key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinCompletionStatistician"/>
     <statistician key="proximity" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinProximityStatistician"/>
 
+    <editor.linePainter order="first" implementation="org.jetbrains.kotlin.idea.parameterInfo.custom.ReturnHintLinePainter"/>
+
+
     <weigher key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinLookupElementProximityWeigher" id="kotlin.proximity" order="after proximity"/>
 
-    <psi.referenceContributor
-        id="kotlinFilePathReferenceContributor"
-        language="kotlin"
-        implementation="org.jetbrains.kotlin.idea.references.KotlinFilePathReferenceContributor"/>
+
 
     <renamePsiElementProcessor id="KotlinAwareJavaGetter"
                                implementation="org.jetbrains.kotlin.idea.refactoring.rename.KotlinAwareJavaGetterRenameProcessor"
