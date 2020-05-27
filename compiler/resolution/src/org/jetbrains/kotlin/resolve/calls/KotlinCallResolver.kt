@@ -146,6 +146,7 @@ class KotlinCallResolver(
         ) {
             val candidatesWithAnnotation =
                 candidates.filter { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION) }
+            val candidatesWithoutAnnotation = candidates - candidatesWithAnnotation
             if (candidatesWithAnnotation.isNotEmpty()) {
                 val newCandidates = kotlinCallCompleter.chooseCandidateRegardingFactoryPatternResolution(maximallySpecificCandidates, resolutionCallbacks)
                 maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
@@ -154,8 +155,8 @@ class KotlinCallResolver(
                     discriminateGenerics = true
                 )
 
-                if (maximallySpecificCandidates.size > 1) {
-                    maximallySpecificCandidates = candidates.toMutableSet().apply { removeAll(candidatesWithAnnotation) }
+                if (maximallySpecificCandidates.size > 1 && candidatesWithoutAnnotation.any { it in maximallySpecificCandidates }) {
+                    maximallySpecificCandidates = maximallySpecificCandidates.toMutableSet().apply { removeAll(candidatesWithAnnotation) }
                     maximallySpecificCandidates.singleOrNull()?.addDiagnostic(CandidateChosenUsingOverloadResolutionByLambdaAnnotation())
                 }
             }
