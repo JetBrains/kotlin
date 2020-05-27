@@ -11,7 +11,6 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.PersistentFSConstants
 import com.intellij.util.indexing.UnindexedFilesUpdater
-import com.intellij.util.indexing.diagnostic.JsonFileProviderIndexStatistics.Companion.FAST_INDEXER_THRESHOLD_NANO
 import com.intellij.util.text.DateFormatUtil
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -79,54 +78,8 @@ data class JsonProcessingSpeed(val totalBytes: BytesNumber, val totalTime: TimeN
     if (totalTime == 0L) {
       return "0 B/s"
     }
-    val bytesPerSecond = (totalBytes.toDouble() * TimeUnit.NANOSECONDS.toSeconds(1).toDouble() / totalTime).toLong()
+    val bytesPerSecond = (totalBytes.toDouble() * TimeUnit.SECONDS.toNanos(1).toDouble() / totalTime).toLong()
     return StringUtil.formatFileSize(bytesPerSecond) + "/s"
-  }
-}
-
-@JsonSerialize(using = JsonTimeStats.Companion::class)
-data class JsonTimeStats(
-  val partOfTotal: JsonPercentages,
-  val minTime: JsonTime,
-  val maxTime: JsonTime,
-  val meanTime: JsonTime,
-  val medianTime: JsonTime
-) {
-  companion object : JsonSerializer<JsonTimeStats>() {
-    override fun serialize(value: JsonTimeStats, gen: JsonGenerator, serializers: SerializerProvider?) {
-      val s = buildString {
-        append("part of total: ${value.partOfTotal.presentablePercentages()}; ")
-        append("max: ${value.maxTime.presentableDuration()}; ")
-        append("mean: ${value.meanTime.presentableDuration()}; ")
-        append("median: ${value.medianTime.presentableDuration()}; ")
-        append("min: ${value.minTime.presentableDuration()}")
-      }
-      gen.writeString(s)
-    }
-  }
-}
-
-fun TimeStats.toTimeStats(cumulativeTime: TimeNano): JsonTimeStats? {
-  if (isEmpty) {
-    return null
-  }
-  return JsonTimeStats(
-    JsonPercentages(calculatePart(sumTime, cumulativeTime)),
-    JsonTime(minTime),
-    JsonTime(maxTime),
-    JsonTime(meanTime.toLong()),
-    JsonTime(getMedianOfArray(maxNTimes).toLong())
-  )
-}
-
-private fun <N : Number> getMedianOfArray(elements: Collection<N>): Double {
-  require(elements.isNotEmpty())
-  val sorted = elements.map { it.toDouble() }.sorted()
-  return if (sorted.size % 2 == 0) {
-    (sorted[sorted.size / 2] + sorted[sorted.size / 2 - 1]) / 2.0
-  }
-  else {
-    sorted[sorted.size / 2]
   }
 }
 
@@ -139,34 +92,31 @@ data class JsonFileProviderIndexStatistics(
   val fastIndexers: List<String /* Index ID */>
 ) {
 
-  companion object {
-    val FAST_INDEXER_THRESHOLD_NANO = TimeUnit.MILLISECONDS.toNanos(1)
-  }
-
   data class JsonStatsPerFileType(
     val fileType: String,
     val numberOfFiles: Int,
-    val indexingTimeStats: JsonTimeStats,
-    val contentLoadingTimeStats: JsonTimeStats
+    val totalFilesSize: JsonFileSize,
+    val partOfTotalIndexingTime: JsonPercentages,
+    val partOfTotalContentLoadingTime: JsonPercentages
   )
 
   data class JsonStatsPerIndexer(
     val indexId: String,
-    val indexingTimeStats: JsonTimeStats
+    val partOfTotalIndexingTime: JsonPercentages
   )
 }
 
 fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics {
   val statsPerFileType = aggregateStatsPerFileType()
   val allStatsPerIndexer = aggregateStatsPerIndexer()
-  val (statsPerIndexer, fastIndexers) = allStatsPerIndexer.partition { it.indexingTimeStats.maxTime.nano > FAST_INDEXER_THRESHOLD_NANO }
+  val (statsPerIndexer, fastIndexers) = allStatsPerIndexer.partition { it.partOfTotalIndexingTime.percentages > 0.01 }
 
   return JsonFileProviderIndexStatistics(
     providerDebugName,
     numberOfFiles,
     JsonTime(totalTime),
     statsPerFileType.sortedByDescending { it.numberOfFiles },
-    statsPerIndexer.sortedByDescending { it.indexingTimeStats.partOfTotal.percentages },
+    statsPerIndexer.sortedByDescending { it.partOfTotalIndexingTime.percentages },
     fastIndexers.map { it.indexId }.sorted()
   )
 }
@@ -187,8 +137,9 @@ private fun FileProviderIndexStatistics.aggregateStatsPerFileType(): List<JsonFi
       JsonFileProviderIndexStatistics.JsonStatsPerFileType(
         fileTypeName,
         stats.numberOfFiles,
-        stats.indexingTime.toTimeStats(totalIndexingTimePerFileType) ?: return@mapNotNull null,
-        stats.contentLoadingTime.toTimeStats(totalContentLoadingTimePerFileType) ?: return@mapNotNull null
+        JsonFileSize(stats.totalBytes),
+        JsonPercentages(calculatePart(stats.indexingTime.sumTime, totalIndexingTimePerFileType)),
+        JsonPercentages(calculatePart(stats.contentLoadingTime.sumTime, totalContentLoadingTimePerFileType))
       )
     }
 }
@@ -201,8 +152,10 @@ private fun FileProviderIndexStatistics.aggregateStatsPerIndexer(): List<JsonFil
 
   return indexingStatistics.statsPerIndexer
     .mapNotNull { (indexId, stats) ->
-      val jsonTimeStats = stats.indexingTime.toTimeStats(totalIndexingTimePerIndexer) ?: return@mapNotNull null
-      JsonFileProviderIndexStatistics.JsonStatsPerIndexer(indexId, jsonTimeStats)
+      JsonFileProviderIndexStatistics.JsonStatsPerIndexer(
+        indexId,
+        JsonPercentages(calculatePart(stats.indexingTime.sumTime, totalIndexingTimePerIndexer))
+      )
     }
 }
 
@@ -299,6 +252,7 @@ private fun ProjectIndexingHistory.aggregateStatsPerFileType(): List<JsonProject
     calculatePart(it.value.totalIndexingTimeInAllThreads, totalIndexingTime)
   }
 
+  @Suppress("DuplicatedCode")
   val totalContentLoadingTime = totalStatsPerFileType.values.map { it.totalContentLoadingTimeInAllThreads }.sum()
   val fileTypeToContentLoadingTimePart = totalStatsPerFileType.mapValues {
     calculatePart(it.value.totalContentLoadingTimeInAllThreads, totalContentLoadingTime)
