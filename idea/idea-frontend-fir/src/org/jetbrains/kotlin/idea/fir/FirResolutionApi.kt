@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 
 private val FirResolvePhase.stubMode: Boolean
     get() = this <= FirResolvePhase.DECLARATIONS
@@ -51,7 +51,8 @@ private fun FirFile.findCallableMember(
         return provider.getClassDeclaredCallableSymbols(ClassId(packageFqName, klassFqName, false), declName)
             .find { symbol: FirCallableSymbol<*> ->
                 symbol.fir.psi == callableMember
-            }?.fir ?: error("Cannot find FIR callable declaration ${CallableId(packageFqName, klassFqName, declName)}")
+            }?.fir
+            ?: error("Cannot find FIR callable declaration ${CallableId(packageFqName, klassFqName, declName)}")
     }
     // NB: not sure it's correct to use member scope provider from here (because of possible changes)
     val memberScope = FirPackageMemberScope(this.packageFqName, session)
@@ -228,12 +229,30 @@ inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
     phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
 ) = getOrBuildFir(state, phase) as? E
 
+
+private fun KtElement.getNonLocalContainingDeclarationWithFqName(): KtDeclaration? {
+    var container = parent
+    while (container != null && container !is KtFile) {
+        if (container is KtDeclaration
+            && (container is KtClassOrObject || container is KtDeclarationWithBody)
+            && !KtPsiUtil.isLocal(container)
+            && container.name != null
+            && container !is KtEnumEntry
+            && container.containingClassOrObject !is KtEnumEntry
+        ) {
+            return container
+        }
+        container = container.parent
+    }
+    return null
+}
+
 fun KtElement.getOrBuildFir(
     state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
 ): FirElement {
     val containerFir: FirDeclaration =
-        when (val container = this.containingNonLocalDeclaration()) {
+        when (val container = getNonLocalContainingDeclarationWithFqName()) {
             is KtCallableDeclaration -> container.getOrBuildFir(state, phase)
             is KtClassOrObject -> container.getOrBuildFir(state, phase)
             null -> containingKtFile.getOrBuildFir(state, phase)
