@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -26,6 +25,7 @@ fun referenceExpectsForUsedActuals(expectDescriptorToSymbol: MutableMap<Declarat
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
+
         override fun visitClass(declaration: IrClass) {
             declaration.forEachExpect {
                 val symbol = symbolTable.referenceClass(it as ClassDescriptor)
@@ -36,6 +36,7 @@ fun referenceExpectsForUsedActuals(expectDescriptorToSymbol: MutableMap<Declarat
             }
             super.visitDeclaration(declaration)
         }
+
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
             declaration.forEachExpect {
                 val symbol = symbolTable.referenceSimpleFunction(it as FunctionDescriptor);
@@ -43,6 +44,7 @@ fun referenceExpectsForUsedActuals(expectDescriptorToSymbol: MutableMap<Declarat
             }
             super.visitDeclaration(declaration)
         }
+
         override fun visitConstructor(declaration: IrConstructor) {
             declaration.forEachExpect {
                 val symbol = symbolTable.referenceConstructor(it as ClassConstructorDescriptor)
@@ -51,6 +53,7 @@ fun referenceExpectsForUsedActuals(expectDescriptorToSymbol: MutableMap<Declarat
             }
             super.visitDeclaration(declaration)
         }
+
         override fun visitProperty(declaration: IrProperty) {
             declaration.forEachExpect {
                 val symbol = symbolTable.referenceProperty(it as PropertyDescriptor)
@@ -58,6 +61,7 @@ fun referenceExpectsForUsedActuals(expectDescriptorToSymbol: MutableMap<Declarat
             }
             super.visitDeclaration(declaration)
         }
+
         override fun visitEnumEntry(declaration: IrEnumEntry) {
             declaration.forEachExpect {
                 val symbol = symbolTable.referenceEnumEntry(it as ClassDescriptor)
@@ -66,12 +70,8 @@ fun referenceExpectsForUsedActuals(expectDescriptorToSymbol: MutableMap<Declarat
             }
             super.visitDeclaration(declaration)
         }
-        override fun visitTypeAlias(declaration: IrTypeAlias) {
-            // Force actual type alias right hand side deserialization.
-            if (declaration.isActual) {
-                declaration.expandedType.classOrNull?.descriptor?.let { symbolTable.referenceClass(it) }
-            }
 
+        override fun visitTypeAlias(declaration: IrTypeAlias) {
             declaration.forEachExpect {
                 val symbol = when (it) {
                     is ClassDescriptor -> symbolTable.referenceClass(it)
