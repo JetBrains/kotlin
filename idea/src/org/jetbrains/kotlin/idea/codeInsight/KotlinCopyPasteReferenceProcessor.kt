@@ -173,7 +173,10 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
             }
         }
 
-        val allElementsToResolve = elements.flatMap { it.collectDescendantsOfType<KtElement>() }
+        val allElementsToResolve = runReadAction {
+            elements.flatMap { it.collectDescendantsOfType<KtElement>() }
+        }
+
         // TODO: allowResolveInDispatchThread could be dropped as soon as
         //  ConvertJavaCopyPasteProcessor will perform it on non UI thread
         val bindingContext = runReadAction {
