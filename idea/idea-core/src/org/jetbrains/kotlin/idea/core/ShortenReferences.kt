@@ -338,12 +338,11 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                         val tryImport = result.descriptors.isNotEmpty()
                                 && result.descriptors.none { it in failedToImportDescriptors }
                                 && result.descriptors.all { mayImport(it, file) }
-                        toBeShortened = if (tryImport) {
+
+                        if (tryImport) {
                             descriptorsToImport.addAll(result.descriptors)
-                            true
-                        } else {
-                            false
                         }
+                        toBeShortened = tryImport
                     }
 
                     AnalyzeQualifiedElementResult.Skip -> {
@@ -516,10 +515,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             element: KtDotQualifiedExpression,
             bindingContext: BindingContext
         ): AnalyzeQualifiedElementResult {
-            if (PsiTreeUtil.getParentOfType(
-                    element,
-                    KtImportDirective::class.java, KtPackageDirective::class.java
-                ) != null || !canBePossibleToDropReceiver(element, bindingContext)
+            if (PsiTreeUtil.getParentOfType(element, KtImportDirective::class.java, KtPackageDirective::class.java) != null ||
+                !canBePossibleToDropReceiver(element, bindingContext)
             ) return AnalyzeQualifiedElementResult.Skip
 
             val selector = element.selectorExpression ?: return AnalyzeQualifiedElementResult.Skip
@@ -719,11 +716,9 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             val receiver = element.receiverExpression
 
-            if (PsiTreeUtil.getParentOfType(
-                    element,
-                    KtImportDirective::class.java, KtPackageDirective::class.java
-                ) != null
-            ) return AnalyzeQualifiedElementResult.Skip
+            if (PsiTreeUtil.getParentOfType(element, KtImportDirective::class.java, KtPackageDirective::class.java) != null) {
+                return AnalyzeQualifiedElementResult.Skip
+            }
 
             val receiverTarget = receiver.singleTarget(bindingContext) as? ClassDescriptor ?: return AnalyzeQualifiedElementResult.Skip
 
@@ -740,11 +735,9 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             // TODO: More generic solution may be possible
             if (selectorsSelectorTarget is PropertyDescriptor) {
                 val source = selectorsSelectorTarget.source.getPsi() as? KtProperty
-                if (source != null && isEnumCompanionPropertyWithEntryConflict(
-                        source,
-                        source.name ?: ""
-                    )
-                ) return AnalyzeQualifiedElementResult.Skip
+                if (source != null && isEnumCompanionPropertyWithEntryConflict(source, source.name ?: "")) {
+                    return AnalyzeQualifiedElementResult.Skip
+                }
             }
 
             return AnalyzeQualifiedElementResult.ShortenNow
