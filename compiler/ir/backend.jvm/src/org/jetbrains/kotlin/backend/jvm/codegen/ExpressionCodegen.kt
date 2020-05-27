@@ -590,8 +590,7 @@ class ExpressionCodegen(
         val index = frameMap.getIndex(irSymbol)
         if (index >= 0)
             return index
-        val dump = if (irSymbol.isBound) irSymbol.owner.dump() else "??? unbound symbol ???"
-        throw AssertionError("Non-mapped local declaration: $dump\n in ${irFunction.dump()}")
+        throw AssertionError("Non-mapped local declaration: $irSymbol\n in ${irFunction.dump()}")
     }
 
     private fun handlePlusMinus(expression: IrSetVariable, value: IrExpression?, isMinus: Boolean): Boolean {
