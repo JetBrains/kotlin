@@ -46,6 +46,14 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
         completion: Continuation<T>
 ): Any? = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
 
+@Suppress("UNCHECKED_CAST")
+@kotlin.internal.InlineOnly
+internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
+        receiver: R,
+        param: P,
+        completion: Continuation<T>
+): Any? = (this as Function3<R, P, Continuation<T>, Any?>).invoke(receiver, param, completion)
+
 private object CoroutineSuspendedMarker
 
 
