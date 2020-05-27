@@ -306,8 +306,11 @@ class MultiThreadSearcher implements SESearcher {
       List<SearchEverywhereFoundElementInfo> toRemove = new ArrayList<>(otherElementsMap.get(REPLACE));
       toRemove.forEach(info -> {
         Collection<SearchEverywhereFoundElementInfo> list = sections.get(info.getContributor());
-            list.remove(info);
-            LOG.debug(String.format("Element %s for contributor %s is removed", info.getElement().toString(), info.getContributor().getSearchProviderId()));
+        if (list != null) {
+          list.remove(info);
+          LOG.debug(String.format("Element %s for contributor %s is removed", info.getElement().toString(),
+                                  info.getContributor().getSearchProviderId()));
+        }
       });
       runInNotificationExecutor(() -> myListener.elementsRemoved(toRemove));
       return true;
