@@ -1,6 +1,3 @@
-const val constProperty1 = 42
-val constProperty2 = 42 // intentionally left as non-const
-
 val delegatedProperty1: Int by lazy { 42 }
 val delegatedProperty2 = 42 // intentionally left as non-delegated
 val delegatedProperty3: Int by mapOf("delegatedProperty3" to 42)
