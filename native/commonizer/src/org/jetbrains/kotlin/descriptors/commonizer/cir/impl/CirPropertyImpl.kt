@@ -31,5 +31,6 @@ data class CirPropertyImpl(
     override val setter: CirPropertySetter?,
     override val backingFieldAnnotations: List<CirAnnotation>?,
     override val delegateFieldAnnotations: List<CirAnnotation>?,
-    override val compileTimeInitializer: ConstantValue<*>?
+    override val compileTimeInitializer: ConstantValue<*>?,
+    override val isLiftedUp: Boolean
 ) : CirProperty

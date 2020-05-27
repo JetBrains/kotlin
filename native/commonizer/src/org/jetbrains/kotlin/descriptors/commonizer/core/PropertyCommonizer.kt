@@ -9,13 +9,16 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirProperty
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertyFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertyGetterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 class PropertyCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirProperty>(cache) {
     private val setter = PropertySetterCommonizer()
     private var isExternal = true
+    private var constCompileTimeInitializer: ConstantValue<*>? = null
 
     override fun commonizationResult(): CirProperty {
         val setter = setter.result
+        val constCompileTimeInitializer = constCompileTimeInitializer
 
         return CirPropertyFactory.create(
             annotations = emptyList(),
@@ -30,20 +33,43 @@ class PropertyCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropert
             kind = kind,
             isVar = setter != null,
             isLateInit = false,
-            isConst = false,
+            isConst = constCompileTimeInitializer != null,
             isDelegate = false,
             getter = CirPropertyGetterFactory.DEFAULT_NO_ANNOTATIONS,
             setter = setter,
             backingFieldAnnotations = null,
             delegateFieldAnnotations = null,
-            compileTimeInitializer = null
+            compileTimeInitializer = constCompileTimeInitializer,
+            isLiftedUp = constCompileTimeInitializer != null
         )
     }
 
+    override fun initialize(first: CirProperty) {
+        super.initialize(first)
+
+        if (first.isConst) {
+            constCompileTimeInitializer = first.compileTimeInitializer
+        }
+    }
+
     override fun doCommonizeWith(next: CirProperty): Boolean {
-        when {
-            next.isConst -> return false // expect property can't be const because expect can't have initializer
-            next.isLateInit -> return false // expect property can't be lateinit
+        if (next.isLateInit) {
+            // expect property can't be lateinit
+            return false
+        }
+
+        val constCompileTimeInitializer = constCompileTimeInitializer
+        if (next.isConst) {
+            // const properties should be lifted up
+            // otherwise commonization should fail: expect property can't be const because expect can't have initializer
+
+            if (constCompileTimeInitializer == null || constCompileTimeInitializer != next.compileTimeInitializer) {
+                // previous property was not constant or const properties have different constants
+                return false
+            }
+        } else if (constCompileTimeInitializer != null) {
+            // previous property was constant but this one is not
+            return false
         }
 
         val result = super.doCommonizeWith(next)

@@ -24,10 +24,16 @@ internal fun CirPropertyNode.buildDescriptors(
     containingDeclarations: List<DeclarationDescriptor?>
 ) {
     val commonProperty = common()
-    val markAsExpectAndActual = commonProperty != null && commonProperty.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
 
-    target.forEachIndexed { index, property ->
-        property?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsExpectAndActual)
+    val isLiftedUp = commonProperty?.isLiftedUp == true
+    val markAsExpectAndActual = commonProperty != null
+            && commonProperty.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
+            && !isLiftedUp
+
+    if (!isLiftedUp) {
+        target.forEachIndexed { index, property ->
+            property?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsExpectAndActual)
+        }
     }
 
     commonProperty?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)

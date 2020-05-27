@@ -53,5 +53,13 @@ interface CirCallableMemberWithParameters {
     val hasSynthesizedParameterNames: Boolean
 }
 
+/**
+ * Indicates a declaration that could be completely lifted up to "common" fragment.
+ * NOTE: Interning can't be applied to the whole lifted declaration, only to its parts!
+ */
+interface CirLiftedUpDeclaration : CirDeclaration {
+    val isLiftedUp: Boolean
+}
+
 /** Indicates presence of recursion in lazy calculations. */
 interface CirRecursionMarker : CirDeclaration
