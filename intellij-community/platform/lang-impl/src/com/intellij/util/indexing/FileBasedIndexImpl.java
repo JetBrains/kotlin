@@ -1197,7 +1197,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     final int fileId = Math.abs(getIdMaskingNonIdBasedFile(file));
 
     FileIndexingResult indexingResult;
-    long startTime = System.nanoTime();
     try {
       // if file was scheduled for update due to vfs events then it is present in myFilesToUpdate
       // in this case we consider that current indexing (out of roots backed CacheUpdater) will cover its content
@@ -1222,7 +1221,9 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         ((VirtualFileSystemEntry)file).setFileIndexed(true);
       }
       getChangedFilesCollector().removeFileIdFromFilesScheduledForUpdate(fileId);
-      return new FileIndexingStatistics(System.nanoTime() - startTime,
+      // Indexing time takes only input data mapping time into account.
+      long indexingTime = indexingResult.timesPerIndexer.values().stream().mapToLong(e -> e).sum();
+      return new FileIndexingStatistics(indexingTime,
                                         indexingResult.fileType,
                                         indexingResult.timesPerIndexer);
     }
@@ -1242,6 +1243,14 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       this.setIndexedStatus = setIndexedStatus;
       this.timesPerIndexer = timesPerIndexer;
       fileType = type;
+    }
+  }
+
+  private static final class SingleIndexUpdateStats {
+    public final long mapInputTime;
+
+    private SingleIndexUpdateStats(long mapInputTime) {
+      this.mapInputTime = mapInputTime;
     }
   }
 
@@ -1285,13 +1294,11 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           final ID<?, ?> indexId = affectedIndexCandidates.get(i);
           if (getInputFilter(indexId).acceptInput(file) && getIndexingState(fc, indexId).updateRequired()) {
             ProgressManager.checkCanceled();
-            long startTime = System.nanoTime();
-            try {
-              if (!updateSingleIndex(indexId, file, inputId, fc)) {
-                setIndexedStatus.set(Boolean.FALSE);
-              }
-            } finally {
-              perIndexerTimes.put(indexId, System.nanoTime() - startTime);
+            SingleIndexUpdateStats updateStats = updateSingleIndex(indexId, file, inputId, fc);
+            if (updateStats == null) {
+              setIndexedStatus.set(Boolean.FALSE);
+            } else {
+              perIndexerTimes.put(indexId, updateStats.mapInputTime);
             }
             currentIndexedStates.remove(indexId);
           }
@@ -1310,13 +1317,11 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         ProgressManager.checkCanceled();
         if (getIndex(indexId).getIndexingStateForFile(inputId, fc).updateRequired()) {
           ProgressManager.checkCanceled();
-          long startTime = System.nanoTime();
-          try {
-            if (!updateSingleIndex(indexId, file, inputId, null)) {
-              setIndexedStatus.set(Boolean.FALSE);
-            }
-          } finally {
-            perIndexerTimes.put(indexId, System.nanoTime() - startTime);
+          SingleIndexUpdateStats updateStats = updateSingleIndex(indexId, file, inputId, null);
+          if (updateStats == null) {
+            setIndexedStatus.set(Boolean.FALSE);
+          } else {
+            perIndexerTimes.put(indexId, updateStats.mapInputTime);
           }
         }
       }
@@ -1355,10 +1360,11 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     fc.setProject(project);
   }
 
-  boolean updateSingleIndex(@NotNull ID<?, ?> indexId, @Nullable VirtualFile file, int inputId, @Nullable FileContent currentFC) {
+  @Nullable("null in case index update is not necessary or the update has failed")
+  SingleIndexUpdateStats updateSingleIndex(@NotNull ID<?, ?> indexId, @Nullable VirtualFile file, int inputId, @Nullable FileContent currentFC) {
     if (!myRegisteredIndexes.isExtensionsDataLoaded()) reportUnexpectedAsyncInitState();
     if (!RebuildStatus.isOk(indexId) && !myIsUnitTestMode) {
-      return false; // the index is scheduled for rebuild, no need to update
+      return null; // the index is scheduled for rebuild, no need to update
     }
     myLocalModCount.incrementAndGet();
 
@@ -1367,8 +1373,14 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
     markFileIndexed(file);
     try {
-      // Propagate MapReduceIndex.MapInputException and ProcessCancelledException happening on input mapping.
-      Computable<Boolean> storageUpdate = index.mapInputAndPrepareUpdate(inputId, currentFC);
+      Computable<Boolean> storageUpdate;
+      long mapInputTime = System.nanoTime();
+      try {
+        // Propagate MapReduceIndex.MapInputException and ProcessCancelledException happening on input mapping.
+        storageUpdate = index.mapInputAndPrepareUpdate(inputId, currentFC);
+      } finally {
+        mapInputTime = System.nanoTime() - mapInputTime;
+      }
       if (myStorageBufferingHandler.runUpdate(false, storageUpdate)) {
         ConcurrencyUtil.withLock(myReadLock, () -> {
           if (currentFC != null) {
@@ -1379,19 +1391,19 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           }
         });
       }
+      return new SingleIndexUpdateStats(mapInputTime);
     }
     catch (RuntimeException exception) {
       Throwable causeToRebuildIndex = getCauseToRebuildIndex(exception);
       if (causeToRebuildIndex != null) {
         requestRebuild(indexId, exception);
-        return false;
+        return null;
       }
       throw exception;
     }
     finally {
       unmarkBeingIndexed();
     }
-    return true;
   }
 
   private static void markFileIndexed(@Nullable VirtualFile file) {
