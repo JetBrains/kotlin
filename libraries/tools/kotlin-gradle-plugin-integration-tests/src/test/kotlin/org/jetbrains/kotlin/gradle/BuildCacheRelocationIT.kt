@@ -31,7 +31,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             withBuildCache = true,
-            androidGradlePluginVersion = AGPVersion.v3_1_0,
+            androidGradlePluginVersion = AGPVersion.v3_2_0,
             androidHome = KotlinTestUtils.findAndroidSdk()
         )
 
