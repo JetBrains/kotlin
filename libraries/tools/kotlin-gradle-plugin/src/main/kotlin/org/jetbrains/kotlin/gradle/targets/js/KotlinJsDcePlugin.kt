@@ -22,12 +22,10 @@ class KotlinJsDcePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.logger.warn(
             """
-                Please pay attention:
-                `kotlin-dce-js` plugin is deprecated.
-                DCE is automatically integrated in `org.jetbrains.kotlin.js` plugin
-                Please follow https://kotlinlang.org/docs/reference/js-project-setup.html to set up project with `org.jetbrains.kotlin.js` plugin.
-                Additional information about JavaScript DCE you can fin here - https://kotlinlang.org/docs/reference/javascript-dce.html
-            
+                The `kotlin-dce-js` Gradle plugin has been deprecated.
+                DCE is now integrated in the `org.jetbrains.kotlin.js` plugin.
+                For plugin usage details, see https://kotlinlang.org/docs/reference/js-project-setup.html.
+                For more details about JavaScript DCE, see https://kotlinlang.org/docs/reference/javascript-dce.html
         """.trimIndent()
         )
         val kotlinExtension =

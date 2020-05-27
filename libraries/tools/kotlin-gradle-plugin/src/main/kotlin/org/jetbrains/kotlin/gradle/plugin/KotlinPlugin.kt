@@ -717,10 +717,9 @@ internal open class Kotlin2JsPlugin(
     override fun apply(project: Project) {
         project.logger.warn(
             """
-                Please pay attention:
-                `kotlin2js` plugin is deprecated.
-                Please follow https://kotlinlang.org/docs/reference/js-project-setup.html to set up project with `org.jetbrains.kotlin.js` plugin
-            
+                The `kotlin2js` Gradle plugin has been deprecated.
+                Please use `org.jetbrains.kotlin.js` plugin instead.
+                For usage details, see https://kotlinlang.org/docs/reference/js-project-setup.html
         """.trimIndent()
         )
         val target = KotlinWithJavaTarget<KotlinJsOptions>(project, KotlinPlatformType.js, targetName)
