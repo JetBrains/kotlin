@@ -40,7 +40,7 @@ data class JsonTime(val nano: Long) {
 }
 
 @JsonSerialize(using = JsonPercentages.Companion::class)
-data class JsonPercentages(val percentages: Int) {
+data class JsonPercentages(val percentages: Double) {
   companion object : JsonSerializer<JsonPercentages>() {
     override fun serialize(value: JsonPercentages, gen: JsonGenerator, serializers: SerializerProvider?) {
       gen.writeString(value.presentablePercentages())
@@ -48,11 +48,11 @@ data class JsonPercentages(val percentages: Int) {
   }
 
   fun presentablePercentages(): String =
-    if (percentages < 1) {
+    if (percentages < 0.01) {
       "< 1%"
     }
     else {
-      "$percentages%"
+      "${String.format("%.1f", percentages)}%"
     }
 }
 
@@ -229,12 +229,12 @@ data class JsonProjectIndexingHistory(
   )
 }
 
-private fun calculatePart(part: Long, total: Long): Int =
+private fun calculatePart(part: Long, total: Long): Double =
   if (total == 0L) {
-    100
+    1.0
   }
   else {
-    ((part.toDouble() / total) * 100).toInt()
+    part.toDouble() / total
   }
 
 fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory {
