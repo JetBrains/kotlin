@@ -172,7 +172,7 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val referenceName = buildReferenceText(element) ?: return
         val factory = KtPsiFactory(element)
-        val lambdaArgument = element.parent as? KtLambdaArgument
+        val lambdaArgument = element.parentValueArgument() as? KtLambdaArgument
         if (lambdaArgument == null) {
             // Without lambda argument syntax, just replace lambda with reference
             val callableReferenceExpr = factory.createCallableReferenceExpression(referenceName) ?: return
@@ -220,11 +220,19 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
 
     companion object {
         private fun KtLambdaExpression.lambdaParameterType(context: BindingContext? = null): KotlinType? {
-            val argument = parent as? KtValueArgument ?: return null
+            val argument = parentValueArgument() ?: return null
             val callExpression = argument.getStrictParentOfType<KtCallExpression>() ?: return null
             return callExpression
                 .getResolvedCall(context ?: analyze(BodyResolveMode.PARTIAL))
                 ?.getParameterForArgument(argument)?.type
+        }
+
+        private fun KtLambdaExpression.parentValueArgument(): KtValueArgument? {
+            return if (parent is KtLabeledExpression) {
+                parent.parent
+            } else {
+                parent
+            } as? KtValueArgument
         }
 
         private fun buildReferenceText(lambdaExpression: KtLambdaExpression, shortTypes: Boolean): String? {
