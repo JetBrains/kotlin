@@ -9,10 +9,29 @@ data class ProjectIndexingHistory(val projectName: String) {
 
   val providerStatistics: MutableList<JsonFileProviderIndexStatistics> = arrayListOf()
 
+  val totalStatsPerFileType: Map<String /* File type name */, StatsPerFileType>
+    get() = _totalStatsPerFileType
+
+  private val _totalStatsPerFileType = hashMapOf<String /* File type name */, StatsPerFileType>()
+
+  @Synchronized
   fun addProviderStatistics(statistics: FileProviderIndexStatistics) {
     // Convert to Json to release memory occupied by statistic values.
     providerStatistics += statistics.convertToJson()
+
+    for ((fileType, fileTypeStats) in statistics.indexingStatistics.statsPerFileType) {
+      val totalStats = _totalStatsPerFileType.getOrPut(fileType) { StatsPerFileType(0, 0, 0) }
+      totalStats.totalNumberOfFiles += fileTypeStats.numberOfFiles
+      totalStats.totalIndexingTimeInAllThreads += fileTypeStats.indexingTime.sumTime
+      totalStats.totalContentLoadingTimeInAllThreads += fileTypeStats.contentLoadingTime.sumTime
+    }
   }
+
+  data class StatsPerFileType(
+    var totalNumberOfFiles: Int,
+    var totalIndexingTimeInAllThreads: TimeNano,
+    var totalContentLoadingTimeInAllThreads: TimeNano
+  )
 
   data class IndexingTimes(
     var startIndexing: TimeMillis = 0,

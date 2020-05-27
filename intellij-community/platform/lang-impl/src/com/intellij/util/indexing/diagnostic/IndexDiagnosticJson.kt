@@ -62,8 +62,7 @@ data class JsonTimeStats(
   val minTime: JsonTime,
   val maxTime: JsonTime,
   val meanTime: JsonTime,
-  val medianTime: JsonTime,
-  val cumulativeTime: TimeNano // Used only to calculate aggregate stats.
+  val medianTime: JsonTime
 ) {
   companion object : JsonSerializer<JsonTimeStats>() {
     override fun serialize(value: JsonTimeStats, gen: JsonGenerator, serializers: SerializerProvider?) {
@@ -88,8 +87,7 @@ fun TimeStats.toTimeStats(cumulativeTime: TimeNano): JsonTimeStats? {
     JsonTime(minTime),
     JsonTime(maxTime),
     JsonTime(meanTime.toLong()),
-    JsonTime(getMedianOfArray(maxNTimes).toLong()),
-    cumulativeTime
+    JsonTime(getMedianOfArray(maxNTimes).toLong())
   )
 }
 
@@ -240,34 +238,28 @@ private fun calculatePart(part: Long, total: Long): Int =
   }
 
 fun ProjectIndexingHistory.convertToJson(): JsonProjectIndexingHistory {
-  val fileTypeToAllStats = providerStatistics.flatMap { it.statsPerFileType }.groupBy { it.fileType }
-
-  val overallIndexingTime = fileTypeToAllStats.values.flatten().map { it.indexingTimeStats.cumulativeTime }.sum()
-  val fileTypeToIndexingTimePart = fileTypeToAllStats.mapValues { (_, stats) ->
-    val fileTypeIndexingTime = stats.map { it.indexingTimeStats.cumulativeTime }.sum()
-    calculatePart(fileTypeIndexingTime, overallIndexingTime)
+  val overallIndexingTime = totalStatsPerFileType.values.map { it.totalIndexingTimeInAllThreads }.sum()
+  val fileTypeToIndexingTimePart = totalStatsPerFileType.mapValues {
+    calculatePart(it.value.totalIndexingTimeInAllThreads, overallIndexingTime)
   }
 
-  @Suppress("DuplicatedCode")
-  val overallContentLoadingTime = fileTypeToAllStats.values.flatten().map { it.contentLoadingTimeStats.cumulativeTime }.sum()
-  val fileTypeToContentLoadingTimePart = fileTypeToAllStats.mapValues { (_, stats) ->
-    val fileTypeIndexingTime = stats.map { it.contentLoadingTimeStats.cumulativeTime }.sum()
-    calculatePart(fileTypeIndexingTime, overallContentLoadingTime)
+  val overallContentLoadingTime = totalStatsPerFileType.values.map { it.totalContentLoadingTimeInAllThreads }.sum()
+  val fileTypeToContentLoadingTimePart = totalStatsPerFileType.mapValues {
+    calculatePart(it.value.totalContentLoadingTimeInAllThreads, overallContentLoadingTime)
   }
 
-  val numberOfFilesPerFileType = fileTypeToAllStats.mapValues { (_, stats) -> stats.map { it.numberOfFiles }.sum() }
+  val totalNumberOfFiles = totalStatsPerFileType.map { it.value.totalNumberOfFiles }.sum()
+
   return JsonProjectIndexingHistory(
     projectName,
-    providerStatistics.map { it.totalNumberOfFiles }.sum(),
+    totalNumberOfFiles,
     times.convertToJson(),
-    numberOfFilesPerFileType.map { (fileType, totalNumberOfFiles) ->
-      val partOfTotalIndexingTime = fileTypeToIndexingTimePart.getValue(fileType)
-      val partOfTotalContentLoadingTime = fileTypeToContentLoadingTimePart.getValue(fileType)
+    totalStatsPerFileType.map { (fileType, stats) ->
       JsonProjectIndexingHistory.StatsPerFileType(
         fileType,
-        JsonPercentages(partOfTotalIndexingTime),
-        JsonPercentages(partOfTotalContentLoadingTime),
-        totalNumberOfFiles
+        JsonPercentages(fileTypeToIndexingTimePart.getValue(fileType)),
+        JsonPercentages(fileTypeToContentLoadingTimePart.getValue(fileType)),
+        stats.totalNumberOfFiles
       )
     }.sortedByDescending { it.totalNumberOfFiles },
     providerStatistics.sortedByDescending { it.totalIndexingTime.nano }
