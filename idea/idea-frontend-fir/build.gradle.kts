@@ -4,24 +4,31 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":compiler:psi"))
-    compileOnly(project(":idea:idea-frontend-independent"))
-    implementation(project(":idea:idea-frontend-api"))
-    compileOnly(project(":idea:idea-core"))
-    compileOnly(project(":compiler:fir:fir2ir"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:checkers"))
-    compileOnly(project(":compiler:fir:java"))
-    compileOnly(project(":compiler:fir:jvm"))
-    compileOnly(intellijCoreDep())
-    compileOnly(intellijDep())
+    compile(project(":compiler:psi"))
+    compile(project(":idea:idea-frontend-independent"))
+    compile(project(":idea:idea-frontend-api"))
+    compile(project(":idea:idea-core"))
+    compile(project(":compiler:fir:fir2ir"))
+    compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:checkers"))
+    compile(project(":compiler:fir:java"))
+    compile(project(":compiler:fir:jvm"))
+    compile(intellijDep())
+    compile(intellijCoreDep())
 
-    Platform[191].orLower {
-        compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
+// <temp>
+    compile(project(":idea:idea-core"))
+// </temp>
+
+    testCompile(toolsJar())
+    testCompile(projectTests(":idea"))
+    testCompile(projectTests(":compiler:tests-common"))
+    testCompile(projectTests(":idea:idea-test-framework"))
+    testCompile(project(":kotlin-test:kotlin-test-junit"))
+    testCompile(commonDep("junit:junit"))
 
     Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+        compile(intellijPluginDep("java"))
     }
 }
 
@@ -30,9 +37,12 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+if (rootProject.findProperty("idea.fir.plugin") == "true")  {
+    projectTest {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
+}
+
 testsJar()
 
-projectTest {
-    dependsOn(":dist")
-    workingDir = rootDir
-}
