@@ -26,15 +26,21 @@ internal class UastFakeLightMethod(original: KtFunction, containingClass: PsiCla
         KotlinLightTypeParameterListBuilder(this).also { paramList ->
             for ((i, p) in original.typeParameters.withIndex()) {
                 paramList.addParameter(
-                    LightTypeParameterBuilder(
+                    object : LightTypeParameterBuilder(
                         p.name ?: "__no_name__",
                         this,
                         i
-                    ).apply {
-                        p.extendsBound?.getType()
-                            ?.toPsiType(this@UastFakeLightMethod, original, false)
-                            ?.safeAs<PsiClassType>()
-                            ?.let { extendsList.addReference(it) }
+                    ) {
+                        private val myExtendsList by lazy {
+                            super.getExtendsList().apply {
+                                p.extendsBound?.getType()
+                                    ?.toPsiType(this@UastFakeLightMethod, original, false)
+                                    ?.safeAs<PsiClassType>()
+                                    ?.let { addReference(it) }
+                            }
+                        }
+
+                        override fun getExtendsList(): LightReferenceListBuilder = myExtendsList
                     }
                 )
             }
