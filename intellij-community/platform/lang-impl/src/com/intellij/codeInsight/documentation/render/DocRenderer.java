@@ -13,6 +13,7 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.MouseShortcut;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.event.CaretEvent;
@@ -31,6 +32,7 @@ import com.intellij.psi.PsiDocCommentBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.ColorUtil;
+import com.intellij.ui.Graphics2DDelegate;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ObjectUtils;
@@ -43,9 +45,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Element;
-import javax.swing.text.View;
+import javax.swing.text.*;
+import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.ImageView;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
@@ -329,8 +330,8 @@ class DocRenderer implements EditorCustomElementRenderer {
     }
   }
 
-  private static JBHtmlEditorKit createEditorKit(@NotNull Editor editor) {
-    JBHtmlEditorKit editorKit = new JBHtmlEditorKit();
+  private static EditorKit createEditorKit(@NotNull Editor editor) {
+    HTMLEditorKit editorKit = new MyEditorKit();
     editorKit.getStyleSheet().addStyleSheet(getStyleSheet(editor));
     return editorKit;
   }
@@ -469,6 +470,98 @@ class DocRenderer implements EditorCustomElementRenderer {
     void dispose() {
       MEMORY_MANAGER.unregister(DocRenderer.this);
       myImages.forEach(image -> IMAGE_MANAGER.dispose(image));
+    }
+  }
+
+  private static class MyEditorKit extends JBHtmlEditorKit {
+    @Override
+    public ViewFactory getViewFactory() {
+      return MyViewFactory.INSTANCE;
+    }
+  }
+
+  private static class MyViewFactory extends JBHtmlEditorKit.JBHtmlFactory {
+    private static final MyViewFactory INSTANCE = new MyViewFactory();
+
+    @Override
+    public View create(Element elem) {
+      View view = super.create(elem);
+      return view instanceof ImageView ? new MyScalingImageView(elem) : view;
+    }
+  }
+
+  private static class MyScalingImageView extends ImageView {
+    private int myAvailableWidth;
+
+    private MyScalingImageView(Element element) {
+      super(element);
+    }
+
+    @Override
+    public int getResizeWeight(int axis) {
+      return 1;
+    }
+
+    @Override
+    public float getMaximumSpan(int axis) {
+      return getPreferredSpan(axis);
+    }
+
+    @Override
+    public float getPreferredSpan(int axis) {
+      float baseSpan = super.getPreferredSpan(axis);
+      if (axis == View.X_AXIS) {
+        return baseSpan;
+      }
+      else {
+        int availableWidth = getAvailableWidth();
+        if (availableWidth <= 0) return baseSpan;
+        float baseXSpan = super.getPreferredSpan(View.X_AXIS);
+        if (baseXSpan == 0) return baseSpan;
+        if (myAvailableWidth > 0 && availableWidth != myAvailableWidth) {
+          preferenceChanged(null, false, true);
+        }
+        myAvailableWidth = availableWidth;
+        return baseSpan * availableWidth / baseXSpan;
+      }
+    }
+
+    private int getAvailableWidth() {
+      for (View v = this; v != null;) {
+        View parent = v.getParent();
+        if (parent instanceof FlowView) {
+          int childCount = parent.getViewCount();
+          for (int i = 0; i < childCount; i++) {
+            if (parent.getView(i) == v) {
+              return ((FlowView)parent).getFlowSpan(i);
+            }
+          }
+        }
+        v = parent;
+      }
+      return 0;
+    }
+
+    @Override
+    public void paint(Graphics g, Shape a) {
+      Rectangle targetRect = (a instanceof Rectangle) ? (Rectangle)a : a.getBounds();
+      Graphics scalingGraphics = new Graphics2DDelegate((Graphics2D)g) {
+        @Override
+        public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver observer) {
+          int maxWidth = Math.max(0, targetRect.width - 2 * (x - targetRect.x)); // assuming left and right insets are the same
+          int maxHeight = Math.max(0, targetRect.height - 2 * (y - targetRect.y)); // assuming top and bottom insets are the same
+          if (width > maxWidth) {
+            height = height * maxWidth / width;
+            width = maxWidth;
+          }
+          if (height > maxHeight) {
+            width = width * maxHeight / height;
+            height = maxHeight;
+          }
+          return super.drawImage(img, x, y, width, height, observer);
+        }
+      };
+      super.paint(scalingGraphics, a);
     }
   }
 }
