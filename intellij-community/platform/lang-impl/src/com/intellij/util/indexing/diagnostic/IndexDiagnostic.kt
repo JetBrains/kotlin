@@ -35,7 +35,7 @@ data class ProjectIndexingHistory(val projectName: String) {
       totalStats.totalIndexingTimeInAllThreads += fileTypeStats.indexingTime.sumTime
       totalStats.totalContentLoadingTimeInAllThreads += fileTypeStats.contentLoadingTime.sumTime
       fileTypeStats.biggestContributors.biggestElements.forEach {
-        totalStats.biggestContributors.addFile(IndexedFileStat(it.fileName, it.fileType, it.fileSize, it.indexingTime))
+        totalStats.biggestContributors.addFile(it)
       }
     }
 

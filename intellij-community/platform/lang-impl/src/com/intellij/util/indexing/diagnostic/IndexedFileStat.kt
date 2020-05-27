@@ -5,5 +5,6 @@ data class IndexedFileStat(
   val fileName: String,
   val fileType: String,
   val fileSize: BytesNumber,
-  val indexingTime: TimeNano
+  val indexingTime: TimeNano,
+  val contentLoadingTime: TimeNano
 )

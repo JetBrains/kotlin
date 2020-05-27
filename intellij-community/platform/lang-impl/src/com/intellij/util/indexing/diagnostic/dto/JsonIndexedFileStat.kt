@@ -5,5 +5,6 @@ data class JsonIndexedFileStat(
   val fileName: String,
   val fileType: String,
   val fileSize: JsonFileSize,
-  val indexingTime: JsonTime
+  val indexingTime: JsonTime,
+  val contentLoadingTime: JsonTime
 )

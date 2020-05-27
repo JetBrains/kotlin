@@ -141,7 +141,8 @@ private fun IndexedFileStat.toJson() =
     fileName,
     fileType,
     JsonFileSize(fileSize),
-    JsonTime(indexingTime)
+    JsonTime(indexingTime),
+    JsonTime(contentLoadingTime)
   )
 
 private fun ProjectIndexingHistory.aggregateStatsPerIndexer(): List<JsonProjectIndexingHistory.JsonStatsPerIndexer> {

@@ -46,6 +46,6 @@ class IndexingJobStatistics {
     stats.totalBytes += fileSize
     stats.numberOfFiles++
 
-    stats.biggestContributors.addFile(IndexedFileStat(fileName, fileTypeName, fileSize, fileStatistics.indexingTime))
+    stats.biggestContributors.addFile(IndexedFileStat(fileName, fileTypeName, fileSize, fileStatistics.indexingTime, contentLoadingTime))
   }
 }
