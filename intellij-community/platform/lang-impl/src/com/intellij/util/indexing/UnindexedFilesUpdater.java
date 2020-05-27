@@ -157,7 +157,10 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
         long startTime = System.nanoTime();
         IndexingJobStatistics indexStatistics = indexUpdateRunner.indexFiles(myProject, providerFiles, subTaskIndicator);
         long totalTime = System.nanoTime() - startTime;
-        FileProviderIndexStatistics statistics = new FileProviderIndexStatistics(provider.getDebugName(), totalTime, indexStatistics);
+        FileProviderIndexStatistics statistics = new FileProviderIndexStatistics(provider.getDebugName(),
+                                                                                 providerFiles.size(),
+                                                                                 totalTime,
+                                                                                 indexStatistics);
         projectIndexingHistory.addProviderStatistics(statistics);
       } finally {
         subTaskIndicator.finished();

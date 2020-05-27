@@ -154,7 +154,6 @@ fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics
       )
     }
 
-  val totalNumberOfFiles = statsPerFileType.asSequence().map { it.numberOfFiles }.sum()
   val allStatsPerIndexer = indexingStatistics.statsPerIndexer
     .mapNotNull { (indexId, stats) ->
       val jsonTimeStats = stats.indexingTime.toTimeStats(totalIndexingTimePerIndexer) ?: return@mapNotNull null
@@ -165,7 +164,7 @@ fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics
 
   return JsonFileProviderIndexStatistics(
     providerDebugName,
-    totalNumberOfFiles,
+    numberOfFiles,
     JsonTime(totalTime),
     statsPerFileType.sortedByDescending { it.numberOfFiles },
     statsPerIndexer,

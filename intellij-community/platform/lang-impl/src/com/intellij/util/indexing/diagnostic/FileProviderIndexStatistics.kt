@@ -3,6 +3,7 @@ package com.intellij.util.indexing.diagnostic
 
 class FileProviderIndexStatistics(
   val providerDebugName: String,
+  val numberOfFiles: Int,
   val totalTime: TimeNano,
   val indexingStatistics: IndexingJobStatistics
 ) 
