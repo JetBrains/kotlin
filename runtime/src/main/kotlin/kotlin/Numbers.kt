@@ -107,8 +107,8 @@ internal external fun fromBits(bits: Int): Float
 /**
  * Counts the number of set bits in the binary representation of this [Int] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @SymbolName("Kotlin_Int_countOneBits")
 public actual external fun Int.countOneBits(): Int
 
@@ -122,8 +122,8 @@ private external fun countLeadingZeroBits(value: Int): Int
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Int] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.countLeadingZeroBits(): Int =
         if (this == 0) 32 else countLeadingZeroBits(this)
 
@@ -137,8 +137,8 @@ private external fun countTrailingZeroBits(value: Int): Int
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.countTrailingZeroBits(): Int =
         if (this == 0) 32 else countTrailingZeroBits(this)
 
@@ -146,8 +146,8 @@ public actual fun Int.countTrailingZeroBits(): Int =
  * Returns a number having a single bit set in the position of the most significant set bit of this [Int] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.takeHighestOneBit(): Int =
         if (this == 0) 0 else 1.shl(32 - 1 - countLeadingZeroBits(this))
 
@@ -155,8 +155,8 @@ public actual fun Int.takeHighestOneBit(): Int =
  * Returns a number having a single bit set in the position of the least significant set bit of this [Int] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.takeLowestOneBit(): Int =
         this and -this
 
@@ -195,8 +195,8 @@ public actual fun Int.rotateRight(bitCount: Int): Int =
 /**
  * Counts the number of set bits in the binary representation of this [Long] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @SymbolName("Kotlin_Long_countOneBits")
 public actual external fun Long.countOneBits(): Int
 
@@ -210,8 +210,8 @@ private external fun countLeadingZeroBits(value: Long): Int
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.countLeadingZeroBits(): Int =
         if (this == 0L) 64 else countLeadingZeroBits(this)
 
@@ -225,8 +225,8 @@ private external fun countTrailingZeroBits(value: Long): Int
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.countTrailingZeroBits(): Int =
         if (this == 0L) 64 else countTrailingZeroBits(this)
 
@@ -234,8 +234,8 @@ public actual fun Long.countTrailingZeroBits(): Int =
  * Returns a number having a single bit set in the position of the most significant set bit of this [Long] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.takeHighestOneBit(): Long =
         if (this == 0L) 0L else 1L.shl(64 - 1 - countLeadingZeroBits(this))
 
@@ -243,8 +243,8 @@ public actual fun Long.takeHighestOneBit(): Long =
  * Returns a number having a single bit set in the position of the least significant set bit of this [Long] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.takeLowestOneBit(): Long =
         this and -this
 
