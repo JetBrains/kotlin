@@ -2,8 +2,6 @@
 package com.intellij.util.indexing.diagnostic
 
 class IndexingJobStatistics {
-  private val timeBucketSize = 128
-
   val statsPerIndexer: Map<String /* ID.name() */, StatsPerIndexer>
     get() = _statsPerIndexer
 
@@ -36,7 +34,7 @@ class IndexingJobStatistics {
   ) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
       val stats = _statsPerIndexer.getOrPut(indexId.name) {
-        StatsPerIndexer(TimeStats(timeBucketSize), 0, 0)
+        StatsPerIndexer(TimeStats(), 0, 0)
       }
       stats.indexingTime.addTime(time)
       stats.numberOfFiles++
@@ -44,7 +42,7 @@ class IndexingJobStatistics {
     }
     val fileTypeName = fileStatistics.fileType.name
     val stats = _statsPerFileType.computeIfAbsent(fileTypeName) {
-      StatsPerFileType(TimeStats(timeBucketSize), TimeStats(timeBucketSize), 0, 0, BiggestIndexedFileQueue())
+      StatsPerFileType(TimeStats(), TimeStats(), 0, 0, BiggestIndexedFileQueue())
     }
     stats.contentLoadingTime.addTime(contentLoadingTime)
     stats.indexingTime.addTime(fileStatistics.indexingTime)

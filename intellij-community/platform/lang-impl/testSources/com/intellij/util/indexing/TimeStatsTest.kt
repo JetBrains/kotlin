@@ -10,29 +10,27 @@ import kotlin.random.Random
 class TimeStatsTest {
   @Test
   fun `empty bucket`() {
-    val bucket = TimeStats(1)
+    val bucket = TimeStats()
     assertThat(bucket.isEmpty)
     assertThatThrownBy { bucket.minTime }
     assertThatThrownBy { bucket.maxTime }
-    assertThatThrownBy { bucket.maxNTimes }
     assertThatThrownBy { bucket.meanTime }
   }
 
   @Test
   fun `one time`() {
-    val bucket = TimeStats(1)
+    val bucket = TimeStats()
     val time = 42L
     bucket.addTime(time)
     assertThat(!bucket.isEmpty)
     assertThat(bucket.minTime).isEqualTo(time)
     assertThat(bucket.maxTime).isEqualTo(time)
     assertThat(bucket.meanTime).isEqualTo(time.toDouble())
-    assertThat(bucket.maxNTimes).containsExactly(time)
   }
 
   @Test
   fun `two times`() {
-    val bucket = TimeStats(2)
+    val bucket = TimeStats()
     val one = 10L
     val two = 20L
     bucket.addTime(one)
@@ -41,14 +39,12 @@ class TimeStatsTest {
     assertThat(bucket.minTime).isEqualTo(one)
     assertThat(bucket.maxTime).isEqualTo(two)
     assertThat(bucket.meanTime).isEqualTo((one + two).toDouble() / 2)
-    assertThat(bucket.maxNTimes).containsExactly(one, two)
   }
 
   @Test
-  fun limit() {
+  fun `many times`() {
     val numberOfTimes = 1000
-    val bucketSize = 10
-    val bucket = TimeStats(bucketSize)
+    val bucket = TimeStats()
     val times = arrayListOf<Long>()
     repeat(numberOfTimes) {
       val time = Random.nextLong()
@@ -58,6 +54,5 @@ class TimeStatsTest {
     assertThat(bucket.minTime).isEqualTo(times.min())
     assertThat(bucket.maxTime).isEqualTo(times.max())
     assertThat(bucket.meanTime).isEqualTo(times.sum().toDouble() / times.size)
-    assertThat(bucket.maxNTimes).containsExactlyInAnyOrderElementsOf(times.sortedDescending().take(bucketSize))
   }
 }
