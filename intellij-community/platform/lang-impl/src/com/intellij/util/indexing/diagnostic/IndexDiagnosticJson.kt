@@ -106,8 +106,8 @@ data class JsonFileProviderIndexStatistics(
   val providerName: String,
   val totalNumberOfFiles: Int,
   val totalIndexingTime: JsonTime,
-  val statsPerFileType: List<StatsPerFileType>,
-  val statsPerIndexer: List<StatsPerIndexer>,
+  val statsPerFileType: List<JsonStatsPerFileType>,
+  val statsPerIndexer: List<JsonStatsPerIndexer>,
   val fastIndexers: List<String /* Index ID */>
 ) {
 
@@ -115,14 +115,14 @@ data class JsonFileProviderIndexStatistics(
     val FAST_INDEXER_THRESHOLD_NANO = TimeUnit.MILLISECONDS.toNanos(1)
   }
 
-  data class StatsPerFileType(
+  data class JsonStatsPerFileType(
     val fileType: String,
     val numberOfFiles: Int,
     val indexingTimeStats: JsonTimeStats,
     val contentLoadingTimeStats: JsonTimeStats
   )
 
-  data class StatsPerIndexer(
+  data class JsonStatsPerIndexer(
     val indexId: String,
     val indexingTimeStats: JsonTimeStats
   )
@@ -146,7 +146,7 @@ fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics
 
   val statsPerFileType = indexingStatistics.statsPerFileType
     .mapNotNull { (fileTypeName, stats) ->
-      JsonFileProviderIndexStatistics.StatsPerFileType(
+      JsonFileProviderIndexStatistics.JsonStatsPerFileType(
         fileTypeName,
         stats.numberOfFiles,
         stats.indexingTime.toTimeStats(totalIndexingTimePerFileType) ?: return@mapNotNull null,
@@ -158,7 +158,7 @@ fun FileProviderIndexStatistics.convertToJson(): JsonFileProviderIndexStatistics
   val allStatsPerIndexer = indexingStatistics.statsPerIndexer
     .mapNotNull { (indexId, stats) ->
       val jsonTimeStats = stats.indexingTime.toTimeStats(totalIndexingTimePerIndexer) ?: return@mapNotNull null
-      JsonFileProviderIndexStatistics.StatsPerIndexer(indexId, jsonTimeStats)
+      JsonFileProviderIndexStatistics.JsonStatsPerIndexer(indexId, jsonTimeStats)
     }
     .sortedByDescending { it.indexingTimeStats.maxTime.nano }
   val (statsPerIndexer, fastIndexers) = allStatsPerIndexer.partition { it.indexingTimeStats.maxTime.nano > FAST_INDEXER_THRESHOLD_NANO }
