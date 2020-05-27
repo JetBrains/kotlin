@@ -220,12 +220,13 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
       Root root = myTreeModel.getRoot();
       int count = root == null ? 0 : root.getProblemsCount();
       content.setDisplayName(getContentDisplayName(count));
-      window.setIcon(getToolWindowIcon(count));
+      Icon icon = getToolWindowIcon(count);
+      if (icon != null) window.setIcon(icon);
     });
   }
 
-  @NotNull Icon getToolWindowIcon(int count) {
-    return AllIcons.Toolwindows.ProblemsEmpty;
+  @Nullable Icon getToolWindowIcon(int count) {
+    return null;
   }
 
   @NotNull String getContentDisplayName(int count) {
