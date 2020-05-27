@@ -517,7 +517,10 @@ class DocRenderer implements EditorCustomElementRenderer {
         int availableWidth = getAvailableWidth();
         if (availableWidth <= 0) return baseSpan;
         float baseXSpan = super.getPreferredSpan(View.X_AXIS);
-        if (baseXSpan == 0) return baseSpan;
+        if (baseXSpan <= 0) return baseSpan;
+        if (availableWidth > baseXSpan) {
+          availableWidth = (int)baseXSpan;
+        }
         if (myAvailableWidth > 0 && availableWidth != myAvailableWidth) {
           preferenceChanged(null, false, true);
         }
