@@ -141,7 +141,7 @@ private fun FileProviderIndexStatistics.aggregateStatsPerFileType(): List<JsonFi
         JsonFileSize(stats.totalBytes),
         JsonPercentages(calculatePart(stats.indexingTime.sumTime, totalIndexingTimePerFileType)),
         JsonPercentages(calculatePart(stats.contentLoadingTime.sumTime, totalContentLoadingTimePerFileType)),
-        stats.biggestContributors.biggestIndexedFiles.map { it.toJson() }.sortedByDescending { it.indexingTime.nano }
+        stats.biggestContributors.biggestElements.map { it.toJson() }.sortedByDescending { it.indexingTime.nano }
       )
     }
 }
@@ -280,7 +280,7 @@ private fun ProjectIndexingHistory.aggregateStatsPerFileType(): List<JsonProject
       stats.totalNumberOfFiles,
       JsonFileSize(stats.totalBytes),
       fileTypeToProcessingSpeed.getValue(fileType),
-      stats.biggestContributors.biggestIndexedFiles.map { it.toJson() }.sortedByDescending { it.indexingTime.nano }
+      stats.biggestContributors.biggestElements.map { it.toJson() }.sortedByDescending { it.indexingTime.nano }
     )
   }
 }
