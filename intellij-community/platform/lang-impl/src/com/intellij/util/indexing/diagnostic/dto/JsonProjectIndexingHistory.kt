@@ -3,6 +3,7 @@ package com.intellij.util.indexing.diagnostic.dto
 
 data class JsonProjectIndexingHistory(
   val projectName: String,
+  val numberOfFileProviders: Int,
   val totalNumberOfFiles: Int,
   val indexingTimes: JsonProjectIndexingHistoryTimes,
   val totalStatsPerFileType: List<JsonStatsPerFileType>,

@@ -94,6 +94,7 @@ private fun calculatePercentages(part: Long, total: Long): JsonPercentages =
 fun ProjectIndexingHistory.toJson() =
   JsonProjectIndexingHistory(
     projectName,
+    providerStatistics.size,
     aggregateTotalNumberOfFiles(),
     times.toJson(),
     aggregateStatsPerFileType().sortedByDescending { it.partOfTotalIndexingTime.percentages },
