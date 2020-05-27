@@ -7,18 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_HOME
 import org.jetbrains.kotlin.gradle.plugin.compareVersionNumbers
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativePlatformDependency.*
@@ -143,7 +139,7 @@ private class NativePlatformDependencyResolver(val project: Project, val kotlinV
                 is CommonizedPlatform -> {
                     /* commonized platform libs with actual declarations */
                     val commonizedLibsDir = commonizedLibsDirs.getValue(dependency.common)
-                    libsInPlatformDir(commonizedLibsDir, dependency.target)
+                    libsInPlatformDir(commonizedLibsDir, dependency.target) + libsInCommonDir(commonizedLibsDir)
                 }
             }
 
