@@ -4,11 +4,16 @@ package com.intellij.util.indexing.diagnostic
 class IndexingJobStatistics {
   private val timeBucketSize = 128
 
-  val timesPerIndexer: Map<String /* ID.name() */, TimeStats>
-    get() = _timesPerIndexer
+  val statsPerIndexer: Map<String /* ID.name() */, StatsPerIndexer>
+    get() = _statsPerIndexer
 
   val statsPerFileType: Map<String /* File type name */, StatsPerFileType>
     get() = _statsPerFileType
+
+  data class StatsPerIndexer(
+    val indexingTime: TimeStats,
+    var numberOfFiles: Int
+  )
 
   data class StatsPerFileType(
     val indexingTime: TimeStats,
@@ -16,13 +21,17 @@ class IndexingJobStatistics {
     var numberOfFiles: Int
   )
 
-  private val _timesPerIndexer = hashMapOf<String, TimeStats>()
+  private val _statsPerIndexer = hashMapOf<String, StatsPerIndexer>()
   private val _statsPerFileType = hashMapOf<String, StatsPerFileType>()
 
   @Synchronized
   fun addFileStatistics(fileStatistics: FileIndexingStatistics, contentLoadingTime: Long) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
-      _timesPerIndexer.getOrPut(indexId.name) { TimeStats(timeBucketSize) }.addTime(time)
+      val stats = _statsPerIndexer.getOrPut(indexId.name) {
+        StatsPerIndexer(TimeStats(timeBucketSize), 0)
+      }
+      stats.indexingTime.addTime(time)
+      stats.numberOfFiles++
     }
     val fileTypeName = fileStatistics.fileType.name
     val stats = _statsPerFileType.computeIfAbsent(fileTypeName) {

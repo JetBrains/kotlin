@@ -12,7 +12,12 @@ data class ProjectIndexingHistory(val projectName: String) {
   val totalStatsPerFileType: Map<String /* File type name */, StatsPerFileType>
     get() = _totalStatsPerFileType
 
-  private val _totalStatsPerFileType = hashMapOf<String /* File type name */, StatsPerFileType>()
+  val totalStatsPerIndexer: Map<String /* Index ID */, StatsPerIndexer>
+    get() = _totalStatsPerIndexer
+
+  private val _totalStatsPerFileType = hashMapOf<String, StatsPerFileType>()
+
+  private val _totalStatsPerIndexer = hashMapOf<String, StatsPerIndexer>()
 
   @Synchronized
   fun addProviderStatistics(statistics: FileProviderIndexStatistics) {
@@ -25,12 +30,23 @@ data class ProjectIndexingHistory(val projectName: String) {
       totalStats.totalIndexingTimeInAllThreads += fileTypeStats.indexingTime.sumTime
       totalStats.totalContentLoadingTimeInAllThreads += fileTypeStats.contentLoadingTime.sumTime
     }
+
+    for ((indexId, stats) in statistics.indexingStatistics.statsPerIndexer) {
+      val totalStats = _totalStatsPerIndexer.getOrPut(indexId) { StatsPerIndexer(0, 0) }
+      totalStats.totalNumberOfFiles += stats.numberOfFiles
+      totalStats.totalIndexingTimeInAllThreads += stats.indexingTime.sumTime
+    }
   }
 
   data class StatsPerFileType(
     var totalNumberOfFiles: Int,
     var totalIndexingTimeInAllThreads: TimeNano,
     var totalContentLoadingTimeInAllThreads: TimeNano
+  )
+
+  data class StatsPerIndexer(
+    var totalNumberOfFiles: Int,
+    var totalIndexingTimeInAllThreads: TimeNano
   )
 
   data class IndexingTimes(
