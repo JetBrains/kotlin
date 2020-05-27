@@ -604,7 +604,7 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
     }
   }
 
-  private class MyViewModel implements ChooseByNameViewModel {
+  private static class MyViewModel implements ChooseByNameViewModel {
     private final Project myProject;
     private final ChooseByNameModel myModel;
 
