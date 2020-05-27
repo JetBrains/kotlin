@@ -18,7 +18,7 @@ class ScriptingGradleProjectImportHandler : GradleProjectImportHandler {
     val gradlePluginJars = listOf(
         "scripting-gradle", // obsolete artifact name, only for compatibility with 1.2.5x, where it was introduced (and immediately dropped afterwards)
         "scripting-compiler",
-        "scripting-compiler-unshaded"
+        "scripting-compiler-embeddable"
     )
 
     override fun importBySourceSet(
