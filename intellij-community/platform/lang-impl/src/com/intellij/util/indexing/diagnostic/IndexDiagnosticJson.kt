@@ -56,6 +56,17 @@ data class JsonPercentages(val percentages: Double) {
     }
 }
 
+@JsonSerialize(using = JsonFileSize.Companion::class)
+data class JsonFileSize(val bytes: BytesNumber) {
+  companion object : JsonSerializer<JsonFileSize>() {
+    override fun serialize(value: JsonFileSize, gen: JsonGenerator, serializers: SerializerProvider?) {
+      gen.writeString(value.presentableSize())
+    }
+  }
+
+  fun presentableSize(): String = StringUtil.formatFileSize(bytes)
+}
+
 @JsonSerialize(using = JsonTimeStats.Companion::class)
 data class JsonTimeStats(
   val partOfTotal: JsonPercentages,
@@ -224,13 +235,15 @@ data class JsonProjectIndexingHistory(
     val fileType: String,
     val partOfTotalIndexingTime: JsonPercentages,
     val partOfTotalContentLoadingTime: JsonPercentages,
-    val totalNumberOfFiles: Int
+    val totalNumberOfFiles: Int,
+    val totalFilesSize: JsonFileSize
   )
 
   data class JsonStatsPerIndexer(
     val indexId: String,
     val partOfTotalIndexingTime: JsonPercentages,
-    val totalNumberOfFiles: Int
+    val totalNumberOfFiles: Int,
+    val totalFilesSize: JsonFileSize
   )
 }
 
@@ -271,7 +284,8 @@ private fun ProjectIndexingHistory.aggregateStatsPerFileType(): List<JsonProject
       fileType,
       JsonPercentages(fileTypeToIndexingTimePart.getValue(fileType)),
       JsonPercentages(fileTypeToContentLoadingTimePart.getValue(fileType)),
-      stats.totalNumberOfFiles
+      stats.totalNumberOfFiles,
+      JsonFileSize(stats.totalBytes)
     )
   }
 }
@@ -285,7 +299,8 @@ private fun ProjectIndexingHistory.aggregateStatsPerIndexer(): List<JsonProjectI
     JsonProjectIndexingHistory.JsonStatsPerIndexer(
       indexId,
       JsonPercentages(indexIdToIndexingTimePart.getValue(indexId)),
-      stats.totalNumberOfFiles
+      stats.totalNumberOfFiles,
+      JsonFileSize(stats.totalBytes)
     )
   }
 }

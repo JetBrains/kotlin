@@ -3,6 +3,7 @@ package com.intellij.util.indexing.diagnostic
 
 typealias TimeMillis = Long
 typealias TimeNano = Long
+typealias BytesNumber = Long
 
 data class ProjectIndexingHistory(val projectName: String) {
   val times: IndexingTimes = IndexingTimes()
@@ -25,27 +26,31 @@ data class ProjectIndexingHistory(val projectName: String) {
     providerStatistics += statistics.convertToJson()
 
     for ((fileType, fileTypeStats) in statistics.indexingStatistics.statsPerFileType) {
-      val totalStats = _totalStatsPerFileType.getOrPut(fileType) { StatsPerFileType(0, 0, 0) }
+      val totalStats = _totalStatsPerFileType.getOrPut(fileType) { StatsPerFileType(0, 0, 0, 0) }
       totalStats.totalNumberOfFiles += fileTypeStats.numberOfFiles
+      totalStats.totalBytes += fileTypeStats.totalBytes
       totalStats.totalIndexingTimeInAllThreads += fileTypeStats.indexingTime.sumTime
       totalStats.totalContentLoadingTimeInAllThreads += fileTypeStats.contentLoadingTime.sumTime
     }
 
     for ((indexId, stats) in statistics.indexingStatistics.statsPerIndexer) {
-      val totalStats = _totalStatsPerIndexer.getOrPut(indexId) { StatsPerIndexer(0, 0) }
+      val totalStats = _totalStatsPerIndexer.getOrPut(indexId) { StatsPerIndexer(0, 0, 0) }
       totalStats.totalNumberOfFiles += stats.numberOfFiles
+      totalStats.totalBytes += stats.totalBytes
       totalStats.totalIndexingTimeInAllThreads += stats.indexingTime.sumTime
     }
   }
 
   data class StatsPerFileType(
     var totalNumberOfFiles: Int,
+    var totalBytes: BytesNumber,
     var totalIndexingTimeInAllThreads: TimeNano,
     var totalContentLoadingTimeInAllThreads: TimeNano
   )
 
   data class StatsPerIndexer(
     var totalNumberOfFiles: Int,
+    var totalBytes: BytesNumber,
     var totalIndexingTimeInAllThreads: TimeNano
   )
 
