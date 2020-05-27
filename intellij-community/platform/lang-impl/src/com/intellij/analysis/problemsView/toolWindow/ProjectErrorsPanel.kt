@@ -30,6 +30,7 @@ internal class ProjectErrorsPanel(project: Project, state: ProblemsViewState)
   override fun getShowWarnings(): Option? = null
   override fun getShowInformation(): Option? = null
   override fun getSortFoldersFirst(): Option? = null
+  override fun getSortBySeverity(): Option? = null
 
   override fun getToolWindowIcon(count: Int) = if (count > 0) Toolwindows.Problems else Toolwindows.ProblemsEmpty
 
