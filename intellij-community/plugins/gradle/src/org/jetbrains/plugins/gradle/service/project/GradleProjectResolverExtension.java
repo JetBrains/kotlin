@@ -119,7 +119,7 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
   /**
    * Allows to request gradle tooling models after "sync" tasks are run
    *
-   * @see BuildActionExecuter.Builder#buildFinished(org.gradle.tooling.BuildAction, org.gradle.tooling.IntermediateResultHandler)
+   * @see BuildActionExecuter.Builder#buildFinished(org.gradle.tooling.BuildAction, IntermediateResultHandler)
    */
   @Nullable
   default ProjectImportModelProvider getModelProvider() {return null;}
@@ -128,15 +128,15 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
    * Allows to request gradle tooling models after gradle projects are loaded and before "sync" tasks are run.
    * This can be used to setup "sync" tasks for the import
    *
-   * @see BuildActionExecuter.Builder#projectsLoaded(org.gradle.tooling.BuildAction, org.gradle.tooling.IntermediateResultHandler)
+   * @see BuildActionExecuter.Builder#projectsLoaded(org.gradle.tooling.BuildAction, IntermediateResultHandler)
    */
   @Nullable
   default ProjectImportModelProvider getProjectsLoadedModelProvider() {return null;}
 
   /**
    * @return whether or not this resolver requires Gradle task running infrastructure to be initialized, if any of the resolvers which are
-   * used by the resolution return true then the {@link org.gradle.tooling.BuildActionExecuter} will have
-   * {@link org.gradle.tooling.BuildActionExecuter#forTasks(String...)} called with an empty list. This will allow
+   * used by the resolution return true then the {@link BuildActionExecuter} will have
+   * {@link BuildActionExecuter#forTasks(String...)} called with an empty list. This will allow
    * any tasks that are scheduled by Gradle plugin in the model builders to be run.
    *
    * @deprecated not required anymore
@@ -225,7 +225,6 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
   /**
    * Allows extension to contribute to init script
    * @param taskNames gradle task names to be executed
-   * @param jvmParametersSetup jvm configuration that will be applied to Gradle jvm
    * @param initScriptConsumer consumer of init script text. Must be called to add script txt
    * @param parameters storage for passing optional named parameters
    */

@@ -14,6 +14,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.roots.DependencyScope;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -360,10 +361,10 @@ public final class GradleProjectResolverUtil {
     attachSourcesAndJavadocFromGradleCacheIfNeeded(null, gradleUserHomeDir, libraryData);
   }
 
-  private static final com.intellij.openapi.util.Key<Set<LibraryData>> LIBRARIES_CACHE =
-    com.intellij.openapi.util.Key.create("GradleProjectResolverUtil.LIBRARIES_CACHE");
-  private static final com.intellij.openapi.util.Key<Map<String, Map<LibraryPathType, List<String>>>> PATHS_CACHE =
-    com.intellij.openapi.util.Key.create("GradleProjectResolverUtil.PATHS_CACHE");
+  private static final Key<Set<LibraryData>> LIBRARIES_CACHE =
+    Key.create("GradleProjectResolverUtil.LIBRARIES_CACHE");
+  private static final Key<Map<String, Map<LibraryPathType, List<String>>>> PATHS_CACHE =
+    Key.create("GradleProjectResolverUtil.PATHS_CACHE");
 
   public static void attachSourcesAndJavadocFromGradleCacheIfNeeded(ProjectResolverContext context,
                                                                     File gradleUserHomeDir,
