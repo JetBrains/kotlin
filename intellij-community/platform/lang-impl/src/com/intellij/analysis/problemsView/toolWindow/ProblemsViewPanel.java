@@ -71,6 +71,17 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   };
   private final Option myShowPreview = new Option() {
     @Override
+    public boolean isEnabled() {
+      OpenFileDescriptor descriptor = getSelectedDescriptor();
+      return descriptor != null && null != ProblemsView.getDocument(getProject(), descriptor.getFile());
+    }
+
+    @Override
+    public boolean isAlwaysVisible() {
+      return true;
+    }
+
+    @Override
     public boolean isSelected() {
       return myState.getShowPreview();
     }
@@ -315,7 +326,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
 
   private void updatePreview(@Nullable OpenFileDescriptor descriptor) {
     Document document = descriptor == null ? null : ProblemsView.getDocument(getProject(), descriptor.getFile());
-    Editor editor = myPreview.preview(document, isNotNullAndSelected(getShowPreview()));
+    Editor editor = myPreview.preview(document, document != null && isNotNullAndSelected(getShowPreview()));
     if (editor != null && descriptor != null) {
       invokeLater(() -> {
         if (editor.getComponent().isShowing()) {
