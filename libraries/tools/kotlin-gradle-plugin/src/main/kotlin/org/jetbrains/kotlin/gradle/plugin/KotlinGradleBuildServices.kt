@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin
@@ -21,7 +10,6 @@ import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
-import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.jetbrains.kotlin.compilerRunner.DELETED_SESSION_FILE_PREFIX
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -44,6 +32,7 @@ internal class KotlinGradleBuildServices private constructor(
         val INIT_MESSAGE = "Initialized $CLASS_NAME"
         val DISPOSE_MESSAGE = "Disposed $CLASS_NAME"
         val ALREADY_INITIALIZED_MESSAGE = "$CLASS_NAME is already initialized"
+
         @field:Volatile
         private var instance: KotlinGradleBuildServices? = null
 
@@ -135,57 +124,36 @@ internal class KotlinGradleBuildServices private constructor(
     private fun getGcCount(): Long =
         ManagementFactory.getGarbageCollectorMXBeans().sumByLong { max(0, it.collectionCount) }
 
-    private var loadedInProjectPath: String? = null
+    private val multipleProjectsHolder = KotlinPluginInMultipleProjectsHolder(
+        differentVersionsInDifferentProject = true
+    )
 
     @Synchronized
     internal fun detectKotlinPluginLoadedInMultipleProjects(project: Project, kotlinPluginVersion: String) {
-        val projectPath = project.path
-
-        val loadedInProjectsPropertyName = "kotlin.plugin.loaded.in.projects.${kotlinPluginVersion}"
-
-        if (loadedInProjectPath == null) {
-            loadedInProjectPath = projectPath
-
-            val ext = project.rootProject.extensions.getByType(ExtraPropertiesExtension::class.java)
-
-            if (!ext.has(loadedInProjectsPropertyName)) {
-                ext.set(loadedInProjectsPropertyName, projectPath)
-
-                gradle.taskGraph.whenReady {
-                    val loadedInProjects = (ext.get(loadedInProjectsPropertyName) as String).split(";")
-                    if (loadedInProjects.size > 1) {
-                        if (PropertiesProvider(project).ignorePluginLoadedInMultipleProjects != true) {
-                            project.logger.warn(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
-                            project.logger.warn(
-                                MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING + loadedInProjects.joinToString(limit = 4) { "'$it'" }
-                            )
-                        }
-                        project.logger.info(
-                            "$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_INFO: " +
-                                    loadedInProjects.joinToString { "'$it'" }
+        val onRegister = {
+            gradle.taskGraph.whenReady {
+                if (multipleProjectsHolder.isInMultipleProjects(project, kotlinPluginVersion)) {
+                    val loadedInProjects = multipleProjectsHolder.getAffectedProjects(project, kotlinPluginVersion)
+                    if (PropertiesProvider(project).ignorePluginLoadedInMultipleProjects != true) {
+                        project.logger.warn(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+                        project.logger.warn(
+                            MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING + loadedInProjects.joinToString(limit = 4) { "'$it'" }
                         )
                     }
+                    project.logger.info(
+                        "$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_INFO: " +
+                                loadedInProjects.joinToString { "'$it'" }
+                    )
                 }
-            } else {
-                ext.set(loadedInProjectsPropertyName, (ext.get(loadedInProjectsPropertyName) as String) + ";" + loadedInProjectPath)
             }
         }
+
+        multipleProjectsHolder.addProject(
+            project,
+            kotlinPluginVersion,
+            onRegister
+        )
     }
 }
 
-const val MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING: String =
-    "\nThe Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may break the build. \n" +
 
-            "This might happen in subprojects that apply the Kotlin plugins with the Gradle 'plugins { ... }' DSL if they specify " +
-            "explicit versions, even if the versions are equal.\n" +
-
-            "Please add the Kotlin plugin to the common parent project or the root project, then remove the versions in the subprojects.\n" +
-
-            "If the parent project does not need the plugin, add 'apply false' to the plugin line.\n" +
-
-            "See: https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl"
-
-const val MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING: String =
-    "The Kotlin plugin was loaded in the following projects: "
-
-const val MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_INFO: String = "The full list of projects that loaded the Kotlin plugin is: "
