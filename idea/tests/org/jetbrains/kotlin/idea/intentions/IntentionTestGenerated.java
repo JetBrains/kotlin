@@ -5065,6 +5065,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/inner.kt");
         }
 
+        @TestMetadata("labeledThis.kt")
+        public void testLabeledThis() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/labeledThis.kt");
+        }
+
         @TestMetadata("mapTo.kt")
         public void testMapTo() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/mapTo.kt");

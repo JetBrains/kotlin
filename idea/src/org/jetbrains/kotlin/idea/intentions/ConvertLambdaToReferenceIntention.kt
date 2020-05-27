@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.unwrapIfLabeled
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -172,7 +173,7 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val referenceName = buildReferenceText(element) ?: return
         val factory = KtPsiFactory(element)
-        val lambdaArgument = element.parent as? KtLambdaArgument
+        val lambdaArgument = element.unwrapIfLabeled().parent as? KtLambdaArgument
         if (lambdaArgument == null) {
             // Without lambda argument syntax, just replace lambda with reference
             val callableReferenceExpr = factory.createCallableReferenceExpression(referenceName) ?: return
@@ -220,7 +221,7 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
 
     companion object {
         private fun KtLambdaExpression.lambdaParameterType(context: BindingContext? = null): KotlinType? {
-            val argument = parent as? KtValueArgument ?: return null
+            val argument = unwrapIfLabeled().parent as? KtValueArgument ?: return null
             val callExpression = argument.getStrictParentOfType<KtCallExpression>() ?: return null
             return callExpression
                 .getResolvedCall(context ?: analyze(BodyResolveMode.PARTIAL))
