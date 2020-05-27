@@ -552,7 +552,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             // targetMatch == false, but shorten still can be preformed
             // TODO: Add possibility to check if descriptor from completion can't be resolved after shorten and not preform shorten than
             val resolvedCallsMatch = if (resolvedCall != null && resolvedCallWhenShort != null) {
-                resolvedCall.resultingDescriptor.original == resolvedCallWhenShort.resultingDescriptor.original
+                val originalCallDescriptor = resolvedCall.resultingDescriptor.original.unwrapIfFakeOverride()
+                val shortenedCallDescriptor = resolvedCallWhenShort.resultingDescriptor.original.unwrapIfFakeOverride()
+
+                originalCallDescriptor == shortenedCallDescriptor
             } else {
                 val resolvedCalls = selector.getCall(bindingContext)?.resolveCandidates(bindingContext, resolutionFacade) ?: emptyList()
                 val callWhenShort = selectorAfterShortening.getCall(newContext)

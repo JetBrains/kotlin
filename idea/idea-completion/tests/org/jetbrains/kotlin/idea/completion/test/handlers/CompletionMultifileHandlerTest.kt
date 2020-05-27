@@ -30,6 +30,10 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
         doTest()
     }
 
+    fun testStaticMethodFromGrandParent() {
+        doTest('\n', "StaticMethodFromGrandParent-1.java", "StaticMethodFromGrandParent-2.java")
+    }
+
     fun testTopLevelFunctionImport() {
         doTest()
     }
@@ -113,8 +117,13 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
     fun doTest(completionChar: Char = '\n', vararg extraFileNames: String, tailText: String? = null) {
         val fileName = getTestName(false)
 
+        val defaultFiles = listOf("$fileName-1.kt", "$fileName-2.kt")
+        val filteredFiles = defaultFiles.filter { File(testDataPath, it).exists() }
+
+        require(filteredFiles.isNotEmpty()) { "At least one of $defaultFiles should exist!" }
+
         configureByFiles(null, *extraFileNames)
-        configureByFiles(null, "$fileName-1.kt", "$fileName-2.kt")
+        configureByFiles(null, *filteredFiles.toTypedArray())
         complete(2)
         if (myItems != null) {
             val item = if (tailText == null)
