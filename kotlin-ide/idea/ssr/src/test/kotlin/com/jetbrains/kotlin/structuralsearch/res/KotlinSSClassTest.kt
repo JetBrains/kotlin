@@ -11,6 +11,8 @@ class KotlinSSClassTest : KotlinSSResourceInspectionTest() {
 
     fun testClassSingleInheritance() { doTest("class '_ : A") }
 
+    fun testClassExtendsParam() { doTest("class '_ : '_('_, '_)") }
+
     fun testClassDelegation() { doTest("class '_(b: B) : A by b") }
 
     fun testClassConstrPrim() { doTest("class A(b: Int, c: String)") }
