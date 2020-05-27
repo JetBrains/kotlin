@@ -1,3 +1,4 @@
+// IGNORE_FIR
 package language_injection
 
 <info descr="null">import</info> org.intellij.lang.annotations.<info descr="null">Language</info>
