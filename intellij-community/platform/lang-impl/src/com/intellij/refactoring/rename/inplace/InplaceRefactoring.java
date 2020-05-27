@@ -3,6 +3,7 @@ package com.intellij.refactoring.rename.inplace;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.highlighting.HighlightManager;
+import com.intellij.codeInsight.hints.presentation.PresentationRenderer;
 import com.intellij.codeInsight.lookup.LookupFocusDegree;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
@@ -362,6 +363,8 @@ public abstract class InplaceRefactoring {
 
     WriteCommandAction.writeCommandAction(myProject).withName(getCommandName()).run(() -> startTemplate(builder));
 
+    afterTemplateStart();
+
     if (myBalloon == null) {
       showBalloon();
     }
@@ -387,6 +390,47 @@ public abstract class InplaceRefactoring {
       myEditor.getDocument().createRangeMarker(myEditor.getCaretModel().getOffset(), myEditor.getCaretModel().getOffset());
     myCaretRangeMarker.setGreedyToLeft(true);
     myCaretRangeMarker.setGreedyToRight(true);
+  }
+
+  protected int getInlayOffset(){
+    return TemplateManagerImpl.getTemplateState(myEditor).getCurrentVariableRange().getEndOffset();
+  }
+
+  protected @Nullable SelectableInlayPresentation getInlayPresentation() {
+    return null;
+  }
+
+  protected void inlayOnSelection(VisualPosition position, SelectableInlayPresentation presentation){
+  }
+
+  protected Inlay<PresentationRenderer> createInlay() {
+    final TemplateState templateState = TemplateManagerImpl.getTemplateState(myEditor);
+    SelectableInlayPresentation presentation = getInlayPresentation();
+    if (templateState == null || presentation == null) return null;
+    int offset = getInlayOffset();
+    final PresentationRenderer renderer = new PresentationRenderer(presentation);
+    final Inlay<PresentationRenderer> inlay = myEditor.getInlayModel().addInlineElement(offset, true, renderer);
+    if (inlay == null) return null;
+    presentation.addSelectionListener(new SelectableInlayPresentation.SelectionListener() {
+      @Override
+      public void selectionChanged(boolean isSelected) {
+        if (isSelected) inlayOnSelection(inlay.getVisualPosition(), presentation);
+      }
+    });
+
+    VirtualTemplateElement.installOnTemplate(templateState, new VirtualTemplateElement() {
+      @Override
+      public void onSelect(@NotNull TemplateState templateState) {
+        presentation.setSelected(true);
+      }
+    });
+    Disposer.register(templateState, inlay);
+    Disposer.register(inlay, () -> myEditor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, null));
+    return inlay;
+  }
+
+  protected void afterTemplateStart(){
+    createInlay();
   }
 
   private void startTemplate(final TemplateBuilderImpl builder) {

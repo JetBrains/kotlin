@@ -15,10 +15,12 @@ interface VirtualTemplateElement {
   companion object {
     private val TEMPLATE_INLAY_ELEMENT: Key<VirtualTemplateElement> = Key.create("template_inlay_element")
 
+    @JvmStatic
     fun installOnTemplate(templateState: TemplateState, element: VirtualTemplateElement){
       templateState.properties[TEMPLATE_INLAY_ELEMENT] = element
     }
 
+    @JvmStatic
     fun findInTemplate(templateState: TemplateState): VirtualTemplateElement? {
       return templateState.properties[TEMPLATE_INLAY_ELEMENT] as? VirtualTemplateElement
     }
