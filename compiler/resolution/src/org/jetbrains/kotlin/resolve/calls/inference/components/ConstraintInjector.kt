@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
-import org.jetbrains.kotlin.utils.SmartList
 import kotlin.math.max
 
 class ConstraintInjector(
@@ -47,47 +46,51 @@ class ConstraintInjector(
     }
 
     fun addInitialSubtypeConstraint(c: Context, lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {
-        val initialConstraint = InitialConstraint(lowerType, upperType, UPPER, position)
-        c.addInitialConstraint(initialConstraint)
+        val initialConstraint = InitialConstraint(lowerType, upperType, UPPER, position).also { c.addInitialConstraint(it) }
+
         updateAllowedTypeDepth(c, lowerType)
         updateAllowedTypeDepth(c, upperType)
-        addSubTypeConstraintAndIncorporateIt(c, lowerType, upperType, IncorporationConstraintPosition(position, initialConstraint))
+
+        addSubTypeConstraintAndIncorporateIt(
+            c,
+            lowerType,
+            upperType,
+            TypeCheckerContext(c, IncorporationConstraintPosition(position, initialConstraint))
+        )
     }
 
     fun addInitialEqualityConstraint(c: Context, a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) {
-        val initialConstraint = InitialConstraint(a, b, EQUALITY, position)
-        c.addInitialConstraint(initialConstraint)
+        val initialConstraint = InitialConstraint(a, b, EQUALITY, position).also { c.addInitialConstraint(it) }
+
         updateAllowedTypeDepth(c, a)
         updateAllowedTypeDepth(c, b)
-        addSubTypeConstraintAndIncorporateIt(c, a, b, IncorporationConstraintPosition(position, initialConstraint))
-        addSubTypeConstraintAndIncorporateIt(c, b, a, IncorporationConstraintPosition(position, initialConstraint))
+
+        val incorporationConstraintPosition = IncorporationConstraintPosition(position, initialConstraint)
+        val typeCheckerContext = TypeCheckerContext(c, incorporationConstraintPosition)
+
+        if (position is FixVariableConstraintPosition) {
+            c.incorporateEqualityConstraintForFixingTypeVariable(
+                incorporationConstraintPosition, position.variable, resultType = b, typeCheckerContext
+            )
+        }
+
+        addSubTypeConstraintAndIncorporateIt(c, a, b, typeCheckerContext)
+        addSubTypeConstraintAndIncorporateIt(c, b, a, typeCheckerContext)
     }
 
     private fun addSubTypeConstraintAndIncorporateIt(
         c: Context,
         lowerType: KotlinTypeMarker,
         upperType: KotlinTypeMarker,
-        incorporatePosition: IncorporationConstraintPosition
+        typeCheckerContext: TypeCheckerContext
     ) {
-        var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
-
-        val typeCheckerContext = TypeCheckerContext(c, incorporatePosition, lowerType, upperType) { typeVar, constraint ->
-            if (possibleNewConstraints == null) {
-                possibleNewConstraints = SmartList()
-            }
-            possibleNewConstraints!!.add(typeVar to constraint)
-        }
+        typeCheckerContext.setConstrainingTypesToPrintDebugInfo(lowerType, upperType)
         typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
+
         var constraintsFromIsSubtype = true
 
-        if (incorporatePosition.from is FixVariableConstraintPosition && lowerType == incorporatePosition.initialConstraint.a) {
-            c.incorporateEqualityConstraintForFixingTypeVariable(incorporatePosition, typeCheckerContext)
-        }
-
-        while (possibleNewConstraints != null) {
-            val constraintsToProcess = possibleNewConstraints
-            possibleNewConstraints = null
-            for ((typeVariable, constraint) in constraintsToProcess!!) {
+        while (typeCheckerContext.hasConstraintsToProcess()) {
+            for ((typeVariable, constraint) in typeCheckerContext.extractAllConstraints()) {
                 if (c.shouldWeSkipConstraint(typeVariable, constraint, constraintsFromIsSubtype)) continue
 
                 val constraints =
@@ -102,7 +105,7 @@ class ConstraintInjector(
             }
 
             val contextOps = c as? ConstraintSystemOperation
-            if (possibleNewConstraints == null ||
+            if (!typeCheckerContext.hasConstraintsToProcess() ||
                 (contextOps != null && c.notFixedTypeVariables.all { typeVariable ->
                     typeVariable.value.constraints.any { constraint ->
                         constraint.kind == EQUALITY && contextOps.isProperType(constraint.type)
@@ -121,24 +124,18 @@ class ConstraintInjector(
 
     private fun Context.incorporateEqualityConstraintForFixingTypeVariable(
         incorporatePosition: IncorporationConstraintPosition,
+        fixingTypeVariable: TypeVariableMarker,
+        resultType: KotlinTypeMarker,
         typeCheckerContext: TypeCheckerContext
     ) {
-        if (incorporatePosition.from !is FixVariableConstraintPosition) return
+        if (resultType.isUninferredParameter() || resultType.isError()) return
 
-        val typeToIncorporate = incorporatePosition.initialConstraint.b
-
-        if (typeToIncorporate.isUninferredParameter() || typeToIncorporate.isError()) return
+        assert(!resultType.contains { it.typeConstructor() is TypeVariableTypeConstructor })
 
         constraintIncorporator.incorporateIntoOtherConstraints(
             typeCheckerContext,
-            incorporatePosition.from.variable,
-            Constraint(
-                EQUALITY,
-                typeToIncorporate,
-                incorporatePosition,
-                derivedFrom = setOf(),
-                isNullabilityConstraint = false
-            )
+            fixingTypeVariable,
+            Constraint(EQUALITY, resultType, incorporatePosition, derivedFrom = emptySet(), isNullabilityConstraint = false)
         )
     }
 
@@ -172,13 +169,25 @@ class ConstraintInjector(
     private fun Context.isAllowedType(type: KotlinTypeMarker) =
         type.typeDepth() <= maxTypeDepthFromInitialConstraints + ALLOWED_DEPTH_DELTA_FOR_INCORPORATION
 
-    private inner class TypeCheckerContext(
-        val c: Context,
-        val position: IncorporationConstraintPosition,
-        val baseLowerType: KotlinTypeMarker,
-        val baseUpperType: KotlinTypeMarker,
-        val addPossibleNewConstraints: (TypeVariableMarker, Constraint) -> Unit
-    ) : AbstractTypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
+    private inner class TypeCheckerContext(val c: Context, val position: IncorporationConstraintPosition) :
+        AbstractTypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
+        private val newPossibleConstraints = mutableSetOf<Pair<TypeVariableMarker, Constraint>>()
+
+        private var baseLowerType = position.initialConstraint.a
+        private var baseUpperType = position.initialConstraint.b
+
+        fun extractAllConstraints(): Set<Pair<TypeVariableMarker, Constraint>> {
+            val newConstraintsSet = newPossibleConstraints.toSet()
+            newPossibleConstraints.clear()
+            return newConstraintsSet
+        }
+
+        fun hasConstraintsToProcess() = newPossibleConstraints.isNotEmpty()
+
+        fun setConstrainingTypesToPrintDebugInfo(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
+            baseLowerType = lowerType
+            baseUpperType = upperType
+        }
 
         val baseContext: AbstractTypeCheckerContext = newBaseTypeCheckerContext(isErrorTypeEqualsToAnything, isStubTypeEqualsToAnything)
 
@@ -333,7 +342,8 @@ class ConstraintInjector(
                 isNullabilityConstraint = isNullabilityConstraint,
                 inputTypePositionBeforeIncorporation = inputTypePosition
             )
-            addPossibleNewConstraints(typeVariable, newConstraint)
+
+            newPossibleConstraints.add(typeVariable to newConstraint)
         }
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
