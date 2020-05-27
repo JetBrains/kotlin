@@ -20,7 +20,8 @@ class IndexingJobStatistics {
     val indexingTime: TimeStats,
     val contentLoadingTime: TimeStats,
     var numberOfFiles: Int,
-    var totalBytes: BytesNumber
+    var totalBytes: BytesNumber,
+    val biggestContributors: BiggestIndexedFileQueue
   )
 
   private val _statsPerIndexer = hashMapOf<String, StatsPerIndexer>()
@@ -30,7 +31,8 @@ class IndexingJobStatistics {
   fun addFileStatistics(
     fileStatistics: FileIndexingStatistics,
     contentLoadingTime: Long,
-    fileSize: Long
+    fileSize: Long,
+    fileName: String
   ) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
       val stats = _statsPerIndexer.getOrPut(indexId.name) {
@@ -42,11 +44,13 @@ class IndexingJobStatistics {
     }
     val fileTypeName = fileStatistics.fileType.name
     val stats = _statsPerFileType.computeIfAbsent(fileTypeName) {
-      StatsPerFileType(TimeStats(timeBucketSize), TimeStats(timeBucketSize), 0, 0)
+      StatsPerFileType(TimeStats(timeBucketSize), TimeStats(timeBucketSize), 0, 0, BiggestIndexedFileQueue())
     }
     stats.contentLoadingTime.addTime(contentLoadingTime)
     stats.indexingTime.addTime(fileStatistics.indexingTime)
     stats.totalBytes += fileSize
     stats.numberOfFiles++
+
+    stats.biggestContributors.addFile(IndexedFileStat(fileName, fileTypeName, fileSize, fileStatistics.indexingTime))
   }
 }

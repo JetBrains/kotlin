@@ -26,11 +26,14 @@ data class ProjectIndexingHistory(val projectName: String) {
     providerStatistics += statistics.convertToJson()
 
     for ((fileType, fileTypeStats) in statistics.indexingStatistics.statsPerFileType) {
-      val totalStats = _totalStatsPerFileType.getOrPut(fileType) { StatsPerFileType(0, 0, 0, 0) }
+      val totalStats = _totalStatsPerFileType.getOrPut(fileType) { StatsPerFileType(0, 0, 0, 0, BiggestIndexedFileQueue()) }
       totalStats.totalNumberOfFiles += fileTypeStats.numberOfFiles
       totalStats.totalBytes += fileTypeStats.totalBytes
       totalStats.totalIndexingTimeInAllThreads += fileTypeStats.indexingTime.sumTime
       totalStats.totalContentLoadingTimeInAllThreads += fileTypeStats.contentLoadingTime.sumTime
+      fileTypeStats.biggestContributors.biggestIndexedFiles.forEach {
+        totalStats.biggestContributors.addFile(IndexedFileStat(it.fileName, it.fileType, it.fileSize, it.indexingTime))
+      }
     }
 
     for ((indexId, stats) in statistics.indexingStatistics.statsPerIndexer) {
@@ -45,7 +48,8 @@ data class ProjectIndexingHistory(val projectName: String) {
     var totalNumberOfFiles: Int,
     var totalBytes: BytesNumber,
     var totalIndexingTimeInAllThreads: TimeNano,
-    var totalContentLoadingTimeInAllThreads: TimeNano
+    var totalContentLoadingTimeInAllThreads: TimeNano,
+    val biggestContributors: BiggestIndexedFileQueue
   )
 
   data class StatsPerIndexer(
