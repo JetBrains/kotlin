@@ -132,13 +132,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         KotlinJsBinaryType.DEVELOPMENT -> devDceTaskProvider
                     }
 
-                    // Breaking of Task Configuration Avoidance is not so critical
-                    // because this task is dependent on DCE task
-                    it.entry = actualDceTaskProvider.get()
-                        .destinationDir
-                        .resolve(compileKotlinTask.outputFile.name)
-
-                    it.dependsOn(actualDceTaskProvider)
+                    it.entryProperty.set(
+                        actualDceTaskProvider.map {
+                            it.destinationDir
+                                .resolve(compileKotlinTask.outputFile.name)
+                        }
+                    )
 
                     it.resolveFromModulesFirst = true
 
@@ -208,13 +207,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         KotlinJsBinaryType.DEVELOPMENT -> devDceTaskProvider
                     }
 
-                    // Breaking of Task Configuration Avoidance is not so critical
-                    // because this task is dependent on DCE task
-                    it.entry = actualDceTaskProvider.get()
-                        .destinationDir
-                        .resolve(compileKotlinTask.outputFile.name)
-
-                    it.dependsOn(actualDceTaskProvider)
+                    it.entryProperty.set(
+                        actualDceTaskProvider.map {
+                            it.destinationDir
+                                .resolve(compileKotlinTask.outputFile.name)
+                        }
+                    )
 
                     commonWebpackConfigurations.forEach { configure ->
                         it.configure()

@@ -10,6 +10,7 @@ import org.gradle.api.Incubating
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
+import org.jetbrains.kotlin.gradle.utils.newProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
@@ -53,9 +55,16 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Input
     var mode: Mode = Mode.DEVELOPMENT
 
+    @get:Internal
+    var entry: File
+        get() = entryProperty.get()
+        set(value) {
+            entryProperty.set(value)
+        }
+
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
-    var entry: File by property {
+    val entryProperty: Property<File> = project.newProperty {
         compilation.compileKotlinTask.outputFile
     }
 
