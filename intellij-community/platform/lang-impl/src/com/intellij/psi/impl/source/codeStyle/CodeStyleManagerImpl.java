@@ -3,11 +3,14 @@
 package com.intellij.psi.impl.source.codeStyle;
 
 import com.intellij.application.options.CodeStyle;
+import com.intellij.application.options.codeStyle.cache.CodeStyleCachingService;
 import com.intellij.diagnostic.PluginException;
 import com.intellij.formatting.*;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.lang.*;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
@@ -952,5 +955,26 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   @Override
   public void scheduleIndentAdjustment(@NotNull Document document, int offset) {
     FormatterBasedIndentAdjuster.scheduleIndentAdjustment(myProject, document, offset);
+  }
+
+  @Override
+  public void scheduleReformatWhenSettingsComputed(@NotNull PsiFile file) {
+    final Project project = file.getProject();
+    CodeStyleCachingService.getInstance(project).scheduleWhenSettingsComputed(
+      file,
+      () -> CommandProcessor.getInstance().executeCommand(
+        project,
+        () -> {
+          ApplicationManager.getApplication().runWriteAction(() -> {
+            PostprocessReformattingAspect.getInstance(project).disablePostprocessFormattingInside(
+              () -> {
+                CodeStyleManager.getInstance(project).reformat(file);
+              }
+            );
+          });
+        },
+        "reformat", null
+      )
+    );
   }
 }
