@@ -244,6 +244,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         public void testSuperCalls() throws Exception {
             runTest("compiler/testData/ir/irText/classes/superCalls.kt");
         }
+
+        @TestMetadata("superCallsComposed.kt")
+        public void testSuperCallsComposed() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/superCallsComposed.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/ir/irText/declarations")

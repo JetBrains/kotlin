@@ -101,8 +101,8 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.K4
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String? declared in <root>.K4'
-          CALL 'public open fun foo (): kotlin.String? declared in <root>.JUnrelatedFoo' type=kotlin.String? origin=null
-            $this: ERROR_CALL 'Unresolved reference: super<R|JUnrelatedFoo|R|IFoo|>' type=IrErrorType
+          CALL 'public open fun foo (): kotlin.String? declared in <root>.JUnrelatedFoo' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JUnrelatedFoo modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.String? origin=null
+            $this: GET_VAR '<this>: <root>.K4 declared in <root>.K4.foo' type=<root>.K4 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

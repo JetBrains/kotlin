@@ -25,12 +25,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 
@@ -181,7 +183,7 @@ internal class CallAndReferenceGenerator(
         return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
             val dispatchReceiver = qualifiedAccess.dispatchReceiver
             if (qualifiedAccess.calleeReference is FirSuperReference) {
-                if (typeRef !is FirComposedSuperTypeRef && dispatchReceiver !is FirNoReceiverExpression) {
+                if (dispatchReceiver !is FirNoReceiverExpression) {
                     return@convertWithOffsets visitor.convertToIrExpression(dispatchReceiver)
                 }
             }
@@ -189,9 +191,18 @@ internal class CallAndReferenceGenerator(
             if (dispatchReceiver is FirQualifiedAccess) {
                 val dispatchReceiverReference = dispatchReceiver.calleeReference
                 if (dispatchReceiverReference is FirSuperReference) {
-                    val coneSuperType = dispatchReceiverReference.superTypeRef.coneTypeSafe<ConeClassLikeType>()
-                    (coneSuperType?.lookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.let {
-                        superQualifierSymbol = classifierStorage.getIrClassSymbol(it)
+                    val superTypeRef = dispatchReceiverReference.superTypeRef
+                    val coneSuperType = superTypeRef.coneTypeSafe<ConeClassLikeType>()
+                    if (coneSuperType != null) {
+                        val firClassSymbol = coneSuperType.lookupTag.toSymbol(session) as? FirClassSymbol<*>
+                        if (firClassSymbol != null) {
+                            superQualifierSymbol = classifierStorage.getIrClassSymbol(firClassSymbol)
+                        }
+                    } else if (superTypeRef is FirComposedSuperTypeRef) {
+                        val owner = symbol?.owner
+                        if (owner != null && owner is IrDeclaration) {
+                            superQualifierSymbol = owner.parentClassOrNull?.symbol
+                        }
                     }
                 }
             }
