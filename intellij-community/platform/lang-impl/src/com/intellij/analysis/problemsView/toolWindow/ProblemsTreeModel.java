@@ -54,6 +54,7 @@ public final class ProblemsTreeModel extends BaseTreeModel<Node> implements Invo
     if (children == null || children.isEmpty()) return emptyList();
     assert null != filter.get() : "set filter before";
     assert null != comparator.get() : "set comparator before";
+    node.update();
     children.forEach(Node::update); // update presentation of child nodes before processing
     return children.stream().filter(this.filter.get()).sorted(comparator.get()).collect(toList());
   }
