@@ -25387,6 +25387,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/methodsFromAny/parametersEqualsHashCode.kt");
             }
 
+            @TestMetadata("parametersEqualsWithClearCaches.kt")
+            public void testParametersEqualsWithClearCaches() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/methodsFromAny/parametersEqualsWithClearCaches.kt");
+            }
+
             @TestMetadata("parametersToString.kt")
             public void testParametersToString() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/methodsFromAny/parametersToString.kt");
