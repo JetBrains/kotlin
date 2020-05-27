@@ -8,19 +8,13 @@ typealias BytesNumber = Long
 data class ProjectIndexingHistory(val projectName: String) {
   private val biggestContributorsLimit = 5
 
-  val times: IndexingTimes = IndexingTimes()
+  val times = IndexingTimes()
 
-  val providerStatistics: MutableList<JsonFileProviderIndexStatistics> = arrayListOf()
+  val providerStatistics = arrayListOf<JsonFileProviderIndexStatistics>()
 
-  val totalStatsPerFileType: Map<String /* File type name */, StatsPerFileType>
-    get() = _totalStatsPerFileType
+  val totalStatsPerFileType = hashMapOf<String /* File type name */, StatsPerFileType>()
 
-  val totalStatsPerIndexer: Map<String /* Index ID */, StatsPerIndexer>
-    get() = _totalStatsPerIndexer
-
-  private val _totalStatsPerFileType = hashMapOf<String, StatsPerFileType>()
-
-  private val _totalStatsPerIndexer = hashMapOf<String, StatsPerIndexer>()
+  val totalStatsPerIndexer = hashMapOf<String /* Index ID */, StatsPerIndexer>()
 
   @Synchronized
   fun addProviderStatistics(statistics: FileProviderIndexStatistics) {
@@ -28,7 +22,7 @@ data class ProjectIndexingHistory(val projectName: String) {
     providerStatistics += statistics.convertToJson()
 
     for ((fileType, fileTypeStats) in statistics.indexingStatistics.statsPerFileType) {
-      val totalStats = _totalStatsPerFileType.getOrPut(fileType) {
+      val totalStats = totalStatsPerFileType.getOrPut(fileType) {
         StatsPerFileType(0, 0, 0, 0, LimitedPriorityQueue(biggestContributorsLimit, compareBy { it.indexingTime }))
       }
       totalStats.totalNumberOfFiles += fileTypeStats.numberOfFiles
@@ -41,7 +35,7 @@ data class ProjectIndexingHistory(val projectName: String) {
     }
 
     for ((indexId, stats) in statistics.indexingStatistics.statsPerIndexer) {
-      val totalStats = _totalStatsPerIndexer.getOrPut(indexId) { StatsPerIndexer(0, 0, 0) }
+      val totalStats = totalStatsPerIndexer.getOrPut(indexId) { StatsPerIndexer(0, 0, 0) }
       totalStats.totalNumberOfFiles += stats.numberOfFiles
       totalStats.totalBytes += stats.totalBytes
       totalStats.totalIndexingTimeInAllThreads += stats.indexingTime.sumTime

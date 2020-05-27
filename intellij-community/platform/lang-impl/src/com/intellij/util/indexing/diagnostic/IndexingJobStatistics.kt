@@ -4,11 +4,9 @@ package com.intellij.util.indexing.diagnostic
 class IndexingJobStatistics {
   private val biggestContributorsLimit = 5
 
-  val statsPerIndexer: Map<String /* ID.name() */, StatsPerIndexer>
-    get() = _statsPerIndexer
+  val statsPerIndexer = hashMapOf<String /* ID.name() */, StatsPerIndexer>()
 
-  val statsPerFileType: Map<String /* File type name */, StatsPerFileType>
-    get() = _statsPerFileType
+  val statsPerFileType = hashMapOf<String /* File type name */, StatsPerFileType>()
 
   data class StatsPerIndexer(
     val indexingTime: TimeStats,
@@ -24,9 +22,6 @@ class IndexingJobStatistics {
     val biggestContributors: LimitedPriorityQueue<IndexedFileStat>
   )
 
-  private val _statsPerIndexer = hashMapOf<String, StatsPerIndexer>()
-  private val _statsPerFileType = hashMapOf<String, StatsPerFileType>()
-
   @Synchronized
   fun addFileStatistics(
     fileStatistics: FileIndexingStatistics,
@@ -35,7 +30,7 @@ class IndexingJobStatistics {
     fileName: String
   ) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
-      val stats = _statsPerIndexer.getOrPut(indexId.name) {
+      val stats = statsPerIndexer.getOrPut(indexId.name) {
         StatsPerIndexer(TimeStats(), 0, 0)
       }
       stats.indexingTime.addTime(time)
@@ -43,7 +38,7 @@ class IndexingJobStatistics {
       stats.totalBytes += fileSize
     }
     val fileTypeName = fileStatistics.fileType.name
-    val stats = _statsPerFileType.computeIfAbsent(fileTypeName) {
+    val stats = statsPerFileType.computeIfAbsent(fileTypeName) {
       StatsPerFileType(TimeStats(), TimeStats(), 0, 0, LimitedPriorityQueue(biggestContributorsLimit, compareBy { it.indexingTime }))
     }
     stats.contentLoadingTime.addTime(contentLoadingTime)
