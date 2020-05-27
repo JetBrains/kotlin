@@ -18,6 +18,7 @@ import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjec
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleTypeId
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.doNotEnableExternalStorageByDefaultInTests
 import com.intellij.openapi.project.getProjectCacheFileName
 import com.intellij.openapi.roots.ExternalProjectSystemRegistry
 import com.intellij.openapi.roots.LanguageLevelProjectExtension
@@ -42,7 +43,6 @@ import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
-import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -118,6 +118,12 @@ class ExternalSystemStorageTest {
     assertThat(facet.type).isEqualTo(MockFacetType.getInstance())
     assertThat(facet.externalSource).isNull()
   }
+
+  @Test
+  fun `do not load modules from external system dir if external storage is disabled`() =
+    loadProjectAndCheckResults("externalStorageIsDisabled") { project ->
+      assertThat(ModuleManager.getInstance(project).modules).isEmpty()
+    }
 
   @Test
   fun `imported facet in imported module`() = saveProjectAndCheckResult("importedFacetInImportedModule") { project, projectDir ->
@@ -210,9 +216,11 @@ class ExternalSystemStorageTest {
       VfsUtil.markDirtyAndRefresh(false, true, true, dir)
       return projectDir.toPath()
     }
-    runBlocking {
-      createOrLoadProject(tempDirManager, ::copyProjectFiles, loadComponentState = true, useDefaultProjectSettings = false) {
-        checkProject(it)
+    doNotEnableExternalStorageByDefaultInTests {
+      runBlocking {
+        createOrLoadProject(tempDirManager, ::copyProjectFiles, loadComponentState = true, useDefaultProjectSettings = false) {
+          checkProject(it)
+        }
       }
     }
   }
