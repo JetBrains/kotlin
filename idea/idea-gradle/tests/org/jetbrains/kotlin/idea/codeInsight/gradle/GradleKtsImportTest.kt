@@ -30,7 +30,6 @@ import org.junit.runners.Parameterized.Parameters
 import java.io.File
 
 @RunWith(value = JUnitParameterizedWithIdeaConfigurationRunner::class)
-@Parameterized.UseParametersRunnerFactory(RunnerFactoryWithMuteInDatabase::class)
 class GradleKtsImportTest : GradleImportingTestCase() {
     companion object {
         @JvmStatic
