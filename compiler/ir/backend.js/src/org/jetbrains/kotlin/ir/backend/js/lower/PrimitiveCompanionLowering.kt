@@ -30,12 +30,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : BodyLowering
         if (!irClass.isCompanion)
             return null
 
-        //TODO: Figure out how to check for primitive companion in case similar to REPL in better way
-        val parent = irClass.parent as? IrClass
-            ?: context.symbolTable.referenceClass(irClass.descriptor.containingDeclaration as ClassDescriptor).owner.also {
-                assert(context.scriptMode)
-            }
-
+        val parent = irClass.parent as IrClass
         if (!parent.defaultType.isPrimitiveType() && !parent.defaultType.isString())
             return null
 
