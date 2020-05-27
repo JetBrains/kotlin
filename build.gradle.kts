@@ -482,7 +482,7 @@ allprojects {
             }
 
             configurations.findByName("kotlinCompilerPluginClasspath")
-                ?.exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler")
+                ?.exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable")
         }
 
         apply(from = "$rootDir/gradle/cacheRedirector.gradle.kts")
@@ -620,7 +620,7 @@ tasks {
     register("scriptingTest") {
         dependsOn("dist")
         dependsOn(":kotlin-script-util:test")
-        dependsOn(":kotlin-scripting-compiler:test")
+        dependsOn(":kotlin-scripting-compiler-embeddable:test")
         dependsOn(":kotlin-scripting-common:test")
         dependsOn(":kotlin-scripting-jvm:test")
         dependsOn(":kotlin-scripting-jvm-host-test:test")
@@ -793,8 +793,8 @@ tasks {
                 ":kotlin-script-util:publish",
                 ":kotlin-scripting-common:publish",
                 ":kotlin-scripting-jvm:publish",
-                ":kotlin-scripting-compiler:publish",
-                ":kotlin-scripting-compiler-impl:publish",
+                ":kotlin-scripting-compiler-embeddable:publish",
+                ":kotlin-scripting-compiler-impl-embeddable:publish",
                 ":kotlin-android-extensions-runtime:publish",
                 ":kotlin-stdlib:publish",
                 ":kotlin-stdlib-jdk7:publish",

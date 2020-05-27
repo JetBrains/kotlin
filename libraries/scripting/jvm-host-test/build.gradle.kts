@@ -21,7 +21,7 @@ dependencies {
     allTestsRuntime(intellijDep()) { includeJars("idea", "idea_rt", "log4j", "jna") }
     testCompile(project(":kotlin-scripting-jvm-host-unshaded"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":kotlin-scripting-compiler-unshaded"))
+    testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":daemon-common")) // TODO: fix import (workaround for jps build)
 
     testRuntimeOnly(project(":kotlin-compiler"))

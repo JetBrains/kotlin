@@ -15,7 +15,7 @@ val embeddableTestRuntime by configurations.creating {
 dependencies {
     allTestsRuntime(commonDep("junit"))
     testCompile(project(":kotlin-scripting-ide-services-unshaded"))
-    testCompile(project(":kotlin-scripting-compiler-unshaded"))
+    testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":compiler:cli-common"))
 
     testRuntimeOnly(project(":kotlin-compiler"))

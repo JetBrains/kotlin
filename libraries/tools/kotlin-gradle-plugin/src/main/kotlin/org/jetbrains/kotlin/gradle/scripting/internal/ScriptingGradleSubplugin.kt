@@ -220,7 +220,7 @@ fun Configuration.discoverScriptExtensionsFiles() =
 
 class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
-        const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting-compiler"
+        const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting-compiler-embeddable"
 
         val SCRIPT_DEFINITIONS_OPTION = "script-definitions"
         val SCRIPT_DEFINITIONS_CLASSPATH_OPTION = "script-definitions-classpath"

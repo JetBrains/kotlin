@@ -43,7 +43,7 @@ dependencies {
     compileOnly(project(":kotlin-compiler-runner"))
     compileOnly(project(":kotlin-annotation-processing"))
     compileOnly(project(":kotlin-annotation-processing-gradle"))
-    compileOnly(project(":kotlin-scripting-compiler-unshaded"))
+    compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":kotlin-gradle-statistics"))
     embedded(project(":kotlin-gradle-statistics"))
 
@@ -64,8 +64,8 @@ dependencies {
     runtime(projectRuntimeJar(":kotlin-annotation-processing-gradle"))
     runtime(projectRuntimeJar(":kotlin-android-extensions"))
     runtime(projectRuntimeJar(":kotlin-compiler-runner"))
-    runtime(projectRuntimeJar(":kotlin-scripting-compiler"))
-    runtime(projectRuntimeJar(":kotlin-scripting-compiler-impl"))
+    runtime(projectRuntimeJar(":kotlin-scripting-compiler-embeddable"))
+    runtime(projectRuntimeJar(":kotlin-scripting-compiler-impl-embeddable"))
     runtime(project(":kotlin-reflect"))
 
     jarContents(compileOnly(intellijDep()) {

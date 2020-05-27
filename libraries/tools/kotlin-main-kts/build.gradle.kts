@@ -30,7 +30,7 @@ dependencies {
     compileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     compileOnly(project(":kotlin-scripting-dependencies"))
     runtime(project(":kotlin-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-compiler"))
+    runtime(project(":kotlin-scripting-compiler-embeddable"))
     runtime(project(":kotlin-scripting-jvm-host"))
     runtime(project(":kotlin-reflect"))
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }

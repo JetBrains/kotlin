@@ -16,7 +16,7 @@ dependencies {
     runtime(project(":kotlin-scripting-jvm"))
     runtime(project(":kotlin-scripting-jvm-host"))
     runtime(project(":kotlin-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-compiler"))
+    runtime(project(":kotlin-scripting-compiler-embeddable"))
 }
 
 sourceSets {
