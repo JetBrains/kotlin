@@ -79,18 +79,33 @@ class NativeStatsCollector(
             append(SEPARATOR)
             append(firstNotNull.declarationType) // readable declaration type
             append(SEPARATOR)
-            append(if (lastIsNull) '-' else 'E') // common
 
-            for (index in 0 until output.size - 1) {
-                append(SEPARATOR)
-                append(
-                    when {
-                        output[index] == null -> '-' // absent
-                        lastIsNull -> 'O' // original (not commonized)
-                        else -> 'A' // actual (commonized)
-                    }
-                )
+            var isLiftedUp = !lastIsNull
+            val platformItems = StringBuilder().apply {
+                for (index in 0 until output.size - 1) {
+                    append(SEPARATOR)
+                    append(
+                        when {
+                            output[index] == null -> '-' // absent
+                            lastIsNull -> 'O' // original (not commonized)
+                            else -> {
+                                isLiftedUp = false
+                                'A' // actual (commonized)
+                            }
+                        }
+                    )
+                }
             }
+
+            append(
+                when {
+                    isLiftedUp -> 'L'
+                    lastIsNull -> '-'
+                    else -> 'E'
+                }
+            ) // common
+
+            append(platformItems)
         }
 
         writer.println(row)
