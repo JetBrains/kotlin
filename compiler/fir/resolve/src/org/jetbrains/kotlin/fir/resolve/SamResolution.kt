@@ -316,7 +316,7 @@ private fun FirRegularClass.hasMoreThenOneAbstractFunctionOrHasAbstractProperty(
 // "methods that are members of I that do not have the same signature as any public instance method of the class Object"
 // It means that if an interface declares `int hashCode()` then the method won't be taken into account when
 // checking if the interface is SAM.
-private fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
+fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
     if (name.asString() !in PUBLIC_METHOD_NAMES_IN_OBJECT) return false
     if (checkOnlyName) return true
 

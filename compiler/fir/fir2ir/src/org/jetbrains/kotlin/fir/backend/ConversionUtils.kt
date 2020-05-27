@@ -470,7 +470,8 @@ fun FirClass<*>.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
 }
 
 fun FirClass<*>.getSamIfAny(): FirSimpleFunction? =
-    declarations.filterIsInstance<FirSimpleFunction>().singleOrNull { it.modality == Modality.ABSTRACT }
+    declarations.filterIsInstance<FirSimpleFunction>()
+        .singleOrNull { it.modality == Modality.ABSTRACT && !it.isPublicInObject(checkOnlyName = true) }
 
 val IrType.isSamType: Boolean
     get() {
