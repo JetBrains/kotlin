@@ -238,8 +238,8 @@ fun ProjectIndexingHistory.convertToJson() =
     projectName,
     aggregateTotalNumberOfFiles(),
     times.convertToJson(),
-    aggregateStatsPerFileType().sortedByDescending { it.totalNumberOfFiles },
-    aggregateStatsPerIndexer().sortedByDescending { it.totalNumberOfFiles },
+    aggregateStatsPerFileType().sortedByDescending { it.partOfTotalIndexingTime.percentages },
+    aggregateStatsPerIndexer().sortedByDescending { it.partOfTotalIndexingTime.percentages },
     providerStatistics.sortedByDescending { it.totalIndexingTime.nano }
   )
 
