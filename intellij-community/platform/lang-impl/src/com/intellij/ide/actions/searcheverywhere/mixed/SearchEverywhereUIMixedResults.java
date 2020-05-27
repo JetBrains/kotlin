@@ -169,6 +169,21 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
   @Override
   public JBList<Object> createList() {
     myListModel = new SearchListModel();
+    Comparator<SearchEverywhereFoundElementInfo> commandsComparator = (element1, element2) -> {
+      if (element1.getContributor() == myStubCommandContributor && element2.getContributor() == myStubCommandContributor) {
+        SearchEverywhereCommandInfo command1 = (SearchEverywhereCommandInfo)element1.getElement();
+        SearchEverywhereCommandInfo command2 = (SearchEverywhereCommandInfo)element2.getElement();
+
+        return command1.getCommand().compareTo(command2.getCommand());
+      }
+
+      return element1.getContributor() == myStubCommandContributor ? 1
+             : element2.getContributor() == myStubCommandContributor ? -1 : 0;
+    };
+
+    myListModel.setElementsComparator(commandsComparator
+                                        .thenComparing(SearchEverywhereFoundElementInfo.COMPARATOR)
+                                        .reversed());
     addListDataListener(myListModel);
 
     return new JBList<>(myListModel);
@@ -1045,6 +1060,11 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
     private final Map<SearchEverywhereContributor<?>, Boolean> hasMoreContributors = new HashMap<>();
 
     private boolean resultsExpired = false;
+    private Comparator<SearchEverywhereFoundElementInfo> myElementsComparator = SearchEverywhereFoundElementInfo.COMPARATOR.reversed();
+
+    public void setElementsComparator(Comparator<SearchEverywhereFoundElementInfo> elementsComparator) {
+      myElementsComparator = elementsComparator;
+    }
 
     public boolean isResultsExpired() {
       return resultsExpired;
@@ -1085,7 +1105,7 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
       }
 
       items = items.stream()
-        .sorted(SearchEverywhereFoundElementInfo.COMPARATOR.reversed())
+        .sorted(myElementsComparator)
         .collect(Collectors.toList());
 
       if (resultsExpired) {
@@ -1113,7 +1133,7 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
 
         // there were items for this contributor before update
         if (startIndex > 0) {
-          listElements.sort(SearchEverywhereFoundElementInfo.COMPARATOR.reversed());
+          listElements.sort(myElementsComparator);
           fireContentsChanged(this, 0, endIndex);
         }
       }
