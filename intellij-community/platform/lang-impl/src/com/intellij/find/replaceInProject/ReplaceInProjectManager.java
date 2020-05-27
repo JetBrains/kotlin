@@ -231,10 +231,18 @@ public class ReplaceInProjectManager {
   }
 
   public boolean showReplaceAllConfirmDialog(@NotNull String usagesCount, @NotNull String stringToFind, @NotNull String filesCount, @NotNull String stringToReplace) {
+    String message = stringToFind.length() < 400 && stringToReplace.length() < 400
+                     ? FindBundle.message("find.replace.all.confirmation", usagesCount,
+                                          StringUtil.escapeXmlEntities(stringToFind),
+                                          filesCount,
+                                          StringUtil.escapeXmlEntities(stringToReplace))
+                     : FindBundle.message("find.replace.all.confirmation.long.text", usagesCount,
+                                          StringUtil.trimMiddle(StringUtil.escapeXmlEntities(stringToFind), 400),
+                                          filesCount,
+                                          StringUtil.trimMiddle(StringUtil.escapeXmlEntities(stringToReplace), 400));
     return Messages.YES == MessageDialogBuilder.yesNo(
       FindBundle.message("find.replace.all.confirmation.title"),
-      FindBundle.message("find.replace.all.confirmation", usagesCount, StringUtil.escapeXmlEntities(stringToFind), filesCount,
-                         StringUtil.escapeXmlEntities(stringToReplace)))
+      message)
                                                .yesText(FindBundle.message("find.replace.command"))
                                                .project(myProject)
                                                .noText(Messages.getCancelButton()).show();
