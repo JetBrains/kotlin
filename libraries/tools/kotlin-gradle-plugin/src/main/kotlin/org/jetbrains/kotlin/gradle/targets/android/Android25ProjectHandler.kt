@@ -6,6 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin
 
+import com.android.build.api.attributes.BuildTypeAttr
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.*
@@ -146,6 +147,11 @@ class Android25ProjectHandler(
         compilation.runtimeDependencyFiles = variant.runtimeConfiguration.apply {
             usesPlatformOf(compilation.target)
             project.addExtendsFromRelation(name, compilation.runtimeDependencyConfigurationName)
+        }
+
+        val buildTypeAttrValue = project.objects.named(BuildTypeAttr::class.java, variant.name)
+        listOf(compilation.compileDependencyConfigurationName, compilation.runtimeDependencyConfigurationName).forEach {
+            project.configurations.findByName(it)?.attributes?.attribute(BuildTypeAttr.ATTRIBUTE, buildTypeAttrValue)
         }
 
         // TODO this code depends on the convention that is present in the Android plugin as there's no public API
