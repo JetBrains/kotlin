@@ -11,3 +11,18 @@ internal inline fun <reified T> function9(t: T, i: Int, s: String): T = t
 public inline fun <reified T> function10(t: T, i: Int, s: String): T = t
 inline fun <reified T> T.function11(t: T, i: Int, s: String): T = t
 inline fun <reified T : CharSequence> T.function11CharSequence(t: T, i: Int, s: String): T = t
+inline fun <reified T : CharSequence, reified B : T> T.function12CharSequence(t: B, i: T, s: String): B = t
+
+fun <T, B> copyWhenGreater(list: List<T>, threshold: T, threshold2: B): B
+        where T : CharSequence,
+              T : Comparable<T>,
+              B : T {
+    return threshold2
+}
+
+class Foo<T> {
+    inline fun <reified Z : T> foo(): Z {
+        TODO()
+    }
+}
+
