@@ -24,16 +24,18 @@ public class TabOutScopesTrackerImpl implements TabOutScopesTracker {
   private static final Key<Integer> CARET_SHIFT = Key.create("tab.out.caret.shift");
 
   @Override
-  public void registerEmptyScope(@NotNull Editor editor, int offset, int tabOutOffset) {
-    registerScopeRange(editor, offset, offset, tabOutOffset);
-  }
-
-  @Override
   public void registerScopeRange(@NotNull Editor editor, int rangeStart, int rangeEnd, int tabOutOffset) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     if (editor.isDisposed()) throw new IllegalArgumentException("Editor is already disposed");
-    if (tabOutOffset <= rangeEnd) throw new IllegalArgumentException("tabOutOffset should be larger than the end of the region");
+    if (rangeStart > rangeEnd) {
+      final String message = String.format("regionEnd (%d) should be larger than regionStart (%d)", rangeEnd, rangeStart);
+      throw new IllegalArgumentException(message);
+    }
+    if (tabOutOffset <= rangeEnd) {
+      final String message = String.format("tabOutOffset (%d) should be larger than rangeEnd (%d)", tabOutOffset, rangeEnd);
+      throw new IllegalArgumentException(message);
+    }
 
     if (!CodeInsightSettings.getInstance().TAB_EXITS_BRACKETS_AND_QUOTES) return;
 
