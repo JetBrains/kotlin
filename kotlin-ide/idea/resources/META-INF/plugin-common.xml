@@ -184,9 +184,6 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.project.KotlinLibraryToSourceAnalysisStateComponent"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.fir.FirIdeResolveStateService"
-                    serviceImplementation="org.jetbrains.kotlin.idea.fir.FirIdeResolveStateServiceImpl"/>
-
     <projectService serviceInterface="org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory"
                     serviceImplementation="org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinderFactory"/>
 

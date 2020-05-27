@@ -1,0 +1,193 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" version="2" url="http://kotlinlang.org" allow-bundled-update="true">
+  <id>org.jetbrains.kotlin</id>
+
+  <name>Kotlin FIR</name>
+  <description><![CDATA[
+The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Studio.
+<br>
+<a href="http://kotlinlang.org/docs/tutorials/getting-started.html">Getting Started in IntelliJ IDEA</a><br>
+<a href="http://kotlinlang.org/docs/tutorials/kotlin-android.html">Getting Started in Android Studio</a><br>
+<a href="http://slack.kotlinlang.org/">Public Slack</a><br>
+<a href="https://youtrack.jetbrains.com/issues/KT">Issue tracker</a><br>
+]]></description>
+  <version>@snapshot@</version>
+  <vendor url="http://www.jetbrains.com">JetBrains</vendor>
+
+  <idea-version since-build="193.4099.13" until-build="193.*"/>
+
+  <depends>com.intellij.modules.platform</depends>
+
+  <depends optional="true" config-file="gradle.xml">com.intellij.gradle</depends>
+  <depends optional="true" config-file="gradle-java.xml">org.jetbrains.plugins.gradle</depends>
+  <depends optional="true" config-file="gradle-groovy.xml">org.intellij.groovy</depends>
+  <depends optional="true" config-file="maven-common.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="git4idea.xml">Git4Idea</depends>
+
+  <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
+
+  <!-- CIDR-PLUGIN-PLACEHOLDER-START -->
+  <depends>com.intellij.modules.idea</depends>
+  <depends>com.intellij.modules.java</depends>
+  <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
+<!--  <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>-->
+  <!-- CIDR-PLUGIN-PLACEHOLDER-END -->
+
+  <xi:include href="indexes.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="jps.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="idea.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="caches.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <xi:include href="extensions/ide-frontend-independent.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+
+  <!-- CIDR-PLUGIN-EXCLUDE-START -->
+  <!--  <xi:include href="jvm-common.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
+  <!--  <xi:include href="jvm.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
+  <!-- CIDR-PLUGIN-EXCLUDE-END -->
+
+  <xi:include href="tipsAndTricks.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <!--  <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
+
+  <!--  <xi:include href="kotlinx-serialization.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
+
+    <xi:include href="scripting-support.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <project-components>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener</implementation-class>
+    </component>
+  </project-components>
+
+  <extensionPoints>
+    <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.pluginUpdateVerifier"
+                    interface="org.jetbrains.kotlin.idea.update.PluginUpdateVerifier"/>
+  </extensionPoints>
+
+  <!--  <xi:include href="plugin-kotlin-extensions.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
+
+  <!--  <extensions defaultExtensionNs="com.intellij.jvm">-->
+  <!--    <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>-->
+  <!--  </extensions>-->
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <beforeResolveHighlightingVisitor implementation="org.jetbrains.kotlin.idea.highlighter.visitors.DeclarationHighlightingExtension"/>
+  </extensions>
+
+
+<!--decompiler-->
+  <extensions defaultExtensionNs="com.intellij">
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClassFileDecompiler"/>
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInDecompiler"/>
+  </extensions>
+<!--decompiler-->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- fir-specific -->
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
+                        serviceImplementation="org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService"/>
+    <highlightRangeExtension implementation="org.jetbrains.kotlin.idea.highlighter.KotlinFirPsiChecker"/>
+    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinFirPsiChecker"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.fir.FirIdeResolveStateService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.fir.FirIdeResolveStateServiceImpl"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
+  </extensions>
+
+  <!--  scripts  -->
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptDefinitionsProvider"
+                    interface="kotlin.script.experimental.intellij.ScriptDefinitionsProvider"
+                    area="IDEA_PROJECT"/>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.listener"
+                    interface="org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener"
+                    area="IDEA_PROJECT"/>
+  </extensionPoints>
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <scriptDefinitionContributor
+        id="ScriptTemplatesFromCompilerSettingsProvider"
+        implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesFromCompilerSettingsProvider"/>
+
+    <scriptDefinitionContributor
+        id="BridgeScriptDefinitionsContributor"
+        implementation="org.jetbrains.kotlin.idea.script.BridgeScriptDefinitionsContributor"/>
+
+    <scriptDefinitionContributor
+        id="ScriptTemplatesFromDependenciesProvider"
+        implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesFromDependenciesProvider"/>
+
+    <scriptDefinitionContributor id="StandardScriptDefinitionContributor"
+                                 order="last"
+                                 implementation="org.jetbrains.kotlin.idea.core.script.StandardScriptDefinitionContributor"/>
+
+    <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
+                                 implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
+
+    <scriptDefinitionsProvider id="MainKtsScriptDefinitionSource"
+                               implementation="org.jetbrains.kotlin.idea.script.MainKtsScriptDefinitionSource"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"/>
+    <java.elementFinder implementation="org.jetbrains.kotlin.idea.core.script.KotlinScriptDependenciesClassFinder"/>
+  </extensions>
+
+  <!-- scripts -->
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.resolveScopeEnlarger"
+                    interface="org.jetbrains.kotlin.idea.caches.resolve.util.KotlinResolveScopeEnlarger"/>
+  </extensionPoints>
+
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.framework.LibraryEffectiveKindProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.framework.LibraryEffectiveKindProviderImpl"/>
+
+  </extensions>
+
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceInterface="org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory"
+                    serviceImplementation="org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinderFactory"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory"
+                    serviceImplementation="org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinderFactory"/>
+
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginStartupActivity"/>
+
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.completion.LookupCancelService"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService"/>
+
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
+
+    <fileType name="Kotlin"
+              implementationClass="org.jetbrains.kotlin.idea.KotlinFileType"
+              fieldName="INSTANCE"
+              language="kotlin"
+              extensions="kt;kts"/>
+    <fileType name="kotlin_builtins"
+              implementationClass="org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType"
+              fieldName="INSTANCE"
+              extensions="kotlin_builtins;kotlin_metadata"/>
+
+    <fileType name="kotlin_module"
+              implementationClass="org.jetbrains.kotlin.idea.KotlinModuleFileType"
+              fieldName="INSTANCE"
+              extensions="kotlin_module"/>
+  </extensions>
+</idea-plugin>
