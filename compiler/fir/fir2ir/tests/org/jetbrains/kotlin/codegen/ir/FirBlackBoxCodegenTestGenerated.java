@@ -26192,6 +26192,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/reflection/methodsFromAny/typeParametersEqualsHashCode.kt");
             }
 
+            @TestMetadata("typeParametersEqualsWithClearCaches.kt")
+            public void testTypeParametersEqualsWithClearCaches() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/methodsFromAny/typeParametersEqualsWithClearCaches.kt");
+            }
+
             @TestMetadata("typeParametersToString.kt")
             public void testTypeParametersToString() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/methodsFromAny/typeParametersToString.kt");
@@ -27076,6 +27081,16 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("declarationSiteVariance.kt")
             public void testDeclarationSiteVariance() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeParameters/declarationSiteVariance.kt");
+            }
+
+            @TestMetadata("innerGenericParameter.kt")
+            public void testInnerGenericParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeParameters/innerGenericParameter.kt");
+            }
+
+            @TestMetadata("javaGenericTypeConstructor.kt")
+            public void testJavaGenericTypeConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeParameters/javaGenericTypeConstructor.kt");
             }
 
             @TestMetadata("typeParametersAndNames.kt")

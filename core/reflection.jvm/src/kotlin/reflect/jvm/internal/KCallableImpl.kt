@@ -20,7 +20,7 @@ import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 
-internal abstract class KCallableImpl<out R> : KCallable<R> {
+internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwnerImpl {
     abstract val descriptor: CallableMemberDescriptor
 
     // The instance which is used to perform a positional call, i.e. `call`
@@ -82,7 +82,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         get() = _returnType()
 
     private val _typeParameters = ReflectProperties.lazySoft {
-        descriptor.typeParameters.map(::KTypeParameterImpl)
+        descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(this, descriptor) }
     }
 
     override val typeParameters: List<KTypeParameter>

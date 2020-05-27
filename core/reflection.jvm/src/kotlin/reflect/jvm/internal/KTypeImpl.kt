@@ -63,7 +63,7 @@ internal class KTypeImpl(
 
                 return KClassImpl(jClass)
             }
-            is TypeParameterDescriptor -> return KTypeParameterImpl(descriptor)
+            is TypeParameterDescriptor -> return KTypeParameterImpl(null, descriptor)
             is TypeAliasDescriptor -> TODO("Type alias classifiers are not yet supported")
             else -> return null
         }
