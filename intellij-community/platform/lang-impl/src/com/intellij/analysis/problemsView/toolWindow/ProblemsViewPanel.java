@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option;
@@ -16,6 +15,7 @@ import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.PopupHandler;
+import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
@@ -170,6 +170,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
       updateAutoscroll(descriptor);
       updatePreview(descriptor);
     });
+    new TreeSpeedSearch(myTree);
     EditSourceOnDoubleClickHandler.install(myTree);
     EditSourceOnEnterKeyHandler.install(myTree);
     PopupHandler.installPopupHandler(myTree, "ProblemsView.ToolWindow.TreePopup", ActionPlaces.POPUP);

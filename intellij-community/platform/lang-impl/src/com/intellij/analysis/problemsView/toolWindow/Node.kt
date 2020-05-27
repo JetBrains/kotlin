@@ -17,6 +17,8 @@ internal abstract class Node : PresentableNodeDescriptor<Node?>, LeafState.Suppl
 
   abstract override fun getName(): String
 
+  override fun toString() = name
+
   open fun getChildren(): Collection<Node> = emptyList()
 
   override fun getElement() = this
