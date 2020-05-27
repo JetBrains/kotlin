@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
@@ -100,6 +102,16 @@ open class KotlinJsProjectExtension :
     internal var _target: KotlinJsTargetDsl? = null
         private set
 
+    companion object {
+        internal fun reportJsCompilerMode(compilerType: KotlinJsCompilerType) {
+            when (compilerType) {
+                KotlinJsCompilerType.LEGACY -> KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "legacy")
+                KotlinJsCompilerType.IR -> KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "ir")
+                KotlinJsCompilerType.BOTH -> KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "both")
+            }
+        }
+    }
+
     @Deprecated("Use js() instead", ReplaceWith("js()"))
     override var target: KotlinJsTargetDsl
         get() {
@@ -126,17 +138,26 @@ open class KotlinJsProjectExtension :
         }
 
         if (_target == null) {
-            val target: KotlinJsTargetDsl = when (compiler ?: defaultJsCompilerType) {
+            val compilerOrDefault = compiler ?: defaultJsCompilerType
+            reportJsCompilerMode(compilerOrDefault)
+            val target: KotlinJsTargetDsl = when (compilerOrDefault) {
                 KotlinJsCompilerType.LEGACY -> legacyPreset
-                    .also { it.irPreset = null }
+                    .also {
+                        it.irPreset = null
+                        KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "legacy")
+                    }
                     .createTarget("js")
                 KotlinJsCompilerType.IR -> irPreset
-                    .also { it.mixedMode = false }
+                    .also {
+                        it.mixedMode = false
+                        KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "ir")
+                    }
                     .createTarget("js")
                 KotlinJsCompilerType.BOTH -> legacyPreset
                     .also {
                         irPreset.mixedMode = true
                         it.irPreset = irPreset
+                        KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "both")
                     }
                     .createTarget(
                         lowerCamelCaseName(
