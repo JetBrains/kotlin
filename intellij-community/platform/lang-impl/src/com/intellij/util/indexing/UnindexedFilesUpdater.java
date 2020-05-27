@@ -145,6 +145,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     int numberOfIndexingThreads = getNumberOfIndexingThreads();
     LOG.info("Using " + numberOfIndexingThreads + " " + StringUtil.pluralize("thread", numberOfIndexingThreads) + " for indexing");
     IndexUpdateRunner indexUpdateRunner = new IndexUpdateRunner(myIndex, GLOBAL_INDEXING_EXECUTOR, numberOfIndexingThreads);
+    projectIndexingHistory.setNumberOfIndexingThreads(numberOfIndexingThreads);
 
     for (IndexableFilesProvider provider : orderedProviders) {
       List<VirtualFile> providerFiles = providerToFiles.get(provider);

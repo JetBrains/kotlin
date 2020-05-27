@@ -13,6 +13,8 @@ data class ProjectIndexingHistory(val projectName: String) {
 
   val times = IndexingTimes()
 
+  var numberOfIndexingThreads: Int = 0
+
   val providerStatistics = arrayListOf<JsonFileProviderIndexStatistics>()
 
   val totalStatsPerFileType = hashMapOf<String /* File type name */, StatsPerFileType>()
