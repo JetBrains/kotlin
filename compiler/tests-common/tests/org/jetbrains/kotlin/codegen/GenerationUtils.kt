@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -145,7 +146,8 @@ object GenerationUtils {
                 configuration.languageVersionSettings,
                 signaturer = IdSignatureDescriptor(JvmManglerDesc()),
                 // TODO: differentiate JVM resolve from other targets, such as JS resolve.
-                generatorExtensions = JvmGeneratorExtensions()
+                generatorExtensions = JvmGeneratorExtensions(),
+                mangler = FirJvmKotlinMangler(session)
             )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 

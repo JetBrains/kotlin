@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -165,7 +166,8 @@ class Fir2IrConverter(
             languageVersionSettings: LanguageVersionSettings,
             fakeOverrideMode: FakeOverrideMode = FakeOverrideMode.NORMAL,
             signaturer: IdSignatureComposer,
-            generatorExtensions: GeneratorExtensions
+            generatorExtensions: GeneratorExtensions,
+            mangler: FirMangler
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer)
@@ -176,7 +178,7 @@ class Fir2IrConverter(
             val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             BuiltinSymbolsBase(builtIns, moduleDescriptor.builtIns, symbolTable)
             val sourceManager = PsiSourceManager()
-            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns)
+            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns, mangler)
             val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
             val classifierStorage = Fir2IrClassifierStorage(components)
             val typeConverter = Fir2IrTypeConverter(components)

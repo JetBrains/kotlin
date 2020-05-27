@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirBasedSignatureComposer : Fir2IrSignatureComposer {
-    class SignatureBuilder : FirVisitorVoid() {
+class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatureComposer {
+    inner class SignatureBuilder : FirVisitorVoid() {
         var hashId: Long? = null
         var mask = 0L
 
@@ -35,14 +35,17 @@ class FirBasedSignatureComposer : Fir2IrSignatureComposer {
         }
 
         override fun visitConstructor(constructor: FirConstructor) {
+            hashId = mangler.run { constructor.signatureMangle }
             setExpected(constructor.isExpect)
         }
 
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+            hashId = mangler.run { simpleFunction.signatureMangle }
             setExpected(simpleFunction.isExpect)
         }
 
         override fun visitProperty(property: FirProperty) {
+            hashId = mangler.run { property.signatureMangle }
             setExpected(property.isExpect)
         }
     }
