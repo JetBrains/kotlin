@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.util.indexing.diagnostic.dto.JsonIndexDiagnostic
 import com.intellij.util.io.createDirectories
 import com.intellij.util.io.delete
 import java.nio.file.Files

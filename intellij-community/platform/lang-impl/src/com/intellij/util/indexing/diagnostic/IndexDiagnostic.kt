@@ -1,6 +1,9 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.diagnostic
 
+import com.intellij.util.indexing.diagnostic.dto.JsonFileProviderIndexStatistics
+import com.intellij.util.indexing.diagnostic.dto.toJson
+
 typealias TimeMillis = Long
 typealias TimeNano = Long
 typealias BytesNumber = Long
@@ -19,7 +22,7 @@ data class ProjectIndexingHistory(val projectName: String) {
   @Synchronized
   fun addProviderStatistics(statistics: FileProviderIndexStatistics) {
     // Convert to Json to release memory occupied by statistic values.
-    providerStatistics += statistics.convertToJson()
+    providerStatistics += statistics.toJson()
 
     for ((fileType, fileTypeStats) in statistics.indexingStatistics.statsPerFileType) {
       val totalStats = totalStatsPerFileType.getOrPut(fileType) {
