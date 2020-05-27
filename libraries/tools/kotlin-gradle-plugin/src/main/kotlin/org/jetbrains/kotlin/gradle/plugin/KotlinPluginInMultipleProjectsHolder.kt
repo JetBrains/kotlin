@@ -16,22 +16,13 @@ internal class KotlinPluginInMultipleProjectsHolder(
     fun addProject(
         project: Project,
         kotlinPluginVersion: String? = null,
-        onRegister: () -> Unit
+        onRegister: () -> Unit = {}
     ) {
         require(differentVersionsInDifferentProject == (kotlinPluginVersion != null))
 
         val projectPath = project.path
 
-        val loadedInProjectsPropertyName = listOf(
-            "kotlin",
-            "plugin",
-            "loaded",
-            "in",
-            "projects",
-            kotlinPluginVersion
-        )
-            .filterNotNull()
-            .joinToString(".")
+        val loadedInProjectsPropertyName = getPropertyName(kotlinPluginVersion)
 
         if (!differentVersionsInDifferentProject || loadedInProjectPath == null) {
             loadedInProjectPath = projectPath
@@ -52,29 +43,47 @@ internal class KotlinPluginInMultipleProjectsHolder(
         kotlinPluginVersion: String? = null
     ): Boolean {
         require(differentVersionsInDifferentProject == (kotlinPluginVersion != null))
-        return getAffectedProjects(project, kotlinPluginVersion).size > 1
+        return getAffectedProjects(project, kotlinPluginVersion)?.let {
+            it.size > 1
+        } ?: false
     }
 
     fun getAffectedProjects(
         project: Project,
         kotlinPluginVersion: String? = null
-    ): List<String> {
+    ): List<String>? {
         require(differentVersionsInDifferentProject == (kotlinPluginVersion != null))
 
         val ext = getExt(project)
 
-        val loadedInProjectsPropertyName = "kotlin.plugin.loaded.in.projects.${kotlinPluginVersion}"
+        val propertyName = getPropertyName(kotlinPluginVersion)
 
-        return (ext.get(loadedInProjectsPropertyName) as String).split(";")
+        if (!ext.has(propertyName)) {
+            return null
+        }
+
+        return (ext.get(propertyName) as String).split(";")
     }
 
     private fun getExt(project: Project): ExtraPropertiesExtension {
         return project.rootProject.extensions.getByType(ExtraPropertiesExtension::class.java)
     }
+
+    private fun getPropertyName(version: String?): String {
+        return listOfNotNull(
+            "kotlin",
+            "plugin",
+            "loaded",
+            "in",
+            "projects",
+            version
+        )
+            .joinToString(".")
+    }
 }
 
 const val MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING: String =
-    "\nThe Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may break the build. \n" +
+    "The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may break the build. \n" +
 
             "This might happen in subprojects that apply the Kotlin plugins with the Gradle 'plugins { ... }' DSL if they specify " +
             "explicit versions, even if the versions are equal.\n" +

@@ -133,7 +133,7 @@ internal class KotlinGradleBuildServices private constructor(
         val onRegister = {
             gradle.taskGraph.whenReady {
                 if (multipleProjectsHolder.isInMultipleProjects(project, kotlinPluginVersion)) {
-                    val loadedInProjects = multipleProjectsHolder.getAffectedProjects(project, kotlinPluginVersion)
+                    val loadedInProjects = multipleProjectsHolder.getAffectedProjects(project, kotlinPluginVersion)!!
                     if (PropertiesProvider(project).ignorePluginLoadedInMultipleProjects != true) {
                         project.logger.warn(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
                         project.logger.warn(
