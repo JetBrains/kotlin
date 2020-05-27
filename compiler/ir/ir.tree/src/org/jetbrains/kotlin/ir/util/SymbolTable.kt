@@ -100,6 +100,19 @@ open class SymbolTable(
             return createOwner(symbol)
         }
 
+        inline fun declare(sig: IdSignature, createSymbol: () -> S, createOwner: (S) -> B): B {
+            val existing = get(sig)
+            val symbol = if (existing == null) {
+                createSymbol()
+            } else {
+                unboundSymbols.remove(existing)
+                existing
+            }
+            val result = createOwner(symbol)
+            set(symbol.descriptor, symbol)
+            return result
+        }
+
         inline fun declareIfNotExists(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
             @Suppress("UNCHECKED_CAST")
             val d0 = d.original as D
@@ -429,6 +442,18 @@ open class SymbolTable(
             constructorFactory
         )
 
+    fun declareConstructor(
+        sig: IdSignature,
+        symbolFactory: () -> IrConstructorSymbol,
+        constructorFactory: (IrConstructorSymbol) -> IrConstructor
+    ): IrConstructor {
+        return constructorSymbolTable.declare(
+            sig,
+            symbolFactory,
+            constructorFactory
+        )
+    }
+
     fun declareConstructorIfNotExists(descriptor: ClassConstructorDescriptor, constructorFactory: (IrConstructorSymbol) -> IrConstructor): IrConstructor =
         constructorSymbolTable.declareIfNotExists(
             descriptor,
@@ -608,6 +633,18 @@ open class SymbolTable(
             propertyFactory
         )
 
+    fun declareProperty(
+        sig: IdSignature,
+        symbolFactory: () -> IrPropertySymbol,
+        propertyFactory: (IrPropertySymbol) -> IrProperty
+    ): IrProperty {
+        return propertySymbolTable.declare(
+            sig,
+            symbolFactory,
+            propertyFactory
+        )
+    }
+
     fun declarePropertyIfNotExists(descriptor: PropertyDescriptor, propertyFactory: (IrPropertySymbol) -> IrProperty): IrProperty =
         propertySymbolTable.declareIfNotExists(descriptor, { createPropertySymbol(descriptor) }, propertyFactory)
 
@@ -684,6 +721,18 @@ open class SymbolTable(
         return simpleFunctionSymbolTable.declare(
             descriptor,
             { createSimpleFunctionSymbol(descriptor) },
+            functionFactory
+        )
+    }
+
+    fun declareSimpleFunction(
+        sig: IdSignature,
+        symbolFactory: () -> IrSimpleFunctionSymbol,
+        functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
+    ): IrSimpleFunction {
+        return simpleFunctionSymbolTable.declare(
+            sig,
+            symbolFactory,
             functionFactory
         )
     }
