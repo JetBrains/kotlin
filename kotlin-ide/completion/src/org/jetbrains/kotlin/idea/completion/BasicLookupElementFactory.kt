@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinClassifierInsertHandl
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
+import org.jetbrains.kotlin.idea.core.unwrapIfFakeOverride
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -51,10 +52,7 @@ class BasicLookupElementFactory(
         includeClassTypeArguments: Boolean = true,
         parametersAndTypeGrayed: Boolean = false
     ): LookupElement {
-        val _descriptor = if (descriptor is CallableMemberDescriptor)
-            DescriptorUtils.unwrapFakeOverride(descriptor)
-        else
-            descriptor
+        val _descriptor = descriptor.unwrapIfFakeOverride()
         return createLookupElementUnwrappedDescriptor(_descriptor, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
     }
 

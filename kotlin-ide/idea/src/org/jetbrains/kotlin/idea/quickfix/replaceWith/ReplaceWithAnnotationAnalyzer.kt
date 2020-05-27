@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
+import org.jetbrains.kotlin.idea.core.unwrapIfFakeOverride
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -43,10 +44,7 @@ object ReplaceWithAnnotationAnalyzer {
         resolutionFacade: ResolutionFacade,
         reformat: Boolean
     ): CodeToInline? {
-        val originalDescriptor = when (symbolDescriptor) {
-            is CallableMemberDescriptor -> DescriptorUtils.unwrapFakeOverride(symbolDescriptor)
-            else -> symbolDescriptor
-        }.original
+        val originalDescriptor = symbolDescriptor.unwrapIfFakeOverride().original
         return analyzeOriginal(annotation, originalDescriptor, resolutionFacade, reformat)
     }
 
