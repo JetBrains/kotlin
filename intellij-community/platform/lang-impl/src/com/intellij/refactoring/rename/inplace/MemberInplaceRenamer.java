@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.impl.FinishMarkAction;
 import com.intellij.openapi.command.impl.StartMarkAction;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.impl.EditorImpl;
@@ -276,6 +277,12 @@ public class MemberInplaceRenamer extends VariableInplaceRenamer {
       ((EditorImpl)editor).startDumb();
     }
     revertState();
+  }
+
+  @Override
+  protected void navigateToAlreadyStarted(Document oldDocument, int exitCode) {
+    super.navigateToAlreadyStarted(oldDocument, exitCode);
+    ((EditorImpl)InjectedLanguageUtil.getTopLevelEditor(myEditor)).stopDumbLater();
   }
 
   @Nullable
