@@ -25,6 +25,9 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
     }
 
     abstract fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirAnnotatedDeclaration>
+    abstract fun getSymbolsWithOwnersByPredicate(
+        predicate: DeclarationPredicate
+    ): List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>>
 
     abstract fun registerAnnotatedDeclaration(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>)
 
@@ -41,6 +44,10 @@ private class FirPredicateBasedProviderImpl(private val session: FirSession) : F
         return annotations.flatMap { cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it] }.filter {
             matches(predicate, it)
         }
+    }
+
+    override fun getSymbolsWithOwnersByPredicate(predicate: DeclarationPredicate): List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>> {
+        return getSymbolsByPredicate(predicate).map { it to cache.ownersForDeclaration.getValue(it) }
     }
 
     override fun registerAnnotatedDeclaration(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>) {
