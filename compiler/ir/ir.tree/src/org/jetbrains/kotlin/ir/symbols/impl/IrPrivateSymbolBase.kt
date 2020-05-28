@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.render
 
 abstract class IrSymbolBase<out D : DeclarationDescriptor>(override val descriptor: D) : IrSymbol {
     override fun toString(): String {
-        if (isBound) return owner.dump()
+        if (isBound) return owner.render()
         return "Unbound private symbol ${super.toString()}"
     }
 }
@@ -60,7 +60,7 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
         if (_owner == null) {
             _owner = owner
         } else {
-            throw IllegalStateException("${javaClass.simpleName} is already bound")
+            throw IllegalStateException("${javaClass.simpleName} is already bound: ${owner.render()}")
         }
     }
 
