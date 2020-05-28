@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     compile(project(":compiler:fir:tree"))
-    compileOnly(project(":kotlin-reflect-api"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
 }
