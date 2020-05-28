@@ -86,7 +86,7 @@ class LastModifiedFiles(
 
         private fun DataOutput.writeSCF(last: SimultaneouslyChangedFiles) {
             writeLong(last.ts)
-            writeStringList(last.fileIds)
+            writeStringList(last.fileIds.toList())
         }
     }
 }
