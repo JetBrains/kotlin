@@ -2,6 +2,7 @@
 package com.intellij.ide.projectView.actions;
 
 import com.intellij.CommonBundle;
+import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.lang.LangBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -10,7 +11,6 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -74,7 +74,7 @@ public class ImportModuleFromImlFileAction extends AnAction {
 
     List<VirtualFile> modulesFiles = new ArrayList<>();
     for (VirtualFile file : files) {
-      if (!FileTypeRegistry.getInstance().isFileOfType(file, StdFileTypes.IDEA_MODULE)) {
+      if (!FileTypeRegistry.getInstance().isFileOfType(file, ModuleFileType.INSTANCE)) {
         return Collections.emptyList();
       }
 

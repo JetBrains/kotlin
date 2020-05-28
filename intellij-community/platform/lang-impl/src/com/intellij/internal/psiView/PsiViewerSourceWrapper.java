@@ -2,6 +2,9 @@
 package com.intellij.internal.psiView;
 
 import com.intellij.ide.highlighter.ArchiveFileType;
+import com.intellij.ide.highlighter.ModuleFileType;
+import com.intellij.ide.highlighter.ProjectFileType;
+import com.intellij.ide.highlighter.WorkspaceFileType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
@@ -73,9 +76,9 @@ class PsiViewerSourceWrapper implements Comparable<PsiViewerSourceWrapper> {
 
   private static boolean isAcceptableFileType(FileType fileType) {
     return fileType != StdFileTypes.GUI_DESIGNER_FORM &&
-           fileType != StdFileTypes.IDEA_MODULE &&
-           fileType != StdFileTypes.IDEA_PROJECT &&
-           fileType != StdFileTypes.IDEA_WORKSPACE &&
+           fileType != ModuleFileType.INSTANCE &&
+           fileType != ProjectFileType.INSTANCE &&
+           fileType != WorkspaceFileType.INSTANCE &&
            fileType != ArchiveFileType.INSTANCE &&
            fileType != FileTypes.UNKNOWN &&
            fileType != FileTypes.PLAIN_TEXT &&
