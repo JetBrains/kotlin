@@ -22,6 +22,9 @@ public abstract class ArtifactManager implements ArtifactModel {
     return project.getService(ArtifactManager.class);
   }
 
+  /**
+   * Return artifacts sorted by their names (ignoring case)
+   */
   public abstract Artifact[] getSortedArtifacts();
 
   public abstract ModifiableArtifactModel createModifiableModel();

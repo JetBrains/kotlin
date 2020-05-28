@@ -30,8 +30,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.packaging.artifacts.ArtifactManager
+import com.intellij.packaging.elements.ArtifactRootElement
 import com.intellij.packaging.elements.PackagingElementFactory
 import com.intellij.packaging.impl.artifacts.PlainArtifactType
+import com.intellij.packaging.impl.elements.ArchivePackagingElement
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.project.stateStore
 import com.intellij.testFramework.*
@@ -126,7 +128,7 @@ class ExternalSystemStorageTest {
     }
 
   @Test
-  fun `imported facet in imported module`() = saveProjectAndCheckResult("importedFacetInImportedModule") { project, projectDir ->
+  fun `save imported facet in imported module`() = saveProjectAndCheckResult("importedFacetInImportedModule") { project, projectDir ->
     val imported = ModuleManager.getInstance(project).newModule(projectDir.resolve("imported.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
     val facetManager = FacetManager.getInstance(imported)
     val model = facetManager.createModifiableModel()
@@ -137,7 +139,16 @@ class ExternalSystemStorageTest {
   }
 
   @Test
-  fun libraries() = saveProjectAndCheckResult("libraries") { project, _ ->
+  fun `load imported facet in imported module`() = loadProjectAndCheckResults("importedFacetInImportedModule") { project ->
+    val module = ModuleManager.getInstance(project).modules.single()
+    assertThat(ExternalSystemModulePropertyManager.getInstance(module).isMavenized()).isTrue()
+    val facet = FacetManager.getInstance(module).allFacets.single()
+    assertThat(facet.name).isEqualTo("imported")
+    assertThat(facet.externalSource!!.id).isEqualTo(ExternalProjectSystemRegistry.MAVEN_EXTERNAL_SOURCE_ID)
+  }
+
+  @Test
+  fun `save libraries`() = saveProjectAndCheckResult("libraries") { project, _ ->
     val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
     val model = libraryTable.modifiableModel
     model.createLibrary("regular", null)
@@ -146,7 +157,18 @@ class ExternalSystemStorageTest {
   }
 
   @Test
-  fun artifacts() = saveProjectAndCheckResult("artifacts") { project, projectDir ->
+  fun `load libraries`() = loadProjectAndCheckResults("libraries") { project ->
+    val libraries = LibraryTablesRegistrar.getInstance().getLibraryTable(project).libraries.sortedBy { it.name }
+    assertThat(libraries).hasSize(2)
+    val (imported, regular) = libraries
+    assertThat(imported.name).isEqualTo("imported")
+    assertThat(regular.name).isEqualTo("regular")
+    assertThat(imported.externalSource!!.id).isEqualTo("test")
+    assertThat(regular.externalSource).isNull()
+  }
+
+  @Test
+  fun `save artifacts`() = saveProjectAndCheckResult("artifacts") { project, projectDir ->
     val model = ArtifactManager.getInstance(project).createModifiableModel()
     val regular = model.addArtifact("regular", PlainArtifactType.getInstance())
     regular.outputPath = projectDir.resolve("out/artifacts/regular").systemIndependentPath
@@ -154,6 +176,21 @@ class ExternalSystemStorageTest {
     val imported = model.addArtifact("imported", PlainArtifactType.getInstance(), root, externalSource)
     imported.outputPath = projectDir.resolve("out/artifacts/imported").systemIndependentPath
     model.commit()
+  }
+
+  @Test
+  fun `load artifacts`() = loadProjectAndCheckResults("artifacts") { project ->
+    val artifacts = ArtifactManager.getInstance(project).sortedArtifacts
+    assertThat(artifacts).hasSize(2)
+    val (imported, regular) = artifacts
+    assertThat(imported.name).isEqualTo("imported")
+    assertThat(regular.name).isEqualTo("regular")
+    assertThat(imported.externalSource!!.id).isEqualTo("test")
+    assertThat(regular.externalSource).isNull()
+    assertThat(imported.outputPath).isEqualTo("${project.basePath}/out/artifacts/imported")
+    assertThat(regular.outputPath).isEqualTo("${project.basePath}/out/artifacts/regular")
+    assertThat((imported.rootElement as ArchivePackagingElement).name).isEqualTo("a.jar")
+    assertThat(regular.rootElement).isInstanceOf(ArtifactRootElement::class.java)
   }
 
   @Before
