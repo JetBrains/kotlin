@@ -32,12 +32,11 @@ abstract class GradleBuildRootsLocator {
         filePath.endsWith("/gradle.properties") ||
                 filePath.endsWith("/gradle.local") ||
                 filePath.endsWith("/gradle-wrapper.properties") ||
-                filePath.endsWith("/build.gradle.kts") ||
-                filePath.endsWith("/settings.gradle.kts") ||
-                filePath.endsWith("/init.gradle.kts")
+                filePath.endsWith(".gradle.kts")
 
     fun isAffectedGradleProjectFile(filePath: String): Boolean =
-        findAffectedFileRoot(filePath) != null
+        findAffectedFileRoot(filePath) != null ||
+                roots.isStandaloneScript(filePath)
 
     fun findAffectedFileRoot(filePath: String): GradleBuildRoot.Linked? {
         if (filePath.endsWith("/gradle.properties") ||
@@ -56,15 +55,17 @@ abstract class GradleBuildRootsLocator {
 
     class ScriptUnderRoot(
         val root: GradleBuildRoot?,
-        val script: GradleScriptInfo? = null
+        val script: GradleScriptInfo? = null,
+        val standalone: Boolean = false
     ) {
         val isUnrelatedScript: Boolean
             get() = root is GradleBuildRoot.Unlinked
 
-        val isNewScript: Boolean
+        val importRequired: Boolean
             get() = root is GradleBuildRoot.Linked &&
                     !isImported &&
-                    !root.importing
+                    !root.importing &&
+                    !standalone
 
         private val isImported: Boolean
             get() = script != null
@@ -91,6 +92,11 @@ abstract class GradleBuildRootsLocator {
 
         // other scripts: "included", "precompiled" scripts, scripts in unlinked projects,
         // or just random files with ".gradle.kts" ending
+
+        val standaloneScriptRoot = roots.getStandaloneScriptRoot(filePath)
+        if (standaloneScriptRoot != null) {
+            return ScriptUnderRoot(standaloneScriptRoot, standalone = true)
+        }
 
         // todo(gradle6): remove, it is required only for projects with old gradle
         if (searchNearestLegacy) {
