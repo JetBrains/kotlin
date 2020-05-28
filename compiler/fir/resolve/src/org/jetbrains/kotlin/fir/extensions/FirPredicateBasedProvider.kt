@@ -41,7 +41,7 @@ private class FirPredicateBasedProviderImpl(private val session: FirSession) : F
     override fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirAnnotatedDeclaration> {
         val annotations = registeredPluginAnnotations.getAnnotationsForPredicate(predicate)
         if (annotations.isEmpty()) return emptyList()
-        return annotations.flatMap { cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it] }.filter {
+        return annotations.flatMapTo(mutableSetOf()) { cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it] }.filter {
             matches(predicate, it)
         }
     }
@@ -128,10 +128,10 @@ private class FirPredicateBasedProviderImpl(private val session: FirSession) : F
     // ---------------------------------- Cache ----------------------------------
 
     private class Cache {
-        val declarationByAnnotation: Multimap<AnnotationFqn, FirAnnotatedDeclaration> = ArrayListMultimap.create()
+        val declarationByAnnotation: Multimap<AnnotationFqn, FirAnnotatedDeclaration> = LinkedHashMultimap.create()
         val annotationsOfDeclaration: LinkedHashMultimap<FirAnnotatedDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
 
-        val declarationsUnderAnnotated: Multimap<AnnotationFqn, FirAnnotatedDeclaration> = ArrayListMultimap.create()
+        val declarationsUnderAnnotated: Multimap<AnnotationFqn, FirAnnotatedDeclaration> = LinkedHashMultimap.create()
         val parentAnnotationsOfDeclaration: LinkedHashMultimap<FirAnnotatedDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
 
         val ownersForDeclaration: MutableMap<FirAnnotatedDeclaration, PersistentList<FirAnnotatedDeclaration>> = mutableMapOf()
