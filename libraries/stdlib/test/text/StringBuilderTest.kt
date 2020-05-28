@@ -153,6 +153,9 @@ class StringBuilderTest {
         StringBuilder().let { sb ->
             repeat(times) { sb.append("foo") }
             assertEquals(expected, sb.toString())
+
+            sb.append(null as String?)
+            assertEquals(expected + "null", sb.toString())
         }
     }
 
@@ -384,6 +387,8 @@ class StringBuilderTest {
             assertEquals("_my insertTtT string test", sb.toString())
             sb.insert(25, "_!_")
             assertEquals("_my insertTtT string test_!_", sb.toString())
+            sb.insert(13, null as String?)
+            assertEquals("_my insertTtTnull string test_!_", sb.toString())
         }
     }
 

@@ -77,9 +77,11 @@ expect class StringBuilder : Appendable, CharSequence {
 
     /**
      * Appends the specified string [value] to this string builder and returns this instance.
+     *
+     * If [value] is `null`, then the four characters `"null"` are appended.
      */
     @SinceKotlin("1.3")
-    fun append(value: String): StringBuilder
+    fun append(value: String?): StringBuilder
 
     /**
      * Returns the current capacity of this string builder.
@@ -200,11 +202,13 @@ expect class StringBuilder : Appendable, CharSequence {
     /**
      * Inserts the string [value] into this string builder at the specified [index] and returns this instance.
      *
+     * If [value] is `null`, then the four characters `"null"` are inserted.
+     *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
     @WasExperimental(ExperimentalStdlibApi::class)
-    fun insert(index: Int, value: String): StringBuilder
+    fun insert(index: Int, value: String?): StringBuilder
 
     /**
      *  Sets the length of this string builder to the specified [newLength].
