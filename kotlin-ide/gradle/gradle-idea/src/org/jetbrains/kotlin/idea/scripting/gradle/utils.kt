@@ -76,10 +76,6 @@ fun kotlinDslScriptsModelImportSupported(currentGradleVersion: String): Boolean 
     return GradleVersion.version(currentGradleVersion) >= GradleVersion.version(minimal_gradle_version_supported)
 }
 
-fun useScriptConfigurationFromImportOnly(): Boolean {
-    return Registry.`is`("kotlin.gradle.scripts.useIdeaProjectImport", false)
-}
-
 fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings> =
     (ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings).linkedProjectsSettings
 
