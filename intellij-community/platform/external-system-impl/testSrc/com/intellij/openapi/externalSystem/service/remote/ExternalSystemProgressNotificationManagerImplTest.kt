@@ -2,6 +2,7 @@
 package com.intellij.openapi.externalSystem.service.remote
 
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.service.internal.AbstractExternalSystemTask
@@ -15,6 +16,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.util.ThrowableRunnable
+import junit.framework.TestCase
 import org.assertj.core.api.Assertions.assertThat
 
 class ExternalSystemProgressNotificationManagerImplTest : UsefulTestCase() {
@@ -60,11 +62,22 @@ class ExternalSystemProgressNotificationManagerImplTest : UsefulTestCase() {
     assertThat(getListeners()[task2.id]).containsExactly(taskListener)
     notificationManager.removeNotificationListener(taskListener)
 
+    assertEquals("start ${task1.id};end ${task1.id};", taskListener.logger.toString())
+
     Disposer.dispose(disposable)
     assertListenersReleased()
   }
 
-  private class DummyTaskNotificationListener : ExternalSystemTaskNotificationListenerAdapter()
+  private class DummyTaskNotificationListener() : ExternalSystemTaskNotificationListenerAdapter() {
+    val logger = java.lang.StringBuilder()
+    override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
+      logger.append("start $id;")
+    }
+
+    override fun onEnd(id: ExternalSystemTaskId) {
+      logger.append("end $id;")
+    }
+  }
   private class MyTestTask(project: Project, private val actionBeforeTaskFinish: (MyTestTask) -> Unit = {}) :
     AbstractExternalSystemTask(ProjectSystemId.IDE, ExternalSystemTaskType.EXECUTE_TASK, project, "") {
     override fun doCancel(): Boolean = true
