@@ -47,32 +47,33 @@ class IrSimpleParcelSerializer(private val reader: IrSimpleFunctionSymbol, priva
         }
 }
 
-// Serialize a value of the primitive type [parcelType] by wrapping the given [serializer] with casts.
-class IrWrappedPrimitiveParcelSerializer(private val parcelType: IrType, private val serializer: IrParcelSerializer) : IrParcelSerializer {
+// Serialize a value of the primitive [parcelType] by coercion to int.
+class IrWrappedIntParcelSerializer(private val parcelType: IrType) : IrParcelSerializer {
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
-        val deserializedPrimitive = readParcelWith(serializer, parcel)
         return if (parcelType.isBoolean()) {
-            irIfThenElse(
-                parcelType,
-                irNotEquals(deserializedPrimitive, irInt(0)),
-                irInt(1),
-                irInt(0)
-            )
+            irNotEquals(parcelReadInt(irGet(parcel)), irInt(0))
         } else {
-            val conversion = deserializedPrimitive.type.getClass()!!.functions.first { function ->
-                function.name.asString() == "to${parcelType.getClass()!!.name}"
+            val conversion = context.irBuiltIns.intClass.functions.first { function ->
+                function.owner.name.asString() == "to${parcelType.getClass()!!.name}"
             }
             irCall(conversion).apply {
-                dispatchReceiver = deserializedPrimitive
+                dispatchReceiver = parcelReadInt(irGet(parcel))
             }
         }
     }
 
-    private fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, irType: IrType): IrExpression =
-        if (expression.type == irType) expression else irAs(expression, irType)
-
     override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression =
-        writeParcelWith(serializer, parcel, flags, irCastIfNeeded(value, parcelType))
+        parcelWriteInt(
+            irGet(parcel),
+            if (parcelType.isBoolean()) {
+                irIfThenElse(context.irBuiltIns.intType, value, irInt(1), irInt(0))
+            } else {
+                val conversion = parcelType.classOrNull!!.functions.first { function ->
+                    function.owner.name.asString() == "toInt"
+                }
+                irCall(conversion).apply { dispatchReceiver = value }
+            }
+        )
 }
 
 // Wraps a non-null aware parceler to handle nullable types.
@@ -253,7 +254,7 @@ class IrArrayParcelSerializer(
 
             forUntil(irGet(arraySize)) { index ->
                 val getter = context.irBuiltIns.arrayClass.getSimpleFunction("get")!!
-                val element = irCall(getter).apply {
+                val element = irCall(getter, elementType).apply {
                     dispatchReceiver = irGet(arrayTemporary)
                     putValueArgument(0, irGet(index))
                 }
@@ -332,7 +333,7 @@ class IrSparseArrayParcelSerializer(
                     putValueArgument(0, irGet(index))
                 })
 
-                +writeParcelWith(elementSerializer, parcel, flags, irCall(valueAtFunction).apply {
+                +writeParcelWith(elementSerializer, parcel, flags, irCall(valueAtFunction.symbol, elementType).apply {
                     dispatchReceiver = irGet(arrayTemporary)
                     putValueArgument(0, irGet(index))
                 })
@@ -342,7 +343,11 @@ class IrSparseArrayParcelSerializer(
 
 // Parcel serializer for all lists supported by Parcelize. List interfaces use hard-coded default implementations for deserialization.
 // List maps to ArrayList, Set maps to LinkedHashSet, NavigableSet and SortedSet map to TreeSet.
-class IrListParcelSerializer(private val irClass: IrClass, private val elementSerializer: IrParcelSerializer) : IrParcelSerializer {
+class IrListParcelSerializer(
+    private val irClass: IrClass,
+    private val elementType: IrType,
+    private val elementSerializer: IrParcelSerializer
+) : IrParcelSerializer {
     override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression {
         val sizeFunction = irClass.getPropertyGetter("size")!!
         val iteratorFunction = irClass.getMethodWithoutArguments("iterator")
@@ -360,7 +365,7 @@ class IrListParcelSerializer(private val irClass: IrClass, private val elementSe
             })
             +irWhile().apply {
                 condition = irCall(iteratorHasNext).apply { dispatchReceiver = irGet(iterator) }
-                body = writeParcelWith(elementSerializer, parcel, flags, irCall(iteratorNext).apply {
+                body = writeParcelWith(elementSerializer, parcel, flags, irCall(iteratorNext.symbol, elementType).apply {
                     dispatchReceiver = irGet(iterator)
                 })
             }
@@ -415,6 +420,8 @@ class IrListParcelSerializer(private val irClass: IrClass, private val elementSe
 // Map uses LinkedHashMap, while NavigableMap and SortedMap use to TreeMap.
 class IrMapParcelSerializer(
     private val irClass: IrClass,
+    private val keyType: IrType,
+    private val valueType: IrType,
     private val keySerializer: IrParcelSerializer,
     private val valueSerializer: IrParcelSerializer
 ) : IrParcelSerializer {
@@ -447,10 +454,10 @@ class IrMapParcelSerializer(
                     val element = irTemporary(irCall(iteratorNext).apply {
                         dispatchReceiver = irGet(iterator)
                     })
-                    +writeParcelWith(keySerializer, parcel, flags, irCall(elementKey).apply {
+                    +writeParcelWith(keySerializer, parcel, flags, irCall(elementKey, keyType).apply {
                         dispatchReceiver = irGet(element)
                     })
-                    +writeParcelWith(valueSerializer, parcel, flags, irCall(elementValue).apply {
+                    +writeParcelWith(valueSerializer, parcel, flags, irCall(elementValue, valueType).apply {
                         dispatchReceiver = irGet(element)
                     })
                 }
