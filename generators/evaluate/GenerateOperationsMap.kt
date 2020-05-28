@@ -7,17 +7,14 @@ package org.jetbrains.kotlin.generators.evaluate
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 val DEST_FILE: File = File("compiler/frontend/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
-private val EXCLUDED_FUNCTIONS = listOf("rangeTo", "hashCode", "inc", "dec", "subSequence")
+private val EXCLUDED_FUNCTIONS: List<String> = listOf("rangeTo", "hashCode", "inc", "dec", "subSequence")
 
 fun main() {
     GeneratorsFileUtil.writeFileIfContentChanged(DEST_FILE, generate())
@@ -40,6 +37,7 @@ fun generate(): String {
 
     val unaryOperationsMap = arrayListOf<Triple<String, List<KotlinType>, Boolean>>()
     val binaryOperationsMap = arrayListOf<Pair<String, List<KotlinType>>>()
+    populateOperationsMap(unaryOperationsMap, binaryOperationsMap, EXCLUDED_FUNCTIONS)
 
     val builtIns = DefaultBuiltIns.Instance
 
@@ -49,24 +47,6 @@ fun generate(): String {
 
     val integerTypes = allPrimitiveTypes.map { it.defaultType }.filter { it.isIntegerType() }
     val fpTypes = allPrimitiveTypes.map { it.defaultType }.filter { it.isFpType() }
-
-    for (descriptor in allPrimitiveTypes + builtIns.string) {
-        @Suppress("UNCHECKED_CAST")
-        val functions = descriptor.getMemberScope(listOf()).getContributedDescriptors()
-            .filter { it is CallableDescriptor && !EXCLUDED_FUNCTIONS.contains(it.getName().asString()) } as List<CallableDescriptor>
-
-        for (function in functions) {
-            val parametersTypes = function.getParametersTypes()
-
-            when (parametersTypes.size) {
-                1 -> unaryOperationsMap.add(Triple(function.name.asString(), parametersTypes, function is FunctionDescriptor))
-                2 -> binaryOperationsMap.add(function.name.asString() to parametersTypes)
-                else -> throw IllegalStateException(
-                    "Couldn't add following method from builtins to operations map: ${function.name} in class ${descriptor.name}"
-                )
-            }
-        }
-    }
 
     unaryOperationsMap.add(Triple("code", listOf(builtIns.charType), false))
 
@@ -185,10 +165,6 @@ private fun KotlinType.isIntegerType(): Boolean =
 
 private fun KotlinType.isFpType(): Boolean =
     KotlinBuiltIns.isDouble(this) || KotlinBuiltIns.isFloat(this)
-
-private fun CallableDescriptor.getParametersTypes(): List<KotlinType> =
-    listOf((containingDeclaration as ClassDescriptor).defaultType) +
-            valueParameters.map { it.type.makeNotNullable() }
 
 private fun KotlinType.asString(): String = typeName.uppercase()
 

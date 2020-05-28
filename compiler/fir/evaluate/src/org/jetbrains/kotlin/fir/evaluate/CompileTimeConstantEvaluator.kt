@@ -15,21 +15,20 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitIntTypeRef
-import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.valueParameters
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 /**
  * An evaluator that transform numeric operation, such as div, into compile-time constant iff involved operands, such as explicit receiver
  * and the argument, are compile-time constant as well.
  */
-// TODO: Handle boolean operators and const property loading
 class CompileTimeConstantEvaluator {
 
-    fun evaluate(expression: FirExpression): FirConstExpression<*>? =
-        if (expression is FirFunctionCall) {
-            evaluate(expression)
-        } else {
-            null
+    // TODO: Handle boolean operators, const property loading, class reference, array, annotation values, etc.
+    fun evaluate(expression: FirExpression): ConstantValue<*>? =
+        when (expression) {
+            is FirConstExpression<*> -> expression.value as? ConstantValue<*>
+            is FirFunctionCall -> evaluate(expression)?.value as? ConstantValue<*>
+            else -> null
         }
 
     private fun evaluate(functionCall: FirFunctionCall): FirConstExpression<*>? {
@@ -98,32 +97,13 @@ class CompileTimeConstantEvaluator {
 
     // Unary operators
     private fun FirConstExpression<out Number>.evaluate(function: FirSimpleFunction): FirConstExpression<out Number>? {
-        val number = typedValue
-        return when (function.name.asString()) {
-            "hashCode" ->
-                buildConstExpression(source, FirConstKind.Int, number.hashCode())
-            "dec" ->
-                kind.toConstExpression(source, number.dec())
-            "inc" ->
-                kind.toConstExpression(source, number.inc())
-            "unaryMinus" ->
-                kind.toConstExpression(source, number.unaryMinus())
-            "unaryPlus" ->
-                kind.toConstExpression(source, number.unaryPlus())
-            "toByte" ->
-                buildConstExpression(source, FirConstKind.Byte, number.toByte())
-            "toDouble" ->
-                buildConstExpression(source, FirConstKind.Double, number.toDouble())
-            "toFloat" ->
-                buildConstExpression(source, FirConstKind.Float, number.toFloat())
-            "toInt" ->
-                buildConstExpression(source, FirConstKind.Int, number.toInt())
-            "toLong" ->
-                buildConstExpression(source, FirConstKind.Long, number.toLong())
-            "toShort" ->
-                buildConstExpression(source, FirConstKind.Short, number.toShort())
-            else ->
-                null
+        val f = unaryOperations[UnaryOperationKey(kind, function.name.asString())] ?: return null
+        // TODO: need some systematic check, e.g., integer overflow
+        return try {
+            val r = f(typedValue)
+            r.toFirConstKind()!!.toConstExpression(source, r)
+        } catch (e: Exception) {
+            null
         }
     }
 
@@ -132,157 +112,15 @@ class CompileTimeConstantEvaluator {
         function: FirSimpleFunction,
         other: FirConstExpression<out Number>
     ): FirConstExpression<out Number>? {
-        val n1 = typedValue
-        val n2 = other.typedValue
-        return when (function.name.asString()) {
-            // TODO: more binary operators
-            "plus" ->
-                n1.plus(n2).let { v -> v.toFirConstKind()!!.toConstExpression(source, v) }
-            else ->
-                null
+        val f = binaryOperations[BinaryOperationKey(kind, other.kind, function.name.asString())] ?: return null
+        // TODO: need some systematic check, e.g., div by zero (1 / 0 v.s. 1 / 0.f)
+        return try {
+            val r = f(typedValue, other.typedValue)
+            r.toFirConstKind()!!.toConstExpression(source, r)
+        } catch (e: Exception) {
+            null
         }
     }
-
-    ////// UNARY OPERATORS
-
-    private fun Number.dec(): Number =
-        when (this) {
-            is Byte -> this.dec()
-            is Double -> this.dec()
-            is Float -> this.dec()
-            is Int -> this.dec()
-            is Long -> this.dec()
-            is Short -> this.dec()
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-
-    private fun Number.inc(): Number =
-        when (this) {
-            is Byte -> this.inc()
-            is Double -> this.inc()
-            is Float -> this.inc()
-            is Int -> this.inc()
-            is Long -> this.inc()
-            is Short -> this.inc()
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-
-    private fun Number.unaryMinus(): Number =
-        when (this) {
-            is Byte -> this.unaryMinus()
-            is Double -> this.unaryMinus()
-            is Float -> this.unaryMinus()
-            is Int -> this.unaryMinus()
-            is Long -> this.unaryMinus()
-            is Short -> this.unaryMinus()
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-
-    private fun Number.unaryPlus(): Number =
-        when (this) {
-            is Byte -> this.unaryPlus()
-            is Double -> this.unaryPlus()
-            is Float -> this.unaryPlus()
-            is Int -> this.unaryPlus()
-            is Long -> this.unaryPlus()
-            is Short -> this.unaryPlus()
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-
-    ////// BINARY OPERATORS
-
-    // Design choice: reflection, which requires iteration over all declared functions every time, v.s., exhaustive type matching.
-    private fun Number.binaryOperation(name: String, other: Number): Number? {
-        val otherType = when (other) {
-            is Byte -> Byte::class
-            is Double -> Double::class
-            is Float -> Float::class
-            is Int -> Int::class
-            is Long -> Long::class
-            is Short -> Short::class
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-        return this::class.declaredFunctions.find { kFunction ->
-            kFunction.name == name && kFunction.valueParameters.size == 1 && kFunction.valueParameters[0].type.classifier == otherType
-        }?.call(other) as? Number
-    }
-
-    private fun Number.plus(other: Number): Number =
-        when (this) {
-            is Byte -> this.plus(other)
-            is Double -> this.plus(other)
-            is Float -> this.plus(other)
-            is Int -> this.plus(other)
-            is Long -> this.plus(other)
-            is Short -> this.plus(other)
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-
-    private fun Byte.plus(other: Number): Number =
-        when (other) {
-            is Byte -> this.plus(other)
-            is Double -> this.plus(other)
-            is Float -> this.plus(other)
-            is Int -> this.plus(other)
-            is Long -> this.plus(other)
-            is Short -> this.plus(other)
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-
-    private fun Double.plus(other: Number): Number =
-        when (other) {
-            is Byte -> this.plus(other)
-            is Double -> this.plus(other)
-            is Float -> this.plus(other)
-            is Int -> this.plus(other)
-            is Long -> this.plus(other)
-            is Short -> this.plus(other)
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-
-    private fun Float.plus(other: Number): Number =
-        when (other) {
-            is Byte -> this.plus(other)
-            is Double -> this.plus(other)
-            is Float -> this.plus(other)
-            is Int -> this.plus(other)
-            is Long -> this.plus(other)
-            is Short -> this.plus(other)
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-
-    private fun Int.plus(other: Number): Number =
-        when (other) {
-            is Byte -> this.plus(other)
-            is Double -> this.plus(other)
-            is Float -> this.plus(other)
-            is Int -> this.plus(other)
-            is Long -> this.plus(other)
-            is Short -> this.plus(other)
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-
-    private fun Long.plus(other: Number): Number =
-        when (other) {
-            is Byte -> this.plus(other)
-            is Double -> this.plus(other)
-            is Float -> this.plus(other)
-            is Int -> this.plus(other)
-            is Long -> this.plus(other)
-            is Short -> this.plus(other)
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
-
-    private fun Short.plus(other: Number): Number =
-        when (other) {
-            is Byte -> this.plus(other)
-            is Double -> this.plus(other)
-            is Float -> this.plus(other)
-            is Int -> this.plus(other)
-            is Long -> this.plus(other)
-            is Short -> this.plus(other)
-            else -> error("Unexpected Number kind: ${this.javaClass}")
-        }
 
     ////// KINDS
 
@@ -357,7 +195,7 @@ class CompileTimeConstantEvaluator {
 
         // TODO: rangeTo?
         private val binaryOperatorNames: Set<String> = setOf(
-            "compareTo", "equals",
+            // TODO: "compareTo", "equals",
             "div", "minus", "mod", "plus", "rem", "times"
         )
     }
