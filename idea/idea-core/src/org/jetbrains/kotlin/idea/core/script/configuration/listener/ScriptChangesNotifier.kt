@@ -91,8 +91,6 @@ internal class ScriptChangesNotifier(
     private fun getListener(project: Project, file: VirtualFile): ScriptChangeListener? {
         if (project.isDisposed || areListenersDisabled()) return null
 
-        if (ScriptConfigurationManager.isManualConfigurationLoading(file)) return null
-
         return listeners.firstOrNull { it.isApplicable(file) }
     }
 

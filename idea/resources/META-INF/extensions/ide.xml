@@ -132,10 +132,6 @@
                      description="Use Kotlin resolution via frontend IR for reference resolve and diagnostics in IDEA"
                      defaultValue="false"
                      restartRequired="true"/>
-        <registryKey key="kotlin.gradle.scripts.useIdeaProjectImport"
-                     description="Use IDEA project import mechanics to load Kotlin Gradle scripts configuration"
-                     defaultValue="false"
-                     restartRequired="false"/>
         <registryKey key="kotlin.formatter.allowTrailingCommaInAnyProject"
                      description="Allow a trailing comma regardless of plugin version"
                      defaultValue="false"
