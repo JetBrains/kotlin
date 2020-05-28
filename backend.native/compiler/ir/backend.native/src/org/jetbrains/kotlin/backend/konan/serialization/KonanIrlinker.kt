@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilderImpl
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.PlatformFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSe
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
-import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.IrLibrary
@@ -48,7 +48,20 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 object KonanFakeOverrideClassFilter : PlatformFakeOverrideClassFilter {
-    override fun constructFakeOverrides(clazz: IrClass): Boolean = !clazz.isObjCClass()
+    private fun IdSignature.isInteropSignature(): Boolean = with(this) {
+        IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
+    }
+
+    // This is an alternative to .isObjCClass that doesn't need to walk up all the class heirarchy,
+    // rather it only looks at immediate super class symbols.
+    private fun IrClass.isObjCClass() = this.superTypes
+        .mapNotNull { it.classOrNull }
+        .filter { it is IrPublicSymbolBase<*> }
+        .any { it.signature.isInteropSignature() }
+
+    override fun constructFakeOverrides(clazz: IrClass): Boolean {
+        return !clazz.isObjCClass()
+    }
 }
 
 internal class KonanIrLinker(
@@ -60,8 +73,9 @@ internal class KonanIrLinker(
         private val forwardModuleDescriptor: ModuleDescriptor?,
         private val stubGenerator: DeclarationStubGenerator,
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
-        exportedDependencies: List<ModuleDescriptor>
-) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, exportedDependencies) {
+        exportedDependencies: List<ModuleDescriptor>,
+        deserializeFakeOverrides: Boolean
+) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, exportedDependencies, deserializeFakeOverrides) {
 
     companion object {
         private val C_NAMES_NAME = Name.identifier("cnames")
@@ -74,7 +88,7 @@ internal class KonanIrLinker(
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
 
-    override val fakeOverrideBuilderImpl = FakeOverrideBuilderImpl(symbolTable, IdSignatureSerializer(KonanManglerIr), builtIns, KonanFakeOverrideClassFilter)
+    override val fakeOverrideBuilder = FakeOverrideBuilder(symbolTable, IdSignatureSerializer(KonanManglerIr), builtIns, KonanFakeOverrideClassFilter)
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let { KonanForwardDeclarationModuleDeserialier(it) }
 

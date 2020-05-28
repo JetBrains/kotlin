@@ -169,6 +169,9 @@ internal val psiToIrPhase = konanUnitPhase(
 
             val irProviderForCEnumsAndCStructs =
                     IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
+
+            val deserializeFakeOverrides = config.configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
+
             val linker =
                 KonanIrLinker(
                     moduleDescriptor,
@@ -179,7 +182,8 @@ internal val psiToIrPhase = konanUnitPhase(
                     forwardDeclarationsModuleDescriptor,
                     stubGenerator,
                     irProviderForCEnumsAndCStructs,
-                    exportedDependencies
+                    exportedDependencies,
+                    deserializeFakeOverrides
             )
 
             translator.addPostprocessingStep { module ->
