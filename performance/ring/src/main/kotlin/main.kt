@@ -77,6 +77,7 @@ class RingLauncher : Launcher() {
                     "DefaultArgument.testOneOfEight" to BenchmarkEntryWithInit.create(::DefaultArgumentBenchmark, { testOneOfEight() }),
                     "DefaultArgument.testEightOfEight" to BenchmarkEntryWithInit.create(::DefaultArgumentBenchmark, { testEightOfEight() }),
                     "Elvis.testElvis" to BenchmarkEntryWithInit.create(::ElvisBenchmark, { testElvis() }),
+                    "Elvis.testCompositeElvis" to BenchmarkEntryWithInit.create(::ElvisBenchmark, { testCompositeElvis() }),
                     "Euler.problem1bySequence" to BenchmarkEntryWithInit.create(::EulerBenchmark, { problem1bySequence() }),
                     "Euler.problem1" to BenchmarkEntryWithInit.create(::EulerBenchmark, { problem1() }),
                     "Euler.problem2" to BenchmarkEntryWithInit.create(::EulerBenchmark, { problem2() }),
