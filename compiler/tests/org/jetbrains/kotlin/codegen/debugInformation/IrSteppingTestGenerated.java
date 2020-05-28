@@ -194,6 +194,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("initBlocksCompanion.kt")
+    public void testInitBlocksCompanion() throws Exception {
+        runTest("compiler/testData/debug/stepping/initBlocksCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("inlineCallableReference.kt")
     public void testInlineCallableReference() throws Exception {
         runTest("compiler/testData/debug/stepping/inlineCallableReference.kt");
