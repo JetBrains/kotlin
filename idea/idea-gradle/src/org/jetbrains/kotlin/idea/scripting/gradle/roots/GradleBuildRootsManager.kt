@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport.Companion.EPN
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.scripting.gradle.*
@@ -69,6 +70,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     override fun isApplicable(file: VirtualFile): Boolean {
         val scriptUnderRoot = findScriptBuildRoot(file) ?: return false
         if (scriptUnderRoot.root is GradleBuildRoot.Legacy) return false
+        if (roots.isStandaloneScript(file.path)) return false
         return true
     }
 
@@ -79,8 +81,16 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         }
     }
 
-    // used in 201
-    @Suppress("UNUSED")
+    @Suppress("MemberVisibilityCanBePrivate") // used in GradleImportHelper.kt.193
+    fun checkUpToDate(file: VirtualFile) {
+        if (isConfigurationOutOfDate(file)) {
+            showNotificationForProjectImport(project)
+        } else {
+            hideNotificationForProjectImport(project)
+        }
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate") // used in GradleImportHelper.kt.201
     fun isConfigurationOutOfDate(file: VirtualFile): Boolean {
         val script = getScriptInfo(file) ?: return false
         return !script.model.inputs.isUpToDate(project, file)
@@ -156,6 +166,14 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
                 }
             }
         }
+    }
+
+    fun addStandaloneScript(file: VirtualFile) {
+        roots.addStandaloneScript(file.path)
+        roots.rebuildProjectRoots()
+        updateNotifications(file.path)
+        val ktFile = project.getKtFile(file) ?: return
+        ScriptConfigurationManager.getInstance(project).getConfiguration(ktFile)
     }
 
     init {
@@ -298,14 +316,19 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         }
     }
 
-    private fun updateNotifications(dir1: String) {
+    @Suppress("MemberVisibilityCanBePrivate")
+    private fun updateNotifications(dir: String) {
         if (!project.isOpen) return
 
         val openedScripts = FileEditorManager.getInstance(project).openFiles.filter {
-            it.path.startsWith(dir1) && isGradleKotlinScript(it)
+            it.path.startsWith(dir) && maybeAffectedGradleProjectFile(it.path)
         }
 
         if (openedScripts.isEmpty()) return
+
+        openedScripts.forEach {
+            checkUpToDate(it)
+        }
 
         GlobalScope.launch(EDT(project)) {
             if (project.isDisposed) return@launch
