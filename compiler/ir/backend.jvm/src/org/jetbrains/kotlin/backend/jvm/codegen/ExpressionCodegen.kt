@@ -495,8 +495,9 @@ class ExpressionCodegen(
 
         val initializer = declaration.initializer
         if (initializer != null) {
-            initializer.accept(this, data).materializeAt(varType, declaration.type)
+            var value = initializer.accept(this, data)
             initializer.markLineNumber(startOffset = true)
+            value.materializeAt(varType, declaration.type)
             mv.store(index, varType)
         } else if (declaration.isVisibleInLVT) {
             pushDefaultValueOnStack(varType, mv)
@@ -980,14 +981,24 @@ class ExpressionCodegen(
         }
 
         mv.mark(tryCatchBlockEnd)
-
         // TODO: generate a common `finally` for try & catch blocks here? Right now this breaks the inliner.
-        if (savedValue != null) {
-            mv.load(savedValue, tryAsmType)
-            frameMap.leaveTemp(tryAsmType)
-            return aTry.onStack
+        return object : PromisedValue(this, tryAsmType, aTry.type) {
+            override fun materializeAt(target: Type, irTarget: IrType) {
+                if (savedValue != null) {
+                    mv.load(savedValue, tryAsmType)
+                    frameMap.leaveTemp(tryAsmType)
+                    super.materializeAt(target, irTarget)
+                } else {
+                    unitValue.materializeAt(target, irTarget)
+                }
+            }
+
+            override fun discard() {
+                if (savedValue != null) {
+                    frameMap.leaveTemp(tryAsmType)
+                }
+            }
         }
-        return unitValue
     }
 
     private fun genTryCatchCover(catchStart: Label, tryStart: Label, tryEnd: Label, tryGaps: List<Pair<Label, Label>>, type: String?) {

@@ -37,10 +37,6 @@ fun box() {
     foo()
 }
 
-// IGNORE_BACKEND: JVM_IR
-// The JVM_IR backend goes back to line 17 after line 18. It has the
-// sequence 17, 18, 17 which doesn't make sense.
-
 // LINENUMBERS
 // test.kt:33 box
 // test.kt:4 foo
