@@ -38,6 +38,7 @@ import com.intellij.pom.java.LanguageLevel
 import com.intellij.project.stateStore
 import com.intellij.testFramework.*
 import com.intellij.util.io.*
+import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.assertj.core.api.Assertions.assertThat
@@ -158,7 +159,11 @@ class ExternalSystemStorageTest {
 
   @Test
   fun `load libraries`() = loadProjectAndCheckResults("libraries") { project ->
-    val libraries = LibraryTablesRegistrar.getInstance().getLibraryTable(project).libraries.sortedBy { it.name }
+    val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
+    runInEdtAndWait {
+      UIUtil.dispatchAllInvocationEvents()
+    }
+    val libraries = libraryTable.libraries.sortedBy { it.name }
     assertThat(libraries).hasSize(2)
     val (imported, regular) = libraries
     assertThat(imported.name).isEqualTo("imported")
