@@ -396,7 +396,7 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         getAppliedConfiguration(file.originalFile.virtualFile) != null
 
     fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
-        return !hasCachedConfiguration(file) && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
+        return !hasCachedConfiguration(file)
     }
 
     fun getOrLoadConfiguration(
