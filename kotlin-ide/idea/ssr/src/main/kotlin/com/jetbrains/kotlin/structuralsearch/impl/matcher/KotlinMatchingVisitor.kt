@@ -561,6 +561,17 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.matchSequentially(expression.entries, other.entries)
     }
 
+    override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
+        val other = getTreeElement<KtStringTemplateEntry>() ?: return
+        myMatchingVisitor.result = when (other) {
+            is KtSimpleNameStringTemplateEntry -> matchTextOrVariable(entry.expression, other.expression)
+            is KtLiteralStringTemplateEntry -> matchTextOrVariable(entry, other)
+            is KtEscapeStringTemplateEntry -> matchTextOrVariable(entry.expression, other)
+            is KtBlockStringTemplateEntry -> myMatchingVisitor.match(entry.expression, other.expression)
+            else -> false
+        }
+    }
+
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry) {
         val other = myMatchingVisitor.element
         myMatchingVisitor.result = when (val handler = entry.getUserData(CompiledPattern.HANDLER_KEY)) {
@@ -568,19 +579,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             else -> matchTextOrVariable(entry, other)
         }
     }
-
-    override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
-        val other = myMatchingVisitor.element
-        myMatchingVisitor.result = when (other) {
-            is KtSimpleNameStringTemplateEntry -> matchTextOrVariable(entry.expression, other.expression)
-            is KtLiteralStringTemplateEntry -> matchTextOrVariable(entry.expression, other)
-            is KtEscapeStringTemplateEntry -> matchTextOrVariable(entry.expression, other)
-            is KtBlockStringTemplateEntry -> myMatchingVisitor.match(entry.expression, other.expression)
-            else -> false
-        }
-    }
-
-
 
     override fun visitBlockStringTemplateEntry(entry: KtBlockStringTemplateEntry) {
         val other = getTreeElementDepar<KtBlockStringTemplateEntry>() ?: return

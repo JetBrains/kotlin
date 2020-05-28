@@ -24,4 +24,8 @@ class KotlinSSStringTemplateEntryTest : KotlinSSResourceInspectionTest() {
     fun testStringsContainingLongTemplate() { doTest(""" "$$'_*${'$'}{ '_ }$$'_*" """) }
 
     fun testStringWithBinaryExpression() { doTest(""" "${"$"}{3 * 2 + 1}" """) }
+
+    fun testStringBracesTemplate() { doTest(""" "Hello world! ${"$"}a" """) }
+
+    fun testStringBracesTemplateQuery() { doTest(""" "Hello world! ${"$"}{a}" """) }
 }

@@ -79,6 +79,12 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitStringTemplateEntry(entry: KtStringTemplateEntry) {
+        super.visitStringTemplateEntry(entry)
+
+        getHandler(entry).setFilter { it is KtStringTemplateEntry }
+    }
+
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry) {
         super.visitLiteralStringTemplateEntry(entry)
 
@@ -91,7 +97,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     }
 
     override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
-        visitElement(entry)
+        super.visitSimpleNameStringTemplateEntry(entry)
         val expression = entry.expression ?: return
         val exprHandler = getHandler(expression)
 
