@@ -3,6 +3,8 @@ package com.intellij.util.indexing.diagnostic.dto
 
 import com.intellij.util.indexing.diagnostic.*
 import com.intellij.util.text.DateFormatUtil
+import java.time.Duration
+import java.time.Instant
 
 fun TimeNano.toMillis(): TimeMillis = this / 1_000_000
 
@@ -63,23 +65,23 @@ private fun FileProviderIndexStatistics.aggregateStatsPerIndexer(): List<JsonFil
     }
 }
 
-private fun TimeMillis.toPresentableTime(): PresentableTime =
-  DateFormatUtil.getIso8601Format().format(this)
+private fun Instant.toPresentableTime(): PresentableTime =
+  DateFormatUtil.getIso8601Format().format(this.toEpochMilli())
 
 fun ProjectIndexingHistory.IndexingTimes.toJson() =
   JsonProjectIndexingHistoryTimes(
-    startIndexing.toPresentableTime(),
-    endIndexing.toPresentableTime(),
-    JsonTime((endIndexing - startIndexing).toNano()),
-    startPushProperties.toPresentableTime(),
-    endPushProperties.toPresentableTime(),
-    JsonTime((endPushProperties - startPushProperties).toNano()),
-    startIndexExtensions.toPresentableTime(),
-    endIndexExtensions.toPresentableTime(),
-    JsonTime((endIndexExtensions - startIndexExtensions).toNano()),
-    startScanFiles.toPresentableTime(),
-    endScanFiles.toPresentableTime(),
-    JsonTime((endScanFiles - startScanFiles).toNano())
+    JsonTime(Duration.between(indexingStart, indexingEnd).toNanos()),
+    JsonTime(Duration.between(scanFilesStart, scanFilesEnd).toNanos()),
+    JsonTime(Duration.between(pushPropertiesStart, pushPropertiesEnd).toNanos()),
+    JsonTime(Duration.between(indexExtensionsStart, indexExtensionsEnd).toNanos()),
+    indexingStart!!.toPresentableTime(),
+    indexingEnd!!.toPresentableTime(),
+    pushPropertiesStart!!.toPresentableTime(),
+    pushPropertiesEnd!!.toPresentableTime(),
+    indexExtensionsStart!!.toPresentableTime(),
+    indexExtensionsEnd!!.toPresentableTime(),
+    scanFilesStart!!.toPresentableTime(),
+    scanFilesEnd!!.toPresentableTime()
   )
 
 private fun calculatePercentages(part: Long, total: Long): JsonPercentages =

@@ -5,7 +5,7 @@ data class JsonProjectIndexingHistory(
   val projectName: String,
   val numberOfFileProviders: Int,
   val totalNumberOfFiles: Int,
-  val indexingTimes: JsonProjectIndexingHistoryTimes,
+  val times: JsonProjectIndexingHistoryTimes,
   val totalStatsPerFileType: List<JsonStatsPerFileType>,
   val totalStatsPerIndexer: List<JsonStatsPerIndexer>,
   val fileProviderStatistics: List<JsonFileProviderIndexStatistics>

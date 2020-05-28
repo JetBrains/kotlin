@@ -3,19 +3,17 @@ package com.intellij.util.indexing.diagnostic.dto
 
 @Suppress("unused", "used for JSON")
 data class JsonProjectIndexingHistoryTimes(
-  val startIndexing: PresentableTime,
-  val endIndexing: PresentableTime,
   val indexingTime: JsonTime,
-
-  val startPushProperties: PresentableTime,
-  val endPushProperties: PresentableTime,
+  val scanFilesTime: JsonTime,
   val pushPropertiesTime: JsonTime,
-
-  val startIndexExtensions: PresentableTime,
-  val endIndexExtensions: PresentableTime,
   val indexExtensionsTime: JsonTime,
 
-  val startScanFiles: PresentableTime,
-  val endScanFiles: PresentableTime,
-  val scanFilesTime: JsonTime
+  val indexingStart: PresentableTime,
+  val indexingEnd: PresentableTime,
+  val pushPropertiesStart: PresentableTime,
+  val pushPropertiesEnd: PresentableTime,
+  val indexExtensionsStart: PresentableTime,
+  val indexExtensionsEnd: PresentableTime,
+  val scanFilesStart: PresentableTime,
+  val scanFilesEnd: PresentableTime
 )

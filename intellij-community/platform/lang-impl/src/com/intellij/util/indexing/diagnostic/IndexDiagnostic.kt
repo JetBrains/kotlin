@@ -3,6 +3,7 @@ package com.intellij.util.indexing.diagnostic
 
 import com.intellij.util.indexing.diagnostic.dto.JsonFileProviderIndexStatistics
 import com.intellij.util.indexing.diagnostic.dto.toJson
+import java.time.Instant
 
 typealias TimeMillis = Long
 typealias TimeNano = Long
@@ -74,16 +75,13 @@ data class ProjectIndexingHistory(val projectName: String) {
   )
 
   data class IndexingTimes(
-    var startIndexing: TimeMillis = 0,
-    var endIndexing: TimeMillis = 0,
-
-    var startPushProperties: TimeMillis = 0,
-    var endPushProperties: TimeMillis = 0,
-
-    var startIndexExtensions: TimeMillis = 0,
-    var endIndexExtensions: TimeMillis = 0,
-
-    var startScanFiles: TimeMillis = 0,
-    var endScanFiles: TimeMillis = 0
+    var indexingStart: Instant? = null,
+    var indexingEnd: Instant? = null,
+    var pushPropertiesStart: Instant? = null,
+    var pushPropertiesEnd: Instant? = null,
+    var indexExtensionsStart: Instant? = null,
+    var indexExtensionsEnd: Instant? = null,
+    var scanFilesStart: Instant? = null,
+    var scanFilesEnd: Instant? = null
   )
 }
