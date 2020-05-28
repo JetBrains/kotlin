@@ -67,6 +67,8 @@ class UastKotlinPsiVariable private constructor(
         return ktElement == (other as? UastKotlinPsiVariable)?.ktElement
     }
 
+    override fun isEquivalentTo(another: PsiElement?): Boolean = this == another || ktElement.isEquivalentTo(another)
+
     override fun hashCode() = ktElement.hashCode()
 
     companion object {
