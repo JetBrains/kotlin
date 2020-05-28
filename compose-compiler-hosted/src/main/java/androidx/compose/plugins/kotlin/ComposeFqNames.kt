@@ -36,6 +36,13 @@ object ComposeFqNames {
     val Composable = ComposeUtils.composeFqName("Composable")
     val CurrentComposerIntrinsic = ComposeUtils.composeFqName("<get-currentComposer>")
     val Direct = ComposeUtils.composeFqName("Direct")
+    val restartableFunction = FqName.fromSegments(listOf(
+        "androidx",
+        "compose",
+        "internal",
+        "restartableFunction"
+    ))
+    val remember = ComposeUtils.composeFqName("remember")
     val key = ComposeUtils.composeFqName("key")
     val StableMarker = ComposeUtils.composeFqName("StableMarker")
     val Stable = ComposeUtils.composeFqName("Stable")
