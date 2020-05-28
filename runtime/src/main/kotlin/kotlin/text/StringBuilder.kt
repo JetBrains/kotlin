@@ -178,10 +178,13 @@ actual class StringBuilder private constructor (
 
     /**
      * Appends the specified string [value] to this string builder and returns this instance.
+     *
+     * If [value] is `null`, then the four characters `"null"` are appended.
      */
-    actual fun append(value: String): StringBuilder {
-        ensureExtraCapacity(value.length)
-        _length += insertString(array, _length, value)
+    actual fun append(value: String?): StringBuilder {
+        val toAppend = value ?: "null"
+        ensureExtraCapacity(toAppend.length)
+        _length += insertString(array, _length, toAppend)
         return this
     }
 
@@ -338,13 +341,16 @@ actual class StringBuilder private constructor (
     /**
      * Inserts the string [value] into this string builder at the specified [index] and returns this instance.
      *
+     * If [value] is `null`, then the four characters `"null"` are inserted.
+     *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    actual fun insert(index: Int, value: String): StringBuilder {
+    actual fun insert(index: Int, value: String?): StringBuilder {
+        val toInsert = value ?: "null"
         checkInsertIndex(index)
-        ensureExtraCapacity(value.length)
-        array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + value.length)
-        _length += insertString(array, index, value)
+        ensureExtraCapacity(toInsert.length)
+        array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + toInsert.length)
+        _length += insertString(array, index, toInsert)
         return this
     }
 
