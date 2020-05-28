@@ -5,6 +5,7 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.roots.impl.ModifiableModelCommitter
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.rules.ProjectModelRule
 import org.assertj.core.api.Assertions.assertThat
@@ -72,11 +73,14 @@ class ModuleModelTest {
       model.renameModule(module, "b")
       assertThat(model.isChanged).isTrue()
       assertThat(model.modules).containsExactly(module)
-      assertThat(model.findModuleByName("a")).isEqualTo(module)
-      assertThat(model.findModuleByName("b")).isNull()
       assertThat(model.getModuleToBeRenamed("a")).isNull()
-      assertThat(model.getNewName(module)).isEqualTo("b")
-      assertThat(module.name).isEqualTo("a")
+      assertThat(model.getActualName(module)).isEqualTo("b")
+      if (Registry.`is`("ide.new.project.model")) {
+        //in the old model newly added module doesn't get the new name until commit; it looks like a bug
+        assertThat(model.findModuleByName("a")).isNull()
+        assertThat(model.findModuleByName("b")).isEqualTo(module)
+        assertThat(module.name).isEqualTo("b")
+      }
       module
     }
 
