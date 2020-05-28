@@ -3,7 +3,6 @@ package com.intellij.util.indexing.diagnostic.dump.paths
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem
@@ -29,15 +28,13 @@ object PortableFilePaths {
     RelativePortableFilePathResolver
   )
 
-  fun getPortableFilePath(virtualFile: VirtualFile, project: Project): PortableFilePath = runReadAction {
+  fun getPortableFilePath(virtualFile: VirtualFile, project: Project): PortableFilePath =
     PROVIDERS.asSequence().mapNotNull { it.getRelativePortableFilePath(project, virtualFile) }.firstOrNull()
     ?: PortableFilePath.AbsolutePath(virtualFile.url)
-  }
 
-  fun findFileByPath(portableFilePath: PortableFilePath, project: Project): VirtualFile? = runReadAction {
+  fun findFileByPath(portableFilePath: PortableFilePath, project: Project): VirtualFile? =
     RESOLVERS.asSequence().mapNotNull { it.findFileByPath(project, portableFilePath) }.firstOrNull()
     ?: AbsolutePortableFilePathResolver.findFileByPath(project, portableFilePath)
-  }
 
   fun isSupportedFileSystem(virtualFile: VirtualFile): Boolean =
     virtualFile.isInLocalFileSystem || virtualFile.fileSystem is ArchiveFileSystem
