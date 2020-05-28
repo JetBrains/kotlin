@@ -48,6 +48,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:fir:checkers",
         ":compiler:fir:checkers:checkers.jvm",
         ":compiler:fir:entrypoint",
+        ":compiler:fir:evaluate",
         ":compiler:fir:resolve",
         ":compiler:fir:fir-serialization",
         ":compiler:fir:fir-deserialization",

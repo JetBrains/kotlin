@@ -275,6 +275,7 @@ extra["compilerModules"] = arrayOf(
     ":core:deserialization",
     ":core:util.runtime",
     ":compiler:fir:cones",
+    ":compiler:fir:evaluate",
     ":compiler:fir:resolve",
     ":compiler:fir:fir-serialization",
     ":compiler:fir:fir-deserialization",
