@@ -14,7 +14,6 @@ import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionDelegate;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
-import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewEditor;
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewUnsupportedOperationException;
 import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
@@ -173,33 +172,24 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
                                                                    @NotNull Editor hostEditor,
                                                                    @Nullable PsiFile injectedFile,
                                                                    @NotNull PairProcessor<? super PsiFile, ? super Editor> predicate) {
-    try {
-      Editor editorToApply = null;
-      PsiFile fileToApply = null;
-
-      Editor injectedEditor = null;
-      // TODO: support intention preview in injections
-      if (injectedFile != null && !(hostEditor instanceof IntentionPreviewEditor)) {
-        injectedEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(hostEditor, injectedFile);
-        if (predicate.process(injectedFile, injectedEditor)) {
-          editorToApply = injectedEditor;
-          fileToApply = injectedFile;
-        }
-      }
-
-      if (editorToApply == null && hostEditor != injectedEditor && predicate.process(hostFile, hostEditor)) {
-        editorToApply = hostEditor;
-        fileToApply = hostFile;
-      }
-      if (editorToApply == null) return null;
-      return Pair.create(fileToApply, editorToApply);
+    if (injectedFile == null) {
+      return Pair.create(hostFile, hostEditor);
     }
-    catch (IntentionPreviewUnsupportedOperationException e) {
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        throw e;
-      }
-      return null;
+    Editor editorToApply = null;
+    PsiFile fileToApply = null;
+
+    Editor injectedEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(hostEditor, injectedFile);
+    if (predicate.process(injectedFile, injectedEditor)) {
+      editorToApply = injectedEditor;
+      fileToApply = injectedFile;
     }
+
+    if (editorToApply == null && hostEditor != injectedEditor && predicate.process(hostFile, hostEditor)) {
+      editorToApply = hostEditor;
+      fileToApply = hostFile;
+    }
+    if (editorToApply == null) return null;
+    return Pair.create(fileToApply, editorToApply);
   }
 
   public static boolean chooseActionAndInvoke(@NotNull PsiFile hostFile,
