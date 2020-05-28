@@ -9,7 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtraPropertiesExtension
 
 internal class KotlinPluginInMultipleProjectsHolder(
-    private val differentVersionsInDifferentProject: Boolean
+    private val trackPluginVersionsSeparately: Boolean
 ) {
     private var loadedInProjectPath: String? = null
 
@@ -18,7 +18,7 @@ internal class KotlinPluginInMultipleProjectsHolder(
         kotlinPluginVersion: String? = null,
         onRegister: () -> Unit = {}
     ) {
-        require(differentVersionsInDifferentProject == (kotlinPluginVersion != null))
+        require(trackPluginVersionsSeparately == (kotlinPluginVersion != null))
 
         val projectPath = project.path
 
@@ -42,7 +42,7 @@ internal class KotlinPluginInMultipleProjectsHolder(
         project: Project,
         kotlinPluginVersion: String? = null
     ): Boolean {
-        require(differentVersionsInDifferentProject == (kotlinPluginVersion != null))
+        require(trackPluginVersionsSeparately == (kotlinPluginVersion != null))
         return getAffectedProjects(project, kotlinPluginVersion)?.let {
             it.size > 1
         } ?: false
@@ -52,7 +52,7 @@ internal class KotlinPluginInMultipleProjectsHolder(
         project: Project,
         kotlinPluginVersion: String? = null
     ): List<String>? {
-        require(differentVersionsInDifferentProject == (kotlinPluginVersion != null))
+        require(trackPluginVersionsSeparately == (kotlinPluginVersion != null))
 
         val ext = getExt(project)
 

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
 internal class MultiplePluginDeclarationDetector
 private constructor() {
     private val pluginInMultipleProjectsHolder = KotlinPluginInMultipleProjectsHolder(
-        differentVersionsInDifferentProject = false
+        trackPluginVersionsSeparately = false
     )
 
     fun detect(project: Project) {

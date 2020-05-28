@@ -125,7 +125,7 @@ internal class KotlinGradleBuildServices private constructor(
         ManagementFactory.getGarbageCollectorMXBeans().sumByLong { max(0, it.collectionCount) }
 
     private val multipleProjectsHolder = KotlinPluginInMultipleProjectsHolder(
-        differentVersionsInDifferentProject = true
+        trackPluginVersionsSeparately = true
     )
 
     @Synchronized
