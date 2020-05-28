@@ -11,8 +11,9 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.ui.popup.PopupFactoryImpl
 import javax.swing.JComponent
 
-class TemplateInlayBuilder {
+object TemplateInlayUtil {
 
+  @JvmStatic
   fun createNavigatableButton(templateState: TemplateState,
                               inEditorOffset: Int,
                               presentation: SelectableInlayPresentation): Inlay<PresentationRenderer>? {
@@ -27,6 +28,7 @@ class TemplateInlayBuilder {
     return inlay
   }
 
+  @JvmStatic
   fun createNavigatableButtonWithPopup(templateState: TemplateState,
                                        inEditorOffset: Int,
                                        presentation: SelectableInlayPresentation,
@@ -34,18 +36,21 @@ class TemplateInlayBuilder {
     val editor = templateState.editor
     val inlay = createNavigatableButton(templateState, inEditorOffset, presentation) ?: return null
     fun showPopup(){
-      editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, inlay.visualPosition)
-      val popup = JBPopupFactory.getInstance()
-        .createComponentPopupBuilder(panel, null)
-        .setRequestFocus(true)
-        .addListener(object : JBPopupListener {
-          override fun onClosed(event: LightweightWindowEvent) {
-            presentation.isSelected = false
-          }
-        })
-        .createPopup()
-      popup.showInBestPositionFor(editor)
-      editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, null)
+      try {
+        editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, inlay.visualPosition)
+        val popup = JBPopupFactory.getInstance()
+          .createComponentPopupBuilder(panel, null)
+          .setRequestFocus(true)
+          .addListener(object : JBPopupListener {
+            override fun onClosed(event: LightweightWindowEvent) {
+              presentation.isSelected = false
+            }
+          })
+          .createPopup()
+        popup.showInBestPositionFor(editor)
+      } finally {
+        editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, null)
+      }
     }
     presentation.addSelectionListener(object : SelectableInlayPresentation.SelectionListener {
       override fun selectionChanged(isSelected: Boolean) {

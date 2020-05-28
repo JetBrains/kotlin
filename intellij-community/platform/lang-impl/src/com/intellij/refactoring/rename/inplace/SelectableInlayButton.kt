@@ -5,7 +5,7 @@ import com.intellij.codeInsight.hints.presentation.DynamicDelegatePresentation
 import com.intellij.codeInsight.hints.presentation.InlayPresentation
 import com.intellij.codeInsight.hints.presentation.PresentationRenderer
 import com.intellij.openapi.editor.Inlay
-import com.intellij.openapi.editor.impl.EditorImpl
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.refactoring.rename.inplace.SelectableInlayPresentation.SelectionListener
 import java.awt.Cursor
 import java.awt.Point
@@ -13,7 +13,7 @@ import java.awt.event.MouseEvent
 import java.util.concurrent.atomic.AtomicReference
 
 class SelectableInlayButton(
-  private val editor: EditorImpl,
+  private val editor: EditorEx,
   private val default: InlayPresentation,
   private val active: InlayPresentation,
   private val hovered: InlayPresentation,

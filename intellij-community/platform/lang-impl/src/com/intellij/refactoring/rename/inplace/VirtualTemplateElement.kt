@@ -9,20 +9,22 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.util.Key
+import org.jetbrains.annotations.ApiStatus
 
+@ApiStatus.Experimental
 interface VirtualTemplateElement {
 
   companion object {
-    private val TEMPLATE_INLAY_ELEMENT: Key<VirtualTemplateElement> = Key.create("template_inlay_element")
+    private val VIRTUAL_TEMPLATE_ELEMENT: Key<VirtualTemplateElement> = Key.create("virtual_template_element")
 
     @JvmStatic
     fun installOnTemplate(templateState: TemplateState, element: VirtualTemplateElement){
-      templateState.properties[TEMPLATE_INLAY_ELEMENT] = element
+      templateState.properties[VIRTUAL_TEMPLATE_ELEMENT] = element
     }
 
     @JvmStatic
     fun findInTemplate(templateState: TemplateState): VirtualTemplateElement? {
-      return templateState.properties[TEMPLATE_INLAY_ELEMENT] as? VirtualTemplateElement
+      return templateState.properties[VIRTUAL_TEMPLATE_ELEMENT] as? VirtualTemplateElement
     }
   }
 
