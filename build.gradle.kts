@@ -267,6 +267,7 @@ extra["compilerModules"] = arrayOf(
     ":core:util.runtime",
     ":core:type-system",
     ":compiler:fir:cones",
+    ":compiler:fir:evaluate",
     ":compiler:fir:resolve",
     ":compiler:fir:fir-serialization",
     ":compiler:fir:tree",
