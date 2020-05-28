@@ -25,6 +25,8 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           ALOAD (0)
           CHECKCAST
           PUTSTATIC (descriptor, Lkotlinx/serialization/SerialDescriptor;)
+        LABEL (L1)
+        LINENUMBER (13)
           RETURN
     }
 
@@ -332,6 +334,8 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (0)
           CHECKCAST
           PUTSTATIC (descriptor, Lkotlinx/serialization/SerialDescriptor;)
+        LABEL (L1)
+        LINENUMBER (10)
           RETURN
     }
 
@@ -687,6 +691,8 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ALOAD (0)
           CHECKCAST
           PUTSTATIC (descriptor, Lkotlinx/serialization/SerialDescriptor;)
+        LABEL (L1)
+        LINENUMBER (7)
           RETURN
     }
 

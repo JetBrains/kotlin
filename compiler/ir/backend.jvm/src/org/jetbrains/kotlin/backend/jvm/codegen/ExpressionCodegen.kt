@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
+import org.jetbrains.kotlin.backend.common.lower.SYNTHESIZED_INIT_BLOCK
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
@@ -324,15 +325,25 @@ class ExpressionCodegen(
 
     override fun visitBlock(expression: IrBlock, data: BlockInfo): PromisedValue {
         assert(expression !is IrReturnableBlock) { "unlowered returnable block: ${expression.dump()}" }
+        val isSynthesizedInitBlock = expression.origin == SYNTHESIZED_INIT_BLOCK
+        if (isSynthesizedInitBlock) {
+            expression.markLineNumber(startOffset = true)
+            mv.nop()
+        }
         if (expression.isTransparentScope)
             return super.visitBlock(expression, data)
         val info = BlockInfo(data)
         // Force materialization to avoid reading from out-of-scope variables.
-        return super.visitBlock(expression, info).materialized().also {
+        val value = super.visitBlock(expression, info).materialized().also {
             if (info.variables.isNotEmpty()) {
                 writeLocalVariablesInTable(info, markNewLabel())
             }
         }
+        if (isSynthesizedInitBlock) {
+            expression.markLineNumber(startOffset = false)
+            mv.nop()
+        }
+        return value
     }
 
     private val IrVariable.isVisibleInLVT: Boolean
