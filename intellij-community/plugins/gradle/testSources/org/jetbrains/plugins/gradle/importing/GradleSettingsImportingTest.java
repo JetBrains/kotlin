@@ -33,9 +33,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.encoding.EncodingProjectManager;
 import com.intellij.openapi.vfs.encoding.EncodingProjectManagerImpl;
 import com.intellij.profile.codeInspection.InspectionProfileManager;
-import com.intellij.psi.codeStyle.CodeStyleScheme;
-import com.intellij.psi.codeStyle.CodeStyleSchemes;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.testFramework.ExtensionTestUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -69,29 +66,6 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
 
     final InspectionProfileImpl profile = InspectionProfileManager.getInstance(myProject).getCurrentProfile();
     assertEquals("Gradle Imported", profile.getName());
-  }
-
-  @Test
-  public void testCodeStyleSettingsImport() throws Exception {
-    importProject(
-      withGradleIdeaExtPlugin(
-        "import org.jetbrains.gradle.ext.*\n" +
-        "idea {\n" +
-        "  project.settings {\n" +
-        "    codeStyle {\n" +
-        "      hardWrapAt = 200\n" +
-        "    }\n" +
-        "  }\n" +
-        "}")
-    );
-
-    final CodeStyleScheme scheme = CodeStyleSchemes.getInstance().getCurrentScheme();
-    final CodeStyleSettings settings = scheme.getCodeStyleSettings();
-
-    assertEquals("Gradle Imported", scheme.getName());
-    assertFalse(scheme.isDefault());
-
-    assertEquals(200, settings.getDefaultRightMargin());
   }
 
   @Test
