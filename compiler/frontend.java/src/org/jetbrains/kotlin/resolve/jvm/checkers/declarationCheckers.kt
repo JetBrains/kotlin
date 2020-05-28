@@ -151,7 +151,7 @@ class JvmNameAnnotationChecker : DeclarationChecker {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             } else if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling() ||
                 requiresFunctionNameManglingForParameterTypes(descriptor.valueParameters.map { it.type }) ||
-                descriptor.containingDeclaration is ClassDescriptor && requiresFunctionNameManglingForReturnType(descriptor.returnType)
+                requiresFunctionNameManglingForReturnType(descriptor)
             ) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             }

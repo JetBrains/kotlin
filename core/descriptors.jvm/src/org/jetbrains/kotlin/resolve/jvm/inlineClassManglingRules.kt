@@ -29,8 +29,11 @@ fun requiresFunctionNameManglingForParameterTypes(valueParameterTypes: List<Kotl
 }
 
 // NB functions returning all inline classes (including our special 'kotlin.Result') should be mangled.
-fun requiresFunctionNameManglingForReturnType(returnType: KotlinType?) =
-    returnType != null && returnType.isInlineClassType()
+fun requiresFunctionNameManglingForReturnType(descriptor: CallableMemberDescriptor): Boolean {
+    if (descriptor.containingDeclaration !is ClassDescriptor) return false
+    val returnType = descriptor.returnType ?: return false
+    return returnType.isInlineClassType()
+}
 
 fun DeclarationDescriptor.isInlineClassThatRequiresMangling(): Boolean =
     isInlineClass() && !isDontMangleClass(this as ClassDescriptor)

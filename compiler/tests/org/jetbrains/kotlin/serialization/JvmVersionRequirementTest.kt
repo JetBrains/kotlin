@@ -128,6 +128,17 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
         )
     }
 
+    fun testInlineClassReturnTypeMangled() {
+        doTest(
+            VersionRequirement.Version(1, 4, 0), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
+            fqNamesWithRequirements = listOf(
+                "test.C.returnsInlineClassType",
+                "test.C.propertyOfInlineClassType"
+            ),
+            customLanguageVersion = LanguageVersion.KOTLIN_1_4
+        )
+    }
+
     fun testSuspendFun_1_2() {
         doTest(
             VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
