@@ -18,18 +18,23 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.codeStyle.MinusculeMatcher;
+import com.intellij.psi.codeStyle.MinusculeMatcherWrapper;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.psi.codeStyle.WordPrefixMatcher;
 import com.intellij.ui.switcher.QuickActionProvider;
 import com.intellij.util.CollectConsumer;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.FList;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.text.Matcher;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -113,12 +118,15 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
   }
 
   private boolean processAbbreviations(@NotNull String pattern, Processor<? super MatchedValue> consumer, DataContext context) {
+    MinusculeMatcher matcher = buildWeightMatcher(pattern);
     List<String> actionIds = AbbreviationManager.getInstance().findActions(pattern);
     JBIterable<MatchedValue> wrappers = JBIterable.from(actionIds)
       .filterMap(myActionManager::getAction)
       .transform(action -> {
         ActionWrapper wrapper = wrapAnAction(action, context);
-        return new MatchedValue(wrapper, pattern) {
+        String name = action.getTemplatePresentation().getText();
+        int degree = name != null ? matcher.matchingDegree(name) : 0;
+        return new MatchedValue(wrapper, pattern, degree) {
           @NotNull
           @Override
           public String getValueText() {
@@ -255,7 +263,13 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
   private static final Logger LOG = Logger.getInstance(GotoActionItemProvider.class);
 
   private static boolean processItems(String pattern, JBIterable<?> items, Processor<? super MatchedValue> consumer) {
-    List<MatchedValue> matched = ContainerUtil.newArrayList(items.map(o -> o instanceof MatchedValue ? (MatchedValue)o : new MatchedValue(o, pattern)));
+    MinusculeMatcher matcher = buildWeightMatcher(pattern);
+    List<MatchedValue> matched = ContainerUtil.newArrayList(items.map(o -> {
+      if (o instanceof MatchedValue) return (MatchedValue)o;
+
+      String name = getActionText(o);
+      return name != null ? new MatchedValue(o, pattern, matcher.matchingDegree(name)) : new MatchedValue(o, pattern);
+    }));
     try {
       matched.sort((o1, o2) -> o1.compareWeights(o2));
     }
@@ -263,5 +277,35 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
       LOG.error("Comparison method violates its general contract with pattern '" + pattern + "'", e);
     }
     return ContainerUtil.process(matched, consumer);
+  }
+
+  private static MinusculeMatcher buildWeightMatcher(String pattern) {
+    MinusculeMatcher matcher = NameUtil.buildMatcher("*" + pattern)
+      .withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE)
+      .preferringStartMatches()
+      .build();
+
+    if (pattern.trim().contains(" ")) matcher = new ActionsPriorityMatcher(matcher);
+    return matcher;
+  }
+
+  @Nullable
+  public static String getActionText(Object value) {
+    if (value instanceof OptionDescription) return ((OptionDescription)value).getHit();
+    if (value instanceof ActionWrapper) return ((ActionWrapper)value).getAction().getTemplatePresentation().getText();
+    return null;
+  }
+
+  private static class ActionsPriorityMatcher extends MinusculeMatcherWrapper {
+    private static final int ACTION_BONUS = 100;
+
+    protected ActionsPriorityMatcher(MinusculeMatcher delegate) {
+      super(delegate);
+    }
+
+    @Override
+    public int matchingDegree(@NotNull String name, boolean valueStartCaseMatch, @Nullable FList<? extends TextRange> fragments) {
+      return myDelegate.matchingDegree(name, valueStartCaseMatch, fragments) + ACTION_BONUS;
+    }
   }
 }
