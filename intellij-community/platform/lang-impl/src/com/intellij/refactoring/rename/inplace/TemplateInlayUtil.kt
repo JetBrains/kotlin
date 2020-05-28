@@ -2,18 +2,20 @@
 package com.intellij.refactoring.rename.inplace
 
 import com.intellij.codeInsight.hints.InlayPresentationFactory
+import com.intellij.codeInsight.hints.presentation.InlayPresentation
 import com.intellij.codeInsight.hints.presentation.PresentationFactory
 import com.intellij.codeInsight.hints.presentation.PresentationRenderer
 import com.intellij.codeInsight.template.impl.TemplateState
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.JBPopupListener
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.util.Disposer
-import com.intellij.ui.JBColor
 import com.intellij.ui.popup.PopupFactoryImpl
+import java.awt.Color
 import java.util.concurrent.atomic.AtomicReference
 import javax.swing.JComponent
 
@@ -70,25 +72,23 @@ object TemplateInlayUtil {
   @JvmStatic
   fun createSettingsPresentation(editor: EditorImpl, inlayToUpdate: AtomicReference<Inlay<PresentationRenderer>>): SelectableInlayPresentation {
     val factory = PresentationFactory(editor)
+    fun button(background: Color?): InlayPresentation {
+      val button = factory.container(
+        presentation = factory.icon(AllIcons.Actions.InlayGear),
+        padding = InlayPresentationFactory.Padding(4, 4, 4, 4),
+        roundedCorners = InlayPresentationFactory.RoundedCorners(6, 6),
+        background = background
+      )
+      return factory.container(button, padding = InlayPresentationFactory.Padding(3, 6, 0, 0))
+    }
 
-    val roundedCorners = InlayPresentationFactory.RoundedCorners(6, 6)
-    val padding = InlayPresentationFactory.Padding(4, 4, 4, 4)
-
-    val inactiveIcon = factory.container(
-      presentation = factory.icon(AllIcons.Actions.InlayGear),
-      padding = padding,
-      roundedCorners = roundedCorners,
-      background = JBColor.LIGHT_GRAY
+    val colorsScheme = editor.colorsScheme
+    return SelectableInlayButton(
+      editor,
+      default = button(colorsScheme.getColor(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_DEFAULT)),
+      active = button(colorsScheme.getColor(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_FOCUSED)),
+      hovered = button(colorsScheme.getColor(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_HOVERED)),
+      inlayToUpdate = inlayToUpdate
     )
-    val activeIcon = factory.container(
-      presentation = factory.icon(AllIcons.Actions.InlayGear),
-      padding = padding,
-      roundedCorners = roundedCorners,
-      background = JBColor.DARK_GRAY
-    )
-    val inactivePadded = factory.container(inactiveIcon, padding = InlayPresentationFactory.Padding(3, 6, 0, 0))
-    val activePadded = factory.container(activeIcon, padding = InlayPresentationFactory.Padding(3, 6, 0, 0))
-
-    return SelectableInlayButton(editor, inactivePadded, activePadded, activePadded, inlayToUpdate)
   }
 }
