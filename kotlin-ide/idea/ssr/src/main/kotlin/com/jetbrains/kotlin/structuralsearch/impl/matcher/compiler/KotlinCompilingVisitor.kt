@@ -15,7 +15,9 @@ import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElement
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.getCommentText
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.handlers.DeclarationHandler
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.psi.*
 import java.util.regex.Pattern
 
@@ -43,14 +45,35 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     private fun setHandler(element: PsiElement, handler: MatchingHandler) =
         myCompilingVisitor.context.pattern.setHandler(element, handler)
 
+    private fun processPatternStringWithFragments(element: PsiElement, text: String = element.text) {
+        if (ourSubstitutionPattern.matcher(text).find()) {
+            myCompilingVisitor.processPatternStringWithFragments(element.text, COMMENT, ourSubstitutionPattern)?.let {
+                element.putUserData(CompiledPattern.HANDLER_KEY, it)
+            }
+        }
+    }
+
     override fun visitElement(element: PsiElement) {
         super.visitElement(element)
         myCompilingVisitor.handle(element)
 
         when (element) {
-            is LeafPsiElement -> getHandler(element).setFilter { it is LeafPsiElement }
-            is KDoc -> getHandler(element).setFilter { it is KDoc }
+            is LeafPsiElement -> visitLeafPsiElement(element)
+            is KDoc -> visitKDoc(element)
+            is KDocLink -> visitKDocLink(element)
         }
+    }
+
+    private fun visitLeafPsiElement(element: LeafPsiElement) {
+        getHandler(element).setFilter { it is LeafPsiElement }
+
+        if (element.elementType == KDocTokens.TEXT) {
+            processPatternStringWithFragments(element)
+        }
+    }
+
+    private fun visitKDoc(kDoc: KDoc) {
+        getHandler(kDoc).setFilter { it is KDoc }
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
@@ -87,12 +110,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry) {
         super.visitLiteralStringTemplateEntry(entry)
-
-        if (ourSubstitutionPattern.matcher(entry.text).find()) {
-            myCompilingVisitor.processPatternStringWithFragments(entry.text, COMMENT, ourSubstitutionPattern)?.let {
-                entry.putUserData(CompiledPattern.HANDLER_KEY, it)
-            }
-        }
+        processPatternStringWithFragments(entry)
         getHandler(entry).setFilter { it is KtLiteralStringTemplateEntry }
     }
 
@@ -131,12 +149,10 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitComment(comment: PsiComment) {
         super.visitComment(comment)
-        val text = getCommentText(comment).trim()
+        processPatternStringWithFragments(comment, getCommentText(comment).trim())
+    }
 
-        if (ourSubstitutionPattern.matcher(text).find()) {
-            myCompilingVisitor.processPatternStringWithFragments(comment.text, COMMENT, ourSubstitutionPattern)?.let {
-                comment.putUserData(CompiledPattern.HANDLER_KEY, it)
-            }
-        }
+    private fun visitKDocLink(link: KDocLink) {
+        getHandler(link).setFilter { it is KDocLink }
     }
 }

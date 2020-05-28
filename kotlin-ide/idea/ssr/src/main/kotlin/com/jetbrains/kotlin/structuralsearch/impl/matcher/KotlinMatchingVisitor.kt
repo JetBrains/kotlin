@@ -8,11 +8,15 @@ import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
@@ -51,6 +55,31 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         return when (val handler = pattern.getHandler(el1)) {
             is SubstitutionHandler -> handler.handle(el2, context)
             else -> myMatchingVisitor.matchText(el1, el2)
+        }
+    }
+
+    override fun visitElement(element: PsiElement) {
+        when (element) {
+            is LeafPsiElement -> visitLeafPsiElement(element)
+            is KDoc -> visitKDoc(element)
+            is KDocSection -> visitKDocSection(element)
+            is KDocTag -> visitKDocTag(element)
+            is KDocName -> visitKDocName(element)
+            is KDocLink -> visitKDocLink(element)
+        }
+    }
+
+    private fun visitLeafPsiElement(element: LeafPsiElement) {
+        val other = getTreeElementDepar<LeafPsiElement>() ?: return
+
+        // Match element type
+        if (!myMatchingVisitor.setResult(element.elementType == other.elementType)) return
+
+        if (element.elementType == KDocTokens.TEXT) {
+            myMatchingVisitor.result = when (val handler = element.getUserData(CompiledPattern.HANDLER_KEY)) {
+                is LiteralWithSubstitutionHandler -> handler.match(element, other, myMatchingVisitor.matchContext)
+                else -> matchTextOrVariable(element, other)
+            }
         }
     }
 
@@ -421,26 +450,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
     }
 
-    override fun visitElement(element: PsiElement) {
-        when (element) {
-            is LeafPsiElement -> {
-                val other = getTreeElementDepar<LeafPsiElement>() ?: return
-                myMatchingVisitor.result = element.elementType.index == other.elementType.index
-            }
-            is KDoc -> {
-                val other = getTreeElementDepar<KDoc>() ?: return
-                myMatchingVisitor.result = myMatchingVisitor.matchSequentially(
-                    element.getChildrenOfType<KDocSection>(),
-                    other.getChildrenOfType<KDocSection>()
-                )
-            }
-            is KDocSection -> {
-                val other = getTreeElementDepar<KDocSection>() ?: return
-                myMatchingVisitor.result = myMatchingVisitor.matchText(element, other)
-            }
-        }
-    }
-
     override fun visitModifierList(list: KtModifierList) {
         val other = getTreeElementDepar<KtModifierList>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchSons(list, other)
@@ -633,5 +642,33 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 )
             }
         }
+    }
+
+    private fun visitKDoc(kDoc: KDoc) {
+        val other = getTreeElementDepar<KDoc>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(
+            kDoc.getChildOfType<KDocSection>(),
+            other.getChildOfType<KDocSection>()
+        )
+    }
+
+    private fun visitKDocSection(section: KDocSection) {
+        val other = getTreeElementDepar<KDocSection>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSonsInAnyOrder(section, other)
+    }
+
+    private fun visitKDocTag(tag: KDocTag) {
+        val other = getTreeElementDepar<KDocTag>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(tag.firstChild, other.firstChild)
+    }
+
+    private fun visitKDocName(name: KDocName) {
+        val other = getTreeElementDepar<KDocName>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.matchText(name, other)
+    }
+
+    private fun visitKDocLink(link: KDocLink) {
+        val other = getTreeElementDepar<KDocLink>() ?: return
+        myMatchingVisitor.result = matchTextOrVariable(link, other)
     }
 }
