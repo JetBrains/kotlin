@@ -214,6 +214,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         }
                     )
 
+                    it.resolveFromModulesFirst = true
+
                     commonWebpackConfigurations.forEach { configure ->
                         it.configure()
                     }
