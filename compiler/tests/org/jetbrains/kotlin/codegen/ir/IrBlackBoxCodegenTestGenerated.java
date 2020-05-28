@@ -12978,6 +12978,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableType.kt");
         }
 
+        @TestMetadata("noReturnTypeMangling.kt")
+        public void testNoReturnTypeMangling() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeMangling.kt");
+        }
+
         @TestMetadata("nullableEqeqNonNull.kt")
         public void testNullableEqeqNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNull.kt");

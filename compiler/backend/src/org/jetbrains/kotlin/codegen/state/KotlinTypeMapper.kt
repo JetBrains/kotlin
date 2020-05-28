@@ -619,6 +619,9 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
     }
 
+    private val shouldMangleByReturnType =
+        languageVersionSettings.supportsFeature(LanguageFeature.MangleClassMembersReturningInlineClasses)
+
     private fun mangleMemberNameIfRequired(
         name: String,
         descriptor: CallableMemberDescriptor,
@@ -657,7 +660,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         // so that we don't have to repeat the same logic in reflection
         // in case of properties without getter methods.
         if (kind !== OwnerKind.PROPERTY_REFERENCE_SIGNATURE || descriptor.isPropertyWithGetterSignaturePresent()) {
-            val suffix = getManglingSuffixBasedOnKotlinSignature(descriptor)
+            val suffix = getManglingSuffixBasedOnKotlinSignature(descriptor, shouldMangleByReturnType)
             if (suffix != null) {
                 newName += suffix
             } else if (kind === OwnerKind.ERASED_INLINE_CLASS) {
@@ -682,6 +685,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             InternalNameMapper.mangleInternalName(newName, getModuleName(descriptor))
         } else newName
     }
+
 
     private fun CallableMemberDescriptor.isPropertyWithGetterSignaturePresent(): Boolean {
         val propertyDescriptor = when (this) {

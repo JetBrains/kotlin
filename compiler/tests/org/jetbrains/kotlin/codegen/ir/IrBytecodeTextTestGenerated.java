@@ -3036,6 +3036,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingUnboxingInAccessorsForDelegatedPropertyWithInlineClassDelegate.kt");
         }
 
+        @TestMetadata("noReturnTypeMangling.kt")
+        public void testNoReturnTypeMangling() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noReturnTypeMangling.kt");
+        }
+
         @TestMetadata("nonOverridingMethodsAreCalledByInlineClass.kt")
         public void testNonOverridingMethodsAreCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/nonOverridingMethodsAreCalledByInlineClass.kt");

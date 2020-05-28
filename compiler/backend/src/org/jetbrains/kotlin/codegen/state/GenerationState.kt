@@ -251,7 +251,8 @@ class GenerationState private constructor(
     val isInlineDisabled: Boolean = configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
     val useTypeTableInSerializer: Boolean = configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
     val unifiedNullChecks: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
-    val functionsWithInlineClassReturnTypesMangled: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+    val functionsWithInlineClassReturnTypesMangled: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.MangleClassMembersReturningInlineClasses)
 
     val rootContext: CodegenContext<*> = RootContext(this)
 

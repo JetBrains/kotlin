@@ -124,6 +124,7 @@ enum class LanguageFeature(
     ProperIeee754Comparisons(KOTLIN_1_4, kind = BUG_FIX),
     FunctionalInterfaceConversion(KOTLIN_1_4, kind = UNSTABLE_FEATURE),
     GenerateJvmOverloadsAsFinal(KOTLIN_1_4),
+    MangleClassMembersReturningInlineClasses(KOTLIN_1_4),
 
     ProhibitSpreadOnSignaturePolymorphicCall(KOTLIN_1_5, kind = BUG_FIX),
     ProhibitInvisibleAbstractMethodsInSuperclasses(KOTLIN_1_5, kind = BUG_FIX),

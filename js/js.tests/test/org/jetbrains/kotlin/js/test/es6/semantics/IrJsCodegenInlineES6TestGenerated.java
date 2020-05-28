@@ -1690,6 +1690,26 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
         public void testInlineFunctionInsideInlineClassesBox() throws Exception {
             runTest("compiler/testData/codegen/boxInline/inlineClasses/inlineFunctionInsideInlineClassesBox.kt");
         }
+
+        @TestMetadata("noReturnTypeManglingFun.kt")
+        public void testNoReturnTypeManglingFun() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/noReturnTypeManglingFun.kt");
+        }
+
+        @TestMetadata("noReturnTypeManglingVal.kt")
+        public void testNoReturnTypeManglingVal() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/noReturnTypeManglingVal.kt");
+        }
+
+        @TestMetadata("withReturnTypeManglingFun.kt")
+        public void testWithReturnTypeManglingFun() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/withReturnTypeManglingFun.kt");
+        }
+
+        @TestMetadata("withReturnTypeManglingVal.kt")
+        public void testWithReturnTypeManglingVal() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/withReturnTypeManglingVal.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/innerClasses")
