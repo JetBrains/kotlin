@@ -392,6 +392,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("variablesWithoutInitializer.kt")
+    public void testVariablesWithoutInitializer() throws Exception {
+        runTest("compiler/testData/debug/stepping/variablesWithoutInitializer.kt");
+    }
+
+    @Test
     @TestMetadata("voidLambdaStepInline.kt")
     public void testVoidLambdaStepInline() throws Exception {
         runTest("compiler/testData/debug/stepping/voidLambdaStepInline.kt");

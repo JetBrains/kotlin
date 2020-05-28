@@ -11,11 +11,10 @@ fun foo(i: Int = 1) {
 inline fun bar(i: Int = 1) {
 }
 
-// TODO: The JVM_IR backend has line number 11 for the inlined
+// The JVM_IR backend has line number 11 for the inlined
 // default argument handling both before and after the actual
 // body of bar. That is consistent with what happens with the
-// $default method in the non-inlined case, but it is not what
-// happens with the JVM backend.
+// $default method in the non-inlined case.
 
 // FORCE_STEP_INTO
 // LINENUMBERS
