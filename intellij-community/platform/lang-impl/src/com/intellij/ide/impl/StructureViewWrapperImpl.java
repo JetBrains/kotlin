@@ -169,7 +169,7 @@ public final class StructureViewWrapperImpl implements StructureViewWrapper, Dis
     if (myStructureView != null) {
       myStructureView.disableStoreState();
     }
-    scheduleRebuild();
+    rebuild();
   }
 
   private void checkUpdate() {
