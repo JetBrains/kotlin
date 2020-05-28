@@ -240,6 +240,11 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/LargeFile.after.kt");
         }
 
+        @TestMetadata("LargeFileWithStringTemplate.after.kt")
+        public void testLargeFileWithStringTemplate() throws Exception {
+            runTest("idea/testData/indentationOnNewline/LargeFileWithStringTemplate.after.kt");
+        }
+
         @TestMetadata("ModifierListInUnfinishedDeclaration.after.kt")
         public void testModifierListInUnfinishedDeclaration() throws Exception {
             runTest("idea/testData/indentationOnNewline/ModifierListInUnfinishedDeclaration.after.kt");
@@ -283,6 +288,116 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("SettingAlignMultilineParametersInCalls.after.kt")
         public void testSettingAlignMultilineParametersInCalls() throws Exception {
             runTest("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryClose.after.kt")
+        public void testTemplateEntryClose() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryClose.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryClose2.after.kt")
+        public void testTemplateEntryClose2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryClose2.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryClose3.after.kt")
+        public void testTemplateEntryClose3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryClose3.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryClose4.after.kt")
+        public void testTemplateEntryClose4() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryClose4.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryClose5.after.kt")
+        public void testTemplateEntryClose5() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryClose5.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryClose6.after.kt")
+        public void testTemplateEntryClose6() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryClose6.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryClose7.after.kt")
+        public void testTemplateEntryClose7() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryClose7.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryCloseInMultilineString.after.kt")
+        public void testTemplateEntryCloseInMultilineString() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryCloseInMultilineString.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryCloseInMultilineString2.after.kt")
+        public void testTemplateEntryCloseInMultilineString2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryCloseInMultilineString2.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryCloseInMultilineString3.after.kt")
+        public void testTemplateEntryCloseInMultilineString3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryCloseInMultilineString3.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpen.after.kt")
+        public void testTemplateEntryOpen() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpen.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpen2.after.kt")
+        public void testTemplateEntryOpen2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpen2.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpenInMultilineString.after.kt")
+        public void testTemplateEntryOpenInMultilineString() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpenInMultilineString.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpenInMultilineString2.after.kt")
+        public void testTemplateEntryOpenInMultilineString2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpenInMultilineString2.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpenInMultilineString3.after.kt")
+        public void testTemplateEntryOpenInMultilineString3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpenInMultilineString3.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpenWithComment.after.kt")
+        public void testTemplateEntryOpenWithComment() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpenWithComment.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpenWithComment2.after.kt")
+        public void testTemplateEntryOpenWithComment2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpenWithComment2.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpenWithoutContent.after.kt")
+        public void testTemplateEntryOpenWithoutContent() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpenWithoutContent.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpenWithoutContent2.after.kt")
+        public void testTemplateEntryOpenWithoutContent2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpenWithoutContent2.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpenWithoutContent3.after.kt")
+        public void testTemplateEntryOpenWithoutContent3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpenWithoutContent3.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpenWithoutContent4.after.kt")
+        public void testTemplateEntryOpenWithoutContent4() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpenWithoutContent4.after.kt");
+        }
+
+        @TestMetadata("TemplateEntryOpenWithoutContent5.after.kt")
+        public void testTemplateEntryOpenWithoutContent5() throws Exception {
+            runTest("idea/testData/indentationOnNewline/TemplateEntryOpenWithoutContent5.after.kt");
         }
 
         @TestMetadata("While.after.kt")

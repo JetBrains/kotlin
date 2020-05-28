@@ -36,6 +36,16 @@ abstract class AbstractTypingIndentationTestBase : KotlinLightPlatformCodeInsigh
             "// WITHOUT_CUSTOM_LINE_INDENT_PROVIDER"
         ) != null
 
+        val ignoreFormatter = InTextDirectivesUtils.findStringWithPrefixes(
+            originalFileText,
+            "// IGNORE_FORMATTER"
+        ) != null
+
+        Assert.assertFalse(
+            "Only one option of 'WITHOUT_CUSTOM_LINE_INDENT_PROVIDER' and 'IGNORE_FORMATTER' is available at the same time",
+            withoutCustomLineIndentProvider && ignoreFormatter
+        )
+
         try {
             val configurator = FormatSettingsUtil.createConfigurator(originalFileText, CodeStyle.getSettings(project))
             if (!inverted) {
@@ -44,16 +54,27 @@ abstract class AbstractTypingIndentationTestBase : KotlinLightPlatformCodeInsigh
                 configurator.configureInvertedSettings()
             }
 
-            doNewlineTest(originFilePath, afterFilePath, withoutCustomLineIndentProvider)
+            doNewlineTest(
+                originFilePath, afterFilePath,
+                withoutCustomLineIndentProvider = withoutCustomLineIndentProvider,
+                ignoreFormatter = ignoreFormatter
+            )
         } finally {
             CodeStyle.getSettings(project).clearCodeStyleSettings()
         }
     }
 
-    private fun doNewlineTest(beforeFilePath: String, afterFilePath: String, withoutCustomLineIndentProvider: Boolean) {
-        KotlinLineIndentProvider.useFormatter = true
-        typeAndCheck(beforeFilePath, afterFilePath, "with FormatterBasedLineIndentProvider")
-        KotlinLineIndentProvider.useFormatter = false
+    private fun doNewlineTest(
+        beforeFilePath: String,
+        afterFilePath: String,
+        withoutCustomLineIndentProvider: Boolean,
+        ignoreFormatter: Boolean
+    ) {
+        if (!ignoreFormatter) {
+            KotlinLineIndentProvider.useFormatter = true
+            typeAndCheck(beforeFilePath, afterFilePath, "with FormatterBasedLineIndentProvider")
+            KotlinLineIndentProvider.useFormatter = false
+        }
 
         if (!withoutCustomLineIndentProvider) {
             typeAndCheck(beforeFilePath, afterFilePath, "with ${customLineIndentProvider.javaClass.simpleName}")
