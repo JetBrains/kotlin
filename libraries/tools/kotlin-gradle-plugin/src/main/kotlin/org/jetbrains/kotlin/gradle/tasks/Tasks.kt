@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -216,6 +216,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:Internal
     internal var coroutinesFromGradleProperties: Coroutines? = null
+
     // Input is needed to force rebuild even if source files are not changed
     @get:Input
     internal val coroutinesStr: String
@@ -527,10 +528,13 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
             else -> incremental
         }
 
-    @Suppress("unused")
-    @get:OutputFile
+    @get:Internal
     val outputFile: File
-        get() = kotlinOptions.outputFile?.let(::File) ?: defaultOutputFile
+        get() = outputFilePath?.let(::File) ?: defaultOutputFile
+
+    @get:Input
+    val outputFilePath: String?
+        get() = kotlinOptions.outputFile
 
     override fun findKotlinCompilerClasspath(project: Project): List<File> =
         findKotlinJsCompilerClasspath(project)
