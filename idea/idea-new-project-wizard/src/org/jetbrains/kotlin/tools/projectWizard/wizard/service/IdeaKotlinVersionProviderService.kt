@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -25,14 +26,26 @@ import java.util.stream.Collectors
 
 class IdeaKotlinVersionProviderService : KotlinVersionProviderService, IdeaWizardService {
     override fun getKotlinVersion(): Version =
-        getKotlinVersionFromCompiler()
+        getPatchedKotlinVersion()
+            ?: getKotlinVersionFromCompiler()
             ?: VersionsDownloader.downloadLatestEapOrStableKotlinVersion()
             ?: Versions.KOTLIN
+
+    private fun getPatchedKotlinVersion() =
+        if (ApplicationManager.getApplication().isInternal) {
+            System.getProperty(KOTLIN_COMPILER_VERSION_TAG)?.let { Version.fromString(it) }
+        } else {
+            null
+        }
 
     private fun getKotlinVersionFromCompiler() =
         KotlinCompilerVersion.getVersion()
             ?.takeUnless { it.contains(SNAPSHOT_TAG, ignoreCase = true) }
             ?.let { Version.fromString(it) }
+
+    companion object {
+        private const val KOTLIN_COMPILER_VERSION_TAG = "kotlin.compiler.version"
+    }
 }
 
 @NonNls
