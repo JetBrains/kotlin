@@ -796,6 +796,7 @@ tasks {
                 ":kotlin-scripting-compiler-embeddable:publish",
                 ":kotlin-scripting-compiler-impl-embeddable:publish",
                 ":kotlin-android-extensions-runtime:publish",
+                ":kotlin-stdlib-common:publish",
                 ":kotlin-stdlib:publish",
                 ":kotlin-stdlib-jdk7:publish",
                 ":kotlin-stdlib-jdk8:publish",
