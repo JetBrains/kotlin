@@ -135,7 +135,7 @@ internal class KotlinGradleBuildServices private constructor(
                 if (multipleProjectsHolder.isInMultipleProjects(project, kotlinPluginVersion)) {
                     val loadedInProjects = multipleProjectsHolder.getAffectedProjects(project, kotlinPluginVersion)!!
                     if (PropertiesProvider(project).ignorePluginLoadedInMultipleProjects != true) {
-                        project.logger.warn(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+                        project.logger.warn("\n$MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING")
                         project.logger.warn(
                             MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING + loadedInProjects.joinToString(limit = 4) { "'$it'" }
                         )
