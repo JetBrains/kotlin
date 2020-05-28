@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.isFlexible
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -37,15 +38,19 @@ import kotlin.reflect.jvm.jvmErasure
 
 internal class KTypeImpl(
     val type: KotlinType,
-    computeJavaType: () -> Type
+    computeJavaType: (() -> Type)? = null
 ) : KTypeBase {
-    override val javaType: Type by ReflectProperties.lazySoft(computeJavaType)
+    @Suppress("UNCHECKED_CAST")
+    private val computeJavaType =
+        computeJavaType as? ReflectProperties.LazySoftVal<Type> ?: computeJavaType?.let(ReflectProperties::lazySoft)
+
+    override val javaType: Type?
+        get() = computeJavaType?.invoke()
 
     override val classifier: KClassifier? by ReflectProperties.lazySoft { convert(type) }
 
     private fun convert(type: KotlinType): KClassifier? {
-        val descriptor = type.constructor.declarationDescriptor
-        when (descriptor) {
+        when (val descriptor = type.constructor.declarationDescriptor) {
             is ClassDescriptor -> {
                 val jClass = descriptor.toJavaClass() ?: return null
                 if (jClass.isArray) {
@@ -53,7 +58,7 @@ internal class KTypeImpl(
                     val argument = type.arguments.singleOrNull()?.type ?: return KClassImpl(jClass)
                     val elementClassifier =
                         convert(argument)
-                                ?: throw KotlinReflectionInternalError("Cannot determine classifier for array element type: $this")
+                            ?: throw KotlinReflectionInternalError("Cannot determine classifier for array element type: $this")
                     return KClassImpl(elementClassifier.jvmErasure.java.createArrayType())
                 }
 
@@ -73,15 +78,14 @@ internal class KTypeImpl(
         val typeArguments = type.arguments
         if (typeArguments.isEmpty()) return@arguments emptyList<KTypeProjection>()
 
-        val parameterizedTypeArguments by lazy(PUBLICATION) { javaType.parameterizedTypeArguments }
+        val parameterizedTypeArguments by lazy(PUBLICATION) { javaType!!.parameterizedTypeArguments }
 
         typeArguments.mapIndexed { i, typeProjection ->
             if (typeProjection.isStarProjection) {
                 KTypeProjection.STAR
             } else {
-                val type = KTypeImpl(typeProjection.type) {
-                    val javaType = javaType
-                    when (javaType) {
+                val type = KTypeImpl(typeProjection.type, if (computeJavaType == null) null else fun(): Type {
+                    return when (val javaType = javaType) {
                         is Class<*> -> {
                             // It's either an array or a raw type.
                             // TODO: return upper bound of the corresponding parameter for a raw type?
@@ -99,7 +103,7 @@ internal class KTypeImpl(
                         }
                         else -> throw KotlinReflectionInternalError("Non-generic type has been queried for arguments: $this")
                     }
-                }
+                })
                 when (typeProjection.projectionKind) {
                     Variance.INVARIANT -> KTypeProjection.invariant(type)
                     Variance.IN_VARIANCE -> KTypeProjection.contravariant(type)
@@ -114,6 +118,13 @@ internal class KTypeImpl(
 
     override val annotations: List<Annotation>
         get() = type.computeAnnotations()
+
+    internal fun makeNullableAsSpecified(nullable: Boolean): KTypeImpl {
+        // If the type is not marked nullable, it's either a non-null type or a platform type.
+        if (!type.isFlexible() && isMarkedNullable == nullable) return this
+
+        return KTypeImpl(TypeUtils.makeNullableAsSpecified(type, nullable), computeJavaType)
+    }
 
     override fun equals(other: Any?) =
         other is KTypeImpl && type == other.type
