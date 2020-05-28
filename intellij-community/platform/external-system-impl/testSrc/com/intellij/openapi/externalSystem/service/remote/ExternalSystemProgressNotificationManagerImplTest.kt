@@ -7,6 +7,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.service.internal.AbstractExternalSystemTask
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager
 import com.intellij.openapi.externalSystem.service.remote.ExternalSystemProgressNotificationManagerImpl.Companion.assertListenersReleased
+import com.intellij.openapi.externalSystem.service.remote.ExternalSystemProgressNotificationManagerImpl.Companion.getListeners
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.RunAll
@@ -14,11 +15,13 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.util.ThrowableRunnable
+import org.assertj.core.api.Assertions.assertThat
 
 class ExternalSystemProgressNotificationManagerImplTest : UsefulTestCase() {
 
   lateinit var testFixture: IdeaProjectTestFixture
   lateinit var project: Project
+  lateinit var notificationManager: ExternalSystemProgressNotificationManager
 
   override fun setUp() {
     super.setUp()
@@ -26,6 +29,7 @@ class ExternalSystemProgressNotificationManagerImplTest : UsefulTestCase() {
     testFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(name).fixture
     testFixture.setUp()
     project = testFixture.project
+    notificationManager = ExternalSystemProgressNotificationManager.getInstance()
   }
 
   override fun tearDown() {
@@ -37,12 +41,24 @@ class ExternalSystemProgressNotificationManagerImplTest : UsefulTestCase() {
 
   fun `test listener cleanup`() {
     val disposable = Disposer.newDisposable(testRootDisposable, "test task listener cleanup")
-    ExternalSystemProgressNotificationManager.getInstance().addNotificationListener(DummyTaskNotificationListener(), disposable)
-    val task = MyTestTask(project) { it.cancel(DummyTaskNotificationListener()) }
-    ExternalSystemProgressNotificationManager.getInstance().addNotificationListener(task.id, DummyTaskNotificationListener())
-    task.execute(DummyTaskNotificationListener())
-    task.cancel(DummyTaskNotificationListener())
-    assertListenersReleased(task.id)
+    notificationManager.addNotificationListener(DummyTaskNotificationListener(), disposable)
+
+    val task1 = MyTestTask(project) { it.cancel(DummyTaskNotificationListener()) }
+    val task2 = MyTestTask(project)
+    val taskListener = DummyTaskNotificationListener()
+    notificationManager.addNotificationListener(task1.id, taskListener)
+    notificationManager.addNotificationListener(task2.id, taskListener)
+
+    assertThat(getListeners()[task1.id]).containsExactly(taskListener)
+    assertThat(getListeners()[task2.id]).containsExactly(taskListener)
+
+    task1.execute(DummyTaskNotificationListener())
+    task1.cancel(DummyTaskNotificationListener())
+    assertListenersReleased(task1.id)
+
+    assertThat(getListeners()[task1.id]).isNull()
+    assertThat(getListeners()[task2.id]).containsExactly(taskListener)
+    notificationManager.removeNotificationListener(taskListener)
 
     Disposer.dispose(disposable)
     assertListenersReleased()

@@ -8,15 +8,12 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationEvent
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager
-import com.intellij.openapi.util.Disposer
 import com.intellij.util.EventDispatcher
-import com.intellij.util.containers.DisposableWrapperList
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.TestOnly
-import java.util.concurrent.ConcurrentHashMap
 
 class ExternalSystemProgressNotificationManagerImpl : RemoteObject(), ExternalSystemProgressNotificationManager, RemoteExternalSystemProgressNotificationManager {
-  private val myListeners: ConcurrentHashMap<Any, EventDispatcher<ExternalSystemTaskNotificationListener>> = ConcurrentHashMap()
+  private val dispatcher = EventDispatcher.create(ExternalSystemTaskNotificationListener::class.java)
 
   override fun addNotificationListener(listener: ExternalSystemTaskNotificationListener): Boolean {
     return addListener(ALL_TASKS_KEY, listener)
@@ -31,87 +28,130 @@ class ExternalSystemProgressNotificationManagerImpl : RemoteObject(), ExternalSy
   }
 
   override fun removeNotificationListener(listener: ExternalSystemTaskNotificationListener): Boolean {
-    synchronized(myListeners) {
-      var removed = false
-      for ((taskId, dispatcher) in myListeners) {
-        removed = removed or dispatcher.listeners.remove(listener)
-        if (!dispatcher.hasListeners()) {
-          myListeners.remove(taskId)
-        }
-      }
-      return removed
-    }
+    val toRemove = dispatcher.listeners.filter { (it as TaskListenerWrapper).delegate === listener }
+    dispatcher.listeners.removeAll(toRemove)
+    return toRemove.isNotEmpty()
   }
 
   override fun onStart(id: ExternalSystemTaskId, workingDir: String) {
-    forEachListener(id) { it.onStart(id, workingDir) }
+    forEachListener { it.onStart(id, workingDir) }
   }
 
   override fun onStatusChange(event: ExternalSystemTaskNotificationEvent) {
-    forEachListener(event.id) { it.onStatusChange(event) }
+    forEachListener { it.onStatusChange(event) }
   }
 
   override fun onTaskOutput(id: ExternalSystemTaskId, text: String, stdOut: Boolean) {
-    forEachListener(id) { it.onTaskOutput(id, text, stdOut) }
+    forEachListener { it.onTaskOutput(id, text, stdOut) }
   }
 
   override fun onEnd(id: ExternalSystemTaskId) {
     try {
-      forEachListener(id) { it.onEnd(id) }
+      forEachListener { it.onEnd(id) }
     }
     finally {
-      synchronized(myListeners) {
-        myListeners[id]?.listeners?.clear()
-        myListeners.remove(id)
-      }
+      val toRemove = dispatcher.listeners.filter { (it as TaskListenerWrapper).taskId === id }
+      dispatcher.listeners.removeAll(toRemove)
     }
   }
 
   override fun onSuccess(id: ExternalSystemTaskId) {
-    forEachListener(id) { it.onSuccess(id) }
+    forEachListener { it.onSuccess(id) }
   }
 
   override fun onFailure(id: ExternalSystemTaskId, e: Exception) {
-    forEachListener(id) { it.onFailure(id, e) }
+    forEachListener { it.onFailure(id, e) }
   }
 
   override fun beforeCancel(id: ExternalSystemTaskId) {
-    forEachListener(id) { it.beforeCancel(id) }
+    forEachListener { it.beforeCancel(id) }
   }
 
   override fun onCancel(id: ExternalSystemTaskId) {
-    forEachListener(id) { it.onCancel(id) }
+    forEachListener { it.onCancel(id) }
   }
 
   private fun addListener(tasksKey: Any, listener: ExternalSystemTaskNotificationListener, parentDisposable: Disposable? = null): Boolean {
-    synchronized(myListeners) {
-      val dispatcher = myListeners[tasksKey]
-      if (dispatcher != null && listener in dispatcher.listeners) return false
-      myListeners.computeIfAbsent(tasksKey) {
-        EventDispatcher.create(ExternalSystemTaskNotificationListener::class.java)
-      }.apply {
-        if (parentDisposable == null) {
-          addListener(listener)
-        }
-        else {
-          val disposable = (listeners as DisposableWrapperList).add(listener, parentDisposable)
-          Disposer.register(disposable, Disposable {
-            synchronized(myListeners) {
-              if (listeners.size == 1) {
-                myListeners.remove(tasksKey)
-              }
-            }
-          })
-        }
-      }
-      return true
+    val wrapper = TaskListenerWrapper(tasksKey, listener)
+    if (dispatcher.listeners.contains(wrapper)) return false
+    if (parentDisposable == null) {
+      dispatcher.addListener(wrapper)
     }
+    else {
+      dispatcher.addListener(wrapper, parentDisposable)
+    }
+    return true
   }
 
-  private fun forEachListener(taskId: ExternalSystemTaskId, action: (ExternalSystemTaskNotificationListener) -> Unit) {
-    myListeners[taskId]?.multicaster?.run { action(this) }
-    myListeners[ALL_TASKS_KEY]?.multicaster?.run { action(this) }
+  private fun forEachListener(action: (ExternalSystemTaskNotificationListener) -> Unit) {
+    action.invoke(dispatcher.multicaster)
     ExternalSystemTaskNotificationListener.EP_NAME.forEachExtensionSafe(action::invoke)
+  }
+
+  private class TaskListenerWrapper(
+    val taskId: Any,
+    val delegate: ExternalSystemTaskNotificationListener
+  ) : ExternalSystemTaskNotificationListener {
+    override fun onSuccess(id: ExternalSystemTaskId) {
+      if (taskId !== ALL_TASKS_KEY && taskId !== id) return
+      delegate.onSuccess(id)
+    }
+
+    override fun onFailure(id: ExternalSystemTaskId, e: java.lang.Exception) {
+      if (taskId !== ALL_TASKS_KEY && taskId !== id) return
+      delegate.onFailure(id, e)
+    }
+
+    override fun onTaskOutput(id: ExternalSystemTaskId, text: String, stdOut: Boolean) {
+      if (taskId !== ALL_TASKS_KEY && taskId !== id) return
+      delegate.onTaskOutput(id, text, stdOut)
+    }
+
+    override fun onStatusChange(event: ExternalSystemTaskNotificationEvent) {
+      if (taskId !== ALL_TASKS_KEY && taskId !== event.id) return
+      delegate.onStatusChange(event)
+    }
+
+    override fun onCancel(id: ExternalSystemTaskId) {
+      if (taskId !== ALL_TASKS_KEY && taskId !== id) return
+      delegate.onCancel(id)
+    }
+
+    override fun onEnd(id: ExternalSystemTaskId) {
+      if (taskId !== ALL_TASKS_KEY && taskId !== id) return
+      delegate.onEnd(id)
+    }
+
+    override fun beforeCancel(id: ExternalSystemTaskId) {
+      if (taskId !== ALL_TASKS_KEY && taskId !== id) return
+      delegate.beforeCancel(id)
+    }
+
+    override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
+      if (taskId !== ALL_TASKS_KEY && taskId !== id) return
+      delegate.onStart(id, workingDir)
+    }
+
+    override fun onStart(id: ExternalSystemTaskId) {
+      if (taskId !== ALL_TASKS_KEY && taskId !== id) return
+      @Suppress("DEPRECATION")
+      delegate.onStart(id)
+    }
+
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (javaClass != other?.javaClass) return false
+      other as TaskListenerWrapper
+      if (taskId !== other.taskId) return false
+      if (delegate !== other.delegate) return false
+      return true
+    }
+
+    override fun hashCode(): Int {
+      var result = taskId.hashCode()
+      result = 31 * result + delegate.hashCode()
+      return result
+    }
   }
 
   companion object {
@@ -126,14 +166,21 @@ class ExternalSystemProgressNotificationManagerImpl : RemoteObject(), ExternalSy
     @JvmStatic
     @TestOnly
     @ApiStatus.Internal
+    fun getListeners(): Map<Any, List<ExternalSystemTaskNotificationListener>> {
+      return getInstanceImpl().dispatcher.listeners.groupBy({ (it as TaskListenerWrapper).taskId },
+                                                            { (it as TaskListenerWrapper).delegate })
+    }
+
+    @JvmStatic
+    @TestOnly
+    @ApiStatus.Internal
     fun assertListenersReleased(taskId: Any? = null) {
-      val listeners = getInstanceImpl().myListeners
+      val listeners = getListeners()
       if (taskId == null && listeners.isNotEmpty()) {
-        val listenersMap = listeners.mapValues { it.value.listeners }
-        throw AssertionError("Leaked listeners: $listenersMap")
+        throw AssertionError("Leaked listeners: $listeners")
       }
-      if (taskId != null && listeners[taskId]?.hasListeners() == true) {
-        throw AssertionError("Leaked listeners for task '$taskId': ${listeners[taskId]?.listeners}")
+      if (taskId != null && listeners.containsKey(taskId)) {
+        throw AssertionError("Leaked listeners for task '$taskId': ${listeners[taskId]}")
       }
     }
   }
