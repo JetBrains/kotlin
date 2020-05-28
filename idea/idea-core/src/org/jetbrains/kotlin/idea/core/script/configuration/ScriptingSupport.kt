@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.psi.KtFile
  *
  * @sample GradleBuildRootsManager
  */
-abstract class ScriptingSupport {
-    abstract fun isApplicable(file: VirtualFile): Boolean
-    abstract fun isConfigurationLoadingInProgress(file: KtFile): Boolean
-    abstract fun collectConfigurations(builder: ScriptClassRootsBuilder)
+interface ScriptingSupport {
+    fun isApplicable(file: VirtualFile): Boolean
+    fun isConfigurationLoadingInProgress(file: KtFile): Boolean
+    fun collectConfigurations(builder: ScriptClassRootsBuilder)
 
     companion object {
         val EPN: ExtensionPointName<ScriptingSupport> =
