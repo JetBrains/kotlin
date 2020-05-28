@@ -30,10 +30,9 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
         if (!isGradleKotlinScript(file)) return null
         if (file.fileType != KotlinFileType.INSTANCE) return null
 
-        val scriptUnderRoot = GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file)
-        val root = scriptUnderRoot?.root
+        val scriptUnderRoot = GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file) ?: return null
         return when {
-            root is GradleBuildRoot.Unlinked -> EditorNotificationPanel().apply {
+            scriptUnderRoot.isUnrelatedScript -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("text.the.associated.gradle.project.isn.t.imported"))
 
                 val linkProjectText = KotlinIdeaGradleBundle.message("action.label.text.load.script.configuration")
@@ -59,7 +58,7 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
                     linkProjectText
                 )
             }
-            root is GradleBuildRoot.New && !root.importing -> EditorNotificationPanel().apply {
+            scriptUnderRoot.isNewScript -> EditorNotificationPanel().apply {
                 text(getMissingConfigurationNotificationText())
                 createActionLabel(getMissingConfigurationActionText()) {
                     runPartialGradleImport(project)
