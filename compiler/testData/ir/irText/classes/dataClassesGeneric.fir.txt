@@ -266,7 +266,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test3<T of <root>.Test3>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test3'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+          CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.List' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:private [final]' type=kotlin.collections.List<T of <root>.Test3> origin=null
               receiver: GET_VAR '<this>: <root>.Test3<T of <root>.Test3> declared in <root>.Test3.hashCode' type=<root>.Test3<T of <root>.Test3> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test3<T of <root>.Test3>) returnType:kotlin.String
@@ -355,7 +355,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test4
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test4'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+          CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.List' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:private [final]' type=kotlin.collections.List<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.hashCode' type=<root>.Test4 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test4) returnType:kotlin.String

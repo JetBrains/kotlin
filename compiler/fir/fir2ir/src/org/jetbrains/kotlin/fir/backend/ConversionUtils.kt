@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
@@ -296,7 +297,7 @@ internal fun IrClass.findMatchingOverriddenSymbolsFromSupertypes(
 ): List<IrSymbol> {
     for (superType in superTypes) {
         val superTypeClass = superType.classOrNull
-        if (superTypeClass is IrClassSymbolImpl) {
+        if (superTypeClass is IrClassSymbolImpl || superTypeClass is IrClassPublicSymbolImpl) {
             superTypeClass.owner.findMatchingOverriddenSymbolsFromThisAndSupertypes(irBuiltIns, target, result, visited)
         }
     }
