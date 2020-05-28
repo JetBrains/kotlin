@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.utils.SmartList
 import kotlin.math.max
 
 class ConstraintInjector(
@@ -90,7 +91,7 @@ class ConstraintInjector(
         var constraintsFromIsSubtype = true
 
         while (typeCheckerContext.hasConstraintsToProcess()) {
-            for ((typeVariable, constraint) in typeCheckerContext.extractAllConstraints()) {
+            for ((typeVariable, constraint) in typeCheckerContext.extractAllConstraints()!!) {
                 if (c.shouldWeSkipConstraint(typeVariable, constraint, constraintsFromIsSubtype)) continue
 
                 val constraints =
@@ -171,18 +172,21 @@ class ConstraintInjector(
 
     private inner class TypeCheckerContext(val c: Context, val position: IncorporationConstraintPosition) :
         AbstractTypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
-        private val newPossibleConstraints = mutableSetOf<Pair<TypeVariableMarker, Constraint>>()
+        private var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
 
         private var baseLowerType = position.initialConstraint.a
         private var baseUpperType = position.initialConstraint.b
 
-        fun extractAllConstraints(): Set<Pair<TypeVariableMarker, Constraint>> {
-            val newConstraintsSet = newPossibleConstraints.toSet()
-            newPossibleConstraints.clear()
-            return newConstraintsSet
+        fun extractAllConstraints() = possibleNewConstraints.also { possibleNewConstraints = null }
+
+        fun addPossibleNewConstraint(variable: TypeVariableMarker, constraint: Constraint) {
+            if (possibleNewConstraints == null) {
+                possibleNewConstraints = SmartList()
+            }
+            possibleNewConstraints!!.add(variable to constraint)
         }
 
-        fun hasConstraintsToProcess() = newPossibleConstraints.isNotEmpty()
+        fun hasConstraintsToProcess() = possibleNewConstraints != null
 
         fun setConstrainingTypesToPrintDebugInfo(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
             baseLowerType = lowerType
@@ -343,7 +347,7 @@ class ConstraintInjector(
                 inputTypePositionBeforeIncorporation = inputTypePosition
             )
 
-            newPossibleConstraints.add(typeVariable to newConstraint)
+            addPossibleNewConstraint(typeVariable, newConstraint)
         }
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
