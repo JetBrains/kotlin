@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeKind
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirControlFlowGraphRenderVisitor
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
-import org.jetbrains.kotlin.fir.resolve.transformers.createAllResolveProcessors
+import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -77,7 +76,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         for ((session, firFiles) in firFilesPerSession) {
             doFirResolveTestBench(
                 firFiles,
-                createAllResolveProcessors(session),
+                createAllCompilerResolveProcessors(session),
                 gc = false
             )
         }

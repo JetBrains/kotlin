@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
-import org.jetbrains.kotlin.fir.resolve.transformers.createAllResolveProcessors
+import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -33,7 +32,7 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
         val failure: FirRuntimeException? = try {
             for ((session, firFiles) in firFilesPerSession) {
-                doFirResolveTestBench(firFiles, createAllResolveProcessors(session), gc = false)
+                doFirResolveTestBench(firFiles, createAllCompilerResolveProcessors(session), gc = false)
             }
             null
         } catch (e: FirRuntimeException) {

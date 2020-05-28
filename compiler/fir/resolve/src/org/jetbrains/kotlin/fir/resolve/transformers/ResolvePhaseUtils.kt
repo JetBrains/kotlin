@@ -16,10 +16,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirGlobalExtensionSt
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirPluginAnnotationsResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirTransformerBasedExtensionStatusProcessor
 
-fun FirResolvePhase.createProcessorByPhase(
+fun FirResolvePhase.createCompilerProcessorByPhase(
     session: FirSession,
-    scopeSession: ScopeSession,
-    compilerMode: CompilerMode = CompilerMode.CLI
+    scopeSession: ScopeSession
 ): FirResolveProcessor {
     return when (this) {
         RAW_FIR -> throw IllegalStateException("Raw FIR building phase does not have a transformer")
@@ -29,10 +28,7 @@ fun FirResolvePhase.createProcessorByPhase(
         SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)
         TYPES -> FirTypeResolveProcessor(session, scopeSession)
-        EXTENSION_STATUS_UPDATE -> when (compilerMode) {
-            CompilerMode.CLI -> FirGlobalExtensionStatusProcessor(session, scopeSession)
-            CompilerMode.IDE -> FirTransformerBasedExtensionStatusProcessor(session, scopeSession)
-        }
+        EXTENSION_STATUS_UPDATE -> FirGlobalExtensionStatusProcessor(session, scopeSession)
         STATUS -> FirStatusResolveProcessor(session, scopeSession)
         CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
@@ -41,9 +37,17 @@ fun FirResolvePhase.createProcessorByPhase(
 }
 
 fun FirResolvePhase.createTransformerBasedProcessorByPhase(session: FirSession, scopeSession: ScopeSession): FirTransformerBasedResolveProcessor {
-    return createProcessorByPhase(session, scopeSession, CompilerMode.IDE) as FirTransformerBasedResolveProcessor
-}
-
-enum class CompilerMode {
-    CLI, IDE
+    return when (this) {
+        RAW_FIR -> throw IllegalStateException("Raw FIR building phase does not have a transformer")
+        ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveProcessor(session, scopeSession)
+        IMPORTS -> FirImportResolveProcessor(session, scopeSession)
+        SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
+        SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)
+        TYPES -> FirTypeResolveProcessor(session, scopeSession)
+        EXTENSION_STATUS_UPDATE -> FirTransformerBasedExtensionStatusProcessor(session, scopeSession)
+        STATUS -> FirStatusResolveProcessor(session, scopeSession)
+        CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
+        IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
+        BODY_RESOLVE -> FirBodyResolveProcessor(session, scopeSession)
+    }
 }

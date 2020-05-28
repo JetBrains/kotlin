@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.createAllResolveProcessors
+import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import java.io.File
 import java.io.FileOutputStream
@@ -55,7 +55,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
         val session = createSession(environment, scope, librariesScope, moduleData.qualifiedName)
-        val processors = createAllResolveProcessors(session)
+        val processors = createAllCompilerResolveProcessors(session)
 
         val firProvider = session.firProvider as FirProviderImpl
         val firFiles = if (useLightTree) {
