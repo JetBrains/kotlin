@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitIntTypeRef
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.valueParameters
 
@@ -22,14 +23,14 @@ import kotlin.reflect.full.valueParameters
  * An evaluator that transform numeric operation, such as div, into compile-time constant iff involved operands, such as explicit receiver
  * and the argument, are compile-time constant as well.
  */
-// TODO: Handle boolean operators and const property loading
 class CompileTimeConstantEvaluator {
 
-    fun evaluate(expression: FirExpression): FirConstExpression<*>? =
-        if (expression is FirFunctionCall) {
-            evaluate(expression)
-        } else {
-            null
+    // TODO: Handle boolean operators, const property loading, class reference, array, annotation values, etc.
+    fun evaluate(expression: FirExpression): ConstantValue<*>? =
+        when (expression) {
+            is FirConstExpression<*> -> expression.value as? ConstantValue<*>
+            is FirFunctionCall -> evaluate(expression)?.value as? ConstantValue<*>
+            else -> null
         }
 
     private fun evaluate(functionCall: FirFunctionCall): FirConstExpression<*>? {

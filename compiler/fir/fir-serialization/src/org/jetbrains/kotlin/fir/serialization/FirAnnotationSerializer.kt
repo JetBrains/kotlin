@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.evaluate.CompileTimeConstantEvaluator
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.resolve.constants.*
 
 class FirAnnotationSerializer(private val session: FirSession, internal val stringTable: FirElementAwareStringTable) {
+    private val constantEvaluator = CompileTimeConstantEvaluator()
+
     fun serializeAnnotation(annotation: FirAnnotationCall): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
         val annotationSymbol = annotation.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)
         val annotationClass = annotationSymbol?.fir ?: error("Annotation type is not a class: ${annotationSymbol?.fir}")
@@ -26,8 +28,8 @@ class FirAnnotationSerializer(private val session: FirSession, internal val stri
             if (argumentExpression !is FirNamedArgumentExpression) continue
             val argument = ProtoBuf.Annotation.Argument.newBuilder()
             argument.nameId = stringTable.getStringIndex(argumentExpression.name.asString())
-            val constant = argumentExpression.expression as? FirConstExpression<*> ?: continue
-            argument.setValue(valueProto(constant.value as? ConstantValue<*> ?: continue))
+            val constant = constantEvaluator.evaluate(argumentExpression.expression) ?: continue
+            argument.setValue(valueProto(constant))
             addArgument(argument)
         }
     }.build()
