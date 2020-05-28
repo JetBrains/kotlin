@@ -11,6 +11,7 @@ class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AllOpenStatusTransformer
         +::AllOpenMemberGenerator
+        +::AllOpenNestedClassGenerator
         +::AllOpenAdditionalCheckers
     }
 }

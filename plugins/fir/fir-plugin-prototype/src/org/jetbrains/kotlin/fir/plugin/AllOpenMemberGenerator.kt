@@ -55,5 +55,3 @@ class AllOpenMemberGenerator(session: FirSession) : FirExistingClassModification
     override val key: FirPluginKey
         get() = AllOpenPluginKey
 }
-
-private fun String.fqn(): FqName = FqName("org.jetbrains.kotlin.fir.plugin.$this")
