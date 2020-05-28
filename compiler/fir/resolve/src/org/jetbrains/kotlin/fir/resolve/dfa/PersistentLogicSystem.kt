@@ -105,44 +105,45 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     override fun joinFlow(flows: Collection<PersistentFlow>): PersistentFlow {
-        if (flows.isEmpty()) return createEmptyFlow()
-        flows.singleOrNull()?.let { return it }
-
-        val aliasedVariablesThatDontChangeAlias = computeAliasesThatDontChange(flows)
-
-        val commonFlow = flows.reduce(::lowestCommonFlow)
-        val commonVariables = flows.map {
-            it.diffVariablesIterable(commonFlow, aliasedVariablesThatDontChangeAlias.keys).toList()
-        }.intersectSets()
-            .takeIf { it.isNotEmpty() }
-            ?: return commonFlow
-
-        for (variable in commonVariables) {
-            val info = or(flows.map { it.getApprovedTypeStatementsDiff(variable, commonFlow) })
-            if (info.isEmpty) continue
-            commonFlow.addApprovedStatements(info)
-        }
-
-        commonFlow.addVariableAliases(aliasedVariablesThatDontChangeAlias)
-
-        updateAllReceivers(commonFlow)
-
-        return commonFlow
+        return foldFlow(
+            flows,
+            mergeOperation = { statements -> this.or(statements).takeIf { it.isNotEmpty } },
+            computeVariables = { computeVariablesDiffWithCommonFlow ->
+                flows.map {
+                    computeVariablesDiffWithCommonFlow(it).toList()
+                }.intersectSets().takeIf { it.isNotEmpty() }
+            }
+        )
     }
 
     override fun unionFlow(flows: Collection<PersistentFlow>): PersistentFlow {
+        return foldFlow(
+            flows,
+            this::and,
+            computeVariables = { computeVariablesDiffWithCommonFlow ->
+                flows.flatMapTo(mutableSetOf()) {
+                    computeVariablesDiffWithCommonFlow(it)
+                }
+            }
+        )
+    }
+
+    private inline fun foldFlow(
+        flows: Collection<PersistentFlow>,
+        mergeOperation: (Collection<TypeStatement>) -> MutableTypeStatement?,
+        computeVariables: (computeVariablesDiffWithCommonFlow: (PersistentFlow) -> Iterable<RealVariable>) -> Collection<RealVariable>?
+    ): PersistentFlow {
         if (flows.isEmpty()) return createEmptyFlow()
         flows.singleOrNull()?.let { return it }
 
         val aliasedVariablesThatDontChangeAlias = computeAliasesThatDontChange(flows)
 
         val commonFlow = flows.reduce(::lowestCommonFlow)
-        val allVariables = flows.flatMapTo(mutableSetOf()) {
-            it.diffVariablesIterable(commonFlow, aliasedVariablesThatDontChangeAlias.keys)
-        }
+        val variables =
+            computeVariables { it.diffVariablesIterable(commonFlow, aliasedVariablesThatDontChangeAlias.keys) } ?: return commonFlow
 
-        for (variable in allVariables) {
-            val info = and(flows.map { it.getApprovedTypeStatementsDiff(variable, commonFlow) })
+        for (variable in variables) {
+            val info = mergeOperation(flows.map { it.getApprovedTypeStatementsDiff(variable, commonFlow) }) ?: continue
             commonFlow.addApprovedStatements(info)
         }
 
