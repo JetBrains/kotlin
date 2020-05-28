@@ -355,6 +355,7 @@ class DocRenderer implements EditorCustomElementRenderer {
         "ol {padding: 0 20 0 0}" +
         "ul {padding: 0 20 0 0}" +
         "li {padding: 1 0 2 0}" +
+        "li p {padding-top: 0}" +
         "table p {padding-bottom: 0}" +
         "th {text-align: left}" +
         "td {padding: 2 0 2 0}" +
