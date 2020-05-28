@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
@@ -248,6 +249,7 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
                             lambdaParameterType.getReceiverTypeFromFunctionType()?.fqName?.asString()
                         receiver == null || descriptor?.isCompanionObject() == true -> ""
                         receiver is ExtensionReceiver ||
+                                descriptor?.let { DescriptorUtils.isAnonymousObject(it) } == true ||
                                 lambdaExpression.getResolutionScope().getImplicitReceiversHierarchy().size == 1 -> "this"
                         else -> descriptor?.name?.let { "this@$it" }
                     } ?: return null
