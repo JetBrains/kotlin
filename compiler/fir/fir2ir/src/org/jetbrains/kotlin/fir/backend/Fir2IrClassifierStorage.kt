@@ -354,6 +354,14 @@ class Fir2IrClassifierStorage(
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.LOCAL) {
             return createIrClass(firClass).symbol
         }
+        val signature = signatureComposer.composeSignature(firClass)
+        symbolTable.referenceClassIfAny(signature)?.let { irClassSymbol ->
+            val irClass = irClassSymbol.owner
+            classCache[firClass as FirRegularClass] = irClass
+            processClassHeader(firClass, irClass)
+            declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
+            return irClassSymbol
+        }
         // TODO: remove all this code and change to unbound symbol creation
         val classId = firClassSymbol.classId
         val parentId = classId.outerClassId

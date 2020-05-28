@@ -421,6 +421,9 @@ open class SymbolTable(
     override fun referenceClass(descriptor: ClassDescriptor) =
         classSymbolTable.referenced(descriptor) { createClassSymbol(descriptor) }
 
+    fun referenceClassIfAny(sig: IdSignature): IrClassSymbol? =
+        classSymbolTable.get(sig)
+
     override fun referenceClassFromLinker(descriptor: ClassDescriptor, sig: IdSignature): IrClassSymbol =
         classSymbolTable.run {
             if (sig.isPublic) referenced(sig) { IrClassPublicSymbolImpl(descriptor, sig) }

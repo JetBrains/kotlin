@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
@@ -19,4 +20,6 @@ class Fir2IrComponentsStorage(
     override lateinit var classifierStorage: Fir2IrClassifierStorage
     override lateinit var declarationStorage: Fir2IrDeclarationStorage
     override lateinit var typeConverter: Fir2IrTypeConverter
+
+    override val signatureComposer = FirBasedSignatureComposer()
 }

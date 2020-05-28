@@ -18,4 +18,5 @@ interface Fir2IrComponents {
     val classifierStorage: Fir2IrClassifierStorage
     val declarationStorage: Fir2IrDeclarationStorage
     val typeConverter: Fir2IrTypeConverter
+    val signatureComposer: Fir2IrSignatureComposer
 }

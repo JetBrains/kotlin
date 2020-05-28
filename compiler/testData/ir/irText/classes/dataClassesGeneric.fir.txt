@@ -175,7 +175,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test2<T of <root>.Test2>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test2'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+          CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Number' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:private [final]' type=T of <root>.Test2 origin=null
               receiver: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.hashCode' type=<root>.Test2<T of <root>.Test2> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test2<T of <root>.Test2>) returnType:kotlin.String
