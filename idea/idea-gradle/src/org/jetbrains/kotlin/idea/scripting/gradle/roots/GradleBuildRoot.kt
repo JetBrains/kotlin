@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle.roots
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor
 import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
@@ -40,8 +41,6 @@ sealed class GradleBuildRoot {
         @Volatile
         var importing = false
 
-        abstract val manager: GradleBuildRootsManager
-
         abstract val pathPrefix: String
 
         abstract val projectRoots: Collection<String>
@@ -52,7 +51,13 @@ sealed class GradleBuildRoot {
         private lateinit var lastModifiedFiles: LastModifiedFiles
 
         fun loadLastModifiedFiles() {
-            lastModifiedFiles = dir?.let { LastModifiedFiles.read(it) } ?: LastModifiedFiles()
+            val loaded = if (!skipLastModifiedFilesLoading) {
+                val dir = dir
+                if (dir != null) LastModifiedFiles.read(dir)
+                else null
+            } else null
+
+            lastModifiedFiles = loaded ?: LastModifiedFiles()
         }
 
         fun saveLastModifiedFiles() {
@@ -64,7 +69,6 @@ sealed class GradleBuildRoot {
 
         fun fileChanged(filePath: String, ts: Long) {
             lastModifiedFiles.fileChanged(ts, filePath)
-            manager.scheduleLastModifiedFilesSave()
         }
     }
 
@@ -81,7 +85,6 @@ sealed class GradleBuildRoot {
      * Gradle build with old Gradle version (<6.0)
      */
     class Legacy(
-        override val manager: GradleBuildRootsManager,
         settings: GradleProjectSettings
     ) : WithoutScriptModels(settings) {
         init {
@@ -93,7 +96,6 @@ sealed class GradleBuildRoot {
      * Linked but not yet imported Gradle build.
      */
     class New(
-        override val manager: GradleBuildRootsManager,
         settings: GradleProjectSettings
     ) : WithoutScriptModels(settings) {
         init {
@@ -106,14 +108,10 @@ sealed class GradleBuildRoot {
      * Each imported build have info about all of it's Kotlin Build Scripts.
      */
     class Imported(
-        override val manager: GradleBuildRootsManager,
         override val pathPrefix: String,
         val javaHome: File?,
         val data: GradleBuildRootData
     ) : Linked() {
-        val project: Project
-            get() = manager.project
-
         override val projectRoots: Collection<String>
             get() = data.projectRoots
 
@@ -126,7 +124,7 @@ sealed class GradleBuildRoot {
                 builder.sdks.addSdk(javaHome)
             }
 
-            val definitions = GradleScriptDefinitionsContributor.getDefinitions(project)
+            val definitions = GradleScriptDefinitionsContributor.getDefinitions(builder.project)
 
             builder.addTemplateClassesRoots(data.templateClasspath)
 
@@ -150,5 +148,11 @@ sealed class GradleBuildRoot {
             val scriptSource = VirtualFileScriptSource(file)
             return definitions.firstOrNull { it.isScript(scriptSource) }
         }
+    }
+
+    companion object {
+        @set:TestOnly
+        @get:TestOnly
+        internal var skipLastModifiedFilesLoading = false
     }
 }
