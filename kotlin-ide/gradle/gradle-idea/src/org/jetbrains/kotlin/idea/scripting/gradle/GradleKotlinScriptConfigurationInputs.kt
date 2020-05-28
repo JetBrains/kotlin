@@ -15,10 +15,9 @@ import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * Up to date of gradle script depends on following factors:
- * 1. It is out of date when essential [sections] are changed
- * @see getGradleScriptInputsStamp
+ * 1. It is out of date when essential [sections] are changed. See [getGradleScriptInputsStamp].
  * 2. When some related file is changed (other gradle script, gradle.properties file)
- * @see GradleBuildRoot.Linked.areRelatedFilesChangedBefore
+ * See [GradleBuildRoot.Linked.areRelatedFilesChangedBefore].
  *
  * [lastModifiedTs] is needed to check if some related file was changed since last update
  */
@@ -35,7 +34,7 @@ data class GradleKotlinScriptConfigurationInputs(
 
             return buildRoot == null ||
                     GradleBuildRootsManager.getInstance(project)
-                        .getBuildRoot(buildRoot)
+                        .getBuildRootByWorkingDir(buildRoot)
                         ?.areRelatedFilesChangedBefore(file, lastModifiedTs) ?: false
         } catch (cancel: ProcessCanceledException) {
             return false
