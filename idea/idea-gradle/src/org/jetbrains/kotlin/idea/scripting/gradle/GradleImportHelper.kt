@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
+const val disableNotificationForProjectImport = true
+
 fun runPartialGradleImport(project: Project) {
     getGradleProjectSettings(project).forEach {
         ExternalSystemUtil.refreshProject(
@@ -51,6 +53,8 @@ private var Project.notificationPanel: ScriptConfigurationChangedNotification?
         by UserDataProperty<Project, ScriptConfigurationChangedNotification>(Key.create("load.script.configuration.panel"))
 
 fun scriptConfigurationsNeedToBeUpdated(project: Project) {
+    if (disableNotificationForProjectImport) return
+
     if (autoReloadScriptConfigurations(project)) {
         // import should be run automatically by Gradle plugin
         return
