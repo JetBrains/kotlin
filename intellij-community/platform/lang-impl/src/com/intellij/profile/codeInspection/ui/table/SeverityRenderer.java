@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.ui.popup.ListSeparator;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.profile.codeInspection.ui.LevelChooserAction;
 import com.intellij.profile.codeInspection.ui.SingleInspectionProfilePanel;
 import com.intellij.util.ui.ColorIcon;
@@ -27,12 +28,13 @@ import java.util.EventObject;
 import java.util.stream.Stream;
 
 public class SeverityRenderer extends ComboBoxTableRenderer<HighlightSeverity> {
+  private static final Icon DEFAULT_DISABLED_ICON = HighlightDisplayLevel.createIconByMask(UIUtil.getLabelDisabledForeground());
+
   static final HighlightSeverity EDIT_SEVERITIES = new HighlightSeverity(InspectionsBundle.message("inspection.edit.severities.text"), -1);
+
   @NotNull
   private final Runnable myOnClose;
   private final ScopesAndSeveritiesTable myTable;
-  @NotNull
-  private final Icon myDisabledIcon;
   @NotNull
   private final Project myProject;
 
@@ -43,7 +45,6 @@ public class SeverityRenderer extends ComboBoxTableRenderer<HighlightSeverity> {
     super(getSeverities(inspectionProfile));
     myOnClose = onClose;
     myTable = table;
-    myDisabledIcon = HighlightDisplayLevel.createIconByMask(UIUtil.getLabelDisabledForeground());
     myProject = project;
   }
 
@@ -70,7 +71,8 @@ public class SeverityRenderer extends ComboBoxTableRenderer<HighlightSeverity> {
   @Override
   protected void customizeComponent(HighlightSeverity value, JTable table, boolean isSelected) {
     super.customizeComponent(value, table, isSelected);
-    setDisabledIcon(myDisabledIcon);
+    HighlightDisplayLevel hdl = HighlightDisplayLevel.find(value);
+    setDisabledIcon(hdl != null ? IconLoader.getDisabledIcon(hdl.getIcon()) : DEFAULT_DISABLED_ICON);
   }
 
   @Override
@@ -82,7 +84,7 @@ public class SeverityRenderer extends ComboBoxTableRenderer<HighlightSeverity> {
   protected Icon getIconFor(@NotNull final HighlightSeverity value) {
     return value == EDIT_SEVERITIES
            ? EmptyIcon.create(HighlightDisplayLevel.getEmptyIconDim())
-           : getIcon(HighlightDisplayLevel.find(value));
+           : HighlightDisplayLevel.find(value).getIcon();
   }
 
   @Override
