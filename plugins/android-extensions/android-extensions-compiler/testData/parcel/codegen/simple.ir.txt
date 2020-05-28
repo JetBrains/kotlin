@@ -145,8 +145,14 @@ public final class User : java/lang/Object, android/os/Parcelable {
           ALOAD (1)
           ALOAD (0)
           GETFIELD (isProUser, Z)
+          IFEQ (L1)
+          ICONST_1
+          GOTO (L2)
+        LABEL (L1)
+          ICONST_0
+        LABEL (L2)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
           RETURN
-        LABEL (L1)
+        LABEL (L3)
     }
 }

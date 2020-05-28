@@ -194,9 +194,29 @@ public class ParcelIrBoxTestGenerated extends AbstractParcelIrBoxTest {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/maps.kt");
     }
 
+    @TestMetadata("nestedArrays.kt")
+    public void testNestedArrays() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/nestedArrays.kt");
+    }
+
+    @TestMetadata("nestedLists.kt")
+    public void testNestedLists() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/nestedLists.kt");
+    }
+
+    @TestMetadata("nestedMaps.kt")
+    public void testNestedMaps() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/nestedMaps.kt");
+    }
+
     @TestMetadata("nestedParcelable.kt")
     public void testNestedParcelable() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/nestedParcelable.kt");
+    }
+
+    @TestMetadata("nestedSparseArrays.kt")
+    public void testNestedSparseArrays() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/nestedSparseArrays.kt");
     }
 
     @TestMetadata("nullableTypes.kt")
