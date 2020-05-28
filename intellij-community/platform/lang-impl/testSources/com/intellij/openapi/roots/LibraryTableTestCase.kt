@@ -54,7 +54,7 @@ abstract class LibraryTableTestCase {
         events += "added ${newLibrary.name}"
       }
 
-      override fun afterLibraryRenamed(library: Library) {
+      override fun afterLibraryRenamed(library: Library, oldName: String?) {
         events += "renamed ${library.name}"
       }
 
