@@ -31,7 +31,7 @@ dependencies {
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
-    evaluateApi(project(":compiler:ir.serialization.jvm")) // used to get ir builtins
+    evaluateApi(project(":compiler:ir.tree"))
     evaluateApi(project(":compiler:ir.backend.common"))
 
     testCompile(builtinsSourceSet.output)
@@ -90,6 +90,5 @@ val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.fronten
 
 val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
 val generateOperationsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt", evaluateSourceSet)
-val generateInterpreterBuiltinsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateBuiltInsMapKt", evaluateSourceSet)
 
 testsJar()

@@ -6,35 +6,20 @@
 package org.jetbrains.kotlin.generators.evaluate
 
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.compileTimeAnnotation
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 val DESTINATION = File("compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/interpreter/builtins/IrBuiltInsMapGenerated.kt")
 
-fun main() {
-    DESTINATION.writeText(generateMap())
-}
-
-fun generateMap(): String {
+fun generateMap(irBuiltIns: IrBuiltIns): String {
     val sb = StringBuilder()
     val p = Printer(sb)
     p.println(File("license/COPYRIGHT.txt").readText())
@@ -49,11 +34,11 @@ fun generateMap(): String {
     val binaryOperationsMap = getOperationMap(2)
     val ternaryOperationsMap = getOperationMap(3)
 
-    val binaryIrOperationsMap = getBinaryIrOperationMap()
+    val binaryIrOperationsMap = getBinaryIrOperationMap(irBuiltIns)
 
     //save to file
     p.println("val unaryFunctions = mapOf<CompileTimeFunction, Function1<Any?, Any?>>(")
-    p.println(generateUnaryBody(unaryOperationsMap))
+    p.println(generateUnaryBody(unaryOperationsMap, irBuiltIns))
     p.println(")")
     p.println()
 
@@ -106,7 +91,7 @@ private fun getOperationMap(argumentsCount: Int): MutableMap<CallableDescriptor,
             if (classTypeParameters.isNotEmpty()) classTypeParameters.joinToString(prefix = "<", postfix = ">") { "Any?" } else ""
         val classType = classDescriptor.defaultType
 
-        val compileTimeFunctions = classDescriptor.getMemberScope(listOf()).getContributedDescriptors()
+        val compileTimeFunctions = classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()
             .filterIsInstance<CallableDescriptor>()
             .filter { it.isCompileTime(classDescriptor) }
 
@@ -125,8 +110,7 @@ private fun getOperationMap(argumentsCount: Int): MutableMap<CallableDescriptor,
     return operationMap
 }
 
-private fun getBinaryIrOperationMap(): MutableMap<CallableDescriptor, Pair<String, String>> {
-    val irBuiltIns = getIrBuiltIns()
+private fun getBinaryIrOperationMap(irBuiltIns: IrBuiltIns): MutableMap<CallableDescriptor, Pair<String, String>> {
     val operationMap = mutableMapOf<CallableDescriptor, Pair<String, String>>()
     val irFunSymbols =
         (irBuiltIns.lessFunByOperandType.values + irBuiltIns.lessOrEqualFunByOperandType.values +
@@ -148,8 +132,8 @@ private fun getBinaryIrOperationMap(): MutableMap<CallableDescriptor, Pair<Strin
     return operationMap
 }
 
-private fun generateUnaryBody(unaryOperationsMap: Map<CallableDescriptor, Pair<String, String>>): String {
-    val irNullCheck = getIrBuiltIns().checkNotNullSymbol.descriptor
+private fun generateUnaryBody(unaryOperationsMap: Map<CallableDescriptor, Pair<String, String>>, irBuiltIns: IrBuiltIns): String {
+    val irNullCheck = irBuiltIns.checkNotNullSymbol.descriptor
     return unaryOperationsMap.entries.joinToString(separator = ",\n", postfix = ",\n") { (function, parameters) ->
         val methodName = "${function.name}"
         val parentheses = if (function is FunctionDescriptor) "()" else ""
@@ -196,20 +180,4 @@ private fun getIrMethodSymbolByName(methodName: String): String {
         IrBuiltIns.OperatorNames.OROR -> "||"
         else -> throw UnsupportedOperationException("Unknown ir operation \"$methodName\"")
     }
-}
-
-private fun getIrBuiltIns(): IrBuiltIns {
-    val builtIns = DefaultBuiltIns.Instance
-    val languageSettings = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3)
-
-    val moduleDescriptor = ModuleDescriptorImpl(Name.special("<test-module>"), LockBasedStorageManager(""), builtIns)
-    val mangler = JvmManglerDesc()
-    val signaturer = JvmIdSignatureDescriptor(mangler)
-    val symbolTable = SymbolTable(signaturer)
-    val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-    val typeTranslator = TypeTranslator(symbolTable, languageSettings, builtIns)
-    constantValueGenerator.typeTranslator = typeTranslator
-    typeTranslator.constantValueGenerator = constantValueGenerator
-
-    return IrBuiltIns(builtIns, typeTranslator, signaturer)
 }
