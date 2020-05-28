@@ -15,6 +15,7 @@ plugins {
 val fatJarContents by configurations.creating
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
+val fatJarContentsStripVersions by configurations.creating
 
 // JPS build assumes fat jar is built from embedded configuration,
 // but we can't use it in gradle build since slightly more complex processing is required like stripping metadata & services from some jars
@@ -211,13 +212,15 @@ dependencies {
 
     fatJarContents(intellijDep()) {
         includeIntellijCoreJarDependencies(project) {
-            !(it.startsWith("jdom") || it.startsWith("log4j") || it.startsWith("trove4j"))
+            !(it.startsWith("jdom") || it.startsWith("log4j") || it.startsWith("trove4j") || it.startsWith("streamex"))
         }
     }
 
     fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
 
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j" ) }
+
+    fatJarContentsStripVersions(intellijCoreDep()) { includeJars("streamex", rootProject = rootProject) }
 }
 
 publish()
@@ -241,6 +244,13 @@ val packCompiler by task<ShadowJar> {
     from {
         fatJarContentsStripMetadata.files.map {
             zipTree(it).matching { exclude("META-INF/jb/**", "META-INF/LICENSE") }
+        }
+    }
+
+    dependsOn(fatJarContentsStripVersions)
+    from {
+        fatJarContentsStripVersions.files.map {
+            zipTree(it).matching { exclude("META-INF/versions/**") }
         }
     }
 }
