@@ -63,15 +63,19 @@ class TrailingCommaInspection(
             }
 
             val last = TrailingCommaHelper.elementAfterLastElement(commaOwner)
-            val whenEntryWithoutTrailingComma =
-                commaOwner is KtWhenEntry && TrailingCommaHelper.trailingCommaOrLastElement(commaOwner)?.isComma != true
-            if (last?.prevLeaf(true)?.isLineBreak() == false && !whenEntryWithoutTrailingComma) {
+
+            if (last?.prevLeaf(true)?.isLineBreak() == false && !allowMissingLineBreak(commaOwner)) {
                 registerProblemForLineBreak(
                     commaOwner,
                     last,
                     if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION,
                 )
             }
+        }
+
+        private fun allowMissingLineBreak(commaOwner: KtElement): Boolean {
+            return commaOwner is KtWhenEntry
+                    && TrailingCommaHelper.trailingCommaOrLastElement(commaOwner)?.isComma != true
         }
 
         private fun checkCommaPosition(commaOwner: KtElement) {
