@@ -296,6 +296,7 @@ class NewConstraintSystemImpl(
     }
 
     // KotlinConstraintSystemCompleter.Context
+    // TODO: simplify this: do only substitution a fixing type variable rather than running of subtyping and full incorporation
     override fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, atom: ResolvedAtom?) {
         checkState(State.BUILDING, State.COMPLETION)
 

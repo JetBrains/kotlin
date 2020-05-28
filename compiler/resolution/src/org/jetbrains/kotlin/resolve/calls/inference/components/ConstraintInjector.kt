@@ -66,14 +66,7 @@ class ConstraintInjector(
         updateAllowedTypeDepth(c, a)
         updateAllowedTypeDepth(c, b)
 
-        val incorporationConstraintPosition = IncorporationConstraintPosition(position, initialConstraint)
-        val typeCheckerContext = TypeCheckerContext(c, incorporationConstraintPosition)
-
-        if (position is FixVariableConstraintPosition) {
-            c.incorporateEqualityConstraintForFixingTypeVariable(
-                incorporationConstraintPosition, position.variable, resultType = b, typeCheckerContext
-            )
-        }
+        val typeCheckerContext = TypeCheckerContext(c, IncorporationConstraintPosition(position, initialConstraint))
 
         addSubTypeConstraintAndIncorporateIt(c, a, b, typeCheckerContext)
         addSubTypeConstraintAndIncorporateIt(c, b, a, typeCheckerContext)
@@ -88,11 +81,9 @@ class ConstraintInjector(
         typeCheckerContext.setConstrainingTypesToPrintDebugInfo(lowerType, upperType)
         typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
 
-        var constraintsFromIsSubtype = true
-
         while (typeCheckerContext.hasConstraintsToProcess()) {
             for ((typeVariable, constraint) in typeCheckerContext.extractAllConstraints()!!) {
-                if (c.shouldWeSkipConstraint(typeVariable, constraint, constraintsFromIsSubtype)) continue
+                if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
 
                 val constraints =
                     c.notFixedTypeVariables[typeVariable.freshTypeConstructor(c)] ?: typeCheckerContext.fixedTypeVariable(typeVariable)
@@ -115,7 +106,6 @@ class ConstraintInjector(
             ) {
                 break
             }
-            constraintsFromIsSubtype = false
         }
     }
 
@@ -123,34 +113,10 @@ class ConstraintInjector(
         c.maxTypeDepthFromInitialConstraints = max(c.maxTypeDepthFromInitialConstraints, initialType.typeDepth())
     }
 
-    private fun Context.incorporateEqualityConstraintForFixingTypeVariable(
-        incorporatePosition: IncorporationConstraintPosition,
-        fixingTypeVariable: TypeVariableMarker,
-        resultType: KotlinTypeMarker,
-        typeCheckerContext: TypeCheckerContext
-    ) {
-        if (resultType.isUninferredParameter() || resultType.isError()) return
-
-        assert(!resultType.contains { it.typeConstructor() is TypeVariableTypeConstructor })
-
-        constraintIncorporator.incorporateIntoOtherConstraints(
-            typeCheckerContext,
-            fixingTypeVariable,
-            Constraint(EQUALITY, resultType, incorporatePosition, derivedFrom = emptySet(), isNullabilityConstraint = false)
-        )
-    }
-
-    private fun Context.shouldWeSkipConstraint(
-        typeVariable: TypeVariableMarker,
-        constraint: Constraint,
-        constraintsFromIsSubtype: Boolean
-    ): Boolean {
-        assert(constraint.kind != ConstraintKind.EQUALITY)
+    private fun Context.shouldWeSkipConstraint(typeVariable: TypeVariableMarker, constraint: Constraint): Boolean {
+        assert(constraint.kind != EQUALITY)
 
         val constraintType = constraint.type
-        // TODO: seems these coditions never met, at least in the tests, we need either to find a test for it or drop the check
-        if (!constraintsFromIsSubtype && !isAllowedType(constraintType))
-            return true
 
         if (constraintType.typeConstructor() == typeVariable.freshTypeConstructor()) {
             if (constraintType.lowerBoundIfFlexible().isMarkedNullable() && constraint.kind == LOWER) return false // T? <: T
@@ -172,6 +138,7 @@ class ConstraintInjector(
 
     private inner class TypeCheckerContext(val c: Context, val position: IncorporationConstraintPosition) :
         AbstractTypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
+        // We use `var` intentionally to avoid extra allocations as this property is quite "hot"
         private var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
 
         private var baseLowerType = position.initialConstraint.a
