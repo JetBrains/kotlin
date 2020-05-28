@@ -5,6 +5,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
+import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkRequirements
 import com.intellij.openapi.roots.ui.configuration.SdkTestCase.*
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkDownloadableSdkFix
@@ -27,10 +28,13 @@ object TestUnknownSdkResolver : UnknownSdkResolver {
   private class TestUnknownSdkLookup : UnknownSdkLookup {
     override fun proposeLocalFix(sdk: UnknownSdk, indicator: ProgressIndicator): UnknownSdkLocalSdkFix? {
       if (!useLocalSdkFix) return null
+      val nameFilter = sdk.sdkName?.let { JdkRequirements.parseRequirement(it) }
+
       val testSdk = TestSdkGenerator.getAllTestSdks().asSequence()
         .filter { sdk.sdkType == it.sdkType }
         .filter { sdk.sdkVersionStringPredicate?.test(it.versionString) != false }
         .filter { sdk.sdkHomePredicate?.test(it.homePath) != false }
+        .filter { nameFilter?.matches(it) != false }
         .maxWith(sdk.sdkType.versionComparator())
       if (testSdk == null) return null
       return TestUnknownSdkLocalSdkFix(testSdk)
@@ -60,7 +64,8 @@ object TestUnknownSdkResolver : UnknownSdkResolver {
         override fun getSuggestedSdkName() = sdkInfo.name
         override fun getPlannedHomeDir() = sdkInfo.homePath
         override fun doDownload(indicator: ProgressIndicator) {
-          TestSdkGenerator.createSdk(sdkInfo)
+          TestSdkGenerator.generateJdkStructure(sdkInfo)
+          TestSdkGenerator.createTestSdk(sdkInfo)
         }
       }
   }

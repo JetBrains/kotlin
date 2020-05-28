@@ -57,53 +57,10 @@ abstract class GradleJavaImportingTestCase : GradleImportingTestCase() {
     return compilerConfiguration.getBytecodeTargetLevel(module)
   }
 
-  private fun getSdkForProject(): Sdk? {
-    return ProjectRootManager.getInstance(myProject).projectSdk
-  }
-
   fun getSdkForModule(moduleName: String): Sdk? {
     return ModuleRootManager.getInstance(getModule(moduleName)).sdk
   }
 
-  fun createAndRegisterSdk(isProjectSdk: Boolean = false): Sdk {
-    val sdk = ExternalSystemImportingTestCase.createJdk()
-    registerSdk(sdk, isProjectSdk)
-    return sdk
-  }
-
-  private fun registerSdk(sdk: Sdk, isProjectSdk: Boolean = false) {
-    registerSdk(sdk)
-    if (isProjectSdk) {
-      setProjectSdk(sdk)
-    }
-  }
-
-  private fun registerSdk(sdk: Sdk) {
-    invokeAndWaitIfNeeded {
-      runWriteAction {
-        val jdkTable = ProjectJdkTable.getInstance()
-        jdkTable.addJdk(sdk, testRootDisposable)
-      }
-    }
-  }
-
-  fun removeSdk(sdk: Sdk) {
-    invokeAndWaitIfNeeded {
-      runWriteAction {
-        val jdkTable = ProjectJdkTable.getInstance()
-        jdkTable.removeJdk(sdk)
-      }
-    }
-  }
-
-  fun setProjectSdk(sdk: Sdk) {
-    invokeAndWaitIfNeeded {
-      runWriteAction {
-        val rootManager = ProjectRootManager.getInstance(myProject)
-        rootManager.projectSdk = sdk
-      }
-    }
-  }
 
   fun setProjectLanguageLevel(languageLevel: LanguageLevel) {
     val languageLevelProjectExtension = LanguageLevelProjectExtension.getInstance(myProject)
@@ -113,13 +70,6 @@ abstract class GradleJavaImportingTestCase : GradleImportingTestCase() {
   fun setProjectTargetBytecodeVersion(targetBytecodeVersion: String) {
     val compilerConfiguration = CompilerConfiguration.getInstance(myProject)
     compilerConfiguration.projectBytecodeTarget = targetBytecodeVersion
-  }
-
-  fun assertSdks(sdkName: String?, vararg moduleNames: String) {
-    assertProjectSdk(sdkName)
-    for (moduleName in moduleNames) {
-      assertModuleSdk(moduleName, sdkName)
-    }
   }
 
   fun assertLanguageLevels(languageLevel: LanguageLevel, vararg moduleNames: String) {
@@ -134,16 +84,6 @@ abstract class GradleJavaImportingTestCase : GradleImportingTestCase() {
     for (moduleName in moduleNames) {
       assertModuleTargetBytecodeVersion(moduleName, targetBytecodeVersion)
     }
-  }
-
-  fun assertProjectSdk(sdkName: String?) {
-    val projectSdk = getSdkForProject()
-    assertEquals(sdkName, projectSdk?.name)
-  }
-
-  fun assertModuleSdk(moduleName: String, sdkName: String?) {
-    val moduleSdk = getSdkForModule(moduleName)
-    assertEquals(sdkName, moduleSdk?.name)
   }
 
   fun assertProjectLanguageLevel(languageLevel: LanguageLevel) {

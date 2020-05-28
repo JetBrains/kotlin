@@ -60,7 +60,7 @@ class GradleJdkResolutionTest : GradleJdkResolutionTestCase() {
       assertGradleJvmSuggestion(expected = USE_PROJECT_JDK)
     }
     withRegisteredSdk(unsupportedSdk, isProjectSdk = true) {
-      assertGradleJvmSuggestion(expected = USE_PROJECT_JDK)
+      assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
     }
   }
 

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.progress.ProgressIndicator
@@ -47,36 +48,14 @@ abstract class SdkTestCase : LightPlatformTestCase() {
   }
 
   private fun registerSdk(sdk: TestSdk, isProjectSdk: Boolean = false) {
-    registerSdk(sdk)
+    registerSdk(sdk, testRootDisposable)
     if (isProjectSdk) {
       setProjectSdk(sdk)
     }
   }
 
-  fun registerSdk(sdk: TestSdk) {
-    invokeAndWaitIfNeeded {
-      runWriteAction {
-        val jdkTable = ProjectJdkTable.getInstance()
-        jdkTable.addJdk(sdk, testRootDisposable)
-      }
-    }
-  }
-
-  fun removeSdk(sdk: Sdk) {
-    invokeAndWaitIfNeeded {
-      runWriteAction {
-        val jdkTable = ProjectJdkTable.getInstance()
-        jdkTable.removeJdk(sdk)
-      }
-    }
-  }
-
   fun registerSdks(vararg sdks: TestSdk) {
-    sdks.forEach(::registerSdk)
-  }
-
-  fun removeSdks(vararg sdks: Sdk) {
-    sdks.forEach(::removeSdk)
+    registerSdks(*sdks, parentDisposable = testRootDisposable)
   }
 
   private fun setProjectSdk(sdk: Sdk?) {
@@ -205,8 +184,7 @@ abstract class SdkTestCase : LightPlatformTestCase() {
       return SdkInfo(name, versionString, homePath)
     }
 
-    fun createSdk(sdkInfo: SdkInfo): TestSdk {
-      generateJdkStructure(sdkInfo.homePath, sdkInfo.versionString)
+    fun createTestSdk(sdkInfo: SdkInfo): TestSdk {
       val sdk = TestSdk(sdkInfo.name, sdkInfo.homePath, sdkInfo.versionString)
       createdSdks[sdkInfo.homePath] = sdk
       return sdk
@@ -214,7 +192,8 @@ abstract class SdkTestCase : LightPlatformTestCase() {
 
     fun createNextSdk(versionString: String = "11"): TestSdk {
       val sdkInfo = reserveNextSdk(versionString)
-      return createSdk(sdkInfo)
+      generateJdkStructure(sdkInfo)
+      return createTestSdk(sdkInfo)
     }
 
     fun createNextDependentSdk(): DependentTestSdk {
@@ -227,13 +206,14 @@ abstract class SdkTestCase : LightPlatformTestCase() {
       return sdk
     }
 
-    private fun generateJdkStructure(homePath: String, versionString: String) {
+    fun generateJdkStructure(sdkInfo: SdkInfo) {
+      val homePath = sdkInfo.homePath
       createFile("$homePath/release")
       createFile("$homePath/jre/lib/rt.jar")
       createFile("$homePath/bin/javac")
       createFile("$homePath/bin/java")
       val properties = Properties()
-      properties.setProperty("JAVA_FULL_VERSION", versionString)
+      properties.setProperty("JAVA_FULL_VERSION", sdkInfo.versionString)
       File("$homePath/release").outputStream().use {
         properties.store(it, null)
       }
@@ -258,6 +238,32 @@ abstract class SdkTestCase : LightPlatformTestCase() {
       assertEquals(expected.name, actual.name)
       assertEquals(expected.sdkType, actual.sdkType)
       assertEquals(expected, TestSdkGenerator.findTestSdk(actual))
+    }
+
+    fun registerSdk(sdk: TestSdk, parentDisposable: Disposable) {
+      invokeAndWaitIfNeeded {
+        runWriteAction {
+          val jdkTable = ProjectJdkTable.getInstance()
+          jdkTable.addJdk(sdk, parentDisposable)
+        }
+      }
+    }
+
+    fun registerSdks(vararg sdks: TestSdk, parentDisposable: Disposable) {
+      sdks.forEach { registerSdk(it, parentDisposable) }
+    }
+
+    fun removeSdk(sdk: Sdk) {
+      invokeAndWaitIfNeeded {
+        runWriteAction {
+          val jdkTable = ProjectJdkTable.getInstance()
+          jdkTable.removeJdk(sdk)
+        }
+      }
+    }
+
+    fun removeSdks(vararg sdks: Sdk) {
+      sdks.forEach(::removeSdk)
     }
   }
 }

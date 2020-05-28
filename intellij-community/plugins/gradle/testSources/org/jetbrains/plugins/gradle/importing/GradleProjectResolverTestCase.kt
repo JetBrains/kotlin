@@ -1,50 +1,98 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
-import com.intellij.ide.impl.ProjectUtil
+
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkProvider
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
-import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtilTestCase
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtilTestCase.TestJdkProvider
+import com.intellij.openapi.externalSystem.service.execution.TestUnknownSdkResolver
+import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
+import com.intellij.openapi.externalSystem.util.environment.Environment
+import com.intellij.openapi.externalSystem.util.environment.TestEnvironment
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.testFramework.PlatformTestUtil
-import org.gradle.util.GradleVersion
+import com.intellij.openapi.roots.ui.configuration.SdkTestCase
+import com.intellij.openapi.roots.ui.configuration.SdkTestCase.TestSdk
+import com.intellij.openapi.roots.ui.configuration.SdkTestCase.TestSdkGenerator
+import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver
+import com.intellij.testFramework.replaceService
+import org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject
 import org.jetbrains.plugins.gradle.util.isSupported
-import java.io.File
 
-abstract class GradleProjectResolverTestCase : ExternalSystemJdkUtilTestCase() {
+abstract class GradleProjectResolverTestCase : GradleImportingTestCase() {
 
-  private lateinit var tempDirectory: File
+  val environment get() = Environment.getInstance() as TestEnvironment
 
   override fun setUp() {
     super.setUp()
 
-    tempDirectory = FileUtilRt.generateRandomTemporaryPath()
+    TestSdkGenerator.reset()
+
+    val application = ApplicationManager.getApplication()
+    application.replaceService(Environment::class.java, TestEnvironment(), testRootDisposable)
+    application.replaceService(ExternalSystemJdkProvider::class.java, TestJdkProvider(), testRootDisposable)
+
+    SdkType.EP_NAME.point.registerExtension(SdkTestCase.TestSdkType, testRootDisposable)
+    UnknownSdkResolver.EP_NAME.point.registerExtension(TestUnknownSdkResolver, testRootDisposable)
+
+    environment.variables(ExternalSystemJdkUtil.JAVA_HOME to null)
+
+    TestUnknownSdkResolver.useLocalSdkFix = true
   }
 
-  fun createTestDirectory(relativePath: String): String {
-    val file = File(tempDirectory, relativePath)
-    file.mkdirs()
-    return file.path
+  override fun tearDown() {
+    /**
+     * Cleanup references on test sdks.
+     * @see com.intellij.openapi.projectRoots.impl.UnknownSdkCollector.collectSdksUnderReadAction
+     */
+    setProjectSdk(null)
+    invokeAndWaitIfNeeded {
+      runWriteAction {
+        val projectRootManager = ProjectRootManager.getInstance(myProject)
+        projectRootManager.projectSdk = null
+        val moduleManager = ModuleManager.getInstance(myProject)
+        moduleManager.modules.forEach {
+          val moduleRootManager = ModuleRootManager.getInstance(it)
+          val modifiableModel = moduleRootManager.modifiableModel
+          modifiableModel.sdk = null
+          modifiableModel.commit()
+        }
+      }
+    }
+
+
+    super.tearDown()
   }
 
-  fun createTestFile(relativePath: String, content: String) {
-    val file = File(tempDirectory, relativePath)
-    file.parentFile.mkdirs()
-    file.createNewFile()
-    file.writeText(content)
+  fun loadProject() {
+    linkAndRefreshGradleProject(projectPath, myProject)
   }
 
-  fun findRealTestSdk(): TestSdk {
+  fun reloadProject() {
+    val importSpec = ImportSpecBuilder(myProject, externalSystemId)
+    ExternalSystemUtil.refreshProject(projectPath, importSpec)
+  }
+
+  fun findRealTestSdk(): TestSdk? {
     val jdkType = JavaSdk.getInstance()
     val jdkInfo = jdkType.suggestHomePaths().asSequence()
       .map { createSdkInfo(jdkType, it) }
       .filter { ExternalSystemJdkUtil.isValidJdk(it.homePath) }
-      .filter { isSupported(GradleVersion.current(), it.versionString) }
-      .first()
-    return TestSdkGenerator.createSdk(jdkInfo)
+      .filter { isSupported(currentGradleVersion, it.versionString) }
+      .firstOrNull()
+    if (jdkInfo == null) {
+      LOG.warn("Cannot find test JDK for Gradle $currentGradleVersion")
+      return null
+    }
+    return TestSdkGenerator.createTestSdk(jdkInfo)
   }
 
   private fun createSdkInfo(sdkType: SdkType, homePath: String): TestSdkGenerator.SdkInfo {
@@ -53,14 +101,55 @@ abstract class GradleProjectResolverTestCase : ExternalSystemJdkUtilTestCase() {
     return TestSdkGenerator.SdkInfo(name, versionString, homePath)
   }
 
-  fun openOrImport(projectPath: String): Project {
-    return ProjectUtil.openOrImport(projectPath, null, false)!!.also {
-      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+  fun assertSdks(sdkName: String?, vararg moduleNames: String) {
+    assertProjectSdk(sdkName)
+    for (moduleName in moduleNames) {
+      assertModuleSdk(moduleName, sdkName)
     }
   }
 
-  fun assertProjectSdk(project: Project, expected: TestSdk) {
-    val projectRootManager = ProjectRootManager.getInstance(project)
-    assertSdk(expected, projectRootManager.projectSdk!!)
+  private fun assertProjectSdk(sdkName: String?) {
+    val projectSdk = getSdkForProject()
+    assertEquals(sdkName, projectSdk?.name)
+  }
+
+  private fun assertModuleSdk(moduleName: String, sdkName: String?) {
+    val moduleSdk = getSdkForModule(moduleName)
+    assertEquals(sdkName, moduleSdk?.name)
+  }
+
+  private fun getSdkForProject(): Sdk? {
+    return ProjectRootManager.getInstance(myProject).projectSdk
+  }
+
+  private fun getSdkForModule(moduleName: String): Sdk? {
+    return ModuleRootManager.getInstance(getModule(moduleName)).sdk
+  }
+
+  private fun setProjectSdk(sdk: Sdk?) {
+    invokeAndWaitIfNeeded {
+      runWriteAction {
+        val projectRootManager = ProjectRootManager.getInstance(myProject)
+        projectRootManager.projectSdk = sdk
+      }
+    }
+  }
+
+  fun withProjectSdk(sdk: TestSdk, action: () -> Unit) {
+    val projectRootManager = ProjectRootManager.getInstance(myProject)
+    val projectSdk = projectRootManager.projectSdk
+    setProjectSdk(sdk)
+    try {
+      action()
+    }
+    finally {
+      setProjectSdk(projectSdk)
+    }
+  }
+
+
+  fun createGradleSubProject() {
+    createProjectSubFile("settings.gradle", GroovyBuilder().property("rootProject.name", "'project'").generate())
+    createProjectSubFile("build.gradle", GradleBuildScriptBuilderEx().withJavaPlugin().generate())
   }
 }

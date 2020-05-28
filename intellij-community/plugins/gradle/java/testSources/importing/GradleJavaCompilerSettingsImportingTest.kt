@@ -6,19 +6,6 @@ import org.junit.Test
 
 class GradleJavaCompilerSettingsImportingTest : GradleJavaCompilerSettingsImportingTestCase() {
   @Test
-  fun `test project-module sdk replacing`() {
-    createJavaGradleSubProject()
-    importProject()
-    assertSdks(GRADLE_JDK_NAME, "project", "project.main", "project.test")
-
-    setProjectSdk(sdk)
-    assertSdks(sdk.name, "project", "project.main", "project.test")
-
-    importProject()
-    assertSdks(sdk.name, "project", "project.main", "project.test")
-  }
-
-  @Test
   fun `test project-module compatibility replacing`() {
     createJavaGradleSubProject(
       projectSourceCompatibility = "1.6",

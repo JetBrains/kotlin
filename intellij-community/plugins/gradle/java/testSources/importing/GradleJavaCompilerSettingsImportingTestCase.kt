@@ -1,32 +1,18 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
-import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.RunAll
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest
 import org.junit.runners.Parameterized
 
 abstract class GradleJavaCompilerSettingsImportingTestCase : GradleJavaImportingTestCase() {
-
-  lateinit var sdk: Sdk
-    private set
 
   var isNotSupportedJava14: Boolean = false
     private set
 
   override fun setUp() {
     super.setUp()
-    sdk = createAndRegisterSdk()
     isNotSupportedJava14 = isGradleOlderThen("6.3")
-  }
-
-  override fun tearDown() {
-    RunAll(
-      ThrowableRunnable { if (::sdk.isInitialized) removeSdk(sdk) },
-      ThrowableRunnable { super.tearDown() }
-    ).run()
   }
 
   fun createGradleSettingsFile(vararg moduleNames: String) {

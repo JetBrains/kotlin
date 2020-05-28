@@ -2,24 +2,24 @@
 package org.jetbrains.plugins.gradle.importing
 
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.JAVA_HOME
-import com.intellij.openapi.externalSystem.util.use
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtilTestCase.Companion.assertNewlyRegisteredSdks
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtilTestCase.Companion.assertUnexpectedSdksRegistration
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtilTestCase.Companion.withRegisteredSdks
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtilTestCase.Companion.withoutRegisteredSdks
+import com.intellij.openapi.roots.ui.configuration.SdkTestCase.TestSdkGenerator
 import org.junit.Test
 
 class GradleProjectResolverTest : GradleProjectResolverTestCase() {
   @Test
   fun `test setup of project sdk for newly opened project`() {
-    val projectPath = createTestDirectory("project")
-    createTestFile("project/settings.gradle", GroovyBuilder().property("rootProject.name", "'project'").generate())
-    createTestFile("project/build.gradle", GradleBuildScriptBuilderEx().withJavaPlugin().generate())
-
-    val jdk = findRealTestSdk()
+    val jdk = findRealTestSdk() ?: return
+    createGradleSubProject()
 
     environment.withVariables(JAVA_HOME to jdk.homePath) {
-      withRegisteredSdk(jdk) {
+      withRegisteredSdks(jdk) {
         assertUnexpectedSdksRegistration {
-          openOrImport(projectPath).use {
-            assertProjectSdk(it, jdk)
-          }
+          loadProject()
+          assertSdks(jdk.name, "project", "project.main", "project.test")
         }
       }
     }
@@ -27,17 +27,36 @@ class GradleProjectResolverTest : GradleProjectResolverTestCase() {
 
   @Test
   fun `test setup of project sdk for newly opened project in clean IDEA`() {
-    val projectPath = createTestDirectory("project")
-    createTestFile("project/settings.gradle", GroovyBuilder().property("rootProject.name", "'project'").generate())
-    createTestFile("project/build.gradle", GradleBuildScriptBuilderEx().withJavaPlugin().generate())
-
-    val jdk = findRealTestSdk()
+    val jdk = findRealTestSdk() ?: return
+    createGradleSubProject()
 
     environment.withVariables(JAVA_HOME to jdk.homePath) {
       withoutRegisteredSdks {
         assertNewlyRegisteredSdks({ jdk }) {
-          openOrImport(projectPath).use {
-            assertProjectSdk(it, jdk)
+          loadProject()
+          assertSdks(jdk.name, "project", "project.main", "project.test")
+        }
+      }
+    }
+  }
+
+  @Test
+  fun `test project-module sdk replacing`() {
+    val jdk = findRealTestSdk() ?: return
+    val sdk = TestSdkGenerator.createNextSdk()
+    createGradleSubProject()
+
+    environment.withVariables(JAVA_HOME to jdk.homePath) {
+      withRegisteredSdks(jdk, sdk) {
+        assertUnexpectedSdksRegistration {
+          loadProject()
+          assertSdks(jdk.name, "project", "project.main", "project.test")
+
+          withProjectSdk(sdk) {
+            assertSdks(sdk.name, "project", "project.main", "project.test")
+
+            reloadProject()
+            assertSdks(sdk.name, "project", "project.main", "project.test")
           }
         }
       }
