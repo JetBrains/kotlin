@@ -24,7 +24,7 @@ internal class KotlinPluginInMultipleProjectsHolder(
 
         val loadedInProjectsPropertyName = getPropertyName(kotlinPluginVersion)
 
-        if (!differentVersionsInDifferentProject || loadedInProjectPath == null) {
+        if (loadedInProjectPath == null) {
             loadedInProjectPath = projectPath
 
             val ext = project.rootProject.extensions.getByType(ExtraPropertiesExtension::class.java)

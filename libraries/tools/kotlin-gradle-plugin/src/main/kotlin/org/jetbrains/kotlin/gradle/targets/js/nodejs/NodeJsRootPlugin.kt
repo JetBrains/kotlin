@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
+import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 
 open class NodeJsRootPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
+        MultiplePluginDeclarationDetector.detect(project)
+
         project.plugins.apply(BasePlugin::class.java)
 
         check(project == project.rootProject) {

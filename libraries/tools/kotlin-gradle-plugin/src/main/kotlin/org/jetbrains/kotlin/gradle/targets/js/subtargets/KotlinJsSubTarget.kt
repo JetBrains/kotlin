@@ -10,8 +10,11 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
@@ -30,22 +33,6 @@ abstract class KotlinJsSubTarget(
     private val disambiguationClassifier: String
 ) : KotlinJsSubTargetDsl {
     val project get() = target.project
-
-    init {
-        val kotlinPluginInMultipleProjectsHolder = KotlinPluginInMultipleProjectsHolder(
-            differentVersionsInDifferentProject = false
-        )
-
-        val anyProjectAffected = kotlinPluginInMultipleProjectsHolder.getAffectedProjects(project)
-            ?.isNotEmpty() ?: false
-
-        if (anyProjectAffected) {
-            error(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
-        }
-
-        kotlinPluginInMultipleProjectsHolder
-            .addProject(project)
-    }
 
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
