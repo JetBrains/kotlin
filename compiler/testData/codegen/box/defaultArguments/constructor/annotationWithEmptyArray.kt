@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 annotation class Anno(val x: Array<String> = emptyArray())
 
 @Anno fun test1() = 1

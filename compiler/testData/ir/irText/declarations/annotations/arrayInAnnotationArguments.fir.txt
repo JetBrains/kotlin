@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      TestAnnWithIntArray(x = CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null)
+      TestAnnWithIntArray(x = ['1', '2', '3'])
       TestAnnWithStringArray(x = ['a', 'b', 'c'])
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
