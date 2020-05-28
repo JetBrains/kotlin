@@ -223,6 +223,19 @@ class ContentEntriesInRootModelTest {
   }
 
   @Test
+  fun `content entries are sorted`() {
+    val model = createModifiableModel(module)
+    val contentRoot1 = projectModel.baseProjectDir.newVirtualDirectory("content1")
+    val contentRoot2 = projectModel.baseProjectDir.newVirtualDirectory("content2")
+    model.addContentEntry(contentRoot2)
+    assertThat(model.contentRoots).containsExactly(contentRoot2)
+    model.addContentEntry(contentRoot1)
+    assertThat(model.contentRoots).containsExactly(contentRoot1, contentRoot2)
+    val committed = commitModifiableRootModel(model)
+    assertThat(committed.contentRoots).containsExactly(contentRoot1, contentRoot2)
+  }
+
+  @Test
   fun clear() {
     val contentRoot = projectModel.baseProjectDir.newVirtualDirectory("content1")
     ModuleRootModificationUtil.addContentRoot(module, contentRoot)
