@@ -239,14 +239,21 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
 
     private fun tryLoadFromFsCache(settings: GradleProjectSettings) =
         tryCreateImportedRoot(settings.externalProjectPath) {
-            GradleBuildRootDataSerializer.read(it)
+            GradleBuildRootDataSerializer.read(it)?.let { data ->
+                addFromSettings(data, settings)
+            }
         }
+
+    private fun addFromSettings(
+        data: GradleBuildRootData,
+        settings: GradleProjectSettings
+    ) = data.copy(projectRoots = data.projectRoots.toSet() + settings.modules)
 
     private fun createOtherLinkedRoot(settings: GradleProjectSettings): GradleBuildRoot.Linked {
         val supported = kotlinDslScriptsModelImportSupported(settings.resolveGradleVersion().version)
         return when {
-            supported -> GradleBuildRoot.New(this, settings)
-            else -> GradleBuildRoot.Legacy(this, settings)
+            supported -> GradleBuildRoot.New(settings)
+            else -> GradleBuildRoot.Legacy(settings)
         }
     }
 
