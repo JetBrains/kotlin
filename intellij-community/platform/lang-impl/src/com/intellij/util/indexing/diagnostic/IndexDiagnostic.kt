@@ -9,7 +9,7 @@ typealias TimeNano = Long
 typealias BytesNumber = Long
 
 data class ProjectIndexingHistory(val projectName: String) {
-  private val biggestContributorsLimit = 5
+  private val biggestContributorsPerFileTypeLimit = 10
 
   val times = IndexingTimes()
 
@@ -28,15 +28,20 @@ data class ProjectIndexingHistory(val projectName: String) {
 
     for ((fileType, fileTypeStats) in statistics.indexingStatistics.statsPerFileType) {
       val totalStats = totalStatsPerFileType.getOrPut(fileType) {
-        StatsPerFileType(0, 0, 0, 0, LimitedPriorityQueue(biggestContributorsLimit, compareBy { it.indexingTime }))
+        StatsPerFileType(0, 0, 0, 0, LimitedPriorityQueue(biggestContributorsPerFileTypeLimit, compareBy { it.indexingTimeInAllThreads }))
       }
       totalStats.totalNumberOfFiles += fileTypeStats.numberOfFiles
       totalStats.totalBytes += fileTypeStats.totalBytes
       totalStats.totalIndexingTimeInAllThreads += fileTypeStats.indexingTime.sumTime
       totalStats.totalContentLoadingTimeInAllThreads += fileTypeStats.contentLoadingTime.sumTime
-      fileTypeStats.biggestContributors.biggestElements.forEach {
-        totalStats.biggestContributors.addFile(it)
-      }
+      totalStats.biggestFileTypeContributors.addElement(
+        BiggestFileTypeContributor(
+          statistics.providerDebugName,
+          fileTypeStats.numberOfFiles,
+          fileTypeStats.totalBytes,
+          fileTypeStats.indexingTime.sumTime
+        )
+      )
     }
 
     for ((indexId, stats) in statistics.indexingStatistics.statsPerIndexer) {
@@ -52,7 +57,14 @@ data class ProjectIndexingHistory(val projectName: String) {
     var totalBytes: BytesNumber,
     var totalIndexingTimeInAllThreads: TimeNano,
     var totalContentLoadingTimeInAllThreads: TimeNano,
-    val biggestContributors: LimitedPriorityQueue<IndexedFileStat>
+    val biggestFileTypeContributors: LimitedPriorityQueue<BiggestFileTypeContributor>
+  )
+
+  data class BiggestFileTypeContributor(
+    val providerName: String,
+    val numberOfFiles: Int,
+    val totalBytes: BytesNumber,
+    val indexingTimeInAllThreads: TimeNano
   )
 
   data class StatsPerIndexer(

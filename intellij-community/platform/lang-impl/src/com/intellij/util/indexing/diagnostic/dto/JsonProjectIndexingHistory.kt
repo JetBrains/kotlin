@@ -17,8 +17,15 @@ data class JsonProjectIndexingHistory(
     val totalNumberOfFiles: Int,
     val totalFilesSize: JsonFileSize,
     val indexingSpeed: JsonProcessingSpeed,
-    val biggestContributors: List<JsonIndexedFileStat>
-  )
+    val biggestContributors: List<JsonBiggestFileTypeContributor>
+  ) {
+    data class JsonBiggestFileTypeContributor(
+      val providerName: String,
+      val numberOfFiles: Int,
+      val totalFilesSize: JsonFileSize,
+      val partOfTotalIndexingTime: JsonPercentages
+    )
+  }
 
   data class JsonStatsPerIndexer(
     val indexId: String,

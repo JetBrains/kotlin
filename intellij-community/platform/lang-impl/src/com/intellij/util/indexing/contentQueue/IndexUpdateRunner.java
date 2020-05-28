@@ -156,10 +156,7 @@ public final class IndexUpdateRunner {
     try {
       FileIndexingStatistics fileIndexingStatistics = indexOneFileOfJob(indexingJob, fileContent);
       if (fileIndexingStatistics != null) {
-        indexingJob.myStatistics.addFileStatistics(fileIndexingStatistics,
-                                                   contentLoadingTime,
-                                                   loadingResult.fileLength,
-                                                   loadingResult.cachedFileContent.getVirtualFile().getName());
+        indexingJob.myStatistics.addFileStatistics(fileIndexingStatistics, contentLoadingTime, loadingResult.fileLength);
       }
       indexingJob.oneMoreFileProcessed();
     }

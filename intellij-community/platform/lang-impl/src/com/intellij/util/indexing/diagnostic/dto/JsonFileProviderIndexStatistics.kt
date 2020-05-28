@@ -15,8 +15,7 @@ data class JsonFileProviderIndexStatistics(
     val numberOfFiles: Int,
     val totalFilesSize: JsonFileSize,
     val partOfTotalIndexingTime: JsonPercentages,
-    val partOfTotalContentLoadingTime: JsonPercentages,
-    val biggestContributors: List<JsonIndexedFileStat>
+    val partOfTotalContentLoadingTime: JsonPercentages
   )
 
   data class JsonStatsPerIndexer(

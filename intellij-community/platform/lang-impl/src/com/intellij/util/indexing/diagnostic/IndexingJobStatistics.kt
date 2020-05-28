@@ -2,7 +2,6 @@
 package com.intellij.util.indexing.diagnostic
 
 class IndexingJobStatistics {
-  private val biggestContributorsLimit = 5
 
   val statsPerIndexer = hashMapOf<String /* ID.name() */, StatsPerIndexer>()
 
@@ -18,16 +17,14 @@ class IndexingJobStatistics {
     val indexingTime: TimeStats,
     val contentLoadingTime: TimeStats,
     var numberOfFiles: Int,
-    var totalBytes: BytesNumber,
-    val biggestContributors: LimitedPriorityQueue<IndexedFileStat>
+    var totalBytes: BytesNumber
   )
 
   @Synchronized
   fun addFileStatistics(
     fileStatistics: FileIndexingStatistics,
     contentLoadingTime: Long,
-    fileSize: Long,
-    fileName: String
+    fileSize: Long
   ) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
       val stats = statsPerIndexer.getOrPut(indexId.name) {
@@ -39,13 +36,11 @@ class IndexingJobStatistics {
     }
     val fileTypeName = fileStatistics.fileType.name
     val stats = statsPerFileType.computeIfAbsent(fileTypeName) {
-      StatsPerFileType(TimeStats(), TimeStats(), 0, 0, LimitedPriorityQueue(biggestContributorsLimit, compareBy { it.indexingTime }))
+      StatsPerFileType(TimeStats(), TimeStats(), 0, 0)
     }
     stats.contentLoadingTime.addTime(contentLoadingTime)
     stats.indexingTime.addTime(fileStatistics.indexingTime)
     stats.totalBytes += fileSize
     stats.numberOfFiles++
-
-    stats.biggestContributors.addFile(IndexedFileStat(fileName, fileTypeName, fileSize, fileStatistics.indexingTime, contentLoadingTime))
   }
 }

@@ -11,7 +11,7 @@ class LimitedPriorityQueue<T>(private val sizeLimit: Int, comparator: Comparator
   private val queue = PriorityQueue(comparator)
 
   @Synchronized
-  fun addFile(element: T) {
+  fun addElement(element: T) {
     queue.add(element)
     while (queue.size > sizeLimit) {
       queue.poll()
