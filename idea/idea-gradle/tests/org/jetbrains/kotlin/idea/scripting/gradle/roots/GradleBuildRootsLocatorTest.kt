@@ -6,11 +6,28 @@
 package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
 import org.junit.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class GradleBuildRootsLocatorTest : AbstractGradleBuildRootsLocatorTest() {
     @Test
-    fun testUnlinkedBuildGradleKtsNearProjectRoot() {
+    fun testNewBuildGradleKtsNearProjectRoot() {
+        // the build.gradle.kts under the project root will be definitive import at next import
+        // so, we should not treat it as unlinked
         newImportedGradleProject("imported", relativeScripts = listOf())
-        assert(findScriptBuildRoot("imported/build.gradle.kts")?.root is GradleBuildRoot.Unlinked)
+        val scriptUnderRoot = findScriptBuildRoot("imported/build.gradle.kts")
+        assertNotNull(scriptUnderRoot)
+        assertTrue(scriptUnderRoot.isNewScript)
+        assertFalse(scriptUnderRoot.isUnrelatedScript)
+    }
+
+    @Test
+    fun testBuildGradleKtsNearProjectRoot() {
+        newImportedGradleProject("imported", relativeScripts = listOf("build.gradle.kts"))
+        val scriptUnderRoot = findScriptBuildRoot("imported/build.gradle.kts")
+        assertNotNull(scriptUnderRoot)
+        assertFalse(scriptUnderRoot.isNewScript)
+        assertFalse(scriptUnderRoot.isUnrelatedScript)
     }
 }
