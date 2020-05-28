@@ -43,8 +43,7 @@ private fun <D : CallableMemberDescriptor> createFreeDescriptor(descriptor: D): 
     while (container != null) {
         if (container is ClassDescriptor) {
             typeParameters.addAll(container.declaredTypeParameters)
-        }
-        else if (container is CallableDescriptor && container !is ConstructorDescriptor) {
+        } else if (container is CallableDescriptor && container !is ConstructorDescriptor) {
             typeParameters.addAll(container.typeParameters)
         }
         container = container.containingDeclaration
@@ -60,23 +59,28 @@ private fun <D : CallableMemberDescriptor> createFreeDescriptor(descriptor: D): 
  */
 fun createFreeFakeLocalPropertyDescriptor(descriptor: LocalVariableDescriptor): PropertyDescriptor {
     val property = PropertyDescriptorImpl.create(
-            descriptor.containingDeclaration, descriptor.annotations, Modality.FINAL, descriptor.visibility, descriptor.isVar,
-            descriptor.name, CallableMemberDescriptor.Kind.DECLARATION, descriptor.source, false, descriptor.isConst,
-            false, false, false, @Suppress("DEPRECATION") descriptor.isDelegated
+        descriptor.containingDeclaration, descriptor.annotations, Modality.FINAL, descriptor.visibility, descriptor.isVar,
+        descriptor.name, CallableMemberDescriptor.Kind.DECLARATION, descriptor.source, false, descriptor.isConst,
+        false, false, false, @Suppress("DEPRECATION") descriptor.isDelegated
     )
-    property.setType(descriptor.type, descriptor.typeParameters, descriptor.dispatchReceiverParameter, descriptor.extensionReceiverParameter)
+    property.setType(
+        descriptor.type, descriptor.typeParameters,
+        descriptor.dispatchReceiverParameter, descriptor.extensionReceiverParameter
+    )
 
     property.initialize(
-            descriptor.getter?.run {
-                PropertyGetterDescriptorImpl(property, annotations, modality, visibility, true, isExternal, isInline, kind, null, source).apply {
+        descriptor.getter?.run {
+            PropertyGetterDescriptorImpl(property, annotations, modality, visibility, true, isExternal, isInline, kind, null, source)
+                .apply {
                     initialize(this@run.returnType)
                 }
-            },
-            descriptor.setter?.run {
-                PropertySetterDescriptorImpl(property, annotations, modality, visibility, true, isExternal, isInline, kind, null, source).apply {
+        },
+        descriptor.setter?.run {
+            PropertySetterDescriptorImpl(property, annotations, modality, visibility, true, isExternal, isInline, kind, null, source)
+                .apply {
                     initialize(this@run.valueParameters.single())
                 }
-            }
+        }
     )
 
     return createFreeDescriptor(property)
