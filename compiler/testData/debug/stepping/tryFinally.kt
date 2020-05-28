@@ -34,9 +34,10 @@ fun box() {
     foo()
 }
 
-// IGNORE_BACKEND: JVM_IR
-// The JVM_IR backend goes back to line 13 after line 14. It has the
-// sequence 13, 14, 13 which doesn't make sense.
+// The JVM backend steps back to line 11 when leaving the
+// `mightThrow2` call. The JVM_IR backend does not. The
+// JVM_IR behavior is consistent with what happens for the
+// try-finally where the value is discarded which seems good.
 
 // LINENUMBERS
 // test.kt:29 box
@@ -50,7 +51,9 @@ fun box() {
 // test.kt:11 foo
 // test.kt:25 mightThrow2
 // test.kt:26 mightThrow2
+// LINENUMBERS JVM
 // test.kt:11 foo
+// LINENUMBERS
 // test.kt:13 foo
 // test.kt:14 foo
 // test.kt:10 foo
