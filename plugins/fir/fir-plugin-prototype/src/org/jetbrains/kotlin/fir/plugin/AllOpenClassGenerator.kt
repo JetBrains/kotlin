@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildClassImpl
+import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirClassGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
@@ -30,7 +30,7 @@ class AllOpenClassGenerator(session: FirSession) : FirClassGenerationExtension(s
         annotatedDeclaration: T
     ): List<GeneratedClass> where T : FirDeclaration, T : FirAnnotationContainer {
         if (annotatedDeclaration !is FirRegularClass) return emptyList()
-        val klass = buildClassImpl {
+        val klass = buildRegularClass {
             session = this@AllOpenClassGenerator.session
             origin = FirDeclarationOrigin.Plugin(AllOpenPluginKey)
             status = FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, FirEffectiveVisibilityImpl.Public, Modality.FINAL)
