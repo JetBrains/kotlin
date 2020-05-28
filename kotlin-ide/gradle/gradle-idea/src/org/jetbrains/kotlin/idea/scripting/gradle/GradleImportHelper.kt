@@ -16,10 +16,12 @@ import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFileBase
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelResolver
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
@@ -40,9 +42,21 @@ fun runPartialGradleImport(project: Project) {
 fun getMissingConfigurationNotificationText() = KotlinIdeaGradleBundle.message("script.configurations.will.be.available.after.load.changes")
 fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.text.load.script.configurations")
 
-fun showNotificationForProjectImport(project: Project) {}
+fun autoReloadScriptConfigurations(project: Project): Boolean {
+    return GradleScriptDefinitionsContributor.getDefinitions(project).any {
+        KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(it)
+    }
+}
 
-fun hideNotificationForProjectImport(project: Project): Boolean = true
+fun scriptConfigurationsNeedToBeUpdated(project: Project) {
+    if (autoReloadScriptConfigurations(project)) {
+        runPartialGradleImport(project)
+    } else {
+        // notification is shown in LoadConfigurationAction
+    }
+}
+
+fun scriptConfigurationsAreUpToDate(project: Project): Boolean = true
 
 class LoadConfigurationAction : AnAction(
     KotlinIdeaGradleBundle.message("action.text.load.script.configurations"),
@@ -56,29 +70,37 @@ class LoadConfigurationAction : AnAction(
 
     override fun update(e: AnActionEvent) {
         ensureValidActionVisibility(e)
-
-        e.presentation.description = KotlinIdeaGradleBundle.message("action.description.load.script.configurations")
     }
 
     private fun ensureValidActionVisibility(e: AnActionEvent) {
         val editor = e.getData(CommonDataKeys.EDITOR) ?: return
 
+        e.presentation.isVisible = getNotificationVisibility(editor)
+    }
+
+    private fun getNotificationVisibility(editor: Editor): Boolean {
         if (DiffUtil.isDiffEditor(editor)) {
-            e.presentation.isVisible = false
-            return
+            return false
         }
 
-        e.presentation.isVisible = editor.getNotificationVisibility()
+        val project = editor.project ?: return false
+        val file = getKotlinScriptFile(editor) ?: return false
+
+        if (autoReloadScriptConfigurations(project)) {
+            return false
+        }
+
+        return GradleBuildRootsManager.getInstance(project).isConfigurationOutOfDate(file)
     }
 
-    private fun Editor.getNotificationVisibility(): Boolean {
-        val project = project ?: return false
-
-        val documentManager = FileDocumentManager.getInstance()
-        val virtualFile = documentManager.getFile(document)
-        if (virtualFile is LightVirtualFileBase) return false
-        if (virtualFile == null || !virtualFile.isValid) return false
-
-        return GradleBuildRootsManager.getInstance(project).isConfigurationOutOfDate(virtualFile)
-    }
+    private fun getKotlinScriptFile(editor: Editor): VirtualFile? {
+            return FileDocumentManager.getInstance()
+                .getFile(editor.document)
+                ?.takeIf {
+                    it !is LightVirtualFileBase
+                            && it.isValid
+                            && it.fileType != KotlinFileType.INSTANCE
+                            && isGradleKotlinScript(it)
+                }
+        }
 }

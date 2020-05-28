@@ -11,14 +11,24 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesColle
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 
 class IDESettingsFUSCollector : ProjectUsagesCollector() {
     override fun getMetrics(project: Project): Set<MetricEvent> {
         val metrics = mutableSetOf<MetricEvent>()
 
-        val scriptingAutoReloadEnabled = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
-        metrics.add(MetricEvent("scriptingAutoReloadEnabled", flagUsage(scriptingAutoReloadEnabled)))
+        for (definition in ScriptDefinitionsManager.getInstance(project).getAllDefinitions()) {
+            if (definition.canAutoReloadScriptConfigurationsBeSwitchedOff) {
+                val scriptingAutoReloadEnabled = KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(definition)
+                val data = FeatureUsageData()
+                    .addData("enabled", scriptingAutoReloadEnabled)
+                    .addData("definition_name", definition.name)
+                    .addData("pluginVersion", KotlinPluginUtil.getPluginVersion())
+                metrics.add(MetricEvent("scriptingAutoReloadEnabled", data))
+            }
+        }
 
         val settings: KotlinCodeInsightSettings = KotlinCodeInsightSettings.getInstance()
         val projectSettings: KotlinCodeInsightWorkspaceSettings = KotlinCodeInsightWorkspaceSettings.getInstance(project)

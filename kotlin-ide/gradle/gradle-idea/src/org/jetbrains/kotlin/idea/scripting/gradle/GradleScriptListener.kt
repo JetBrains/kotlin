@@ -54,9 +54,9 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
             .getScriptInfo(vFile)?.model?.inputs?.isUpToDate(project, vFile) ?: return
 
         if (upToDate) {
-            hideNotificationForProjectImport(project)
+            scriptConfigurationsAreUpToDate(project)
         } else {
-            showNotificationForProjectImport(project)
+            scriptConfigurationsNeedToBeUpdated(project)
         }
     }
 }

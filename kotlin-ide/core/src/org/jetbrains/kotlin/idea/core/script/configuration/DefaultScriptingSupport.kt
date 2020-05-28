@@ -174,7 +174,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                 if (forceSync) {
                     loaders.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
                 } else {
-                    val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
+                    val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(scriptDefinition)
                     val postponeLoading = isPostponedLoad && !autoReloadEnabled
 
                     if (postponeLoading) {
@@ -206,7 +206,8 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
             val applied = cached?.applied
             if (applied != null && applied.inputs.isUpToDate(project, virtualFile)) {
                 // in case user reverted to applied configuration
-                suggestOrSaveConfiguration(virtualFile, applied, skipNotification = isLoadingPostponed)
+                val skipNotification = isLoadingPostponed || KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(scriptDefinition)
+                suggestOrSaveConfiguration(virtualFile, applied, skipNotification)
             } else if (cached == null || !cached.isUpToDate(project, virtualFile)) {
                 // don't start loading if nothing was changed
                 // (in case we checking for up-to-date and loading concurrently)
@@ -280,7 +281,6 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                 } else {
                     val autoReload = skipNotification
                             || oldConfiguration == null
-                            || KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
                             || ApplicationManager.getApplication().isUnitTestModeWithoutScriptLoadingNotification
 
                     if (autoReload) {

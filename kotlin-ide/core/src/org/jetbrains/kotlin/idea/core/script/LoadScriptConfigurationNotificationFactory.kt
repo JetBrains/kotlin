@@ -17,6 +17,7 @@ import com.intellij.ui.HyperlinkLabel
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 
 object LoadScriptConfigurationNotificationFactory {
     fun showNotification(file: VirtualFile, project: Project, onClick: () -> Unit): Boolean {
@@ -50,7 +51,7 @@ object LoadScriptConfigurationNotificationFactory {
                 return@withSelectedEditor
             }
 
-            val panel = NewLoadConfigurationNotificationPanel(onClick, project)
+            val panel = NewLoadConfigurationNotificationPanel(onClick, project, this@addLoadConfigurationNotificationPanel)
             notificationPanel = panel
             manager.addTopComponent(this, panel)
         }
@@ -72,7 +73,8 @@ object LoadScriptConfigurationNotificationFactory {
 
     private class NewLoadConfigurationNotificationPanel(
         var onClick: () -> Unit,
-        project: Project
+        project: Project,
+        file: VirtualFile
     ) : EditorNotificationPanel() {
 
         init {
@@ -83,7 +85,9 @@ object LoadScriptConfigurationNotificationFactory {
 
             createComponentActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.enable.auto.reload")) {
                 onClick()
-                KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled = true
+
+                val scriptDefinition = file.findScriptDefinition(project) ?: return@createComponentActionLabel
+                KotlinScriptingSettings.getInstance(project).setAutoReloadConfigurations(scriptDefinition, true)
             }
         }
 

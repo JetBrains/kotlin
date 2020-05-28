@@ -172,6 +172,11 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     }
 
     fun reorderScriptDefinitions() = lock.write {
+        definitions?.forEach {
+            it.order = KotlinScriptingSettings.getInstance(project).getScriptDefinitionOrder(it)
+        }
+        definitions = definitions?.sortedBy { it.order }
+
         updateDefinitions()
     }
 
@@ -197,10 +202,6 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
     private fun updateDefinitions() {
         assert(lock.isWriteLocked) { "updateDefinitions should only be called under the write lock" }
-
-        definitions = definitions?.sortedBy {
-            KotlinScriptingSettings.getInstance(project).getScriptDefinitionOrder(it)
-        }
 
         val fileTypeManager = FileTypeManager.getInstance()
 
