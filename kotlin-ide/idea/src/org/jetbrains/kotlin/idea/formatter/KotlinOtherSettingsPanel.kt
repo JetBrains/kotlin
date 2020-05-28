@@ -15,8 +15,8 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import java.awt.BorderLayout
 import javax.swing.BorderFactory
+import javax.swing.BoxLayout
 import javax.swing.JCheckBox
 import javax.swing.JPanel
 
@@ -47,11 +47,12 @@ class KotlinOtherSettingsPanel(settings: CodeStyleSettings) : CodeStyleAbstractP
 
     override fun getTabTitle(): String = KotlinBundle.message("formatter.title.other")
 
-    private val jPanel = JPanel(BorderLayout()).apply {
+    private val jPanel = JPanel().apply {
+        layout = BoxLayout(this, BoxLayout.Y_AXIS)
         add(
             JBScrollPane(
                 JPanel(VerticalLayout(JBUI.scale(5))).apply {
-                    border = BorderFactory.createEmptyBorder(UIUtil.DEFAULT_VGAP, 10, UIUtil.DEFAULT_VGAP, 10)
+                    border = BorderFactory.createEmptyBorder(0, UIUtil.DEFAULT_HGAP, UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP)
                     add(
                         OptionGroup(KotlinBundle.message("formatter.title.trailing.comma")).apply {
                             add(cbTrailingComma)

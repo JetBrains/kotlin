@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import com.intellij.application.options.CodeStyleAbstractPanel
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.ui.ListCellRendererWrapper
+import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.components.panels.VerticalLayout
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JLabel
-import javax.swing.JList
 import javax.swing.JPanel
 
 class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel(KotlinLanguage.INSTANCE, null, settings) {
@@ -53,17 +52,15 @@ class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel
         add(
             JBScrollPane(
                 JPanel(VerticalLayout(JBUI.scale(5))).apply {
-                    border = BorderFactory.createEmptyBorder(UIUtil.DEFAULT_VGAP, 10, UIUtil.DEFAULT_VGAP, 10)
+                    border = BorderFactory.createEmptyBorder(0, UIUtil.DEFAULT_HGAP, UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP)
                     add(JPanel(HorizontalLayout(JBUI.scale(5))).apply {
                         saveDefaultsItems.forEach {
                             saveDefaultsComboBox.addItem(it)
                         }
 
-                        saveDefaultsComboBox.setRenderer(object : ListCellRendererWrapper<SaveItem>() {
-                            override fun customize(list: JList<*>?, value: SaveItem, index: Int, selected: Boolean, hasFocus: Boolean) {
-                                setText(value.label)
-                            }
-                        })
+                        saveDefaultsComboBox.renderer = SimpleListCellRenderer.create("") {
+                            it.label
+                        }
 
                         add(JLabel(KotlinBundle.message("formatter.text.use.defaults.from")))
                         add(saveDefaultsComboBox)
