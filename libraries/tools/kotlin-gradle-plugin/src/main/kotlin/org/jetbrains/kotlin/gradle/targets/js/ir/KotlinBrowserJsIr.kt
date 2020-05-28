@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,9 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -75,17 +77,14 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         RUN_TASK_NAME
                     )
                 ) {
-                    it.dependsOn(
-                        nodeJs.npmInstallTask,
-                        binary.linkTask,
-                        target.project.tasks.getByName(compilation.processResourcesTaskName)
+                    it.commonConfigure(
+                        compilation = compilation,
+                        binary = binary,
+                        nodeJs = nodeJs
                     )
-
-                    it.configureOptimization(type)
 
                     it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
                     it.compilation = compilation
-                    it.entry = binary.linkTask.map { it.outputFile }.get()
                     it.description = "start ${type.name.toLowerCase()} webpack dev server"
 
                     it.devServer = KotlinWebpackConfig.DevServer(
@@ -94,10 +93,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     )
 
                     it.outputs.upToDateWhen { false }
-
-                    commonRunConfigurations.forEach { configure ->
-                        it.configure()
-                    }
                 }
 
                 if (type == KotlinJsBinaryType.DEVELOPMENT) {
@@ -141,22 +136,19 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         WEBPACK_TASK_NAME
                     )
                 ) {
+                    it.commonConfigure(
+                        compilation = compilation,
+                        binary = binary,
+                        nodeJs = nodeJs
+                    )
+
                     it.dependsOn(
-                        nodeJs.npmInstallTask,
-                        binary.linkTask,
                         distributeResourcesTask
                     )
 
-                    it.configureOptimization(type)
-
                     it.compilation = compilation
-                    it.entry = binary.linkTask.map { it.outputFile }.get()
                     it.description = "build webpack ${type.name.toLowerCase()} bundle"
                     it._destinationDirectory = distribution.directory
-
-                    commonWebpackConfigurations.forEach { configure ->
-                        it.configure()
-                    }
                 }
 
                 if (type == KotlinJsBinaryType.PRODUCTION) {
@@ -174,6 +166,28 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     }
                 }
             }
+    }
+
+    private fun KotlinWebpack.commonConfigure(
+        compilation: KotlinJsCompilation,
+        binary: Executable,
+        nodeJs: NodeJsRootExtension
+    ) {
+        val type = binary.type
+
+        dependsOn(
+            nodeJs.npmInstallTask,
+            binary.linkTask,
+            target.project.tasks.getByName(compilation.processResourcesTaskName)
+        )
+
+        configureOptimization(type)
+
+        entryProperty.set(binary.linkTask.map { it.outputFile })
+
+        commonRunConfigurations.forEach { configure ->
+            configure()
+        }
     }
 
     private fun KotlinWebpack.configureOptimization(kind: KotlinJsBinaryType) {

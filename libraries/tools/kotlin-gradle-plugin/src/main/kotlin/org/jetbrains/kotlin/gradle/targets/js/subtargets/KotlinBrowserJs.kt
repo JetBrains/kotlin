@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.executeTaskBaseName
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -95,8 +96,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        val compileKotlinTask = compilation.compileKotlinTask
-
         val commonRunTask = registerSubTargetTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
 
         compilation.binaries
@@ -109,12 +108,13 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         RUN_TASK_NAME
                     )
                 ) {
-                    it.dependsOn(
-                        nodeJs.npmInstallTask,
-                        target.project.tasks.named(compilation.processResourcesTaskName)
+                    it.commonConfigure(
+                        compilation = compilation,
+                        dceTaskProvider = dceTaskProvider,
+                        devDceTaskProvider = devDceTaskProvider,
+                        type = type,
+                        nodeJs = nodeJs
                     )
-
-                    it.configureOptimization(type)
 
                     it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
                     it.compilation = compilation
@@ -126,24 +126,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     )
 
                     it.outputs.upToDateWhen { false }
-
-                    val actualDceTaskProvider = when (type) {
-                        KotlinJsBinaryType.PRODUCTION -> dceTaskProvider
-                        KotlinJsBinaryType.DEVELOPMENT -> devDceTaskProvider
-                    }
-
-                    it.entryProperty.set(
-                        actualDceTaskProvider.map {
-                            it.destinationDir
-                                .resolve(compileKotlinTask.outputFile.name)
-                        }
-                    )
-
-                    it.resolveFromModulesFirst = true
-
-                    commonRunConfigurations.forEach { configure ->
-                        it.configure()
-                    }
                 }
 
                 if (type == KotlinJsBinaryType.DEVELOPMENT) {
@@ -162,8 +144,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     ) {
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-
-        val compileKotlinTask = compilation.compileKotlinTask
 
         val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
 
@@ -190,9 +170,15 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                     )
                 ) {
+                    it.commonConfigure(
+                        compilation = compilation,
+                        dceTaskProvider = dceTaskProvider,
+                        devDceTaskProvider = devDceTaskProvider,
+                        type = type,
+                        nodeJs = nodeJs
+                    )
+
                     it.dependsOn(
-                        nodeJs.npmInstallTask,
-                        processResourcesTask,
                         distributeResourcesTask
                     )
 
@@ -201,24 +187,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     it.compilation = compilation
                     it.description = "build webpack ${type.name.toLowerCase()} bundle"
                     it._destinationDirectory = distribution.directory
-
-                    val actualDceTaskProvider = when (type) {
-                        KotlinJsBinaryType.PRODUCTION -> dceTaskProvider
-                        KotlinJsBinaryType.DEVELOPMENT -> devDceTaskProvider
-                    }
-
-                    it.entryProperty.set(
-                        actualDceTaskProvider.map {
-                            it.destinationDir
-                                .resolve(compileKotlinTask.outputFile.name)
-                        }
-                    )
-
-                    it.resolveFromModulesFirst = true
-
-                    commonWebpackConfigurations.forEach { configure ->
-                        it.configure()
-                    }
                 }
 
                 if (type == KotlinJsBinaryType.PRODUCTION) {
@@ -236,6 +204,46 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     }
                 }
             }
+    }
+
+    private fun KotlinWebpack.commonConfigure(
+        compilation: KotlinJsCompilation,
+        dceTaskProvider: TaskProvider<KotlinJsDceTask>,
+        devDceTaskProvider: TaskProvider<KotlinJsDceTask>,
+        type: KotlinJsBinaryType,
+        nodeJs: NodeJsRootExtension
+    ) {
+        dependsOn(
+            nodeJs.npmInstallTask,
+            target.project.tasks.named(compilation.processResourcesTaskName)
+        )
+
+        configureOptimization(type)
+
+        devServer = KotlinWebpackConfig.DevServer(
+            open = true,
+            contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
+        )
+
+        outputs.upToDateWhen { false }
+
+        val actualDceTaskProvider = when (type) {
+            KotlinJsBinaryType.PRODUCTION -> dceTaskProvider
+            KotlinJsBinaryType.DEVELOPMENT -> devDceTaskProvider
+        }
+
+        entryProperty.set(
+            actualDceTaskProvider.map {
+                it.destinationDir
+                    .resolve(compilation.compileKotlinTask.outputFile.name)
+            }
+        )
+
+        resolveFromModulesFirst = true
+
+        commonRunConfigurations.forEach { configure ->
+            configure()
+        }
     }
 
     private fun configureDce(
