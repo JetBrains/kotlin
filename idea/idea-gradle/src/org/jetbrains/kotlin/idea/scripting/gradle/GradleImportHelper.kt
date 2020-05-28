@@ -34,11 +34,28 @@ fun runPartialGradleImport(project: Project) {
 fun getMissingConfigurationNotificationText() = KotlinIdeaGradleBundle.message("script.configurations.will.be.available.after.import")
 fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.label.import.project")
 
+fun autoReloadScriptConfigurations(project: Project): Boolean {
+    val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
+    val projectSettings = gradleSettings.getLinkedProjectsSettings()
+        .filterIsInstance<GradleProjectSettings>()
+        .firstOrNull()
+    if (projectSettings != null) {
+        return projectSettings.isUseAutoImport
+    }
+
+    return false
+}
+
 private const val kotlinDslNotificationGroupId = "Gradle Kotlin DSL Scripts"
 private var Project.notificationPanel: ScriptConfigurationChangedNotification?
         by UserDataProperty<Project, ScriptConfigurationChangedNotification>(Key.create("load.script.configuration.panel"))
 
-fun showNotificationForProjectImport(project: Project) {
+fun scriptConfigurationsNeedToBeUpdated(project: Project) {
+    if (autoReloadScriptConfigurations(project)) {
+        // import should be run automatically by Gradle plugin
+        return
+    }
+
     val existingPanel = project.notificationPanel
     if (existingPanel != null) {
         return
@@ -56,7 +73,7 @@ fun showNotificationForProjectImport(project: Project) {
     notification.notify(project)
 }
 
-fun hideNotificationForProjectImport(project: Project): Boolean {
+fun scriptConfigurationsAreUpToDate(project: Project): Boolean {
     if (project.notificationPanel == null) return false
     project.notificationPanel?.expire()
     return true

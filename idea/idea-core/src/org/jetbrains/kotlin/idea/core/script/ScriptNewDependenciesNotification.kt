@@ -18,6 +18,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
 fun VirtualFile.removeScriptDependenciesNotificationPanel(project: Project) {
@@ -45,7 +46,7 @@ fun VirtualFile.addScriptDependenciesNotificationPanel(
             }
         }
 
-        val panel = NewScriptDependenciesNotificationPanel(onClick, compilationConfigurationResult, project)
+        val panel = NewScriptDependenciesNotificationPanel(onClick, compilationConfigurationResult, project, this@addScriptDependenciesNotificationPanel)
         notificationPanel = panel
         manager.addTopComponent(this, panel)
     }
@@ -81,7 +82,8 @@ private var FileEditor.notificationPanel: NewScriptDependenciesNotificationPanel
 private class NewScriptDependenciesNotificationPanel(
     val onClick: () -> Unit,
     val compilationConfigurationResult: ScriptCompilationConfigurationWrapper,
-    project: Project
+    project: Project,
+    file: VirtualFile
 ) : EditorNotificationPanel() {
 
     init {
@@ -92,7 +94,9 @@ private class NewScriptDependenciesNotificationPanel(
 
         createComponentActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.enable.auto.reload")) {
             onClick()
-            KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled = true
+
+            val scriptDefinition = file.findScriptDefinition(project) ?: return@createComponentActionLabel
+            KotlinScriptingSettings.getInstance(project).setAutoReloadConfigurations(scriptDefinition, true)
         }
     }
 

@@ -41,6 +41,11 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     open val isDefault = false
 
+    // Store IDE-related settings in script definition
+    var order: Int = Integer.MAX_VALUE
+    open val canAutoReloadScriptConfigurationsBeSwitchedOff: Boolean get() = true
+    open val canDefinitionBeSwitchedOff: Boolean get() = true
+
     abstract val baseClassType: KotlinType
     abstract val compilerOptions: Iterable<String>
     abstract val annotationsForSamWithReceivers: List<String>
@@ -59,7 +64,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         override val legacyDefinition: KotlinScriptDefinition
     ) : ScriptDefinition() {
 
-        override val compilationConfiguration by lazy {
+        override val compilationConfiguration: ScriptCompilationConfiguration by lazy {
             ScriptCompilationConfigurationFromDefinition(
                 hostConfiguration,
                 legacyDefinition
