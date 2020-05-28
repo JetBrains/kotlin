@@ -58,6 +58,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     private val functionsWithInlineClassReturnTypesMangled = state.functionsWithInlineClassReturnTypesMangled
     override val metadataVersion = state.metadataVersion
     private val jvmDefaultMode = state.jvmDefaultMode
+    private val approximator = state.typeApproximator
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
     override fun shouldSerializeFunction(descriptor: FunctionDescriptor): Boolean {
@@ -137,7 +138,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
         val localVariables = CodegenBinding.getLocalDelegatedProperties(codegenBinding, classAsmType) ?: return
 
         for (localVariable in localVariables) {
-            val propertyDescriptor = createFreeFakeLocalPropertyDescriptor(localVariable)
+            val propertyDescriptor = createFreeFakeLocalPropertyDescriptor(localVariable, approximator)
             val serializer = DescriptorSerializer.createForLambda(this)
             proto.addExtension(extension, serializer.propertyProto(propertyDescriptor)?.build() ?: continue)
         }

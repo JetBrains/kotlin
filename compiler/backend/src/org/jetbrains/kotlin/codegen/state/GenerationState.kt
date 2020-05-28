@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
@@ -284,6 +285,12 @@ class GenerationState private constructor(
     val globalSerializationBindings = JvmSerializationBindings()
     lateinit var irBasedMapAsmMethod: (FunctionDescriptor) -> Method
     var mapInlineClass: (ClassDescriptor) -> Type = { descriptor -> typeMapper.mapType(descriptor.defaultType) }
+
+    val typeApproximator: TypeApproximator? =
+        if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
+            TypeApproximator(module.builtIns)
+        else
+            null
 
     init {
         this.interceptedBuilderFactory = builderFactory

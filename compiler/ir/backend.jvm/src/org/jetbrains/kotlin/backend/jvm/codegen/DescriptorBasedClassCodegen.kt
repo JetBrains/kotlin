@@ -87,7 +87,7 @@ class DescriptorBasedClassCodegen internal constructor(
                 }
             }
             is MetadataSource.Function -> {
-                val fakeDescriptor = createFreeFakeLambdaDescriptor(metadata.descriptor)
+                val fakeDescriptor = createFreeFakeLambdaDescriptor(metadata.descriptor, state.typeApproximator)
                 val functionProto = serializer!!.functionProto(fakeDescriptor)?.build()
                 writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, extraFlags) {
                     if (functionProto != null) {
