@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
@@ -87,7 +85,9 @@ class JvmSharedVariablesManager(
         val provider = getProvider(InlineClassAbi.unboxType(valueType) ?: valueType)
         val typeArguments = provider.refClass.typeParameters.map { valueType }
         val refType = provider.refClass.typeWith(typeArguments)
-        val refConstructorCall = IrConstructorCallImpl.fromSymbolOwner(refType, provider.refConstructor.symbol).apply {
+        val refConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
+            originalDeclaration.startOffset, originalDeclaration.startOffset, refType, provider.refConstructor.symbol
+        ).apply {
             typeArguments.forEachIndexed(::putTypeArgument)
         }
         return with(originalDeclaration) {
@@ -110,8 +110,8 @@ class JvmSharedVariablesManager(
             // The field is preinitialized to the default value, so an explicit set is not required.
             return sharedVariableDeclaration
         }
-        val initializationStatement = with(initializer) {
-            IrSetVariableImpl(startOffset, endOffset, irBuiltIns.unitType, originalDeclaration.symbol, this, null)
+        val initializationStatement = with (originalDeclaration) {
+            IrSetVariableImpl(startOffset, endOffset, irBuiltIns.unitType, symbol, initializer, null)
         }
         val sharedVariableInitialization = setSharedValue(sharedVariableDeclaration.symbol, initializationStatement)
         return with(originalDeclaration) {

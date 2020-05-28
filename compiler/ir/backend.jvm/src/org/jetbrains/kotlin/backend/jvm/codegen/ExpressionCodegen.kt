@@ -406,6 +406,8 @@ class ExpressionCodegen(
                 mv.dup()
             }
             expression is IrDelegatingConstructorCall -> {
+                expression.markLineNumber(startOffset = true)
+
                 // In this case the receiver is `this` (not specified in IR) and the return value is discarded anyway.
                 mv.load(0, OBJECT_TYPE)
 
@@ -502,13 +504,12 @@ class ExpressionCodegen(
         val varType = typeMapper.mapType(declaration)
         val index = frameMap.enter(declaration.symbol, varType)
 
-        declaration.markLineNumber(startOffset = true)
-
         val initializer = declaration.initializer
         if (initializer != null) {
             var value = initializer.accept(this, data)
             initializer.markLineNumber(startOffset = true)
             value.materializeAt(varType, declaration.type)
+            declaration.markLineNumber(startOffset = true)
             mv.store(index, varType)
         } else if (declaration.isVisibleInLVT) {
             pushDefaultValueOnStack(varType, mv)
@@ -569,6 +570,7 @@ class ExpressionCodegen(
                 value.materializeAt(fieldType, callee.type)
             }
 
+            expression.markLineNumber(startOffset = true)
             when {
                 isStatic -> mv.putstatic(ownerName, fieldName, fieldType.descriptor)
                 else -> mv.putfield(ownerName, fieldName, fieldType.descriptor)
