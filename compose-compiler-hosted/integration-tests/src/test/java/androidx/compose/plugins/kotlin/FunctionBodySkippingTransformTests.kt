@@ -92,7 +92,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   } else {
                     %composer.skipToGroupEnd()
                   }
-                }, %composer, <>, 0)
+                }, %composer, <>, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -143,7 +143,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   %composer.startReplaceableGroup(%key)
                   A(x, 0, %composer, <>, 0b0110 and %dirty, 0b0010)
                   %composer.endReplaceableGroup()
-                }, %composer, <>, 0)
+                }, %composer, <>, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -655,7 +655,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   } else {
                     %composer.skipToGroupEnd()
                   }
-                }, %composer, <>, 0)
+                }, %composer, <>, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -928,7 +928,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   } else {
                     %composer.skipToGroupEnd()
                   }
-                }, %composer, <>, 0b0110)
+                }, %composer, <>, 0b00011110)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -1267,11 +1267,14 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             operator fun Dp.plus(other: Dp): Dp = Dp(this.value + other.value)
             @Stable
             val Int.dp: Dp get() = Dp(this)
+            @Composable fun D(content: @Composable() () -> Unit) {}
         """,
         """
             // all of these should result in 0b0110
             @Composable fun A() {
                 val x = 123
+                D {}
+                C({})
                 C(stableFun(123))
                 C(16.dp + 10.dp)
                 C(Dp(16))
@@ -1299,6 +1302,17 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               %composer.startRestartGroup(%key)
               if (%changed !== 0 || !%composer.skipping) {
                 val x = 123
+                D(restartableFunction(%composer, <>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    Unit
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                }, %composer, <>, 0b0110)
+                C(remember({
+                  {
+                  }
+                }, %composer, <>, 0), %composer, <>, 0b0110)
                 C(stableFun(123), %composer, <>, 0b0110)
                 C(16.dp + 10.dp, %composer, <>, 0b0110)
                 C(Dp(16), %composer, <>, 0b0110)
@@ -1718,12 +1732,12 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                       } else {
                         %composer.skipToGroupEnd()
                       }
-                    }, %composer, <>, 0)
+                    }, %composer, <>, 0b0110)
                     B(x, y, 0, %composer, <>, 0b0110 and %dirty or 0b00011000 and %dirty shl 0b0010, 0b0100)
                   } else {
                     %composer.skipToGroupEnd()
                   }
-                }, %composer, <>, 0)
+                }, %composer, <>, 0b0110)
                 B(x, 0, 0, %composer, <>, 0b0110 and %dirty, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
