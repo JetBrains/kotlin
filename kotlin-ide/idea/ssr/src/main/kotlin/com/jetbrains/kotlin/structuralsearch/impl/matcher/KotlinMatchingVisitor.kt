@@ -630,8 +630,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             }
             else -> {
                 myMatchingVisitor.result = myMatchingVisitor.matchText(
-                    StructuralSearchUtil.normalize(KotlinMatchUtil.getCommentText(comment)),
-                    StructuralSearchUtil.normalize(KotlinMatchUtil.getCommentText(other))
+                    StructuralSearchUtil.normalize(getCommentText(comment)),
+                    StructuralSearchUtil.normalize(getCommentText(other))
                 )
             }
         }

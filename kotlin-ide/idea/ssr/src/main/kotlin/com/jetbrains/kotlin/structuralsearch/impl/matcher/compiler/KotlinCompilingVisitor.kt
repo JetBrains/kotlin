@@ -11,9 +11,9 @@ import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
 import com.intellij.structuralsearch.impl.matcher.handlers.MatchingHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinMatchUtil
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
+import com.jetbrains.kotlin.structuralsearch.impl.matcher.getCommentText
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.handlers.DeclarationHandler
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
@@ -125,7 +125,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitComment(comment: PsiComment) {
         super.visitComment(comment)
-        val text = KotlinMatchUtil.getCommentText(comment).trim()
+        val text = getCommentText(comment).trim()
 
         if (ourSubstitutionPattern.matcher(text).find()) {
             myCompilingVisitor.processPatternStringWithFragments(comment.text, COMMENT, ourSubstitutionPattern)?.let {
