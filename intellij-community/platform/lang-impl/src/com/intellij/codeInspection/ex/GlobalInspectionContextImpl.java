@@ -57,7 +57,7 @@ import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
@@ -264,18 +264,19 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
     final boolean headlessEnvironment = ApplicationManager.getApplication().isHeadlessEnvironment();
     final Map<String, InspectionToolWrapper> map = getInspectionWrappersMap(localTools);
 
-    final BlockingQueue<PsiFile> filesToInspect = new ArrayBlockingQueue<>(1000);
+    final BlockingQueue<VirtualFile> filesToInspect = new ArrayBlockingQueue<>(1000);
     // use original progress indicator here since we don't want it to cancel on write action start
     ProgressIndicator iteratingIndicator = new SensitiveProgressWrapper(progressIndicator);
     Future<?> future = startIterateScopeInBackground(scope, localScopeFiles, headlessEnvironment, filesToInspect, iteratingIndicator);
 
-    Processor<PsiFile> processor = file -> {
+    PsiManager psiManager = PsiManager.getInstance(getProject());
+    Processor<VirtualFile> processor = virtualFile -> {
       ProgressManager.checkCanceled();
+      PsiFile file = ReadAction.compute(() -> psiManager.findFile(virtualFile));
+      if (file == null) {
+        return true;
+      }
       Boolean readActionSuccess = DumbService.getInstance(getProject()).tryRunReadActionInSmartMode(() -> {
-        if (!file.isValid()) {
-          return true;
-        }
-        VirtualFile virtualFile = file.getVirtualFile();
         if (!scope.contains(virtualFile)) {
           LOG.info(file.getName() + "; scope: " + scope + "; " + virtualFile);
           return true;
@@ -304,7 +305,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
       return true;
     };
     try {
-      final Queue<PsiFile> filesFailedToInspect = new LinkedBlockingQueue<>();
+      final Queue<VirtualFile> filesFailedToInspect = new LinkedBlockingQueue<>();
       while (true) {
         Disposable disposable = Disposer.newDisposable();
         ProgressIndicator wrapper = new DaemonProgressIndicator();
@@ -438,12 +439,12 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
     return profile.getSingleTool() != null;
   }
 
-  private static final PsiFile TOMBSTONE = PsiUtilCore.NULL_PSI_FILE;
+  private static final VirtualFile TOMBSTONE = new LightVirtualFile("TOMBSTONE");
 
   private @NotNull Future<?> startIterateScopeInBackground(final @NotNull AnalysisScope scope,
                                                            final @Nullable Collection<? super VirtualFile> localScopeFiles,
                                                            final boolean headlessEnvironment,
-                                                           final @NotNull BlockingQueue<? super PsiFile> outFilesToInspect,
+                                                           final @NotNull BlockingQueue<? super VirtualFile> outFilesToInspect,
                                                            final @NotNull ProgressIndicator progressIndicator) {
     Task.Backgroundable task = new Task.Backgroundable(getProject(), InspectionsBundle.message("scanning.files.to.inspect.progress.text")) {
       @Override
@@ -469,7 +470,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
                 if (ApplicationManager.getApplication().isReadAccessAllowed()) {
                   throw new IllegalStateException("Must not have read action");
                 }
-                outFilesToInspect.put(psiFile);
+                outFilesToInspect.put(file);
               }
               catch (InterruptedException e) {
                 LOG.error(e);
