@@ -198,7 +198,13 @@ public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, Disp
     new ColorDescriptor(OptionsBundle.message("options.language.defaults.doc.guide"),
                         DefaultLanguageHighlighterColors.DOC_COMMENT_GUIDE, ColorDescriptor.Kind.FOREGROUND),
     new ColorDescriptor(OptionsBundle.message("options.language.defaults.doc.link"),
-                        DefaultLanguageHighlighterColors.DOC_COMMENT_LINK, ColorDescriptor.Kind.FOREGROUND)
+                        DefaultLanguageHighlighterColors.DOC_COMMENT_LINK, ColorDescriptor.Kind.FOREGROUND),
+    new ColorDescriptor(OptionsBundle.message("options.java.attribute.descriptor.inline.parameter.hint.default"),
+                        DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_DEFAULT, ColorDescriptor.Kind.BACKGROUND_WITH_TRANSPARENCY),
+    new ColorDescriptor(OptionsBundle.message("options.java.attribute.descriptor.inline.parameter.hint.focused"),
+                        DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_FOCUSED, ColorDescriptor.Kind.BACKGROUND_WITH_TRANSPARENCY),
+    new ColorDescriptor(OptionsBundle.message("options.java.attribute.descriptor.inline.parameter.hint.hovered"),
+                                            DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_HOVERED, ColorDescriptor.Kind.BACKGROUND_WITH_TRANSPARENCY),
   };
 
   @Nullable
