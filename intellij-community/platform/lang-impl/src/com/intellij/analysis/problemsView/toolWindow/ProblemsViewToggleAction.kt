@@ -8,9 +8,6 @@ import java.util.function.Function
 
 internal class AutoscrollToSource : ProblemsViewToggleAction({ it.autoscrollToSource })
 internal class ShowPreview : ProblemsViewToggleAction({ it.showPreview })
-internal class ShowErrors : ProblemsViewToggleAction({ it.showErrors })
-internal class ShowWarnings : ProblemsViewToggleAction({ it.showWarnings })
-internal class ShowInformation : ProblemsViewToggleAction({ it.showInformation })
 internal class SortFoldersFirst : ProblemsViewToggleAction({ it.sortFoldersFirst })
 internal class SortBySeverity : ProblemsViewToggleAction({ it.sortBySeverity })
 internal class SortByName : ProblemsViewToggleAction({ it.sortByName })

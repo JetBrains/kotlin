@@ -2,10 +2,13 @@
 package com.intellij.analysis.problemsView.toolWindow
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
+import com.intellij.codeInsight.daemon.impl.SeverityRegistrar.getSeverityRegistrar
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option
 import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.profile.codeInspection.ui.SingleInspectionProfilePanel.renderSeverity
 import com.intellij.util.ui.tree.TreeUtil.promiseSelectFirstLeaf
 
 internal class HighlightingPanel(project: Project, state: ProblemsViewState)
@@ -18,7 +21,6 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
   }
 
   override fun getDisplayName() = ProblemsViewBundle.message("problems.view.highlighting")
-  override fun getShowErrors(): Option? = null
   override fun getSortFoldersFirst(): Option? = null
 
   override fun selectionChangedTo(selected: Boolean) {
@@ -58,4 +60,8 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
     val textEditor = fileEditor as? TextEditor ?: return null
     return FileDocumentManager.getInstance().getFile(textEditor.editor.document)
   }
+
+  override fun getSeverityFilters() = getSeverityRegistrar(project).allSeverities.reversed()
+    .filter { it != HighlightSeverity.INFO && it > HighlightSeverity.INFORMATION && it < HighlightSeverity.ERROR }
+    .map { Pair(ProblemsViewBundle.message("problems.view.highlighting.severity.show", renderSeverity(it)), it.myVal) }
 }

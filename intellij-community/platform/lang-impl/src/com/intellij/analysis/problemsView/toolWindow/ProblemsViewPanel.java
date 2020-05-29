@@ -29,13 +29,14 @@ import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.function.Predicate;
 
 import static com.intellij.openapi.application.ApplicationManager.getApplication;
 import static com.intellij.openapi.application.ModalityState.stateForComponent;
@@ -44,6 +45,7 @@ import static com.intellij.ui.ColorUtil.toHtmlColor;
 import static com.intellij.ui.ScrollPaneFactory.createScrollPane;
 import static com.intellij.ui.scale.JBUIScale.scale;
 import static com.intellij.util.OpenSourceUtil.navigate;
+import static java.util.Collections.emptyList;
 import static javax.swing.tree.TreeSelectionModel.SINGLE_TREE_SELECTION;
 
 abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable, DataProvider {
@@ -92,42 +94,6 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
       updatePreview(getSelectedDescriptor());
     }
   };
-  private final Option myShowErrors = new Option() {
-    @Override
-    public boolean isSelected() {
-      return myState.getShowErrors();
-    }
-
-    @Override
-    public void setSelected(boolean selected) {
-      myState.setShowErrors(selected);
-      myTreeModel.setFilter(createFilter());
-    }
-  };
-  private final Option myShowWarnings = new Option() {
-    @Override
-    public boolean isSelected() {
-      return myState.getShowWarnings();
-    }
-
-    @Override
-    public void setSelected(boolean selected) {
-      myState.setShowWarnings(selected);
-      myTreeModel.setFilter(createFilter());
-    }
-  };
-  private final Option myShowInformation = new Option() {
-    @Override
-    public boolean isSelected() {
-      return myState.getShowInformation();
-    }
-
-    @Override
-    public void setSelected(boolean selected) {
-      myState.setShowInformation(selected);
-      myTreeModel.setFilter(createFilter());
-    }
-  };
   private final Option mySortFoldersFirst = new Option() {
     @Override
     public boolean isSelected() {
@@ -171,7 +137,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     myState = state;
 
     myTreeModel.setComparator(createComparator());
-    myTreeModel.setFilter(createFilter());
+    myTreeModel.setFilter(new SeverityFilter(state));
     myTree = new Tree(new AsyncTreeModel(myTreeModel, this));
     myTree.setRootVisible(false);
     myTree.getSelectionModel().setSelectionMode(SINGLE_TREE_SELECTION);
@@ -261,6 +227,10 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     return myProject;
   }
 
+  final @NotNull ProblemsViewState getState() {
+    return myState;
+  }
+
   final @NotNull ProblemsTreeModel getTreeModel() {
     return myTreeModel;
   }
@@ -282,7 +252,6 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   void selectionChangedTo(boolean selected) {
     if (selected) {
       myTreeModel.setComparator(createComparator());
-      myTreeModel.setFilter(createFilter());
       updatePreview(getSelectedDescriptor());
 
       ToolWindow window = ProblemsView.getToolWindow(getProject());
@@ -355,11 +324,8 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
       isNotNullAndSelected(getSortByName()));
   }
 
-  @NotNull Predicate<Node> createFilter() {
-    return new NodeFilter(
-      isNullableOrSelected(getShowErrors()),
-      isNotNullAndSelected(getShowWarnings()),
-      isNotNullAndSelected(getShowInformation()));
+  @NotNull Collection<Pair<String, Integer>> getSeverityFilters() {
+    return emptyList();
   }
 
   @Nullable Option getAutoscrollToSource() {
@@ -368,18 +334,6 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
 
   @Nullable Option getShowPreview() {
     return myShowPreview;
-  }
-
-  @Nullable Option getShowErrors() {
-    return myShowErrors;
-  }
-
-  @Nullable Option getShowWarnings() {
-    return myShowWarnings;
-  }
-
-  @Nullable Option getShowInformation() {
-    return myShowInformation;
   }
 
   @Nullable Option getSortFoldersFirst() {

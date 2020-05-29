@@ -26,9 +26,6 @@ internal class ProjectErrorsPanel(project: Project, state: ProblemsViewState)
   }
 
   override fun getDisplayName() = ProblemsViewBundle.message("problems.view.project")
-  override fun getShowErrors(): Option? = null
-  override fun getShowWarnings(): Option? = null
-  override fun getShowInformation(): Option? = null
   override fun getSortFoldersFirst(): Option? = null
   override fun getSortBySeverity(): Option? = null
 
