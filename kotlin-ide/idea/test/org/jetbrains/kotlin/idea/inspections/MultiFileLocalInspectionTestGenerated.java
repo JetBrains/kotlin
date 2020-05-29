@@ -96,6 +96,21 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
         runTest("testData/multiFileLocalInspections/redundantQualifierName/javaStatic/fromKotlinTest.test");
     }
 
+    @TestMetadata("redundantQualifierName/unnecessaryNonDirectParentClassQualifier/fromKotlinTest.test")
+    public void testRedundantQualifierName_unnecessaryNonDirectParentClassQualifier_FromKotlinTest() throws Exception {
+        runTest("testData/multiFileLocalInspections/redundantQualifierName/unnecessaryNonDirectParentClassQualifier/fromKotlinTest.test");
+    }
+
+    @TestMetadata("redundantQualifierName/unnecessaryNonDirectParentClassQualifierAmbiguous/fromKotlinTest.test")
+    public void testRedundantQualifierName_unnecessaryNonDirectParentClassQualifierAmbiguous_FromKotlinTest() throws Exception {
+        runTest("testData/multiFileLocalInspections/redundantQualifierName/unnecessaryNonDirectParentClassQualifierAmbiguous/fromKotlinTest.test");
+    }
+
+    @TestMetadata("redundantQualifierName/unnecessaryNonDirectParentClassQualifierDisabled/fromKotlinTest.test")
+    public void testRedundantQualifierName_unnecessaryNonDirectParentClassQualifierDisabled_FromKotlinTest() throws Exception {
+        runTest("testData/multiFileLocalInspections/redundantQualifierName/unnecessaryNonDirectParentClassQualifierDisabled/fromKotlinTest.test");
+    }
+
     @TestMetadata("unusedSymbol/fromKotlinTestClass/fromKotlinTestClass.test")
     public void testUnusedSymbol_fromKotlinTestClass_FromKotlinTestClass() throws Exception {
         runTest("testData/multiFileLocalInspections/unusedSymbol/fromKotlinTestClass/fromKotlinTestClass.test");
