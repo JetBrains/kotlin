@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.knownBuiltins
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
@@ -162,6 +163,8 @@ fun generateKLib(
     val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, expectDescriptorToSymbol)
 
     moduleFragment.acceptVoid(ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc)))
+    val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
+    irLinker.modules.forEach{ fakeOverrideChecker.check(it) }
 
     val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
 
@@ -230,6 +233,10 @@ fun loadIr(
             // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
             val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
             moduleFragment.acceptVoid(mangleChecker)
+
+            val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
+            irLinker.modules.forEach{ fakeOverrideChecker.check(it) }
+
             irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
 
             return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker)
