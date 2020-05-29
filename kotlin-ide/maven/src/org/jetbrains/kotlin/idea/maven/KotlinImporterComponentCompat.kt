@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.idea.maven
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 
-// BUNCH: 192
+// FIX ME WHEN BUNCH 192 REMOVED
 internal val Module.kotlinImporterComponent: KotlinImporterComponent
     get() = this.getServiceSafe()

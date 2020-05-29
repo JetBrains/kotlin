@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.move.MoveHandlerDelegate
 
-// BUNCH: 191
+// FIX ME WHEN BUNCH 191 REMOVED
 internal fun MoveHandlerDelegate.canMoveCompat(
     elements: Array<out PsiElement>,
     targetContainer: PsiElement?,

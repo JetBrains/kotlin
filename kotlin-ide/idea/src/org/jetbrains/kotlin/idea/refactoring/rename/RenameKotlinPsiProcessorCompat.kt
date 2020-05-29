@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.ArrayList
 import kotlin.collections.*
 
-// BUNCH 191
+// FIX ME WHEN BUNCH 191 REMOVED
 abstract class RenameKotlinPsiProcessorCompat : RenamePsiElementProcessor() {
     class MangledJavaRefUsageInfo(
         val manglingSuffix: String,

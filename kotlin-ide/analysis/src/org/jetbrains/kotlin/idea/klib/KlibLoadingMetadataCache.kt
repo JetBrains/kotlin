@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.klib
 
 import com.intellij.openapi.application.ApplicationManager
 
-// BUNCH: 192
+// FIX ME WHEN BUNCH 192 REMOVED
 class KlibLoadingMetadataCache : KlibLoadingMetadataCacheCompat() {
 
     companion object {

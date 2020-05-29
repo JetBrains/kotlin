@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.search.or
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.psi.KtParameter
 
-// BUNCH: 191
+// FIX ME WHEN BUNCH 191 REMOVED
 
 internal fun KtParameter.findReferences(renamer: RenamePsiElementProcessor): MutableCollection<PsiReference> {
     val searchScope = this.project.projectScope() or this.useScope

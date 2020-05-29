@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import java.io.IOException
 import java.util.*
 
-// BUNCH: 192
+// FIX ME WHEN BUNCH 192 REMOVED
 abstract class KlibLoadingMetadataCacheCompat {
 
     // Use special CacheKey class instead of VirtualFile for cache keys. Certain types of VirtualFiles (for example, obtained from JarFileSystem)

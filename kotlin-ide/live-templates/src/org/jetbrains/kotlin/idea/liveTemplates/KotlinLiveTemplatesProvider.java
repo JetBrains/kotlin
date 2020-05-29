@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.liveTemplates;
 
 import com.intellij.codeInsight.template.impl.DefaultLiveTemplatesProvider;
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 public class KotlinLiveTemplatesProvider implements DefaultLiveTemplatesProvider {
     @Override
     public String[] getDefaultLiveTemplateFiles() {

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.caches
 import com.intellij.psi.PsiMethod
 import com.intellij.util.Processor
 
-// BUNCH 193
+// FIX ME WHEN BUNCH 193 REMOVED
 typealias StringProcessor = Processor<in String>
 typealias PsiMethodProcessor = Processor<in PsiMethod>
 

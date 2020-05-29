@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 
-// BUNCH 191
+// FIX ME WHEN BUNCH 191 REMOVED
 class RenameKotlinFunctionProcessor : RenameKotlinFunctionProcessorCompat() {
 
     override fun findReferences(

@@ -9,7 +9,7 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 fun setTemplateTestingCompat(project: Project, disposable: Disposable) {
     TemplateManagerImpl.setTemplateTesting(disposable)
 }

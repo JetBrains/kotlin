@@ -15,7 +15,7 @@ import com.intellij.testFramework.PlatformTestUtil;
 import org.jetbrains.concurrency.Promise;
 import java.util.Arrays;
 
-//BUNCH: 192
+//FIX ME WHEN BUNCH 192 REMOVED
 class ExternalSystemTestCaseBunch {
 
     protected static boolean isDefaultRefreshCallback(Object callback) {
