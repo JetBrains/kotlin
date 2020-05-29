@@ -23,9 +23,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -157,15 +155,13 @@ public abstract class CallerChooserBase<M extends PsiElement> extends DialogWrap
     final PsiElement callee = parentNode != null ? parentNode.getElementToSearch() : null;
     if (caller != null && caller.isPhysical() && callee != null) {
       HighlightManager highlighter = HighlightManager.getInstance(myProject);
-      EditorColorsManager colorManager = EditorColorsManager.getInstance();
-      TextAttributes attributes = colorManager.getGlobalScheme().getAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
       int start = getStartOffset(caller);
       InjectedLanguageManager injectedLanguageManager = InjectedLanguageManager.getInstance(myProject);
       for (PsiElement element : findElementsToHighlight(caller, callee)) {
         TextRange textRange = element.getTextRange();
         textRange = injectedLanguageManager.injectedToHost(element, textRange);
-        highlighter.addRangeHighlight(myCallerEditor, textRange.getStartOffset() - start,
-                                      textRange.getEndOffset() - start, attributes, false, null);
+        highlighter.addRangeHighlight(myCallerEditor, textRange.getStartOffset() - start, textRange.getEndOffset() - start, 
+                                      EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES, false, null);
       }
     }
   }
@@ -257,7 +253,7 @@ public abstract class CallerChooserBase<M extends PsiElement> extends DialogWrap
                                     int row,
                                     boolean hasFocus) {
         if (value instanceof MemberNodeBase) {
-          ((MemberNodeBase)value).customizeRenderer(getTextRenderer());
+          ((MemberNodeBase<?>)value).customizeRenderer(getTextRenderer());
         }
       }
     };
