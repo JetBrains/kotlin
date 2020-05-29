@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses -MangleClassMembersReturningInlineClasses
-// IGNORE_BACKEND: JVM_IR
 
 inline class S(val x: String)
 

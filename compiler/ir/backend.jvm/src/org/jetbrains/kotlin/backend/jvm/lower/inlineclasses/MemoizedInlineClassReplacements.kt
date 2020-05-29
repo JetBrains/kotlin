@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.
  */
-class MemoizedInlineClassReplacements {
+class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean) {
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
     private val propertyMap = mutableMapOf<IrPropertySymbol, IrProperty>()
 
@@ -55,7 +54,7 @@ class MemoizedInlineClassReplacements {
                     createStaticReplacement(it)
 
                 // Otherwise, mangle functions with mangled parameters, ignoring constructors
-                it is IrSimpleFunction && (it.hasMangledParameters || it.hasMangledReturnType) ->
+                it is IrSimpleFunction && (it.hasMangledParameters || mangleReturnTypes && it.hasMangledReturnType) ->
                     if (it.dispatchReceiverParameter != null) createMethodReplacement(it) else createStaticReplacement(it)
 
                 else ->
@@ -190,7 +189,7 @@ class MemoizedInlineClassReplacements {
         if (noFakeOverride) {
             isFakeOverride = false
         }
-        name = mangledNameFor(function)
+        name = mangledNameFor(function, mangleReturnTypes)
         returnType = function.returnType
     }.apply {
         parent = function.parent
