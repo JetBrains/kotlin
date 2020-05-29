@@ -181,9 +181,6 @@ final class PassExecutorService implements Disposable {
     for (ScheduledPass freePass : freePasses) {
       submit(freePass);
     }
-    if (LOG.isTraceEnabled()) {
-      LOG.trace("PassExecutorService.submitPasses("+ContainerUtil.map(toBeSubmitted.keySet(), fe->fe.getFile() == null ? null : fe.getFile().getName())+")");
-    }
   }
 
   private static void checkUniquePassId(int id,
