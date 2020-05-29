@@ -18,6 +18,7 @@ package com.intellij.refactoring.actions;
 import com.intellij.ide.actions.CopyElementAction;
 import com.intellij.ide.actions.QuickSwitchSchemeAction;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.impl.ActionManagerImpl;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -39,7 +40,7 @@ public class RefactoringQuickListPopupAction extends QuickSwitchSchemeAction {
       return;
     }
 
-    final ActionManager actionManager = ActionManager.getInstance();
+    final ActionManagerImpl actionManager = (ActionManagerImpl) ActionManager.getInstance();
     final AnAction action = actionManager.getAction(IdeActions.GROUP_REFACTOR);
     collectEnabledChildren(action, group, dataContext, actionManager, false);
   }
@@ -47,7 +48,7 @@ public class RefactoringQuickListPopupAction extends QuickSwitchSchemeAction {
   private static void collectEnabledChildren(AnAction action,
                                              @NotNull DefaultActionGroup destinationGroup,
                                              @NotNull DataContext dataContext,
-                                             @NotNull ActionManager actionManager,
+                                             @NotNull ActionManagerImpl actionManager,
                                              boolean popup) {
     if (action instanceof DefaultActionGroup) {
       final AnAction[] children = ((DefaultActionGroup)action).getChildren(null);
@@ -65,8 +66,7 @@ public class RefactoringQuickListPopupAction extends QuickSwitchSchemeAction {
           destinationGroup.add(child);
         }
         else {
-          if (child instanceof BaseRefactoringAction && ((BaseRefactoringAction)child).hasAvailableHandler(dataContext) ||
-              child instanceof CopyElementAction) {
+          if (isRefactoringAction(child, dataContext, actionManager)) {
             final Presentation presentation = new Presentation();
             final AnActionEvent event = new AnActionEvent(null, dataContext, ActionPlaces.REFACTORING_QUICKLIST, presentation, actionManager, 0);
             event.setInjectedContext(child.isInInjectedContext());
@@ -78,6 +78,17 @@ public class RefactoringQuickListPopupAction extends QuickSwitchSchemeAction {
         }
       }
     }
+  }
+
+  private static boolean isRefactoringAction(AnAction child, DataContext dataContext, ActionManagerImpl actionManager) {
+    if (child instanceof BaseRefactoringAction && ((BaseRefactoringAction)child).hasAvailableHandler(dataContext) ||
+        child instanceof CopyElementAction) {
+      return true;
+    }
+
+    return child instanceof OverridingAction &&
+           (actionManager.getBaseAction((OverridingAction)child) instanceof BaseRefactoringAction ||
+            actionManager.getBaseAction((OverridingAction)child) instanceof CopyElementAction);
   }
 
 
