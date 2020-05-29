@@ -15,9 +15,8 @@ class PerfTestBuilder<SV, TV> {
     private var setUp: (TestData<SV, TV>) -> Unit = { }
     private lateinit var test: (TestData<SV, TV>) -> Unit
     private var tearDown: (TestData<SV, TV>) -> Unit = { }
-    private var profilerEnabled: Boolean = false
     private var checkStability: Boolean = true
-    private var profilerConfig: ProfilerConfig = ProfilerConfig()
+    internal var profilerConfig: ProfilerConfig = ProfilerConfig()
 
     internal fun run() {
         stats.perfTest(
@@ -27,7 +26,6 @@ class PerfTestBuilder<SV, TV> {
             setUp = setUp,
             test = test,
             tearDown = tearDown,
-            profilerEnabled = profilerEnabled,
             checkStability = checkStability
         )
     }
@@ -58,10 +56,6 @@ class PerfTestBuilder<SV, TV> {
 
     fun tearDown(tearDown: (TestData<SV, TV>) -> Unit) {
         this.tearDown = tearDown
-    }
-
-    fun profilerEnabled(profilerEnabled: Boolean) {
-        this.profilerEnabled = profilerEnabled
     }
 
     fun profilerConfig(profilerConfig: ProfilerConfig) {

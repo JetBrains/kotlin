@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.idea.perf.profilers.yk
 
 import org.jetbrains.kotlin.idea.perf.profilers.ProfilerConfig
 import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler
+import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler.Companion.determinePhasePath
 import org.jetbrains.kotlin.idea.perf.profilers.doOrThrow
 import org.jetbrains.kotlin.idea.perf.util.logMessage
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.lang.management.ManagementFactory
 import java.lang.reflect.Method
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 
 /**
@@ -19,9 +23,10 @@ import java.nio.file.Paths
  * - ${YOURKIT_PROFILER_HOME}/lib/yjp-controller-api-redist.jar has to be in a classpath
  * - add agentpath vm paramter like `-agentpath:${YOURKIT_PROFILER_HOME}/Resources/bin/mac/libyjpagent.dylib`
  */
-class YKProfilerHandler : ProfilerHandler {
+class YKProfilerHandler(val profilerConfig: ProfilerConfig) : ProfilerHandler {
 
     private var controller: Any
+    lateinit var phasePath: Path
 
     init {
         check(ManagementFactory.getRuntimeMXBean().inputArguments.any { it.contains("yjpagent") }) {
@@ -33,20 +38,28 @@ class YKProfilerHandler : ProfilerHandler {
         }
     }
 
-    override fun startProfiling(activityName: String, config: ProfilerConfig) {
-        if (config.tracing)
-            startTracingMethod.invoke(controller, null)
-        else
-            startCPUSamplingMethod.invoke(controller, null)
+    override fun startProfiling() {
+        try {
+            if (profilerConfig.tracing) {
+                startTracingMethod.invoke(controller, null)
+            } else {
+                startSamplingMethod.invoke(controller, null)
+            }
+        } catch (e: Exception) {
+            val stringWriter = StringWriter().also { e.printStackTrace(PrintWriter(it)) }
+            logMessage { "exception while starting profile ${e.localizedMessage} $stringWriter" }
+        }
     }
 
-    override fun stopProfiling(snapshotsPath: String, activityName: String, config: ProfilerConfig) {
-        val dumpPath = captureSnapshotMethod.invoke(controller, SNAPSHOT_WITHOUT_HEAP) as String
-        stopCPUProfilingMethod.invoke(controller)
-        val path = Paths.get(dumpPath)
-        val target = path.parent.resolve(snapshotsPath).resolve(activityName)
-        logMessage { "dump is moved to $target" }
-        Files.move(path, target)
+    override fun stopProfiling(attempt: Int) {
+        val pathToSnapshot = captureSnapshotMethod.invoke(controller, SNAPSHOT_WITHOUT_HEAP) as String
+        stopCpuProfilingMethod.invoke(controller)
+        val dumpPath = Paths.get(pathToSnapshot)
+        if (!this::phasePath.isInitialized)
+            phasePath = determinePhasePath(dumpPath, profilerConfig)
+        val targetFile = phasePath.resolve("$attempt-${profilerConfig.name}.snapshot")
+        logMessage { "dump is moved to $targetFile" }
+        Files.move(dumpPath, targetFile)
     }
 
     companion object {
@@ -55,9 +68,9 @@ class YKProfilerHandler : ProfilerHandler {
         private val ykLibClass: Class<*> = doOrThrow("yjp-controller-api-redist.jar is not in a classpath") {
             Class.forName("com.yourkit.api.Controller")
         }
-        private val startCPUSamplingMethod: Method = doOrThrow("com.yourkit.api.Controller#startCPUSampling(String) not found") {
+        private val startSamplingMethod: Method = doOrThrow("com.yourkit.api.Controller#startSampling(String) not found") {
             ykLibClass.getMethod(
-                "startCPUSampling",
+                "startSampling",
                 String::class.java
             )
         }
@@ -74,12 +87,13 @@ class YKProfilerHandler : ProfilerHandler {
             )
         }
 
-        private val capturePerformanceSnapshotMethod: Method = doOrThrow("com.yourkit.api.Controller#capturePerformanceSnapshot() not found") {
-            ykLibClass.getMethod("capturePerformanceSnapshot")
-        }
+        private val capturePerformanceSnapshotMethod: Method =
+            doOrThrow("com.yourkit.api.Controller#capturePerformanceSnapshot() not found") {
+                ykLibClass.getMethod("capturePerformanceSnapshot")
+            }
 
-        private val stopCPUProfilingMethod: Method = doOrThrow("com.yourkit.api.Controller#stopCPUProfiling() not found") {
-            ykLibClass.getMethod("stopCPUProfiling")
+        private val stopCpuProfilingMethod: Method = doOrThrow("com.yourkit.api.Controller#stopCPUProfiling() not found") {
+            ykLibClass.getMethod("stopCpuProfiling")
         }
     }
 }
