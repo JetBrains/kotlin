@@ -141,7 +141,7 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
         val initialTypeName = expressionTypeAsPrimitive.jvmPrimitiveType.javaKeywordName.capitalize()
         val conversionFunctionName = "to${toTypeAsPrimitive.jvmPrimitiveType.javaKeywordName.capitalize()}"
         return JKQualifiedExpression(
-            copyTreeAndDetach(),
+            copyTreeAndDetach().parenthesizeIfBinaryExpression(),
             JKCallExpressionImpl(
                 symbolProvider.provideMethodSymbol("kotlin.$initialTypeName.$conversionFunctionName"),
                 JKArgumentList()

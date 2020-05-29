@@ -2556,6 +2556,20 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
     }
 
+    @TestMetadata("nj2k/testData/newJ2k/implicitCasts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImplicitCasts extends AbstractNewJavaToKotlinConverterSingleFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("arithmeticInFunctionCall.java")
+        public void testArithmeticInFunctionCall() throws Exception {
+            runTest("nj2k/testData/newJ2k/implicitCasts/arithmeticInFunctionCall.java");
+        }
+    }
+
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/newJ2k/importStatement")
     public static class ImportStatement extends AbstractNewJavaToKotlinConverterSingleFileTest {
