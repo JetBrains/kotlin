@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
@@ -148,6 +150,12 @@ class FirIdeProvider(
     override fun getNestedClassifierScope(classId: ClassId): FirScope? {
         getFirClassifierByFqName(classId)
         return cacheProvider.getNestedClassifierScope(classId)
+    }
+
+    @FirProviderInternals
+    override fun recordNestedClass(owner: FirRegularClass, klass: FirRegularClass) {
+        // TODO: check that this implementation is correct
+        cacheProvider.recordNestedClass(owner, klass)
     }
 }
 
