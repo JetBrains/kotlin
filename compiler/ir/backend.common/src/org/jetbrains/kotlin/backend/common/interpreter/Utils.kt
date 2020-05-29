@@ -24,11 +24,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-// main purpose is to get receiver from constructor call
-fun IrMemberAccessExpression.getThisAsReceiver(): DeclarationDescriptor {
-    return (this.symbol.descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter
-}
-
 fun IrFunction.getDispatchReceiver(): DeclarationDescriptor? {
     return (this.symbol.descriptor.containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter
 }
@@ -51,6 +46,7 @@ fun DeclarationDescriptor.equalTo(other: DeclarationDescriptor): Boolean {
 
 private fun WrappedReceiverParameterDescriptor.isEqualTo(other: DeclarationDescriptor): Boolean {
     return when (val container = this.containingDeclaration) {
+        is ClassDescriptor -> container == other.containingDeclaration
         is FunctionDescriptor -> container.dispatchReceiverParameter == other || container.extensionReceiverParameter == other
         else -> false
     }

@@ -366,7 +366,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val declarationsMap: Map
             constructorCall.dispatchReceiver!!.interpret().check { return it }
             state.outerClass = Variable(constructorCall.symbol.owner.dispatchReceiverParameter!!.descriptor, stack.popReturnValue())
         }
-        valueArguments.add(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
+        valueArguments.add(Variable(irClass.thisReceiver!!.descriptor, state)) //used to set up fields in body
         return stack.newFrame(initPool = valueArguments + state.typeArguments) {
             val statements = constructorCall.getBody()!!.statements
             // enum entry use IrTypeOperatorCall with IMPLICIT_COERCION_TO_UNIT as delegation call, but we need the value
