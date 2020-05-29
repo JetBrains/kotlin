@@ -32,7 +32,7 @@ import java.lang.invoke.MethodHandle
 private const val MAX_STACK_SIZE = 10_000
 private const val MAX_COMMANDS = 500_000
 
-class IrInterpreter(irModule: IrModuleFragment, private val declarationsMap: Map<IdSignature, IrBody> = emptyMap()) {
+class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSignature, IrBody> = emptyMap()) {
     private val irBuiltIns = irModule.irBuiltins
     private val irExceptions = irModule.files.flatMap { it.declarations }.filterIsInstance<IrClass>()
         .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
@@ -301,14 +301,15 @@ class IrInterpreter(irModule: IrModuleFragment, private val declarationsMap: Map
                 dispatchReceiver is Wrapper && !isInlineOnly -> dispatchReceiver.getMethod(irFunction).invokeMethod(irFunction)
                 irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction)
                 dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction) // 'is Primitive' check for js char and js long
-                irFunction.body == null -> irFunction.substituteFunctionBody()
+                irFunction.body == null -> irFunction.trySubstituteFunctionBody() ?: calculateBuiltIns(irFunction)
                 else -> irFunction.interpret()
             }
         }
     }
 
-    private suspend fun IrFunction.substituteFunctionBody(): ExecutionResult {
-        val body = declarationsMap[this.symbol.signature]
+    private suspend fun IrFunction.trySubstituteFunctionBody(): ExecutionResult? {
+        if (!this.symbol.isPublicApi) return null
+        val body = bodyMap[this.symbol.signature]
 
         return body?.let {
             try {
@@ -317,7 +318,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val declarationsMap: Map
             } finally {
                 this.body = null
             }
-        } ?: calculateBuiltIns(this)
+        }
     }
 
     private suspend fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall): ExecutionResult {
@@ -349,7 +350,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val declarationsMap: Map
         interpretValueParameters(constructorCall, owner, valueArguments).check { return it }
 
         val irClass = owner.parent as IrClass
-        val typeArguments = getTypeArguments(irClass, constructorCall) { stack.getVariableState(it) } + stack.getAllTypeArguments()
+        val typeArguments = getTypeArguments(irClass, constructorCall) { stack.getVariableState(it) }
         if (irClass.hasAnnotation(evaluateIntrinsicAnnotation) || irClass.fqNameWhenAvailable!!.startsWith(Name.identifier("java"))) {
             return stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
                 .apply { (stack.peekReturnValue() as? Wrapper)?.typeArguments?.addAll(typeArguments) } // 'as?' because can be exception

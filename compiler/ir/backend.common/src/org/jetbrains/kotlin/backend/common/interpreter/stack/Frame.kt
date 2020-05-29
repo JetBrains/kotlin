@@ -17,7 +17,6 @@ interface Frame {
     fun getVariableState(variableDescriptor: DeclarationDescriptor): State
     fun tryGetVariableState(variableDescriptor: DeclarationDescriptor): State?
     fun getAll(): List<Variable>
-    fun getAllTypeArguments(): List<Variable> // TODO try to get rid of this method; possibly by finding all type arguments in local class
     fun contains(descriptor: DeclarationDescriptor): Boolean
     fun pushReturnValue(state: State)
     fun pushReturnValue(frame: Frame) // TODO rename to getReturnValueFrom
@@ -53,10 +52,6 @@ class InterpreterFrame(
 
     override fun getAll(): List<Variable> {
         return pool
-    }
-
-    override fun getAllTypeArguments(): List<Variable> {
-        return typeArguments
     }
 
     override fun contains(descriptor: DeclarationDescriptor): Boolean {
