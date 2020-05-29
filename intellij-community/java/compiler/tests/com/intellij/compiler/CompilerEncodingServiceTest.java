@@ -1,16 +1,17 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.encoding.EncodingProjectManager;
 import com.intellij.testFramework.JavaPsiTestCase;
 import com.intellij.testFramework.PsiTestUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 public class CompilerEncodingServiceTest extends JavaPsiTestCase {
@@ -18,7 +19,7 @@ public class CompilerEncodingServiceTest extends JavaPsiTestCase {
   private static final Charset WINDOWS_1252 = Charset.forName("windows-1252");
 
   private Collection<Charset> projectDefaultPlus(Charset @NotNull ... charsets) {
-    Set<Charset> result = new THashSet<>();
+    Set<Charset> result = new HashSet<>();
     result.add(getProjectDefault());
     result.addAll(Arrays.asList(charsets));
     return result;
