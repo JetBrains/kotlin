@@ -64,6 +64,9 @@
     <applicationService serviceInterface="com.jetbrains.swift.sourcekitd.SourceKitServiceManager"
                         serviceImplementation="com.jetbrains.swift.sourcekitd.MobileSourceKitServiceManager"/>
 
+    <applicationService serviceInterface="com.jetbrains.swift.SwiftSourceKitCompileArgumentsCollector"
+                        serviceImplementation="com.jetbrains.swift.MobileSwiftSourceKitCompileArgumentsCollector"/>
+
     <!--<externalAnnotator implementationClass="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator"
                        language="Swift"/>-->
 
