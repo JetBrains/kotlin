@@ -31,7 +31,8 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
         customLanguageVersion: LanguageVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion,
         analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
         fqNamesWithRequirements: List<String>,
-        fqNamesWithoutRequirement: List<String> = emptyList()
+        fqNamesWithoutRequirement: List<String> = emptyList(),
+        shouldBeSingleRequirement: Boolean = true
     ) {
         compileFiles(
             listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")),
@@ -45,6 +46,13 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
             val requirements = extractRequirement(descriptor)
             if (requirements.isEmpty()) throw AssertionError("No VersionRequirement for $descriptor")
 
+            if (shouldBeSingleRequirement && requirements.size > 1) {
+                throw AssertionError(
+                    "Single VersionRequirement expected, got ${requirements.size}:\n" +
+                            requirements.joinToString(separator = "\n") { it.toDebugString() }
+                )
+            }
+
             requirements.firstOrNull {
                 expectedVersionRequirement == it.version &&
                         expectedLevel == it.level &&
@@ -53,14 +61,14 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
                         expectedErrorCode == it.errorCode
             }
                 ?: throw AssertionError(
-                    "Version requirement not found:\n" +
-                            "expectedVersionRequirement=" + expectedVersionRequirement +
-                            "; expectedLevel=" + expectedLevel +
-                            "; expectedMessage=" + expectedMessage +
-                            "; expectedVersionKind=" + expectedVersionKind +
-                            "; expectedErrorCode=" + expectedErrorCode +
+                    "Version requirement not found, expected:\n" +
+                            "versionRequirement=" + expectedVersionRequirement +
+                            "; level=" + expectedLevel +
+                            "; message=" + expectedMessage +
+                            "; versionKind=" + expectedVersionKind +
+                            "; errorCode=" + expectedErrorCode +
                             "\nActual requirements:\n" +
-                            requirements.joinToString(separator = "\n") { it.toString() }
+                            requirements.joinToString(separator = "\n") { it.toDebugString() }
                 )
         }
 
@@ -71,6 +79,9 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
             assertTrue("Expecting absence of any requirements for $fqName, but `$requirement`", requirement.isEmpty())
         }
     }
+
+    private fun VersionRequirement.toDebugString(): String =
+        "versionRequirement=$version; level=$level; message=$message; versionKind=$kind; errorCode=$errorCode"
 
     private fun extractRequirement(descriptor: DeclarationDescriptor): List<VersionRequirement> {
         return when (descriptor) {

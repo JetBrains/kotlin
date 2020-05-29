@@ -216,7 +216,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
 
     private fun MutableVersionRequirementTable.writeFunctionNameManglingForReturnTypeRequirement(add: (Int) -> Unit) {
         if (functionsWithInlineClassReturnTypesMangled) {
-            add(writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
+            add(writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, this))
         }
     }
 

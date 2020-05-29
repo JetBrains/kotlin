@@ -6,3 +6,6 @@ class C {
     fun returnsInlineClassType(): IC = IC(42)
     val propertyOfInlineClassType: IC get() = IC(42)
 }
+
+fun returnsInlineClassType(): IC = IC(42)
+val propertyOfInlineClassType: IC get() = IC(42)
