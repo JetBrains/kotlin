@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import java.util.*
 
 class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
@@ -45,8 +47,15 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
         // project may be null in case of new project
         val project = id.findProject() ?: return
 
+        if (sync.gradleHome == null) {
+            sync.gradleHome = ServiceManager
+                .getService(GradleInstallationManager::class.java)
+                .getGradleHome(project, sync.workingDir)
+                ?.canonicalPath
+        }
+
         @Suppress("DEPRECATION")
-        ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(project)?.reloadIfNecessary()
+        ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(project)?.reloadIfNeeded(sync.workingDir, sync.gradleHome)
 
         saveScriptModels(project, sync)
     }

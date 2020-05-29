@@ -39,7 +39,7 @@ open class AbstractGradleBuildRootsLocatorTest {
             GradleBuildRootData(
                 ts,
                 relativeProjectRoots.map { (pathPrefix + it).removeSuffix("/") },
-                listOf(),
+                "",
                 listOf()
             ),
             LastModifiedFiles()

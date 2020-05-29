@@ -6,11 +6,23 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
+import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PlatformTestCase
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.codeInsight.gradle.ExternalSystemImportingTestCase
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
+import org.jetbrains.kotlin.idea.scripting.gradle.getGradleProjectSettings
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
@@ -27,6 +39,7 @@ import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleEnvironment
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -40,8 +53,9 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
     override fun setUp() {
         super.setUp()
         runWriteAction {
-            val sdk = SimpleJavaSdkType().createJdk(SDK_NAME, IdeaTestUtil.requireRealJdkHome())
-            PluginTestCaseBase.addJdk(testRootDisposable, { sdk })
+            PluginTestCaseBase.addJdk(testRootDisposable) {
+                JavaSdk.getInstance().createJdk(SDK_NAME, IdeaTestUtil.requireRealJdkHome(), false)
+            }
         }
         sdkCreationChecker = KotlinSdkCreationChecker()
     }
@@ -56,6 +70,7 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
 
     fun doTestGradleKts(directoryPath: String) {
         doTest(directoryPath, BuildSystem.GRADLE_KOTLIN_DSL)
+        checkScriptConfigurationsIfAny()
     }
 
     fun doTestGradleGroovy(directoryPath: String) {
@@ -77,6 +92,14 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
             prepareGradleBuildSystem(tempDirectory)
         }
 
+        runWizard(directory, buildSystem, tempDirectory)
+    }
+
+    protected fun runWizard(
+        directory: Path,
+        buildSystem: BuildSystem,
+        tempDirectory: Path
+    ) {
         val wizard = createWizard(directory, buildSystem, tempDirectory)
 
         val projectDependentServices =
@@ -86,7 +109,10 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
         wizard.apply(projectDependentServices, GenerationPhase.ALL).assertSuccess()
     }
 
-    protected fun prepareGradleBuildSystem(directory: Path) {
+    protected fun prepareGradleBuildSystem(
+        directory: Path,
+        distributionTypeSettings: DistributionType = DistributionType.WRAPPED
+    ) {
         com.intellij.openapi.components.ServiceManager.getService(project, GradleSettings::class.java)?.apply {
             isOfflineWork = GradleEnvironment.Headless.GRADLE_OFFLINE?.toBoolean() ?: isOfflineWork
             serviceDirectoryPath = GradleEnvironment.Headless.GRADLE_SERVICE_DIRECTORY ?: serviceDirectoryPath
@@ -99,9 +125,33 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
                 isUseAutoImport = false
                 isUseQualifiedModuleNames = true
                 gradleJvm = SDK_NAME
-                distributionType = DistributionType.WRAPPED
+                distributionType = distributionTypeSettings
             }
             ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).linkProject(settings)
+        }
+    }
+
+    protected fun checkScriptConfigurationsIfAny() {
+        if (is192()) return
+
+        val settings = getGradleProjectSettings(project).firstOrNull() ?: error("Cannot find linked gradle project: ${project.basePath}")
+        val scripts = File(settings.externalProjectPath).walkTopDown().filter {
+            it.name.endsWith("gradle.kts")
+        }
+        scripts.forEach {
+            val virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(it)!!
+            val psiFile = project.getKtFile(virtualFile) ?: error("Cannot find KtFile for $it")
+            assertTrue(
+                "Configuration for ${it.path} is missing",
+                project.service<ScriptConfigurationManager>().hasConfiguration(psiFile)
+            )
+
+            val bindingContext = psiFile.analyzeWithContent()
+
+            val diagnostics = bindingContext.diagnostics.filter { it.severity == Severity.ERROR }
+            assert(diagnostics.isEmpty()) {
+                "Diagnostics list should be empty:\n ${diagnostics.joinToString("\n") { DefaultErrorMessages.render(it) }}"
+            }
         }
     }
 
