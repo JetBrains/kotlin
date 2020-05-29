@@ -380,6 +380,25 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
 
   private fun isControlDown(e: MouseEvent): Boolean = (SystemInfo.isMac && e.isMetaDown) || e.isControlDown
 
+  @Contract(pure = true)
+  fun withTooltip(tooltip: String, base: InlayPresentation): InlayPresentation = when {
+    tooltip.isEmpty() -> base
+    else -> {
+      var hint: LightweightHint? = null
+      onHover(base, object : HoverListener {
+        override fun onHover(event: MouseEvent, translated: Point) {
+          if (hint?.isVisible != true) {
+            hint = showTooltip(editor, event, tooltip)
+          }
+        }
+
+        override fun onHoverFinished() {
+          hint?.hide()
+          hint = null
+        }
+      })
+    }
+  }
   private fun showTooltip(editor: Editor, e: MouseEvent, text: String): LightweightHint {
     val hint = run {
       val label = HintUtil.createInformationLabel(text)

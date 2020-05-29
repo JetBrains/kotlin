@@ -45,7 +45,7 @@ class SelectableInlayButton(
       isSelected -> active
       else -> default
     }
-    inlayToUpdate.get().repaint()
+    inlayToUpdate.get()?.repaint()
   }
 
   override fun mouseClicked(event: MouseEvent, translated: Point) {
