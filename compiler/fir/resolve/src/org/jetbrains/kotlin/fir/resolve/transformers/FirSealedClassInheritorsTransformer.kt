@@ -72,6 +72,10 @@ class FirSealedClassInheritorsTransformer : FirTransformer<Nothing?>() {
         override fun visitRegularClass(regularClass: FirRegularClass, data: MutableMap<FirRegularClass, MutableList<ClassId>>) {
             regularClass.declarations.forEach { it.accept(this, data) }
 
+            if (regularClass.modality == Modality.SEALED) {
+                data.computeIfAbsent(regularClass) { mutableListOf() }
+            }
+
             val symbolProvider = regularClass.session.firSymbolProvider
 
             for (typeRef in regularClass.superTypeRefs) {
