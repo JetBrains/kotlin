@@ -1,0 +1,27 @@
+FILE: functionForProperty.kt
+    @R|org/jetbrains/kotlin/fir/plugin/WithGenerated|() public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|org/jetbrains/kotlin/fir/plugin/WithHello|() public final val x: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        public final fun helloX(): R|kotlin/Int|
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|org/jetbrains/kotlin/fir/plugin/WithHello|() public final val x: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun test_1(a: R|A|): R|kotlin/Unit| {
+        R|<local>/a|.R|/A.helloX|()
+    }
+    public final fun test_2(b: R|B|): R|kotlin/Unit| {
+        R|<local>/b|.<Unresolved name: helloX>#()
+    }

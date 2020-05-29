@@ -5,4 +5,7 @@
 
 package org.jetbrains.kotlin.fir.plugin
 
-annotation class WithClass
+annotation class AllOpen
+annotation class WithGenerated
+annotation class WithHello
+annotation class WithNestedFoo

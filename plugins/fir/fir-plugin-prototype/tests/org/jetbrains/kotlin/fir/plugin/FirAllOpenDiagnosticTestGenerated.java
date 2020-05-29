@@ -46,21 +46,21 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         }
     }
 
-    @TestMetadata("plugins/fir/fir-plugin-prototype/testData/classGen")
+    @TestMetadata("plugins/fir/fir-plugin-prototype/testData/memberGen")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ClassGen extends AbstractFirAllOpenDiagnosticTest {
+    public static class MemberGen extends AbstractFirAllOpenDiagnosticTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInClassGen() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir/fir-plugin-prototype/testData/classGen"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        public void testAllFilesPresentInMemberGen() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir/fir-plugin-prototype/testData/memberGen"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            runTest("plugins/fir/fir-plugin-prototype/testData/classGen/simple.kt");
+        @TestMetadata("functionForProperty.kt")
+        public void testFunctionForProperty() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/functionForProperty.kt");
         }
     }
 
