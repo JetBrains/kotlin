@@ -52,8 +52,12 @@ class BasicLookupElementFactory(
         includeClassTypeArguments: Boolean = true,
         parametersAndTypeGrayed: Boolean = false
     ): LookupElement {
-        val _descriptor = descriptor.unwrapIfFakeOverride()
-        return createLookupElementUnwrappedDescriptor(_descriptor, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
+        return createLookupElementUnwrappedDescriptor(
+            descriptor.unwrapIfFakeOverride(),
+            qualifyNestedClasses,
+            includeClassTypeArguments,
+            parametersAndTypeGrayed
+        )
     }
 
     fun createLookupElementForJavaClass(

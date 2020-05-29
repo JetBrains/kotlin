@@ -17,6 +17,7 @@ import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
+import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -128,7 +129,8 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         inspection: AbstractKotlinInspection,
         expectedProblemString: String?,
         expectedHighlightString: String?,
-        localFixTextString: String?
+        localFixTextString: String?,
+        inspectionSettings: Element? = null
     ): Boolean {
         val problemExpected = expectedProblemString == null || expectedProblemString != "none"
         myFixture.enableInspections(inspection::class.java)
@@ -138,6 +140,10 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         val inspectionProfile = inspectionProfileManager.currentProfile
         val state = inspectionProfile.getToolDefaultState(inspection.shortName, project)
         state.level = HighlightDisplayLevel.WARNING
+
+        if (inspectionSettings != null) {
+            state.tool.tool.readSettings(inspectionSettings)
+        }
 
         val caretOffset = myFixture.caretOffset
         val highlightInfos = CodeInsightTestFixtureImpl.instantiateAndRun(

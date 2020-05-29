@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
+import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.compareDescriptors
+import org.jetbrains.kotlin.idea.core.unwrapIfFakeOverride
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -30,11 +32,27 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.utils.findFirstClassifierWithDeprecationStatus
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import javax.swing.JComponent
 
 class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     companion object {
         private val ENUM_STATIC_METHODS = listOf("values", "valueOf")
     }
+
+    /**
+     * In order to detect that `foo()` and `GrandBase.foo()` point to the same method,
+     * we need to unwrap fake overrides from descriptors. If we don't do that, they will
+     * have different `fqName`s, and the inspection will not detect `GrandBase` as a
+     * redundant qualifier.
+     */
+    var unwrapFakeOverrides: Boolean = false
+
+    override fun createOptionsPanel(): JComponent =
+        SingleCheckboxOptionsPanel(
+            KotlinBundle.message("redundant.qualifier.unnecessary.non.direct.parent.class.qualifier"),
+            this,
+            ::unwrapFakeOverrides.name
+        )
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         object : KtVisitorVoid() {
@@ -67,7 +85,7 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                     ?.firstOrNull() ?: return
 
                 val applicableExpression = expressionForAnalyze.firstApplicableExpression(
-                    validator = { applicableExpression(originalExpression, context, originalDescriptor) },
+                    validator = { applicableExpression(originalExpression, context, originalDescriptor, unwrapFakeOverrides) },
                     generator = { firstChild as? KtDotQualifiedExpression }
                 ) ?: return
 
@@ -106,7 +124,8 @@ private tailrec fun <T : KtElement> T.firstApplicableExpression(validator: T.() 
 private fun KtDotQualifiedExpression.applicableExpression(
     originalExpression: KtExpression,
     oldContext: BindingContext,
-    originalDescriptor: DeclarationDescriptor
+    originalDescriptor: DeclarationDescriptor,
+    unwrapFakeOverrides: Boolean
 ): KtDotQualifiedExpression? {
     if (!receiverExpression.isApplicableReceiver(oldContext) || !ShortenReferences.canBePossibleToDropReceiver(this, oldContext)) {
         return null
@@ -119,12 +138,19 @@ private fun KtDotQualifiedExpression.applicableExpression(
         ?.mainReference?.resolveToDescriptors(newContext)
         ?.firstOrNull() ?: return null
 
-    return takeIf {
-        originalDescriptor.fqNameSafe == newDescriptor.fqNameSafe &&
-                if (newDescriptor is ImportedFromObjectCallableDescriptor<*>)
-                    compareDescriptors(project, newDescriptor.callableFromObject, originalDescriptor)
-                else
-                    compareDescriptors(project, newDescriptor, originalDescriptor)
+    fun DeclarationDescriptor.unwrapFakeOverrideIfNecessary(): DeclarationDescriptor {
+        return if (unwrapFakeOverrides) this.unwrapIfFakeOverride() else this
+    }
+
+    val originalDescriptorFqName = originalDescriptor.unwrapFakeOverrideIfNecessary().fqNameSafe
+    val newDescriptorFqName = newDescriptor.unwrapFakeOverrideIfNecessary().fqNameSafe
+    if (originalDescriptorFqName != newDescriptorFqName) return null
+
+    return this.takeIf {
+        if (newDescriptor is ImportedFromObjectCallableDescriptor<*>)
+            compareDescriptors(project, newDescriptor.callableFromObject, originalDescriptor)
+        else
+            compareDescriptors(project, newDescriptor, originalDescriptor)
     }
 }
 
