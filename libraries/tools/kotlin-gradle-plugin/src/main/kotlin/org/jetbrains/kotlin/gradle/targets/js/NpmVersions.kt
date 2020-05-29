@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,10 +20,7 @@ class NpmVersions {
     val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "3.6.1")
     val webpackDevServer = NpmPackageVersion("webpack-dev-server", "3.10.3")
 
-    // Temporarily use our own source-map-loader, while original source-map-loader is not updated
-    //  https://github.com/webpack-contrib/source-map-loader/pull/91
-    val kotlinSourceMapLoader = KotlinGradleNpmPackage("source-map-loader")
-    val sourceMapLoader = NpmPackageVersion("source-map-loader", "0.2.4")
+    val sourceMapLoader = NpmPackageVersion("source-map-loader", "1.0.0")
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.16")
 
     val cssLoader = NpmPackageVersion("css-loader", "3.4.2")

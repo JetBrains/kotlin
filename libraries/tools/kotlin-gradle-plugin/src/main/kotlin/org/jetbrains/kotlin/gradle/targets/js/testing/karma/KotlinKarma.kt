@@ -214,7 +214,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
 
         requiredDependencies.add(versions.webpack)
         requiredDependencies.add(versions.webpackCli)
-        requiredDependencies.add(versions.kotlinSourceMapLoader)
         requiredDependencies.add(versions.sourceMapLoader)
     }
 

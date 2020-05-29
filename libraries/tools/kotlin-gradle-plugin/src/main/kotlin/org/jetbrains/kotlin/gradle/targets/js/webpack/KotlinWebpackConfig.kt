@@ -50,7 +50,6 @@ data class KotlinWebpackConfig(
             }
 
             if (sourceMaps) {
-                it.add(versions.kotlinSourceMapLoader)
                 it.add(versions.sourceMapLoader)
             }
 
@@ -214,10 +213,13 @@ data class KotlinWebpackConfig(
                 // source maps
                 config.module.rules.push({
                         test: /\.js${'$'}/,
-                        use: ["kotlin-source-map-loader"],
+                        use: ["source-map-loader"],
                         enforce: "pre"
                 });
                 config.devtool = ${devtool?.let { "'$it'" } ?: false};
+                config.stats = {
+                    warningsFilter: [/Failed to parse source map/],
+                },
                 
             """.trimIndent()
         )
