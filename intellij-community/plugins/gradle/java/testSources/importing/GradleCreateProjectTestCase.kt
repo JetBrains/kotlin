@@ -118,7 +118,6 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
     val project = invokeAndWaitIfNeeded {
       val wizard = createWizard(null, directory)
       wizard.runWizard(configure)
-      wizard.disposeIfNeeded()
       NewProjectUtil.createFromWizard(wizard, null)
     }
     waitForImportCompletion(project)
@@ -129,7 +128,6 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
     invokeAndWaitIfNeeded {
       val wizard = createWizard(project, directory)
       wizard.runWizard(configure)
-      wizard.disposeIfNeeded()
       NewModuleAction().createModuleFromWizard(project, null, wizard)
     }
     waitForImportCompletion(project)
@@ -137,9 +135,11 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
 
   private fun createWizard(project: Project?, directory: String): AbstractProjectWizard {
     val modulesProvider = project?.let { DefaultModulesProvider(it) } ?: ModulesProvider.EMPTY_MODULES_PROVIDER
-    return NewProjectWizard(project, modulesProvider, directory).also {
+    val projectWizard = NewProjectWizard(project, modulesProvider, directory).also {
       PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
+    Disposer.register(testRootDisposable, Disposable { invokeAndWaitIfNeeded { Disposer.dispose(projectWizard.disposable) } })
+    return projectWizard
   }
 
   private fun AbstractProjectWizard.runWizard(configure: ModuleWizardStep.() -> Unit) {
