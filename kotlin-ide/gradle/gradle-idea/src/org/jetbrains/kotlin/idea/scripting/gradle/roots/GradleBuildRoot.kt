@@ -17,10 +17,6 @@ import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import java.io.File
 
-@set:TestOnly
-@get:TestOnly
-internal var skipLastModifiedFilesLoading = false
-
 /**
  * [GradleBuildRoot] is a linked gradle build (don't confuse with gradle project and included build).
  * Each [GradleBuildRoot] may have it's own Gradle version, Java home and other settings.
@@ -29,7 +25,7 @@ internal var skipLastModifiedFilesLoading = false
  *
  * See [GradleBuildRootsManager] for more details.
  */
-sealed class GradleBuildRoot {
+sealed class GradleBuildRoot(private val lastModifiedFiles: LastModifiedFiles) {
     @Volatile
     var importing = false
 
@@ -39,18 +35,6 @@ sealed class GradleBuildRoot {
 
     val dir: VirtualFile?
         get() = LocalFileSystem.getInstance().findFileByPath(pathPrefix)
-
-    private lateinit var lastModifiedFiles: LastModifiedFiles
-
-    fun loadLastModifiedFiles() {
-        val loaded = if (!skipLastModifiedFilesLoading) {
-            val dir = dir
-            if (dir != null) LastModifiedFiles.read(dir)
-            else null
-        } else null
-
-        lastModifiedFiles = loaded ?: LastModifiedFiles()
-    }
 
     fun saveLastModifiedFiles() {
         LastModifiedFiles.write(dir ?: return, lastModifiedFiles)
@@ -64,36 +48,29 @@ sealed class GradleBuildRoot {
     }
 }
 
-sealed class WithoutScriptModels(settings: GradleProjectSettings) : GradleBuildRoot() {
+sealed class WithoutScriptModels(
+    settings: GradleProjectSettings,
+    lastModifiedFiles: LastModifiedFiles
+) : GradleBuildRoot(lastModifiedFiles) {
     final override val pathPrefix = settings.externalProjectPath!!
     final override val projectRoots = settings.modules.takeIf { it.isNotEmpty() } ?: listOf(pathPrefix)
-
-    init {
-        loadLastModifiedFiles()
-    }
 }
 
 /**
  * Gradle build with old Gradle version (<6.0)
  */
 class Legacy(
-    settings: GradleProjectSettings
-) : WithoutScriptModels(settings) {
-    init {
-        loadLastModifiedFiles()
-    }
-}
+    settings: GradleProjectSettings,
+    lastModifiedFiles: LastModifiedFiles = settings.loadLastModifiedFiles() ?: LastModifiedFiles()
+) : WithoutScriptModels(settings, lastModifiedFiles)
 
 /**
  * Linked but not yet imported Gradle build.
  */
 class New(
-    settings: GradleProjectSettings
-) : WithoutScriptModels(settings) {
-    init {
-        loadLastModifiedFiles()
-    }
-}
+    settings: GradleProjectSettings,
+    lastModifiedFiles: LastModifiedFiles = settings.loadLastModifiedFiles() ?: LastModifiedFiles()
+) : WithoutScriptModels(settings, lastModifiedFiles)
 
 /**
  * Imported Gradle build.
@@ -102,14 +79,11 @@ class New(
 class Imported(
     override val pathPrefix: String,
     val javaHome: File?,
-    val data: GradleBuildRootData
-) : GradleBuildRoot() {
+    val data: GradleBuildRootData,
+    lastModifiedFiles: LastModifiedFiles
+) : GradleBuildRoot(lastModifiedFiles) {
     override val projectRoots: Collection<String>
         get() = data.projectRoots
-
-    init {
-        loadLastModifiedFiles()
-    }
 
     fun collectConfigurations(builder: ScriptClassRootsBuilder) {
         if (javaHome != null) {
@@ -140,4 +114,14 @@ class Imported(
         val scriptSource = VirtualFileScriptSource(file)
         return definitions.firstOrNull { it.isScript(scriptSource) }
     }
+}
+
+fun GradleProjectSettings.loadLastModifiedFiles(): LastModifiedFiles? {
+    val externalProjectPath = externalProjectPath ?: return null
+    return loadLastModifiedFiles(externalProjectPath)
+}
+
+fun loadLastModifiedFiles(rootDirPath: String): LastModifiedFiles? {
+    val vFile = LocalFileSystem.getInstance().findFileByPath(rootDirPath) ?: return null
+    return LastModifiedFiles.read(vFile)
 }

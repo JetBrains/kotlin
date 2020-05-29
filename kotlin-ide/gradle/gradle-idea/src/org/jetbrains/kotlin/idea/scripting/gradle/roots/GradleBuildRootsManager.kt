@@ -128,14 +128,16 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         val root = actualizeBuildRoot(build.workingDir) ?: return
         root.importing = false
 
-        if (root is Legacy) return
+            if (root is Legacy) return
 
-        val templateClasspath = GradleScriptDefinitionsContributor.getDefinitionsTemplateClasspath(project)
-        val newData = GradleBuildRootData(build.projectRoots, templateClasspath, build.models)
-        val mergedData = if (build.failed && root is Imported) merge(root.data, newData) else newData
+            val templateClasspath = GradleScriptDefinitionsContributor.getDefinitionsTemplateClasspath(project)
+            val newData = GradleBuildRootData(build.projectRoots, templateClasspath, build.models)
+            val mergedData = if (build.failed && root is Imported) merge(root.data, newData) else newData
 
-        val newSupport = tryCreateImportedRoot(build.workingDir) { mergedData } ?: return
-        GradleBuildRootDataSerializer.write(newSupport.dir ?: return, mergedData)
+            val lastModifiedFilesReset = LastModifiedFiles()
+            val newSupport = tryCreateImportedRoot(build.workingDir, lastModifiedFilesReset) { mergedData } ?: return
+            GradleBuildRootDataSerializer.write(newSupport.dir ?: return, mergedData)
+            newSupport.saveLastModifiedFiles()
 
         add(newSupport)
 
@@ -285,6 +287,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
 
     private fun tryCreateImportedRoot(
         externalProjectPath: String,
+        lastModifiedFiles: LastModifiedFiles = loadLastModifiedFiles(externalProjectPath) ?: LastModifiedFiles(),
         dataProvider: (buildRoot: VirtualFile) -> GradleBuildRootData?
     ): Imported? {
         val buildRoot = VfsUtil.findFile(Paths.get(externalProjectPath), true) ?: return null
@@ -293,12 +296,14 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             .getExecutionSettings<GradleExecutionSettings>(project, externalProjectPath, GradleConstants.SYSTEM_ID)
             .javaHome?.let { File(it) }
 
-        return Imported(externalProjectPath, javaHome, data)
+        return Imported(externalProjectPath, javaHome, data, lastModifiedFiles)
     }
 
     private fun add(newRoot: GradleBuildRoot) {
         val old = roots.add(newRoot)
-        if (old is Imported && newRoot !is Imported) removeData(old.pathPrefix)
+        if (old is Imported && newRoot !is Imported) {
+            removeData(old.pathPrefix)
+        }
         if (old is Imported || newRoot is Imported) {
             updater.invalidateAndCommit()
         }
