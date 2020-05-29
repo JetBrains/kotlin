@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.inlineclasses
 
-import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.codegen.state.md5base64
 import org.jetbrains.kotlin.ir.declarations.*
@@ -63,7 +62,7 @@ object InlineClassAbi {
      * Returns a mangled name for a function taking inline class arguments
      * to avoid clashes between overloaded methods.
      */
-    fun mangledNameFor(irFunction: IrFunction): Name {
+    fun mangledNameFor(irFunction: IrFunction, mangleReturnTypes: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
             assert(irFunction.constructedClass.isInline) {
@@ -75,7 +74,7 @@ object InlineClassAbi {
         val suffix = when {
             irFunction.fullValueParameterList.any { it.type.requiresMangling } ->
                 hashSuffix(irFunction)
-            irFunction.hasMangledReturnType ->
+            mangleReturnTypes && irFunction.hasMangledReturnType ->
                 returnHashSuffix(irFunction)
             (irFunction.parent as? IrClass)?.isInline == true -> "impl"
             else -> return irFunction.name
