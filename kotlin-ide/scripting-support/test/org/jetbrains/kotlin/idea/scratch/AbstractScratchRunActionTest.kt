@@ -37,40 +37,47 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
 
 abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
-    fun doRightPreviewPanelOutputTest(fileName: String) {
-        doRightPreviewPanelOutputTest(fileName = fileName, isRepl = false)
+    protected open fun fileName(): String = getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
+
+    override fun getTestDataPath(): String {
+        val clazz = this::class.java
+        val root = getTestsRoot(clazz)
+        return toSlashEndingDirPath(root)
     }
 
-    fun doWorksheetReplTest(fileName: String) {
-        doInlayOutputTest(fileName = fileName, isRepl = true, isWorksheet = true)
+    fun doRightPreviewPanelOutputTest(unused: String) {
+        doRightPreviewPanelOutputTest(isRepl = false)
     }
 
-    fun doScratchReplTest(fileName: String) {
-        doInlayOutputTest(fileName = fileName, isRepl = true, isWorksheet = false)
+    fun doWorksheetReplTest(unused: String) {
+        doInlayOutputTest(isRepl = true, isWorksheet = true)
     }
 
-    fun doWorksheetCompilingTest(fileName: String) {
-        doInlayOutputTest(fileName = fileName, isRepl = false, isWorksheet = true)
+    fun doScratchReplTest(unused: String) {
+        doInlayOutputTest(isRepl = true, isWorksheet = false)
     }
 
-    fun doScratchCompilingTest(fileName: String) {
-        doInlayOutputTest(fileName = fileName, isRepl = false, isWorksheet = false)
+    fun doWorksheetCompilingTest(unused: String) {
+        doInlayOutputTest(isRepl = false, isWorksheet = true)
     }
 
-    fun doWorksheetMultiFileTest(dirName: String) {
-        doMultiFileTest(dirName, isWorksheet = true)
+    fun doScratchCompilingTest(unused: String) {
+        doInlayOutputTest(isRepl = false, isWorksheet = false)
     }
 
-    fun doScratchMultiFileTest(dirName: String) {
-        doMultiFileTest(dirName, isWorksheet = false)
+    fun doWorksheetMultiFileTest(unused: String) {
+        doMultiFileTest(fileName(), isWorksheet = true)
+    }
+
+    fun doScratchMultiFileTest(unused: String) {
+        doMultiFileTest(fileName(), isWorksheet = false)
     }
 
     private fun doMultiFileTest(dirName: String, isWorksheet: Boolean) {
@@ -104,7 +111,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         if (javaFiles.isNotEmpty()) {
             val options = listOf("-d", outputDir.path)
-            KotlinTestUtils.compileJavaFiles(javaFiles, options)
+            compileJavaFiles(javaFiles, options)
         }
 
         MockLibraryUtil.compileKotlin(baseDir.path, outputDir)
@@ -123,22 +130,23 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         }
     }
 
-    private fun doInlayOutputTest(fileName: String, isRepl: Boolean, isWorksheet: Boolean) {
+    private fun doInlayOutputTest(fileName: String = fileName(), isRepl: Boolean, isWorksheet: Boolean) {
         configureAndLaunchScratch(fileName = fileName, isRepl = isRepl, isWorksheet = isWorksheet)
 
         val actualOutput = getFileTextWithInlays()
 
         val expectedFile = getExpectedFile(fileName, isRepl, suffix = "after")
-        KotlinTestUtils.assertEqualsToFile(expectedFile, actualOutput)
+        assertEqualsToFile(expectedFile, actualOutput)
     }
 
-    private fun doRightPreviewPanelOutputTest(fileName: String, isRepl: Boolean) {
-        configureAndLaunchScratch(fileName = fileName, isRepl = isRepl, isWorksheet = false)
+    private fun doRightPreviewPanelOutputTest(isRepl: Boolean) {
+        val fileName = fileName()
+        configureAndLaunchScratch(fileName, isRepl = isRepl, isWorksheet = false)
 
         val previewTextWithFoldings = getPreviewTextWithFoldings()
 
         val expectedFile = getExpectedFile(fileName, isRepl, suffix = "preview")
-        KotlinTestUtils.assertEqualsToFile(expectedFile, previewTextWithFoldings)
+        assertEqualsToFile(expectedFile, previewTextWithFoldings)
     }
 
     private fun configureAndLaunchScratch(fileName: String, isRepl: Boolean, isWorksheet: Boolean) {
@@ -295,9 +303,6 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         return File(testDataPath, "scripting-support/testData/scratch/custom/test_scratch.kts").readText()
     }
 
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
-
-
     override fun getProjectDescriptor(): com.intellij.testFramework.LightProjectDescriptor {
         val testName = getTestName(false)
 
@@ -312,7 +317,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(getHomeDirectory())
 
         PluginTestCaseBase.addJdk(myFixture.projectDisposable) { PluginTestCaseBase.fullJdk() }
     }
@@ -320,7 +325,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun tearDown() {
         super.tearDown()
 
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(getHomeDirectory())
 
         ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
             runWriteAction { file.delete(this) }
