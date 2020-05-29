@@ -9,14 +9,15 @@ import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
+import org.jetbrains.kotlin.fir.builder.toBinaryName
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -91,11 +92,83 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.matchSons(expression.indicesNode, other.indicesNode)
     }
 
+    /** Matches binary expressions including translated operators. */
     override fun visitBinaryExpression(expression: KtBinaryExpression) {
-        val other = getTreeElementDepar<KtBinaryExpression>() ?: return
-        myMatchingVisitor.result = expression.operationToken == other.operationToken
-                && myMatchingVisitor.match(expression.left, other.left)
-                && myMatchingVisitor.match(expression.right, other.right)
+        fun KtBinaryExpression.match(other: KtBinaryExpression) = operationToken == other.operationToken
+                && myMatchingVisitor.match(left, other.left)
+                && myMatchingVisitor.match(right, other.right)
+
+        fun KtQualifiedExpression.match(text: String, receiver: KtExpression?, callEntry: KtExpression?): Boolean {
+            val callExpr = callExpression
+            return callExpr is KtCallExpression && callExpr.calleeExpression?.text == text
+                    && myMatchingVisitor.match(receiver, receiverExpression)
+                    && myMatchingVisitor.match(callEntry, callExpr.valueArguments.first().getArgumentExpression())
+        }
+
+        fun KtBinaryExpression.matchEq(other: KtBinaryExpression): Boolean {
+            val otherLeft = other.left?.deparenthesize()
+            val otherRight = other.right?.deparenthesize()
+            return otherLeft is KtSafeQualifiedExpression
+                    && otherLeft.match("equals", left, right)
+                    && other.operationToken == KtTokens.ELVIS
+                    && otherRight is KtBinaryExpression
+                    && myMatchingVisitor.match(right, otherRight.left)
+                    && otherRight.operationToken == KtTokens.EQEQEQ
+                    && myMatchingVisitor.match(KtPsiFactory(other, true).createExpression("null"), otherRight.right)
+        }
+
+        val other = getTreeElementDepar<KtExpression>() ?: return
+        when (other) {
+            is KtBinaryExpression -> {
+                println("binary on binary ${other.text} ${expression.match(other)}")
+                if (myMatchingVisitor.setResult(expression.match(other))) return
+                when (expression.operationToken) { // translated matching
+                    KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ -> { // a.compareTo(b) OP 0
+                        val left = other.left?.deparenthesize()
+                        myMatchingVisitor.result = left is KtDotQualifiedExpression
+                                && left.match("compareTo", expression.left, expression.right)
+                                && expression.operationToken == other.operationToken
+                                && myMatchingVisitor.match(other.right, KtPsiFactory(other, true).createExpression("0"))
+
+                    }
+                    KtTokens.EQEQ -> { // match a?.equals(b) ?: (b === null)
+                        myMatchingVisitor.result = expression.matchEq(other)
+                    }
+                }
+            }
+            is KtDotQualifiedExpression -> { // translated matching
+                when (expression.operationToken) {
+                    KtTokens.IN_KEYWORD -> { // b.contains(a)
+                        val parent = other.parent
+                        val isNotNegated = if (parent is KtPrefixExpression) parent.operationToken != KtTokens.EXCL else true
+                        myMatchingVisitor.result = isNotNegated && other.match("contains", expression.right, expression.left)
+                    }
+                    KtTokens.NOT_IN -> myMatchingVisitor.result = false // already matches with prefix expression
+                    else -> { // a.plus(b) all arithmetic operators
+                        val selector = other.selectorExpression
+                        myMatchingVisitor.result = selector is KtCallExpression && other.match(
+                            expression.operationToken.toBinaryName().toString(), expression.left, expression.right
+                        )
+                    }
+                }
+            }
+            is KtPrefixExpression -> { // translated matching
+                val baseExpr = other.baseExpression?.deparenthesize()
+                when (expression.operationToken) {
+                    KtTokens.NOT_IN -> { // !b.contains(a)
+                        myMatchingVisitor.result = other.operationToken == KtTokens.EXCL
+                                && baseExpr is KtDotQualifiedExpression
+                                && baseExpr.match("contains", expression.right, expression.left)
+                    }
+                    KtTokens.EXCLEQ -> { // !(a?.equals(b) ?: (b === null))
+                        myMatchingVisitor.result = other.operationToken == KtTokens.EXCL
+                                && baseExpr is KtBinaryExpression
+                                && expression.matchEq(baseExpr)
+                    }
+                }
+            }
+            else -> myMatchingVisitor.result = false
+        }
     }
 
     override fun visitBlockExpression(expression: KtBlockExpression) {

@@ -83,6 +83,13 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitBinaryExpression(expression: KtBinaryExpression) {
+        super.visitBinaryExpression(expression)
+        getHandler(expression).setFilter {
+            it is KtBinaryExpression || it is KtDotQualifiedExpression || it is KtPrefixExpression // op overload matching
+        }
+    }
+
     override fun visitConstantExpression(expression: KtConstantExpression) {
         super.visitConstantExpression(expression)
         getHandler(expression).setFilter {

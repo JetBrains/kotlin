@@ -11,5 +11,33 @@ class KotlinSSBinaryExpressionTest : KotlinSSResourceInspectionTest() {
 
     fun testTwoBinaryExpressions() { doTest("a = 1 \n b = 2") }
 
+    fun testBinaryPlus() { doTest("1 + 2") }
+
+    fun testBinaryMinus() { doTest("1 - 2") }
+
+    fun testBinaryTimes() { doTest("1 * 2") }
+
+    fun testBinaryDiv() { doTest("1 / 2") }
+
+    fun testBinaryRem() { doTest("1 % 2") }
+
+    fun testBinaryRangeTo() { doTest("1..2") }
+
+    fun testBinaryIn() { doTest("1 in 0..2") }
+
+    fun testBinaryNotIn() { doTest("1 !in 0..2") }
+
+    fun testBinaryBigThan() { doTest("1 > 2") }
+
+    fun testBinaryLessThan() { doTest("1 < 2") }
+
+    fun testBinaryBigEqThan() { doTest("1 >= 2") }
+
+    fun testBinaryLessEqThan() { doTest("1 <= 2") }
+
+    fun testBinaryEquality() { doTest("a == b") }
+
+    fun testBinaryInEquality() { doTest("a != b") }
+
     fun testElvis() { doTest("'_ ?: '_") }
 }
