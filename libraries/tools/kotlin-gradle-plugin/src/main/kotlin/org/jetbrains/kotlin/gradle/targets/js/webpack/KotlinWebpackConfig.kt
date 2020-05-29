@@ -217,9 +217,10 @@ data class KotlinWebpackConfig(
                         enforce: "pre"
                 });
                 config.devtool = ${devtool?.let { "'$it'" } ?: false};
-                config.stats = {
+                config.stats = config.stats || {}
+                Object.assign(config.stats, config.stats, {
                     warningsFilter: [/Failed to parse source map/]
-                }
+                })
                 
             """.trimIndent()
         )
@@ -369,6 +370,11 @@ data class KotlinWebpackConfig(
                 ;(function(config) {
                     const tcErrorPlugin = require('kotlin-test-js-runner/tc-log-error-webpack');
                     config.plugins.push(new tcErrorPlugin(tcErrorPlugin))
+                    config.stats = config.stats || {}
+                    Object.assign(config.stats, config.stats, {
+                        warnings: false,
+                        errors: false
+                    })
                 })(config);
             """.trimIndent()
         )
@@ -400,9 +406,11 @@ data class KotlinWebpackConfig(
                     const handler = (percentage, message, ...args) => {
                         const p = percentage * 100;
                         let msg = `${"$"}{Math.trunc(p / 10)}${"$"}{Math.trunc(p % 10)}% ${"$"}{message} ${"$"}{args.join(' ')}`;
-                        ${if (progressReporterPathFilter == null) "" else """
+                        ${
+                if (progressReporterPathFilter == null) "" else """
                             msg = msg.replace(new RegExp(${progressReporterPathFilter.jsQuoted()}, 'g'), '');
-                        """.trimIndent()};
+                        """.trimIndent()
+            };
                         console.log(msg);
                     };
             
