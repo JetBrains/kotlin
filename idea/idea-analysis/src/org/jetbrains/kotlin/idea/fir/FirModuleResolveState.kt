@@ -34,7 +34,7 @@ interface FirModuleResolveState {
     fun getSession(project: Project, moduleInfo: ModuleSourceInfo): FirSession {
         sessionProvider.getSession(moduleInfo)?.let { return it }
         return synchronized(moduleInfo.module) {
-            val session = sessionProvider.getSession(moduleInfo) ?: FirIdeJavaModuleBasedSession(
+            val session = sessionProvider.getSession(moduleInfo) ?: FirIdeJavaModuleBasedSession.create(
                 project, moduleInfo, sessionProvider, moduleInfo.contentScope()
             ).also { moduleBasedSession ->
                 sessionProvider.sessionCache[moduleInfo] = moduleBasedSession

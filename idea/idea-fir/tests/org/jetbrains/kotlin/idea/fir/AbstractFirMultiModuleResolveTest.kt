@@ -72,7 +72,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
 
     private fun createSession(module: Module, provider: FirProjectSessionProvider): FirJavaModuleBasedSession {
         val moduleInfo = module.productionSourceInfo()!!
-        return FirJavaModuleBasedSession(moduleInfo, provider, moduleInfo.contentScope()).also {
+        return FirJavaModuleBasedSession.create(moduleInfo, provider, moduleInfo.contentScope()).also {
             it.extensionService.registerExtensions(BunchOfRegisteredExtensions.empty())
         }
     }

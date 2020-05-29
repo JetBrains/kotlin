@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
 import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
 import org.jetbrains.kotlin.fir.utils.TypeRegistry
 import org.jetbrains.kotlin.utils.Jsr305State
+import kotlin.reflect.KClass
 
 interface FirSessionComponent
 
@@ -29,6 +30,10 @@ abstract class FirSession(val sessionProvider: FirSessionProvider?) : ComponentA
     val builtinTypes: BuiltinTypes = BuiltinTypes()
 
     final override val typeRegistry: TypeRegistry<FirSessionComponent, FirSessionComponent> = Companion
+
+    fun register(tClass: KClass<out FirSessionComponent>, value: FirSessionComponent) {
+        registerComponent(tClass, value)
+    }
 }
 
 interface FirSessionProvider {

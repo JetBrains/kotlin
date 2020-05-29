@@ -105,7 +105,7 @@ abstract class AbstractSimpleFileBenchmark {
     fun setUp() {
         if (isIR && !useNewInference) error("Invalid configuration")
         env = KotlinCoreEnvironment.createForTests(
-                myDisposable, 
+                myDisposable,
                 newConfiguration(useNewInference),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
@@ -183,7 +183,7 @@ fun createSession(
     val moduleInfo = FirTestModuleInfo()
     val project = environment.project
     val provider = FirProjectSessionProvider(project)
-    return FirJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
+    return FirJavaModuleBasedSession.create(moduleInfo, provider, sourceScope).also {
         createSessionForDependencies(provider, moduleInfo, librariesScope, environment)
     }
 }
