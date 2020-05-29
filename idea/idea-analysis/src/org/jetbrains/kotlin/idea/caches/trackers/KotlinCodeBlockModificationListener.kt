@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 class KotlinCodeBlockModificationListener(
     project: Project,
     treeAspect: TreeAspect
@@ -24,7 +24,7 @@ class KotlinCodeBlockModificationListener(
     @Suppress("UnstableApiUsage")
     private val isLanguageTrackerEnabled = modificationTrackerImpl.isEnableLanguageTrackerCompat
 
-    // BUNCH: 191
+    // FIX ME WHEN BUNCH 191 REMOVED
     // When there're we no per-language trackers we had to increment global tracker first and process result afterward
     private val customIncrement = if (isLanguageTrackerEnabled) 0 else 1
 

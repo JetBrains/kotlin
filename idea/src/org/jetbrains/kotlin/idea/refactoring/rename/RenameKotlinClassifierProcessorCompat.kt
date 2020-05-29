@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
-// BUNCH 191
+// FIX ME WHEN BUNCH 191 REMOVED
 abstract class RenameKotlinClassifierProcessorCompat : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
         return element is KtClassOrObject || element is KtLightClass || element is KtConstructor<*> || element is KtTypeAlias

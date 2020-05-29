@@ -7,5 +7,5 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.xml.breadcrumbs.BreadcrumbsInfoProvider
 
-// BUNCH 201
+// FIX ME WHEN BUNCH 201 REMOVED
 typealias BreadcrumbsProviderCompatBase = BreadcrumbsInfoProvider

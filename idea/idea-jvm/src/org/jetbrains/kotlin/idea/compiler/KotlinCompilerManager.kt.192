@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.js.JavaScript
 import java.io.PrintStream
 import java.io.PrintWriter
 
-// BUNCH: 192
+// FIX ME WHEN BUNCH 192 REMOVED
 class KotlinCompilerManager(project: Project, manager: CompilerManager) : ProjectComponent {
     // Extending PluginException ensures that Exception Analyzer recognizes this as a Kotlin exception
     private class KotlinCompilerException(private val text: String) :

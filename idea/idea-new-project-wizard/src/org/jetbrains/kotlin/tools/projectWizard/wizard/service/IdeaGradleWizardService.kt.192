@@ -28,7 +28,7 @@ import org.jetbrains.plugins.gradle.action.ImportProjectFromScriptAction
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.nio.file.Path
 
-// BUNCH: 192
+// FIX ME WHEN BUNCH 192 REMOVED
 class IdeaGradleWizardService(private val project: Project) : ProjectImportingWizardService,
     IdeaWizardService {
     override fun isSuitableFor(buildSystemType: BuildSystemType): Boolean =

@@ -17,8 +17,8 @@ import com.intellij.testFramework.LightIdeaTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformTestCase
 
-// BUNCH: as36
-// BUNCH: 191
+// FIX ME WHEN BUNCH as36 REMOVED
+// FIX ME WHEN BUNCH 191 REMOVED
 @Suppress("DEPRECATION")
 @Deprecated("Use KotlinLightCodeInsightFixtureTestCase instead")
 abstract class KotlinLightCodeInsightTestCase : com.intellij.testFramework.LightCodeInsightTestCase() {
@@ -33,8 +33,8 @@ abstract class KotlinLightCodeInsightTestCase : com.intellij.testFramework.Light
     }
 }
 
-// BUNCH: as36
-// BUNCH: 191
+// FIX ME WHEN BUNCH as36 REMOVED
+// FIX ME WHEN BUNCH 191 REMOVED
 abstract class KotlinLightIdeaTestCase : LightIdeaTestCase() {
     protected inline val project_: Project get() = LightPlatformTestCase.getProject()
     protected inline val module_: Module get() = LightPlatformTestCase.getModule()

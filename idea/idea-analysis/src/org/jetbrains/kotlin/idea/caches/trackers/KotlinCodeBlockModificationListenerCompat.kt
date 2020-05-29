@@ -37,7 +37,7 @@ val KOTLIN_CONSOLE_KEY = Key.create<Boolean>("kotlin.console")
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 abstract class KotlinCodeBlockModificationListenerCompat(protected val project: Project) : PsiTreeChangePreprocessor {
     protected val modificationTrackerImpl: PsiModificationTrackerImpl =
         PsiModificationTracker.SERVICE.getInstance(project) as PsiModificationTrackerImpl

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.navigationToolbar
 import com.intellij.ide.navigationToolbar.AbstractNavBarModelExtension
 import com.intellij.psi.PsiElement
 
-// BUNCH 201
+// FIX ME WHEN BUNCH 201 REMOVED
 abstract class AbstractNavBarModelExtensionCompatBase : AbstractNavBarModelExtension() {
 
     protected abstract fun adjustElementImpl(psiElement: PsiElement?): PsiElement?

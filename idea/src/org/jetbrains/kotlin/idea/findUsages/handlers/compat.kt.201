@@ -9,6 +9,6 @@ import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 typealias UsageInfoProcessor = Processor<in UsageInfo>
 typealias SliceUsageProcessor = Processor<in SliceUsage>

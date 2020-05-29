@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-// BUNCH 191
+// FIX ME WHEN BUNCH 191 REMOVED
 class RenameKotlinPropertyProcessor : RenameKotlinPropertyProcessorCompat() {
 
     override fun findReferences(

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import kotlin.reflect.KClass
 
-// BUNCH 201
+// FIX ME WHEN BUNCH 201 REMOVED
 class KotlinBreadcrumbsInfoProvider : BreadcrumbsProviderCompatBase() {
     private abstract class ElementHandler<TElement : KtElement>(val type: KClass<TElement>) {
         abstract fun elementInfo(element: TElement): String

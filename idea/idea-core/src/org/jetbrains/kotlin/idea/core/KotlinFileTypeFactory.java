@@ -30,7 +30,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.library.KotlinLibraryUtilsKt.KLIB_FILE_EXTENSION;
 
-// BUNCH: 192
+// FIX ME WHEN BUNCH 192 REMOVED
 public class KotlinFileTypeFactory extends FileTypeFactory {
     public final static String[] KOTLIN_EXTENSIONS = new String[] { "kt", "kts" };
     private final static FileType[] KOTLIN_FILE_TYPES = new FileType[] { KotlinFileType.INSTANCE };

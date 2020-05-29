@@ -5,5 +5,5 @@
 
 package org.jetbrains.kotlin.idea
 
-// BUNCH 201
+// FIX ME WHEN BUNCH 201 REMOVED
 class KotlinDocumentationProvider : KotlinDocumentationProviderCompatBase()

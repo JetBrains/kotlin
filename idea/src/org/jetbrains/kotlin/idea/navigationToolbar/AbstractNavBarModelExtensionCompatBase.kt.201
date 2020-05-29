@@ -10,7 +10,7 @@ import com.intellij.lang.Language
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-// BUNCH 201
+// FIX ME WHEN BUNCH 201 REMOVED
 abstract class AbstractNavBarModelExtensionCompatBase : StructureAwareNavBarModelExtension() {
 
     protected abstract fun adjustElementImpl(psiElement: PsiElement?): PsiElement?

@@ -12,7 +12,7 @@ import com.intellij.usageView.UsageInfo;
 
 import java.util.Collection;
 
-// BUNCH: 201
+// FIX ME WHEN BUNCH 201 REMOVED
 final class BunchedDeprecation {
     public static void findNonCodeUsages(
             PsiElement element,

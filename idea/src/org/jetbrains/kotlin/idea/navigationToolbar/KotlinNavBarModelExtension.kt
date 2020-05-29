@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.projectView.KtDeclarationTreeNode.Companion.try
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
-// BUNCH 201
+// FIX ME WHEN BUNCH 201 REMOVED
 class KotlinNavBarModelExtension : AbstractNavBarModelExtensionCompatBase() {
     override fun getPresentableText(item: Any?): String? =
         (item as? KtDeclaration)?.let { tryGetRepresentableText(it, it.project) }

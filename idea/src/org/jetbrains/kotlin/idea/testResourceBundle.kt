@@ -6,6 +6,6 @@
 package org.jetbrains.kotlin.idea
 
 // Remove the function, when there's no dependency to cidr during running Kotlin tests.
-// BUNCH: as35
+// FIX ME WHEN BUNCH as35 REMOVED
 fun registerAdditionalResourceBundleInTests() {
 }
