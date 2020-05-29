@@ -25,9 +25,33 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
 
     override fun isSuitableForLanguage(language: Language): Boolean = language.isKindOf(KotlinLanguage.INSTANCE)
 
+    private fun debugInfo(currentPosition: SemanticEditorPosition): String {
+        val after = currentPosition.after()
+        val before = currentPosition.before()
+        val chars = currentPosition.chars
+        fun print(position: SemanticEditorPosition, next: SemanticEditorPosition? = null) = "${position.currElement} =>\n'${
+            if (position.isAtEnd)
+                "end"
+            else
+                chars.subSequence(position.startOffset, next?.takeIf { !it.isAtEnd }?.startOffset ?: chars.length)
+        }'"
+
+        return "==\nbefore ${
+            print(before, currentPosition)
+        }\ncurr ${
+            print(currentPosition, after)
+        }\nafter ${
+            print(after)
+        }\n=="
+    }
+
     override fun getIndent(project: Project, editor: Editor, language: Language?, offset: Int): IndentCalculator? {
         val factory = IndentCalculatorFactory(project, editor)
         val currentPosition = getPosition(editor, offset)
+
+        // ~~~ TESTING ~~~
+//        println(debugInfo(currentPosition))
+        // ~~~ TESTING ~~~
 
         currentPosition.beforeOptionalMix(Whitespace, LineComment)
             .takeIf { it.isAt(TemplateEntryOpen) }
