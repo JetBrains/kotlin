@@ -15,7 +15,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.LightIdeaTestCase
 
-// BUNCH: as36, 191
+// BUNCH: as36
+// BUNCH: 191
 @Suppress("DEPRECATION")
 @Deprecated("Use KotlinLightCodeInsightFixtureTestCase instead")
 abstract class KotlinLightCodeInsightTestCase : com.intellij.testFramework.LightCodeInsightTestCase() {
@@ -30,7 +31,8 @@ abstract class KotlinLightCodeInsightTestCase : com.intellij.testFramework.Light
     }
 }
 
-// BUNCH: as36, 191
+// BUNCH: as36
+// BUNCH: 191
 abstract class KotlinLightIdeaTestCase : LightIdeaTestCase() {
     protected inline val project_: Project get() = project
     protected inline val module_: Module get() = module
