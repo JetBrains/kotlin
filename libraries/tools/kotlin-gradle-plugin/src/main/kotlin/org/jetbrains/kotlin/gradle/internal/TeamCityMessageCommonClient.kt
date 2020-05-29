@@ -73,6 +73,6 @@ class TeamCityMessageCommonClient(
     }
 
     override fun regularText(text: String) {
-        printMessage(text, null)
+        printMessage(text, LogType.DEBUG)
     }
 }
