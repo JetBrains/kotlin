@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
 class IrExternalPackageFragmentImpl(
     override val symbol: IrExternalPackageFragmentSymbol,
@@ -42,6 +43,8 @@ class IrExternalPackageFragmentImpl(
     override val packageFragmentDescriptor: PackageFragmentDescriptor get() = symbol.descriptor
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
+
+    override val containerSource get() = (symbol.descriptor as? DeserializedMemberDescriptor)?.containerSource
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitExternalPackageFragment(this, data)

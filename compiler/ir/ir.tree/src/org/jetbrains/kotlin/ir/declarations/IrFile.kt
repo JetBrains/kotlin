@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import java.io.File
 
 interface IrPackageFragment : IrElement, IrDeclarationContainer, IrSymbolOwner {
@@ -36,6 +37,7 @@ interface IrPackageFragment : IrElement, IrDeclarationContainer, IrSymbolOwner {
 
 interface IrExternalPackageFragment : IrPackageFragment {
     override val symbol: IrExternalPackageFragmentSymbol
+    val containerSource: DeserializedContainerSource?
 }
 
 interface IrFile : IrPackageFragment, IrMutableAnnotationContainer, IrMetadataSourceOwner {

@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.util.mapOptimized
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 class IrLazyClass(
     startOffset: Int,
@@ -84,6 +87,9 @@ class IrLazyClass(
     }
 
     override var attributeOwnerId: IrAttributeContainer = this
+
+    val classProto: ProtoBuf.Class? get() = (descriptor as? DeserializedClassDescriptor)?.classProto
+    val nameResolver: NameResolver? get() = (descriptor as? DeserializedClassDescriptor)?.c?.nameResolver
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
