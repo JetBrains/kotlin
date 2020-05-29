@@ -53,6 +53,10 @@ object FirGeneratedElementsValidator : FirDefaultVisitorVoid() {
         typeRef.acceptChildren(this)
     }
 
+    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+        resolvedTypeRef.annotations.forEach { it.accept(this) }
+    }
+
     override fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus) {
         require(declarationStatus is FirResolvedDeclarationStatus)
     }
