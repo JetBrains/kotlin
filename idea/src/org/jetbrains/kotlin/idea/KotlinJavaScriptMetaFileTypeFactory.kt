@@ -20,7 +20,7 @@ import com.intellij.openapi.fileTypes.FileTypeConsumer
 import com.intellij.openapi.fileTypes.FileTypeFactory
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
 
-// BUNCH: 192
+// FIX ME WHEN BUNCH 192 REMOVED
 class KotlinJavaScriptMetaFileTypeFactory : FileTypeFactory() {
     override fun createFileTypes(consumer: FileTypeConsumer) {
         consumer.consume(KotlinJavaScriptMetaFileType, KotlinJavaScriptMetaFileType.defaultExtension)

@@ -9,7 +9,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import org.jetbrains.kotlin.psi.KtParameter
 
-// BUNCH: 191
+// FIX ME WHEN BUNCH 191 REMOVED
 
 internal fun KtParameter.findReferences(renamer: RenamePsiElementProcessor): MutableCollection<PsiReference> {
     return renamer.findReferences(this, false)

@@ -10,7 +10,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.Messages.OkCancelResult
 import javax.swing.Icon
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 
 @OkCancelResult
 fun showOkCancelDialog(

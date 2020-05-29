@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
-// BUNCH 191
+// FIX ME WHEN BUNCH 191 REMOVED
 abstract class RenameKotlinFunctionProcessorCompat : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
 

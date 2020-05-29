@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.caches.trackers
 
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 
-// BUNCH: 191
+// FIX ME WHEN BUNCH 191 REMOVED
 @Suppress("unused")
 val PsiModificationTrackerImpl.isEnableLanguageTrackerCompat
     get() = true

@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.idea.testFramework
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 fun ProjectManagerEx.forceCloseProjectEx(project: Project, dispose: Boolean): Boolean {
     if (!dispose) error("dispose should be true")
     return this.forceCloseProject(project)
 }
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 typealias TestApplicationManager = com.intellij.testFramework.TestApplicationManager

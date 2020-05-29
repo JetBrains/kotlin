@@ -12,12 +12,12 @@ import com.intellij.ide.hierarchy.call.CallerMethodsTreeStructure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiMethod
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 fun createCallerMethodsTreeStructure(project: Project, method: PsiMethod, scopeType: String): CallerMethodsTreeStructure {
     return CallerMethodsTreeStructure(project, method, scopeType)
 }
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 fun createCalleeMethodsTreeStructure(project: Project, method: PsiMethod, scopeType: String): CalleeMethodsTreeStructure {
     return CalleeMethodsTreeStructure(project, method, scopeType)
 }

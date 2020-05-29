@@ -10,7 +10,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler
 
-// BUNCH: 191
+// FIX ME WHEN BUNCH 191 REMOVED
 abstract class MoveHandlerDelegateCompat : MoveHandlerDelegate() {
     override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean =
         canMove(elements, targetContainer, null)
@@ -19,7 +19,7 @@ abstract class MoveHandlerDelegateCompat : MoveHandlerDelegate() {
         super.canMove(elements, targetContainer)
 }
 
-// BUNCH: 191
+// FIX ME WHEN BUNCH 191 REMOVED
 abstract class MoveFilesOrDirectoriesHandlerCompat : MoveFilesOrDirectoriesHandler() {
     override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean =
         canMove(elements, targetContainer, null)

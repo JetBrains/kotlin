@@ -11,7 +11,7 @@ import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 
-// BUNCH 191
+// FIX ME WHEN BUNCH 191 REMOVED
 abstract class RenameKotlinPsiProcessor : RenameKotlinPsiProcessorCompat() {
 
     override fun findReferences(

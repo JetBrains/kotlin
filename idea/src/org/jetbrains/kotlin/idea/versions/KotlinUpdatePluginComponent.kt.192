@@ -33,7 +33,7 @@ private val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
  * Component forces update for built-in libraries in plugin directory. They are ignored because of
  * com.intellij.util.indexing.FileBasedIndex.isUnderConfigOrSystem()
  */
-// BUNCH: 192
+// FIX ME WHEN BUNCH 192 REMOVED
 class KotlinUpdatePluginComponent : BaseComponent {
     override fun initComponent() {
         if (ApplicationManager.getApplication()?.isUnitTestMode == true) {

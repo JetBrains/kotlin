@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.move
 import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler
 
-// BUNCH: 191
+// FIX ME WHEN BUNCH 191 REMOVED
 typealias MoveHandlerDelegateCompat = MoveHandlerDelegate
-// BUNCH: 191
+// FIX ME WHEN BUNCH 191 REMOVED
 typealias MoveFilesOrDirectoriesHandlerCompat = MoveFilesOrDirectoriesHandler

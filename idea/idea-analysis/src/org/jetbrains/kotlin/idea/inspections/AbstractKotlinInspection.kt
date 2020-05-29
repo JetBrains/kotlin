@@ -39,7 +39,7 @@ abstract class AbstractKotlinInspection : LocalInspectionTool() {
         registerProblem(problemDescriptor)
     }
 
-    // BUNCH: 191
+    // FIX ME WHEN BUNCH 191 REMOVED
     // a workaround for IDEA-211491
     override fun getProblemElement(psiElement: PsiElement): PsiNamedElement? {
         val parent = psiElement.parents().firstOrNull { parent ->

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.openapi.project.Project
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 fun runActivity(project: Project) {
     // nothing for 193
 }

@@ -11,7 +11,7 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
 
-// BUNCH: 191
+// FIX ME WHEN BUNCH 191 REMOVED
 abstract class KotlinLightPlatformCodeInsightTestCase : LightPlatformCodeInsightTestCase() {
     protected inline val project_: Project get() = LightPlatformTestCase.getProject()
     protected inline val editor_: Editor get() = LightPlatformCodeInsightTestCase.getEditor()

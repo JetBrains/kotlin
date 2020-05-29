@@ -10,7 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 fun invokeIntentionCompat(action: IntentionAction, file: PsiFile, editor: Editor) {
     CodeInsightTestFixtureImpl.invokeIntention(action, file, editor)
 }

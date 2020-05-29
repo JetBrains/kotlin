@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
 
-// BUNCH 191
+// FIX ME WHEN BUNCH 191 REMOVED
 abstract class RenameKotlinPropertyProcessorCompat : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
         val namedUnwrappedElement = element.namedUnwrappedElement

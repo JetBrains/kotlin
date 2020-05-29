@@ -7,5 +7,5 @@ package org.jetbrains.kotlin.idea.projectView
 
 import com.intellij.ide.util.treeView.AbstractTreeNode
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 typealias AbstractTreeNodeAny = AbstractTreeNode<*>

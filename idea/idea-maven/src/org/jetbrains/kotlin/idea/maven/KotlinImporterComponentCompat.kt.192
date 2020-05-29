@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.idea.maven
 
 import com.intellij.openapi.module.Module
 
-// BUNCH: 192
+// FIX ME WHEN BUNCH 192 REMOVED
 internal val Module.kotlinImporterComponent: KotlinImporterComponent
     get() = getComponent(KotlinImporterComponent::class.java) ?: throw IllegalStateException("No maven importer state configured")

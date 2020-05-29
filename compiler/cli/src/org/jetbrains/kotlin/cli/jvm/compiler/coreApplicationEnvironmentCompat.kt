@@ -9,7 +9,7 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.extensions.ExtensionsArea
 import java.io.File
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 fun registerExtensionPointAndExtensionsEx(pluginFile: File, fileName: String, area: ExtensionsArea) {
     @Suppress("MissingRecentApi")
     CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginFile, fileName, area)
