@@ -47,7 +47,7 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
 
                 createActionLabel(KotlinIdeaGradleBundle.message("action.text.standalone")) {
                     rootsManager.updateStandaloneScripts {
-                        removeStandaloneScript(file.path)
+                        addStandaloneScript(file.path)
                     }
                 }
 
@@ -59,7 +59,7 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
                 text("Standalone script")
                 createActionLabel("Disable script") {
                     rootsManager.updateStandaloneScripts {
-                        addStandaloneScript(file.path)
+                        removeStandaloneScript(file.path)
                     }
                 }
                 contextHelp(
