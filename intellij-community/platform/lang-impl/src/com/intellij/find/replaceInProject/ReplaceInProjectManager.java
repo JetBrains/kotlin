@@ -176,7 +176,7 @@ public class ReplaceInProjectManager {
     @Override
     public String getLongDescriptiveName() {
       UsageViewPresentation presentation = FindInProjectUtil.setupViewPresentation(myFindModel);
-      return "Replace " + StringUtil.decapitalize(presentation.getToolwindowTitle()) + " with '" + myFindModel.getStringToReplace() + "'";
+      return StringUtil.decapitalize(presentation.getToolwindowTitle());
     }
 
     @Override

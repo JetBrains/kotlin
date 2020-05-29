@@ -347,6 +347,7 @@ public class FindInProjectUtil {
   public static void setupViewPresentation(UsageViewPresentation presentation, boolean toOpenInNewTab, @NotNull FindModel findModel) {
     String scope = getTitleForScope(findModel);
     final String stringToFind = findModel.getStringToFind();
+    final String stringToReplace = findModel.getStringToReplace();
     presentation.setScopeText(scope);
     if (stringToFind.isEmpty()) {
       if (!scope.isEmpty()) {
@@ -362,8 +363,13 @@ public class FindInProjectUtil {
       if (searchContext != FindModel.SearchContext.ANY) {
         contextText = FindBundle.message("find.context.presentation.scope.label", FindInProjectUtil.getPresentableName(searchContext));
       }
-      presentation.setTabText(FindBundle.message("find.usage.view.tab.text", stringToFind, contextText));
-      presentation.setToolwindowTitle(FindBundle.message("find.usage.view.toolwindow.title", stringToFind, scope, contextText));
+      if (!findModel.isReplaceState()) {
+        presentation.setTabText(FindBundle.message("find.usage.view.tab.text", stringToFind, contextText));
+        presentation.setToolwindowTitle(FindBundle.message("find.usage.view.toolwindow.title", stringToFind, scope, contextText));
+      } else {
+        presentation.setTabText(FindBundle.message("replace.usage.view.tab.text", stringToFind, stringToReplace, contextText));
+        presentation.setToolwindowTitle(FindBundle.message("replace.usage.view.toolwindow.title", stringToFind, stringToReplace, scope, contextText));
+      }
       presentation.setSearchString(FindBundle.message("find.occurrences.search.string", stringToFind, searchContext.ordinal()));
       presentation.setUsagesWord(FindBundle.message("occurrence"));
       presentation.setCodeUsagesString(FindBundle.message("found.occurrences"));
