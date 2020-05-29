@@ -30,12 +30,12 @@ import java.io.File
 
 abstract class AbstractMavenConfigureProjectByChangingFileTest : AbstractConfigureProjectByChangingFileTest<KotlinMavenConfigurator>() {
     fun doTestWithMaven(path: String) {
-        val pathWithFile = path + "/" + MavenConstants.POM_XML
+        val pathWithFile = MavenConstants.POM_XML
         doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), KotlinJavaMavenConfigurator())
     }
 
     fun doTestWithJSMaven(path: String) {
-        val pathWithFile = path + "/" + MavenConstants.POM_XML
+        val pathWithFile = MavenConstants.POM_XML
         doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), KotlinJavascriptMavenConfigurator())
     }
 

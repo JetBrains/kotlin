@@ -858,9 +858,15 @@ public class KotlinTestUtils {
     }
 
     public static String getTestsRoot(@NotNull Class<?> testCaseClass) {
-        TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
-        Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
-        return Paths.get(getHomeDirectory(), testClassMetadata.value()).toString();
+        File testData = TestMetadataUtil.getTestData(testCaseClass);
+        Assert.assertNotNull("No metadata for class: " + testCaseClass, testData);
+        return testData.toString();
+    }
+
+    public static String toSlashEndingDirPath(@NotNull String path) {
+        // Drop when LightPlatformCodeInsightTestCase#configureByFile gets rid of
+        // `String fullPath = getTestDataPath() + relativePath;`
+        return path.endsWith(File.separator) ? path : path + File.separatorChar;
     }
 
     /**
