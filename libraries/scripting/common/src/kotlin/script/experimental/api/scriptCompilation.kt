@@ -148,7 +148,7 @@ val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by Prope
 val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompiling by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>(isTransient = true)
 
 /**
- * The list of script fragments that should be compiled intead of the whole text
+ * The list of script fragments that should be compiled instead of the whole text
  * (for use primary with the refinement callbacks)
  */
 val ScriptCompilationConfigurationKeys.sourceFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
