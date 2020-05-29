@@ -272,11 +272,11 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
     PsiManager psiManager = PsiManager.getInstance(getProject());
     Processor<VirtualFile> processor = virtualFile -> {
       ProgressManager.checkCanceled();
-      PsiFile file = ReadAction.compute(() -> psiManager.findFile(virtualFile));
-      if (file == null) {
-        return true;
-      }
       Boolean readActionSuccess = DumbService.getInstance(getProject()).tryRunReadActionInSmartMode(() -> {
+        PsiFile file = psiManager.findFile(virtualFile);
+        if (file == null) {
+          return true;
+        }
         if (!scope.contains(virtualFile)) {
           LOG.info(file.getName() + "; scope: " + scope + "; " + virtualFile);
           return true;
@@ -289,6 +289,11 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextEx {
       }, "Inspect code is not available until indices are ready");
       if (readActionSuccess == null || !readActionSuccess) {
         throw new ProcessCanceledException();
+      }
+
+      PsiFile file = ReadAction.compute(() -> psiManager.findFile(virtualFile));
+      if (file == null) {
+        return true;
       }
 
       boolean includeDoNotShow = includeDoNotShow(getCurrentProfile());
