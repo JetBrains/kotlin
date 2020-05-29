@@ -2025,21 +2025,272 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
               %composer.startReplaceableGroup(%key)
               val tmp0 = if (x > 0) {
                 %composer.startReplaceableGroup(<>)
-                val tmp3_group =
-                if (%composer.startReplaceableGroup(<>)
+                val tmp4_group =
+                val tmp3_group = if (%composer.startReplaceableGroup(<>)
                 val tmp1_group = B(%composer, <>, 0)
                 %composer.endReplaceableGroup()
                 tmp1_group) 1 else if (%composer.startReplaceableGroup(<>)
                 val tmp2_group = B(%composer, <>, 0)
                 %composer.endReplaceableGroup()
                 tmp2_group) 2 else 3
-                %composer.endReplaceableGroup()
                 tmp3_group
+                %composer.endReplaceableGroup()
+                tmp4_group
               } else {
                 %composer.startReplaceableGroup(<>)
                 %composer.endReplaceableGroup()
                 4
               }
+              %composer.endReplaceableGroup()
+              return tmp0
+            }
+        """
+    )
+
+    @Test
+    fun testTheThing(): Unit = controlFlow(
+        """
+            @Direct
+            @Composable
+            fun Simple() {
+              // this has a composable call in it, and since we don't know the number of times the
+              // lambda will get called, we place a group around the whole call
+              run {
+                A()
+              }
+              A()
+            }
+
+            @Direct
+            @Composable
+            fun WithReturn() {
+              // this has an early return in it, so it needs to end all of the groups present.
+              run {
+                A()
+                return@WithReturn
+              }
+              A()
+            }
+
+            @Direct
+            @Composable
+            fun NoCalls() {
+              // this has no composable calls in it, so shouldn't cause any groups to get created
+              run {
+                println("hello world")
+              }
+              A()
+            }
+
+            @Direct
+            @Composable
+            fun NoCallsAfter() {
+              // this has a composable call in the lambda, but not after it, which means the
+              // group should be able to be coalesced into the group of the function
+              run {
+                A()
+              }
+            }
+        """,
+        """
+            @Direct
+            @Composable
+            fun Simple(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(<>)
+              run {
+                A(%composer, <>, 0)
+              }
+              %composer.endReplaceableGroup()
+              A(%composer, <>, 0)
+              %composer.endReplaceableGroup()
+            }
+            @Direct
+            @Composable
+            fun WithReturn(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(<>)
+              run {
+                A(%composer, <>, 0)
+                %composer.endReplaceableGroup()
+                %composer.endReplaceableGroup()
+                return
+              }
+              %composer.endReplaceableGroup()
+              A(%composer, <>, 0)
+              %composer.endReplaceableGroup()
+            }
+            @Direct
+            @Composable
+            fun NoCalls(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
+              run {
+                println("hello world")
+              }
+              A(%composer, <>, 0)
+              %composer.endReplaceableGroup()
+            }
+            @Direct
+            @Composable
+            fun NoCallsAfter(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startReplaceableGroup(%key)
+              run {
+                A(%composer, <>, 0)
+              }
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
+    fun testLetWithComposableCalls(): Unit = controlFlow(
+        """
+            @Composable
+            fun Example(x: Int?) {
+              x?.let {
+                if (it > 0) {
+                  A()
+                }
+                A()
+              }
+              A()
+            }
+        """,
+        """
+            @Composable
+            fun Example(x: Int?, %composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startRestartGroup(%key)
+              val %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                val tmp0_safe_receiver = x
+                when {
+                  tmp0_safe_receiver == null -> {
+                    %composer.startReplaceableGroup(<>)
+                    %composer.endReplaceableGroup()
+                    null
+                  }
+                  else -> {
+                    %composer.startReplaceableGroup(<>)
+                    tmp0_safe_receiver.let { it: Int ->
+                      if (it > 0) {
+                        %composer.startReplaceableGroup(<>)
+                        A(%composer, <>, 0)
+                        %composer.endReplaceableGroup()
+                      } else {
+                        %composer.startReplaceableGroup(<>)
+                        %composer.endReplaceableGroup()
+                      }
+                      A(%composer, <>, 0)
+                    }
+                    %composer.endReplaceableGroup()
+                  }
+                }
+                A(%composer, <>, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
+                Example(x, %composer, %key, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testLetWithoutComposableCalls(): Unit = controlFlow(
+        """
+            @Composable
+            fun Example(x: Int?) {
+              x?.let {
+                if (it > 0) {
+                  NA()
+                }
+                NA()
+              }
+              A()
+            }
+        """,
+        """
+            @Composable
+            fun Example(x: Int?, %composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startRestartGroup(%key)
+              val %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                x?.let { it: Int ->
+                  if (it > 0) {
+                    NA()
+                  }
+                  NA()
+                }
+                A(%composer, <>, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
+                Example(x, %composer, %key, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testApplyOnComposableCallResult(): Unit = controlFlow(
+        """
+            import androidx.compose.state
+            import androidx.compose.State
+
+            @Composable
+            fun <T> provided(value: T): State<T> = state { value }.apply {
+                this.value = value
+            }
+        """,
+        """
+            @Composable
+            fun <T> provided(value: T, %composer: Composer<*>?, %key: Int, %changed: Int): State<T> {
+              %composer.startReplaceableGroup(%key)
+              val tmp0 = state(null, {
+                val tmp0_return = value
+                tmp0_return
+              }, %composer, <>, 0, 0b0001).apply {
+                value = value
+              }
+              %composer.endReplaceableGroup()
+              return tmp0
+            }
+        """
+    )
+
+    @Test
+    fun testReturnInlinedExpressionWithCall(): Unit = controlFlow(
+        """
+            import androidx.compose.state
+            import androidx.compose.State
+
+            @Composable
+            fun Test(x: Int): Int {
+                return x.let {
+                    A()
+                    123
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Test(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int): Int {
+              %composer.startReplaceableGroup(%key)
+              val tmp0 =
+              val tmp1_group = x.let { it: Int ->
+                A(%composer, <>, 0)
+                val tmp0_return = 123
+                tmp0_return
+              }
+              tmp1_group
               %composer.endReplaceableGroup()
               return tmp0
             }
