@@ -10,14 +10,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
-import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.*
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * Up to date of gradle script depends on following factors:
  * 1. It is out of date when essential [sections] are changed. See [getGradleScriptInputsStamp].
  * 2. When some related file is changed (other gradle script, gradle.properties file)
- * See [GradleBuildRoot.Linked.areRelatedFilesChangedBefore].
+ * See [GradleBuildRoot.areRelatedFilesChangedBefore].
  *
  * [lastModifiedTs] is needed to check if some related file was changed since last update
  */

@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
 import com.intellij.openapi.diagnostic.logger
 
-class GradleBuildRootIndex {
+class GradleBuildRootIndex : StandaloneScriptsUpdater {
     private val log = logger<GradleBuildRootIndex>()
 
-    private val standaloneScriptRoots = mutableMapOf<String, GradleBuildRoot.Linked?>()
+    private val standaloneScriptRoots = mutableMapOf<String, GradleBuildRoot?>()
 
-    private val byWorkingDir = HashMap<String, GradleBuildRoot.Linked>()
-    private val byProjectDir = HashMap<String, GradleBuildRoot.Linked>()
+    private val byWorkingDir = HashMap<String, GradleBuildRoot>()
+    private val byProjectDir = HashMap<String, GradleBuildRoot>()
 
-    val list: Collection<GradleBuildRoot.Linked>
+    val list: Collection<GradleBuildRoot>
         get() = byWorkingDir.values
 
     @Synchronized
@@ -34,8 +34,8 @@ class GradleBuildRootIndex {
     fun getBuildByRootDir(dir: String) = byWorkingDir[dir]
 
     @Synchronized
-    fun findNearestRoot(path: String): GradleBuildRoot.Linked? {
-        var max: Pair<String, GradleBuildRoot.Linked>? = null
+    fun findNearestRoot(path: String): GradleBuildRoot? {
+        var max: Pair<String, GradleBuildRoot>? = null
         byWorkingDir.entries.forEach {
             if (path.startsWith(it.key) && (max == null || it.key.length > max!!.first.length)) {
                 max = it.key to it.value
@@ -54,7 +54,7 @@ class GradleBuildRootIndex {
     fun getStandaloneScriptRoot(path: String) = standaloneScriptRoots[path]
 
     @Synchronized
-    fun add(value: GradleBuildRoot.Linked): GradleBuildRoot.Linked? {
+    fun add(value: GradleBuildRoot): GradleBuildRoot? {
         val prefix = value.pathPrefix
         val old = byWorkingDir.put(prefix, value)
         rebuildProjectRoots()
@@ -69,11 +69,15 @@ class GradleBuildRootIndex {
     }
 
     @Synchronized
-    fun addStandaloneScript(path: String) {
+    override fun addStandaloneScript(path: String) {
         computeStandaloneScriptRoot(path)
     }
 
-    var standaloneScripts: Collection<String>
+    @Synchronized
+    override fun removeStandaloneScript(path: String) =
+        standaloneScriptRoots.remove(path)
+
+    override var standaloneScripts: Collection<String>
         @Synchronized get() = standaloneScriptRoots.keys
         @Synchronized set(value) {
             standaloneScriptRoots.clear()

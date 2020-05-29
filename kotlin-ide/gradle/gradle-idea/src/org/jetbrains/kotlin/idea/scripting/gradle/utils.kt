@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -64,7 +63,7 @@ fun getGradleScriptInputsStamp(
                     }
                 }
 
-            val buildRoot = GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file)?.root as? GradleBuildRoot.Linked
+            val buildRoot = GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file)?.root as? GradleBuildRoot
             GradleKotlinScriptConfigurationInputs(result.toString(), givenTimeStamp, buildRoot?.pathPrefix)
         } else null
     }

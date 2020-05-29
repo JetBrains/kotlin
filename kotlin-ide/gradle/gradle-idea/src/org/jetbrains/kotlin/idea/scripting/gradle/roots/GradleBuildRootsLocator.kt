@@ -38,7 +38,7 @@ abstract class GradleBuildRootsLocator {
         findAffectedFileRoot(filePath) != null ||
                 roots.isStandaloneScript(filePath)
 
-    fun findAffectedFileRoot(filePath: String): GradleBuildRoot.Linked? {
+    fun findAffectedFileRoot(filePath: String): GradleBuildRoot? {
         if (filePath.endsWith("/gradle.properties") ||
             filePath.endsWith("/gradle.local")
         ) {
@@ -50,25 +50,42 @@ abstract class GradleBuildRootsLocator {
             return roots.getBuildByRootDir(filePath.substring(0, buildDirIndex))
         }
 
-        return findScriptBuildRoot(filePath, searchNearestLegacy = false)?.root as? GradleBuildRoot.Linked
+        return findScriptBuildRoot(filePath, searchNearestLegacy = false)?.root as? GradleBuildRoot
+    }
+
+    enum class NotificationKind {
+        dontCare, // one of: imported, inside linked legacy gradle build
+        outsideAnyting, // suggest link related gradle build or just say that there is no one
+        wasNotImportedAfterCreation, // project not yet imported after this file was created
+        notEvaluatedInLastImport, // all other scripts, suggest to sync or mark as standalone
+        standalone
     }
 
     class ScriptUnderRoot(
         val root: GradleBuildRoot?,
         val script: GradleScriptInfo? = null,
-        val standalone: Boolean = false
+        val standalone: Boolean = false,
+        val nearest: GradleBuildRoot? = null
     ) {
-        val isUnrelatedScript: Boolean
-            get() = root is GradleBuildRoot.Unlinked
-
-        val importRequired: Boolean
-            get() = root is GradleBuildRoot.Linked &&
-                    !isImported &&
-                    !root.importing &&
-                    !standalone
+        val notificationKind: NotificationKind
+            get() = when {
+                isImported -> NotificationKind.dontCare
+                standalone -> NotificationKind.standalone
+                nearest == null -> NotificationKind.outsideAnyting
+                nearest.importing -> NotificationKind.dontCare
+                else -> when (nearest) {
+                    is Legacy -> NotificationKind.dontCare
+                    is New -> NotificationKind.wasNotImportedAfterCreation
+                    is Imported -> NotificationKind.notEvaluatedInLastImport // todo: wasNotImportedAfterCreation
+                }
+            }
 
         private val isImported: Boolean
             get() = script != null
+
+        override fun toString(): String {
+            return "ScriptUnderRoot(root=$root, script=$script, standalone=$standalone, nearest=$nearest)"
+        }
     }
 
     fun findScriptBuildRoot(gradleKtsFile: VirtualFile): ScriptUnderRoot? =
@@ -98,12 +115,14 @@ abstract class GradleBuildRootsLocator {
             return ScriptUnderRoot(standaloneScriptRoot, standalone = true)
         }
 
-        // todo(gradle6): remove, it is required only for projects with old gradle
         if (searchNearestLegacy) {
-            val found = roots.findNearestRoot(filePath)
-            if (found is GradleBuildRoot.Legacy) return ScriptUnderRoot(found)
+            val nearest = roots.findNearestRoot(filePath)
+            return when (nearest) {
+                is Legacy -> ScriptUnderRoot(nearest)
+                else -> ScriptUnderRoot(null, nearest = nearest)
+            }
+        } else {
+            return ScriptUnderRoot(null)
         }
-
-        return ScriptUnderRoot(GradleBuildRoot.Unlinked())
     }
 }
