@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.idea.perf
 
+import com.intellij.codeHighlighting.Pass
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.perf.util.ExternalProject
 import org.jetbrains.kotlin.idea.perf.util.lastPathSegment
 import org.jetbrains.kotlin.idea.perf.util.suite
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.junit.Ignore
 import org.junit.runner.RunWith
 
 /**
@@ -31,6 +33,7 @@ class AHeavyInspectionsPerformanceTest : UsefulTestCase() {
         "UnusedSymbol",
         "MemberVisibilityCanBePrivate"
     )
+    val passesToIgnore = ((1 until 100) - Pass.LOCAL_INSPECTIONS - Pass.WHOLE_FILE_LOCAL_INSPECTIONS).toIntArray()
 
     fun testLocalInspection() {
         suite {
@@ -38,6 +41,65 @@ class AHeavyInspectionsPerformanceTest : UsefulTestCase() {
                 project(ExternalProject.KOTLIN_GRADLE) {
                     for (inspection in listOfInspections) {
                         enableSingleInspection(inspection)
+                        for (file in listOfFiles) {
+                            val editorFile = editor(file)
+
+                            measure<List<HighlightInfo>>(inspection, file.lastPathSegment()) {
+                                test = {
+                                    highlight(editorFile, passesToIgnore)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Ignore
+    fun testUnusedSymbolLocalInspection() {
+        suite {
+            config.warmup = 1
+            config.iterations = 2
+            config.profilerConfig.enabled = true
+            config.profilerConfig.tracing = true
+            app {
+                project(ExternalProject.KOTLIN_AUTO) {
+                    for (inspection in listOfInspections.sliceArray(0 until 1)) {
+                        enableSingleInspection(inspection)
+                        for (file in listOfFiles.sliceArray(0 until 1)) {
+                            val editorFile = editor(file)
+
+                            measure<List<HighlightInfo>>(inspection, file.lastPathSegment()) {
+                                test = {
+                                    highlight(editorFile, passesToIgnore)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // used locally to test
+    val UNUSED_AUTO = ExternalProject(
+        "../unused",
+        ExternalProject.autoOpenAction("../unused")
+    )
+
+    @Ignore
+    fun testSingleInspection1() {
+        suite {
+            config.warmup = 0
+            config.iterations = 1
+            config.profilerConfig.enabled = true
+            config.profilerConfig.tracing = true
+            app {
+                project(UNUSED_AUTO) {
+                    for (inspection in listOfInspections.sliceArray(0..1)) {
+                        enableSingleInspection(inspection)
+                        val listOfFiles = listOf("src/main/kotlin/org/test/test.kt")
                         for (file in listOfFiles) {
                             val editorFile = editor(file)
 

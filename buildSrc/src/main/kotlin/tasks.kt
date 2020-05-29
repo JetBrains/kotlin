@@ -79,21 +79,20 @@ fun Project.projectTest(
         }
     }
 
-    doFirst {
-        val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
-
-        val args = project.findProperty("kotlin.test.instrumentation.args")?.let { "=$it" }.orEmpty()
-
-        jvmArgs("-javaagent:$agent$args")
+    if (project.findProperty("kotlin.test.instrumentation.disable")?.toString()?.toBoolean() != true) {
+        doFirst {
+            val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
+            val args = project.findProperty("kotlin.test.instrumentation.args")?.let { "=$it" }.orEmpty()
+            jvmArgs("-javaagent:$agent$args")
+        }
+        dependsOn(":test-instrumenter:jar")
     }
-
-    dependsOn(":test-instrumenter:jar")
 
     jvmArgs(
         "-ea",
         "-XX:+HeapDumpOnOutOfMemoryError",
         "-XX:+UseCodeCacheFlushing",
-        "-XX:ReservedCodeCacheSize=128m",
+        "-XX:ReservedCodeCacheSize=256m",
         "-Djna.nosys=true"
     )
 

@@ -61,11 +61,11 @@ class PerformanceSuite {
             }
         }
 
-        private fun PsiFile.highlightFile(): List<HighlightInfo> {
+        private fun PsiFile.highlightFile(toIgnore: IntArray = ArrayUtilRt.EMPTY_INT_ARRAY): List<HighlightInfo> {
             val document = FileDocumentManager.getInstance().getDocument(virtualFile)!!
             val editor = EditorFactory.getInstance().getEditors(document).first()
             PsiDocumentManager.getInstance(project).commitAllDocuments()
-            return CodeInsightTestFixtureImpl.instantiateAndRun(this, editor, ArrayUtilRt.EMPTY_INT_ARRAY, true)
+            return CodeInsightTestFixtureImpl.instantiateAndRun(this, editor, toIgnore, true)
         }
 
         fun rollbackChanges(vararg file: VirtualFile) {
@@ -139,7 +139,6 @@ class PerformanceSuite {
                 tearDown {
                     after?.invoke()
                 }
-                profilerEnabled(config.profile)
                 profilerConfig(config.profilerConfig)
             }
             return value
@@ -216,7 +215,7 @@ class PerformanceSuite {
     }
 
 
-    class StatsScopeConfig(var name: String? = null, var warmup: Int = 2, var iterations: Int = 5, var profile: Boolean = false, var profilerConfig: ProfilerConfig = ProfilerConfig())
+    class StatsScopeConfig(var name: String? = null, var warmup: Int = 2, var iterations: Int = 5, var profilerConfig: ProfilerConfig = ProfilerConfig())
 
     class ProjectScopeConfig(val path: String, val openWith: ProjectOpenAction, val refresh: Boolean = false) {
         val name: String = path.lastPathSegment()
@@ -239,10 +238,8 @@ class PerformanceSuite {
 
         fun highlight(fixture: Fixture) = highlight(fixture.psiFile)
 
-        fun highlight(editorFile: PsiFile?) =
-            editorFile?.let {
-                it.highlightFile()
-            } ?: error("editor isn't ready for highlight")
+        fun highlight(editorFile: PsiFile?, toIgnore: IntArray = ArrayUtilRt.EMPTY_INT_ARRAY) =
+            editorFile?.highlightFile(toIgnore) ?: error("editor isn't ready for highlight")
 
         fun moveCursor(config: TypingConfig) {
             val fixture = config.fixture
@@ -322,7 +319,7 @@ class PerformanceSuite {
 
         fun <T> measure(vararg name: String, f: MeasurementScope<T>.() -> Unit): List<T?> {
             val after = { PsiManager.getInstance(project).dropPsiCaches() }
-            return app.stats.measure("${name.joinToString("-")}", f, after)
+            return app.stats.measure(name.joinToString("-"), f, after)
         }
 
         fun <T> measure(vararg name: String, fixture: Fixture, f: MeasurementScope<T>.() -> Unit): List<T?> =

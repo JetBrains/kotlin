@@ -294,7 +294,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                 setUp(perfKtsFileAnalysisSetUp(project, fileName))
                 test(perfKtsFileAnalysisTest())
                 tearDown(perfKtsFileAnalysisTearDown(extraTimingsNs, project))
-                profilerEnabled(true)
+                profilerConfig.enabled = true
             }
 
             extraStats.printWarmUpTimings(

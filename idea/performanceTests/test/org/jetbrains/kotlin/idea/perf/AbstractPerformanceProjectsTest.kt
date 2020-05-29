@@ -350,7 +350,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 stats(stats)
                 warmUpIterations(8)
                 iterations(15)
-                profilerEnabled(true)
+                profilerConfig.enabled = true
                 setUp {
                     val markerOffset = editor.document.text.indexOf(marker)
                     assertTrue("marker '$marker' not found in $fileName", markerOffset > 0)
@@ -468,7 +468,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 }
                 commitAllDocuments()
             }
-            profilerEnabled(true)
+            profilerConfig.enabled = true
         }
     }
 
@@ -543,7 +543,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     commitAllDocuments()
                 }
             }
-            profilerEnabled(true)
+            profilerConfig.enabled = true
         }
     }
 
@@ -610,7 +610,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                         }
                         PsiManager.getInstance(project).dropPsiCaches()
                     }
-                    profilerEnabled(!isWarmUp)
+                    profilerConfig.enabled = true
                 }
                 highlightInfos
             }
@@ -663,7 +663,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 }
                 it.value?.let { v -> assertNotNull(v) }
             }
-            profilerEnabled(true)
+            profilerConfig.enabled = true
             checkStability(false)
         }
     }

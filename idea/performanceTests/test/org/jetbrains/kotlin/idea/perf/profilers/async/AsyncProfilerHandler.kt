@@ -26,7 +26,7 @@ import java.util.*
  *
  * AsyncProfiler could be downloaded from https://github.com/jvm-profiling-tools/async-profiler/releases/
  */
-internal class AsyncProfilerHandler : ProfilerHandler {
+internal class AsyncProfilerHandler(val profilerConfig: ProfilerConfig) : ProfilerHandler {
 
     private val asyncProfiler: Any
 
@@ -48,20 +48,20 @@ internal class AsyncProfilerHandler : ProfilerHandler {
         executeMethod.invoke(asyncProfiler, command)
     }
 
-    override fun startProfiling(activityName: String, config: ProfilerConfig) {
+    override fun startProfiling() {
         try {
-            profilingOptions = config.options
-            execute(AsyncProfilerCommandBuilder.buildStartCommand(config.options))
+            profilingOptions = profilerConfig.options
+            execute(AsyncProfilerCommandBuilder.buildStartCommand(profilerConfig.options))
             profilingStarted = true
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
     }
 
-    override fun stopProfiling(snapshotsPath: String, activityName: String, config: ProfilerConfig) {
-        val combinedOptions = ArrayList(config.options)
-        val commandBuilder = AsyncProfilerCommandBuilder(snapshotsPath)
-        val name = activityName.replace(' ', '_').replace('/', '_')
+    override fun stopProfiling(attempt: Int) {
+        val combinedOptions = ArrayList(profilerConfig.options)
+        val commandBuilder = AsyncProfilerCommandBuilder(profilerConfig.path)
+        val name = "${profilerConfig.name}-$attempt".replace(' ', '_').replace('/', '_')
         val stopAndDumpCommands = commandBuilder.buildStopAndDumpCommands(name, combinedOptions)
         for (stopCommand in stopAndDumpCommands) {
             execute(stopCommand)
