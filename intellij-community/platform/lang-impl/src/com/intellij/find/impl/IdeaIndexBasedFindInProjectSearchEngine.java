@@ -94,7 +94,7 @@ public class IdeaIndexBasedFindInProjectSearchEngine implements FindInProjectSea
       });
 
       // in case our word splitting is incorrect
-      CacheManager cacheManager = CacheManager.SERVICE.getInstance(myProject);
+      CacheManager cacheManager = CacheManager.getInstance(myProject);
       VirtualFile[] filesWithWord = cacheManager.getVirtualFilesWithWord(stringToFind, UsageSearchContext.ANY, scope,
                                                                          myFindModel.isCaseSensitive());
       return Collections.unmodifiableCollection(Arrays.asList(filesWithWord));

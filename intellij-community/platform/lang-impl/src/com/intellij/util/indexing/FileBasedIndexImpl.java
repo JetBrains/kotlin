@@ -53,6 +53,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
+import com.intellij.util.containers.Stack;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.contentQueue.CachedFileContent;
 import com.intellij.util.indexing.diagnostic.FileIndexingStatistics;
@@ -93,7 +94,8 @@ import java.util.stream.Stream;
 public final class FileBasedIndexImpl extends FileBasedIndexEx {
   private static final ThreadLocal<VirtualFile> ourIndexedFile = new ThreadLocal<>();
   private static final ThreadLocal<VirtualFile> ourFileToBeIndexed = new ThreadLocal<>();
-  private static final ThreadLocal<DumbModeAccessType> ourDumbModeAccessType = new ThreadLocal<>();
+  @SuppressWarnings("SSBasedInspection")
+  private static final ThreadLocal<Stack<DumbModeAccessType>> ourDumbModeAccessTypeStack = ThreadLocal.withInitial(Stack::new);
   public static final Logger LOG = Logger.getInstance(FileBasedIndexImpl.class);
 
   private volatile RegisteredIndexes myRegisteredIndexes;
@@ -639,22 +641,14 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
                                                    @NotNull ThrowableComputable<T, E> computable) throws E {
     assert ApplicationManager.getApplication().isReadAccessAllowed();
     if (FileBasedIndex.isIndexAccessDuringDumbModeEnabled()) {
-      boolean setAccessType = true;
-      DumbModeAccessType currentAccessType = ourDumbModeAccessType.get();
-      if (currentAccessType != null) {
-        if (currentAccessType == dumbModeAccessType) {
-          setAccessType = false;
-        }
-        else {
-          throw new AssertionError("Reentrant dumb mode ignorance. Current mode: " + currentAccessType + ", Requested mode: " + dumbModeAccessType);
-        }
-      }
-      if (setAccessType) ourDumbModeAccessType.set(dumbModeAccessType);
+      Stack<DumbModeAccessType> dumbModeAccessTypeStack = ourDumbModeAccessTypeStack.get();
+      dumbModeAccessTypeStack.push(dumbModeAccessType);
       try {
         return computable.compute();
       }
       finally {
-        if (setAccessType) ourDumbModeAccessType.set(null);
+        DumbModeAccessType type = dumbModeAccessTypeStack.pop();
+        assert dumbModeAccessType == type;
       }
     } else {
       return computable.compute();
@@ -678,7 +672,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     if (filter == GlobalSearchScope.EMPTY_SCOPE) {
       return false;
     }
-    boolean dumbModeAccessRestricted = ourDumbModeAccessType.get() == null;
+    boolean dumbModeAccessRestricted = ourDumbModeAccessTypeStack.get() == null;
     if (dumbModeAccessRestricted && ActionUtil.isDumbMode(project)) {
       handleDumbMode(project);
     }
@@ -1423,8 +1417,9 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   @Override
-  public DumbModeAccessType getCurrentDumbModeAccessType() {
-    return ourDumbModeAccessType.get();
+  public @Nullable DumbModeAccessType getCurrentDumbModeAccessType() {
+    Stack<DumbModeAccessType> dumbModeAccessTypeStack = ourDumbModeAccessTypeStack.get();
+    return dumbModeAccessTypeStack.isEmpty() ? null : dumbModeAccessTypeStack.peek();
   }
 
   private class VirtualFileUpdateTask extends UpdateTask<VirtualFile> {

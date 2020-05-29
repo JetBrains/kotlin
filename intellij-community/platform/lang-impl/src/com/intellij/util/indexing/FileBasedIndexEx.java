@@ -463,7 +463,9 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
       ProgressManager.checkCanceled();
       VirtualFile file = IndexInfrastructure.findFileByIdIfCached(fs, id);
       if (file != null && filter.accept(file)) {
-        return processor.process(file);
+        boolean processNext = processor.process(file);
+        ProgressManager.checkCanceled();
+        return processNext;
       }
       return true;
     });
