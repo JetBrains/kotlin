@@ -101,6 +101,7 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
     }
 
 class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSystemTaskId) {
+    val ts = System.currentTimeMillis()
     var project: Project? = null
     val projectRoots = mutableSetOf<String>()
     val models = mutableListOf<KotlinDslScriptModel>()

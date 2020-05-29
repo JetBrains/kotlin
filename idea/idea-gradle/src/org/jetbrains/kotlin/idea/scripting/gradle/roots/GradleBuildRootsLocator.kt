@@ -61,11 +61,18 @@ abstract class GradleBuildRootsLocator {
         standalone
     }
 
-    class ScriptUnderRoot(
+    /**
+     * Timestamp of an moment when script file was discovered (indexed).
+     * Used to detect if that script was existed at the moment of import
+     */
+    abstract fun getScriptFirstSeenTs(path: String): Long
+
+    inner class ScriptUnderRoot(
+        val filePath: String,
         val root: GradleBuildRoot?,
         val script: GradleScriptInfo? = null,
         val standalone: Boolean = false,
-        val nearest: GradleBuildRoot? = null
+        val nearest: GradleBuildRoot? = root
     ) {
         val notificationKind: NotificationKind
             get() = when {
@@ -76,12 +83,19 @@ abstract class GradleBuildRootsLocator {
                 else -> when (nearest) {
                     is Legacy -> NotificationKind.dontCare
                     is New -> NotificationKind.wasNotImportedAfterCreation
-                    is Imported -> NotificationKind.notEvaluatedInLastImport // todo: wasNotImportedAfterCreation
+                    is Imported -> when {
+                        wasImportedAndNotEvaluated -> NotificationKind.notEvaluatedInLastImport
+                        else -> NotificationKind.wasNotImportedAfterCreation
+                    }
                 }
             }
 
         private val isImported: Boolean
             get() = script != null
+
+        private val wasImportedAndNotEvaluated: Boolean
+            get() = nearest is Imported &&
+                    getScriptFirstSeenTs(filePath) < nearest.data.importTs
 
         override fun toString(): String {
             return "ScriptUnderRoot(root=$root, script=$script, standalone=$standalone, nearest=$nearest)"
@@ -96,7 +110,7 @@ abstract class GradleBuildRootsLocator {
 
         val scriptInfo = getScriptInfo(filePath)
         val imported = scriptInfo?.buildRoot
-        if (imported != null) return ScriptUnderRoot(imported, scriptInfo)
+        if (imported != null) return ScriptUnderRoot(filePath, imported, scriptInfo)
 
         if (filePath.endsWith("/build.gradle.kts") ||
             filePath.endsWith("/settings.gradle.kts") ||
@@ -104,7 +118,7 @@ abstract class GradleBuildRootsLocator {
         ) {
             // build|settings|init.gradle.kts scripts should be located near gradle project root only
             val gradleBuild = roots.getBuildByProjectDir(filePath.substringBeforeLast("/"))
-            if (gradleBuild != null) return ScriptUnderRoot(gradleBuild)
+            if (gradleBuild != null) return ScriptUnderRoot(filePath, gradleBuild)
         }
 
         // other scripts: "included", "precompiled" scripts, scripts in unlinked projects,
@@ -112,17 +126,17 @@ abstract class GradleBuildRootsLocator {
 
         val standaloneScriptRoot = roots.getStandaloneScriptRoot(filePath)
         if (standaloneScriptRoot != null) {
-            return ScriptUnderRoot(standaloneScriptRoot, standalone = true)
+            return ScriptUnderRoot(filePath, standaloneScriptRoot, standalone = true)
         }
 
         if (searchNearestLegacy) {
             val nearest = roots.findNearestRoot(filePath)
             return when (nearest) {
-                is Legacy -> ScriptUnderRoot(nearest)
-                else -> ScriptUnderRoot(null, nearest = nearest)
+                is Legacy -> ScriptUnderRoot(filePath, nearest)
+                else -> ScriptUnderRoot(filePath, null, nearest = nearest)
             }
         } else {
-            return ScriptUnderRoot(null)
+            return ScriptUnderRoot(filePath, null)
         }
     }
 }
