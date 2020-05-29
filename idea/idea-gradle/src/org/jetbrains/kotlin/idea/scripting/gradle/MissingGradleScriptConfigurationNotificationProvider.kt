@@ -14,6 +14,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsLocator.NotificationKind.*
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 
 class MissingGradleScriptConfigurationNotificationProvider(private val project: Project) :
@@ -24,30 +25,61 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
         if (!isGradleKotlinScript(file)) return null
         if (file.fileType != KotlinFileType.INSTANCE) return null
 
-        val scriptUnderRoot = GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file) ?: return null
-        return when {
-            scriptUnderRoot.isUnrelatedScript -> EditorNotificationPanel().apply {
-                text(KotlinIdeaGradleBundle.message("text.the.associated.gradle.project.isn.t.imported"))
-
-                createActionLabel(KotlinIdeaGradleBundle.message("action.text.standalone")) {
-                    GradleBuildRootsManager.getInstance(project).addStandaloneScript(file)
+        val rootsManager = GradleBuildRootsManager.getInstance(project)
+        val scriptUnderRoot = rootsManager.findScriptBuildRoot(file) ?: return null
+        return when (scriptUnderRoot.notificationKind) {
+            dontCare -> null
+            outsideAnyting -> EditorNotificationPanel().apply {
+                text("Code insight unavailable (related Gradle project not linked)")
+                // todo: Code insight unavailable (cannot find related Gradle project)
+                createActionLabel("Link related Gradle project") {
+                    runPartialGradleImport(project)
                 }
-
-                val helpIcon = createActionLabel("") {}
-                helpIcon.setIcon(AllIcons.General.ContextHelp)
-                helpIcon.setUseIconAsLink(true)
-                helpIcon.toolTipText = KotlinIdeaGradleBundle.message(
-                    "tool.tip.text.the.external.gradle.project.needs.to.be.imported.to.get.this.script.analyzed"
-                )
             }
-            scriptUnderRoot.importRequired -> EditorNotificationPanel().apply {
-                text(getMissingConfigurationNotificationText())
+            wasNotImportedAfterCreation -> EditorNotificationPanel().apply {
+                text("Code insight unavailable (Gradle project Sync required)")
                 createActionLabel(getMissingConfigurationActionText()) {
                     runPartialGradleImport(project)
                 }
             }
-            else -> null
+            notEvaluatedInLastImport -> EditorNotificationPanel().apply {
+                text(KotlinIdeaGradleBundle.message("text.the.associated.gradle.project.isn.t.imported"))
+
+                createActionLabel(KotlinIdeaGradleBundle.message("action.text.standalone")) {
+                    rootsManager.updateStandaloneScripts {
+                        removeStandaloneScript(file.path)
+                    }
+                }
+
+                contextHelp(
+                    KotlinIdeaGradleBundle.message("tool.tip.text.the.external.gradle.project.needs.to.be.imported.to.get.this.script.analyzed")
+                )
+            }
+            standalone -> EditorNotificationPanel().apply {
+                text("Standalone script")
+                createActionLabel("Disable script") {
+                    rootsManager.updateStandaloneScripts {
+                        addStandaloneScript(file.path)
+                    }
+                }
+                contextHelp(
+                    """
+<div width=400>\
+<p>Configuration for this script will be loaded separately from Gradle project Sync. \
+<br/>
+<p>This can be expensive for large Gradle projects.</p>\
+</div>                        
+                    """
+                )
+            }
         }
+    }
+
+    private fun EditorNotificationPanel.contextHelp(text: String) {
+        val helpIcon = createActionLabel("") {}
+        helpIcon.setIcon(AllIcons.General.ContextHelp)
+        helpIcon.setUseIconAsLink(true)
+        helpIcon.toolTipText = text
     }
 
     companion object {

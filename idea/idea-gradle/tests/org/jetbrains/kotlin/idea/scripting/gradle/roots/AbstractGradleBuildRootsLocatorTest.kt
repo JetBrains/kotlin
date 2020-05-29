@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleKotlinScriptConfigurationInputs
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
+import kotlin.test.assertEquals
 
 open class AbstractGradleBuildRootsLocatorTest {
     init {
-        GradleBuildRoot.skipLastModifiedFilesLoading = true
+        skipLastModifiedFilesLoading = true
     }
 
     private val scripts = mutableMapOf<String, GradleScriptInfo>()
@@ -21,7 +22,7 @@ open class AbstractGradleBuildRootsLocatorTest {
         fun accessRoots() = roots
     }
 
-    private fun add(root: GradleBuildRoot.Linked) {
+    private fun add(root: GradleBuildRoot) {
         locator.accessRoots().add(root)
     }
 
@@ -31,7 +32,7 @@ open class AbstractGradleBuildRootsLocatorTest {
         relativeScripts: List<String> = listOf("build.gradle.kts")
     ) {
         val pathPrefix = "$dir/"
-        val root = GradleBuildRoot.Imported(
+        val root = Imported(
             dir,
             null,
             GradleBuildRootData(
@@ -62,4 +63,8 @@ open class AbstractGradleBuildRootsLocatorTest {
 
     fun findScriptBuildRoot(filePath: String, searchNearestLegacy: Boolean = true) =
         locator.findScriptBuildRoot(filePath, searchNearestLegacy)
+
+    fun assertNotificationKind(filePath: String, notificationKind: GradleBuildRootsLocator.NotificationKind) {
+        assertEquals(notificationKind, findScriptBuildRoot(filePath)?.notificationKind)
+    }
 }
