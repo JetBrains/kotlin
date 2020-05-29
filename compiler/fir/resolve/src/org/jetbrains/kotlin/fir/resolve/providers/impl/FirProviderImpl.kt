@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -65,56 +67,65 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         recordFile(file, state)
     }
 
+    @FirProviderInternals
+    override fun recordNestedClass(owner: FirRegularClass, klass: FirRegularClass) {
+        val file = getFirClassifierContainerFile(owner.symbol.classId)
+        klass.accept(FirRecorder, state to file)
+    }
+
     private fun recordFile(file: FirFile, state: State) {
         val packageName = file.packageFqName
         state.fileMap.merge(packageName, listOf(file)) { a, b -> a + b }
 
-        file.acceptChildren(object : FirDefaultVisitorVoid() {
-            override fun visitElement(element: FirElement) {}
+        file.acceptChildren(FirRecorder, state to file)
+    }
 
+    private object FirRecorder : FirDefaultVisitor<Unit, Pair<State, FirFile>>() {
+        override fun visitElement(element: FirElement, data: Pair<State, FirFile>) {}
 
-            override fun visitRegularClass(regularClass: FirRegularClass) {
-                val classId = regularClass.symbol.classId
+        override fun visitRegularClass(regularClass: FirRegularClass, data: Pair<State, FirFile>) {
+            val classId = regularClass.symbol.classId
+            val (state, file) = data
+            state.classifierMap[classId] = regularClass
+            state.classifierContainerFileMap[classId] = file
 
-                state.classifierMap[classId] = regularClass
-                state.classifierContainerFileMap[classId] = file
-
-                if (!classId.isNestedClass && !classId.isLocal) {
-                    state.classesInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
-                }
-
-                regularClass.acceptChildren(this)
+            if (!classId.isNestedClass && !classId.isLocal) {
+                state.classesInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
             }
 
-            override fun visitTypeAlias(typeAlias: FirTypeAlias) {
-                val classId = typeAlias.symbol.classId
-                state.classifierMap[classId] = typeAlias
-                state.classifierContainerFileMap[classId] = file
-            }
+            regularClass.acceptChildren(this, data)
+        }
 
-            override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>) {
-                val symbol = callableDeclaration.symbol
-                val callableId = symbol.callableId
-                state.callableMap.merge(callableId, listOf(symbol)) { a, b -> a + b }
-                state.callableContainerMap[symbol] = file
-            }
+        override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Pair<State, FirFile>) {
+            val classId = typeAlias.symbol.classId
+            val (state, file) = data
+            state.classifierMap[classId] = typeAlias
+            state.classifierContainerFileMap[classId] = file
+        }
 
-            override fun visitConstructor(constructor: FirConstructor) {
-                visitCallableDeclaration(constructor)
-            }
+        override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>, data: Pair<State, FirFile>) {
+            val symbol = callableDeclaration.symbol
+            val callableId = symbol.callableId
+            val (state, file) = data
+            state.callableMap.merge(callableId, listOf(symbol)) { a, b -> a + b }
+            state.callableContainerMap[symbol] = file
+        }
 
-            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
-                visitCallableDeclaration(simpleFunction)
-            }
+        override fun visitConstructor(constructor: FirConstructor, data: Pair<State, FirFile>) {
+            visitCallableDeclaration(constructor, data)
+        }
 
-            override fun visitProperty(property: FirProperty) {
-                visitCallableDeclaration(property)
-            }
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Pair<State, FirFile>) {
+            visitCallableDeclaration(simpleFunction, data)
+        }
 
-            override fun visitEnumEntry(enumEntry: FirEnumEntry) {
-                visitCallableDeclaration(enumEntry)
-            }
-        })
+        override fun visitProperty(property: FirProperty, data: Pair<State, FirFile>) {
+            visitCallableDeclaration(property, data)
+        }
+
+        override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Pair<State, FirFile>) {
+            visitCallableDeclaration(enumEntry, data)
+        }
     }
 
     private val state = State()

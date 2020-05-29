@@ -6,18 +6,20 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.addDeclaration
 import org.jetbrains.kotlin.fir.extensions.existingClassModifiers
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
 
 class FirGlobalNestedClassGenerationProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirGlobalResolveProcessor(session, scopeSession) {
+    @OptIn(FirProviderInternals::class)
     override fun process() {
         val extensions = session.extensionService.existingClassModifiers
         if (extensions.isEmpty()) return
@@ -30,6 +32,7 @@ class FirGlobalNestedClassGenerationProcessor(
                 for ((nestedClass, owner) in nestedClasses) {
                     owner.addDeclaration(nestedClass)
                     index.registerNestedClass(nestedClass, owner)
+                    session.firProvider.recordNestedClass(owner, nestedClass)
                 }
             }
         }
