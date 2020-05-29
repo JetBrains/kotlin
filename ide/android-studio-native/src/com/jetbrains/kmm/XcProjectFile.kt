@@ -105,7 +105,7 @@ class XcProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher
             } else if (location.isDirectory) {
                 for (file in (location.listFiles() ?: emptyArray())) {
                     when (file.extension) {
-                        XcFileExtensions.workspace -> candidates.add(0, file) // workspaces are more preferable
+                        XcFileExtensions.workspace -> candidates.add(0, file) // workspaces are preferable
                         XcFileExtensions.project -> candidates.add(file)
                     }
                 }

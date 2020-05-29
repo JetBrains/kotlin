@@ -11,8 +11,13 @@ import com.intellij.execution.Executor
 import com.intellij.execution.configurations.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction
+import com.intellij.ide.actions.OpenFileAction
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.DialogWrapperDialog
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.ui.ComponentUtil
 import com.jetbrains.kmm.AppleConfigurationFactory
 import com.jetbrains.kmm.AppleRunConfigurationEditor
 import com.jetbrains.konan.KonanBundle
@@ -67,21 +72,37 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
         return result
     }
 
+    private val openGradleProperties = Runnable {
+        val propertiesFile = LocalFileSystem.getInstance().findFileByIoFile(File(project.basePath, "gradle.properties"))
+        OpenFileAction.openFile(propertiesFile, project)
+        val dialogWindow = (ComponentUtil.getActiveWindow() as? DialogWrapperDialog) ?: return@Runnable
+        dialogWindow.dialogWrapper.close(DialogWrapper.CANCEL_EXIT_CODE)
+    }
+
+    private fun reportXcFileError(message: String, quickFix: Runnable? = null) {
+        throw if (quickFix == null)
+            RuntimeConfigurationError(message)
+        else
+            RuntimeConfigurationError(message, quickFix)
+    }
+
     override fun checkConfiguration() {
         val propertyKey = KonanBundle.message("property.xcodeproj")
 
-        val projectFileError = when (val status = workspace.xcProjectStatus) {
+        when (val status = workspace.xcProjectStatus) {
             is XcProjectStatus.Misconfiguration ->
-                "Project is misconfigured: " + status.reason
+                reportXcFileError("Project is misconfigured: " + status.reason)
             XcProjectStatus.NotLocated ->
-                "Please specify Xcode project location path relative to root in $propertyKey property of gradle.properties"
+                reportXcFileError(
+                    "Please specify Xcode project location path relative" +
+                            " to root in $propertyKey property of gradle.properties",
+                    openGradleProperties
+                )
             is XcProjectStatus.NotFound ->
-                "Please check $propertyKey property of gradle.properties: " + status.reason
-            XcProjectStatus.Found -> ""
-        }
-
-        if (projectFileError.isNotEmpty()) {
-            throw RuntimeConfigurationError(projectFileError)
+                reportXcFileError(
+                    "Please check $propertyKey property of gradle.properties: " + status.reason,
+                    openGradleProperties
+                )
         }
 
         if (workspace.xcProjectFile!!.schemes.isEmpty()) {
