@@ -77,7 +77,8 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
     CountDownLatch latch = new CountDownLatch(1);
     MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(ProjectDataImportListener.TOPIC, path -> latch.countDown());
-    while (latch.getCount() == 1) {
+    long start = System.currentTimeMillis();
+    while (latch.getCount() == 1 && System.currentTimeMillis() < start + 60*1000) {
       UIUtil.invokeAndWaitIfNeeded((Runnable)() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());
       Thread.yield();
     }
