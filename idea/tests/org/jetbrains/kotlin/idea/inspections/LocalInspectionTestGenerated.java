@@ -8396,6 +8396,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantSemicolon/beforeKDocAndLambda.kt");
         }
 
+        @TestMetadata("betweenNullableTypeAndNotOperator.kt")
+        public void testBetweenNullableTypeAndNotOperator() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSemicolon/betweenNullableTypeAndNotOperator.kt");
+        }
+
         @TestMetadata("betweenSoftKeywordAndDeclaration.kt")
         public void testBetweenSoftKeywordAndDeclaration() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSemicolon/betweenSoftKeywordAndDeclaration.kt");
