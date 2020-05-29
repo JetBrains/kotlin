@@ -115,7 +115,6 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     fun markImportingInProgress(workingDir: String, inProgress: Boolean = true) {
         actualizeBuildRoot(workingDir)?.importing = inProgress
         updateNotifications { it.startsWith(workingDir) }
-        hideNotificationForProjectImport(project)
     }
 
     fun update(build: KotlinDslGradleBuildSync) {
@@ -125,8 +124,9 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             if (root is Imported && root.data.models.isEmpty()) return
         }
 
-        val root = actualizeBuildRoot(build.workingDir) ?: return
-        root.importing = false
+        try {
+            val root = actualizeBuildRoot(build.workingDir) ?: return
+            root.importing = false
 
             if (root is Legacy) return
 
@@ -139,9 +139,10 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             GradleBuildRootDataSerializer.write(newSupport.dir ?: return, mergedData)
             newSupport.saveLastModifiedFiles()
 
-        add(newSupport)
-
-        hideNotificationForProjectImport(project)
+            add(newSupport)
+        } finally {
+            updateNotifications { it.startsWith(build.workingDir) }
+        }
     }
 
     private fun merge(old: GradleBuildRootData, new: GradleBuildRootData): GradleBuildRootData {
@@ -172,18 +173,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         val changes = StandaloneScriptsUpdater.collectChanges(delegate = roots, update)
 
         updateNotifications { it in changes.new || it in changes.removed }
-
-        runReadAction {
-            changes.new.forEach {
-                val virtualFile = LocalFileSystem.getInstance().findFileByPath(it)
-                if (virtualFile != null) {
-                    val ktFile = PsiManager.getInstance(project).findFile(virtualFile) as? KtFile
-                    if (ktFile != null) {
-                        ScriptConfigurationManager.getInstance(project).getConfiguration(ktFile)
-                    }
-                }
-            }
-        }
+        loadStandaloneScriptConfigurations(changes.new)
     }
 
     init {
@@ -333,15 +323,18 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     private fun updateNotifications(shouldUpdatePath: (String) -> Boolean) {
         if (!project.isOpen) return
 
+        // import notification is a balloon, so should be shown only for selected editor
+        FileEditorManager.getInstance(project).selectedEditor?.file?.let {
+            if (shouldUpdatePath(it.path) && maybeAffectedGradleProjectFile(it.path)) {
+                checkUpToDate(it)
+            }
+        }
+
         val openedScripts = FileEditorManager.getInstance(project).openFiles.filter {
             shouldUpdatePath(it.path) && maybeAffectedGradleProjectFile(it.path)
         }
 
         if (openedScripts.isEmpty()) return
-
-        openedScripts.forEach {
-            checkUpToDate(it)
-        }
 
         GlobalScope.launch(EDT(project)) {
             if (project.isDisposed) return@launch
@@ -350,6 +343,20 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
                 val ktFile = PsiManager.getInstance(project).findFile(it)
                 if (ktFile != null) DaemonCodeAnalyzer.getInstance(project).restart(ktFile)
                 EditorNotifications.getInstance(project).updateAllNotifications()
+            }
+        }
+    }
+
+    private fun loadStandaloneScriptConfigurations(files: MutableSet<String>) {
+        runReadAction {
+            files.forEach {
+                val virtualFile = LocalFileSystem.getInstance().findFileByPath(it)
+                if (virtualFile != null) {
+                    val ktFile = PsiManager.getInstance(project).findFile(virtualFile) as? KtFile
+                    if (ktFile != null) {
+                        ScriptConfigurationManager.getInstance(project).getConfiguration(ktFile)
+                    }
+                }
             }
         }
     }
