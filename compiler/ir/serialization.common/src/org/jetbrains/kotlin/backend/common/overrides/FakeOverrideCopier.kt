@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.backend.common.serialization
+package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction

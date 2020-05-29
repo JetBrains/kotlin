@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.backend.common.serialization
+package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns

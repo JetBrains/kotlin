@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.backend.common.override
+package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind

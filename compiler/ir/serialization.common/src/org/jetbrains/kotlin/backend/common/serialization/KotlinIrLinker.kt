@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.isExpect
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilderImpl
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideControl
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -662,8 +664,4 @@ enum class DeserializationStrategy(
     EXPLICITLY_EXPORTED(true, true, false, true),
     ONLY_DECLARATION_HEADERS(false, false, false, false),
     WITH_INLINE_BODIES(false, false, false, true)
-}
-
-interface FakeOverrideBuilder {
-    fun buildFakeOverridesForClass(clazz: IrClass)
 }

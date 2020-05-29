@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization
+package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.IrElement
@@ -36,6 +36,10 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+
+interface FakeOverrideBuilder {
+    fun buildFakeOverridesForClass(clazz: IrClass)
+}
 
 interface PlatformFakeOverrideClassFilter {
     fun constructFakeOverrides(clazz: IrClass): Boolean = true

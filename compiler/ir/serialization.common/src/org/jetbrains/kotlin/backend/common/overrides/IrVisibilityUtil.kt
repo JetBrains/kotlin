@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.backend.common.serialization
+package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.descriptors.Visibilities
