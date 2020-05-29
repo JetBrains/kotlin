@@ -76,7 +76,7 @@ class KotlinCallCompleter(
         }
     }
 
-    fun chooseCandidateRegardingFactoryPatternResolution(
+    fun chooseCandidateRegardingOverloadResolutionByLambdaReturnType(
         candidates: Set<KotlinResolutionCandidate>,
         resolutionCallbacks: KotlinResolutionCallbacks
     ): Set<KotlinResolutionCandidate> {

@@ -141,14 +141,14 @@ class KotlinCallResolver(
 
         if (
             maximallySpecificCandidates.size > 1 &&
-            callComponents.languageVersionSettings.supportsFeature(LanguageFeature.FactoryPatternResolution) &&
+            callComponents.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType) &&
             candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
         ) {
             val candidatesWithAnnotation =
                 candidates.filter { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION) }
             val candidatesWithoutAnnotation = candidates - candidatesWithAnnotation
             if (candidatesWithAnnotation.isNotEmpty()) {
-                val newCandidates = kotlinCallCompleter.chooseCandidateRegardingFactoryPatternResolution(maximallySpecificCandidates, resolutionCallbacks)
+                val newCandidates = kotlinCallCompleter.chooseCandidateRegardingOverloadResolutionByLambdaReturnType(maximallySpecificCandidates, resolutionCallbacks)
                 maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
                     newCandidates,
                     CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
