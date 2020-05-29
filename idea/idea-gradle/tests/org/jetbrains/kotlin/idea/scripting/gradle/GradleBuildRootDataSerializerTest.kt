@@ -20,6 +20,7 @@ class GradleBuildRootDataSerializerTest {
     @Test
     fun write() {
         val data = GradleBuildRootData(
+            123,
             listOf("a", "b", "c"),
             listOf("a"),
             listOf(

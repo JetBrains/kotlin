@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle.roots
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 
 data class GradleBuildRootData(
+    val importTs: Long,
     val projectRoots: Collection<String>,
     val templateClasspath: Collection<String>,
     val models: Collection<KotlinDslScriptModel>

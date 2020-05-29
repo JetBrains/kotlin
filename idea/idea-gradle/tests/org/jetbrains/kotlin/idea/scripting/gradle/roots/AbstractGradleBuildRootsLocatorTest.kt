@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import kotlin.test.assertEquals
 
 open class AbstractGradleBuildRootsLocatorTest {
-    private val scripts = mutableMapOf<String, GradleScriptInfo>()
+    private val scripts = mutableMapOf<String, ScriptFixture>()
     private val locator = MyRootsLocator()
 
+    class ScriptFixture(val introductionTs: Long, val info: GradleScriptInfo)
+
     private inner class MyRootsLocator : GradleBuildRootsLocator() {
-        override fun getScriptInfo(localPath: String): GradleScriptInfo? = scripts[localPath]
+        override fun getScriptFirstSeenTs(path: String): Long = scripts[path]?.introductionTs ?: 0
+        override fun getScriptInfo(localPath: String): GradleScriptInfo? = scripts[localPath]?.info
         fun accessRoots() = roots
     }
 
@@ -26,13 +29,15 @@ open class AbstractGradleBuildRootsLocatorTest {
     fun newImportedGradleProject(
         dir: String,
         relativeProjectRoots: List<String> = listOf(""),
-        relativeScripts: List<String> = listOf("build.gradle.kts")
+        relativeScripts: List<String> = listOf("build.gradle.kts"),
+        ts: Long = 0
     ) {
         val pathPrefix = "$dir/"
         val root = Imported(
             dir,
             null,
             GradleBuildRootData(
+                ts,
                 relativeProjectRoots.map { (pathPrefix + it).removeSuffix("/") },
                 listOf(),
                 listOf()
@@ -44,16 +49,19 @@ open class AbstractGradleBuildRootsLocatorTest {
 
         relativeScripts.forEach {
             val path = pathPrefix + it
-            scripts[path] = GradleScriptInfo(
-                root,
-                null,
-                KotlinDslScriptModel(
-                    file = path,
-                    inputs = GradleKotlinScriptConfigurationInputs("", 0, dir),
-                    classPath = listOf(),
-                    sourcePath = listOf(),
-                    imports = listOf(),
-                    messages = listOf()
+            scripts[path] = ScriptFixture(
+                0,
+                GradleScriptInfo(
+                    root,
+                    null,
+                    KotlinDslScriptModel(
+                        file = path,
+                        inputs = GradleKotlinScriptConfigurationInputs("", 0, dir),
+                        classPath = listOf(),
+                        sourcePath = listOf(),
+                        imports = listOf(),
+                        messages = listOf()
+                    )
                 )
             )
         }

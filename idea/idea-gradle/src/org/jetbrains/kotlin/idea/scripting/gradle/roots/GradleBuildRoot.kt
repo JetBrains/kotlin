@@ -25,7 +25,9 @@ import java.io.File
  *
  * See [GradleBuildRootsManager] for more details.
  */
-sealed class GradleBuildRoot(private val lastModifiedFiles: LastModifiedFiles) {
+sealed class GradleBuildRoot(
+    private val lastModifiedFiles: LastModifiedFiles
+) {
     @Volatile
     var importing = false
 
