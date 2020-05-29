@@ -106,7 +106,7 @@ open class KotlinUSimpleReferenceExpression(
         private val resolvedCall: ResolvedCall<*>,
         private val accessorDescriptor: DeclarationDescriptor,
         val setterValue: KtExpression?
-    ) : UCallExpressionEx, DelegatedMultiResolve, JvmDeclarationUElementPlaceholder {
+    ) : UCallExpressionEx, DelegatedMultiResolve {
         override val methodName: String?
             get() = accessorDescriptor.name.asString()
 

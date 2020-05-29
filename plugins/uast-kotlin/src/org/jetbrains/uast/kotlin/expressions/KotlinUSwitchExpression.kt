@@ -74,7 +74,7 @@ class KotlinUSwitchEntry(
             }
             expressions =
                 if (userExpressions.isNotEmpty())
-                    userExpressions.subList(0, userExpressions.lastIndex) + object : UYieldExpression, JvmDeclarationUElementPlaceholder {
+                    userExpressions.subList(0, userExpressions.lastIndex) + object : UYieldExpression {
                         override val javaPsi: PsiElement? = null
                         override val sourcePsi: PsiElement? = null
                         override val psi: PsiElement?
