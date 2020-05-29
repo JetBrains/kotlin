@@ -218,8 +218,8 @@ data class KotlinWebpackConfig(
                 });
                 config.devtool = ${devtool?.let { "'$it'" } ?: false};
                 config.stats = {
-                    warningsFilter: [/Failed to parse source map/],
-                },
+                    warningsFilter: [/Failed to parse source map/]
+                }
                 
             """.trimIndent()
         )
