@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 
 inline class Inner(val x: Int)
 inline class A(val x: Inner)

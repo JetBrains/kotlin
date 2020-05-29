@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 
 class BoxT<T>(val boxed: T)
 class BoxAny(val boxed: Any?)
