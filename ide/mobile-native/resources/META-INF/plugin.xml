@@ -67,6 +67,11 @@
     <applicationService serviceInterface="com.jetbrains.swift.SwiftSourceKitCompileArgumentsCollector"
                         serviceImplementation="com.jetbrains.swift.MobileSwiftSourceKitCompileArgumentsCollector"/>
 
+    <completion.contributor language="Swift"
+                            order="first"
+                            id="swift_source_kit_completion"
+                            implementationClass="com.jetbrains.swift.completion.SwiftSourceKitCompletionContributor" />
+
     <!--<externalAnnotator implementationClass="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator"
                        language="Swift"/>-->
 
