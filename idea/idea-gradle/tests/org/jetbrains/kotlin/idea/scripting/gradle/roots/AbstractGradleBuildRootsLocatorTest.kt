@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleKotlinScriptConfigurationInputs
+import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import kotlin.test.assertEquals
 
 open class AbstractGradleBuildRootsLocatorTest {
-    init {
-        skipLastModifiedFilesLoading = true
-    }
-
     private val scripts = mutableMapOf<String, GradleScriptInfo>()
     private val locator = MyRootsLocator()
 
@@ -39,7 +36,8 @@ open class AbstractGradleBuildRootsLocatorTest {
                 relativeProjectRoots.map { (pathPrefix + it).removeSuffix("/") },
                 listOf(),
                 listOf()
-            )
+            ),
+            LastModifiedFiles()
         )
 
         add(root)
