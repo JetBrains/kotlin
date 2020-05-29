@@ -10,6 +10,7 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.kmm.KMMTargetListener
 import com.jetbrains.kmm.XcProjectFile
 import com.jetbrains.konan.WorkspaceXML
@@ -29,16 +30,19 @@ class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
     var xcProjectStatus: XcProjectStatus = XcProjectStatus.NotLocated
     var xcProjectFile: XcProjectFile? = null
 
-    fun locateXCProject(relativePath: String) {
+    fun locateXCProject(path: String) {
         if (project.basePath == null) {
             xcProjectStatus = XcProjectStatus.Misconfiguration("project base path is absent")
             return
         }
 
-        val xcProjectDir = File(project.basePath).resolve(relativePath)
+        val xcProjectDir = if (FileUtil.isAbsolute(path))
+            File(path)
+        else
+            File(project.basePath).resolve(path)
 
         if (!xcProjectDir.exists()) {
-            xcProjectStatus = XcProjectStatus.NotFound("directory $relativePath doesn't exist")
+            xcProjectStatus = XcProjectStatus.NotFound("directory $xcProjectDir doesn't exist")
             return
         }
 
@@ -47,7 +51,7 @@ class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
         xcProjectStatus = if (xcProjectFile != null) {
             XcProjectStatus.Found
         } else {
-            XcProjectStatus.NotFound("can't find Xcode projects located at $relativePath")
+            XcProjectStatus.NotFound("can't find Xcode projects located at $xcProjectDir")
         }
     }
 

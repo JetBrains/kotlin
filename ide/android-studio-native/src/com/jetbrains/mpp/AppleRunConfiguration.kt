@@ -94,8 +94,8 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
                 reportXcFileError("Project is misconfigured: " + status.reason)
             XcProjectStatus.NotLocated ->
                 reportXcFileError(
-                    "Please specify Xcode project location path relative" +
-                            " to root in $propertyKey property of gradle.properties",
+                    "Please specify Xcode project location in" +
+                            " $propertyKey property of gradle.properties",
                     openGradleProperties
                 )
             is XcProjectStatus.NotFound ->
