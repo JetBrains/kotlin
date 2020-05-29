@@ -10,12 +10,14 @@ import com.intellij.openapi.command.impl.StartMarkAction;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.markup.HighlighterLayer;
 import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -88,8 +90,8 @@ public class InplaceChangeSignature implements DocumentListener {
     TextRange highlightingRange = myDetector.getHighlightingRange(myStableChange);
 
     HighlightManager highlightManager = HighlightManager.getInstance(myProject);
-    highlightManager.addRangeHighlight(editor, highlightingRange.getStartOffset(), highlightingRange.getEndOffset(), 
-                                       EditorColors.LIVE_TEMPLATE_ATTRIBUTES, false, myHighlighters);
+    TextAttributes attributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.LIVE_TEMPLATE_ATTRIBUTES);
+    highlightManager.addRangeHighlight(editor, highlightingRange.getStartOffset(), highlightingRange.getEndOffset(), attributes, false, myHighlighters);
     for (RangeHighlighter highlighter : myHighlighters) {
       highlighter.setGreedyToRight(true);
       highlighter.setGreedyToLeft(true);

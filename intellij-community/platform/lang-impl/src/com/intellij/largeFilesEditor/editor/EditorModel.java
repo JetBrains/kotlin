@@ -11,9 +11,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -424,13 +426,15 @@ public class EditorModel {
 
     if (!highlightRanges.isEmpty()) {
       HighlightManager highlightManager = HighlightManager.getInstance(dataProvider.getProject());
+      TextAttributes textAttributes = EditorColorsManager.getInstance().getGlobalScheme()
+        .getAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
 
       for (TextRange range : highlightRanges) {
         highlightManager.addRangeHighlight(
           editor,
           range.getStartOffset(),
           range.getEndOffset(),
-          EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES, true, pageRangeHighlighters);
+          textAttributes, true, pageRangeHighlighters);
       }
     }
   }
