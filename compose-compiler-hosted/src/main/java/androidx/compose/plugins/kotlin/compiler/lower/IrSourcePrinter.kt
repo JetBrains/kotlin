@@ -310,6 +310,7 @@ private class IrSourcePrinterVisitor(
                 // no names for
                 "invoke", "get", "set" -> ""
                 "iterator", "hasNext", "next" -> name
+                "CHECK_NOT_NULL" -> "!!"
                 else -> error("Unhandled operator $name")
             }
 
@@ -336,6 +337,10 @@ private class IrSourcePrinterVisitor(
                 // unary postfix
                 "inc", "dec" -> {
                     (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                    print(opSymbol)
+                }
+                "CHECK_NOT_NULL" -> {
+                    expression.getValueArgument(0)?.print()
                     print(opSymbol)
                 }
                 // invoke

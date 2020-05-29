@@ -669,24 +669,6 @@ class ComposerParamTransformer(
         return false
     }
 
-    fun IrFunction.isInlinedLambda(): Boolean {
-        descriptor.findPsi()?.let { psi ->
-            (psi as? KtFunctionLiteral)?.let {
-                if (InlineUtil.isInlinedArgument(
-                        it,
-                        context.bindingContext,
-                        false
-                    )
-                )
-                    return true
-                if (it.isEmitInline(context.bindingContext)) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
     private fun IrFunction.isEmitInlineChildrenLambda(): Boolean {
         descriptor.findPsi()?.let { psi ->
             (psi as? KtFunctionLiteral)?.let {

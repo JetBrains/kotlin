@@ -80,19 +80,22 @@ class EmitTransformTests : AbstractIrTransformTest() {
               %composer.startRestartGroup(%key)
               if (%changed !== 0 || !%composer.skipping) {
                 val cond = state(null, {
-                  true
+                  val tmp0_return = true
+                  tmp0_return
                 }, %composer, <>, 0, 0b0001)
                 val text = if (cond.value) {
                   %composer.startReplaceableGroup(<>)
                   val tmp0_group = remember({
-                    "abc"
+                    val tmp0_return = "abc"
+                    tmp0_return
                   }, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                   tmp0_group
                 } else {
                   %composer.startReplaceableGroup(<>)
                   val tmp1_group = remember({
-                    "def"
+                    val tmp0_return = "def"
+                    tmp0_return
                   }, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                   tmp1_group

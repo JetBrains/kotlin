@@ -21,6 +21,7 @@ import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.irTrace
+import androidx.compose.plugins.kotlin.isEmitInline
 import androidx.compose.plugins.kotlin.isMarkedStable
 import androidx.compose.plugins.kotlin.isSpecialType
 import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
@@ -117,12 +118,15 @@ import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.startOffset
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.KotlinType
@@ -244,6 +248,24 @@ abstract class AbstractComposeLowering(
 
     fun IrCall.isSyntheticComposableCall(): Boolean {
         return context.irTrace[ComposeWritableSlices.IS_SYNTHETIC_COMPOSABLE_CALL, this] == true
+    }
+
+    fun IrFunction.isInlinedLambda(): Boolean {
+        descriptor.findPsi()?.let { psi ->
+            (psi as? KtFunctionLiteral)?.let {
+                if (InlineUtil.isInlinedArgument(
+                        it,
+                        context.bindingContext,
+                        false
+                    )
+                )
+                    return true
+                if (it.isEmitInline(context.bindingContext)) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     private val composableChecker = ComposableAnnotationChecker()
