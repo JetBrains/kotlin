@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelResolver
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 fun runPartialGradleImport(project: Project) {
@@ -39,17 +40,17 @@ fun runPartialGradleImport(project: Project) {
     }
 }
 
-fun getMissingConfigurationNotificationText() = KotlinIdeaGradleBundle.message("script.configurations.will.be.available.after.load.changes")
 fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.text.load.script.configurations")
 
-fun autoReloadScriptConfigurations(project: Project): Boolean {
-    return GradleScriptDefinitionsContributor.getDefinitions(project).any {
+fun autoReloadScriptConfigurations(project: Project, file: VirtualFile): Boolean {
+    val buildRoot = GradleBuildRootsManager.getInstance(project).getScriptInfo(file)?.buildRoot ?: return false
+    return GradleScriptDefinitionsContributor.getDefinitions(project, buildRoot.pathPrefix, buildRoot.data.gradleHome)?.any {
         KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(it)
-    }
+    } ?: return false
 }
 
-fun scriptConfigurationsNeedToBeUpdated(project: Project) {
-    if (autoReloadScriptConfigurations(project)) {
+fun scriptConfigurationsNeedToBeUpdated(project: Project, file: VirtualFile) {
+    if (autoReloadScriptConfigurations(project, file)) {
         runPartialGradleImport(project)
     } else {
         // notification is shown in LoadConfigurationAction
@@ -86,7 +87,7 @@ class LoadConfigurationAction : AnAction(
         val project = editor.project ?: return false
         val file = getKotlinScriptFile(editor) ?: return false
 
-        if (autoReloadScriptConfigurations(project)) {
+        if (autoReloadScriptConfigurations(project, file)) {
             return false
         }
 
@@ -94,13 +95,13 @@ class LoadConfigurationAction : AnAction(
     }
 
     private fun getKotlinScriptFile(editor: Editor): VirtualFile? {
-            return FileDocumentManager.getInstance()
-                .getFile(editor.document)
-                ?.takeIf {
-                    it !is LightVirtualFileBase
-                            && it.isValid
-                            && it.fileType != KotlinFileType.INSTANCE
-                            && isGradleKotlinScript(it)
-                }
-        }
+        return FileDocumentManager.getInstance()
+            .getFile(editor.document)
+            ?.takeIf {
+                it !is LightVirtualFileBase
+                        && it.isValid
+                        && it.fileType == KotlinFileType.INSTANCE
+                        && isGradleKotlinScript(it)
+            }
+    }
 }
