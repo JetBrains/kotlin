@@ -24,14 +24,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx;
 import com.intellij.pom.Navigatable;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.intellij.compiler.impl.CompileDriver.CLASSES_UP_TO_DATE_CHECK;
 import static com.intellij.execution.filters.RegexpFilter.*;
@@ -219,18 +219,52 @@ public class BuildOutputService implements BuildViewService {
       return;
     }
     ((ProgressIndicatorEx)indicator).addStateDelegate(new CompilerMessagesService.DummyProgressIndicator() {
+      private final Map<String, Set<String>> mySeenMessages = new HashMap<>();
       private String lastMessage = null;
+      private Stack<String> myTextStack;
 
       @Override
       public void setText(@Nls(capitalization = Nls.Capitalization.Sentence) String text) {
-        if (isEmptyOrSpaces(text) || text.equals(lastMessage)) return;
-        lastMessage = text;
-        myBuildProgress.output(text + '\n', true);
+        addIndicatorNewMessagesAsBuildOutput(text);
+      }
+
+      @Override
+      public void pushState() {
+        getTextStack().push(indicator.getText());
       }
 
       @Override
       public void setFraction(double fraction) {
         myBuildProgress.progress(lastMessage, 100, (long)(fraction * 100), "%");
+      }
+
+      @NotNull
+      private Stack<String> getTextStack() {
+        Stack<String> stack = myTextStack;
+        if (stack == null) myTextStack = stack = new Stack<>(2);
+        return stack;
+      }
+
+      private void addIndicatorNewMessagesAsBuildOutput(String msg) {
+        Stack<String> textStack = getTextStack();
+        if (!textStack.isEmpty() && msg.equals(textStack.peek())) {
+          textStack.pop();
+          return;
+        }
+        if (isEmptyOrSpaces(msg) || msg.equals(lastMessage)) return;
+        lastMessage = msg;
+
+        int start = msg.indexOf("[");
+        if (start >= 1) {
+          int end = msg.indexOf(']', start + 1);
+          if (end != -1) {
+            String buildTargetNameCandidate = msg.substring(start + 1, end);
+            Set<String> targets = mySeenMessages.computeIfAbsent(buildTargetNameCandidate, unused -> new HashSet<>());
+            boolean isSeenMessage = !targets.add(msg.substring(0, start));
+            if (isSeenMessage) return;
+          }
+        }
+        myBuildProgress.output(msg + '\n', true);
       }
     });
   }

@@ -3,21 +3,22 @@ package com.intellij.compiler.progress
 
 import com.intellij.compiler.BaseCompilerTestCase
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.compiler.CompileStatusNotification
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.testFramework.PsiTestUtil.addSourceRoot
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.fixtures.BuildViewTestFixture
 import com.intellij.util.ThrowableRunnable
+import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.jps.model.java.JavaResourceRootType
 
 class CompilerBuildViewTest : BaseCompilerTestCase() {
 
   private lateinit var buildViewTestFixture: BuildViewTestFixture
-  private val testDisposable: Disposable = object : Disposable {
-    override fun dispose() {
-    }
-  }
+  private val testDisposable: Disposable = Disposer.newDisposable()
 
   @Throws(Exception::class)
   public override fun setUp() {
@@ -54,14 +55,58 @@ class CompilerBuildViewTest : BaseCompilerTestCase() {
     val file = createFile("src/A.java", "public class A {}")
     val srcRoot = file.parent
     val module = addModule("a", srcRoot)
+    val propFile = createFile("resources/foo.properties", "bar=baz")
+    runWriteAction { addSourceRoot(module, propFile.parent, JavaResourceRootType.RESOURCE) }
+
     build(module)
     buildViewTestFixture.assertBuildViewTreeEquals("-\n build finished")
 
-    rebuildProject()
+    runWithProgressExIndicatorSupport { rebuildProject() }
     buildViewTestFixture.assertBuildViewTreeEquals("-\n rebuild finished")
+    buildViewTestFixture.assertBuildViewSelectedNode("rebuild finished", false) { output: String? ->
+      assertThat(output).startsWith("Clearing build system data...\n" +
+                                    "Executing pre-compile tasks...\n" +
+                                    "Loading Ant Configuration...\n" +
+                                    "Running Ant Tasks...\n" +
+                                    "Cleaning output directories...\n" +
+                                    "Running 'before' tasks\n" +
+                                    "Checking sources\n" +
+                                    "Copying resources... [a]\n" +
+                                    "Parsing java... [a]\n" +
+                                    "Writing classes... [a]\n" +
+                                    "Updating dependency information... [a]\n" +
+                                    "Adding @NotNull assertions... [a]\n" +
+                                    "Adding pattern assertions... [a]\n" +
+                                    "Running 'after' tasks\n")
+      assertThat(output).contains("Finished, saving caches...\n" +
+                                  "Executing post-compile tasks...\n" +
+                                  "Loading Ant Configuration...\n" +
+                                  "Running Ant Tasks...\n" +
+                                  "Synchronizing output directories...")
+    }
 
-    rebuild(module)
+    runWithProgressExIndicatorSupport { rebuild(module) }
     buildViewTestFixture.assertBuildViewTreeEquals("-\n recompile finished")
+    buildViewTestFixture.assertBuildViewSelectedNode("recompile finished", false) { output: String? ->
+      assertThat(output).startsWith("Executing pre-compile tasks...\n" +
+                                    "Loading Ant Configuration...\n" +
+                                    "Running Ant Tasks...\n" +
+                                    "Cleaning output directories...\n" +
+                                    "Running 'before' tasks\n" +
+                                    "Checking sources\n" +
+                                    "Copying resources... [a]\n" +
+                                    "Parsing java... [a]\n" +
+                                    "Writing classes... [a]\n" +
+                                    "Updating dependency information... [a]\n" +
+                                    "Adding @NotNull assertions... [a]\n" +
+                                    "Adding pattern assertions... [a]\n" +
+                                    "Running 'after' tasks")
+      assertThat(output).contains("Finished, saving caches...\n" +
+                                  "Executing post-compile tasks...\n" +
+                                  "Loading Ant Configuration...\n" +
+                                  "Running Ant Tasks...\n" +
+                                  "Synchronizing output directories...")
+    }
   }
 
   fun `test build with compile error`() {
@@ -109,6 +154,22 @@ class CompilerBuildViewTest : BaseCompilerTestCase() {
   private fun rebuildProject(errorsExpected: Boolean = false): CompilationLog? {
     return compile(errorsExpected) { compileStatusNotification: CompileStatusNotification? ->
       compilerManager.rebuild(compileStatusNotification)
+    }
+  }
+
+  private fun runWithProgressExIndicatorSupport(action: () -> Unit) {
+    val key = "intellij.progress.task.ignoreHeadless"
+    val prev = System.setProperty(key, "true")
+    try {
+      return action()
+    }
+    finally {
+      if (prev != null) {
+        System.setProperty(key, prev)
+      }
+      else {
+        System.clearProperty(key)
+      }
     }
   }
 }
