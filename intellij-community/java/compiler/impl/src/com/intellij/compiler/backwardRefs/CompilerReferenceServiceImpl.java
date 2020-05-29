@@ -16,8 +16,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.util.messages.MessageBusConnection;
-import gnu.trove.TIntHashSet;
+import com.intellij.util.messages.SimpleMessageBusConnection;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,49 +39,43 @@ public final class CompilerReferenceServiceImpl extends CompilerReferenceService
                 compilationAffectedModules.add(messageText);
               }
             }));
-  }
 
-  @Override
-  public void projectOpened() {
-    super.projectOpened();
-    if (CompilerReferenceService.isEnabled()) {
-      MessageBusConnection connection = myProject.getMessageBus().connect(myProject);
-      connection.subscribe(BuildManagerListener.TOPIC, new BuildManagerListener() {
-        @Override
-        public void buildStarted(@NotNull Project project, @NotNull UUID sessionId, boolean isAutomake) {
-          if (project == myProject) {
-            closeReaderIfNeeded(IndexCloseReason.COMPILATION_STARTED);
-          }
+    SimpleMessageBusConnection connection = myProject.getMessageBus().simpleConnect();
+    connection.subscribe(BuildManagerListener.TOPIC, new BuildManagerListener() {
+      @Override
+      public void buildStarted(@NotNull Project project, @NotNull UUID sessionId, boolean isAutomake) {
+        if (project == myProject) {
+          closeReaderIfNeeded(IndexCloseReason.COMPILATION_STARTED);
         }
-      });
+      }
+    });
 
-      connection.subscribe(CompilerTopics.COMPILATION_STATUS, new CompilationStatusListener() {
-        @Override
-        public void compilationFinished(boolean aborted, int errors, int warnings, @NotNull CompileContext compileContext) {
-          compilationFinished(compileContext);
-        }
+    connection.subscribe(CompilerTopics.COMPILATION_STATUS, new CompilationStatusListener() {
+      @Override
+      public void compilationFinished(boolean aborted, int errors, int warnings, @NotNull CompileContext compileContext) {
+        compilationFinished(compileContext);
+      }
 
-        @Override
-        public void automakeCompilationFinished(int errors, int warnings, @NotNull CompileContext compileContext) {
-          compilationFinished(compileContext);
-        }
+      @Override
+      public void automakeCompilationFinished(int errors, int warnings, @NotNull CompileContext compileContext) {
+        compilationFinished(compileContext);
+      }
 
-        private void compilationFinished(@NotNull CompileContext context) {
-          if (!(context instanceof DummyCompileContext) && context.getProject() == myProject) {
-            Runnable compilationFinished = () -> {
-              final Module[] compilationModules = ReadAction.compute(() -> {
-                if (myProject.isDisposed()) return null;
-                CompileScope scope = context.getCompileScope();
-                return scope == null ? null : scope.getAffectedModules();
-              });
-              if (compilationModules == null) return;
-              openReaderIfNeeded(IndexOpenReason.COMPILATION_FINISHED);
-            };
-            executeOnBuildThread(compilationFinished);
-          }
+      private void compilationFinished(@NotNull CompileContext context) {
+        if (!(context instanceof DummyCompileContext) && context.getProject() == myProject) {
+          Runnable compilationFinished = () -> {
+            final Module[] compilationModules = ReadAction.compute(() -> {
+              if (myProject.isDisposed()) return null;
+              CompileScope scope = context.getCompileScope();
+              return scope == null ? null : scope.getAffectedModules();
+            });
+            if (compilationModules == null) return;
+            openReaderIfNeeded(IndexOpenReason.COMPILATION_FINISHED);
+          };
+          executeOnBuildThread(compilationFinished);
         }
-      });
-    }
+      }
+    });
   }
 
   @NotNull
@@ -165,8 +159,10 @@ public final class CompilerReferenceServiceImpl extends CompilerReferenceService
     try {
       if (!myReadDataLock.tryLock()) return null;
       try {
-        if (myReader == null) throw new ReferenceIndexUnavailableException();
-        final TIntHashSet ids = myReader.getAllContainingFileIds(method);
+        if (myReader == null) {
+          throw new ReferenceIndexUnavailableException();
+        }
+        IntSet ids = myReader.getAllContainingFileIds(method);
 
         CompilerRef.CompilerClassHierarchyElementDef owner = method.getOwner();
 
@@ -195,10 +191,12 @@ public final class CompilerReferenceServiceImpl extends CompilerReferenceService
     try {
       if (!myReadDataLock.tryLock()) return false;
       try {
-        if (myReader == null) throw new ReferenceIndexUnavailableException();
-        final TIntHashSet ids1 = myReader.getAllContainingFileIds(qualifier);
-        final TIntHashSet ids2 = myReader.getAllContainingFileIds(base);
-        final TIntHashSet intersection = intersection(ids1, ids2);
+        if (myReader == null) {
+          throw new ReferenceIndexUnavailableException();
+        }
+        IntSet ids1 = myReader.getAllContainingFileIds(qualifier);
+        IntSet ids2 = myReader.getAllContainingFileIds(base);
+        IntSet intersection = intersection(ids1, ids2);
 
         if ((ids2.size() - intersection.size()) * probabilityThreshold < ids2.size()) {
           return true;
@@ -276,7 +274,9 @@ public final class CompilerReferenceServiceImpl extends CompilerReferenceService
     try {
       if (!myReadDataLock.tryLock()) return -1;
       try {
-        if (myReader == null) throw new ReferenceIndexUnavailableException();
+        if (myReader == null) {
+          throw new ReferenceIndexUnavailableException();
+        }
         CompilerRef.NamedCompilerRef[] hierarchy = myReader.getHierarchy(baseClass, false, true, -1);
         return hierarchy == null ? -1 : hierarchy.length;
       }
@@ -290,10 +290,12 @@ public final class CompilerReferenceServiceImpl extends CompilerReferenceService
     }
   }
 
-  static class InitializationActivity implements StartupActivity, StartupActivity.DumbAware {
+  static final class InitializationActivity implements StartupActivity.DumbAware {
     @Override
     public void runActivity(@NotNull Project project) {
-      project.getService(CompilerReferenceService.class).projectOpened();
+      if (CompilerReferenceService.isEnabled()) {
+        CompilerReferenceService.getInstance(project);
+      }
     }
   }
 }

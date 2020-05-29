@@ -44,9 +44,9 @@ import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.Chunk;
 import com.intellij.util.ThrowableRunnable;
+import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.DateFormatUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.*;
 import org.jetbrains.jps.api.*;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
@@ -306,7 +306,7 @@ public final class CompileDriver {
           case FILES_GENERATED:
             final List<CmdlineRemoteProto.Message.BuilderMessage.BuildEvent.GeneratedFile> generated = event.getGeneratedFilesList();
             CompilationStatusListener publisher = myProject.isDisposed() ? null : myProject.getMessageBus().syncPublisher(CompilerTopics.COMPILATION_STATUS);
-            Set<String> writtenArtifactOutputPaths = outputToArtifact != null ? new THashSet<>(FileUtil.PATH_HASHING_STRATEGY) : null;
+            Set<String> writtenArtifactOutputPaths = outputToArtifact != null ? CollectionFactory.createFilePathSet() : null;
             for (CmdlineRemoteProto.Message.BuilderMessage.BuildEvent.GeneratedFile generatedFile : generated) {
               final String root = FileUtil.toSystemIndependentName(generatedFile.getOutputRoot());
               final String relativePath = FileUtil.toSystemIndependentName(generatedFile.getRelativePath());

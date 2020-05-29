@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.backwardRefs;
 
 import com.intellij.compiler.server.BuildManager;
@@ -15,7 +15,9 @@ import com.intellij.util.containers.Queue;
 import com.intellij.util.indexing.InvertedIndexUtil;
 import com.intellij.util.indexing.StorageException;
 import gnu.trove.THashSet;
-import gnu.trove.TIntHashSet;
+import it.unimi.dsi.fastutil.ints.IntCollection;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.backwardRefs.CompilerRef;
@@ -29,7 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenceReaderFactory<JavaBackwardReferenceIndexReaderFactory.BackwardReferenceReader> {
+public final class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenceReaderFactory<JavaBackwardReferenceIndexReaderFactory.BackwardReferenceReader> {
   public static final JavaBackwardReferenceIndexReaderFactory INSTANCE = new JavaBackwardReferenceIndexReaderFactory();
 
   private static final Logger LOG = Logger.getInstance(JavaBackwardReferenceIndexReaderFactory.class);
@@ -66,7 +68,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
 
     @Override
     @Nullable
-    public TIntHashSet findReferentFileIds(@NotNull CompilerRef ref, boolean checkBaseClassAmbiguity) throws StorageException {
+    public IntSet findReferentFileIds(@NotNull CompilerRef ref, boolean checkBaseClassAmbiguity) throws StorageException {
       CompilerRef.NamedCompilerRef[] hierarchy;
       if (ref instanceof CompilerRef.CompilerClassHierarchyElementDef) {
         hierarchy = new CompilerRef.NamedCompilerRef[]{(CompilerRef.NamedCompilerRef)ref};
@@ -76,7 +78,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
         hierarchy = getHierarchy(hierarchyElement, checkBaseClassAmbiguity, false, -1);
       }
       if (hierarchy == null) return null;
-      TIntHashSet set = new TIntHashSet();
+      IntSet set = new IntOpenHashSet();
       for (CompilerRef.NamedCompilerRef aClass : hierarchy) {
         final CompilerRef overriderUsage = ref.override(aClass.getName());
         addUsages(overriderUsage, set);
@@ -86,8 +88,8 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
 
     @Override
     @Nullable
-    public TIntHashSet findFileIdsWithImplicitToString(@NotNull CompilerRef ref) throws StorageException {
-      TIntHashSet result = new TIntHashSet();
+    public IntSet findFileIdsWithImplicitToString(@NotNull CompilerRef ref) throws StorageException {
+      IntSet result = new IntOpenHashSet();
       myIndex.get(JavaCompilerIndices.IMPLICIT_TO_STRING).getData(ref).forEach(
         (id, value) -> {
           final VirtualFile file = findFile(id);
@@ -181,13 +183,13 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
     }
 
     @NotNull
-    TIntHashSet getAllContainingFileIds(@NotNull CompilerRef ref) throws StorageException {
+    IntSet getAllContainingFileIds(@NotNull CompilerRef ref) throws StorageException {
       return InvertedIndexUtil
         .collectInputIdsContainingAllKeys(myIndex.get(JavaCompilerIndices.BACK_USAGES), Collections.singletonList(ref), null, null, null);
     }
 
     @NotNull
-    OccurrenceCounter<CompilerRef> getTypeCastOperands(@NotNull CompilerRef.CompilerClassHierarchyElementDef castType, @Nullable TIntHashSet fileIds)
+    OccurrenceCounter<CompilerRef> getTypeCastOperands(@NotNull CompilerRef castType, @Nullable IntCollection fileIds)
       throws StorageException {
       OccurrenceCounter<CompilerRef> result = new OccurrenceCounter<>();
       myIndex.get(JavaCompilerIndices.BACK_CAST).getData(castType).forEach((id, values) -> {
@@ -200,7 +202,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
       return result;
     }
 
-    private void addUsages(CompilerRef usage, TIntHashSet sink) throws StorageException {
+    private void addUsages(CompilerRef usage, IntCollection sink) throws StorageException {
       myIndex.get(JavaCompilerIndices.BACK_USAGES).getData(usage).forEach(
         (id, value) -> {
           final VirtualFile file = findFile(id);
@@ -264,7 +266,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
       }
     }
 
-    CompilerRef.CompilerClassHierarchyElementDef @NotNull [] getDirectInheritors(CompilerRef.CompilerClassHierarchyElementDef hierarchyElement)
+    CompilerRef.CompilerClassHierarchyElementDef @NotNull [] getDirectInheritors(CompilerRef hierarchyElement)
       throws StorageException {
       Set<CompilerRef.CompilerClassHierarchyElementDef> result = new THashSet<>();
       myIndex.get(JavaCompilerIndices.BACK_HIERARCHY).getData(hierarchyElement).forEach((id, children) -> {
@@ -292,7 +294,7 @@ public class JavaBackwardReferenceIndexReaderFactory implements CompilerReferenc
     }
 
     @NotNull
-    private DefCount getDefinitionCount(CompilerRef.NamedCompilerRef def) throws StorageException {
+    private DefCount getDefinitionCount(CompilerRef def) throws StorageException {
       DefCount[] result = new DefCount[]{DefCount.NONE};
       myIndex.get(JavaCompilerIndices.BACK_CLASS_DEF).getData(def).forEach((id, value) -> {
         if (result[0] == DefCount.NONE) {

@@ -1,11 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.backwardRefs;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.StorageException;
-import gnu.trove.TIntHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.backwardRefs.CompilerRef;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 public abstract class CompilerReferenceReader<Index extends CompilerReferenceIndex<?>> {
   protected final Index myIndex;
-  protected final File myBuildDir;
+  private final File myBuildDir;
 
   public CompilerReferenceReader(File buildDir, Index index) {
     myIndex = index;
@@ -41,10 +41,10 @@ public abstract class CompilerReferenceReader<Index extends CompilerReferenceInd
   }
 
   @Nullable
-  public abstract TIntHashSet findReferentFileIds(@NotNull CompilerRef ref, boolean checkBaseClassAmbiguity) throws StorageException;
+  public abstract IntSet findReferentFileIds(@NotNull CompilerRef ref, boolean checkBaseClassAmbiguity) throws StorageException;
 
   @Nullable
-  public abstract TIntHashSet findFileIdsWithImplicitToString(@NotNull CompilerRef ref) throws StorageException;
+  public abstract IntSet findFileIdsWithImplicitToString(@NotNull CompilerRef ref) throws StorageException;
 
   @Nullable
   public abstract Map<VirtualFile, SearchId[]> getDirectInheritors(@NotNull CompilerRef searchElement,

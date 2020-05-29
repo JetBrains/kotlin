@@ -1,67 +1,56 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.backwardRefs.view;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
-import com.intellij.util.indexing.FileBasedIndex;
-import gnu.trove.TIntHashSet;
+import it.unimi.dsi.fastutil.ints.IntIterator;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CompilerReferenceFindUsagesTestInfo {
-  @Nullable private final TIntHashSet myFileIds;
+public final class CompilerReferenceFindUsagesTestInfo {
+  @Nullable private final IntSet myFileIds;
   @NotNull private final DirtyScopeTestInfo myDirtyScopeInfo;
-  @NotNull private final Project myProject;
 
-  public CompilerReferenceFindUsagesTestInfo(@Nullable TIntHashSet occurrencesIds,
-                                             @NotNull DirtyScopeTestInfo dirtyScopeTestInfo,
-                                             @NotNull Project project) {
+  public CompilerReferenceFindUsagesTestInfo(@Nullable IntSet occurrencesIds, @NotNull DirtyScopeTestInfo dirtyScopeTestInfo) {
     myFileIds = occurrencesIds;
     myDirtyScopeInfo = dirtyScopeTestInfo;
-    myProject = project;
   }
 
-  VirtualFile @NotNull [] getFilesWithKnownOccurrences() {
-    if (myFileIds == null) throw new IllegalStateException();
-    ManagingFS managingFS = ManagingFS.getInstance();
-    return IntStream.of(myFileIds.toArray())
-      .mapToObj(managingFS::findFileById)
-      .filter(f -> !myDirtyScopeInfo.getDirtyScope().contains(f))
-      .toArray(VirtualFile[]::new);
+  private @NotNull List<VirtualFile> getFilesWithKnownOccurrences() {
+    if (myFileIds == null) {
+      throw new IllegalStateException();
+    }
+
+    ManagingFS managingFs = ManagingFS.getInstance();
+    List<VirtualFile> list = new ArrayList<>();
+    for (IntIterator iterator = myFileIds.iterator(); iterator.hasNext(); ) {
+      VirtualFile f = managingFs.findFileById(iterator.nextInt());
+      if (f != null && !myDirtyScopeInfo.getDirtyScope().contains(f)) {
+        list.add(f);
+      }
+    }
+    return list;
   }
 
-  Module @NotNull [] getDirtyModules() {
+  private Module @NotNull [] getDirtyModules() {
     return myDirtyScopeInfo.getDirtyModules();
   }
 
-  Module @NotNull [] getDirtyUnsavedModules() {
+  private Module @NotNull [] getDirtyUnsavedModules() {
     return myDirtyScopeInfo.getDirtyUnsavedModules();
   }
 
-  VirtualFile @NotNull [] getExcludedFiles() {
+  private VirtualFile @NotNull [] getExcludedFiles() {
     return myDirtyScopeInfo.getExcludedFiles();
   }
 
-  boolean isEnabled() {
+  private boolean isEnabled() {
     return myFileIds != null;
   }
 
