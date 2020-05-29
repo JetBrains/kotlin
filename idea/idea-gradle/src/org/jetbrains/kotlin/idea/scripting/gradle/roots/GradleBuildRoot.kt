@@ -96,12 +96,17 @@ class Imported(
             builder.sdks.addSdk(javaHome)
         }
 
-        val definitions = GradleScriptDefinitionsContributor.getDefinitions(builder.project)
+        val definitions = GradleScriptDefinitionsContributor.getDefinitions(builder.project, pathPrefix, data.gradleHome)
+        if (definitions == null) {
+            // needed to recreate classRoots if correct script definitions weren't loaded at this moment
+            // in this case classRoots will be recreated after script definitions update
+            builder.useCustomScriptDefinition()
+        }
 
-        builder.addTemplateClassesRoots(data.templateClasspath)
+        builder.addTemplateClassesRoots(GradleScriptDefinitionsContributor.getDefinitionsTemplateClasspath(data.gradleHome))
 
         data.models.forEach { script ->
-            val definition = selectScriptDefinition(script, definitions)
+            val definition = definitions?.let { selectScriptDefinition(script, it) }
 
             builder.addCustom(
                 script.file,

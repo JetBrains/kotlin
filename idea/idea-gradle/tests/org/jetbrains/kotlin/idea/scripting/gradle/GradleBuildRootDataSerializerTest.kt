@@ -22,7 +22,7 @@ class GradleBuildRootDataSerializerTest {
         val data = GradleBuildRootData(
             123,
             listOf("a", "b", "c"),
-            listOf("a"),
+            "a",
             listOf(
                 KotlinDslScriptModel(
                     "a",

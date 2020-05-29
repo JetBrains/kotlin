@@ -19,6 +19,8 @@ abstract class GradleBuildRootsLocator {
 
     abstract fun getScriptInfo(localPath: String): GradleScriptInfo?
 
+    fun getAllRoots(): Collection<GradleBuildRoot> = roots.list
+
     fun getBuildRootByWorkingDir(gradleWorkingDir: String) =
         roots.getBuildByRootDir(gradleWorkingDir)
 

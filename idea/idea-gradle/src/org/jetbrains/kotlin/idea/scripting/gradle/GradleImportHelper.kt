@@ -10,14 +10,19 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.vfs.VirtualFile
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -37,26 +42,24 @@ fun runPartialGradleImport(project: Project) {
 
 fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.label.import.project")
 
-fun autoReloadScriptConfigurations(project: Project): Boolean {
-    val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-    val projectSettings = gradleSettings.getLinkedProjectsSettings()
-        .filterIsInstance<GradleProjectSettings>()
-        .firstOrNull()
-    if (projectSettings != null) {
-        return projectSettings.isUseAutoImport
-    }
+fun autoReloadScriptConfigurations(project: Project, file: VirtualFile): Boolean {
+    val path = GradleBuildRootsManager.getInstance(project)
+        .getScriptInfo(file)?.buildRoot?.pathPrefix ?: return false
 
-    return false
+    return ExternalSystemApiUtil
+        .getSettings(project, GradleConstants.SYSTEM_ID)
+        .getLinkedProjectSettings(path)
+        ?.isUseAutoImport ?: false
 }
 
 private const val kotlinDslNotificationGroupId = "Gradle Kotlin DSL Scripts"
 private var Project.notificationPanel: ScriptConfigurationChangedNotification?
         by UserDataProperty<Project, ScriptConfigurationChangedNotification>(Key.create("load.script.configuration.panel"))
 
-fun scriptConfigurationsNeedToBeUpdated(project: Project) {
+fun scriptConfigurationsNeedToBeUpdated(project: Project, file: VirtualFile) {
     if (!scriptConfigurationsNeedToBeUpdatedBalloon) return
 
-    if (autoReloadScriptConfigurations(project)) {
+    if (autoReloadScriptConfigurations(project, file)) {
         // import should be run automatically by Gradle plugin
         return
     }
@@ -98,12 +101,8 @@ private class ScriptConfigurationChangedNotification(val project: Project) :
     init {
         addAction(LoadConfigurationAction())
         addAction(NotificationAction.createSimple(KotlinIdeaGradleBundle.message("action.label.enable.auto.import")) {
-            val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-            val projectSettings = gradleSettings.getLinkedProjectsSettings()
-                .filterIsInstance<GradleProjectSettings>()
-                .firstOrNull()
-            if (projectSettings != null) {
-                projectSettings.isUseAutoImport = true
+            getGradleProjectSettings(project).forEach {
+                it.isUseAutoImport = true
             }
             runPartialGradleImport(project)
         })
