@@ -7966,6 +7966,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/funInterface/genericSubstitutionForFunInterface.kt");
             }
 
+            @TestMetadata("noCompatibilityResolveForFunInterfaces.kt")
+            public void testNoCompatibilityResolveForFunInterfaces() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/funInterface/noCompatibilityResolveForFunInterfaces.kt");
+            }
+
             @TestMetadata("resolveFunInterfaceWithoutMainMethod.kt")
             public void testResolveFunInterfaceWithoutMainMethod() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/funInterface/resolveFunInterfaceWithoutMainMethod.kt");
@@ -13616,6 +13621,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
 
                 public void testAllFilesPresentInSam() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/sam"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("compatibilityResolveToOuterScopeForKotlinFunctions.kt")
+                public void testCompatibilityResolveToOuterScopeForKotlinFunctions() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/sam/compatibilityResolveToOuterScopeForKotlinFunctions.kt");
                 }
 
                 @TestMetadata("enhancedSamConstructor.kt")

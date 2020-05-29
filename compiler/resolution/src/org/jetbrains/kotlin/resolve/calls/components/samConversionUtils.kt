@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.incremental.record
+import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
@@ -86,11 +87,24 @@ object SamTypeConversions : ParameterTypeConversion {
             SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!)
         )
 
+        if (needCompatibilityResolve(candidate, expectedParameterType)) {
+            candidate.addDiagnostic(LowerPriorityToPreserveCompatibility)
+        }
+
         val samDescriptor = originalExpectedType.constructor.declarationDescriptor
         if (samDescriptor is ClassDescriptor) {
             callComponents.lookupTracker.record(candidate.scopeTower.location, samDescriptor, SAM_LOOKUP_NAME)
         }
 
         return convertedTypeByCandidate
+    }
+
+    private fun needCompatibilityResolve(candidate: KotlinResolutionCandidate, typeToConvert: UnwrappedType): Boolean {
+        // fun interfaces is a new feature with a new modifier, so no compatibility resolve is needed
+        val descriptor = typeToConvert.constructor.declarationDescriptor
+        if (descriptor is ClassDescriptor && descriptor.isFun) return false
+
+        // now conversions for Kotlin candidates are possible, so we have to perform compatibility resolve
+        return !candidate.callComponents.samConversionOracle.isJavaApplicableCandidate(candidate.resolvedCall.candidateDescriptor)
     }
 }
