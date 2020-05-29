@@ -67,8 +67,8 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     private fun visitLeafPsiElement(element: LeafPsiElement) {
         getHandler(element).setFilter { it is LeafPsiElement }
 
-        if (element.elementType == KDocTokens.TEXT) {
-            processPatternStringWithFragments(element)
+        when (element.elementType) {
+            KDocTokens.TEXT, KDocTokens.TAG_NAME -> processPatternStringWithFragments(element)
         }
     }
 

@@ -10,7 +10,7 @@ class Bar1
 
 <warning descr="SSR">/**
  * foo
- * @param bar bar
+ * @since 1
  */</warning>
 class Foo2
 

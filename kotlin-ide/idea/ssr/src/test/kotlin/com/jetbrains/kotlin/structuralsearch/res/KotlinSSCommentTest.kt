@@ -56,7 +56,7 @@ class KotlinSSCommentTest : KotlinSSResourceInspectionTest() {
 
     fun testKdocTag() { doTest("""
         /**
-         * @param '_ bar
+         * @'_ '_
          */
     """.trimIndent()) }
 

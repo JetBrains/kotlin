@@ -8,6 +8,7 @@ object KotlinPredefinedConfigurations {
     private val CLASS_TYPE = KSSRBundle.message("class.category")
     private val EXPRESSION_TYPE = KSSRBundle.message("expressions.category")
     private val OPERATOR_TYPE = KSSRBundle.message("operators.category")
+    private val COMMENT_TYPE = KSSRBundle.message("comments.category")
 
     private fun searchTemplate(name: String, pattern: String, category: String) =
         createSearchTemplateInfo(name, pattern, category, KotlinFileType.INSTANCE)
@@ -84,6 +85,17 @@ object KotlinPredefinedConfigurations {
             KSSRBundle.message("predefined.configuration.strings.with.long.template"),
             """ "$$'_EntryBefore*${'$'}{ '_LongTemplateExpr }$$'_EntryAfter*" """,
             EXPRESSION_TYPE
+        ),
+
+        // Comments, KDoc and Metadata
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.kdoc.tag"),
+            """
+                /**
+                 * @'_Tag '_Text
+                 */
+            """.trimIndent(),
+            COMMENT_TYPE
         ),
 
         // Operators

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
@@ -64,7 +65,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             is KDoc -> visitKDoc(element)
             is KDocSection -> visitKDocSection(element)
             is KDocTag -> visitKDocTag(element)
-            is KDocName -> visitKDocName(element)
             is KDocLink -> visitKDocLink(element)
         }
     }
@@ -75,10 +75,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         // Match element type
         if (!myMatchingVisitor.setResult(element.elementType == other.elementType)) return
 
-        if (element.elementType == KDocTokens.TEXT) {
-            myMatchingVisitor.result = when (val handler = element.getUserData(CompiledPattern.HANDLER_KEY)) {
-                is LiteralWithSubstitutionHandler -> handler.match(element, other, myMatchingVisitor.matchContext)
-                else -> matchTextOrVariable(element, other)
+        when (element.elementType) {
+            KDocTokens.TEXT, KDocTokens.TAG_NAME -> {
+                myMatchingVisitor.result = when (val handler = element.getUserData(CompiledPattern.HANDLER_KEY)) {
+                    is LiteralWithSubstitutionHandler -> handler.match(element, other, myMatchingVisitor.matchContext)
+                    else -> matchTextOrVariable(element, other)
+                }
             }
         }
     }
@@ -220,7 +222,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                     && myMatchingVisitor.match(expression.selectorExpression, other)
         }
     }
-
 
     override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
         val other = getTreeElementDepar<KtLambdaExpression>() ?: return
@@ -646,9 +647,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     private fun visitKDoc(kDoc: KDoc) {
         val other = getTreeElementDepar<KDoc>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(
-            kDoc.getChildOfType<KDocSection>(),
-            other.getChildOfType<KDocSection>()
+        myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(
+            kDoc.getChildrenOfType<KDocSection>(),
+            other.getChildrenOfType<KDocSection>()
         )
     }
 
@@ -659,12 +660,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     private fun visitKDocTag(tag: KDocTag) {
         val other = getTreeElementDepar<KDocTag>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(tag.firstChild, other.firstChild)
-    }
-
-    private fun visitKDocName(name: KDocName) {
-        val other = getTreeElementDepar<KDocName>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchText(name, other)
+        myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(tag.getChildrenOfType(), other.getChildrenOfType())
     }
 
     private fun visitKDocLink(link: KDocLink) {
