@@ -17,8 +17,13 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 
 class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotionListener {
+  private final DocRenderSelectionManager mySelectionManager;
   private DocRenderer.EditorPane myMouseOverPane;
   private DocRenderer.EditorPane myDragPane;
+
+  DocRenderMouseEventBridge(DocRenderSelectionManager selectionManager) {
+    mySelectionManager = selectionManager;
+  }
 
   @Override
   public void mouseMoved(@NotNull EditorMouseEvent event) {
@@ -43,7 +48,7 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
   public void mouseDragged(@NotNull EditorMouseEvent e) {
     if (e.getArea() != EditorMouseEventArea.EDITING_AREA) return;
 
-    redispatchEvent(e, MouseEvent.MOUSE_DRAGGED, myDragPane);
+    checkPaneSelection(redispatchEvent(e, MouseEvent.MOUSE_DRAGGED, myDragPane));
   }
 
   @Override
@@ -58,13 +63,14 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
     if (event.getArea() != EditorMouseEventArea.EDITING_AREA) return;
 
     myDragPane = redispatchEvent(event, MouseEvent.MOUSE_PRESSED, null);
+    checkPaneSelection(myDragPane);
   }
 
   @Override
   public void mouseReleased(@NotNull EditorMouseEvent event) {
     if (event.getArea() != EditorMouseEventArea.EDITING_AREA) return;
 
-    redispatchEvent(event, MouseEvent.MOUSE_RELEASED, null);
+    checkPaneSelection(redispatchEvent(event, MouseEvent.MOUSE_RELEASED, null));
     myDragPane = null;
   }
 
@@ -72,7 +78,7 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
   public void mouseClicked(@NotNull EditorMouseEvent event) {
     if (event.getArea() != EditorMouseEventArea.EDITING_AREA) return;
 
-    redispatchEvent(event, MouseEvent.MOUSE_CLICKED, null);
+    checkPaneSelection(redispatchEvent(event, MouseEvent.MOUSE_CLICKED, null));
   }
 
   private void restoreCursor() {
@@ -80,6 +86,12 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
       dispatchMouseExitEvent(myMouseOverPane);
       ((EditorEx)myMouseOverPane.getEditor()).setCustomCursor(DocRenderMouseEventBridge.class, null);
       myMouseOverPane = null;
+    }
+  }
+
+  private void checkPaneSelection(@Nullable DocRenderer.EditorPane pane) {
+    if (pane != null && pane.hasSelection()) {
+      mySelectionManager.setPaneWithSelection(pane);
     }
   }
 

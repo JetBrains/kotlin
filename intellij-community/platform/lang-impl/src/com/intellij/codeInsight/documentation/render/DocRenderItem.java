@@ -146,9 +146,14 @@ public class DocRenderItem {
         }, connection);
         editor.getCaretModel().addCaretListener(new MyCaretListener(), connection);
 
-        DocRenderMouseEventBridge mouseEventBridge = new DocRenderMouseEventBridge();
+        DocRenderSelectionManager selectionManager = new DocRenderSelectionManager(editor);
+        editor.getCaretModel().addCaretListener(selectionManager, connection);
+        editor.getSelectionModel().addSelectionListener(selectionManager, connection);
+
+        DocRenderMouseEventBridge mouseEventBridge = new DocRenderMouseEventBridge(selectionManager);
         editor.addEditorMouseListener(mouseEventBridge, connection);
         editor.addEditorMouseMotionListener(mouseEventBridge, connection);
+
         IconVisibilityController iconVisibilityController = new IconVisibilityController();
         editor.addEditorMouseListener(iconVisibilityController, connection);
         editor.addEditorMouseMotionListener(iconVisibilityController, connection);

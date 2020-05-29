@@ -41,7 +41,6 @@ import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -340,10 +339,6 @@ class DocRenderer implements EditorCustomElementRenderer {
     }
   }
 
-  @Nullable String getSelectedText() {
-    return myPane == null ? null : myPane.getSelectedText();
-  }
-
   private static EditorKit createEditorKit(@NotNull Editor editor) {
     HTMLEditorKit editorKit = new MyEditorKit();
     editorKit.getStyleSheet().addStyleSheet(getStyleSheet(editor));
@@ -431,6 +426,14 @@ class DocRenderer implements EditorCustomElementRenderer {
 
     Editor getEditor() {
       return myItem.editor;
+    }
+
+    void removeSelection() {
+      doWithRepaintTracking(() -> select(0, 0));
+    }
+
+    boolean hasSelection() {
+      return getSelectionStart() != getSelectionEnd();
     }
 
     private void scheduleUpdate() {
@@ -590,12 +593,12 @@ class DocRenderer implements EditorCustomElementRenderer {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-      e.getPresentation().setVisible(!StringUtil.isEmpty(getSelectedText()));
+      e.getPresentation().setVisible(myPane != null && myPane.hasSelection());
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      String text = getSelectedText();
+      String text = myPane == null ? null : myPane.getSelectedText();
       if (!StringUtil.isEmpty(text)) {
         CopyPasteManager.getInstance().setContents(new StringSelection(text));
       }
