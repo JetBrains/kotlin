@@ -10,6 +10,7 @@ import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -41,6 +42,7 @@ import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -58,6 +60,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 class DocRenderer implements EditorCustomElementRenderer {
+  private static final Logger LOG = Logger.getInstance(DocRenderer.class);
   private static final DocRendererMemoryManager MEMORY_MANAGER = new DocRendererMemoryManager();
   private static final DocRenderImageManager IMAGE_MANAGER = new DocRenderImageManager();
 
@@ -436,6 +439,28 @@ class DocRenderer implements EditorCustomElementRenderer {
       return getSelectionStart() != getSelectionEnd();
     }
 
+    @Nullable Point getSelectionPositionInEditor() {
+      if (myPane != this ||
+          myItem.inlay == null ||
+          myItem.inlay.getRenderer() != DocRenderer.this) {
+        return null;
+      }
+      Rectangle inlayBounds = myItem.inlay.getBounds();
+      if (inlayBounds == null) {
+        return null;
+      }
+      Rectangle boundsWithinInlay = getEditorPaneBoundsWithinInlay(myItem.inlay);
+      Rectangle locationInPane;
+      try {
+        locationInPane = modelToView(getSelectionStart());
+      }
+      catch (BadLocationException e) {
+        LOG.error(e);
+        locationInPane = new Rectangle();
+      }
+      return new Point(inlayBounds.x + boundsWithinInlay.x + locationInPane.x, inlayBounds.y + boundsWithinInlay.y + locationInPane.y);
+    }
+
     private void scheduleUpdate() {
       if (myUpdateScheduled.compareAndSet(false, true)) {
         SwingUtilities.invokeLater(() -> {
@@ -589,6 +614,10 @@ class DocRenderer implements EditorCustomElementRenderer {
   private class CopySelection extends DumbAwareAction {
     CopySelection() {
       super(CodeInsightBundle.messagePointer("doc.render.copy.action.text"), AllIcons.Actions.Copy);
+      AnAction copyAction = ActionManager.getInstance().getAction(IdeActions.ACTION_COPY);
+      if (copyAction != null) {
+        copyShortcutFrom(copyAction);
+      }
     }
 
     @Override

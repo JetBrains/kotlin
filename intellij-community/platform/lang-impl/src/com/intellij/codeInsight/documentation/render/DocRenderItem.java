@@ -147,8 +147,7 @@ public class DocRenderItem {
         editor.getCaretModel().addCaretListener(new MyCaretListener(), connection);
 
         DocRenderSelectionManager selectionManager = new DocRenderSelectionManager(editor);
-        editor.getCaretModel().addCaretListener(selectionManager, connection);
-        editor.getSelectionModel().addSelectionListener(selectionManager, connection);
+        Disposer.register(connection, selectionManager);
 
         DocRenderMouseEventBridge mouseEventBridge = new DocRenderMouseEventBridge(selectionManager);
         editor.addEditorMouseListener(mouseEventBridge, connection);
