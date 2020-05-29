@@ -13,28 +13,37 @@ import org.jetbrains.annotations.Nullable;
 import sun.awt.AWTAccessor;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 
 class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotionListener {
-  private DocRenderer.EditorPane myCurrentPane;
+  private DocRenderer.EditorPane myMouseOverPane;
+  private DocRenderer.EditorPane myDragPane;
 
   @Override
   public void mouseMoved(@NotNull EditorMouseEvent event) {
     if (event.getArea() != EditorMouseEventArea.EDITING_AREA) return;
 
-    DocRenderer.EditorPane currentPane = redispatchEvent(event, MouseEvent.MOUSE_MOVED);
+    DocRenderer.EditorPane currentPane = redispatchEvent(event, MouseEvent.MOUSE_MOVED, null);
     if (currentPane == null) {
       restoreCursor();
     }
     else {
       ((EditorEx)event.getEditor()).setCustomCursor(DocRenderMouseEventBridge.class, currentPane.getCursor());
-      if (currentPane != myCurrentPane) {
-        if (myCurrentPane != null) {
-          dispatchMouseExitEvent(myCurrentPane);
+      if (currentPane != myMouseOverPane) {
+        if (myMouseOverPane != null) {
+          dispatchMouseExitEvent(myMouseOverPane);
         }
-        myCurrentPane = currentPane;
+        myMouseOverPane = currentPane;
       }
     }
+  }
+
+  @Override
+  public void mouseDragged(@NotNull EditorMouseEvent e) {
+    if (e.getArea() != EditorMouseEventArea.EDITING_AREA) return;
+
+    redispatchEvent(e, MouseEvent.MOUSE_DRAGGED, myDragPane);
   }
 
   @Override
@@ -45,22 +54,41 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
   }
 
   @Override
+  public void mousePressed(@NotNull EditorMouseEvent event) {
+    if (event.getArea() != EditorMouseEventArea.EDITING_AREA) return;
+
+    myDragPane = redispatchEvent(event, MouseEvent.MOUSE_PRESSED, null);
+  }
+
+  @Override
+  public void mouseReleased(@NotNull EditorMouseEvent event) {
+    if (event.getArea() != EditorMouseEventArea.EDITING_AREA) return;
+
+    redispatchEvent(event, MouseEvent.MOUSE_RELEASED, null);
+    myDragPane = null;
+  }
+
+  @Override
   public void mouseClicked(@NotNull EditorMouseEvent event) {
     if (event.getArea() != EditorMouseEventArea.EDITING_AREA) return;
 
-    redispatchEvent(event, MouseEvent.MOUSE_CLICKED);
+    redispatchEvent(event, MouseEvent.MOUSE_CLICKED, null);
   }
 
   private void restoreCursor() {
-    if (myCurrentPane != null) {
-      dispatchMouseExitEvent(myCurrentPane);
-      ((EditorEx)myCurrentPane.getEditor()).setCustomCursor(DocRenderMouseEventBridge.class, null);
-      myCurrentPane = null;
+    if (myMouseOverPane != null) {
+      dispatchMouseExitEvent(myMouseOverPane);
+      ((EditorEx)myMouseOverPane.getEditor()).setCustomCursor(DocRenderMouseEventBridge.class, null);
+      myMouseOverPane = null;
     }
   }
 
   @Nullable
-  private static DocRenderer.EditorPane redispatchEvent(@NotNull EditorMouseEvent event, int eventId) {
+  private static DocRenderer.EditorPane redispatchEvent(@NotNull EditorMouseEvent event,
+                                                        // we need a separately passed eventId because EditorImpl dispatches MOUSE_RELEASED
+                                                        // events to both 'mouseReleased' and 'mouseClicked' methods in listeners
+                                                        int eventId,
+                                                        @Nullable DocRenderer.EditorPane targetPane) {
     MouseEvent mouseEvent = event.getMouseEvent();
     Point mousePoint = mouseEvent.getPoint();
     Inlay inlay = event.getInlay();
@@ -74,11 +102,14 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
         int y = mousePoint.y - inlayBounds.y - relativeBounds.y;
         if (x >= 0 && x < relativeBounds.width && y >= 0 && y < relativeBounds.height) {
           DocRenderer.EditorPane editorPane = ((DocRenderer)renderer).getRendererComponent(inlay, relativeBounds.width);
-          int button = mouseEvent.getButton();
-          dispatchEvent(editorPane, new MouseEvent(editorPane, eventId, 0, 0, x, y, mouseEvent.getClickCount(), false,
-                                              // hack to process middle-button clicks (JEditorPane ignores them)
-                                              button == MouseEvent.BUTTON2 ? MouseEvent.BUTTON1 : button));
-          return editorPane;
+          if (targetPane == null || targetPane == editorPane) {
+            int button = mouseEvent.getButton();
+            int modifiers = eventId == MouseEvent.MOUSE_DRAGGED && button == MouseEvent.BUTTON1 ? InputEvent.BUTTON1_DOWN_MASK : 0;
+            dispatchEvent(editorPane, new MouseEvent(editorPane, eventId, 0, modifiers, x, y, mouseEvent.getClickCount(), false,
+                                                     // hack to process middle-button clicks (JEditorPane ignores them)
+                                                     button == MouseEvent.BUTTON2 ? MouseEvent.BUTTON1 : button));
+            return editorPane;
+          }
         }
       }
     }

@@ -9,10 +9,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.actionSystem.MouseShortcut;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -22,8 +19,10 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
@@ -42,6 +41,7 @@ import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -50,6 +50,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.ImageView;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.ImageObserver;
@@ -159,7 +160,12 @@ class DocRenderer implements EditorCustomElementRenderer {
 
   @Override
   public ActionGroup getContextMenuGroup(@NotNull Inlay inlay) {
-    return new DefaultActionGroup(myItem.createToggleAction(), new DocRenderItem.ChangeFontSize());
+    DefaultActionGroup group = new DefaultActionGroup();
+    group.add(new CopySelection());
+    group.addSeparator();
+    group.add(myItem.createToggleAction());
+    group.add(new DocRenderItem.ChangeFontSize());
+    return group;
   }
 
   private static int scale(int value) {
@@ -200,6 +206,7 @@ class DocRenderer implements EditorCustomElementRenderer {
       clearCachedComponent();
       myPane = new EditorPane();
       myPane.setEditable(false);
+      myPane.getCaret().setSelectionVisible(true);
       myPane.putClientProperty("caretWidth", 0); // do not reserve space for caret (making content one pixel narrower than component)
       myPane.setEditorKit(createEditorKit(editor));
       myPane.setBorder(JBUI.Borders.empty());
@@ -208,7 +215,10 @@ class DocRenderer implements EditorCustomElementRenderer {
       // disable kerning for now - laying out all fragments in a file with it takes too much time
       fontAttributes.put(TextAttribute.KERNING, 0);
       myPane.setFont(myPane.getFont().deriveFont(fontAttributes));
-      myPane.setForeground(getTextColor(editor.getColorsScheme()));
+      Color textColor = getTextColor(editor.getColorsScheme());
+      myPane.setForeground(textColor);
+      myPane.setSelectedTextColor(textColor);
+      myPane.setSelectionColor(editor.getSelectionModel().getTextAttributes().getBackgroundColor());
       UIUtil.enableEagerSoftWrapping(myPane);
       String textToRender = myItem.textToRender;
       if (textToRender == null) {
@@ -328,6 +338,10 @@ class DocRenderer implements EditorCustomElementRenderer {
         }
       }, disposable);
     }
+  }
+
+  @Nullable String getSelectedText() {
+    return myPane == null ? null : myPane.getSelectedText();
   }
 
   private static EditorKit createEditorKit(@NotNull Editor editor) {
@@ -566,6 +580,25 @@ class DocRenderer implements EditorCustomElementRenderer {
         }
       };
       super.paint(scalingGraphics, a);
+    }
+  }
+
+  private class CopySelection extends DumbAwareAction {
+    CopySelection() {
+      super(CodeInsightBundle.messagePointer("doc.render.copy.action.text"), AllIcons.Actions.Copy);
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+      e.getPresentation().setVisible(!StringUtil.isEmpty(getSelectedText()));
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+      String text = getSelectedText();
+      if (!StringUtil.isEmpty(text)) {
+        CopyPasteManager.getInstance().setContents(new StringSelection(text));
+      }
     }
   }
 }
