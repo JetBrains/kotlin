@@ -9,53 +9,53 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirModuleBasedSession
-import org.jetbrains.kotlin.fir.analysis.CheckersComponent
+import org.jetbrains.kotlin.fir.analysis.registerCheckersComponent
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.registerCommonComponents
+import org.jetbrains.kotlin.fir.registerResolveComponents
+import org.jetbrains.kotlin.fir.resolve.calls.jvm.registerJvmCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 
 
 class FirIdeJavaModuleBasedSession(
-    project: Project,
     moduleInfo: ModuleInfo,
-    sessionProvider: FirProjectSessionProvider,
-    scope: GlobalSearchScope
+    sessionProvider: FirProjectSessionProvider
 ) : FirModuleBasedSession(moduleInfo, sessionProvider) {
+    companion object {
+        fun create(
+            project: Project,
+            moduleInfo: ModuleInfo,
+            sessionProvider: FirProjectSessionProvider,
+            scope: GlobalSearchScope
+        ): FirIdeJavaModuleBasedSession {
+            return FirIdeJavaModuleBasedSession(moduleInfo, sessionProvider).apply {
+                registerCommonComponents()
+                registerResolveComponents()
+                registerCheckersComponent()
+                registerJvmCallConflictResolverFactory()
 
+                val firIdeProvider = FirIdeProvider(project, scope, this, KotlinScopeProvider(::wrapScopeWithJvmMapped))
 
-    init {
-        val firIdeProvider = FirIdeProvider(project, scope, this, KotlinScopeProvider(::wrapScopeWithJvmMapped))
+                register(FirProvider::class, firIdeProvider)
+                register(FirIdeProvider::class, firIdeProvider)
 
-        registerComponent(FirProvider::class, firIdeProvider)
-        registerComponent(FirIdeProvider::class, firIdeProvider)
-
-        registerComponent(
-            FirSymbolProvider::class,
-            FirCompositeSymbolProvider(
-                listOf(
-                    firProvider,
-                    JavaSymbolProvider(this, sessionProvider.project, scope),
-                    FirIdeModuleDependenciesSymbolProvider(this)
+                register(
+                    FirSymbolProvider::class,
+                    FirCompositeSymbolProvider(
+                        listOf(
+                            firProvider,
+                            JavaSymbolProvider(this, sessionProvider.project, scope),
+                            FirIdeModuleDependenciesSymbolProvider(this)
+                        )
+                    ) as FirSymbolProvider
                 )
-            ) as FirSymbolProvider
-        )
-
-        registerComponent(
-            ConeCallConflictResolverFactory::class,
-            JvmCallConflictResolverFactory
-        )
-
-        registerComponent(
-            CheckersComponent::class,
-            CheckersComponent.componentWithDefaultCheckers()
-        )
+            }
+        }
     }
 }

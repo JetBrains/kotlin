@@ -22,7 +22,7 @@ fun createSession(
 ): FirSession {
     val moduleInfo = FirTestModuleInfo(name = Name.identifier(moduleName))
     val provider = FirProjectSessionProvider(project)
-    return FirJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
+    return FirJavaModuleBasedSession.create(moduleInfo, provider, sourceScope).also {
         createSessionForDependencies(project, provider, moduleInfo, librariesScope, packagePartProvider)
     }
 }
