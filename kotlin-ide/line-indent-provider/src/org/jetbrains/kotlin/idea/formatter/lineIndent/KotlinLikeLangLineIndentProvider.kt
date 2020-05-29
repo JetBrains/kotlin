@@ -48,6 +48,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
     override fun getIndent(project: Project, editor: Editor, language: Language?, offset: Int): IndentCalculator? {
         val factory = IndentCalculatorFactory(project, editor)
         val currentPosition = getPosition(editor, offset)
+        if (!currentPosition.matchesRule { it.isAt(Whitespace) && it.isAtMultiline }) return null
 
         // ~~~ TESTING ~~~
 //        println(debugInfo(currentPosition))
