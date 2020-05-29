@@ -553,6 +553,11 @@ public class LoadJavaClsStubTestGenerated extends AbstractLoadJavaClsStubTest {
             runTest("testData/compiler/loadJava/compiledKotlin/class/EnumWithPrimitiveConstructorParameter.kt");
         }
 
+        @TestMetadata("FunInterface.kt")
+        public void testFunInterface() throws Exception {
+            runTest("testData/compiler/loadJava/compiledKotlin/class/FunInterface.kt");
+        }
+
         @TestMetadata("InheritClassSimple.kt")
         public void testInheritClassSimple() throws Exception {
             runTest("testData/compiler/loadJava/compiledKotlin/class/InheritClassSimple.kt");
