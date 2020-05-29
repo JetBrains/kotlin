@@ -107,6 +107,8 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     override fun getScriptInfo(localPath: String): GradleScriptInfo? =
         manager.getLightScriptInfo(localPath) as? GradleScriptInfo
 
+    override fun getScriptFirstSeenTs(path: String): Long = 0
+
     fun fileChanged(filePath: String, ts: Long = System.currentTimeMillis()) {
         findAffectedFileRoot(filePath)?.fileChanged(filePath, ts)
         scheduleLastModifiedFilesSave()
@@ -117,31 +119,34 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         updateNotifications { it.startsWith(workingDir) }
     }
 
-    fun update(build: KotlinDslGradleBuildSync) {
+    fun update(sync: KotlinDslGradleBuildSync) {
         // fast path for linked gradle builds without .gradle.kts support
-        if (build.models.isEmpty()) {
-            val root = getBuildRootByWorkingDir(build.workingDir) ?: return
+        if (sync.models.isEmpty()) {
+            val root = getBuildRootByWorkingDir(sync.workingDir) ?: return
             if (root is Imported && root.data.models.isEmpty()) return
         }
 
         try {
-            val root = actualizeBuildRoot(build.workingDir) ?: return
-            root.importing = false
+            val oldRoot = actualizeBuildRoot(sync.workingDir) ?: return
+            oldRoot.importing = false
 
-            if (root is Legacy) return
+            if (oldRoot is Legacy) return
 
             val templateClasspath = GradleScriptDefinitionsContributor.getDefinitionsTemplateClasspath(project)
-            val newData = GradleBuildRootData(build.projectRoots, templateClasspath, build.models)
-            val mergedData = if (build.failed && root is Imported) merge(root.data, newData) else newData
+            val newData = GradleBuildRootData(sync.ts, sync.projectRoots, templateClasspath, sync.models)
+            val mergedData = if (sync.failed && oldRoot is Imported) merge(oldRoot.data, newData) else newData
 
             val lastModifiedFilesReset = LastModifiedFiles()
-            val newSupport = tryCreateImportedRoot(build.workingDir, lastModifiedFilesReset) { mergedData } ?: return
-            GradleBuildRootDataSerializer.write(newSupport.dir ?: return, mergedData)
-            newSupport.saveLastModifiedFiles()
+            val newRoot = tryCreateImportedRoot(
+                sync.workingDir,
+                lastModifiedFilesReset
+            ) { mergedData } ?: return
+            GradleBuildRootDataSerializer.write(newRoot.dir ?: return, mergedData)
+            newRoot.saveLastModifiedFiles()
 
-            add(newSupport)
+            add(newRoot)
         } finally {
-            updateNotifications { it.startsWith(build.workingDir) }
+            updateNotifications { it.startsWith(sync.workingDir) }
         }
     }
 
@@ -152,7 +157,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         val models = old.models.associateByTo(mutableMapOf()) { it.file }
         new.models.associateByTo(models) { it.file }
 
-        return GradleBuildRootData(roots, new.templateClasspath, models.values)
+        return GradleBuildRootData(new.importTs, roots, new.templateClasspath, models.values)
     }
 
     private val lastModifiedFilesSaveScheduled = AtomicBoolean()
