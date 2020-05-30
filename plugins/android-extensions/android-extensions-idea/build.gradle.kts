@@ -15,7 +15,6 @@ dependencies {
     compileOnly(project(":compiler:light-classes"))
     compileOnly(project(":idea:idea-core"))
     compileOnly(project(":idea"))
-    compileOnly(project(":idea:idea-jvm"))
     compileOnly(project(":idea:idea-gradle"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijPluginDep("android"))
@@ -40,7 +39,6 @@ dependencies {
     testCompile(intellijPluginDep("Groovy"))
     testCompile(intellijDep())
 
-    testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))

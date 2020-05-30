@@ -101,7 +101,6 @@ val projectsToShadow by extra(listOf(
         ":kotlinx-serialization-ide-plugin",
         ":idea:idea-android",
         ":idea:idea-android-output-parser",
-        ":idea:idea-jvm",
         ":idea:idea-git",
         ":idea:idea-jps-common",
         ":idea:idea-frontend-independent",
