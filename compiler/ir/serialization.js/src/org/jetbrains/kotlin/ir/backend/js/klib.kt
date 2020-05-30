@@ -229,6 +229,7 @@ fun loadIr(
             }
 
             val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, mainModule.files, irLinker)
+            symbolTable.noUnboundLeft("Unbound symbols left after linker")
 
             // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
             val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
@@ -69,6 +70,7 @@ fun compile(
     val irFiles = allModules.flatMap { it.files }
 
     deserializer.postProcess()
+    symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
     moduleFragment.files.clear()
     moduleFragment.files += irFiles
