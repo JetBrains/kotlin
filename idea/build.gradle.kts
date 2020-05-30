@@ -67,7 +67,6 @@ dependencies {
     compile(project(":compiler:plugin-api"))
     compile(project(":idea:jvm-debugger:jvm-debugger-evaluation"))
     compile(project(":idea:jvm-debugger:jvm-debugger-sequence"))
-    compile(project(":idea:jvm-debugger:jvm-debugger-coroutine"))
     compile(project(":j2k"))
     compile(project(":idea:idea-j2k"))
     compile(project(":idea:formatter"))

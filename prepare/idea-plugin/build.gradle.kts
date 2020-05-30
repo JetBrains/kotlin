@@ -31,7 +31,6 @@ val projectsToShadow by extra(listOf(
         ":core:descriptors.jvm",
         ":core:deserialization",
         ":idea:jvm-debugger:jvm-debugger-evaluation",
-        ":idea:jvm-debugger:jvm-debugger-coroutine",
         ":idea:jvm-debugger:jvm-debugger-sequence",
         ":idea:scripting-support",
         ":idea:idea-j2k",
