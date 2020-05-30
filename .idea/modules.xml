@@ -2090,7 +2090,6 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/gradle/gradle-idea/kotlin.gradle.gradle-idea.iml" filepath="$PROJECT_DIR$/kotlin/gradle/gradle-idea/kotlin.gradle.gradle-idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/gradle/gradle-native/kotlin.gradle.gradle-native.iml" filepath="$PROJECT_DIR$/kotlin/gradle/gradle-native/kotlin.gradle.gradle-native.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/gradle/gradle-tooling/kotlin.gradle.gradle-tooling.iml" filepath="$PROJECT_DIR$/kotlin/gradle/gradle-tooling/kotlin.gradle.gradle-tooling.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kotlin/gradle/gradle-tooling-api/kotlin.gradle.gradle-tooling-api.iml" filepath="$PROJECT_DIR$/kotlin/gradle/gradle-tooling-api/kotlin.gradle.gradle-tooling-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/idea/kotlin.idea.iml" filepath="$PROJECT_DIR$/kotlin/idea/kotlin.idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/j2k/idea/kotlin.j2k.idea.iml" filepath="$PROJECT_DIR$/kotlin/j2k/idea/kotlin.j2k.idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/j2k/new/kotlin.j2k.new.iml" filepath="$PROJECT_DIR$/kotlin/j2k/new/kotlin.j2k.new.iml" />
