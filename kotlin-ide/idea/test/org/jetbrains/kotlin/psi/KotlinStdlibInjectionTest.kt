@@ -55,6 +55,20 @@ class KotlinStdlibInjectionTest : AbstractInjectionTest() {
         RegExpLanguage.INSTANCE.id
     )
 
+    fun testToPattern0() = assertInjectionPresent(
+        """
+            val test = "a.*b<caret>".toPattern()
+            """,
+        RegExpLanguage.INSTANCE.id
+    )
+
+    fun testToPattern1() = assertInjectionPresent(
+        """
+            val test = "a.*b<caret>".toPattern(java.util.regex.Pattern.CASE_INSENSITIVE)
+            """,
+        RegExpLanguage.INSTANCE.id
+    )
+
     private fun assertInjectionPresent(@Language("kotlin") text: String, languageId: String) {
         doInjectionPresentTest(text, languageId = languageId, unInjectShouldBePresent = false)
     }
