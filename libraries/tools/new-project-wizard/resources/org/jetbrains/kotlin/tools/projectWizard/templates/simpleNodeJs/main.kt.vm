@@ -1,6 +1,0 @@
-fun main() {
-    println(greeting("${moduleName}"))
-}
-
-fun greeting(name: String) =
-    "Hello, $name"
