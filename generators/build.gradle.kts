@@ -45,9 +45,6 @@ dependencies {
 
     testCompile(projectTests(":compiler:cli"))
     testCompile(projectTests(":idea:idea-fir-performance-tests"))
-    if (Ide.IJ()) {
-        testCompile(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
-    }
     testCompile(projectTests(":idea:idea-android"))
     testCompile(projectTests(":plugins:jvm-abi-gen"))
     testCompile(projectTests(":plugins:android-extensions-compiler"))

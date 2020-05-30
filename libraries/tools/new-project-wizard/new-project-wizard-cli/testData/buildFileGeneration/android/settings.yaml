@@ -1,9 +1,0 @@
-android:
-  androidSdkPath: androidSdkPath
-kotlin:
-  projectKind: Multiplatform
-  modules:
-    - type:
-        name: android
-        androidSdkPath: /home/user/Android/Sdk
-      name: android
