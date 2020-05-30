@@ -39,7 +39,6 @@ dependencies {
     testCompile(interpreterSourceSet.output)
 
     testCompile(projectTests(":compiler:cli"))
-    testCompile(projectTests(":idea:idea-android"))
     testCompile(projectTests(":plugins:jvm-abi-gen"))
     testCompile(projectTests(":plugins:android-extensions-compiler"))
     testCompile(projectTests(":plugins:android-extensions-ide"))
