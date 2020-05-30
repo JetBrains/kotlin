@@ -295,7 +295,6 @@ extra["compilerModulesForJps"] = listOf(
     ":daemon-common-new",
     ":core:descriptors",
     ":core:descriptors.jvm",
-    ":idea:idea-jps-common",
     ":kotlin-preloader",
     ":compiler:util",
     ":compiler:config",
