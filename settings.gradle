@@ -179,7 +179,6 @@ include ":benchmarks",
         ":plugins:android-extensions-ide",
         ":kotlin-allopen-compiler-plugin",
         ":kotlin-noarg-compiler-plugin",
-        ":noarg-ide-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin",
         ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-script-runtime",
@@ -477,7 +476,6 @@ project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/and
 project(':plugins:android-extensions-ide').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen/allopen-cli" as File
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg/noarg-cli" as File
-project(':noarg-ide-plugin').projectDir = "$rootDir/plugins/noarg/noarg-ide" as File
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
