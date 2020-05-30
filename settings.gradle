@@ -273,7 +273,6 @@ include ":benchmarks",
         ":plugins:jvm-abi-gen-embeddable",
         ":test-instrumenter",
         ":kotlinx-serialization-compiler-plugin",
-        ":kotlinx-serialization-ide-plugin",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded",
         ":wasm:wasm.ir"
@@ -542,7 +541,6 @@ project(':js:js.tests').projectDir = "$rootDir/js/js.tests" as File
 project(':js:js.engines').projectDir = "$rootDir/js/js.engines" as File
 
 project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-compiler")
-project(':kotlinx-serialization-ide-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-ide")
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
 
