@@ -44,7 +44,6 @@ dependencies {
     testCompile(interpreterSourceSet.output)
 
     testCompile(projectTests(":compiler:cli"))
-    testCompile(projectTests(":idea:idea-maven"))
     testCompile(projectTests(":idea:idea-fir"))
     testCompile(projectTests(":idea:idea-fir-performance-tests"))
     testCompile(projectTests(":idea:idea-frontend-fir"))
