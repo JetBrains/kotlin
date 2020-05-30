@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.common.overrides
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverrideFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverridePropertyImpl
@@ -278,6 +279,18 @@ class IrOverridingUtil(
         return result
     }
 
+    private fun IrSimpleFunction.updateAccessorModalityAndVisibility(newModality: Modality, newVisibility: Visibility): IrSimpleFunction? {
+        require(this is IrFakeOverrideFunctionImpl) {
+            "Unexpected fake override accessor kind: $this"
+        }
+        // For descriptors it gets INVISIBLE_FAKE.
+        if (newVisibility == Visibilities.PRIVATE) return null
+
+        this.visibility = newVisibility
+        this.modality = newModality
+        return this
+    }
+
     private fun createAndBindFakeOverride(
         overridables: Collection<IrOverridableMember>,
         current: IrClass
@@ -297,6 +310,8 @@ class IrOverridingUtil(
                 is IrFakeOverridePropertyImpl -> {
                     this.visibility = visibility
                     this.modality = modality
+                    this.getter = this.getter?.updateAccessorModalityAndVisibility(modality, visibility)
+                    this.setter = this.setter?.updateAccessorModalityAndVisibility(modality, visibility)
                 }
                 is IrFakeOverrideFunctionImpl -> {
                     this.visibility = visibility
