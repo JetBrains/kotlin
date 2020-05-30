@@ -193,7 +193,6 @@ include ":benchmarks",
         ":kotlin-noarg-compiler-plugin",
         ":noarg-ide-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin",
-        ":sam-with-receiver-ide-plugin",
         ":kotlin-imports-dumper-compiler-plugin",
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":kotlin-script-runtime",
@@ -494,7 +493,6 @@ project(':allopen-ide-plugin').projectDir = "$rootDir/plugins/allopen/allopen-id
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg/noarg-cli" as File
 project(':noarg-ide-plugin').projectDir = "$rootDir/plugins/noarg/noarg-ide" as File
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File
-project(':sam-with-receiver-ide-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-ide" as File
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
 project(':kotlin-gradle-plugin-dsl-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen" as File
