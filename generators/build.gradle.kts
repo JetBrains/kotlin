@@ -49,7 +49,6 @@ dependencies {
     testCompile(projectTests(":nj2k"))
     if (Ide.IJ()) {
         testCompile(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
-        testCompile(projectTests(":idea:idea-new-project-wizard"))
     }
     testCompile(projectTests(":idea:idea-android"))
     testCompile(projectTests(":idea:performanceTests"))
