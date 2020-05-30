@@ -1,3 +1,0 @@
-field -> USimpleNameReferenceExpression (identifier = field) from KtNameReferenceExpression
-field -> USimpleNameReferenceExpression (identifier = field) from KtNameReferenceExpression
-p -> USimpleNameReferenceExpression (identifier = p) from KtNameReferenceExpression
