@@ -173,7 +173,6 @@ include ":benchmarks",
         ":j2k",
         ":nj2k",
         ":plugins:lint",
-        ":plugins:kapt3-idea",
         ":plugins:android-extensions-compiler",
         ":kotlin-android-extensions",
         ":kotlin-android-extensions-runtime",
@@ -504,7 +503,6 @@ project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3/ka
 project(':kotlin-annotation-processing-cli').projectDir = "$rootDir/plugins/kapt3/kapt3-cli" as File
 project(':kotlin-annotation-processing-base').projectDir = "$rootDir/plugins/kapt3/kapt3-base" as File
 project(':kotlin-annotation-processing-runtime').projectDir = "$rootDir/plugins/kapt3/kapt3-runtime" as File
-project(':plugins:kapt3-idea').projectDir = "$rootDir/plugins/kapt3/kapt3-idea" as File
 project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-local-example" as File
 project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
