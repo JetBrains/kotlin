@@ -135,7 +135,7 @@ public class EditorTracker implements Disposable {
     }
   }
 
-  private void unregisterEditor(Editor editor) {
+  private void unregisterEditor(@NotNull Editor editor) {
     Window oldWindow = myEditorToWindowMap.get(editor);
     if (oldWindow != null) {
       myEditorToWindowMap.remove(editor);
