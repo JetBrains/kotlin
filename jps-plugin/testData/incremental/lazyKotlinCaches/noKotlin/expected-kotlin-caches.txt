@@ -1,3 +1,0 @@
-kotlin-data-container
-Module 'module' production
-Module 'module' tests

@@ -1,5 +1,0 @@
-pJvm [jvm]
-pJs [js]
-
-pJs -> pJvm [compile]
-pJvm -> pJs [compile]

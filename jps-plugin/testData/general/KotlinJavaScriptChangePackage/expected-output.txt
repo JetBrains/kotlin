@@ -1,9 +1,0 @@
-kotlinProject/
-  kotlinProject/
-    package1/
-      package1.kjsm
-  kotlinProject.js
-  kotlinProject.meta.js
-  lib/
-    kotlin.js
-    kotlin.meta.js

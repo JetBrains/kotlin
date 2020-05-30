@@ -23,7 +23,6 @@ dependencies {
     testCompile(project(":core:descriptors"))
     testCompile(project(":core:descriptors.jvm"))
     testCompile(project(":compiler:frontend.java"))
-    testCompile(projectTests(":jps-plugin"))
     testCompile(commonDep("junit:junit"))
     Platform[193].orLower {
         testCompile(intellijDep()) { includeJars("openapi", rootProject = rootProject) }

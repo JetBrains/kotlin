@@ -702,11 +702,6 @@ tasks {
         dependsOn(":compiler:android-tests:test")
     }
 
-    register("jps-tests") {
-        dependsOn("dist")
-        dependsOn(":jps-plugin:test")
-    }
-
     register("idea-plugin-main-tests") {
         dependsOn("dist")
         dependsOn(":idea:test")

@@ -1,4 +1,0 @@
-module1->
-module2->module1[exported]
-module3->module2
-module4->module3
