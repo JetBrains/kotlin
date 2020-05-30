@@ -1,5 +1,0 @@
-// REPL_MODE: false
-
-arrayListOf(1, 5, 7).map { it * 2 }    // RESULT: 2
-    .filter { it < 10 }
-    .find { it == 2 }
