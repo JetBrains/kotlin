@@ -8,7 +8,6 @@ plugins {
 dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":idea"))
-    compile(project(":idea:idea-android"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("android"))

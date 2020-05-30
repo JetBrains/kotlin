@@ -45,7 +45,6 @@ dependencies {
 
     testCompile(projectTests(":compiler:cli"))
     testCompile(projectTests(":idea:idea-fir-performance-tests"))
-    testCompile(projectTests(":idea:idea-android"))
     testCompile(projectTests(":plugins:jvm-abi-gen"))
     testCompile(projectTests(":plugins:android-extensions-compiler"))
     testCompile(projectTests(":plugins:android-extensions-ide"))
