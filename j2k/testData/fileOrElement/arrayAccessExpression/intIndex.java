@@ -1,2 +1,0 @@
-//expression
-myArray[10]

@@ -1,2 +1,0 @@
-//method
-public void test() {}

@@ -1,1 +1,0 @@
-internal enum class A
