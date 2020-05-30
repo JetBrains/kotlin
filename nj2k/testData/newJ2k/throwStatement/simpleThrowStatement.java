@@ -1,2 +1,0 @@
-//statement
-throw exception;

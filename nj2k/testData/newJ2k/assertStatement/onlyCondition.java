@@ -1,2 +1,0 @@
-//statement
-assert boolMethod();

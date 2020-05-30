@@ -1,1 +1,0 @@
-assert(true) { "string details" }

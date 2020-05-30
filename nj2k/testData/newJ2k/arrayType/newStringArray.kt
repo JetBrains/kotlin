@@ -1,1 +1,0 @@
-val a = arrayOf("abc")
