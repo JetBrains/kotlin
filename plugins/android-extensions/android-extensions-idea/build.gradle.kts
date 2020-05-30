@@ -13,7 +13,6 @@ dependencies {
 
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:light-classes"))
-    compileOnly(project(":idea:idea-core"))
     compileOnly(project(":idea"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijPluginDep("android"))
