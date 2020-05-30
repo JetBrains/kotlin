@@ -1,8 +1,0 @@
-// FIR_COMPARISON
-package xxx
-
-class A<T> {
-    fun foo(x: T<caret>)
-}
-
-// ELEMENT: T

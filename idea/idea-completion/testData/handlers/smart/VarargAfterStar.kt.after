@@ -1,7 +1,0 @@
-fun foo(vararg strings: String){ }
-
-fun bar(list: List<String>){
-    foo(*list.toTypedArray()<caret>)
-}
-
-// ELEMENT: toTypedArray

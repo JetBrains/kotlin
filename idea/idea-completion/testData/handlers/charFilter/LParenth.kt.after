@@ -1,8 +1,0 @@
-fun foo() { }
-
-fun bar() {
-    foo(<caret>)
-}
-
-// ELEMENT: foo
-// CHAR: (

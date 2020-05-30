@@ -1,7 +1,0 @@
-fun foo(p: (x: Char, String) -> Unit){}
-
-fun bar() {
-    foo { x, s -> <caret> }
-}
-
-// ELEMENT: "x, s ->"

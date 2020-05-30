@@ -1,7 +1,0 @@
-import java.io.File
-
-fun foo(xxx: java.io.File?)
-
-fun bar(xxx: File?<caret>)
-
-// ELEMENT_TEXT: xxx: File?

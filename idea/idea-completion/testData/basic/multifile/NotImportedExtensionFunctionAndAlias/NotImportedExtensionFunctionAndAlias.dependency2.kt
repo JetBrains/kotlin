@@ -1,3 +1,0 @@
-package third
-
-class Dependency

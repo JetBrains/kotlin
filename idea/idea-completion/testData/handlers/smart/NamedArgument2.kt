@@ -1,7 +1,0 @@
-fun foo(param1: String = "", param2: Int, param3: Int = 0) { }
-
-fun bar(pInt: Int) {
-    foo(param2 = <caret>)
-}
-
-// ELEMENT: pInt

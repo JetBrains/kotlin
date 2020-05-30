@@ -1,5 +1,0 @@
-fun f(list: List<String>) {
-    list.map { <caret> }
-}
-
-// ELEMENT: map

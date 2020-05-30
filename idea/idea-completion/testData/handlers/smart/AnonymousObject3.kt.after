@@ -1,7 +1,0 @@
-var r : Runnable = object : Runnable {
-    override fun run() {
-        TODO("Not yet implemented")
-    }
-}
-
-//ELEMENT: object

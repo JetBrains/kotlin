@@ -1,3 +1,0 @@
-fun foo(): Boolean = true<caret>
-
-// ELEMENT: true

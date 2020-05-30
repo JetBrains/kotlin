@@ -1,8 +1,0 @@
-class `this` {
-    fun String.foo(){
-        val foo: `this` = this@`this`<caret>
-    }
-}
-
-// ELEMENT: "this@`this`"
-
