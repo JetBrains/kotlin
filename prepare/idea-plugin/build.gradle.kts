@@ -57,7 +57,6 @@ val projectsToShadow by extra(listOf(
         ":compiler:frontend.java",
         ":idea",
         ":idea:idea-native",
-        ":idea:idea-core",
         ":idea:idea-gradle-native",
         ":compiler:ir.psi2ir",
         ":compiler:ir.tree",
