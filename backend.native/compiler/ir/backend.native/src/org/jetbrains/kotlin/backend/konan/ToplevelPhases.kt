@@ -249,6 +249,8 @@ internal val psiToIrPhase = konanUnitPhase(
             // Enable lazy IR genration for newly-created symbols inside BE
             stubGenerator.unboundSymbolGeneration = true
 
+            symbolTable.noUnboundLeft("Unbound symbols left after linker")
+
             module.acceptVoid(ManglerChecker(KonanManglerIr, Ir2DescriptorManglerAdapter(KonanManglerDesc)))
             val fakeOverrideChecker = FakeOverrideChecker(KonanManglerIr, KonanManglerDesc)
             linker.modules.values.forEach{ fakeOverrideChecker.check(it) }
