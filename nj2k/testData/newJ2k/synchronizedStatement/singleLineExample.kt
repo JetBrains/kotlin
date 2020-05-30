@@ -1,1 +1,0 @@
-synchronized(s) { doSomething(s) }

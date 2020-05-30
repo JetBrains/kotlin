@@ -1,1 +1,0 @@
-abstract val noofGears: Int

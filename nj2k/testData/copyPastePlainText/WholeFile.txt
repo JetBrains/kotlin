@@ -1,8 +1,0 @@
-import java.util.ArrayList;
-
-class JavaClass {
-    void foo() {
-        ArrayList<String> list = new ArrayList<String>();
-        list.add(1);
-    }
-}

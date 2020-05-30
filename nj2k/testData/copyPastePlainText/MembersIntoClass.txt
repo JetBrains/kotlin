@@ -1,7 +1,0 @@
-    void foo() {
-        ArrayList<String> list = new ArrayList<String>();
-        list.add(1);
-    }
-
-    void bar() {
-    }
