@@ -1,3 +1,0 @@
-fun usageWithStatic() {
-    JavaClass.bar { "" }
-}

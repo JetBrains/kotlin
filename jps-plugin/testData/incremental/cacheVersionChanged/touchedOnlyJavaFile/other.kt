@@ -1,4 +1,0 @@
-package other
-
-fun other() {
-}

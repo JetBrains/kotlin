@@ -1,1 +1,0 @@
-fun createAFromInt() = A(5)

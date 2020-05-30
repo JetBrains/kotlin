@@ -1,1 +1,0 @@
-fun zero() = OuterClass().InnerClass().getZero

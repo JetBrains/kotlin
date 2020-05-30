@@ -1,9 +1,0 @@
-package inline
-
-fun doo(fn: () -> Unit) = fn()
-
-inline fun f() {
-    doo {
-        println("I'm an inline function!")
-    }
-}

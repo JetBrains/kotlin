@@ -1,1 +1,0 @@
-fun getListOfD() = listOf(D())

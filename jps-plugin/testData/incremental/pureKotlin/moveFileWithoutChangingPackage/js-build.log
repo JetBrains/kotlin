@@ -1,8 +1,0 @@
-================ Step #1 =================
-
-Compiling files:
-    src/bar/a.kt
-    src/useClass.kt
-    src/useFun.kt
-End of files
-Exit code: OK

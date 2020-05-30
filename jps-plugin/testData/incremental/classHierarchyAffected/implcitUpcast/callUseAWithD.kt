@@ -1,3 +1,0 @@
-fun callUseAWithD() {
-    useA(getD())
-}

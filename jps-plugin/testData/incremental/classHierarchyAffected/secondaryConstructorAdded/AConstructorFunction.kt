@@ -1,1 +1,0 @@
-fun A(x: String) = A(x.toInt())

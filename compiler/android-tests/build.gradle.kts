@@ -24,7 +24,6 @@ dependencies {
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
 
-    testCompile(projectTests(":jps-plugin"))
     testCompile(commonDep("junit:junit"))
 
     Platform[193].orLower {

@@ -1,1 +1,0 @@
-fun getAChild() = AChild()

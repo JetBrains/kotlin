@@ -1,7 +1,0 @@
-package a
-
-class A
-
-fun a(): String {
-    return ":)"
-}

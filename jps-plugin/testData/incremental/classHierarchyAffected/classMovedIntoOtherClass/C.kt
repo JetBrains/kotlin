@@ -1,5 +1,0 @@
-open class C : B() {
-    open inner class Z : Y() {
-        override fun f() {}
-    }
-}

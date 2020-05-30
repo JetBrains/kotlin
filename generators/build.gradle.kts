@@ -51,7 +51,6 @@ dependencies {
         testCompile(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
     }
     testCompile(projectTests(":idea:idea-android"))
-    testCompile(projectTests(":jps-plugin"))
     testCompile(projectTests(":plugins:jvm-abi-gen"))
     testCompile(projectTests(":plugins:android-extensions-compiler"))
     testCompile(projectTests(":plugins:android-extensions-ide"))

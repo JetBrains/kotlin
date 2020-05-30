@@ -1,3 +1,0 @@
-fun useCreateErr()  {
-    createErr()
-}

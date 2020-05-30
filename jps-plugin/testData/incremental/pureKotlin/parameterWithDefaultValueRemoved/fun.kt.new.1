@@ -1,5 +1,0 @@
-package test
-
-fun f(x: Any) {
-    println("f(x: Any)")
-}
