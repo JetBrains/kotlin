@@ -175,7 +175,6 @@ dependencies {
     }
 
     gradleToolingModel(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
-    gradleToolingModel(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":plugins:kapt3-idea")) { isTransitive = false }
     gradleToolingModel(project(":plugins:android-extensions-ide")) { isTransitive = false }
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
