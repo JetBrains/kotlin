@@ -1,1 +1,0 @@
-fun getListOfA() = listOf(A())

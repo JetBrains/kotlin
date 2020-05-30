@@ -1,4 +1,0 @@
-package test
-
-fun foo() {
-}

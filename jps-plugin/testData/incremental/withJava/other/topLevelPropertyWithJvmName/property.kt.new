@@ -1,4 +1,0 @@
-package test
-
-val g: Int
-    @JvmName("newName") get() = 0

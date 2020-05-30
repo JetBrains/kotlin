@@ -1,3 +1,0 @@
-fun useOverloaded() {
-    overloaded("useOverloadedInline")
-}

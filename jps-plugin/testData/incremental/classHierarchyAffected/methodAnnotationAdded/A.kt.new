@@ -1,8 +1,0 @@
-package foo
-
-annotation class Ann
-
-open class A {
-    @Ann
-    fun f() {}
-}

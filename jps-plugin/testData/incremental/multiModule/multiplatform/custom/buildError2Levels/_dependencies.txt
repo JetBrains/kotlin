@@ -1,7 +1,0 @@
-c [sourceSetHolder]
-
-pJvm [compilationAndSourceSetHolder, jvm]
-pJvm -> c [include]
-
-pJs [compilationAndSourceSetHolder, js]
-pJs -> c [include]

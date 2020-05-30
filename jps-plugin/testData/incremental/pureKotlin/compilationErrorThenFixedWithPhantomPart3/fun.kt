@@ -1,4 +1,0 @@
-class A {
-    fun f() {
-    }
-}

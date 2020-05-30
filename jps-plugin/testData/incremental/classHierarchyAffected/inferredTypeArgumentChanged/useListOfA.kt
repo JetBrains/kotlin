@@ -1,1 +1,0 @@
-fun useListOfA(aas: List<A>) {}

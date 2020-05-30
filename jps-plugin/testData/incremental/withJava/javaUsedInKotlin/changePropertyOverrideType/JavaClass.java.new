@@ -1,4 +1,0 @@
-public class JavaClass implements KotlinInterface {
-    public String getX() { return ""; }
-    public int getY() { return 1; }
-}

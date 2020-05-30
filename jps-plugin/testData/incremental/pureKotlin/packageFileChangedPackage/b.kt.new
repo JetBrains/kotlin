@@ -1,3 +1,0 @@
-package newName
-
-fun b() = "b"
