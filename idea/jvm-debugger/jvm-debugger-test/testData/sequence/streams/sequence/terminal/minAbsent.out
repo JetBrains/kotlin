@@ -1,9 +1,0 @@
-LineBreakpoint created at MinAbsent.kt:5
-Run Java
-Connected to the target VM
-MinAbsent.kt:5
-Exception caught: junit.framework.AssertionFailedError: Type mismatch: inferred type is Double? but Double was expected, Type mismatch: inferred type is Double? but Double was expected
-WRONG!
-Disconnected from the target VM
-
-Process finished with exit code 0

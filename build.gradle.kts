@@ -877,11 +877,7 @@ tasks {
             ":plugins:uast-kotlin:test",
             ":kotlin-annotation-processing-gradle:test",
             ":kotlinx-serialization-compiler-plugin:test",
-            ":kotlinx-serialization-ide-plugin:test",
-            ":idea:jvm-debugger:jvm-debugger-test:test",
-            "idea-plugin-additional-tests",
-            "jps-tests",
-            ":generators:test"
+            ":kotlinx-serialization-ide-plugin:test"
         )
         if (Ide.IJ()) {
             dependsOn(

@@ -1,8 +1,0 @@
-LineBreakpoint created at whenEvaluation.kt:6
-Run Java
-Connected to the target VM
-whenEvaluation.kt:6
-Compile bytecode for when (a) { "a" -> "A"; "b" -> "B"; else -> "C" }
-Disconnected from the target VM
-
-Process finished with exit code 0

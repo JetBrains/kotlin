@@ -1,5 +1,0 @@
-try {
-  this.hashCode()
-} catch(e : kotlin.Throwable) {
-  this.fail()
-}

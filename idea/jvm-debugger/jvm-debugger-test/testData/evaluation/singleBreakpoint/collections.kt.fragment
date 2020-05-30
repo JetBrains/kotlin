@@ -1,5 +1,0 @@
-ar.map { if (it > 50) "big" else "small" }
-  .filter { it == "small" }
-  .size
-
-// RESULT: 2: I

@@ -1,8 +1,0 @@
-LineBreakpoint created at typeParameterRef.kt:13
-Run Java
-Connected to the target VM
-typeParameterRef.kt:13
-Compile bytecode for foo<T>()
-Disconnected from the target VM
-
-Process finished with exit code 0

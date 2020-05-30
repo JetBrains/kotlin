@@ -1,9 +1,0 @@
-LineBreakpoint created at typedArray.kt:6
-Run Java
-Connected to the target VM
-typedArray.kt:6
-Compile bytecode for list.toTypedArray().size
-Compile bytecode for block { list.toTypedArray().size }
-Disconnected from the target VM
-
-Process finished with exit code 0

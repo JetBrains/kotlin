@@ -1,8 +1,0 @@
-LineBreakpoint created at lambdaOnReturn.kt:14 lambdaOrdinal = 1
-Run Java
-Connected to the target VM
-lambdaOnReturn.kt:14
-Compile bytecode for y
-Disconnected from the target VM
-
-Process finished with exit code 0
