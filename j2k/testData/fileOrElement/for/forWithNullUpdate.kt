@@ -1,2 +1,0 @@
-init()
-while (condition()) body()

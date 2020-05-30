@@ -39,7 +39,6 @@ dependencies {
     testCompile(interpreterSourceSet.output)
 
     testCompile(projectTests(":compiler:cli"))
-    testCompile(projectTests(":j2k"))
     if (Ide.IJ()) {
         testCompile(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
     }

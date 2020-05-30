@@ -1,2 +1,0 @@
-//class
-private enum Test {}
