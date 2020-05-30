@@ -1,3 +1,0 @@
-// RUNTIME
-fun foo(p: StringBuilder<caret>) {
-}

@@ -1,3 +1,0 @@
-import other.extensionFun
-
-fun foo(s: String): String = s.extensionFun()<caret>

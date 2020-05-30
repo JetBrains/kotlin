@@ -1,5 +1,0 @@
-fun test() {
-    <caret>
-}
-
-// ABSENT: ""

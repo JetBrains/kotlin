@@ -1,5 +1,0 @@
-import java.io.Closeable
-
-var a : java.io.Closeable = Closeable { <caret> }
-
-// ELEMENT: Closeable

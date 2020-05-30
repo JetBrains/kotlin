@@ -1,9 +1,0 @@
-fun foo(p: Int): Int = p
-fun bar(): Int = p
-
-fun f(): Int {
-    return bar()<caret>
-}
-
-//ELEMENT: bar
-//CHAR: \t

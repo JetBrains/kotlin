@@ -1,5 +1,0 @@
-fun main(args: Array<String>) {
-    args.filterNot {<caret>it != ""}
-}
-
-// ELEMENT: filterNot

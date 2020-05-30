@@ -1,9 +1,0 @@
-fun foo(p: () -> Unit, i: Int){}
-
-fun bar() {
-    foo(::f, <caret>)
-}
-
-fun f(){}
-
-// ELEMENT: ::f

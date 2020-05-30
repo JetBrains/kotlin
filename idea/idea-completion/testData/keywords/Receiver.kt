@@ -1,3 +1,0 @@
-fun @<caret>
-
-// EXIST: receiver

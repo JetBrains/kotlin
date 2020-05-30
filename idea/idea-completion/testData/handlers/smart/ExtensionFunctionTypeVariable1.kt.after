@@ -1,7 +1,0 @@
-fun test(i: Int, foo: Int.() -> Char) {
-    bar(i.foo(), <caret>)
-}
-
-fun bar(p1: Char, p2: Int){}
-
-// ELEMENT: foo

@@ -1,7 +1,0 @@
-import java.lang.annotation.Inherited
-
-class A {
-    @Inherited<caret>
-}
-
-// ELEMENT: Inherited

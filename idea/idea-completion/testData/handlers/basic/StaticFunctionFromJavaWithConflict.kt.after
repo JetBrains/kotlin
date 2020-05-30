@@ -1,9 +1,0 @@
-import java.util.Arrays
-
-fun buildTemplates() {
-    val java = 42
-    Arrays.binarySearch()
-}
-
-// ELEMENT: binarySearch
-// TAIL_TEXT: "(a: IntArray!, key: Int) (java.util)"

@@ -1,3 +1,0 @@
-@Deprecated
-class XXXDeprecatedJavaClass {
-}

@@ -1,8 +1,0 @@
-fun foo(p: Int){}
-
-fun f() {
-    foo(<caret>)
-    (a + b).x()
-}
-
-// ELEMENT: foo

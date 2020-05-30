@@ -1,5 +1,0 @@
-open class Base(p1: String, p2: String)
-
-class Derived(s: String) : Base(s, <caret>)
-
-// ELEMENT: s

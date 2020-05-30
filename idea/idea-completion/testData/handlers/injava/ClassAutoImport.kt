@@ -1,4 +1,0 @@
-package jettesting
-
-class ClassFromJet {
-}

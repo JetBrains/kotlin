@@ -1,9 +1,0 @@
-class A {
-    inner class XYZ
-
-    fun foo() {
-        val v: XYZ = XYZ()<caret>
-    }
-}
-
-// ELEMENT: XYZ

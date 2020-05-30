@@ -1,8 +1,0 @@
-var vvv = 1
-
-fun foo() {
-    vvv = <caret>
-}
-
-// ELEMENT: vvv
-// CHAR: =

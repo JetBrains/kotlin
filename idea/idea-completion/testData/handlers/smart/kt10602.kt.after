@@ -1,7 +1,0 @@
-import java.util.concurrent.atomic.*
-
-fun f() {
-    AtomicReferenceFieldUpdater.newUpdater<String, Int>(String::class.java, <caret>)
-}
-
-// ELEMENT: String

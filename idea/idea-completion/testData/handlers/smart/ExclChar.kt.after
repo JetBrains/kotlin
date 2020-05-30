@@ -1,6 +1,0 @@
-fun foo(flag: Boolean) {
-    if (!flag)<caret>
-}
-
-// ELEMENT: flag
-// CHAR: '!'

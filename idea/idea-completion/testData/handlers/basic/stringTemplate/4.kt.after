@@ -1,5 +1,0 @@
-fun foo(param: Any): String {
-    val s = "${param<caret>}"
-}
-
-// ELEMENT: param
