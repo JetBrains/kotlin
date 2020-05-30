@@ -1,3 +1,0 @@
-interface SomeTrait {
-    <caret>
-}
