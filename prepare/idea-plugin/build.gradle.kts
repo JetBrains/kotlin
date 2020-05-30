@@ -36,7 +36,6 @@ val projectsToShadow by extra(listOf(
         ":core:deserialization.common",
         ":core:deserialization.common.jvm",
         ":core:deserialization",
-        ":idea:jvm-debugger:eval4j",
         ":idea:jvm-debugger:jvm-debugger-util",
         ":idea:jvm-debugger:jvm-debugger-core",
         ":idea:jvm-debugger:jvm-debugger-evaluation",
