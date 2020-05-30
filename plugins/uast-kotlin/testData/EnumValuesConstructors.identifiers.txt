@@ -1,7 +1,0 @@
-Style -> UClass (name = Style)
-value -> UParameter (name = value)
-String -> USimpleNameReferenceExpression (identifier = String)
-SYSTEM -> UEnumConstant (name = SYSTEM)
-USER -> UEnumConstant (name = USER)
-INTERNAL -> UEnumConstant (name = INTERNAL)
-UNKNOWN -> UEnumConstant (name = UNKNOWN)

@@ -1,9 +1,0 @@
-public final class TestPropertyInitializer {
-    public final fun getWithSetter() : java.lang.String {
-        return field
-    }
-    public final fun setWithSetter(@org.jetbrains.annotations.NotNull p: java.lang.String) : void {
-        field = p
-    }
-    public fun TestPropertyInitializer() = UastEmptyExpression
-}
