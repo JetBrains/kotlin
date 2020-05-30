@@ -128,9 +128,13 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
 
     if (!project.isDefault()) {
       // initial state
-      StartupManager.getInstance(project).runAfterOpened(() -> {myRegisteredCompilers = collectCompilers();});
+      StartupManager.getInstance(project).runAfterOpened(() -> {
+        myRegisteredCompilers = collectCompilers();
+      });
     }
-    BackendCompiler.EP_NAME.getPoint(project).addChangeListener(() -> {myRegisteredCompilers = collectCompilers();}, project);
+    BackendCompiler.EP_NAME.getPoint(project).addChangeListener(() -> {
+      myRegisteredCompilers = collectCompilers();
+    }, project);
   }
 
   // Overridden in Upsource
