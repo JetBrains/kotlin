@@ -1,3 +1,0 @@
-interface MyRunnable {
-    fun run()
-}

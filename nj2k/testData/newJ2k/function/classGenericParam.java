@@ -1,2 +1,0 @@
-//method
-T getT() {}

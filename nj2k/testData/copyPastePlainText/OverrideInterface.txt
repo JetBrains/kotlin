@@ -1,1 +1,0 @@
-@Override public void subject(String s) {}
