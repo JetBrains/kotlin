@@ -45,7 +45,6 @@ dependencies {
 
     testCompile(projectTests(":compiler:cli"))
     testCompile(projectTests(":idea:idea-fir-performance-tests"))
-    testCompile(projectTests(":j2k"))
     if (Ide.IJ()) {
         testCompile(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
     }

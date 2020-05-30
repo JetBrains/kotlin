@@ -1,2 +1,0 @@
-//class
-public enum Test {}

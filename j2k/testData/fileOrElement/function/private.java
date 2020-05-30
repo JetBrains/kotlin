@@ -1,2 +1,0 @@
-//method
-private void test() {}
