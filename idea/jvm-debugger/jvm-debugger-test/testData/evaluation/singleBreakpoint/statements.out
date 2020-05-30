@@ -1,8 +1,0 @@
-LineBreakpoint created at statements.kt:5
-Run Java
-Connected to the target VM
-statements.kt:5
-Compile bytecode for val b = 1
-Disconnected from the target VM
-
-Process finished with exit code 0

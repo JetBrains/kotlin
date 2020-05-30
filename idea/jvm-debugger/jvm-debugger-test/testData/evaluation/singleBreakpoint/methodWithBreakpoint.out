@@ -1,9 +1,0 @@
-LineBreakpoint created at methodWithBreakpoint.kt:5
-LineBreakpoint created at methodWithBreakpoint.kt:10
-Run Java
-Connected to the target VM
-methodWithBreakpoint.kt:5
-Compile bytecode for foo()
-Disconnected from the target VM
-
-Process finished with exit code 0

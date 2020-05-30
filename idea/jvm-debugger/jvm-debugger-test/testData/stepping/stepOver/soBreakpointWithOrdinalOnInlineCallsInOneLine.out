@@ -1,9 +1,0 @@
-LineBreakpoint created at soBreakpointWithOrdinalOnInlineCallsInOneLine.kt:12 lambdaOrdinal = -1
-Run Java
-Connected to the target VM
-soBreakpointWithOrdinalOnInlineCallsInOneLine.kt:12
-soBreakpointWithOrdinalOnInlineCallsInOneLine.kt:13
-soBreakpointWithOrdinalOnInlineCallsInOneLine.kt:14
-Disconnected from the target VM
-
-Process finished with exit code 0

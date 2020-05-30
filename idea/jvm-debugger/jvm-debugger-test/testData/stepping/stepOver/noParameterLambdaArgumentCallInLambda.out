@@ -1,8 +1,0 @@
-LineBreakpoint created at noParameterLambdaArgumentCallInLambda.kt:5 lambdaOrdinal = 1
-Run Java
-Connected to the target VM
-noParameterLambdaArgumentCallInLambda.kt:5
-noParameterLambdaArgumentCallInLambda.kt:11
-Disconnected from the target VM
-
-Process finished with exit code 0
