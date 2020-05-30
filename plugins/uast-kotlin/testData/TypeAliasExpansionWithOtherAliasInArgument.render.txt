@@ -1,8 +1,0 @@
-public final class TypeAliasExpansionWithOtherAliasInArgumentKt {
-    public static final fun foo(@org.jetbrains.annotations.NotNull $this$foo: kotlin.jvm.functions.Function1<? super java.util.Map<java.lang.String,java.lang.Integer>,kotlin.Unit>, @org.jetbrains.annotations.NotNull x: kotlin.jvm.functions.Function1<? super java.util.Map<java.lang.String,java.lang.Integer>,kotlin.Unit>) : kotlin.jvm.functions.Function1<java.util.Map<java.lang.String,java.lang.Integer>,kotlin.Unit> {
-        return null
-    }
-    public static final fun bar(@org.jetbrains.annotations.NotNull $this$bar: java.util.Map<java.lang.String,java.lang.Integer>, @org.jetbrains.annotations.NotNull x: java.util.Map<java.lang.String,java.lang.Integer>) : java.util.Map<java.lang.String,java.lang.Integer> {
-        return null
-    }
-}

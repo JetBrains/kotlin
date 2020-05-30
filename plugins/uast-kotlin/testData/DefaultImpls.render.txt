@@ -1,9 +1,0 @@
-public abstract interface Foo {
-    public default fun bar() : java.lang.String {
-        return "Hello!"
-    }
-}
-
-public final class Baz : Foo {
-    public fun Baz() = UastEmptyExpression
-}
