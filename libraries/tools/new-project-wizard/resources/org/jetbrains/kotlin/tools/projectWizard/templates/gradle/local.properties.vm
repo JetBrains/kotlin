@@ -1,3 +1,0 @@
-#foreach($property in $properties)
-${property.getFirst()}=${property.getSecond()}
-#end
