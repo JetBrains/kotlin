@@ -1,5 +1,0 @@
-// REPL_MODE: true
-
-import inlineFun.*
-
-foo { 1 + 3 }         // RESULT: res1: kotlin.Int = 4

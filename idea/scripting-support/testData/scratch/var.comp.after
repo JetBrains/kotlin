@@ -1,5 +1,0 @@
-// REPL_MODE: false
-
-var a = 1    // RESULT: var a: Int
-a++          // RESULT: 1
-a            // RESULT: 2

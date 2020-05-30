@@ -1,4 +1,0 @@
-// REPL_MODE: true
-// NO_MODULE
-
-run { 1 + 1 }    // RESULT: res0: kotlin.Int = 2
