@@ -29,7 +29,6 @@ dependencies {
     testCompile(projectTests(":idea:idea-android"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(commonDep("junit:junit"))
-    testCompile(project(":idea:idea-native")) { isTransitive = false }
     testRuntime(project(":native:frontend.native"))
     testRuntime(project(":kotlin-reflect"))
     testCompile(intellijPluginDep("android"))
