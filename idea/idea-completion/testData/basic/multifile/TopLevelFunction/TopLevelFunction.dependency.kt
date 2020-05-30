@@ -1,4 +1,0 @@
-package first
-
-fun secondFun() {
-}

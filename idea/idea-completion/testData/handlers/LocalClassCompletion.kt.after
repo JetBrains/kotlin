@@ -1,5 +1,0 @@
-fun foo() {
-    class LocalClass {}
-
-    val v: LocalClass<caret>
-}

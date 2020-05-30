@@ -1,5 +1,0 @@
-class C constructor(<caret>) {
-
-}
-
-// ELEMENT: constructor

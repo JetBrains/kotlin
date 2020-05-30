@@ -1,7 +1,0 @@
-fun foo(p1: String, p2: String = ""){}
-
-fun bar(p: String){
-    foo(p<caret>)
-}
-
-// ELEMENT: p

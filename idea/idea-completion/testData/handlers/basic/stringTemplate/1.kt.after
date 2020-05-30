@@ -1,7 +1,0 @@
-package ppp
-
-fun foo(): String {
-    val s = "${foo()<caret>}"
-}
-
-// ELEMENT: foo

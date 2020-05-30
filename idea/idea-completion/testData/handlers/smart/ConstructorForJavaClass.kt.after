@@ -1,6 +1,0 @@
-import java.util.Date
-
-var a : Date = Date(<caret>)
-
-// ELEMENT: Date
-// TAIL_TEXT: "(...) (java.util)"

@@ -1,7 +1,0 @@
-fun foo(vararg v: Int, s: String) { }
-
-fun bar(i: Int) {
-    foo(*intArrayOf(), i, <caret>)
-}
-
-// ELEMENT: i

@@ -1,3 +1,0 @@
-package forimport
-
-class TTTest {}

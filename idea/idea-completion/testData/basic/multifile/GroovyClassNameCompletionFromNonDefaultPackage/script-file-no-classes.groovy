@@ -1,5 +1,0 @@
-package nondefault
-
-def method() {
-
-}

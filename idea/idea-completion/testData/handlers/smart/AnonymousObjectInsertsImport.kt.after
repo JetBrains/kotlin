@@ -1,9 +1,0 @@
-import java.io.Closeable
-
-val c: java.io.Closeable = object : Closeable {
-    override fun close() {
-        TODO("Not yet implemented")
-    }
-}
-
-//ELEMENT_TEXT: "object : Closeable{...}"

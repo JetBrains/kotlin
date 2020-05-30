@@ -1,3 +1,0 @@
-fun foo() {
-    KtCla<caret>
-}
