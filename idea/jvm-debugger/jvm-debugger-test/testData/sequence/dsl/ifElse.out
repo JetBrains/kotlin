@@ -1,5 +1,0 @@
-if (false) {
-  this.success()
-} else { 
-  this.fail()
-}

@@ -1,9 +1,0 @@
-LineBreakpoint created at ceAnonymousObjectCapturedInClosure.kt:7 lambdaOrdinal = -1
-Run Java
-Connected to the target VM
-ceAnonymousObjectCapturedInClosure.kt:7
-Compile bytecode for lambda { localObject.test() }
-Compile bytecode for lambda { localObjectVar.test() }
-Disconnected from the target VM
-
-Process finished with exit code 0

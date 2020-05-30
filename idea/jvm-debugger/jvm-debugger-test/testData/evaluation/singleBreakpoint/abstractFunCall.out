@@ -1,8 +1,0 @@
-LineBreakpoint created at abstractFunCall.kt:5
-Run Java
-Connected to the target VM
-abstractFunCall.kt:5
-Compile bytecode for (1 as java.lang.Number).intValue()
-Disconnected from the target VM
-
-Process finished with exit code 0

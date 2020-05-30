@@ -1,9 +1,0 @@
-LineBreakpoint created at superCallsSimple.kt:14
-Run Java
-Connected to the target VM
-superCallsSimple.kt:14
-Compile bytecode for foo()
-Compile bytecode for super.foo()
-Disconnected from the target VM
-
-Process finished with exit code 0

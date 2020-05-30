@@ -1,6 +1,0 @@
-val objects: kotlin.collections.MutableList<kotlin.Any> = getObjects()
-var i: kotlin.Int = 0
-while (i < objects.size()) {
-  i.toString()
-  i++
-}

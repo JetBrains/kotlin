@@ -1,9 +1,0 @@
-LineBreakpoint created at .kt.kt:5
-Run Java
-Connected to the target VM
-.kt.kt:5
-Compile bytecode for 1 + 1
-Compile bytecode for Test(1).a
-Disconnected from the target VM
-
-Process finished with exit code 0
