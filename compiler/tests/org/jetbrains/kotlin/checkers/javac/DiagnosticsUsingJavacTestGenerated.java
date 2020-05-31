@@ -23209,6 +23209,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/severalConversionsInOneCall.kt");
             }
 
+            @TestMetadata("suspendAndFunConversionInDisabledMode.kt")
+            public void testSuspendAndFunConversionInDisabledMode() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendAndFunConversionInDisabledMode.kt");
+            }
+
             @TestMetadata("suspendConversionCompatibility.kt")
             public void testSuspendConversionCompatibility() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionCompatibility.kt");

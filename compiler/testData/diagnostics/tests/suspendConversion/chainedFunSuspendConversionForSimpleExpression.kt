@@ -9,5 +9,5 @@ fun foo(s: SuspendRunnable) {}
 
 fun test(f: () -> Unit) {
     foo { }
-    foo(<!TYPE_MISMATCH!>f<!>)
+    foo(f)
 }
