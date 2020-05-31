@@ -120,7 +120,7 @@ object TemplateInlayUtil {
         roundedCorners = InlayPresentationFactory.RoundedCorners(6, 6),
         background = background
       )
-      return factory.container(button, padding = InlayPresentationFactory.Padding(3, 0, 0, 0))
+      return factory.container(button, padding = InlayPresentationFactory.Padding(3, 0, 0, 0), background = background)
     }
 
     val colorsScheme = editor.colorsScheme

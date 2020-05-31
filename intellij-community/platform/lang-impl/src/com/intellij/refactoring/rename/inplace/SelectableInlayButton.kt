@@ -41,8 +41,8 @@ class SelectableInlayButton(
 
   private fun update(){
     delegate = when {
-      isHovered -> hovered
       isSelected -> active
+      isHovered -> hovered
       else -> default
     }
     inlayToUpdate.get()?.repaint()
