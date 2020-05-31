@@ -180,7 +180,6 @@ dependencies {
     }
 
     gradleToolingModel(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
-    gradleToolingModel(project(":plugins:android-extensions-ide")) { isTransitive = false }
     gradleToolingModel(project(":plugins:parcelize:parcelize-ide")) { isTransitive = false }
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
