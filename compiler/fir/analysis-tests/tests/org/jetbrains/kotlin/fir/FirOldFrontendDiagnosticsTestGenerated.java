@@ -23207,6 +23207,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/suspendConversion/severalConversionsInOneCall.kt");
         }
 
+        @TestMetadata("suspendConversionCompatibility.kt")
+        public void testSuspendConversionCompatibility() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionCompatibility.kt");
+        }
+
         @TestMetadata("suspendConversionDisabled.kt")
         public void testSuspendConversionDisabled() throws Exception {
             runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionDisabled.kt");
