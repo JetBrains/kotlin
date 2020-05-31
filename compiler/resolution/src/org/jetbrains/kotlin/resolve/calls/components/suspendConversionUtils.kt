@@ -18,8 +18,6 @@ object SuspendTypeConversions : ParameterTypeConversion {
         argument: KotlinCallArgument,
         expectedParameterType: UnwrappedType
     ): Boolean {
-        if (!candidate.callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SuspendConversion)) return true
-
         if (argument !is SimpleKotlinCallArgument) return true
 
         val argumentType = argument.receiver.stableType

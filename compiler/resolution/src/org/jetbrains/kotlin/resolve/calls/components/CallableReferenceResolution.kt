@@ -366,10 +366,7 @@ class CallableReferencesCandidateFactory(
                 mappedArguments
 
         val suspendConversionStrategy =
-            if (
-                callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SuspendConversion) &&
-                !descriptor.isSuspend && expectedType?.isSuspendFunctionType == true
-            ) {
+            if (!descriptor.isSuspend && expectedType?.isSuspendFunctionType == true) {
                 SuspendConversionStrategy.SUSPEND_CONVERSION
             } else {
                 SuspendConversionStrategy.NO_CONVERSION

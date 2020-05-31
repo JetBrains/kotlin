@@ -2,41 +2,6 @@ package
 
 public object Test1 {
     private constructor Test1()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun foo(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-    public object Scope {
-        private constructor Scope()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun foo(/*0*/ f: suspend () -> kotlin.Unit): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun test(/*0*/ g: () -> kotlin.Unit): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-}
-
-public object Test2 {
-    private constructor Test2()
-    public final suspend fun bar(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun </*0*/ T> foo(/*0*/ f: suspend () -> T): T
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-    public object Scope {
-        private constructor Scope()
-        public final fun bar(): kotlin.String
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public final fun test(): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-}
-
-public object Test3 {
-    private constructor Test3()
     public final suspend fun bar(/*0*/ x: kotlin.Int = ...): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun </*0*/ T> foo(/*0*/ f: suspend () -> T): T
@@ -50,5 +15,31 @@ public object Test3 {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final fun test(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public object Test2 {
+    private constructor Test2()
+    public final suspend fun bar(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ T> foo(/*0*/ f: suspend () -> T): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public object Scope1 {
+        private constructor Scope1()
+        public final suspend fun bar(/*0*/ x: kotlin.Int = ...): kotlin.Double
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public object Scope2 {
+            private constructor Scope2()
+            public final fun bar(/*0*/ x: kotlin.Int = ...): kotlin.String
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public final fun test(): kotlin.Unit
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
     }
 }

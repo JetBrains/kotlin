@@ -21,7 +21,7 @@ fun foo() {
     builder { 1 }
 
     val x = { 1 }
-    builder(<!TYPE_MISMATCH!>x<!>)
+    builder(<!NI;UNSUPPORTED_FEATURE, OI;TYPE_MISMATCH!>x<!>)
     builder({1} <!UNCHECKED_CAST!>as (suspend () -> Int)<!>)
 
     var i: Int = 1
@@ -32,7 +32,7 @@ fun foo() {
     genericBuilder<Int> { <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>""<!> }
 
     val y = { 1 }
-    <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!TYPE_MISMATCH!>y<!>)
+    <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!NI;UNSUPPORTED_FEATURE, OI;TYPE_MISMATCH!>y<!>)
 
     unitBuilder {}
     unitBuilder { <!UNUSED_EXPRESSION!>1<!> }

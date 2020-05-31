@@ -1,5 +1,6 @@
 package
 
+public fun bar(): kotlin.String
 public fun foo1(/*0*/ f: suspend () -> kotlin.String): kotlin.Unit
 public fun foo2(/*0*/ f: suspend (kotlin.Int) -> kotlin.String): kotlin.Unit
 public fun foo3(/*0*/ f: suspend () -> kotlin.Unit): kotlin.Unit

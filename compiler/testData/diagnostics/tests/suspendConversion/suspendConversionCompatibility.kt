@@ -26,3 +26,18 @@ object Test2 {
         }
     }
 }
+
+object Test3 {
+    fun <T> foo(f: suspend () -> T): T = TODO()
+
+    suspend fun bar(x: Int = 42): Int = 0
+
+    object Scope {
+        fun bar(x: Int = 42): String = ""
+
+        fun test() {
+            val result = foo(::bar)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
+        }
+    }
+}
