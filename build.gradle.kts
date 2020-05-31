@@ -532,11 +532,6 @@ val copyCompilerToIdeaPlugin by task<Copy> {
     from(distDir) { include("kotlinc/**") }
 }
 
-val ideaPlugin by task<Task> {
-    dependsOn(copyCompilerToIdeaPlugin)
-    dependsOn(":prepare:idea-plugin:ideaPlugin")
-}
-
 tasks {
     named("clean") {
         doLast {
@@ -702,53 +697,9 @@ tasks {
         dependsOn(":compiler:android-tests:test")
     }
 
-    register("idea-plugin-additional-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":idea:idea-gradle:test",
-            ":idea:idea-gradle-native:test",
-            ":idea:idea-maven:test",
-            ":j2k:test",
-            ":nj2k:test",
-            ":idea:scripting-support:test"
-        )
-    }
-
-    if (Ide.IJ()) {
-        register("idea-new-project-wizard-tests") {
-            dependsOn("dist")
-            dependsOn(
-                ":libraries:tools:new-project-wizard:test",
-                ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
-                ":idea:idea-new-project-wizard:test"
-            )
-        }
-    }
-
-    register("idea-plugin-tests") {
-        dependsOn("dist")
-        dependsOn(
-            "idea-plugin-main-tests",
-            "idea-plugin-additional-tests"
-        )
-        if (Ide.IJ()) {
-            dependsOn("idea-new-project-wizard-tests")
-        }
-    }
-
-    register("idea-plugin-performance-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":idea:performanceTests:performanceTest"
-        )
-    }
-
     register("android-ide-tests") {
         dependsOn("dist")
-        dependsOn(
-            ":idea:idea-android:test",
-            ":kotlin-annotation-processing:test"
-        )
+        dependsOn(":kotlin-annotation-processing:test")
     }
 
     register("plugins-tests") {
@@ -762,17 +713,6 @@ tasks {
             ":kotlin-annotation-processing-gradle:test",
             ":kotlinx-serialization-compiler-plugin:test",
             ":kotlinx-serialization-ide-plugin:test"
-        )
-    }
-
-
-    register("ideaPluginTest") {
-        dependsOn(
-            "idea-plugin-tests",
-            "jps-tests",
-            "plugins-tests",
-            "android-ide-tests",
-            ":generators:test"
         )
     }
 
