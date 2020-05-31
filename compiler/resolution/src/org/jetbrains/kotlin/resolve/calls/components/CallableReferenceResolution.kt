@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstit
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
@@ -60,12 +61,17 @@ class CallableReferenceCandidate(
     val explicitReceiverKind: ExplicitReceiverKind,
     val reflectionCandidateType: UnwrappedType,
     val callableReferenceAdaptation: CallableReferenceAdaptation?,
-    val diagnostics: List<KotlinCallDiagnostic>
+    initialDiagnostics: List<KotlinCallDiagnostic>
 ) : Candidate {
+    private val mutableDiagnostics = initialDiagnostics.toMutableList()
+    val diagnostics: List<KotlinCallDiagnostic> = mutableDiagnostics
+
     override val resultingApplicability = getResultApplicability(diagnostics)
 
     override fun addCompatibilityWarning(other: Candidate) {
-        // TODO: now only arguments can be converted, so CR candidates shouldn't be affected
+        if (this !== other) {
+            mutableDiagnostics.add(CompatibilityWarning())
+        }
     }
 
     override val isSuccessful get() = resultingApplicability.isSuccess
@@ -207,6 +213,10 @@ class CallableReferencesCandidateFactory(
             callComponents.builtIns
         )
 
+        if (needCompatibilityWarning(callableReferenceAdaptation)) {
+            diagnostics.add(LowerPriorityToPreserveCompatibility)
+        }
+
         if (callableReferenceAdaptation != null &&
             callableReferenceAdaptation.defaults != 0 &&
             !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
@@ -249,6 +259,15 @@ class CallableReferencesCandidateFactory(
             candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
             explicitReceiverKind, reflectionCandidateType, callableReferenceAdaptation, diagnostics
         )
+    }
+
+    private fun needCompatibilityWarning(callableReferenceAdaptation: CallableReferenceAdaptation?): Boolean {
+        if (callableReferenceAdaptation == null) return false
+
+        return callableReferenceAdaptation.defaults != 0 ||
+                callableReferenceAdaptation.suspendConversionStrategy != SuspendConversionStrategy.NO_CONVERSION ||
+                callableReferenceAdaptation.coercionStrategy != CoercionStrategy.NO_COERCION ||
+                callableReferenceAdaptation.mappedArguments.values.any { it is ResolvedCallArgument.VarargArgument }
     }
 
     private enum class VarargMappingState {

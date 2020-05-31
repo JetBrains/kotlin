@@ -218,6 +218,10 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.report(CANNOT_INFER_PARAMETER_TYPE.on(parameter))
                 }
             }
+
+            CompatibilityWarningOnArgument::class.java -> {
+                trace.report(COMPATIBILITY_WARNING.on(callArgument.psiCallArgument.valueArgument.asElement()))
+            }
         }
     }
 

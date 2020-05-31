@@ -1934,6 +1934,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/callableReference/propertyOfNestedGenericClass.kt");
         }
 
+        @TestMetadata("referenceAdaptationCompatibility.kt")
+        public void testReferenceAdaptationCompatibility() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/callableReference/referenceAdaptationCompatibility.kt");
+        }
+
         @TestMetadata("rewriteAtSliceOnGetOperator.kt")
         public void testRewriteAtSliceOnGetOperator() throws Exception {
             runTest("compiler/testData/diagnostics/tests/callableReference/rewriteAtSliceOnGetOperator.kt");

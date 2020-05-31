@@ -255,3 +255,9 @@ class CompatibilityWarning : KotlinCallDiagnostic(RESOLVED) {
         reporter.onCall(this)
     }
 }
+
+class CompatibilityWarningOnArgument(val argument: CallableReferenceKotlinCallArgument) : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(argument, this)
+    }
+}
