@@ -57,7 +57,6 @@ dependencies {
     testCompile(projectTests(":kotlinx-serialization-compiler-plugin"))
     testCompile(projectTests(":plugins:fir:fir-plugin-prototype"))
     testCompile(projectTests(":generators:test-generator"))
-    testCompile(projectTests(":idea"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(intellijDep()) { includeJars("idea_rt") }
     testRuntime(project(":kotlin-reflect"))
