@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.*
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -180,8 +179,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun mapSignature(function: IrFunction, skipGenericSignature: Boolean, skipSpecial: Boolean = false): JvmMethodGenericSignature {
         if (function is IrLazyFunctionBase && function.initialSignatureFunction != null) {
             // Overrides of special builtin in Kotlin classes always have special signature
-            if (function.descriptor.getOverriddenBuiltinReflectingJvmDescriptor() == null ||
-                function.descriptor.containingDeclaration.original is JavaClassDescriptor
+            if ((function as? IrSimpleFunction)?.getDifferentNameForJvmBuiltinFunction() == null ||
+                (function.parent as? IrClass)?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             ) {
                 return mapSignature(function.initialSignatureFunction!!, skipGenericSignature)
             }
