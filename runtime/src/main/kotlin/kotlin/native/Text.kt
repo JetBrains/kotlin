@@ -12,10 +12,11 @@ import kotlinx.cinterop.toKString
  */
 @Deprecated(
         "Use toKString or decodeToString instead",
-        ReplaceWith("toKString()", "kotlinx.cinterop.toKString")
+        ReplaceWith("toKString()", "kotlinx.cinterop.toKString"),
+        DeprecationLevel.ERROR
 )
 public fun ByteArray.stringFromUtf8() : String {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return this.stringFromUtf8(0, this.size)
 }
 
@@ -24,7 +25,8 @@ public fun ByteArray.stringFromUtf8() : String {
  */
 @Deprecated(
         "Use toKString or decodeToString instead",
-        ReplaceWith("toKString(start, start + size)", "kotlinx.cinterop.toKString")
+        ReplaceWith("toKString(start, start + size)", "kotlinx.cinterop.toKString"),
+        DeprecationLevel.ERROR
 )
 public fun ByteArray.stringFromUtf8(start: Int = 0, size: Int = this.size) : String {
     return toKString(start, start + size)
@@ -36,10 +38,11 @@ public fun ByteArray.stringFromUtf8(start: Int = 0, size: Int = this.size) : Str
  */
 @Deprecated(
         "Use toKString or decodeToString instead",
-        ReplaceWith("toKString(throwOnInvalidSequence = true)", "kotlinx.cinterop.toKString")
+        ReplaceWith("toKString(throwOnInvalidSequence = true)", "kotlinx.cinterop.toKString"),
+        DeprecationLevel.ERROR
 )
 public fun ByteArray.stringFromUtf8OrThrow() : String {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return this.stringFromUtf8OrThrow(0, this.size)
 }
 
@@ -49,13 +52,14 @@ public fun ByteArray.stringFromUtf8OrThrow() : String {
  */
 @Deprecated(
         "Use toKString or decodeToString instead",
-        ReplaceWith("toKString(start, start + size, throwOnInvalidSequence = true)", "kotlinx.cinterop.toKString")
+        ReplaceWith("toKString(start, start + size, throwOnInvalidSequence = true)", "kotlinx.cinterop.toKString"),
+        DeprecationLevel.ERROR
 )
 public fun ByteArray.stringFromUtf8OrThrow(start: Int = 0, size: Int = this.size) : String {
     try {
         return toKString(start, start + size, throwOnInvalidSequence = true)
     } catch (e: CharacterCodingException) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         throw IllegalCharacterConversionException()
     }
 }
@@ -63,16 +67,24 @@ public fun ByteArray.stringFromUtf8OrThrow(start: Int = 0, size: Int = this.size
 /**
  * Converts a [String] into an UTF-8 array. Replaces invalid input sequences with a default character.
  */
-@Deprecated("Use encodeToByteArray instead", ReplaceWith("encodeToByteArray()"))
+@Deprecated(
+        "Use encodeToByteArray instead",
+        ReplaceWith("encodeToByteArray()"),
+        DeprecationLevel.ERROR
+)
 public fun String.toUtf8() : ByteArray {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return this.toUtf8(0, this.length)
 }
 
 /**
  * Converts a [String] into an UTF-8 array. Replaces invalid input sequences with a default character.
  */
-@Deprecated("Use encodeToByteArray instead", ReplaceWith("encodeToByteArray(start, start + size)"))
+@Deprecated(
+        "Use encodeToByteArray instead",
+        ReplaceWith("encodeToByteArray(start, start + size)"),
+        DeprecationLevel.ERROR
+)
 public fun String.toUtf8(start: Int = 0, size: Int = this.length) : ByteArray {
     checkBoundsIndexes(start, start + size, this.length)
     return unsafeStringToUtf8(start, size)
@@ -82,9 +94,13 @@ public fun String.toUtf8(start: Int = 0, size: Int = this.length) : ByteArray {
  * Converts a [String] into an UTF-8 array.
  * @throws [IllegalCharacterConversionException] if the input is invalid.
  */
-@Deprecated("Use encodeToByteArray instead", ReplaceWith("encodeToByteArray(throwOnInvalidSequence = true)"))
+@Deprecated(
+        "Use encodeToByteArray instead",
+        ReplaceWith("encodeToByteArray(throwOnInvalidSequence = true)"),
+        DeprecationLevel.ERROR
+)
 public fun String.toUtf8OrThrow() : ByteArray {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return this.toUtf8OrThrow(0, this.length)
 }
 
@@ -92,13 +108,17 @@ public fun String.toUtf8OrThrow() : ByteArray {
  * Converts a [String] into an UTF-8 array.
  * @throws [IllegalCharacterConversionException] if the input is invalid.
  */
-@Deprecated("Use encodeToByteArray instead", ReplaceWith("encodeToByteArray(start, start + size, throwOnInvalidSequence = true)"))
+@Deprecated(
+        "Use encodeToByteArray instead",
+        ReplaceWith("encodeToByteArray(start, start + size, throwOnInvalidSequence = true)"),
+        DeprecationLevel.ERROR
+)
 public fun String.toUtf8OrThrow(start: Int = 0, size: Int = this.length) : ByteArray {
     checkBoundsIndexes(start, start + size, this.length)
     try {
         return unsafeStringToUtf8OrThrow(start, size)
     } catch (e: CharacterCodingException) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         throw IllegalCharacterConversionException()
     }
 }

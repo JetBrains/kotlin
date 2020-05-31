@@ -2288,7 +2288,7 @@ task utf8(type: KonanLocalTest) {
     // Cannot be executed in the two-stage mode due to KT-33175.
     // Uses exceptions so cannot run on wasm.
     enabled = !twoStageEnabled && (project.testTarget != 'wasm32')
-    goldValue = "Hello\nПривет\n\uD800\uDC00\n\n\uFFFD\uFFFD\n\uFFFD12\n\uFFFD12\n12\uFFFD\n\uD83D\uDE25\n\uD83D\uDE25\n\uD83D\uDE25\n"
+    goldValue = "Hello\nПривет\n\uD800\uDC00\n\n\uFFFD\uFFFD\n\uFFFD12\n\uFFFD12\n12\uFFFD\n\uD83D\uDE25\n\uD83D\uDE25\n"
     source = "runtime/text/utf8.kt"
 }
 
