@@ -47,7 +47,6 @@ dependencies {
     testCompile(projectTests(":idea:idea-fir-performance-tests"))
     testCompile(projectTests(":plugins:jvm-abi-gen"))
     testCompile(projectTests(":plugins:android-extensions-compiler"))
-    testCompile(projectTests(":plugins:android-extensions-ide"))
     testCompile(projectTests(":plugins:parcelize:parcelize-compiler"))
     testCompile(projectTests(":plugins:parcelize:parcelize-ide"))
     testCompile(projectTests(":kotlin-annotation-processing"))
