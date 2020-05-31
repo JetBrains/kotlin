@@ -67,8 +67,8 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
 
     val fixture: JavaCodeInsightTestFixture get() = myFixture
 
-    protected fun doIntroduceVariableTest(path: String) {
-        doTest(path) { file ->
+    protected fun doIntroduceVariableTest(unused: String) {
+        doTest { file ->
             file as KtFile
 
             KotlinIntroduceVariableHandler.invoke(
@@ -80,8 +80,8 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         }
     }
 
-    private fun doIntroduceParameterTest(path: String, asLambda: Boolean) {
-        doTest(path) { file ->
+    private fun doIntroduceParameterTest(unused: String, asLambda: Boolean) {
+        doTest { file ->
             val fileText = file.text
 
             open class HelperImpl : KotlinIntroduceParameterHelper {
@@ -128,9 +128,9 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         doIntroduceParameterTest(path, true)
     }
 
-    protected fun doIntroduceJavaParameterTest(path: String) {
+    protected fun doIntroduceJavaParameterTest(unused: String) {
         // Copied from com.intellij.refactoring.IntroduceParameterTest.perform()
-        doTest(path, true) { file ->
+        doTest(true) { file ->
             file as PsiJavaFile
 
             var elementToWorkOn: ElementToWorkOn? = null
@@ -203,8 +203,8 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         }
     }
 
-    protected fun doIntroducePropertyTest(path: String) {
-        doTest(path) { file ->
+    protected fun doIntroducePropertyTest(unused: String) {
+        doTest { file ->
             file as KtFile
 
             val extractionTarget = propertyTargets.single {
@@ -237,12 +237,12 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         }
     }
 
-    protected fun doExtractFunctionTest(path: String) {
-        doTest(path) { file -> doExtractFunction(myFixture, file as KtFile) }
+    protected fun doExtractFunctionTest(unused: String) {
+        doTest { file -> doExtractFunction(myFixture, file as KtFile) }
     }
 
-    protected fun doIntroduceTypeParameterTest(path: String) {
-        doTest(path) { file ->
+    protected fun doIntroduceTypeParameterTest(unused: String) {
+        doTest { file ->
             file as KtFile
 
             val explicitPreviousSibling = file.findElementByCommentPrefix("// SIBLING:")
@@ -253,8 +253,8 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         }
     }
 
-    protected fun doIntroduceTypeAliasTest(path: String) {
-        doTest(path) { file ->
+    protected fun doIntroduceTypeAliasTest(unused: String) {
+        doTest { file ->
             file as KtFile
 
             val explicitPreviousSibling = file.findElementByCommentPrefix("// SIBLING:")
@@ -280,8 +280,8 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         }
     }
 
-    protected fun doExtractSuperTest(path: String, isInterface: Boolean) {
-        doTest(path, true) { file ->
+    protected fun doExtractSuperTest(unused: String, isInterface: Boolean) {
+        doTest(true) { file ->
             file as KtFile
 
             markMembersInfo(file)
@@ -314,8 +314,8 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
 
     protected fun doExtractInterfaceTest(path: String) = doExtractSuperTest(path, true)
 
-    protected fun doTest(path: String, checkAdditionalAfterdata: Boolean = false, action: (PsiFile) -> Unit) {
-        val mainFile = File(path)
+    protected fun doTest(checkAdditionalAfterdata: Boolean = false, action: (PsiFile) -> Unit) {
+        val mainFile = File(testDataPath, fileName())
 
         PluginTestCaseBase.addJdk(myFixture.projectDisposable, PluginTestCaseBase::mockJdk)
 
@@ -334,7 +334,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         }
         val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(it.name) }
-        val fileText = FileUtil.loadFile(File(path), true)
+        val fileText = FileUtil.loadFile(mainFile, true)
 
         withCustomCompilerOptions(fileText, project, module) {
             ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
@@ -345,7 +345,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             }
 
             try {
-                checkExtract(ExtractTestFiles(path, fixture.configureByFile(mainFileName), extraFilesToPsi), checkAdditionalAfterdata, action)
+                checkExtract(ExtractTestFiles(mainFile.path, fixture.configureByFile(mainFileName), extraFilesToPsi), checkAdditionalAfterdata, action)
             } finally {
                 ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
 
