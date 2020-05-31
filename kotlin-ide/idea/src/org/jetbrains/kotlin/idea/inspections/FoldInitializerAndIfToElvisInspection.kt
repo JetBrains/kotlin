@@ -84,7 +84,20 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
 
             val explicitTypeToSet = when {
                 // for var with no explicit type, add it so that the actual change won't change
-                declaration.isVar && declaration.typeReference == null -> initializer.analyze(BodyResolveMode.PARTIAL).getType(initializer)
+                declaration.isVar && declaration.typeReference == null -> {
+                    if (element.condition is KtBinaryExpression) {
+                        val ifEndOffset = element.endOffset
+                        val context = element.analyze()
+                        val isUsedAsNotNullable = ReferencesSearch.search(declaration, LocalSearchScope(declaration.parent)).any {
+                            if (it.element.startOffset <= ifEndOffset) return@any false
+                            val type = it.element.safeAs<KtExpression>()?.getType(context) ?: return@any false
+                            !type.isNullable()
+                        }
+                        if (isUsedAsNotNullable) null else context.getType(initializer)
+                    } else {
+                        initializer.analyze(BodyResolveMode.PARTIAL).getType(initializer)
+                    }
+                }
 
                 // for val with explicit type, change it to non-nullable
                 !declaration.isVar && declaration.typeReference != null -> initializer.analyze(BodyResolveMode.PARTIAL).getType(initializer)
@@ -153,15 +166,6 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
                 val checkedType = ifExpression.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
                 val variableType = (prevStatement.resolveToDescriptorIfAny() as? VariableDescriptor)?.type
                 if (checkedType != null && variableType != null && !checkedType.isSubtypeOf(variableType)) return null
-            } else if (prevStatement.isVar && operationExpression is KtBinaryExpression) {
-                val ifEndOffset = ifExpression.endOffset
-                val context = ifExpression.analyze()
-                val isUsedAsNotNullable = ReferencesSearch.search(prevStatement, LocalSearchScope(prevStatement.parent)).any {
-                    if (it.element.startOffset <= ifEndOffset) return@any false
-                    val type = it.element.safeAs<KtExpression>()?.getType(context) ?: return@any false
-                    !type.isNullable()
-                }
-                if (isUsedAsNotNullable) return null
             }
 
             val statement = if (then is KtBlockExpression) then.statements.singleOrNull() else then
