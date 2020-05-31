@@ -15,8 +15,15 @@ import org.jetbrains.annotations.NotNull;
  * @author zolotov
  */
 public class AddSpaceInsertHandler implements InsertHandler<LookupElement> {
-  public final static InsertHandler<LookupElement> INSTANCE = new AddSpaceInsertHandler(false);
-  public final static InsertHandler<LookupElement> INSTANCE_WITH_AUTO_POPUP = new AddSpaceInsertHandler(true);
+  public final static InsertHandler<LookupElement> INSTANCE = new DeclarativeInsertHandler.Builder()
+    .disableOnCompletionChars(" ")
+    .insertOrMove(" ")
+    .build();
+  public final static InsertHandler<LookupElement> INSTANCE_WITH_AUTO_POPUP = new DeclarativeInsertHandler.Builder()
+    .disableOnCompletionChars(" ")
+    .insertOrMove(" ")
+    .triggerAutoPopup()
+    .build();
 
   private final String myIgnoreOnChars;
   private final boolean myTriggerAutoPopup;
