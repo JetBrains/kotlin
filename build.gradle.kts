@@ -751,7 +751,6 @@ tasks {
     register("android-ide-tests") {
         dependsOn("dist")
         dependsOn(
-            ":plugins:android-extensions-ide:test",
             ":idea:idea-android:test",
             ":kotlin-annotation-processing:test"
         )

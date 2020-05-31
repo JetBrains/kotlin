@@ -165,7 +165,6 @@ include ":benchmarks",
         ":plugins:android-extensions-compiler",
         ":kotlin-android-extensions",
         ":kotlin-android-extensions-runtime",
-        ":plugins:android-extensions-ide",
         ":kotlin-allopen-compiler-plugin",
         ":kotlin-noarg-compiler-plugin",
         ":kotlin-sam-with-receiver-compiler-plugin",
@@ -417,7 +416,6 @@ project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-and
 project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
 project(':kotlin-android-extensions').projectDir = "$rootDir/prepare/android-extensions-compiler-gradle" as File
 project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
-project(':plugins:android-extensions-ide').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen/allopen-cli" as File
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg/noarg-cli" as File
 project(':kotlin-sam-with-receiver-compiler-plugin').projectDir = "$rootDir/plugins/sam-with-receiver/sam-with-receiver-cli" as File
