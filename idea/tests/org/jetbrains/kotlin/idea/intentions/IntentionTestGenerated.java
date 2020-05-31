@@ -3723,6 +3723,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/chop/argumentList/onNestedArgumentList.kt");
             }
 
+            @TestMetadata("onNestedArgumentList2.kt")
+            public void testOnNestedArgumentList2() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/onNestedArgumentList2.kt");
+            }
+
+            @TestMetadata("onNestedArgumentList3.kt")
+            public void testOnNestedArgumentList3() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/onNestedArgumentList3.kt");
+            }
+
+            @TestMetadata("onNestedArgumentList4.kt")
+            public void testOnNestedArgumentList4() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/onNestedArgumentList4.kt");
+            }
+
+            @TestMetadata("onRightParenthesis.kt")
+            public void testOnRightParenthesis() throws Exception {
+                runTest("idea/testData/intentions/chop/argumentList/onRightParenthesis.kt");
+            }
+
             @TestMetadata("threeArgs.kt")
             public void testThreeArgs() throws Exception {
                 runTest("idea/testData/intentions/chop/argumentList/threeArgs.kt");
@@ -10430,6 +10450,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("onNestedArgumentList.kt")
         public void testOnNestedArgumentList() throws Exception {
             runTest("idea/testData/intentions/joinArgumentList/onNestedArgumentList.kt");
+        }
+
+        @TestMetadata("onNestedArgumentList2.kt")
+        public void testOnNestedArgumentList2() throws Exception {
+            runTest("idea/testData/intentions/joinArgumentList/onNestedArgumentList2.kt");
+        }
+
+        @TestMetadata("onNestedArgumentList3.kt")
+        public void testOnNestedArgumentList3() throws Exception {
+            runTest("idea/testData/intentions/joinArgumentList/onNestedArgumentList3.kt");
+        }
+
+        @TestMetadata("onNestedArgumentList4.kt")
+        public void testOnNestedArgumentList4() throws Exception {
+            runTest("idea/testData/intentions/joinArgumentList/onNestedArgumentList4.kt");
+        }
+
+        @TestMetadata("onRightParenthesis.kt")
+        public void testOnRightParenthesis() throws Exception {
+            runTest("idea/testData/intentions/joinArgumentList/onRightParenthesis.kt");
         }
 
         @TestMetadata("oneArg.kt")

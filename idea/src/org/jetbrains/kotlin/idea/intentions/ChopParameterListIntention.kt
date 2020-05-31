@@ -11,12 +11,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement>(
     listClass: Class<TList>,
@@ -24,11 +22,12 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
     textGetter: () -> String
 ) : SelfTargetingOffsetIndependentIntention<TList>(listClass, textGetter) {
     override fun allowCaretInsideElement(element: PsiElement) =
-        element !is KtValueArgumentList && super.allowCaretInsideElement(element)
+        element !is KtValueArgument && super.allowCaretInsideElement(element)
 
     override fun isApplicableTo(element: TList): Boolean {
         val elements = element.elements()
         if (elements.size <= 1) return false
+        if (!isApplicableCaretPosition(element)) return false
         if (elements.dropLast(1).all { hasLineBreakAfter(it) }) return false
         return true
     }
@@ -72,6 +71,13 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
             it as TElement
         }
         .toList()
+
+    protected fun isApplicableCaretPosition(element: TList): Boolean {
+        val offset = element.findExistingEditor()?.caretModel?.offset ?: return true
+        val elementBeforeCaret = element.containingFile.findElementAt(offset - 1) ?: return true
+        if (elementBeforeCaret.node.elementType != KtTokens.RPAR) return true
+        return elementBeforeCaret.parent == element
+    }
 }
 
 class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, KtParameter>(

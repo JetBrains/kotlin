@@ -22,6 +22,7 @@ abstract class AbstractJoinListIntention<TList : KtElement, TElement : KtElement
     override fun isApplicableTo(element: TList): Boolean {
         val elements = element.elements()
         if (elements.isEmpty()) return false
+        if (!isApplicableCaretPosition(element)) return false
         return hasLineBreakBefore(elements.first()) || elements.any { hasLineBreakAfter(it) }
     }
 

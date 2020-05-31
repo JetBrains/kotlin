@@ -1,9 +1,8 @@
-// IS_APPLICABLE: false
 fun foo() {
     f(
         1,
         2,
-        g(<caret>3, 4, 5),
+        g(3, 4, 5)<caret>,
         3
     )
 }
