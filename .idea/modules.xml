@@ -2080,6 +2080,7 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/noarg/kotlin.compiler-plugins.noarg.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/noarg/kotlin.compiler-plugins.noarg.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/sam-with-receiver/kotlin.compiler-plugins.sam-with-receiver.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/sam-with-receiver/kotlin.compiler-plugins.sam-with-receiver.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/scripting-ide-services/kotlin.compiler-plugins.scripting-ide-services.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/scripting-ide-services/kotlin.compiler-plugins.scripting-ide-services.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/completion/kotlin.completion.iml" filepath="$PROJECT_DIR$/kotlin/completion/kotlin.completion.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/core/kotlin.core.iml" filepath="$PROJECT_DIR$/kotlin/core/kotlin.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/jvm-debugger/eval4j/kotlin.eval4j.iml" filepath="$PROJECT_DIR$/kotlin/jvm-debugger/eval4j/kotlin.eval4j.iml" />
