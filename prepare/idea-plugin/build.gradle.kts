@@ -58,7 +58,6 @@ val projectsToShadow by extra(listOf(
         ":compiler:frontend.common",
         ":compiler:frontend.java",
         ":compiler:frontend:cfg",
-        ":idea",
         ":compiler:ir.psi2ir",
         ":compiler:ir.tree",
         ":compiler:ir.tree.impl",
