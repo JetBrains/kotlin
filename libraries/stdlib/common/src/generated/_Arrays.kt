@@ -20133,14 +20133,14 @@ public inline fun <R> CharArray.scanIndexed(initial: R, operation: (index: Int, 
     return runningFoldIndexed(initial, operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public inline fun <S, T : S> Array<out T>.scanReduce(operation: (acc: S, T) -> S): List<S> {
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20148,7 +20148,7 @@ public inline fun ByteArray.scanReduce(operation: (acc: Byte, Byte) -> Byte): Li
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20156,7 +20156,7 @@ public inline fun ShortArray.scanReduce(operation: (acc: Short, Short) -> Short)
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20164,7 +20164,7 @@ public inline fun IntArray.scanReduce(operation: (acc: Int, Int) -> Int): List<I
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20172,7 +20172,7 @@ public inline fun LongArray.scanReduce(operation: (acc: Long, Long) -> Long): Li
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20180,7 +20180,7 @@ public inline fun FloatArray.scanReduce(operation: (acc: Float, Float) -> Float)
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20188,7 +20188,7 @@ public inline fun DoubleArray.scanReduce(operation: (acc: Double, Double) -> Dou
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20196,7 +20196,7 @@ public inline fun BooleanArray.scanReduce(operation: (acc: Boolean, Boolean) -> 
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"))
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20204,14 +20204,14 @@ public inline fun CharArray.scanReduce(operation: (acc: Char, Char) -> Char): Li
     return runningReduce(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 public inline fun <S, T : S> Array<out T>.scanReduceIndexed(operation: (index: Int, acc: S, T) -> S): List<S> {
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20219,7 +20219,7 @@ public inline fun ByteArray.scanReduceIndexed(operation: (index: Int, acc: Byte,
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20227,7 +20227,7 @@ public inline fun ShortArray.scanReduceIndexed(operation: (index: Int, acc: Shor
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20235,7 +20235,7 @@ public inline fun IntArray.scanReduceIndexed(operation: (index: Int, acc: Int, I
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20243,7 +20243,7 @@ public inline fun LongArray.scanReduceIndexed(operation: (index: Int, acc: Long,
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20251,7 +20251,7 @@ public inline fun FloatArray.scanReduceIndexed(operation: (index: Int, acc: Floa
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20259,7 +20259,7 @@ public inline fun DoubleArray.scanReduceIndexed(operation: (index: Int, acc: Dou
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
@@ -20267,7 +20267,7 @@ public inline fun BooleanArray.scanReduceIndexed(operation: (index: Int, acc: Bo
     return runningReduceIndexed(operation)
 }
 
-@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"))
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
