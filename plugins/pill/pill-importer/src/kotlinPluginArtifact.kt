@@ -93,17 +93,12 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMapper: Art
 
     fun Project.getProject(name: String) = findProject(name) ?: error("Cannot find project $name")
 
-    val prepareIdeaPluginProject = rootProject.getProject(":prepare:idea-plugin")
-
     root.add(Directory("kotlinc").apply {
         val kotlincDirectory = rootProject.extra["distKotlinHomeDir"].toString()
         add(DirectoryCopy(File(kotlincDirectory)))
     })
 
     root.add(Directory("lib").apply {
-        val librariesConfiguration = prepareIdeaPluginProject.configurations.getByName("libraries")
-        add(getArtifactElements(librariesConfiguration, dependencyMapper, false))
-
         add(Directory("jps").apply {
             val prepareJpsPluginProject = rootProject.getProject(":kotlin-jps-plugin")
             add(Archive(prepareJpsPluginProject.name + ".jar").apply {
@@ -114,9 +109,6 @@ fun generateKotlinPluginArtifactFile(rootProject: Project, dependencyMapper: Art
 
         add(Archive("kotlin-plugin.jar").apply {
             add(FileCopy(File(rootProject.projectDir, "resources/kotlinManifest.properties")))
-
-            val embeddedConfiguration = prepareIdeaPluginProject.configurations.getByName(EMBEDDED_CONFIGURATION_NAME)
-            add(getArtifactElements(embeddedConfiguration, dependencyMapper, true))
         })
     })
 
