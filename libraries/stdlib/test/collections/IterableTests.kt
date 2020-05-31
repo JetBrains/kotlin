@@ -468,18 +468,16 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     }
 
     @Test
-    @Suppress("DEPRECATION")
-    fun scanReduce() {
-        val accumulators = data.scanReduce { acc, e -> acc + e }
+    fun runningReduce() {
+        val accumulators = data.runningReduce { acc, e -> acc + e }
         assertEquals(2, accumulators.size)
         assertTrue(accumulators.first() in listOf("foo", "bar"))
         assertTrue(accumulators.last() in listOf("foobar", "barfoo"))
     }
 
     @Test
-    @Suppress("DEPRECATION")
-    fun scanReduceIndexed() {
-        val accumulators = data.scanReduceIndexed { i, acc, e -> acc + i + e }
+    fun runningReduceIndexed() {
+        val accumulators = data.runningReduceIndexed { i, acc, e -> acc + i + e }
         assertEquals(2, accumulators.size)
         assertTrue(accumulators.first() in listOf("foo", "bar"))
         assertTrue(accumulators.last() in listOf("foo1bar", "bar1foo"))
