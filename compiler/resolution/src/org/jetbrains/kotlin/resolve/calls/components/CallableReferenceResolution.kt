@@ -63,6 +63,11 @@ class CallableReferenceCandidate(
     val diagnostics: List<KotlinCallDiagnostic>
 ) : Candidate {
     override val resultingApplicability = getResultApplicability(diagnostics)
+
+    override fun addCompatibilityWarning(other: Candidate) {
+        // TODO: now only arguments can be converted, so CR candidates shouldn't be affected
+    }
+
     override val isSuccessful get() = resultingApplicability.isSuccess
 
     var freshSubstitutor: FreshVariableNewTypeSubstitutor? = null

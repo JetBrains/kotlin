@@ -80,6 +80,9 @@ class DiagnosticReporterByTrackingStrategy(
             CandidateChosenUsingOverloadResolutionByLambdaAnnotation::class.java -> {
                 trace.report(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION.on(psiKotlinCall.psiCall.callElement))
             }
+            CompatibilityWarning::class.java -> {
+                trace.report(COMPATIBILITY_WARNING.on(psiKotlinCall.psiCall.callElement))
+            }
         }
     }
 

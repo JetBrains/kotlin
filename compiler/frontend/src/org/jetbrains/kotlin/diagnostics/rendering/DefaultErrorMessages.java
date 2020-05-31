@@ -898,6 +898,8 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_PARAMETERS_NOT_ALLOWED, "Type parameters are not allowed here");
         MAP.put(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION, "Candidate was choosen only by @OverloadResolutionByLambdaReturnType annotation");
 
+        MAP.put(COMPATIBILITY_WARNING, "Candidate was chosen to preserve compatibility");
+
         MAP.put(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, "Type parameter of a property must be used in its receiver type");
 
         MAP.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes");

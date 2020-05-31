@@ -1,5 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
+object Test0 {
+    fun foo(f: Runnable): Int = 0
+    fun foo(x: () -> String): String = ""
+
+    fun test(f: () -> Unit) {
+        val result = foo(f)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+    }
+}
+
 object Test1 {
     fun foo(x: Any) {}
     fun foo(f: () -> Unit) {}

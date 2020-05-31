@@ -249,3 +249,9 @@ class CandidateChosenUsingOverloadResolutionByLambdaAnnotation : KotlinCallDiagn
         reporter.onCall(this)
     }
 }
+
+class CompatibilityWarning : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}

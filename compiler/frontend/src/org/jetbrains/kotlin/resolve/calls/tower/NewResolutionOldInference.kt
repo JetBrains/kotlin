@@ -422,6 +422,10 @@ class NewResolutionOldInference(
             getResultApplicability(diagnostics)
         }
 
+        override fun addCompatibilityWarning(other: Candidate) {
+            // Only applicable for new inference
+        }
+
         override val isSuccessful = getResultApplicability(eagerDiagnostics).isSuccess
     }
 

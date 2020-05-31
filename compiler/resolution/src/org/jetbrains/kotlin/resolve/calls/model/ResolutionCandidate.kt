@@ -165,6 +165,12 @@ class KotlinResolutionCandidate(
             return maxOf(currentApplicability, systemApplicability, variableApplicability)
         }
 
+    override fun addCompatibilityWarning(other: Candidate) {
+        if (this !== other) {
+            addDiagnostic(CompatibilityWarning())
+        }
+    }
+
     override fun toString(): String {
         val descriptor = DescriptorRenderer.COMPACT.render(resolvedCall.candidateDescriptor)
         val okOrFail = if (currentApplicability.isSuccess) "OK" else "FAIL"

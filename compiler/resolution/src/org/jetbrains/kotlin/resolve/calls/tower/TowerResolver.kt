@@ -35,6 +35,8 @@ interface Candidate {
     val isSuccessful: Boolean
 
     val resultingApplicability: ResolutionCandidateApplicability
+
+    fun addCompatibilityWarning(other: Candidate)
 }
 
 interface CandidateFactory<out C : Candidate> {
@@ -310,9 +312,25 @@ class TowerResolver {
 
         override fun getSuccessfulCandidates(): Collection<C>? {
             if (!isSuccessful) return null
-            val firstGroupWithResolved = candidateGroups.firstOrNull {
-                it.any(::isSuccessfulCandidate)
-            } ?: return null
+            var compatibilityCandidate: C? = null
+            var firstGroupWithResolved: Collection<C>? = null
+            outer@ for (group in candidateGroups) {
+                for (candidate in group) {
+                    if (isSuccessfulCandidate(candidate)) {
+                        firstGroupWithResolved = group
+                        break@outer
+                    }
+
+                    if (compatibilityCandidate == null && isSuccessfulPreserveCompatibility(candidate)) {
+                        compatibilityCandidate = candidate
+                    }
+                }
+            }
+
+            if (firstGroupWithResolved == null) return null
+            if (compatibilityCandidate != null) {
+                firstGroupWithResolved.forEach { it.addCompatibilityWarning(compatibilityCandidate) }
+            }
 
             return firstGroupWithResolved.filter(::isSuccessfulCandidate)
         }
@@ -321,6 +339,9 @@ class TowerResolver {
             return candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED
                     || candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED_WITH_ERROR
         }
+
+        private fun isSuccessfulPreserveCompatibility(candidate: C): Boolean =
+            candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY
 
         override fun pushCandidates(candidates: Collection<C>) {
             val thereIsSuccessful = candidates.any { it.isSuccessful }
