@@ -55,7 +55,7 @@ public class ProjectLoadingErrorsNotifierImpl extends ProjectLoadingErrorsNotifi
       fireNotifications();
     }
     else if (first) {
-      StartupManager.getInstance(myProject).registerPostStartupDumbAwareActivity(() -> fireNotifications());
+      StartupManager.getInstance(myProject).runAfterOpened(() -> fireNotifications());
     }
   }
 

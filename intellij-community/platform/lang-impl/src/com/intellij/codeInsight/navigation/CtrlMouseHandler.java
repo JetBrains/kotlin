@@ -170,7 +170,7 @@ public final class CtrlMouseHandler {
 
   public CtrlMouseHandler(@NotNull Project project) {
     myProject = project;
-    StartupManager.getInstance(project).registerPostStartupDumbAwareActivity(() -> {
+    StartupManager.getInstance(project).runAfterOpened(() -> {
       EditorEventMulticaster eventMulticaster = EditorFactory.getInstance().getEventMulticaster();
       eventMulticaster.addEditorMouseListener(myEditorMouseAdapter, project);
       eventMulticaster.addEditorMouseMotionListener(myEditorMouseMotionListener, project);

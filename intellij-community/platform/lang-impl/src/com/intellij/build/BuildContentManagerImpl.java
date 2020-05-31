@@ -12,7 +12,6 @@ import com.intellij.ide.startup.StartupManagerEx;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -87,17 +86,13 @@ public final class BuildContentManagerImpl implements BuildContentManager {
     return toolWindow;
   }
 
-  private void invokeLaterIfNeeded(@NotNull DumbAwareRunnable runnable) {
+  private void invokeLaterIfNeeded(@NotNull Runnable runnable) {
     if (myProject.isDefault()) {
       return;
     }
-    if (!StartupManagerEx.getInstanceEx(myProject).startupActivityPassed()) {
-      StartupManagerEx.getInstanceEx(myProject).registerPostStartupDumbAwareActivity(
-        () -> GuiUtils.invokeLaterIfNeeded(runnable, ModalityState.defaultModalityState(), myProject.getDisposed()));
-    }
-    else {
+    StartupManagerEx.getInstanceEx(myProject).runAfterOpened(() -> {
       GuiUtils.invokeLaterIfNeeded(runnable, ModalityState.defaultModalityState(), myProject.getDisposed());
-    }
+    });
   }
 
   @Override
@@ -255,7 +250,7 @@ public final class BuildContentManagerImpl implements BuildContentManager {
     });
   }
 
-  private class CloseListener extends BaseContentCloseListener {
+  private final class CloseListener extends BaseContentCloseListener {
     private @Nullable BuildProcessHandler myProcessHandler;
 
     private CloseListener(final @NotNull Content content, @NotNull BuildProcessHandler processHandler) {
