@@ -6593,20 +6593,20 @@ public fun <T> kotlin.collections.MutableIterable<T>.removeAll(predicate: (T) ->
 
 public fun <T> kotlin.collections.MutableList<T>.removeAll(predicate: (T) -> kotlin.Boolean): kotlin.Boolean
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeFirst(): T
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeFirstOrNull(): T?
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeLast(): T
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeLastOrNull(): T?
 
 public fun <T : kotlin.Any> kotlin.Array<T?>.requireNoNulls(): kotlin.Array<T>
@@ -9716,8 +9716,8 @@ public abstract class AbstractSet<out E> : kotlin.collections.AbstractCollection
     public open override fun hashCode(): kotlin.Int
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public final class ArrayDeque<E> : kotlin.collections.AbstractMutableList<E> {
     public constructor ArrayDeque<E>()
 
