@@ -3,9 +3,13 @@ package com.intellij.util.indexing.diagnostic
 
 class IndexingJobStatistics {
 
-  val statsPerIndexer = hashMapOf<String /* ID.name() */, StatsPerIndexer>()
+  private val _statsPerIndexer = hashMapOf<String, StatsPerIndexer>()
+  val statsPerIndexer: Map<String /* ID.name() */, StatsPerIndexer>
+    @Synchronized get() = _statsPerIndexer.toMap()
 
-  val statsPerFileType = hashMapOf<String /* File type name */, StatsPerFileType>()
+  private val _statsPerFileType = hashMapOf<String, StatsPerFileType>()
+  val statsPerFileType: Map<String /* File type name */, StatsPerFileType>
+    @Synchronized get() = _statsPerFileType.toMap()
 
   data class StatsPerIndexer(
     val indexingTime: TimeStats,
@@ -27,7 +31,7 @@ class IndexingJobStatistics {
     fileSize: Long
   ) {
     fileStatistics.perIndexerTimes.forEach { (indexId, time) ->
-      val stats = statsPerIndexer.getOrPut(indexId.name) {
+      val stats = _statsPerIndexer.getOrPut(indexId.name) {
         StatsPerIndexer(TimeStats(), 0, 0)
       }
       stats.indexingTime.addTime(time)
@@ -35,7 +39,7 @@ class IndexingJobStatistics {
       stats.totalBytes += fileSize
     }
     val fileTypeName = fileStatistics.fileType.name
-    val stats = statsPerFileType.computeIfAbsent(fileTypeName) {
+    val stats = _statsPerFileType.getOrPut(fileTypeName) {
       StatsPerFileType(TimeStats(), TimeStats(), 0, 0)
     }
     stats.contentLoadingTime.addTime(contentLoadingTime)
