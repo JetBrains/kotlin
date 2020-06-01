@@ -119,6 +119,9 @@ final class StubTreeLoaderImpl extends StubTreeLoader {
       catch (SerializerNotFoundException e) {
         return processError(vFile, "No stub serializer: " + vFile.getPresentableUrl() + ": " + e.getMessage(), e);
       }
+      if (stub == SerializedStubTree.NO_STUB) {
+        return null;
+      }
       ObjectStubTree<?> tree =
         stub instanceof PsiFileStub ? new StubTree((PsiFileStub<?>)stub) : new ObjectStubTree((ObjectStubBase<?>)stub, true);
       tree.setDebugInfo("created from index");
