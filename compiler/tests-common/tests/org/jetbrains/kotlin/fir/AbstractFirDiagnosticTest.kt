@@ -295,7 +295,9 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 for (from in node.previousNodes) {
                     checkEdge(from, node)
                 }
-                TestCase.assertTrue(node.followingNodes.isNotEmpty() || node.previousNodes.isNotEmpty())
+                if (node.followingNodes.isEmpty() && node.previousNodes.isEmpty()) {
+                    throw AssertionError("Unconnected CFG node: $node")
+                }
             }
         }
 
