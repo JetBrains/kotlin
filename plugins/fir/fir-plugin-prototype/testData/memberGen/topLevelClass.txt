@@ -1,0 +1,14 @@
+FILE: topLevelClass.kt
+    @R|org/jetbrains/kotlin/fir/plugin/A|() public final class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|TopLevelSomeClass|.R|/TopLevelSomeClass.hello|()
+    }
+    public final object TopLevelSomeClass {
+        public final fun hello(): R|kotlin/Int|
+
+    }

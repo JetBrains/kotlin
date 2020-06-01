@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.plugin.generators.AllOpenMemberGenerator
+import org.jetbrains.kotlin.fir.plugin.generators.AllOpenNestedClassGenerator
+import org.jetbrains.kotlin.fir.plugin.generators.AllOpenRecursiveNestedClassGenerator
+import org.jetbrains.kotlin.fir.plugin.generators.AllOpenTopLevelDeclarationsGenerator
 
 class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
@@ -13,5 +17,7 @@ class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
         +::AllOpenMemberGenerator
         +::AllOpenNestedClassGenerator
         +::AllOpenAdditionalCheckers
+        +::AllOpenTopLevelDeclarationsGenerator
+        +::AllOpenRecursiveNestedClassGenerator
     }
 }

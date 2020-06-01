@@ -3,31 +3,32 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.plugin
+package org.jetbrains.kotlin.fir.plugin.generators
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
-import org.jetbrains.kotlin.fir.extensions.FirExistingClassModificationExtension
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.and
 import org.jetbrains.kotlin.fir.extensions.predicate.has
 import org.jetbrains.kotlin.fir.extensions.predicate.under
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedNestedClass
+import org.jetbrains.kotlin.fir.plugin.AllOpenPluginKey
+import org.jetbrains.kotlin.fir.plugin.fqn
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClass
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class AllOpenMemberGenerator(session: FirSession) : FirExistingClassModificationExtension(session) {
-    override fun generateNestedClasses(
+class AllOpenMemberGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+    override fun generateClasses(
         annotatedDeclaration: FirDeclaration,
         owners: List<FirAnnotatedDeclaration>
     ): List<GeneratedDeclaration<FirRegularClass>> {
         return emptyList()
     }
 
-    override fun generateMembersForNestedClasses(generatedNestedClass: GeneratedNestedClass): List<FirDeclaration> {
+    override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration> {
         return emptyList()
     }
 

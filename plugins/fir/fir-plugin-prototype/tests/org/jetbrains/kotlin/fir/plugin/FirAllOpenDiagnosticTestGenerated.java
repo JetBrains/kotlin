@@ -67,6 +67,16 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         public void testNestedClass() throws Exception {
             runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/nestedClass.kt");
         }
+
+        @TestMetadata("recursiveNestedClasses.kt")
+        public void testRecursiveNestedClasses() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/recursiveNestedClasses.kt");
+        }
+
+        @TestMetadata("topLevelClass.kt")
+        public void testTopLevelClass() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/memberGen/topLevelClass.kt");
+        }
     }
 
     @TestMetadata("plugins/fir/fir-plugin-prototype/testData/status")

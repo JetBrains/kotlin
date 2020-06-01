@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.plugin
+package org.jetbrains.kotlin.fir.plugin.generators
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.extensions.FirExistingClassModificationExtension
+import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedNestedClass
+import org.jetbrains.kotlin.fir.plugin.AllOpenPluginKey
+import org.jetbrains.kotlin.fir.plugin.fqn
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClass
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -28,8 +30,8 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.Name
 
-class AllOpenNestedClassGenerator(session: FirSession) : FirExistingClassModificationExtension(session) {
-    override fun generateNestedClasses(
+class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+    override fun generateClasses(
         annotatedDeclaration: FirDeclaration,
         owners: List<FirAnnotatedDeclaration>
     ): List<GeneratedDeclaration<FirRegularClass>> {
@@ -53,8 +55,8 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirExistingClassModific
         return listOf(GeneratedDeclaration(newClass, owner))
     }
 
-    override fun generateMembersForNestedClasses(generatedNestedClass: GeneratedNestedClass): List<FirDeclaration> {
-        val klass = generatedNestedClass.nestedClass
+    override fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration> {
+        val klass = generatedClass.klass
 
         val classId = klass.symbol.classId
         val constructor = buildConstructor {

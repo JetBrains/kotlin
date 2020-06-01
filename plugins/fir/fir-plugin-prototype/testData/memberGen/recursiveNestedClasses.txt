@@ -1,0 +1,19 @@
+FILE: recursiveNestedClasses.kt
+    @R|org/jetbrains/kotlin/fir/plugin/B|() public final class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|org/jetbrains/kotlin/fir/plugin/B|() public final class Nested {
+            @R|org/jetbrains/kotlin/fir/plugin/B|() public final class Nested {
+            }
+
+        }
+
+    }
+    public final fun test_1(x: R|SomeClass.Nested|): R|kotlin/Unit| {
+    }
+    public final fun test_2(x: R|SomeClass.Nested.Nested|): R|kotlin/Unit| {
+    }
+    public final fun test_3(x: R|ERROR CLASS: Symbol not found, for `SomeClass.Nested.Nested.Nested`|): R|kotlin/Unit| {
+    }
