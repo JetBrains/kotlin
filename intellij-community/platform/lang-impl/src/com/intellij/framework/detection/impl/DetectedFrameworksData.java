@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.framework.detection.impl;
 
 import com.intellij.framework.detection.DetectedFrameworkDescription;
@@ -36,14 +22,14 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
-public class DetectedFrameworksData {
+public final class DetectedFrameworksData {
   private static final Logger LOG = Logger.getInstance(DetectedFrameworksData.class);
-  private PersistentHashMap<Integer,TIntHashSet> myExistentFrameworkFiles;
+  private PersistentHashMap<Integer, TIntHashSet> myExistentFrameworkFiles;
   private final TIntObjectHashMap<TIntHashSet> myNewFiles;
   private final MultiMap<Integer, DetectedFrameworkDescription> myDetectedFrameworks;
   private final Object myLock = new Object();
 
-  public DetectedFrameworksData(Project project) {
+  public DetectedFrameworksData(@NotNull Project project) {
     myDetectedFrameworks = new MultiMap<>();
     Path file = ProjectUtil.getProjectCachePath(project, FrameworkDetectorRegistryImpl.getDetectionDirPath(), true).resolve("files");
     myNewFiles = new TIntObjectHashMap<>();
