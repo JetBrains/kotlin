@@ -28,8 +28,8 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.DocumentUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -160,16 +160,11 @@ public class BackspaceHandler extends EditorWriteActionHandler {
     return editables.size() == 1 && editables.get(0).equals(rangeToEdit);
   }
 
-  public static @NotNull Language getLanguageAtCursorPosition(final PsiFile file, final Editor editor) {
+  static @NotNull Language getLanguageAtCursorPosition(final PsiFile file, final Editor editor) {
     PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-    if (element instanceof LeafPsiElement) {
-      element = element.getParent();
-    }
-    if (element != null) {
-      Language language = element.getLanguage();
-      if (language != Language.ANY) {
-        return language;
-      }
+    Language language = element != null ? PsiUtilCore.findLanguageFromElement(element) : Language.ANY;
+    if (language != Language.ANY) {
+      return language;
     }
     return file.getLanguage();
   }
