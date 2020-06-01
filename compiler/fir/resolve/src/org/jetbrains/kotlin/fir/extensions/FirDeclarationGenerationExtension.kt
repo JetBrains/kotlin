@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedNestedClass
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClass
 import kotlin.reflect.KClass
 
 /*
  * TODO:
  *  - check that annotations or meta-annotations is not empty
  */
-abstract class FirExistingClassModificationExtension(session: FirSession) : FirPredicateBasedExtension(session) {
+abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredicateBasedExtension(session) {
     companion object {
         val NAME = FirExtensionPointName("ExistingClassModification")
     }
@@ -24,23 +24,23 @@ abstract class FirExistingClassModificationExtension(session: FirSession) : FirP
     final override val name: FirExtensionPointName
         get() = NAME
 
-    final override val extensionType: KClass<out FirExtension> = FirExistingClassModificationExtension::class
+    final override val extensionType: KClass<out FirExtension> = FirDeclarationGenerationExtension::class
 
-    abstract fun generateNestedClasses(
+    abstract fun generateClasses(
         annotatedDeclaration: FirDeclaration,
         owners: List<FirAnnotatedDeclaration>
     ): List<GeneratedDeclaration<FirRegularClass>>
 
-    abstract fun generateMembersForNestedClasses(generatedNestedClass: GeneratedNestedClass): List<FirDeclaration>
+    abstract fun generateMembersForGeneratedClass(generatedClass: GeneratedClass): List<FirDeclaration>
 
     abstract fun generateMembers(
         annotatedDeclaration: FirDeclaration,
         owners: List<FirAnnotatedDeclaration>
     ): List<GeneratedDeclaration<*>>
 
-    data class GeneratedDeclaration<out T : FirDeclaration>(val newDeclaration: T, val owner: FirRegularClass)
+    data class GeneratedDeclaration<out T : FirDeclaration>(val newDeclaration: T, val owner: FirAnnotatedDeclaration)
 
-    fun interface Factory : FirExtension.Factory<FirExistingClassModificationExtension>
+    fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 }
 
-val FirExtensionService.existingClassModifiers: List<FirExistingClassModificationExtension> by FirExtensionService.registeredExtensions()
+val FirExtensionService.declarationGenerators: List<FirDeclarationGenerationExtension> by FirExtensionService.registeredExtensions()

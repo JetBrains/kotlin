@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedNestedClassIndex
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 
@@ -19,5 +19,5 @@ fun FirSession.registerCommonComponents() {
     register(FirExtensionService::class, FirExtensionService(this))
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.create(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProvider.create(this))
-    register(GeneratedNestedClassIndex::class, GeneratedNestedClassIndex.create())
+    register(GeneratedClassIndex::class, GeneratedClassIndex.create())
 }

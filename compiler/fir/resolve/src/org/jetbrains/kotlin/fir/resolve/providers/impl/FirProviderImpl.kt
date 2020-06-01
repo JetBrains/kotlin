@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -68,10 +67,21 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
     }
 
     @FirProviderInternals
-    override fun recordNestedClass(owner: FirRegularClass, klass: FirRegularClass) {
-        val file = getFirClassifierContainerFile(owner.symbol.classId)
-        klass.accept(FirRecorder, state to file)
+    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
+        klass.accept(FirRecorder, state to owner.file)
     }
+
+    @FirProviderInternals
+    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) {
+        klass.accept(FirRecorder, state to owner.file)
+    }
+
+    private val FirAnnotatedDeclaration.file: FirFile
+        get() = when (this) {
+            is FirFile -> this
+            is FirRegularClass -> getFirClassifierContainerFile(this.symbol.classId)
+            else -> error("Should not be here")
+        }
 
     private fun recordFile(file: FirFile, state: State) {
         val packageName = file.packageFqName

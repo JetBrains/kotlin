@@ -25,7 +25,7 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
     return when (this) {
         RAW_FIR -> throw IllegalStateException("Raw FIR building phase does not have a transformer")
         ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveProcessor(session, scopeSession)
-        NESTED_CLASS_GENERATION -> FirGlobalNestedClassGenerationProcessor(session, scopeSession)
+        CLASS_GENERATION -> FirGlobalClassGenerationProcessor(session, scopeSession)
         IMPORTS -> FirImportResolveProcessor(session, scopeSession)
         SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)
@@ -46,7 +46,7 @@ fun FirResolvePhase.createTransformerBasedProcessorByPhase(
     return when (this) {
         RAW_FIR -> throw IllegalStateException("Raw FIR building phase does not have a transformer")
         ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveProcessor(session, scopeSession)
-        NESTED_CLASS_GENERATION -> FirDummyTransformerBasedProcessor(session, scopeSession) // TODO: remove
+        CLASS_GENERATION -> FirDummyTransformerBasedProcessor(session, scopeSession) // TODO: remove
         IMPORTS -> FirImportResolveProcessor(session, scopeSession)
         SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)

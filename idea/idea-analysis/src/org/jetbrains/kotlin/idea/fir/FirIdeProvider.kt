@@ -10,9 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
@@ -153,9 +151,15 @@ class FirIdeProvider(
     }
 
     @FirProviderInternals
-    override fun recordNestedClass(owner: FirRegularClass, klass: FirRegularClass) {
+    override fun recordGeneratedClass(owner: FirAnnotatedDeclaration, klass: FirRegularClass) {
         // TODO: check that this implementation is correct
-        cacheProvider.recordNestedClass(owner, klass)
+        cacheProvider.recordGeneratedClass(owner, klass)
+    }
+
+    @FirProviderInternals
+    override fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration) {
+        // TODO: check that this implementation is correct
+        cacheProvider.recordGeneratedMember(owner, klass)
     }
 }
 
