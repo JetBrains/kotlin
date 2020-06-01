@@ -19,11 +19,11 @@ public abstract class ObservableProperty<V> : kotlin.properties.ReadWritePropert
 }
 
 @kotlin.SinceKotlin(version = "1.4")
-public interface PropertyDelegateProvider<in T, out D> {
+public fun interface PropertyDelegateProvider<in T, out D> {
     public abstract operator fun provideDelegate(thisRef: T, property: kotlin.reflect.KProperty<*>): D
 }
 
-public interface ReadOnlyProperty<in T, out V> {
+public fun interface ReadOnlyProperty<in T, out V> {
     public abstract operator fun getValue(thisRef: T, property: kotlin.reflect.KProperty<*>): V
 }
 
