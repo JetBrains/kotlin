@@ -46,6 +46,9 @@ abstract class AbstractKotlinTarget(
     override var useDisambiguitionClassifierAsSourcesetNamePreffix: Boolean = true
         internal set
 
+    override var overrideDisambiguitionClassifierOnIdeImport: String? = null
+        internal set
+
     override val apiElementsConfigurationName: String
         get() = disambiguateName("apiElements")
 

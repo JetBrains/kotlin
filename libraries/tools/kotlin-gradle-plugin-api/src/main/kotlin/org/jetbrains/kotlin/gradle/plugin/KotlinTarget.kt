@@ -29,6 +29,7 @@ interface KotlinTarget : Named, HasAttributes {
     val targetName: String
     val disambiguationClassifier: String? get() = targetName
     val useDisambiguitionClassifierAsSourcesetNamePreffix: Boolean
+    val overrideDisambiguitionClassifierOnIdeImport: String?
 
     val platformType: KotlinPlatformType
 

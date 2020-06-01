@@ -369,8 +369,9 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             targetClass.getMethodOrNull("getUseDisambiguitionClassifierAsSourcesetNamePreffix")?.invoke(gradleTarget) as? Boolean ?: true
         val disambiguationClassifier = if (useDisambiguationClassifier)
             getDisambiguationClassifier(gradleTarget) as? String
-        else
-            null
+        else {
+            targetClass.getMethodOrNull("getOverrideDisambiguitionClassifierOnIdeImport")?.invoke(gradleTarget) as? String
+        }
         val getPreset = targetClass.getMethodOrNull("getPreset")
         val targetPresetName: String?
         targetPresetName = try {

@@ -24,6 +24,8 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
     // This function is used in IDE import in order to indicate that sourceSetName=disambiguitionClassifier+compilationName
     protected open fun useDisambiguitionClassifierAsSourcesetNamePreffix() = true
 
+    protected open fun overrideDisambiguitionClassifierOnIdeImport(): String? = null
+
     abstract protected fun instantiateTarget(name: String): R
 
     override fun createTarget(name: String): R {
@@ -31,6 +33,7 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
             targetName = name
             disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)
             useDisambiguitionClassifierAsSourcesetNamePreffix = useDisambiguitionClassifierAsSourcesetNamePreffix()
+            overrideDisambiguitionClassifierOnIdeImport = overrideDisambiguitionClassifierOnIdeImport()
             preset = this@KotlinOnlyTargetPreset
 
             val compilationFactory = createCompilationFactory(this)

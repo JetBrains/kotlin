@@ -33,6 +33,16 @@ open class KotlinJsTargetPreset(
 
     override fun useDisambiguitionClassifierAsSourcesetNamePreffix() = false
 
+    override fun overrideDisambiguitionClassifierOnIdeImport(): String? = if (isMpp) {
+        irPreset?.let {
+            name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
+                .removeJsCompilerSuffix(KotlinJsCompilerType.IR)
+                .removeJsCompilerSuffix(KotlinJsCompilerType.BOTH)
+        }
+    } else {
+        null
+    }
+
     override fun instantiateTarget(name: String): KotlinJsTarget {
         return project.objects.newInstance(
             KotlinJsTarget::class.java,
