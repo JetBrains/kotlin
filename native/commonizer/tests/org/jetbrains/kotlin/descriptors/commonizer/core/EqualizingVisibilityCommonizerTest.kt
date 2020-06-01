@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclarationWithVisibility
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasVisibility
 import org.junit.Test
 
-class EqualizingVisibilityCommonizerTest : AbstractCommonizerTest<CirDeclarationWithVisibility, Visibility>() {
+class EqualizingVisibilityCommonizerTest : AbstractCommonizerTest<CirHasVisibility, Visibility>() {
 
     @Test
     fun publicOnly() = doTestSuccess(
@@ -63,6 +63,6 @@ class EqualizingVisibilityCommonizerTest : AbstractCommonizerTest<CirDeclaration
     override fun createCommonizer() = VisibilityCommonizer.equalizing()
 }
 
-private fun Visibility.toMock() = object : CirDeclarationWithVisibility {
+private fun Visibility.toMock() = object : CirHasVisibility {
     override val visibility: Visibility = this@toMock
 }

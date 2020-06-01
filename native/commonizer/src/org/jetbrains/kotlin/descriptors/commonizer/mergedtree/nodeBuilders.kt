@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassRecursionMarker
+import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassifierRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.ClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
@@ -133,7 +134,7 @@ internal fun buildTypeAliasNode(
     descriptors = typeAliases,
     targetDeclarationProducer = CirTypeAliasFactory::create,
     commonValueProducer = { commonize(it, TypeAliasCommonizer(cacheRW)) },
-    recursionMarker = CirClassRecursionMarker,
+    recursionMarker = CirClassifierRecursionMarker,
     nodeProducer = ::CirTypeAliasNode
 ).also { node ->
     typeAliases.firstNonNull().fqNameSafe.intern().let { fqName ->

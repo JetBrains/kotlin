@@ -8,13 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.FqName
 
-interface CirClass :
-    CirAnnotatedDeclaration,
-    CirNamedDeclaration,
-    CirDeclarationWithTypeParameters,
-    CirDeclarationWithVisibility,
-    CirDeclarationWithModality {
-
+interface CirClass : CirClassifier, CirDeclarationWithModality {
     val kind: ClassKind
     var companion: FqName? // null means no companion object
     val isCompanion: Boolean

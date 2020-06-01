@@ -19,4 +19,7 @@ data class CirTypeAliasImpl(
     override val visibility: Visibility,
     override val underlyingType: CirSimpleType,
     override val expandedType: CirSimpleType
-) : CirTypeAlias
+) : CirTypeAlias {
+    // any TA in "common" fragment is already lifted up
+    override val isLiftedUp get() = true
+}

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind.CLASS
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind.TYPE_ALIAS
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
@@ -17,8 +18,7 @@ sealed class CirType {
 }
 
 /**
- * All attributes except for [expandedTypeConstructorId] are read from the abbreviation type: [AbbreviatedType.abbreviation].
- * And [expandedTypeConstructorId] is read from the expanded type: [AbbreviatedType.expandedType].
+ * All attributes are read from the abbreviation type: [AbbreviatedType.abbreviation].
  *
  * This is necessary to properly compare types for type aliases, where abbreviation type represents the type alias itself while
  * expanded type represents right-hand side declaration that should be processed separately.
@@ -28,13 +28,12 @@ sealed class CirType {
  *
  * Note: Annotations at simple types are not preserved. After commonization all annotations assigned to types will be lost.
  */
-abstract class CirSimpleType : CirType() {
+abstract class CirSimpleType : CirType(), CirHasVisibility {
     abstract val kind: CirSimpleTypeKind
     abstract val fqName: FqName
     abstract val arguments: List<CirTypeProjection>
     abstract val isMarkedNullable: Boolean
     abstract val isDefinitelyNotNullType: Boolean
-    abstract val expandedTypeConstructorId: CirTypeConstructorId
 
     inline val isClassOrTypeAlias: Boolean get() = (kind == CLASS || kind == TYPE_ALIAS)
 }
@@ -49,8 +48,6 @@ enum class CirSimpleTypeKind {
             expect == actual || (expect == CLASS && actual == TYPE_ALIAS)
     }
 }
-
-data class CirTypeConstructorId(val fqName: FqName, val numberOfTypeParameters: Int)
 
 data class CirTypeProjection(val projectionKind: Variance, val isStarProjection: Boolean, val type: CirType)
 

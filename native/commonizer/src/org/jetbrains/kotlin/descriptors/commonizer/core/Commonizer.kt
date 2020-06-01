@@ -19,11 +19,14 @@ abstract class AbstractStandardCommonizer<T, R> : Commonizer<T, R> {
 
     private var state = State.EMPTY
 
-    final override val result: R
+    protected val hasResult: Boolean
         get() = when (state) {
-            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
-            State.IN_PROGRESS -> commonizationResult()
+            State.EMPTY, State.ERROR -> false
+            State.IN_PROGRESS -> true
         }
+
+    final override val result: R
+        get() = if (hasResult) commonizationResult() else throw IllegalCommonizerStateException()
 
     final override fun commonizeWith(next: T): Boolean {
         val result = when (state) {

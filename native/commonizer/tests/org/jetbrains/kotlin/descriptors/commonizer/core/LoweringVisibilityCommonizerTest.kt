@@ -10,15 +10,15 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirContainingClassDetails
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclarationWithVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.unsupported
 import org.junit.Test
 
 abstract class LoweringVisibilityCommonizerTest(
     private val allowPrivate: Boolean,
     private val areMembersVirtual: Boolean
-) : AbstractCommonizerTest<CirDeclarationWithVisibility, Visibility>() {
+) : AbstractCommonizerTest<CirHasVisibility, Visibility>() {
 
     @Test
     fun publicOnly() = doTestSuccess(
