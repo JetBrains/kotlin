@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
@@ -20,9 +18,7 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
 
     private val context: ConeTypeContext = session.typeContext
 
-    private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
-        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
-        val substitutedBaseType = substitutor.substituteOrSelf(baseType)
+    private fun isEqualTypes(substitutedCandidateType: ConeKotlinType, substitutedBaseType: ConeKotlinType): Boolean {
         return with(context) {
             val baseIsFlexible = substitutedBaseType.isFlexible()
             val candidateIsFlexible = substitutedCandidateType.isFlexible()
@@ -45,8 +41,61 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
         }
     }
 
+    private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
+        val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
+        val substitutedBaseType = substitutor.substituteOrSelf(baseType)
+        return isEqualTypes(substitutedCandidateType, substitutedBaseType)
+    }
+
     override fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor) =
         isEqualTypes((candidateTypeRef as FirResolvedTypeRef).type, (baseTypeRef as FirResolvedTypeRef).type, substitutor)
+
+
+    /**
+     * Good case complexity is O(1)
+     * Worst case complexity is O(N), where N is number of type-parameter bound's
+     */
+    private fun isEqualBound(
+        overrideBound: FirTypeRef,
+        baseBound: FirTypeRef,
+        overrideTypeParameter: FirTypeParameter,
+        baseTypeParameter: FirTypeParameter,
+        substitutor: ConeSubstitutor
+    ): Boolean {
+        val substitutedOverrideType = substitutor.substituteOrSelf(overrideBound.coneTypeUnsafe())
+        val substitutedBaseType = substitutor.substituteOrSelf(baseBound.coneTypeUnsafe())
+
+        if (isEqualTypes(substitutedOverrideType, substitutedBaseType)) return true
+
+        return overrideTypeParameter.bounds.any { bound -> isEqualTypes(bound.coneTypeUnsafe(), substitutedBaseType, substitutor) } &&
+                baseTypeParameter.bounds.any { bound -> isEqualTypes(bound.coneTypeUnsafe(), substitutedOverrideType, substitutor) }
+    }
+
+    private fun isCompatibleTypeParameters(
+        overrideCandidate: FirTypeParameterRef,
+        baseDeclaration: FirTypeParameterRef,
+        substitutor: ConeSubstitutor
+    ): Boolean {
+        if (overrideCandidate.symbol == baseDeclaration.symbol) return true
+        if (overrideCandidate !is FirTypeParameter || baseDeclaration !is FirTypeParameter) return false
+        if (overrideCandidate.bounds.size != baseDeclaration.bounds.size) return false
+        return overrideCandidate.bounds.zip(baseDeclaration.bounds)
+            .all { (aBound, bBound) -> isEqualBound(aBound, bBound, overrideCandidate, baseDeclaration, substitutor) }
+    }
+
+    override fun buildTypeParametersSubstitutorIfCompatible(
+        overrideCandidate: FirCallableMemberDeclaration<*>,
+        baseDeclaration: FirCallableMemberDeclaration<*>
+    ): ConeSubstitutor? {
+        val substitutor = buildSubstitutorForOverridesCheck(overrideCandidate, baseDeclaration) ?: return null
+        if (
+            overrideCandidate.typeParameters.isNotEmpty() &&
+            overrideCandidate.typeParameters.zip(baseDeclaration.typeParameters).any { (override, base) ->
+                !isCompatibleTypeParameters(override, base, substitutor)
+            }
+        ) return null
+        return substitutor
+    }
 
     private fun isEqualReceiverTypes(candidateTypeRef: FirTypeRef?, baseTypeRef: FirTypeRef?, substitutor: ConeSubstitutor): Boolean {
         return when {
@@ -58,7 +107,7 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
         if (overrideCandidate.valueParameters.size != baseDeclaration.valueParameters.size) return false
 
-        val substitutor = getSubstitutorIfTypeParametersAreCompatible(overrideCandidate, baseDeclaration) ?: return false
+        val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
 
         if (!isEqualReceiverTypes(overrideCandidate.receiverTypeRef, baseDeclaration.receiverTypeRef, substitutor)) return false
 
@@ -73,7 +122,7 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
         baseDeclaration: FirProperty
     ): Boolean {
         if (overrideCandidate !is FirProperty) return false
-        val substitutor = getSubstitutorIfTypeParametersAreCompatible(overrideCandidate, baseDeclaration) ?: return false
+        val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
         return isEqualReceiverTypes(overrideCandidate.receiverTypeRef, baseDeclaration.receiverTypeRef, substitutor)
     }
 }
