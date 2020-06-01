@@ -8,10 +8,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -34,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -97,6 +95,27 @@ public class FileDownloaderImpl implements FileDownloader {
   }
 
   @Nullable
+  @Override
+  public CompletableFuture<List<Pair<VirtualFile, DownloadableFileDescription>>> downloadWithBackgroundProgress(@Nullable String targetDirectoryPath,
+                                                                                                               @Nullable Project project) {
+    File dir;
+    if (targetDirectoryPath != null) {
+      dir = new File(targetDirectoryPath);
+    }
+    else {
+      VirtualFile virtualDir = chooseDirectoryForFiles(project, null);
+      if (virtualDir != null) {
+        dir = VfsUtilCore.virtualToIoFile(virtualDir);
+      }
+      else {
+        return null;
+      }
+    }
+
+    return downloadWithBackgroundProcess(dir, project);
+  }
+
+  @Nullable
   private List<Pair<VirtualFile,DownloadableFileDescription>> downloadWithProcess(final File targetDir,
                                                                                   Project project,
                                                                                   JComponent parentComponent) {
@@ -125,6 +144,47 @@ public class FileDownloaderImpl implements FileDownloader {
     }
 
     return findVirtualFiles(localFiles.get());
+  }
+
+  private @NotNull CompletableFuture<@Nullable List<Pair<VirtualFile,DownloadableFileDescription>>> downloadWithBackgroundProcess(final File targetDir,
+                                                                                  Project project) {
+    final Ref<List<Pair<File, DownloadableFileDescription>>> localFiles = Ref.create(null);
+    final Ref<IOException> exceptionRef = Ref.create(null);
+
+    CompletableFuture<List<Pair<VirtualFile, DownloadableFileDescription>>> result = new CompletableFuture<>();
+
+    ProgressManager.getInstance().run(new Task.Backgroundable(project, myDialogTitle, true) {
+      @Override
+      public boolean shouldStartInBackground() {
+        return true;
+      }
+
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        try {
+          localFiles.set(download(targetDir));
+        }
+        catch (IOException exception) {
+          final boolean tryAgain = IOExceptionDialog.showErrorDialog(myDialogTitle, exception.getMessage());
+          if (tryAgain) {
+            downloadWithBackgroundProcess(targetDir, project).thenAccept(pairs -> result.complete(pairs));
+          }
+          result.complete(null);
+        }
+      }
+
+      @Override
+      public void onSuccess() {
+        result.complete(findVirtualFiles(localFiles.get()));
+      }
+
+      @Override
+      public void onCancel() {
+        result.complete(null);
+      }
+    });
+
+    return result;
   }
 
   @NotNull
