@@ -1,0 +1,39 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+@file:Suppress("DEPRECATION")
+
+package org.jetbrains.kotlin.idea
+
+import com.intellij.featureStatistics.FeatureStatisticsBundleEP
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.extensions.Extensions
+
+private const val CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME = "com.jetbrains.cidr.lang.OCFeatureStatisticsBundleProvider"
+
+// Remove the function, when there's no dependency to cidr during running Kotlin tests.
+// BUNCH: as35
+fun registerAdditionalResourceBundleInTests() {
+    if (!ApplicationManager.getApplication().isUnitTestMode) {
+        return
+    }
+
+    val isAlreadyRegistered = FeatureStatisticsBundleEP.EP_NAME.extensions.any { provider ->
+        provider.javaClass.name == CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME
+    }
+    if (isAlreadyRegistered) {
+        return
+    }
+
+    val cidrFSBundleProviderClass = try {
+        Class.forName(CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME)
+    } catch (_: ClassNotFoundException) {
+        return
+    }
+
+    val cidrFSBundleProvider = cidrFSBundleProviderClass.newInstance() as FeatureStatisticsBundleEP
+
+    Extensions.getRootArea().getExtensionPoint(FeatureStatisticsBundleEP.EP_NAME).registerExtension(cidrFSBundleProvider)
+}
