@@ -39,15 +39,7 @@
     </orderEntry>
     <orderEntry type="module" module-name="kotlin.project-wizard.core" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
-    <orderEntry type="module-library" scope="RUNTIME">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../dependencies/repo/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4-SNAPSHOT/kotlin-compiler-for-ide-1.4-SNAPSHOT.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" scope="RUNTIME" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
   </component>
 </module>
