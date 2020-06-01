@@ -2854,6 +2854,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         public void testResolutionInOldInference() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/resolutionInOldInference.kt");
         }
+
+        @TestMetadata("returnFromInlineLambda.kt")
+        public void testReturnFromInlineLambda() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/factoryPattern/returnFromInlineLambda.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/forInArrayLoop")

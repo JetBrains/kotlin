@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -20,7 +17,6 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.StubType
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -85,4 +81,6 @@ interface KotlinResolutionCallbacks {
     fun disableContractsIfNecessary(resolvedAtom: ResolvedCallAtom)
 
     fun convertSignedConstantToUnsigned(argument: KotlinCallArgument): IntegerValueTypeConstant?
+
+    fun recordInlinabilityOfLambda(atom: Set<Map.Entry<KotlinResolutionCandidate, ResolvedLambdaAtom>>)
 }

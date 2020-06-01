@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintS
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empty.hasContradiction
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -113,6 +111,9 @@ class KotlinCallCompleter(
         val diagnosticHolderForLambda = KotlinDiagnosticsHolder.SimpleHolder()
         val iterator = newAtoms.entries.iterator()
         val (firstCandidate, firstAtom) = iterator.next()
+
+        resolutionCallbacks.recordInlinabilityOfLambda(lambdas.entries)
+
         val results = postponedArgumentsAnalyzer.analyzeLambda(
             firstCandidate.getSystem().asPostponedArgumentsAnalyzerContext(),
             resolutionCallbacks,

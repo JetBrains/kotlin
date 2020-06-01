@@ -99,6 +99,11 @@ public class InlineUtil {
         if (containingFunctionDescriptor == null) return false;
 
         while (canBeInlineArgument(containingFunction) && fromFunction != containingFunctionDescriptor) {
+            Boolean isLambdaDefinitelyInline = bindingContext.get(BindingContext.NEW_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE, containingFunction);
+            if (isLambdaDefinitelyInline != null) {
+                return isLambdaDefinitelyInline;
+            }
+
             if (!isInlinedArgument((KtFunction) containingFunction, bindingContext, true)) {
                 return false;
             }

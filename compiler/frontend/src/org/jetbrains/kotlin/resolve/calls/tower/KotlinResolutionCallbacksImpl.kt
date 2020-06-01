@@ -8,19 +8,14 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnderKotlinPackage
-import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getBinaryWithTypeParent
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.*
@@ -40,6 +35,7 @@ import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
@@ -48,7 +44,6 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 data class LambdaContextInfo(
@@ -315,6 +310,17 @@ class KotlinResolutionCallbacksImpl(
     override fun convertSignedConstantToUnsigned(argument: KotlinCallArgument): IntegerValueTypeConstant? {
         val argumentExpression = argument.psiExpression ?: return null
         return convertSignedConstantToUnsigned(argumentExpression)
+    }
+
+    override fun recordInlinabilityOfLambda(lambdas: Set<Map.Entry<KotlinResolutionCandidate, ResolvedLambdaAtom>>) {
+        val call = lambdas.first().value.atom.psiCallArgument.valueArgument as? KtLambdaArgument ?: return
+        val literal = call.getLambdaExpression()?.functionLiteral ?: return
+        val isLambdaInline = lambdas.all { (candidate, atom) ->
+            if (!InlineUtil.isInline(candidate.resolvedCall.candidateDescriptor)) return
+            val valueParameterDescriptor = candidate.resolvedCall.argumentToCandidateParameter[atom.atom] ?: return
+            InlineUtil.isInlineParameter(valueParameterDescriptor)
+        }.takeIf { it }
+        trace.record(BindingContext.NEW_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE, literal, isLambdaInline)
     }
 
     private fun convertSignedConstantToUnsigned(expression: KtExpression): IntegerValueTypeConstant? {
