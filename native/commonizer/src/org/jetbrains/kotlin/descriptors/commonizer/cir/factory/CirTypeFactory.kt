@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirSimpleTypeImpl
@@ -30,10 +27,11 @@ object CirTypeFactory {
 
     fun create(source: SimpleType): CirSimpleType {
         val abbreviation: SimpleType = (source as? AbbreviatedType)?.abbreviation ?: source
-        val expanded: SimpleType = (source as? AbbreviatedType)?.expandedType ?: source
+        val classifierDescriptor: ClassifierDescriptor = abbreviation.declarationDescriptor
 
         val simpleType = CirSimpleTypeImpl(
-            kind = abbreviation.declarationDescriptor.cirSimpleTypeKind,
+            kind = classifierDescriptor.cirSimpleTypeKind,
+            visibility = (classifierDescriptor as? ClassifierDescriptorWithTypeParameters)?.visibility ?: Visibilities.UNKNOWN,
             fqName = abbreviation.fqNameInterned,
             arguments = abbreviation.arguments.map { projection ->
                 CirTypeProjection(
@@ -44,10 +42,6 @@ object CirTypeFactory {
             },
             isMarkedNullable = abbreviation.isMarkedNullable,
             isDefinitelyNotNullType = abbreviation.isDefinitelyNotNullType,
-            expandedTypeConstructorId = CirTypeConstructorId(
-                fqName = expanded.fqNameInterned,
-                numberOfTypeParameters = expanded.constructor.parameters.size
-            ),
             fqNameWithTypeParameters = source.fqNameWithTypeParameters
         )
 

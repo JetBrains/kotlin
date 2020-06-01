@@ -129,7 +129,7 @@ internal class DeclarationsBuilderVisitor1(
         node.buildDescriptors(components, typeAliasesGroup, data)
         val typeAliases = typeAliasesGroup.toList()
 
-        val commonClass = typeAliases[node.indexOfCommon] as CommonizedClassDescriptor?
+        val commonClass = typeAliases[node.indexOfCommon] as? CommonizedClassDescriptor?
         commonClass?.unsubstitutedMemberScope = CommonizedMemberScope() // empty member scope
         commonClass?.initialize(emptyList()) // no constructors
 

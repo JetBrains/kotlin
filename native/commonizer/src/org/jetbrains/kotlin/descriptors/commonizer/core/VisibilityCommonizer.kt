@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclarationWithVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasVisibility
 
-abstract class VisibilityCommonizer(private val allowPrivate: Boolean) : Commonizer<CirDeclarationWithVisibility, Visibility> {
+abstract class VisibilityCommonizer(private val allowPrivate: Boolean) : Commonizer<CirHasVisibility, Visibility> {
 
     companion object {
         fun lowering(allowPrivate: Boolean = false): VisibilityCommonizer = LoweringVisibilityCommonizer(allowPrivate)
@@ -22,7 +22,7 @@ abstract class VisibilityCommonizer(private val allowPrivate: Boolean) : Commoni
     override val result: Visibility
         get() = temp?.takeIf { it != Visibilities.UNKNOWN } ?: throw IllegalCommonizerStateException()
 
-    override fun commonizeWith(next: CirDeclarationWithVisibility): Boolean {
+    override fun commonizeWith(next: CirHasVisibility): Boolean {
         if (temp == Visibilities.UNKNOWN)
             return false
 
@@ -37,7 +37,7 @@ abstract class VisibilityCommonizer(private val allowPrivate: Boolean) : Commoni
         return temp != Visibilities.UNKNOWN
     }
 
-    protected abstract fun canBeCommonized(next: CirDeclarationWithVisibility): Boolean
+    protected abstract fun canBeCommonized(next: CirHasVisibility): Boolean
     protected abstract fun getNext(current: Visibility, next: Visibility): Visibility
 }
 
@@ -49,7 +49,7 @@ private class LoweringVisibilityCommonizer(allowPrivate: Boolean) : VisibilityCo
     private var atLeastOneVirtualCallableMet = false
     private var atLeastTwoVisibilitiesMet = false
 
-    override fun canBeCommonized(next: CirDeclarationWithVisibility): Boolean {
+    override fun canBeCommonized(next: CirHasVisibility): Boolean {
         if (!atLeastOneVirtualCallableMet)
             atLeastOneVirtualCallableMet = (next as? CirFunctionOrProperty)?.isVirtual() == true
 
@@ -74,7 +74,7 @@ private class LoweringVisibilityCommonizer(allowPrivate: Boolean) : VisibilityCo
  * Make sure that visibilities of all member descriptors are equal and are not private according to [Visibilities.isPrivate].
  */
 private class EqualizingVisibilityCommonizer : VisibilityCommonizer(false) {
-    override fun canBeCommonized(next: CirDeclarationWithVisibility) = true
+    override fun canBeCommonized(next: CirHasVisibility) = true
 
     override fun getNext(current: Visibility, next: Visibility) =
         if (Visibilities.compare(current, next) == 0) current else Visibilities.UNKNOWN

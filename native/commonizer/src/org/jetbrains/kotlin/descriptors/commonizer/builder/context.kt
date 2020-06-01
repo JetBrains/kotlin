@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 /**
  * Temporary caches for constructed descriptors.
  */
-class DeclarationsBuilderCache(dimension: Int) {
+class DeclarationsBuilderCache(private val dimension: Int) {
     init {
         check(dimension > 0)
     }
@@ -43,8 +43,26 @@ class DeclarationsBuilderCache(dimension: Int) {
 
     fun getCachedClasses(fqName: FqName): List<CommonizedClassDescriptor?> = classes.getOrFail(fqName)
 
-    fun getCachedClassifier(fqName: FqName, index: Int): ClassifierDescriptorWithTypeParameters? =
-        classes.getOrNull(fqName)?.get(index) ?: typeAliases.getOrNull(fqName)?.get(index)
+    fun getCachedClassifier(fqName: FqName, index: Int): ClassifierDescriptorWithTypeParameters? {
+        // first, look up for class
+        val classes: CommonizedGroup<CommonizedClassDescriptor>? = classes.getOrNull(fqName)
+        classes?.get(index)?.let { return it }
+
+        // then, for type alias
+        val typeAliases: CommonizedGroup<CommonizedTypeAliasDescriptor>? = typeAliases.getOrNull(fqName)
+        typeAliases?.get(index)?.let { return it }
+
+        val indexOfCommon = dimension - 1
+        if (indexOfCommon != index) {
+            // then, for class from the common fragment
+            classes?.get(indexOfCommon)?.let { return it }
+
+            // then, for type alias from the common fragment
+            typeAliases?.get(indexOfCommon)?.let { return it }
+        }
+
+        return null
+    }
 
     fun cache(index: Int, modules: List<ModuleDescriptorImpl>) {
         this.modules[index] = modules

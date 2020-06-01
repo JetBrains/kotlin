@@ -118,8 +118,8 @@ class CirClassConstructorNode(
 
 class CirTypeAliasNode(
     override val target: List<CirTypeAlias?>,
-    override val common: NullableLazyValue<CirClass>
-) : CirNodeWithFqName<CirTypeAlias, CirClass> {
+    override val common: NullableLazyValue<CirClassifier>
+) : CirNodeWithFqName<CirTypeAlias, CirClassifier> {
     override lateinit var fqName: FqName
 
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =

@@ -31,9 +31,12 @@ interface CirNamedDeclaration : CirDeclaration {
     val name: Name
 }
 
-interface CirDeclarationWithVisibility : CirDeclaration {
+// TODO: merge with [CirDeclarationWithVisibility]
+interface CirHasVisibility {
     val visibility: Visibility
 }
+
+interface CirDeclarationWithVisibility : CirDeclaration, CirHasVisibility
 
 interface CirDeclarationWithModality : CirDeclaration {
     val modality: Modality
