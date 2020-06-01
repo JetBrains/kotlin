@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -536,12 +536,43 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
         }
         require(operation == FirOperation.ASSIGN)
+
+        if (this?.elementType == SAFE_ACCESS_EXPRESSION && this != null) {
+            val safeCallNonAssignment = convert() as? FirSafeCallExpression
+            if (safeCallNonAssignment != null) {
+                return putAssignmentToSafeCall(safeCallNonAssignment, baseSource, value)
+            }
+        }
+
         return buildVariableAssignment {
             source = baseSource
             safe = false
             rValue = value
             calleeReference = initializeLValue(this@generateAssignment) { convert() as? FirQualifiedAccess }
         }
+    }
+
+    // gets a?.{ $subj.x } and turns it to a?.{ $subj.x = v }
+    private fun putAssignmentToSafeCall(
+        safeCallNonAssignment: FirSafeCallExpression,
+        baseSource: FirSourceElement?,
+        value: FirExpression
+    ): FirSafeCallExpression {
+        val nestedAccess = safeCallNonAssignment.regularQualifiedAccess
+
+        val assignment = buildVariableAssignment {
+            source = baseSource
+            safe = false
+            rValue = value
+            calleeReference = nestedAccess.calleeReference
+            explicitReceiver = safeCallNonAssignment.checkedSubject.value
+        }
+
+        safeCallNonAssignment.replaceRegularQualifiedAccess(
+            assignment
+        )
+
+        return safeCallNonAssignment
     }
 
     private fun T.generateAugmentedArraySetCall(

@@ -1699,8 +1699,14 @@ class RawFirBuilder(
                 )
             val firSelector = selector.toFirExpression("Incorrect selector expression")
             if (firSelector is FirModifiableQualifiedAccess) {
-                firSelector.safe = expression is KtSafeQualifiedExpression
-                firSelector.explicitReceiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
+                val receiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
+
+                if (expression is KtSafeQualifiedExpression) {
+                    return firSelector.wrapWithSafeCall(receiver)
+                }
+
+                firSelector.safe = false
+                firSelector.explicitReceiver = receiver
             }
             return firSelector
         }

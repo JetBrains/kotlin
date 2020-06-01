@@ -483,7 +483,11 @@ class ExpressionsConverter(
         }
 
         (firSelector as? FirModifiableQualifiedAccess)?.let {
-            it.safe = isSafe
+            if (isSafe) {
+                return it.wrapWithSafeCall(firReceiver!!)
+            }
+
+            it.safe = false
             it.explicitReceiver = firReceiver
         }
         return firSelector

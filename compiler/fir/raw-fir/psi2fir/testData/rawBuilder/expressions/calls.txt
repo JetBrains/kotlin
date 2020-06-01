@@ -34,9 +34,9 @@ FILE: calls.kt
     }
     public? final? fun testQualified(first: My, second: My?): R|kotlin/Unit| {
         println#(first#.x#)
-        println#(second#?.x#)
+        println#(second#?.{ $subj$.x# })
         first#.foo#()
-        second#?.foo#()
+        second#?.{ $subj$.foo#() }
         first#.copy#().foo#()
         first#.x# = IntegerLiteral(42)
     }

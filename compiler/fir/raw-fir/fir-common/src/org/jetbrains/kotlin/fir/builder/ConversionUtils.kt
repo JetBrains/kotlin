@@ -19,13 +19,20 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.builder.*
+import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
+import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
@@ -478,4 +485,23 @@ private fun FirExpression.checkReceiver(name: String?): Boolean {
     val receiver = explicitReceiver as? FirQualifiedAccessExpression ?: return false
     val receiverName = (receiver.calleeReference as? FirNamedReference)?.name?.asString() ?: return false
     return receiverName == name
+}
+
+fun FirModifiableQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExpression {
+    // TODO: Refactor tree to make FirModifiableQualifiedAccess inherit FirQualifiedAccess
+    require(this is FirQualifiedAccess) {
+        "Safe-call instances are expected to be FirQualifiedAccess, but ${this::class} was found"
+    }
+
+    val checkedSafeCallSubject = buildCheckedSafeCallSubject {
+        this.originalReceiverReference = FirSafeCallOriginalReceiverReference(receiver)
+    }
+
+    explicitReceiver = checkedSafeCallSubject
+    return buildSafeCallExpression {
+        this.receiver = receiver
+        this.checkedSubject = FirSafeCallCheckedSubjectReference(checkedSafeCallSubject)
+        this.regularQualifiedAccess = this@wrapWithSafeCall
+        this.source = this@wrapWithSafeCall.source
+    }
 }
