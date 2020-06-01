@@ -15,12 +15,12 @@ abstract class Flow {
     abstract fun getVariablesInTypeStatements(): Collection<RealVariable>
     abstract fun removeOperations(variable: DataFlowVariable): Collection<Implication>
 
-    abstract val directAliasMap: Map<RealVariable, RealVariable>
+    abstract val directAliasMap: Map<RealVariable, RealVariableAndType>
     abstract val backwardsAliasMap: Map<RealVariable, List<RealVariable>>
 }
 
 fun Flow.unwrapVariable(variable: RealVariable): RealVariable {
-    return directAliasMap[variable] ?: variable
+    return directAliasMap[variable]?.variable ?: variable
 }
 
 abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceContext) {
@@ -53,7 +53,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         shouldRemoveSynthetics: Boolean,
     ): FLOW
 
-    abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariable)
+    abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariableAndType)
     abstract fun removeLocalVariableAlias(flow: FLOW, alias: RealVariable)
 
     protected abstract fun getImplicationsWithVariable(flow: FLOW, variable: DataFlowVariable): Collection<Implication>

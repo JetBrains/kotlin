@@ -9,6 +9,7 @@ import com.google.common.collect.ArrayListMultimap
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 import kotlin.NoSuchElementException
 
@@ -51,7 +52,7 @@ class PersistentFlow : Flow {
      * directAliasMap: { x -> a, y -> a}
      * backwardsAliasMap: { a -> [x, y] }
      */
-    override var directAliasMap: PersistentMap<RealVariable, RealVariable>
+    override var directAliasMap: PersistentMap<RealVariable, RealVariableAndType>
     override var backwardsAliasMap: PersistentMap<RealVariable, PersistentList<RealVariable>>
 
     constructor(previousFlow: PersistentFlow) {
@@ -156,9 +157,9 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
 
     private fun computeAliasesThatDontChange(
         flows: Collection<PersistentFlow>
-    ): MutableMap<RealVariable, RealVariable> {
+    ): MutableMap<RealVariable, RealVariableAndType> {
         val flowsSize = flows.size
-        val aliasedVariablesThatDontChangeAlias = mutableMapOf<RealVariable, RealVariable>()
+        val aliasedVariablesThatDontChangeAlias = mutableMapOf<RealVariable, RealVariableAndType>()
 
         flows.flatMapTo(mutableSetOf()) { it.directAliasMap.keys }.forEach { aliasedVariable ->
             val originals = flows.map { it.directAliasMap[aliasedVariable] ?: return@forEach }
@@ -173,7 +174,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     }
 
     private fun PersistentFlow.addVariableAliases(
-        aliasedVariablesThatDontChangeAlias: MutableMap<RealVariable, RealVariable>
+        aliasedVariablesThatDontChangeAlias: MutableMap<RealVariable, RealVariableAndType>
     ) {
         for ((alias, underlyingVariable) in aliasedVariablesThatDontChangeAlias) {
             addLocalVariableAlias(this, alias, underlyingVariable)
@@ -189,11 +190,11 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
     }
 
-    override fun addLocalVariableAlias(flow: PersistentFlow, alias: RealVariable, underlyingVariable: RealVariable) {
+    override fun addLocalVariableAlias(flow: PersistentFlow, alias: RealVariable, underlyingVariable: RealVariableAndType) {
         removeLocalVariableAlias(flow, alias)
         flow.directAliasMap = flow.directAliasMap.put(alias, underlyingVariable)
         flow.backwardsAliasMap = flow.backwardsAliasMap.put(
-            underlyingVariable,
+            underlyingVariable.variable,
             { persistentListOf(alias) },
             { variables -> variables + alias }
         )
@@ -201,7 +202,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
 
     override fun removeLocalVariableAlias(flow: PersistentFlow, alias: RealVariable) {
         flow.updatedAliasDiff += alias
-        val original = flow.directAliasMap[alias] ?: return
+        val original = flow.directAliasMap[alias]?.variable ?: return
         flow.directAliasMap = flow.directAliasMap.remove(alias)
         val variables = flow.backwardsAliasMap.getValue(original)
         flow.backwardsAliasMap = flow.backwardsAliasMap.put(original, variables - alias)
@@ -220,8 +221,8 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
                 flow = flow.previousFlow!!
             }
         } else {
-            result.exactType += variableUnderAlias.originalType
-            flow.approvedTypeStatements[variableUnderAlias]?.let { result += it }
+            result.exactType.addIfNotNull(variableUnderAlias.originalType)
+            flow.approvedTypeStatements[variableUnderAlias.variable]?.let { result += it }
         }
         return result
     }

@@ -41,7 +41,7 @@ class VariableStorage(private val session: FirSession) {
 
     private fun getOrCreateRealVariable(flow: Flow, symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {
         val variable = getOrCreateRealVariableWithoutUnwrappingAlias(flow, symbol, fir)
-        return flow.directAliasMap[variable] ?: variable
+        return flow.directAliasMap[variable]?.variable ?: variable
     }
 
     private fun FirElement.unwrapElement(): FirElement = when (this) {
@@ -85,13 +85,7 @@ class VariableStorage(private val session: FirSession) {
         }
 
         val receiverVariable = receiver?.let { getOrCreateVariable(flow, it) }
-        val originalType: ConeKotlinType = when (originalFir) {
-            is FirExpression -> originalFir.typeRef.coneTypeUnsafe()
-            is FirProperty -> originalFir.returnTypeRef.coneTypeUnsafe()
-            is FirVariableAssignment -> identifier.symbol.fir.extractReturnType()
-            else -> throw IllegalStateException("Should not be here: $originalFir")
-        }
-        return RealVariable(identifier, isThisReference, receiverVariable, originalType, counter++)
+        return RealVariable(identifier, isThisReference, receiverVariable, counter++)
     }
 
     @JvmName("getOrCreateRealVariableOrNull")

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class DataFlowAnalyzerContext<FLOW : Flow>(
     val graphBuilder: ControlFlowGraphBuilder,
@@ -118,8 +119,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         var variable = variableStorage.getRealVariableWithoutUnwrappingAlias(symbol, qualifiedAccessExpression, flow) ?: return null
         val result = mutableListOf<ConeKotlinType>()
         flow.directAliasMap[variable]?.let {
-            result += it.originalType
-            variable = it
+            result.addIfNotNull(it.originalType)
+            variable = it.variable
         }
         flow.getTypeStatement(variable)?.exactType?.let { result += it }
         return result.takeIf { it.isNotEmpty() }
@@ -783,7 +784,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         variableStorage.getOrCreateRealVariable(flow, initializer.symbol, initializer)?.let { initializerVariable ->
-            logicSystem.addLocalVariableAlias(flow, propertyVariable, initializerVariable)
+            logicSystem.addLocalVariableAlias(
+                flow, propertyVariable,
+                RealVariableAndType(initializerVariable, initializer.coneType)
+            )
             // node.flow.addImplication((propertyVariable notEq null) implies (initializerVariable notEq null))
         }
 
