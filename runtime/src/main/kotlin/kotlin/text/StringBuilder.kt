@@ -886,7 +886,7 @@ public inline fun StringBuilder.setLength(l: Int) = this.setLength(newLength = l
  */
 @Deprecated(
         "Use insertRange(index: Int, csq: CharSequence, start: Int, end: Int) instead",
-        ReplaceWith("insertRange(index, csq ?: "null", start, end)"),
+        ReplaceWith("insertRange(index, csq ?: \"null\", start, end)"),
         DeprecationLevel.WARNING
 )
 @kotlin.internal.InlineOnly
