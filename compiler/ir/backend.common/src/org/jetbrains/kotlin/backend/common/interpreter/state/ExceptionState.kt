@@ -80,11 +80,11 @@ class ExceptionState private constructor(
     }
 
     private fun setMessage(messageValue: String? = null) {
-        setState(Variable(messageProperty.descriptor, Primitive(messageValue, messageProperty.getter!!.returnType)))
+        setField(Variable(messageProperty.descriptor, Primitive(messageValue, messageProperty.getter!!.returnType)))
     }
 
     private fun setCause(causeValue: State?) {
-        setState(Variable(causeProperty.descriptor, causeValue ?: Primitive<Throwable?>(null, causeProperty.getter!!.returnType)))
+        setField(Variable(causeProperty.descriptor, causeValue ?: Primitive<Throwable?>(null, causeProperty.getter!!.returnType)))
     }
 
     fun getMessage(): Primitive<String?> = getState(messageProperty.descriptor) as Primitive<String?>
@@ -104,8 +104,6 @@ class ExceptionState private constructor(
     }
 
     fun getThisAsCauseForException() = ExceptionData(this)
-
-    override fun copy() = ExceptionState(irClass, fields, stackTrace).copyFrom(this)
 
     companion object {
         private fun IrClass.getPropertyByName(name: String): IrProperty {

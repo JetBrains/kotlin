@@ -48,8 +48,6 @@ class Common private constructor(
             .let { getOverridden(it as IrSimpleFunction, this) }
     }
 
-    override fun copy() = Common(irClass, fields).copyFrom(this)
-
     override fun toString(): String {
         return "Common(obj='${irClass.fqNameForIrSerialization}', super=$superClass, values=$fields)"
     }

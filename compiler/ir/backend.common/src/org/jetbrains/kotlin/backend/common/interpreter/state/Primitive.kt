@@ -24,15 +24,6 @@ class Primitive<T>(var value: T, val type: IrType) : State {
         return super.getState(descriptor) ?: this
     }
 
-    override fun setState(newVar: Variable) {
-        newVar.state as? Primitive<T> ?: throw IllegalArgumentException("Cannot set $newVar in current $this")
-        value = newVar.state.value
-    }
-
-    override fun copy(): State {
-        return Primitive(value, type)
-    }
-
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
         val descriptor = expression.symbol.descriptor
         // must add property's getter to declaration's list because they are not present in ir class for primitives

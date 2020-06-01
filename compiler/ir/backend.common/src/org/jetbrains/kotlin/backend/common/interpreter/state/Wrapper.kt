@@ -52,10 +52,6 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
         return MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
     }
 
-    override fun setState(newVar: Variable) {
-        throw UnsupportedOperationException("Method setState is not supported in Wrapper class")
-    }
-
     // this method is used to get correct java method name
     // for example: - method 'get' in kotlin StringBuilder is actually 'charAt' in java StringBuilder
     //              - method 'keys' in kotlin Map is actually 'keySet' in java
@@ -193,8 +189,6 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
             return true
         }
     }
-
-    override fun copy() = Wrapper(value, irClass).copyFrom(this)
 
     override fun toString(): String {
         return "Wrapper(obj='$typeFqName', value=$value)"

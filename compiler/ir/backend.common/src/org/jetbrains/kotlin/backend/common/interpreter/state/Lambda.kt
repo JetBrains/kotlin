@@ -19,16 +19,8 @@ class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State 
     // irFunction is anonymous declaration, but irCall will contain descriptor of invoke method from Function interface
     private val invokeDescriptor = irClass.declarations.single { it.nameForIrSerialization.asString() == "invoke" }.descriptor
 
-    override fun setState(newVar: Variable) {
-        throw UnsupportedOperationException("Method setState is not supported in Lambda class")
-    }
-
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
         return if (invokeDescriptor.equalTo(expression.symbol.descriptor)) irFunction else null
-    }
-
-    override fun copy(): State {
-        return Lambda(irFunction, irClass).apply { this.fields.addAll(this@Lambda.fields) }
     }
 
     override fun toString(): String {

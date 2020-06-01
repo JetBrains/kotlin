@@ -14,8 +14,7 @@ import kotlin.NoSuchElementException
 interface Frame {
     fun addVar(variable: Variable)
     fun addAll(variables: List<Variable>)
-    fun getVariableState(variableDescriptor: DeclarationDescriptor): State
-    fun tryGetVariableState(variableDescriptor: DeclarationDescriptor): State?
+    fun getVariable(variableDescriptor: DeclarationDescriptor): Variable?
     fun getAll(): List<Variable>
     fun contains(descriptor: DeclarationDescriptor): Boolean
     fun pushReturnValue(state: State)
@@ -40,14 +39,9 @@ class InterpreterFrame(
         pool.addAll(variables)
     }
 
-    override fun tryGetVariableState(variableDescriptor: DeclarationDescriptor): State? {
+    override fun getVariable(variableDescriptor: DeclarationDescriptor): Variable? {
         return (if (variableDescriptor is TypeParameterDescriptor) typeArguments else pool)
-            .firstOrNull { it.descriptor.equalTo(variableDescriptor) }?.state
-    }
-
-    override fun getVariableState(variableDescriptor: DeclarationDescriptor): State {
-        return tryGetVariableState(variableDescriptor)
-            ?: throw NoSuchElementException("Frame pool doesn't contains variable with descriptor $variableDescriptor")
+            .firstOrNull { it.descriptor.equalTo(variableDescriptor) }
     }
 
     override fun getAll(): List<Variable> {

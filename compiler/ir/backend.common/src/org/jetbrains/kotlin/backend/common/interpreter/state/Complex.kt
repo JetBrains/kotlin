@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.isInterface
 abstract class Complex(override val irClass: IrClass, override val fields: MutableList<Variable>) : State {
     var superClass: Complex? = null
     var subClass: Complex? = null
+    val interfaces: MutableList<Complex> = mutableListOf() // filled lazily, as needed
     val typeArguments: MutableList<Variable> = mutableListOf()
     var outerClass: Variable? = null
 
@@ -46,21 +47,6 @@ abstract class Complex(override val irClass: IrClass, override val fields: Mutab
 
     private fun contains(variable: Variable) = fields.any { it.descriptor == variable.descriptor }
 
-    override fun setState(newVar: Variable) {
-        when (val oldState = fields.firstOrNull { it.descriptor == newVar.descriptor }) {
-            null -> fields.add(newVar)                          // newVar isn't present in value list
-            else -> fields[fields.indexOf(oldState)] = newVar   // newVar already present
-        }
-    }
-
-    protected fun copyFrom(other: Complex): State {
-        this.superClass = other.superClass
-        this.subClass = other.subClass ?: other
-        this.typeArguments.addAll(other.typeArguments)
-        this.outerClass = other.outerClass
-        return this
-    }
-
     private fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
         val propertyGetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }
         val functions = irClass.declarations.filterIsInstance<IrFunction>()
@@ -70,10 +56,9 @@ abstract class Complex(override val irClass: IrClass, override val fields: Mutab
     private fun getThisOrSuperReceiver(superIrClass: IrClass?): Complex? {
         return when {
             superIrClass == null -> this.getOriginal()
-            superIrClass.isInterface -> {
-                val interfaceState = Common(superIrClass)
-                (this.copy() as Complex).setSuperClassInstance(interfaceState)
-                interfaceState
+            superIrClass.isInterface -> Common(superIrClass).apply {
+                interfaces.add(this)
+                this.subClass = this@Complex
             }
             else -> this.superClass
         }

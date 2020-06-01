@@ -20,16 +20,12 @@ interface State {
         return fields.firstOrNull { it.descriptor.equalTo(descriptor) }?.state
     }
 
-    fun setState(newVar: Variable)
-
-    /**
-     * This method is used for passing a copy of a state.
-     * It is necessary then copy change its state's value, but the original one must remain the same.
-     *
-     * @see copyReceivedValue.kt
-     * @see tryFinally.kt
-     */
-    fun copy(): State
+    fun setField(newVar: Variable) {
+        when (val oldState = fields.firstOrNull { it.descriptor == newVar.descriptor }) {
+            null -> fields.add(newVar)                                      // newVar isn't present in value list
+            else -> fields[fields.indexOf(oldState)].state = newVar.state   // newVar already present
+        }
+    }
 
     fun getIrFunctionByIrCall(expression: IrCall): IrFunction?
 }

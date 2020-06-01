@@ -28,7 +28,7 @@ interface Stack {
     fun clean()
     fun addVar(variable: Variable)
     fun addAll(variables: List<Variable>)
-    fun getVariableState(variableDescriptor: DeclarationDescriptor): State
+    fun getVariable(variableDescriptor: DeclarationDescriptor): Variable
     fun getAll(): List<Variable>
 
     fun contains(descriptor: DeclarationDescriptor): Boolean
@@ -86,8 +86,8 @@ class StackImpl : Stack {
         getCurrentFrame().addAll(variables)
     }
 
-    override fun getVariableState(variableDescriptor: DeclarationDescriptor): State {
-        return getCurrentFrame().getVariableState(variableDescriptor)
+    override fun getVariable(variableDescriptor: DeclarationDescriptor): Variable {
+        return getCurrentFrame().getVariable(variableDescriptor)
     }
 
     override fun getAll(): List<Variable> {
@@ -132,8 +132,8 @@ private class FrameContainer(current: Frame = InterpreterFrame()) {
     fun addVar(variable: Variable) = getTopFrame().addVar(variable)
     fun addAll(variables: List<Variable>) = getTopFrame().addAll(variables)
     fun getAll() = innerStack.flatMap { it.getAll() }
-    fun getVariableState(variableDescriptor: DeclarationDescriptor): State {
-        return innerStack.firstNotNullResult { it.tryGetVariableState(variableDescriptor) }
+    fun getVariable(variableDescriptor: DeclarationDescriptor): Variable {
+        return innerStack.firstNotNullResult { it.getVariable(variableDescriptor) }
             ?: throw InterpreterException("$variableDescriptor not found") // TODO better message
     }
 
