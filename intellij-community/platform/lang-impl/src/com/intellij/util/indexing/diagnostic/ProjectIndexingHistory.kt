@@ -22,6 +22,10 @@ data class ProjectIndexingHistory(val projectName: String) {
 
   val totalStatsPerIndexer = hashMapOf<String /* Index ID */, StatsPerIndexer>()
 
+  var totalNumberOfTooLargeFiles: Int = 0
+  var totalNumberOfFailedToLoadFiles: Int = 0
+  var totalNumberOfFailedToIndexFiles: Int = 0
+
   fun addProviderStatistics(statistics: FileProviderIndexStatistics) {
     // Convert to Json to release memory occupied by statistic values.
     providerStatistics += statistics.toJson()
@@ -50,6 +54,10 @@ data class ProjectIndexingHistory(val projectName: String) {
       totalStats.totalBytes += stats.totalBytes
       totalStats.totalIndexingTimeInAllThreads += stats.indexingTime.sumTime
     }
+
+    totalNumberOfTooLargeFiles += statistics.indexingStatistics.numberOfTooLargeFiles.get()
+    totalNumberOfFailedToLoadFiles += statistics.indexingStatistics.numberOfFailedToLoadFiles.get()
+    totalNumberOfFailedToIndexFiles += statistics.indexingStatistics.numberOfFailedToIndexFiles.get()
   }
 
   data class StatsPerFileType(

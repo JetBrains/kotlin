@@ -8,9 +8,13 @@ import java.time.Instant
 
 fun TimeNano.toMillis(): TimeMillis = this / 1_000_000
 
-fun TimeMillis.toNano(): TimeNano = this * 1_000_000
+// Int value that is greater than zero.
+// Can be used to skip int value from JSON if it is equal to 0 (to not pollute the JSON report).
+typealias PositiveInt = Int?
 
 typealias PresentableTime = String
+
+fun Int.toPositiveInt() = takeIf { it > 0 }
 
 fun FileProviderIndexStatistics.toJson(): JsonFileProviderIndexStatistics {
   val statsPerFileType = aggregateStatsPerFileType()
@@ -21,6 +25,9 @@ fun FileProviderIndexStatistics.toJson(): JsonFileProviderIndexStatistics {
     providerDebugName,
     numberOfFiles,
     JsonTime(totalTime),
+    indexingStatistics.numberOfTooLargeFiles.get().toPositiveInt(),
+    indexingStatistics.numberOfFailedToLoadFiles.get().toPositiveInt(),
+    indexingStatistics.numberOfFailedToIndexFiles.get().toPositiveInt(),
     statsPerFileType.sortedByDescending { it.partOfTotalIndexingTime.percentages },
     statsPerIndexer.sortedByDescending { it.partOfTotalIndexingTime.percentages },
     fastIndexers.map { it.indexId }.sorted()
@@ -97,6 +104,9 @@ fun ProjectIndexingHistory.toJson() =
     projectName,
     providerStatistics.size,
     aggregateTotalNumberOfFiles(),
+    totalNumberOfTooLargeFiles.toPositiveInt(),
+    totalNumberOfFailedToLoadFiles.toPositiveInt(),
+    totalNumberOfFailedToIndexFiles.toPositiveInt(),
     times.toJson(),
     aggregateStatsPerFileType().sortedByDescending { it.partOfTotalIndexingTime.percentages },
     aggregateStatsPerIndexer().sortedByDescending { it.partOfTotalIndexingTime.percentages },

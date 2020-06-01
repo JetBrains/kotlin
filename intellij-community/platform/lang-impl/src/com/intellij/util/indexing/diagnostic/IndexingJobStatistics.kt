@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.diagnostic
 
+import java.util.concurrent.atomic.AtomicInteger
+
 class IndexingJobStatistics {
 
   private val _statsPerIndexer = hashMapOf<String, StatsPerIndexer>()
@@ -10,6 +12,10 @@ class IndexingJobStatistics {
   private val _statsPerFileType = hashMapOf<String, StatsPerFileType>()
   val statsPerFileType: Map<String /* File type name */, StatsPerFileType>
     @Synchronized get() = _statsPerFileType.toMap()
+
+  val numberOfTooLargeFiles = AtomicInteger()
+  val numberOfFailedToLoadFiles = AtomicInteger()
+  val numberOfFailedToIndexFiles = AtomicInteger()
 
   data class StatsPerIndexer(
     val indexingTime: TimeStats,

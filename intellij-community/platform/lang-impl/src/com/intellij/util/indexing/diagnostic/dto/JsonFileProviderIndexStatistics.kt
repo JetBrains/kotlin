@@ -5,6 +5,9 @@ data class JsonFileProviderIndexStatistics(
   val providerName: String,
   val totalNumberOfFiles: Int,
   val totalIndexingTime: JsonTime,
+  val numberOfTooLargeFiles: PositiveInt,
+  val numberOfFailedToLoadFiles: PositiveInt,
+  val numberOfFailedToIndexFiles: PositiveInt,
   val statsPerFileType: List<JsonStatsPerFileType>,
   val statsPerIndexer: List<JsonStatsPerIndexer>,
   val fastIndexers: List<String /* Index ID */>
