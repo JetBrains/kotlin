@@ -16,7 +16,6 @@ import org.gradle.api.artifacts.maven.MavenResolver
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.InvalidPluginException
 import org.gradle.api.plugins.JavaPlugin
@@ -41,7 +40,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
@@ -337,7 +336,7 @@ internal class KotlinJsIrSourceSetProcessor(
     private fun registerJsLink(
         project: Project,
         taskName: String,
-        type: KotlinJsBinaryType,
+        mode: KotlinJsBinaryMode,
         configureAction: (Kotlin2JsCompile) -> Unit
     ): TaskProvider<out KotlinJsIrLink> {
         return tasksProvider.registerKotlinJsIrTask(
@@ -345,7 +344,7 @@ internal class KotlinJsIrSourceSetProcessor(
             taskName,
             kotlinCompilation
         ) { task ->
-            task.type = type
+            task.mode = mode
             configureAction(task)
         }
     }
@@ -363,7 +362,7 @@ internal class KotlinJsIrSourceSetProcessor(
                 registerKotlinCompileTask(
                     binary.linkTaskName
                 ) { project, name, action ->
-                    registerJsLink(project, name, binary.type) { compileTask ->
+                    registerJsLink(project, name, binary.mode) { compileTask ->
                         action(compileTask)
                         compileTask.dependsOn(kotlinTask)
                     }
