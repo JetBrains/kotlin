@@ -84,6 +84,7 @@ class ExternalSystemStorageTest {
     val imported = ModuleManager.getInstance(project).newModule(projectDir.resolve("imported.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
     ModuleRootModificationUtil.addContentRoot(imported, projectDir.resolve("imported").systemIndependentPath)
     ExternalSystemModulePropertyManager.getInstance(imported).setMavenized(true)
+    ExternalSystemModulePropertyManager.getInstance(imported).setLinkedProjectPath("${project.basePath}/imported")
   }
 
   @Test
