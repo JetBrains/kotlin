@@ -13,6 +13,7 @@ expect fun function1(text: String): String
 expect fun <Q : Number> Q.function2(): Q
 
 expect class AnnotatedClass(value: String) { val value: String }
-expect class AnnotatedTypeAlias
+typealias AnnotatedLiftedUpTypeAlias = AnnotatedClass
+expect class AnnotatedNonLiftedUpTypeAlias
 
 //expect object ObjectWithNestedAnnotations

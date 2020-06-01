@@ -1,8 +1,21 @@
 actual class A actual constructor()
-actual typealias B = A
-typealias C = B
-typealias D = List<String>
-typealias E<T> = List<T>
-typealias F<R> = Function<R>
-typealias G = () -> Unit
-typealias H = (String) -> Int
+
+// Lifted up type aliases:
+typealias D = B // class/TA at the RHS
+typealias E = C // different TAs at the RHS
+
+typealias G = List<Int> // different parameterized types at the RHS
+
+typealias I<T> = List<T> // TAs with own parameters with different names
+
+typealias K<T> = Function<T> // function types with different type parameter names
+typealias L<T> = () -> T // different kinds of function types
+typealias N = () -> Any // different return types
+typealias P = (Int) -> Int // different argument types
+
+// Type aliases converted to expect classes:
+actual typealias T = Int
+
+// Nullability:
+actual typealias V = A? // different nullability of the RHS class
+typealias X = U? // different nullability of the RHS TA

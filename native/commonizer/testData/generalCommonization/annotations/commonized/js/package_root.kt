@@ -53,9 +53,13 @@ actual fun <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") 
 @CommonAnnotation("class")
 actual class AnnotatedClass @JsAnnotation("constructor") @CommonAnnotation("constructor") actual constructor(actual val value: String)
 
-@JsAnnotation("type-alias")
-@CommonAnnotation("type-alias")
-actual typealias AnnotatedTypeAlias = AnnotatedClass
+@JsAnnotation("js-only-class")
+@CommonAnnotation("js-only-class")
+class JsOnlyAnnotatedClass @JsAnnotation("js-only-constructor") @CommonAnnotation("js-only-constructor") constructor(val value: String)
+
+@JsAnnotation("non-lifted-up-type-alias")
+@CommonAnnotation("non-lifted-up-type-alias")
+actual typealias AnnotatedNonLiftedUpTypeAlias = JsOnlyAnnotatedClass
 
 //@JsOuterAnnotation(inner = JsInnerAnnotation("nested-annotations"))
 //@CommonOuterAnnotation(inner = CommonInnerAnnotation("nested-annotations"))

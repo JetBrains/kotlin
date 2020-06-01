@@ -53,9 +53,13 @@ actual fun <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter")
 @CommonAnnotation("class")
 actual class AnnotatedClass @JvmAnnotation("constructor") @CommonAnnotation("constructor") actual constructor(actual val value: String)
 
-@JvmAnnotation("type-alias")
-@CommonAnnotation("type-alias")
-actual typealias AnnotatedTypeAlias = AnnotatedClass
+@JvmAnnotation("jvm-only-class")
+@CommonAnnotation("jvm-only-class")
+class JvmOnlyAnnotatedClass @JvmAnnotation("jvm-only-constructor") @CommonAnnotation("jvm-only-constructor") constructor(val value: String)
+
+@JvmAnnotation("non-lifted-up-type-alias")
+@CommonAnnotation("non-lifted-up-type-alias")
+actual typealias AnnotatedNonLiftedUpTypeAlias = JvmOnlyAnnotatedClass
 
 //@JvmOuterAnnotation(inner = JvmInnerAnnotation("nested-annotations"))
 //@CommonOuterAnnotation(inner = CommonInnerAnnotation("nested-annotations"))
