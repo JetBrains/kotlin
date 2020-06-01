@@ -39,8 +39,7 @@ class PropertyCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropert
             setter = setter,
             backingFieldAnnotations = null,
             delegateFieldAnnotations = null,
-            compileTimeInitializer = constCompileTimeInitializer,
-            isLiftedUp = constCompileTimeInitializer != null
+            compileTimeInitializer = constCompileTimeInitializer
         )
     }
 
