@@ -53,9 +53,17 @@ fun <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @Js
 @CommonAnnotation("class")
 class AnnotatedClass @JsAnnotation("constructor") @CommonAnnotation("constructor") constructor(val value: String)
 
-@JsAnnotation("type-alias")
-@CommonAnnotation("type-alias")
-typealias AnnotatedTypeAlias = AnnotatedClass
+@JsAnnotation("js-only-class")
+@CommonAnnotation("js-only-class")
+class JsOnlyAnnotatedClass @JsAnnotation("js-only-constructor") @CommonAnnotation("js-only-constructor") constructor(val value: String)
+
+@JsAnnotation("lifted-up-type-alias")
+@CommonAnnotation("lifted-up-type-alias")
+typealias AnnotatedLiftedUpTypeAlias = AnnotatedClass
+
+@JsAnnotation("non-lifted-up-type-alias")
+@CommonAnnotation("non-lifted-up-type-alias")
+typealias AnnotatedNonLiftedUpTypeAlias = JsOnlyAnnotatedClass
 
 //@JsOuterAnnotation(inner = JsInnerAnnotation("nested-annotations"))
 //@CommonOuterAnnotation(inner = CommonInnerAnnotation("nested-annotations"))
