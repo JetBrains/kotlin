@@ -10,30 +10,22 @@ package org.jetbrains.kotlin.idea
 import com.intellij.featureStatistics.FeatureStatisticsBundleEP
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
-
-private const val CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME = "com.jetbrains.cidr.lang.OCFeatureStatisticsBundleProvider"
+import com.jetbrains.cidr.lang.OCBundle
 
 // Remove the function, when there's no dependency to cidr during running Kotlin tests.
-// BUNCH: as35
 fun registerAdditionalResourceBundleInTests() {
     if (!ApplicationManager.getApplication().isUnitTestMode) {
         return
     }
 
-    val isAlreadyRegistered = FeatureStatisticsBundleEP.EP_NAME.extensions.any { provider ->
-        provider.javaClass.name == CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME
+    val extensionPoint = Extensions.getRootArea().getExtensionPoint(FeatureStatisticsBundleEP.EP_NAME)
+    if (extensionPoint.extensions.none { it.qualifiedName == TestOCBundleProvider.qualifiedName }) {
+        extensionPoint.registerExtension(TestOCBundleProvider)
     }
-    if (isAlreadyRegistered) {
-        return
+}
+
+object TestOCBundleProvider : FeatureStatisticsBundleEP() {
+    init {
+        qualifiedName = OCBundle.BUNDLE
     }
-
-    val cidrFSBundleProviderClass = try {
-        Class.forName(CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME)
-    } catch (_: ClassNotFoundException) {
-        return
-    }
-
-    val cidrFSBundleProvider = cidrFSBundleProviderClass.newInstance() as FeatureStatisticsBundleEP
-
-    Extensions.getRootArea().getExtensionPoint(FeatureStatisticsBundleEP.EP_NAME).registerExtension(cidrFSBundleProvider)
 }
