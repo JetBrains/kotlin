@@ -105,7 +105,7 @@ internal class FakeOverrideGenerator(
                     } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalFunction.allowsToHaveFakeOverrideIn(klass)) {
                         // Trivial fake override case
                         val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideFunction(
-                            session, originalFunction, functionSymbol
+                            session, originalFunction, functionSymbol, derivedClassId = klass.symbol.classId
                         )
                         val fakeOverrideFunction = fakeOverrideSymbol.fir
 
