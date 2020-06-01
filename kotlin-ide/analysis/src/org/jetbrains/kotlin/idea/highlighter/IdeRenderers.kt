@@ -25,6 +25,11 @@ object IdeRenderers {
     }
 
     @JvmField
+    val HTML_COMPATIBILITY_CANDIDATE = Renderer { call: CallableDescriptor ->
+        renderAmbiguousDescriptors(listOf(call))
+    }
+
+    @JvmField
     val HTML_AMBIGUOUS_REFERENCES = Renderer { descriptors: Collection<CallableDescriptor> ->
         renderAmbiguousDescriptors(descriptors)
     }
