@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.cli
 
+import org.jetbrains.kotlin.tools.projectWizard.core.service.EapVersionDownloader
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
@@ -12,6 +13,8 @@ class KotlinVersionProviderTestWizardService : KotlinVersionProviderService, Tes
     override fun getKotlinVersion(): Version = TEST_KOTLIN_VERSION
 
     companion object {
-        val TEST_KOTLIN_VERSION = Version("1.4.0-dev-5730")
+        val TEST_KOTLIN_VERSION by lazy {
+            EapVersionDownloader.getLatestDevVersion()!!
+        }
     }
 }
