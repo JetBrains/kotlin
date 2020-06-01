@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import org.jetbrains.annotations.NotNull;
@@ -31,13 +32,11 @@ public final class DeclarativeInsertHandler implements InsertHandler<LookupEleme
     Project project = editor.getProject();
     if (project != null) {
       CaretModel model = editor.getCaretModel();
-      int moveCount = charCountToMove(editor);
-      String remaining = valueToInsert.substring(moveCount);
-      if (moveCount != 0) {
-        model.moveToOffset(model.getOffset() + moveCount);
+      if (isValueAlreadyHere(editor)) {
+        model.moveToOffset(model.getOffset() + valueToInsert.length());
       }
-      if (!remaining.isEmpty()) {
-        EditorModificationUtil.insertStringAtCaret(editor, remaining);
+      else {
+        EditorModificationUtil.insertStringAtCaret(editor, valueToInsert);
         PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
       }
       if (autoPopup) {
@@ -46,17 +45,12 @@ public final class DeclarativeInsertHandler implements InsertHandler<LookupEleme
     }
   }
 
-  private int charCountToMove(@NotNull Editor editor) {
-    int offset = editor.getCaretModel().getOffset();
-    int valueSize = valueToInsert.length();
-    int idx = 0;
-    Document doc = editor.getDocument();
-    while (offset + idx < doc.getTextLength() &&
-           idx < valueSize &&
-           doc.getCharsSequence().charAt(idx + offset) == valueToInsert.charAt(idx)) {
-      idx++;
-    }
-    return idx;
+  private boolean isValueAlreadyHere(@NotNull Editor editor) {
+    int startOffset = editor.getCaretModel().getOffset();
+    Document document = editor.getDocument();
+    int valueLength = valueToInsert.length();
+    return document.getTextLength() >= startOffset + valueLength &&
+           document.getText(TextRange.create(startOffset, startOffset + valueLength)).equals(valueToInsert);
   }
 
   public final static class Builder {
