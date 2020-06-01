@@ -11,11 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeContext
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker.strictEqualTypes
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
@@ -24,7 +20,7 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
 
     private val context: ConeTypeContext = session.typeContext
 
-    private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean{
+    private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
         val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
         val substitutedBaseType = substitutor.substituteOrSelf(baseType)
         return with(context) {
@@ -76,8 +72,8 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
         overrideCandidate: FirCallableMemberDeclaration<*>,
         baseDeclaration: FirProperty
     ): Boolean {
-        // TODO: substitutor
-        return overrideCandidate is FirProperty &&
-                isEqualReceiverTypes(overrideCandidate.receiverTypeRef, baseDeclaration.receiverTypeRef, ConeSubstitutor.Empty)
+        if (overrideCandidate !is FirProperty) return false
+        val substitutor = getSubstitutorIfTypeParametersAreCompatible(overrideCandidate, baseDeclaration) ?: return false
+        return isEqualReceiverTypes(overrideCandidate.receiverTypeRef, baseDeclaration.receiverTypeRef, substitutor)
     }
 }
