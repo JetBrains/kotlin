@@ -433,6 +433,10 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    private fun declareIrSimpleFunction(signature: IdSignature, factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction): IrSimpleFunction {
+        return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }, factory)
+    }
+
     fun createIrFunction(
         function: FirFunction<*>,
         irParent: IrDeclarationParent?,
@@ -456,7 +460,7 @@ class Fir2IrDeclarationStorage(
             else simpleFunction?.isSuspend == true
         val signature = signatureComposer.composeSignature(function)
         val created = function.convertWithOffsets { startOffset, endOffset ->
-            val result = symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
+            val result = declareIrSimpleFunction(signature) { symbol ->
                 IrFunctionImpl(
                     startOffset, endOffset, updatedOrigin, symbol,
                     name, visibility,
@@ -515,6 +519,10 @@ class Fir2IrDeclarationStorage(
 
     fun getCachedIrConstructor(constructor: FirConstructor): IrConstructor? = constructorCache[constructor]
 
+    private fun declareIrConstructor(signature: IdSignature, factory: (IrConstructorSymbol) -> IrConstructor): IrConstructor {
+        return symbolTable.declareConstructor(signature, { Fir2IrConstructorSymbol(signature) }, factory)
+    }
+
     fun createIrConstructor(
         constructor: FirConstructor,
         irParent: IrClass,
@@ -524,7 +532,7 @@ class Fir2IrDeclarationStorage(
         classifierStorage.preCacheTypeParameters(constructor)
         val signature = signatureComposer.composeSignature(constructor)
         val created = constructor.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareConstructor(signature, { Fir2IrConstructorSymbol(signature) }) { symbol ->
+            declareIrConstructor(signature) { symbol ->
                 IrConstructorImpl(
                     startOffset, endOffset, origin, symbol,
                     Name.special("<init>"), constructor.visibility,
@@ -556,7 +564,7 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunction {
         val prefix = if (isSetter) "set" else "get"
         val signature = signatureComposer.composeAccessorSignature(property, isSetter)
-        return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
+        return declareIrSimpleFunction(signature) { symbol ->
             val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
             IrFunctionImpl(
                 startOffset, endOffset, origin, symbol,
@@ -639,6 +647,10 @@ class Fir2IrDeclarationStorage(
             else -> Visibilities.PRIVATE
         }
 
+    private fun declareIrProperty(signature: IdSignature, factory: (IrPropertySymbol) -> IrProperty): IrProperty {
+        return symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature) }, factory)
+    }
+
     fun createIrProperty(
         property: FirProperty,
         irParent: IrDeclarationParent?,
@@ -648,7 +660,7 @@ class Fir2IrDeclarationStorage(
         classifierStorage.preCacheTypeParameters(property)
         val signature = signatureComposer.composeSignature(property)
         return property.convertWithOffsets { startOffset, endOffset ->
-            val result = symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature) }) { symbol ->
+            val result = declareIrProperty(signature) { symbol ->
                 IrPropertyImpl(
                     startOffset, endOffset, origin, symbol,
                     property.name, property.visibility, property.modality!!,

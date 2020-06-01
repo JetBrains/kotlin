@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.Name
 
@@ -155,6 +156,10 @@ class Fir2IrClassifierStorage(
         return irClass
     }
 
+    private fun declareIrClass(signature: IdSignature, factory: (IrClassSymbol) -> IrClass): IrClass {
+        return symbolTable.declareClass(signature, { Fir2IrClassSymbol(signature) }, factory)
+    }
+
     fun registerIrClass(
         regularClass: FirRegularClass,
         parent: IrDeclarationParent? = null,
@@ -168,7 +173,7 @@ class Fir2IrClassifierStorage(
         }
         val signature = signatureComposer.composeSignature(regularClass)
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareClass(signature, { Fir2IrClassSymbol(signature) }) { symbol ->
+            declareIrClass(signature) { symbol ->
                 IrClassImpl(
                     startOffset,
                     endOffset,
@@ -212,7 +217,7 @@ class Fir2IrClassifierStorage(
         val modality = Modality.FINAL
         val signature = signatureComposer.composeSignature(anonymousObject)
         val result = anonymousObject.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareClass(signature, { Fir2IrClassSymbol(signature) }) { symbol ->
+            declareIrClass(signature) { symbol ->
                 IrClassImpl(
                     startOffset, endOffset, origin, symbol, name,
                     // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
