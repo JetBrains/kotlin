@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -47,6 +45,8 @@ class VariableStorage(private val session: FirSession) {
     private fun FirElement.unwrapElement(): FirElement = when (this) {
         is FirWhenSubjectExpression -> whenSubject.whenExpression.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
         is FirExpressionWithSmartcast -> originalExpression.unwrapElement()
+        is FirSafeCallExpression -> regularQualifiedAccess.unwrapElement()
+        is FirCheckedSafeCallSubject -> originalReceiverReference.value.unwrapElement()
         else -> this
     }
 

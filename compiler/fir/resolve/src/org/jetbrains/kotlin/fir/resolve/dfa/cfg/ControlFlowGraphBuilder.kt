@@ -860,18 +860,18 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Safe calls -----------------------------------
 
-    fun enterSafeCall(qualifiedAccess: FirQualifiedAccess): EnterSafeCallNode {
+    fun enterSafeCall(safeCall: FirSafeCallExpression): EnterSafeCallNode {
         val lastNode = lastNodes.pop()
-        val enterNode = createEnterSafeCallNode(qualifiedAccess)
+        val enterNode = createEnterSafeCallNode(safeCall)
         lastNodes.push(enterNode)
-        val exitNode = createExitSafeCallNode(qualifiedAccess)
+        val exitNode = createExitSafeCallNode(safeCall)
         exitSafeCallNodes.push(exitNode)
         addEdge(lastNode, enterNode)
         addEdge(lastNode, exitNode)
         return enterNode
     }
 
-    fun exitSafeCall(qualifiedAccess: FirQualifiedAccess): ExitSafeCallNode {
+    fun exitSafeCall(safeCall: FirSafeCallExpression): ExitSafeCallNode {
         return exitSafeCallNodes.pop().also {
             addNewSimpleNode(it)
             it.updateDeadStatus()
