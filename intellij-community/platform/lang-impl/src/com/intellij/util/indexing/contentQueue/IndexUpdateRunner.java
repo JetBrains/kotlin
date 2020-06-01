@@ -151,9 +151,10 @@ public final class IndexUpdateRunner {
     }
 
     CachedFileContent fileContent = loadingResult.cachedFileContent;
+    VirtualFile file = fileContent.getVirtualFile();
     try {
-      indexingJob.setLocationBeingIndexed(fileContent.getVirtualFile());
-      if (!fileContent.isDirectory()) {
+      indexingJob.setLocationBeingIndexed(file);
+      if (!file.isDirectory()) {
         FileIndexingStatistics fileIndexingStatistics = ReadAction
           .nonBlocking(() -> myFileBasedIndex.indexFileContent(indexingJob.myProject, fileContent))
           .expireWith(indexingJob.myProject)
@@ -165,13 +166,13 @@ public final class IndexUpdateRunner {
     }
     catch (ProcessCanceledException e) {
       // Push back the file.
-      indexingJob.myQueueOfFiles.add(fileContent.getVirtualFile());
+      indexingJob.myQueueOfFiles.add(file);
       throw e;
     }
     catch (Throwable e) {
       indexingJob.oneMoreFileProcessed();
       indexingJob.myStatistics.getNumberOfFailedToIndexFiles().incrementAndGet();
-      FileBasedIndexImpl.LOG.error("Error while indexing " + fileContent.getVirtualFile().getPresentableUrl() + "\n" +
+      FileBasedIndexImpl.LOG.error("Error while indexing " + file.getPresentableUrl() + "\n" +
                                    "To reindex this file IDEA has to be restarted", e);
     }
     finally {

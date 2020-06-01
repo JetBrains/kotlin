@@ -61,8 +61,4 @@ public final class CachedFileContent extends UserDataHolderBase {
     }
     return myCachedWritable == Boolean.TRUE;
   }
-
-  public boolean isDirectory() {
-    return myVirtualFile.isDirectory();
-  }
 }
