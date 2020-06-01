@@ -28,7 +28,7 @@ digraph safeCallAndEqualityToBool_kt {
                 9 [label="Enter when branch condition "];
                 10 [label="Access variable R|<local>/s|"];
                 11 [label="Enter safe call"];
-                13 [label="Function call: R|<local>/s|?.R|/check|()"];
+                13 [label="Function call: $subj$.R|/check|()"];
                 12 [label="Exit safe call"];
                 14 [label="Const: Boolean(true)"];
                 15 [label="Operator =="];
@@ -98,7 +98,7 @@ digraph safeCallAndEqualityToBool_kt {
                 35 [label="Enter when branch condition "];
                 36 [label="Access variable R|<local>/s|"];
                 37 [label="Enter safe call"];
-                39 [label="Function call: R|<local>/s|?.R|/check|()"];
+                39 [label="Function call: $subj$.R|/check|()"];
                 38 [label="Exit safe call"];
                 40 [label="Const: Boolean(false)"];
                 41 [label="Operator =="];
@@ -168,7 +168,7 @@ digraph safeCallAndEqualityToBool_kt {
                 61 [label="Enter when branch condition "];
                 62 [label="Access variable R|<local>/s|"];
                 63 [label="Enter safe call"];
-                65 [label="Function call: R|<local>/s|?.R|/check|()"];
+                65 [label="Function call: $subj$.R|/check|()"];
                 64 [label="Exit safe call"];
                 66 [label="Const: Boolean(true)"];
                 67 [label="Operator !="];
@@ -238,7 +238,7 @@ digraph safeCallAndEqualityToBool_kt {
                 87 [label="Enter when branch condition "];
                 88 [label="Access variable R|<local>/s|"];
                 89 [label="Enter safe call"];
-                91 [label="Function call: R|<local>/s|?.R|/check|()"];
+                91 [label="Function call: $subj$.R|/check|()"];
                 90 [label="Exit safe call"];
                 92 [label="Const: Boolean(false)"];
                 93 [label="Operator !="];

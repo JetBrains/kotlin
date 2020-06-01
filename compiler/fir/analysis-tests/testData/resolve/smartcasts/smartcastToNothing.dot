@@ -209,7 +209,7 @@ digraph smartcastToNothing_kt {
         }
         91 [label="Call arguments union" style="filled" fillcolor=yellow];
         89 [label="Postponed exit from lambda"];
-        90 [label="Function call: R|<local>/s|?.R|kotlin/let|<R|A|, R|kotlin/Int|>(...)"];
+        90 [label="Function call: $subj$.R|kotlin/let|<R|A|, R|kotlin/Int|>(...)"];
         87 [label="Exit safe call"];
         48 [label="Exit function test_0" style="filled" fillcolor=red];
     }

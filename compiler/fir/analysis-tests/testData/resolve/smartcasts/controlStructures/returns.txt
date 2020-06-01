@@ -74,7 +74,7 @@ FILE: returns.kt
         }
     public final fun test_4(a: R|kotlin/Any?|): R|kotlin/Unit| {
         lval s: R|kotlin/String?| = (R|<local>/a| as? R|kotlin/String|)
-        lval length: R|kotlin/Int| = when (lval <elvis>: R|kotlin/Int?| = R|<local>/s|?.R|/ext|) {
+        lval length: R|kotlin/Int| = when (lval <elvis>: R|kotlin/Int?| = R|<local>/s|?.{ $subj$.R|/ext| }) {
             ==($subj$, Null(null)) ->  {
                 ^test_4 Unit
             }

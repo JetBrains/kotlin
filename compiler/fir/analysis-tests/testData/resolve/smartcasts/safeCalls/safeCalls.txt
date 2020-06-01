@@ -5,7 +5,7 @@ FILE: safeCalls.kt
     public final fun R|kotlin/String|.let(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test(x: R|kotlin/String?|): R|kotlin/Unit| {
-        R|<local>/x|?.R|/foo|(==(R|<local>/x|.R|kotlin/String.length|, Int(1)))
+        R|<local>/x|?.{ $subj$.R|/foo|(==(R|<local>/x|.R|kotlin/String.length|, Int(1))) }
         R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
     }
     public abstract interface A : R|kotlin/Any| {
@@ -17,24 +17,24 @@ FILE: safeCalls.kt
 
     }
     public final fun test_2(x: R|kotlin/Any|): R|kotlin/Unit| {
-        (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)
+        (R|<local>/x| as? R|A|)?.{ $subj$.R|/A.bar|(R|<local>/x|) }
     }
     public final fun test_3(x: R|kotlin/Any|): R|kotlin/Unit| {
-        (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)?.R|/foo|(R|<local>/x|.R|/A.bool|())?.R|/let|(<L> = let@fun <anonymous>(): R|kotlin/Unit| {
+        (R|<local>/x| as? R|A|)?.{ $subj$.R|/A.bar|(R|<local>/x|) }?.{ $subj$.R|/foo|(R|<local>/x|.R|/A.bool|()) }?.{ $subj$.R|/let|(<L> = let@fun <anonymous>(): R|kotlin/Unit| {
             ^ R|<local>/x|.R|/A.bool|()
         }
-        )
+        ) }
         R|<local>/x|.<Unresolved name: bool>#()
     }
     public final fun test_4(x: R|A?|): R|kotlin/Unit| {
-        R|<local>/x|?.R|/A.id|()?.R|/A.bool|()
+        R|<local>/x|?.{ $subj$.R|/A.id|() }?.{ $subj$.R|/A.bool|() }
         R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()
     }
     public final fun R|kotlin/Any?|.boo(b: R|kotlin/Boolean|): R|kotlin/Unit|
     public final fun test_5(x: R|A?|): R|kotlin/Unit| {
-        R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
+        R|<local>/x|?.{ $subj$.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
             ^test_5 Unit
         }
-        )?.R|/boo|(R|<local>/x|.R|/A.bool|())
+        ) }?.{ $subj$.R|/boo|(R|<local>/x|.R|/A.bool|()) }
         R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()
     }

@@ -114,7 +114,7 @@ digraph assignSafeCall_kt {
         38 [label="Enter function test_2" style="filled" fillcolor=red];
         40 [label="Access variable R|<local>/a|"];
         41 [label="Enter safe call"];
-        43 [label="Function call: R|<local>/a|?.R|/A.foo|()"];
+        43 [label="Function call: $subj$.R|/A.foo|()"];
         42 [label="Exit safe call"];
         44 [label="Variable declaration: lval x: R|kotlin/Int?|"];
         subgraph cluster_11 {
@@ -333,7 +333,7 @@ digraph assignSafeCall_kt {
         119 [label="Enter function test_2" style="filled" fillcolor=red];
         121 [label="Access variable R|<local>/a|"];
         122 [label="Enter safe call"];
-        124 [label="Function call: R|<local>/a|?.R|/B.foo|()"];
+        124 [label="Function call: $subj$.R|/B.foo|()"];
         123 [label="Exit safe call"];
         125 [label="Variable declaration: lval x: R|kotlin/Int?|"];
         subgraph cluster_30 {

@@ -16,7 +16,7 @@ FILE: assignSafeCall.kt
 
     }
     public final fun test_1(a: R|A?|): R|kotlin/Unit| {
-        lval x: R|kotlin/Int?| = R|<local>/a|?.R|/A.x|
+        lval x: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|/A.x| }
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/a|.R|/A.bar|()
@@ -25,7 +25,7 @@ FILE: assignSafeCall.kt
 
     }
     public final fun test_2(a: R|A?|): R|kotlin/Unit| {
-        lval x: R|kotlin/Int?| = R|<local>/a|?.R|/A.foo|()
+        lval x: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|/A.foo|() }
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/a|.R|/A.bar|()
@@ -56,7 +56,7 @@ FILE: assignSafeCall.kt
 
     }
     public final fun test_1(a: R|B?|): R|kotlin/Unit| {
-        lval x: R|kotlin/Int?| = R|<local>/a|?.R|/B.x|
+        lval x: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|/B.x| }
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/a|.R|/B.bar|()
@@ -65,7 +65,7 @@ FILE: assignSafeCall.kt
 
     }
     public final fun test_2(a: R|B?|): R|kotlin/Unit| {
-        lval x: R|kotlin/Int?| = R|<local>/a|?.R|/B.foo|()
+        lval x: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|/B.foo|() }
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/a|.R|/B.bar|()

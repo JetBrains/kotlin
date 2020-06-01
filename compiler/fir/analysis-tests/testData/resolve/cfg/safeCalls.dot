@@ -62,10 +62,10 @@ digraph safeCalls_kt {
         16 [label="Enter function test_1" style="filled" fillcolor=red];
         18 [label="Access variable R|<local>/x|"];
         19 [label="Enter safe call"];
-        21 [label="Function call: R|<local>/x|?.R|/A.foo|()"];
+        21 [label="Function call: $subj$.R|/A.foo|()"];
         20 [label="Exit safe call"];
         22 [label="Enter safe call"];
-        24 [label="Function call: R|<local>/x|?.R|/A.foo|()?.R|/A.bar|()"];
+        24 [label="Function call: $subj$.R|/A.bar|()"];
         23 [label="Exit safe call"];
         17 [label="Exit function test_1" style="filled" fillcolor=red];
     }

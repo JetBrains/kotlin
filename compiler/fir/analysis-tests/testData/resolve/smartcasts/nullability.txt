@@ -99,7 +99,7 @@ FILE: nullability.kt
     }
     public final fun test_4(x: R|A?|): R|kotlin/Unit| {
         when () {
-            ==(R|<local>/x|?.R|/A.getA|(), Null(null)) ->  {
+            ==(R|<local>/x|?.{ $subj$.R|/A.getA|() }, Null(null)) ->  {
                 ^test_4 Unit
             }
         }
@@ -108,7 +108,7 @@ FILE: nullability.kt
     }
     public final fun test_5(q: R|Q?|): R|kotlin/Unit| {
         when () {
-            !=(R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
+            !=(R|<local>/q|?.{ $subj$.R|/Q.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
                 R|<local>/q|.R|/Q.data|
                 R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
                 R|<local>/q|.R|/Q.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()
@@ -117,7 +117,7 @@ FILE: nullability.kt
 
     }
     public final fun test_6(q: R|Q?|): R|kotlin/Unit| {
-        when (lval <elvis>: R|kotlin/Int?| = R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|()) {
+        when (lval <elvis>: R|kotlin/Int?| = R|<local>/q|?.{ $subj$.R|/Q.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }) {
             ==($subj$, Null(null)) ->  {
                 ^test_6 Unit
             }
@@ -132,7 +132,7 @@ FILE: nullability.kt
     }
     public final fun test_7(q: R|Q?|): R|kotlin/Unit| {
         when () {
-            !=(R|<local>/q|?.R|/Q.fdata|()?.R|/MyData.fs|()?.R|kotlin/Int.inc|(), Null(null)) ->  {
+            !=(R|<local>/q|?.{ $subj$.R|/Q.fdata|() }?.{ $subj$.R|/MyData.fs|() }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
                 R|<local>/q|.R|/Q.fdata|()
                 R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#()
                 R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#().<Unresolved name: inc>#()
@@ -210,7 +210,7 @@ FILE: nullability.kt
     }
     public final fun test_11(q: R|QImpl?|, q2: R|QImpl|): R|kotlin/Unit| {
         when () {
-            !=(R|<local>/q|?.R|/QImpl.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
+            !=(R|<local>/q|?.{ $subj$.R|/QImpl.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
                 R|<local>/q|.R|/QImpl.data|
                 R|<local>/q|.R|/QImpl.data|.R|/MyData.s|
                 R|<local>/q|.R|/QImpl.data|.R|/MyData.s|.R|kotlin/Int.inc|()
@@ -230,7 +230,7 @@ FILE: nullability.kt
     }
     public final fun test_12(q: R|QImplWithCustomGetter?|): R|kotlin/Unit| {
         when () {
-            !=(R|<local>/q|?.R|/QImplWithCustomGetter.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
+            !=(R|<local>/q|?.{ $subj$.R|/QImplWithCustomGetter.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
                 R|<local>/q|.R|/QImplWithCustomGetter.data|
                 R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
                 R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()
@@ -240,7 +240,7 @@ FILE: nullability.kt
     }
     public final fun test_13(q: R|QImplMutable?|): R|kotlin/Unit| {
         when () {
-            !=(R|<local>/q|?.R|/QImplMutable.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
+            !=(R|<local>/q|?.{ $subj$.R|/QImplMutable.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
                 R|<local>/q|.R|/QImplMutable.data|
                 R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#
                 R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(WRONG_RECEIVER): [/MyData.s]>#.<Unresolved name: inc>#()

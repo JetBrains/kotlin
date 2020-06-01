@@ -440,7 +440,7 @@ digraph nullability_kt {
                 150 [label="Enter when branch condition "];
                 151 [label="Access variable R|<local>/x|"];
                 152 [label="Enter safe call"];
-                154 [label="Function call: R|<local>/x|?.R|/A.getA|()"];
+                154 [label="Function call: $subj$.R|/A.getA|()"];
                 153 [label="Exit safe call"];
                 155 [label="Const: Null(null)"];
                 156 [label="Operator =="];
@@ -501,7 +501,7 @@ digraph nullability_kt {
                 178 [label="Access variable R|/MyData.s|"];
                 177 [label="Exit safe call"];
                 179 [label="Enter safe call"];
-                181 [label="Function call: R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|()"];
+                181 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
                 180 [label="Exit safe call"];
                 182 [label="Const: Null(null)"];
                 183 [label="Operator !="];
@@ -574,7 +574,7 @@ digraph nullability_kt {
             209 [label="Access variable R|/MyData.s|"];
             208 [label="Exit safe call"];
             210 [label="Enter safe call"];
-            212 [label="Function call: R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|()"];
+            212 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
             211 [label="Exit safe call"];
             213 [label="Variable declaration: lval <elvis>: R|kotlin/Int?|"];
             subgraph cluster_55 {
@@ -672,13 +672,13 @@ digraph nullability_kt {
                 244 [label="Enter when branch condition "];
                 245 [label="Access variable R|<local>/q|"];
                 246 [label="Enter safe call"];
-                248 [label="Function call: R|<local>/q|?.R|/Q.fdata|()"];
+                248 [label="Function call: $subj$.R|/Q.fdata|()"];
                 247 [label="Exit safe call"];
                 249 [label="Enter safe call"];
-                251 [label="Function call: R|<local>/q|?.R|/Q.fdata|()?.R|/MyData.fs|()"];
+                251 [label="Function call: $subj$.R|/MyData.fs|()"];
                 250 [label="Exit safe call"];
                 252 [label="Enter safe call"];
-                254 [label="Function call: R|<local>/q|?.R|/Q.fdata|()?.R|/MyData.fs|()?.R|kotlin/Int.inc|()"];
+                254 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
                 253 [label="Exit safe call"];
                 255 [label="Const: Null(null)"];
                 256 [label="Operator !="];
@@ -1140,7 +1140,7 @@ digraph nullability_kt {
                 431 [label="Access variable R|/MyData.s|"];
                 430 [label="Exit safe call"];
                 432 [label="Enter safe call"];
-                434 [label="Function call: R|<local>/q|?.R|/QImpl.data|?.R|/MyData.s|?.R|kotlin/Int.inc|()"];
+                434 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
                 433 [label="Exit safe call"];
                 435 [label="Const: Null(null)"];
                 436 [label="Operator !="];
@@ -1283,7 +1283,7 @@ digraph nullability_kt {
                 492 [label="Access variable R|/MyData.s|"];
                 491 [label="Exit safe call"];
                 493 [label="Enter safe call"];
-                495 [label="Function call: R|<local>/q|?.R|/QImplWithCustomGetter.data|?.R|/MyData.s|?.R|kotlin/Int.inc|()"];
+                495 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
                 494 [label="Exit safe call"];
                 496 [label="Const: Null(null)"];
                 497 [label="Operator !="];
@@ -1359,7 +1359,7 @@ digraph nullability_kt {
                 524 [label="Access variable R|/MyData.s|"];
                 523 [label="Exit safe call"];
                 525 [label="Enter safe call"];
-                527 [label="Function call: R|<local>/q|?.R|/QImplMutable.data|?.R|/MyData.s|?.R|kotlin/Int.inc|()"];
+                527 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
                 526 [label="Exit safe call"];
                 528 [label="Const: Null(null)"];
                 529 [label="Operator !="];

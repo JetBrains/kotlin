@@ -76,7 +76,7 @@ digraph functionCallBound_kt {
                 25 [label="Access variable R|<local>/base|"];
                 26 [label="Type operator: (R|<local>/base| as? R|Sub|)"];
                 27 [label="Enter safe call"];
-                29 [label="Function call: (R|<local>/base| as? R|Sub|)?.R|/isOk|()"];
+                29 [label="Function call: $subj$.R|/isOk|()"];
                 28 [label="Exit safe call"];
                 30 [label="Const: Boolean(true)"];
                 31 [label="Operator =="];
@@ -107,7 +107,7 @@ digraph functionCallBound_kt {
             23 [label="Exit when"];
         }
         46 [label="Jump: ^check when () {
-    ==((R|<local>/base| as? R|Sub|)?.R|/isOk|(), Boolean(true)) ->  {
+    ==((R|<local>/base| as? R|Sub|)?.{ $subj$.R|/isOk|() }, Boolean(true)) ->  {
         R|<local>/base|.R|/Sub.data|
     }
     else ->  {

@@ -16,7 +16,7 @@ FILE: test.kt
         R|<local>/resolvedCall|.R|/ResolvedCall.resultingDescriptor|.R|/name|
         lval resolvedDescriptor: R|D?| = R|<local>/resolvedCall|.R|/ResolvedCall.candidateDescriptor|
         when () {
-            !=(R|<local>/resolvedDescriptor|?.R|/correct|(), Boolean(true)) ->  {
+            !=(R|<local>/resolvedDescriptor|?.{ $subj$.R|/correct|() }, Boolean(true)) ->  {
                 ^test Unit
             }
         }

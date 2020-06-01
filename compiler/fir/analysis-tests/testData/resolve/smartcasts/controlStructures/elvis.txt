@@ -8,7 +8,7 @@ FILE: elvis.kt
     }
     public final fun test_1(x: R|A?|): R|kotlin/Unit| {
         when () {
-            when (lval <elvis>: R|kotlin/Boolean?| = R|<local>/x|?.R|/A.b|) {
+            when (lval <elvis>: R|kotlin/Boolean?| = R|<local>/x|?.{ $subj$.R|/A.b| }) {
                 ==($subj$, Null(null)) ->  {
                     ^test_1 Unit
                 }

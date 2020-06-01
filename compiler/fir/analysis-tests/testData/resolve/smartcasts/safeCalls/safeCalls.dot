@@ -33,7 +33,7 @@ digraph safeCalls_kt {
         13 [label="Access variable R|kotlin/String.length|"];
         14 [label="Const: Int(1)"];
         15 [label="Operator =="];
-        16 [label="Function call: R|<local>/x|?.R|/foo|(...)"];
+        16 [label="Function call: $subj$.R|/foo|(...)"];
         11 [label="Exit safe call"];
         17 [label="Access variable R|<local>/x|"];
         18 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
@@ -86,7 +86,7 @@ digraph safeCalls_kt {
         30 [label="Type operator: (R|<local>/x| as? R|A|)"];
         31 [label="Enter safe call"];
         33 [label="Access variable R|<local>/x|"];
-        34 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(...)"];
+        34 [label="Function call: $subj$.R|/A.bar|(...)"];
         32 [label="Exit safe call"];
         28 [label="Exit function test_2" style="filled" fillcolor=red];
     }
@@ -105,12 +105,12 @@ digraph safeCalls_kt {
         38 [label="Type operator: (R|<local>/x| as? R|A|)"];
         39 [label="Enter safe call"];
         41 [label="Access variable R|<local>/x|"];
-        42 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(...)"];
+        42 [label="Function call: $subj$.R|/A.bar|(...)"];
         40 [label="Exit safe call"];
         43 [label="Enter safe call"];
         45 [label="Access variable R|<local>/x|"];
         46 [label="Function call: R|<local>/x|.R|/A.bool|()"];
-        47 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(...)?.R|/foo|(...)"];
+        47 [label="Function call: $subj$.R|/foo|(...)"];
         44 [label="Exit safe call"];
         48 [label="Enter safe call"];
         50 [label="Postponed enter to lambda"];
@@ -122,7 +122,7 @@ digraph safeCalls_kt {
             56 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
         51 [label="Postponed exit from lambda"];
-        52 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(...)?.R|/foo|(...)?.R|/let|(...)"];
+        52 [label="Function call: $subj$.R|/let|(...)"];
         49 [label="Exit safe call"];
         53 [label="Access variable R|<local>/x|"];
         54 [label="Function call: R|<local>/x|.<Unresolved name: bool>#()"];
@@ -157,10 +157,10 @@ digraph safeCalls_kt {
         59 [label="Enter function test_4" style="filled" fillcolor=red];
         61 [label="Access variable R|<local>/x|"];
         62 [label="Enter safe call"];
-        64 [label="Function call: R|<local>/x|?.R|/A.id|()"];
+        64 [label="Function call: $subj$.R|/A.id|()"];
         63 [label="Exit safe call"];
         65 [label="Enter safe call"];
-        67 [label="Function call: R|<local>/x|?.R|/A.id|()?.R|/A.bool|()"];
+        67 [label="Function call: $subj$.R|/A.bool|()"];
         66 [label="Exit safe call"];
         68 [label="Access variable R|<local>/x|"];
         69 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
@@ -192,45 +192,47 @@ digraph safeCalls_kt {
         77 [label="Postponed enter to lambda"];
         subgraph cluster_13 {
             color=blue
-            88 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-            90 [label="Jump: ^test_5 Unit"];
-            91 [label="Stub" style="filled" fillcolor=gray];
-            89 [label="Exit function anonymousFunction" style="filled" fillcolor=red style="filled" fillcolor=gray];
+            89 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+            91 [label="Jump: ^test_5 Unit"];
+            92 [label="Stub" style="filled" fillcolor=gray];
+            90 [label="Exit function anonymousFunction" style="filled" fillcolor=red style="filled" fillcolor=gray];
         }
         80 [label="Call arguments union" style="filled" fillcolor=gray];
         78 [label="Postponed exit from lambda"];
-        79 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)" style="filled" fillcolor=gray];
+        79 [label="Function call: $subj$.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)" style="filled" fillcolor=gray];
+        81 [label="Stub" style="filled" fillcolor=gray];
         76 [label="Exit safe call"];
-        81 [label="Enter safe call"];
-        83 [label="Access variable R|<local>/x|"];
-        84 [label="Function call: R|<local>/x|.R|/A.bool|()"];
-        85 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)?.R|/boo|(...)"];
-        82 [label="Exit safe call"];
-        86 [label="Access variable R|<local>/x|"];
-        87 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
+        82 [label="Enter safe call"];
+        84 [label="Access variable R|<local>/x|"];
+        85 [label="Function call: R|<local>/x|.R|/A.bool|()"];
+        86 [label="Function call: $subj$.R|/boo|(...)"];
+        83 [label="Exit safe call"];
+        87 [label="Access variable R|<local>/x|"];
+        88 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
         73 [label="Exit function test_5" style="filled" fillcolor=red];
     }
     72 -> {74};
     74 -> {75 76};
     75 -> {77};
-    76 -> {81 82};
-    77 -> {88};
+    76 -> {82 83};
+    77 -> {89};
     77 -> {78} [color=red];
     78 -> {79} [color=green];
-    79 -> {76} [style=dotted];
+    79 -> {73 81} [style=dotted];
     80 -> {79} [style=dotted];
-    81 -> {83};
-    82 -> {86};
-    83 -> {84};
+    81 -> {76} [style=dotted];
+    82 -> {84};
+    83 -> {87};
     84 -> {85};
-    85 -> {82};
-    86 -> {87};
-    87 -> {73};
-    88 -> {90};
-    89 -> {80} [style=dotted];
-    89 -> {78} [color=green];
-    90 -> {73};
-    90 -> {91} [style=dotted];
-    91 -> {89} [style=dotted];
+    85 -> {86};
+    86 -> {83};
+    87 -> {88};
+    88 -> {73} [style=dotted];
+    89 -> {91};
+    90 -> {80} [style=dotted];
+    90 -> {78} [color=green];
+    91 -> {73};
+    91 -> {92} [style=dotted];
+    92 -> {90} [style=dotted];
 
 }
