@@ -164,7 +164,8 @@ public final class IndexUpdateRunner {
       indexingJob.oneMoreFileProcessed();
     }
     catch (ProcessCanceledException e) {
-      pushBackFile(indexingJob, fileContent);
+      // Push back the file.
+      indexingJob.myQueueOfFiles.add(fileContent.getVirtualFile());
       throw e;
     }
     catch (Throwable e) {
@@ -176,10 +177,6 @@ public final class IndexUpdateRunner {
     finally {
       signalThatFileIsUnloaded(loadingResult.fileLength);
     }
-  }
-
-  private static void pushBackFile(@NotNull IndexingJob indexingJob, @NotNull CachedFileContent fileContent) {
-    indexingJob.myQueueOfFiles.add(fileContent.getVirtualFile());
   }
 
   @Nullable
