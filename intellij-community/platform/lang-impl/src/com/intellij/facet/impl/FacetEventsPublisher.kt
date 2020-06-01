@@ -175,7 +175,7 @@ class FacetEventsPublisher(private val project: Project) {
 
   @Suppress("UNCHECKED_CAST")
   private inline fun <F : Facet<*>> processListeners(facetType: FacetType<F, *>, action: (ProjectFacetListener<F>) -> Unit) {
-    for (listenerEP in LISTENER_EP.getByGroupingKey<String>(facetType.stringId, LISTENER_EP_CACHE_KEY)) {
+    for (listenerEP in LISTENER_EP.getByGroupingKey<String>(facetType.stringId, LISTENER_EP_CACHE_KEY::class.java, LISTENER_EP_CACHE_KEY)) {
       action(listenerEP.listenerInstance as ProjectFacetListener<F>)
     }
     manuallyRegisteredListeners.filter { it.first == facetType.id }.forEach {
@@ -185,7 +185,7 @@ class FacetEventsPublisher(private val project: Project) {
 
   @Suppress("UNCHECKED_CAST")
   private inline fun processListeners(action: (ProjectFacetListener<Facet<*>>) -> Unit) {
-    for (listenerEP in LISTENER_EP.getByGroupingKey<String>(ANY_TYPE, LISTENER_EP_CACHE_KEY)) {
+    for (listenerEP in LISTENER_EP.getByGroupingKey<String>(ANY_TYPE, LISTENER_EP_CACHE_KEY::class.java, LISTENER_EP_CACHE_KEY)) {
       action(listenerEP.listenerInstance as ProjectFacetListener<Facet<*>>)
     }
     manuallyRegisteredListeners.filter { it.first == null }.forEach {

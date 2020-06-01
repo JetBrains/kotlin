@@ -1079,7 +1079,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
         startLine > 0 ? myEditor.getFoldingModel().getCollapsedRegionAtOffset(document.getLineStartOffset(startLine - 1)) : null;
       String lastFoldingFqn = USED_FOLDING_FQN_KEY.get(existingRegion);
       ConsoleFolding lastFolding = lastFoldingFqn != null
-                                   ? ConsoleFolding.EP_NAME.getByKey(lastFoldingFqn, consoleFolding -> consoleFolding.getClass().getName())
+                                   ? ConsoleFolding.EP_NAME.getByKey(lastFoldingFqn, ConsoleViewImpl.class, consoleFolding -> consoleFolding.getClass().getName())
                                    : null;
       int lastStartLine = lastFolding == null ? Integer.MAX_VALUE :
                           existingRegion.getStartOffset() == 0 ? 0 :

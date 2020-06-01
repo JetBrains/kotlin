@@ -90,7 +90,7 @@ public final class StructureViewFactoryImpl extends StructureViewFactoryEx imple
     for (StructureViewExtension extension : point.getExtensionList()) {
       Class<? extends PsiElement> registeredType = extension.getType();
       if (ReflectionUtil.isAssignable(registeredType, type) && visitedTypes.add(registeredType)) {
-        result.addAll(ExtensionProcessingHelper.getByGroupingKey(point, registeredType, StructureViewExtension::getType));
+        result.addAll(ExtensionProcessingHelper.getByGroupingKey(point, StructureViewExtension.class, registeredType, StructureViewExtension::getType));
       }
     }
 

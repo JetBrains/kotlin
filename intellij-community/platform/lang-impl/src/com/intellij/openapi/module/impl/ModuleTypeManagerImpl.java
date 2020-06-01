@@ -75,7 +75,7 @@ public class ModuleTypeManagerImpl extends ModuleTypeManager {
       }
     }
 
-    ModuleTypeEP result = EP_NAME.getByKey(moduleTypeId, it -> it.id);
+    ModuleTypeEP result = EP_NAME.getByKey(moduleTypeId, ModuleTypeManagerImpl.class, it -> it.id);
     if (result != null) {
       return result.getModuleType();
     }
