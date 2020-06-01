@@ -22,7 +22,6 @@ data class ProjectIndexingHistory(val projectName: String) {
 
   val totalStatsPerIndexer = hashMapOf<String /* Index ID */, StatsPerIndexer>()
 
-  @Synchronized
   fun addProviderStatistics(statistics: FileProviderIndexStatistics) {
     // Convert to Json to release memory occupied by statistic values.
     providerStatistics += statistics.toJson()
