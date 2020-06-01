@@ -42,42 +42,42 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: Byte): Int
+    public override infix operator fun compareTo(other: Byte): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Short): Int
+    public infix operator fun compareTo(other: Short): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Int): Int
+    public infix operator fun compareTo(other: Int): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Long): Int
+    public infix operator fun compareTo(other: Long): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Float): Int
+    public infix operator fun compareTo(other: Float): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Double): Int
+    public infix operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
     public operator fun plus(other: Byte): Int
@@ -258,42 +258,42 @@ public class Short private constructor() : Number(), Comparable<Short> {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Byte): Int
+    public infix operator fun compareTo(other: Byte): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: Short): Int
+    public override infix operator fun compareTo(other: Short): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Int): Int
+    public infix operator fun compareTo(other: Int): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Long): Int
+    public infix operator fun compareTo(other: Long): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Float): Int
+    public infix operator fun compareTo(other: Float): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Double): Int
+    public infix operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
     public operator fun plus(other: Byte): Int
@@ -472,42 +472,42 @@ public class Int private constructor() : Number(), Comparable<Int> {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Byte): Int
+    public infix operator fun compareTo(other: Byte): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Short): Int
+    public infix operator fun compareTo(other: Short): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: Int): Int
+    public override infix operator fun compareTo(other: Int): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Long): Int
+    public infix operator fun compareTo(other: Long): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Float): Int
+    public infix operator fun compareTo(other: Float): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Double): Int
+    public infix operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
     public operator fun plus(other: Byte): Int
@@ -720,42 +720,42 @@ public class Float private constructor() : Number(), Comparable<Float> {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Byte): Int
+    public infix operator fun compareTo(other: Byte): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Short): Int
+    public infix operator fun compareTo(other: Short): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Int): Int
+    public infix operator fun compareTo(other: Int): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Long): Int
+    public infix operator fun compareTo(other: Long): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: Float): Int
+    public override infix operator fun compareTo(other: Float): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Double): Int
+    public infix operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
     public operator fun plus(other: Byte): Float
@@ -937,42 +937,42 @@ public class Double private constructor() : Number(), Comparable<Double> {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Byte): Int
+    public infix operator fun compareTo(other: Byte): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Short): Int
+    public infix operator fun compareTo(other: Short): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Int): Int
+    public infix operator fun compareTo(other: Int): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Long): Int
+    public infix operator fun compareTo(other: Long): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: Float): Int
+    public infix operator fun compareTo(other: Float): Int
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: Double): Int
+    public override infix operator fun compareTo(other: Double): Int
 
     /** Adds the other value to this value. */
     public operator fun plus(other: Byte): Double

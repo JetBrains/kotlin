@@ -107,7 +107,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 out.println("""    @Suppress("OVERRIDE_BY_INLINE")""")
             out.print("    public ")
             if (otherType == type) out.print("override ")
-            out.print("inline operator fun compareTo(other: ${otherType.capitalized}): Int = ")
+            out.print("inline infix operator fun compareTo(other: ${otherType.capitalized}): Int = ")
             if (otherType == type && maxByDomainCapacity(type, UnsignedType.UINT) == type) {
                 out.println("${className.toLowerCase()}Compare(this.data, other.data)")
             } else {

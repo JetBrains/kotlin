@@ -42,42 +42,42 @@ public class Long internal constructor(
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public inline operator fun compareTo(other: Byte): Int = compareTo(other.toLong())
+    public inline infix operator fun compareTo(other: Byte): Int = compareTo(other.toLong())
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public inline operator fun compareTo(other: Short): Int = compareTo(other.toLong())
+    public inline infix operator fun compareTo(other: Short): Int = compareTo(other.toLong())
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public inline operator fun compareTo(other: Int): Int = compareTo(other.toLong())
+    public inline infix operator fun compareTo(other: Int): Int = compareTo(other.toLong())
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: Long): Int = compare(other)
+    public override infix operator fun compareTo(other: Long): Int = compare(other)
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public inline operator fun compareTo(other: Float): Int = toFloat().compareTo(other)
+    public inline infix operator fun compareTo(other: Float): Int = toFloat().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public inline operator fun compareTo(other: Double): Int = toDouble().compareTo(other)
+    public inline infix operator fun compareTo(other: Double): Int = toDouble().compareTo(other)
 
     /** Adds the other value to this value. */
     public inline operator fun plus(other: Byte): Long = plus(other.toLong())

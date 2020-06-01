@@ -58,11 +58,11 @@ public final class BooleanArray {
 public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     /*primary*/ private constructor Byte()
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun dec(): kotlin.Byte
     public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
@@ -192,7 +192,7 @@ public interface CharSequence {
 }
 
 public interface Comparable</*0*/ in T> {
-    public abstract operator fun compareTo(/*0*/ other: T): kotlin.Int
+    public abstract infix operator fun compareTo(/*0*/ other: T): kotlin.Int
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.MustBeDocumented public final annotation class Deprecated : kotlin.Annotation {
@@ -227,12 +227,12 @@ public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> 
 
 public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     /*primary*/ private constructor Double()
-    public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun dec(): kotlin.Double
     public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Double
     public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
@@ -328,12 +328,12 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
 
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     /*primary*/ private constructor Float()
-    public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun dec(): kotlin.Float
     public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Float
     public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
@@ -411,12 +411,12 @@ public interface Function</*0*/ out R> {
 public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     /*primary*/ private constructor Int()
     public final infix fun and(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun dec(): kotlin.Int
     public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
@@ -495,12 +495,12 @@ public final class IntArray {
 public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     /*primary*/ private constructor Long()
     public final infix fun and(/*0*/ other: kotlin.Long): kotlin.Long
-    public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun dec(): kotlin.Long
     public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Long
     public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
@@ -611,11 +611,11 @@ public abstract class Number {
 
 public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     /*primary*/ private constructor Short()
-    public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final infix operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun dec(): kotlin.Short
     public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Int

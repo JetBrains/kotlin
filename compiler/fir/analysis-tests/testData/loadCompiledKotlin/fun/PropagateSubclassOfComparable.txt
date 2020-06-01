@@ -1,5 +1,5 @@
 public final class PropagateSubclassOfComparable : R|kotlin/Comparable<test/PropagateSubclassOfComparable>| {
-    public open operator fun compareTo(other: R|test/PropagateSubclassOfComparable|): R|kotlin/Int|
+    public open operator infix fun compareTo(other: R|test/PropagateSubclassOfComparable|): R|kotlin/Int|
 
     public constructor(): R|test/PropagateSubclassOfComparable|
 

@@ -153,7 +153,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
      */""")
             out.print("    public ")
             if (otherKind == thisKind) out.print("override ")
-            out.println("operator fun compareTo(other: ${otherKind.capitalized}): Int")
+            out.println("infix operator fun compareTo(other: ${otherKind.capitalized}): Int")
         }
         out.println()
     }

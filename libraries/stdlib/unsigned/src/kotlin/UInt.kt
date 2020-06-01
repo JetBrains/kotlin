@@ -42,7 +42,7 @@ public inline class UInt @PublishedApi internal constructor(@PublishedApi intern
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.InlineOnly
-    public inline operator fun compareTo(other: UByte): Int = this.compareTo(other.toUInt())
+    public inline infix operator fun compareTo(other: UByte): Int = this.compareTo(other.toUInt())
 
     /**
      * Compares this value with the specified value for order.
@@ -50,7 +50,7 @@ public inline class UInt @PublishedApi internal constructor(@PublishedApi intern
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.InlineOnly
-    public inline operator fun compareTo(other: UShort): Int = this.compareTo(other.toUInt())
+    public inline infix operator fun compareTo(other: UShort): Int = this.compareTo(other.toUInt())
 
     /**
      * Compares this value with the specified value for order.
@@ -59,7 +59,7 @@ public inline class UInt @PublishedApi internal constructor(@PublishedApi intern
      */
     @kotlin.internal.InlineOnly
     @Suppress("OVERRIDE_BY_INLINE")
-    public override inline operator fun compareTo(other: UInt): Int = uintCompare(this.data, other.data)
+    public override inline infix operator fun compareTo(other: UInt): Int = uintCompare(this.data, other.data)
 
     /**
      * Compares this value with the specified value for order.
@@ -67,7 +67,7 @@ public inline class UInt @PublishedApi internal constructor(@PublishedApi intern
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.InlineOnly
-    public inline operator fun compareTo(other: ULong): Int = this.toULong().compareTo(other)
+    public inline infix operator fun compareTo(other: ULong): Int = this.toULong().compareTo(other)
 
     /** Adds the other value to this value. */
     @kotlin.internal.InlineOnly
