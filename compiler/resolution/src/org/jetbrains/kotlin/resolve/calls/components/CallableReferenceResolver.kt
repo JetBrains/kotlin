@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
@@ -109,6 +110,7 @@ class CallableReferenceResolver(
             chosenCandidate.diagnostics.forEach {
                 val transformedDiagnostic = when (it) {
                     is CompatibilityWarning -> CompatibilityWarningOnArgument(argument)
+                    is LowerPriorityToPreserveCompatibility -> return@forEach
                     else -> it
                 }
                 diagnosticsHolder.addDiagnostic(transformedDiagnostic)
