@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -175,7 +176,34 @@ interface IrBuilderExtension {
 
     fun KotlinType.toIrType() = compilerContext.typeTranslator.translateType(this)
 
+    // note: this method should be used only for properties from current module. Fields from other modules are private and inaccessible.
     val SerializableProperty.irField: IrField get() = compilerContext.symbolTable.referenceField(this.descriptor).owner
+
+    val SerializableProperty.irProp: IrProperty
+        get() {
+            val desc = this.descriptor
+            // this API is used to reference both current module descriptors and external ones (because serializable class can be in any of them),
+            // so we use descriptor api for current module because it is not possible to obtain FQname for e.g. local classes.
+            return if (desc.module == compilerContext.moduleDescriptor) {
+                compilerContext.symbolTable.referenceProperty(desc).owner
+            } else {
+                compilerContext.referenceProperties(this.descriptor.fqNameSafe).single().owner
+            }
+        }
+
+    fun IrBuilderWithScope.getProperty(receiver: IrExpression, property: IrProperty): IrExpression {
+        return if (property.getter != null)
+            irGet(property.getter!!.returnType, receiver, property.getter!!.symbol)
+        else
+            irGetField(receiver, property.backingField!!)
+    }
+
+    fun IrBuilderWithScope.setProperty(receiver: IrExpression, property: IrProperty, value: IrExpression): IrExpression {
+        return if (property.setter != null)
+            irSet(property.setter!!.returnType, receiver, property.setter!!.symbol, value)
+        else
+            irSetField(receiver, property.backingField!!, value)
+    }
 
     /*
      The rest of the file is mainly copied from FunctionGenerator.
@@ -681,6 +709,12 @@ interface IrBuilderExtension {
 
     fun serializableSyntheticConstructor(forClass: IrClass): IrConstructorSymbol {
         return forClass.declarations.filterIsInstance<IrConstructor>().single { it.isSerializationCtor() }.symbol
+    }
+
+    fun IrClass.getSuperClassOrAny(): IrClass {
+        val superClasses = superTypes.mapNotNull { it.classOrNull }.map { it.owner }
+
+        return superClasses.singleOrNull { it.kind == ClassKind.CLASS } ?: compilerContext.irBuiltIns.anyClass.owner
     }
 
 }
