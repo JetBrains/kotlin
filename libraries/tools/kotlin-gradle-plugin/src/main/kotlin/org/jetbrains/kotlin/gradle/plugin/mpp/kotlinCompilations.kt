@@ -18,6 +18,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.TaskState
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
@@ -329,13 +330,17 @@ internal object CompilationSourceSetUtil {
 
                 val compilations = targets.flatMap { it.compilations }
 
-                val result = compilations
-                    .flatMap { compilation -> compilation.allKotlinSourceSets.map { sourceSet -> compilation to sourceSet } }
-                    .groupBy(
-                        { (_, sourceSet) -> sourceSet },
-                        valueTransform = { (compilation, _) -> compilation }
-                    )
-                    .mapValues { (_, compilations) -> compilations.toSet() }
+                val result = mutableMapOf<KotlinSourceSet, MutableSet<KotlinCompilation<*>>>().apply {
+                    compilations.forEach { compilation ->
+                        compilation.allKotlinSourceSets.forEach { sourceSet ->
+                            getOrPut(sourceSet) { mutableSetOf() }.add(compilation)
+                        }
+                    }
+                    kotlinExtension.sourceSets.forEach { sourceSet ->
+                        // For source sets not taking part in any compilation, keep an empty set to avoid errors on access by key
+                        getOrPut(sourceSet) { mutableSetOf() }
+                    }
+                }
 
                 if (shouldFinalizeValue) {
                     set(result)
