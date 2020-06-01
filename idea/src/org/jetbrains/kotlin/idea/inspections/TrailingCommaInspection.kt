@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.idea.util.isComma
 import org.jetbrains.kotlin.idea.util.isLineBreak
 import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.psiUtil.*
 import javax.swing.JComponent
 import kotlin.properties.Delegates
@@ -63,9 +62,7 @@ class TrailingCommaInspection(
             }
 
             val last = TrailingCommaHelper.elementAfterLastElement(commaOwner)
-            val whenEntryWithoutTrailingComma =
-                commaOwner is KtWhenEntry && TrailingCommaHelper.trailingCommaOrLastElement(commaOwner)?.isComma != true
-            if (last?.prevLeaf(true)?.isLineBreak() == false && !whenEntryWithoutTrailingComma) {
+            if (last?.prevLeaf(true)?.isLineBreak() == false) {
                 registerProblemForLineBreak(
                     commaOwner,
                     last,
