@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeKlibCommonizerToolRunner
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -16,73 +19,95 @@ import java.nio.file.*
 import java.nio.file.attribute.*
 import java.time.*
 import java.util.*
+import javax.inject.Inject
 
-internal fun runCommonizerInBulk(
-    project: Project,
-    distributionDir: File,
-    baseDestinationDir: File,
-    targetGroups: List<Set<KonanTarget>>,
-    kotlinVersion: String
-): List<File> {
+internal data class CommonizerTaskParams(
+    @get:InputDirectory val distributionDir: File,
+    @get:InputDirectory val baseDestinationDir: File,
+    @Internal val targetGroups: List<Set<KonanTarget>>,
+    @get:Input val kotlinVersion: String
+) {
+    @Internal
     val commandLineArguments = mutableListOf<String>()
 
+    @Internal
     val successPostActions = mutableListOf<() -> Unit>()
+
+    @Internal
     val failurePostActions = mutableListOf<() -> Unit>()
 
-    val destinationDirs = targetGroups.map { targets ->
-        if (targets.size == 1) {
-            // no need to commonize, just use the libraries from the distribution
-            distributionDir.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-        } else {
-            // need stable order of targets for consistency
-            val orderedTargets = targets.sortedBy { it.name }
+    // It isn't best option for "up-to-date" checker (for multi project build it will be started few times)
+    // but commonizer has inner check
+    @get:OutputDirectories
+    val destinationDirs: List<File>
 
-            val discriminator = buildString {
-                orderedTargets.joinTo(this, separator = "-")
-                append("-")
-                append(kotlinVersion.toLowerCase().base64)
+    // need stable order of targets for consistency
+    private val orderedTargetGroups = targetGroups.map { it.sortedBy { target -> target.name } }
+
+    @Input
+    fun getTargetNames() = orderedTargetGroups.map { it.map { target -> target.name } }
+
+    init {
+        destinationDirs = orderedTargetGroups.map { orderedTargets ->
+            if (orderedTargets.size == 1) {
+                // no need to commonize, just use the libraries from the distribution
+                distributionDir.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+            } else {
+                val discriminator = buildString {
+                    orderedTargets.joinTo(this, separator = "-")
+                    append("-")
+                    append(kotlinVersion.toLowerCase().base64)
+                }
+
+                val destinationDir = baseDestinationDir.resolve(discriminator)
+                if (!destinationDir.isDirectory) {
+                    val parentDir = destinationDir.parentFile
+                    parentDir.mkdirs()
+
+                    val destinationTmpDir = createTempDir(
+                        prefix = "tmp-" + destinationDir.name,
+                        suffix = ".new",
+                        directory = parentDir
+                    )
+
+                    commandLineArguments += "native-dist-commonize"
+                    commandLineArguments += "-distribution-path"
+                    commandLineArguments += distributionDir.toString()
+                    commandLineArguments += "-output-path"
+                    commandLineArguments += destinationTmpDir.toString()
+                    commandLineArguments += "-targets"
+                    commandLineArguments += orderedTargets.joinToString(separator = ",")
+
+                    successPostActions.add { renameDirectory(destinationTmpDir, destinationDir) }
+                    failurePostActions.add { renameToTempAndDelete(destinationTmpDir) }
+                }
+
+                destinationDir
             }
-
-            val destinationDir = baseDestinationDir.resolve(discriminator)
-            if (!destinationDir.isDirectory) {
-                val parentDir = destinationDir.parentFile
-                parentDir.mkdirs()
-
-                val destinationTmpDir = createTempDir(
-                    prefix = "tmp-" + destinationDir.name,
-                    suffix = ".new",
-                    directory = parentDir
-                )
-
-                commandLineArguments += "native-dist-commonize"
-                commandLineArguments += "-distribution-path"
-                commandLineArguments += distributionDir.toString()
-                commandLineArguments += "-output-path"
-                commandLineArguments += destinationTmpDir.toString()
-                commandLineArguments += "-targets"
-                commandLineArguments += orderedTargets.joinToString(separator = ",")
-
-                successPostActions.add { renameDirectory(destinationTmpDir, destinationDir) }
-                failurePostActions.add { renameToTempAndDelete(destinationTmpDir) }
-            }
-
-            destinationDir
         }
     }
+}
 
-    // first of all remove directories with unused commonized libraries plus temporary directories with commonized libraries
-    // that accidentally were not cleaned up before
-    cleanUp(baseDestinationDir, excludedDirectories = destinationDirs)
+internal const val COMMONIZER_TASK_NAME = "runCommonizer"
 
-    try {
-        callCommonizerCLI(project, commandLineArguments)
-        successPostActions.forEach { it() }
-    } catch (e: Exception) {
-        failurePostActions.forEach { it() }
-        throw e
+internal open class CommonizerTask @Inject constructor(
+    @Nested val params: CommonizerTaskParams
+) : DefaultTask() {
+
+    @TaskAction
+    fun run() {
+        // first of all remove directories with unused commonized libraries plus temporary directories with commonized libraries
+        // that accidentally were not cleaned up before
+        cleanUp(params.baseDestinationDir, excludedDirectories = params.destinationDirs)
+
+        try {
+            callCommonizerCLI(project, params.commandLineArguments)
+            params.successPostActions.forEach { it() }
+        } catch (e: Exception) {
+            params.failurePostActions.forEach { it() }
+            throw e
+        }
     }
-
-    return destinationDirs
 }
 
 private fun callCommonizerCLI(project: Project, commandLineArguments: List<String>) {
