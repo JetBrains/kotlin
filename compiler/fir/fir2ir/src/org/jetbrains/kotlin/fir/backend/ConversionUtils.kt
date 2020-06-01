@@ -34,7 +34,13 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
@@ -480,3 +486,45 @@ val IrType.isSamType: Boolean
         val am = irClass.functions.singleOrNull { it.owner.modality == Modality.ABSTRACT }
         return am != null
     }
+
+fun Fir2IrComponents.createSafeCallConstruction(
+    receiverVariable: IrVariable,
+    receiverVariableSymbol: IrValueSymbol,
+    expressionOnNotNull: IrExpression,
+    isReceiverNullable: Boolean
+): IrExpression {
+    val startOffset = expressionOnNotNull.startOffset
+    val endOffset = expressionOnNotNull.endOffset
+
+    val resultType = expressionOnNotNull.type.let { if (isReceiverNullable) it.makeNullable() else it }
+    return IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL).apply {
+        statements += receiverVariable
+        statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
+            val condition = IrCallImpl(
+                startOffset, endOffset, irBuiltIns.booleanType, irBuiltIns.eqeqSymbol, origin = IrStatementOrigin.EQEQ
+            ).apply {
+                putValueArgument(0, IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol))
+                putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType))
+            }
+            branches += IrBranchImpl(
+                condition, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
+            )
+            branches += IrElseBranchImpl(
+                IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true),
+                expressionOnNotNull
+            )
+        }
+    }
+}
+
+fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
+    receiverExpression: IrExpression,
+    conversionScope: Fir2IrConversionScope
+): Pair<IrVariable, IrValueSymbol> {
+    val receiverVariable = declarationStorage.declareTemporaryVariable(receiverExpression, "safe_receiver").apply {
+        parent = conversionScope.parentFromStack()
+    }
+    val variableSymbol = symbolTable.referenceValue(receiverVariable.descriptor)
+
+    return Pair(receiverVariable, variableSymbol)
+}

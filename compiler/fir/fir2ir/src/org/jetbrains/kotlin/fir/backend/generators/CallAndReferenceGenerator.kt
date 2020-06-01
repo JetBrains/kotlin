@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
@@ -15,11 +18,9 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.calls.isExtensionFunctionType
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -99,61 +100,6 @@ internal class CallAndReferenceGenerator(
         }.applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
     }
 
-    fun convertToIrCall(
-        qualifiedAccess: FirQualifiedAccess,
-        typeRef: FirTypeRef,
-        explicitReceiverExpression: IrExpression?
-    ): IrExpression {
-        val explicitReceiver = qualifiedAccess.explicitReceiver
-        if (!qualifiedAccess.safe || explicitReceiver == null) {
-            return convertToUnsafeIrCall(qualifiedAccess, typeRef, explicitReceiverExpression)
-        }
-        return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
-            val callableSymbol = (qualifiedAccess.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol<*>
-            val typeShouldBeNotNull = callableSymbol?.fir?.returnTypeRef?.coneTypeSafe<ConeKotlinType>()?.isNullable == false
-            val unsafeIrCall =
-                convertToUnsafeIrCall(qualifiedAccess, typeRef, explicitReceiverExpression, makeNotNull = typeShouldBeNotNull)
-
-            convertToSafeIrCall(
-                unsafeIrCall,
-                explicitReceiverExpression!!,
-                isDispatch = explicitReceiver == qualifiedAccess.dispatchReceiver
-            )
-        }
-    }
-
-    internal fun convertToSafeIrCall(call: IrExpression, explicitReceiverExpression: IrExpression, isDispatch: Boolean): IrExpression {
-        val startOffset = call.startOffset
-        val endOffset = call.endOffset
-        val receiverVariable = declarationStorage.declareTemporaryVariable(explicitReceiverExpression, "safe_receiver").apply {
-            parent = conversionScope.parentFromStack()
-        }
-        val variableSymbol = symbolTable.referenceValue(receiverVariable.descriptor)
-
-        val resultType = call.type.makeNullable()
-        return IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL).apply {
-            statements += receiverVariable
-            statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
-                val condition = IrCallImpl(
-                    startOffset, endOffset, irBuiltIns.booleanType, irBuiltIns.eqeqSymbol, origin = IrStatementOrigin.EQEQ
-                ).apply {
-                    putValueArgument(0, IrGetValueImpl(startOffset, endOffset, variableSymbol))
-                    putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType))
-                }
-                branches += IrBranchImpl(
-                    condition, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
-                )
-                val newReceiver = IrGetValueImpl(startOffset, endOffset, variableSymbol)
-                val replacedCall = call.replaceReceiver(newReceiver, isDispatch)
-                branches += IrElseBranchImpl(
-                    IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true),
-                    replacedCall
-                )
-            }
-        }
-    }
-
-
     private fun FirQualifiedAccess.tryConvertToSamConstructorCall(type: IrType): IrTypeOperatorCall? {
         val calleeReference = calleeReference as? FirResolvedNamedReference ?: return null
         val fir = calleeReference.resolvedSymbol.fir
@@ -167,10 +113,14 @@ internal class CallAndReferenceGenerator(
         return null
     }
 
-    private fun convertToUnsafeIrCall(
-        qualifiedAccess: FirQualifiedAccess, typeRef: FirTypeRef, explicitReceiverExpression: IrExpression?, makeNotNull: Boolean = false
+    fun convertToIrCall(
+        qualifiedAccess: FirQualifiedAccess,
+        typeRef: FirTypeRef,
+        explicitReceiverExpression: IrExpression?
     ): IrExpression {
-        val type = typeRef.toIrType().let { if (makeNotNull) it.makeNotNull() else it }
+        require(!qualifiedAccess.safe)
+
+        val type = typeRef.toIrType()
         val samConstructorCall = qualifiedAccess.tryConvertToSamConstructorCall(type)
         if (samConstructorCall != null) return samConstructorCall
 
@@ -559,22 +509,6 @@ internal class CallAndReferenceGenerator(
             }
             else -> this
         }
-    }
-
-    private fun IrExpression.replaceReceiver(newReceiver: IrExpression, isDispatch: Boolean): IrExpression {
-        when (this) {
-            is IrCallImpl -> {
-                if (!isDispatch) {
-                    extensionReceiver = newReceiver
-                } else {
-                    dispatchReceiver = newReceiver
-                }
-            }
-            is IrFieldExpressionBase -> {
-                receiver = newReceiver
-            }
-        }
-        return this
     }
 
     private fun generateErrorCallExpression(

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -67,7 +66,7 @@ class Fir2IrVisitor(
 
     private val memberGenerator = ClassMemberGenerator(components, this, conversionScope, callGenerator, fakeOverrideMode)
 
-    private val operatorGenerator = OperatorExpressionGenerator(components, this, callGenerator)
+    private val operatorGenerator = OperatorExpressionGenerator(components, this, callGenerator, conversionScope)
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
@@ -285,6 +284,34 @@ class Fir2IrVisitor(
             functionCall.explicitReceiver, functionCall.calleeReference
         )
         return callGenerator.convertToIrCall(convertibleCall, convertibleCall.typeRef, explicitReceiverExpression)
+    }
+
+    override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: Any?): IrElement {
+        val explicitReceiverExpression = convertToIrExpression(safeCallExpression.receiver)
+
+        val (receiverVariable, variableSymbol) = components.createTemporaryVariableForSafeCallConstruction(
+            explicitReceiverExpression,
+            conversionScope
+        )
+
+        return conversionScope.withSafeCallSubject(receiverVariable) {
+            val afterNotNullCheck = safeCallExpression.regularQualifiedAccess.accept(this, data) as IrExpression
+
+            val isReceiverNullable = with(components.session.inferenceContext) {
+                safeCallExpression.receiver.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableType() == true
+            }
+
+            components.createSafeCallConstruction(
+                receiverVariable, variableSymbol, afterNotNullCheck, isReceiverNullable
+            )
+        }
+    }
+
+    override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: Any?): IrElement {
+        val lastSubjectVariable = conversionScope.lastSafeCallSubject()
+        return checkedSafeCallSubject.convertWithOffsets { startOffset, endOffset ->
+            IrGetValueImpl(startOffset, endOffset, lastSubjectVariable.type, lastSubjectVariable.symbol)
+        }
     }
 
     private fun FirFunctionCall.resolvedNamedFunctionSymbol(): FirNamedFunctionSymbol? {
@@ -552,7 +579,7 @@ class Fir2IrVisitor(
             KtNodeTypes.POSTFIX_EXPRESSION -> IrStatementOrigin.EXCLEXCL
             else -> null
         }
-        return conversionScope.withSubject(subjectVariable) {
+        return conversionScope.withWhenSubject(subjectVariable) {
             whenExpression.convertWithOffsets { startOffset, endOffset ->
                 val irWhen = IrWhenImpl(
                     startOffset, endOffset,
@@ -601,7 +628,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Any?): IrElement {
-        val lastSubjectVariable = conversionScope.lastSubject()
+        val lastSubjectVariable = conversionScope.lastWhenSubject()
         return whenSubjectExpression.convertWithOffsets { startOffset, endOffset ->
             IrGetValueImpl(startOffset, endOffset, lastSubjectVariable.type, lastSubjectVariable.symbol)
         }

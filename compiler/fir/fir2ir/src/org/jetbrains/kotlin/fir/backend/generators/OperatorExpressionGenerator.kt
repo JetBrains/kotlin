@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -24,7 +25,8 @@ import org.jetbrains.kotlin.ir.util.getSimpleFunction
 internal class OperatorExpressionGenerator(
     private val components: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
-    private val callGenerator: CallAndReferenceGenerator
+    private val callGenerator: CallAndReferenceGenerator,
+    private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
 
     fun convertComparisonExpression(comparisonExpression: FirComparisonExpression): IrExpression {
@@ -158,7 +160,12 @@ internal class OperatorExpressionGenerator(
             it.dispatchReceiver = dispatchReceiver
         }
         return if (operandType.isNullable) {
-            callGenerator.convertToSafeIrCall(unsafeIrCall, dispatchReceiver, isDispatch = true)
+            val (receiverVariable, receiverVariableSymbol) =
+                components.createTemporaryVariableForSafeCallConstruction(dispatchReceiver, conversionScope)
+
+            unsafeIrCall.dispatchReceiver = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+
+            components.createSafeCallConstruction(receiverVariable, receiverVariableSymbol, unsafeIrCall, isReceiverNullable = true)
         } else {
             unsafeIrCall
         }

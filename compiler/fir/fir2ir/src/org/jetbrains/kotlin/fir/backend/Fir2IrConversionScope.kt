@@ -65,12 +65,20 @@ class Fir2IrConversionScope {
         return klass
     }
 
-    private val subjectVariableStack = mutableListOf<IrVariable>()
+    private val whenSubjectVariableStack = mutableListOf<IrVariable>()
+    private val safeCallSubjectVariableStack = mutableListOf<IrVariable>()
 
-    fun <T> withSubject(subject: IrVariable?, f: () -> T): T {
-        if (subject != null) subjectVariableStack += subject
+    fun <T> withWhenSubject(subject: IrVariable?, f: () -> T): T {
+        if (subject != null) whenSubjectVariableStack += subject
         val result = f()
-        if (subject != null) subjectVariableStack.removeAt(subjectVariableStack.size - 1)
+        if (subject != null) whenSubjectVariableStack.removeAt(whenSubjectVariableStack.size - 1)
+        return result
+    }
+
+    fun <T> withSafeCallSubject(subject: IrVariable?, f: () -> T): T {
+        if (subject != null) safeCallSubjectVariableStack += subject
+        val result = f()
+        if (subject != null) safeCallSubjectVariableStack.removeAt(safeCallSubjectVariableStack.size - 1)
         return result
     }
 
@@ -98,5 +106,6 @@ class Fir2IrConversionScope {
 
     fun lastClass(): IrClass? = classStack.lastOrNull()
 
-    fun lastSubject(): IrVariable = subjectVariableStack.last()
+    fun lastWhenSubject(): IrVariable = whenSubjectVariableStack.last()
+    fun lastSafeCallSubject(): IrVariable = safeCallSubjectVariableStack.last()
 }
