@@ -266,8 +266,7 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, irBuiltIns:
 
     abstract val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol
 
-    open val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol
-        get() = TODO("Support KotlinNothingValueException in Kotlin/Native and make this val abstract")
+    abstract val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol
 
     abstract val stringBuilder: IrClassSymbol
 
