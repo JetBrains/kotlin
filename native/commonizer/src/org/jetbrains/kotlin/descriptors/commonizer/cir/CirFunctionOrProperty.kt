@@ -22,12 +22,12 @@ interface CirFunctionOrProperty :
     val extensionReceiver: CirExtensionReceiver?
     val returnType: CirType
     val kind: CallableMemberDescriptor.Kind
+
+    fun isNonAbstractMemberInInterface(): Boolean =
+        modality != Modality.ABSTRACT && containingClassDetails?.kind == ClassKind.INTERFACE
+
+    fun isVirtual(): Boolean =
+        visibility != Visibilities.PRIVATE
+                && modality != Modality.FINAL
+                && !(containingClassDetails?.modality == Modality.FINAL && containingClassDetails?.kind != ClassKind.ENUM_CLASS)
 }
-
-fun CirFunctionOrProperty.isNonAbstractMemberInInterface(): Boolean =
-    modality != Modality.ABSTRACT && containingClassDetails?.kind == ClassKind.INTERFACE
-
-fun CirFunctionOrProperty.isVirtual(): Boolean =
-    visibility != Visibilities.PRIVATE
-            && modality != Modality.FINAL
-            && !(containingClassDetails?.modality == Modality.FINAL && containingClassDetails?.kind != ClassKind.ENUM_CLASS)
