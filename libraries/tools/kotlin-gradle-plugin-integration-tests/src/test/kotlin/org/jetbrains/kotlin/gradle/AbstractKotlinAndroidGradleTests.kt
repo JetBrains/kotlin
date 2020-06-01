@@ -343,6 +343,10 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_2_0
 
+    //android build tool 28.0.3 use org.gradle.api.file.ProjectLayout#fileProperty(org.gradle.api.provider.Provider) that was deleted in gradle 6.0
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.Until("5.6.4")
+
     @Test
     fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject")) {
         setupWorkingDir()

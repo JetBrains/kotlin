@@ -252,10 +252,12 @@ internal class DefaultKotlinBuildStatsService internal constructor(
             gradle.rootProject.properties["kotlin.code.style"] == "official"
         ) // constants are saved in IDEA plugin and could not be accessed directly
 
-        val executedTaskNames = gradle.taskGraph.allTasks.map { it.name }.distinct()
-        report(BooleanMetrics.COMPILATION_STARTED, executedTaskNames.contains("compileKotlin"))
-        report(BooleanMetrics.TESTS_EXECUTED, executedTaskNames.contains("compileTestKotlin"))
-        report(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
+        gradle.taskGraph.whenReady() { taskExecutionGraph ->
+            val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
+            report(BooleanMetrics.COMPILATION_STARTED, executedTaskNames.contains("compileKotlin"))
+            report(BooleanMetrics.TESTS_EXECUTED, executedTaskNames.contains("compileTestKotlin"))
+            report(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
+        }
 
         fun buildSrcExists(project: Project) = File(project.projectDir, "buildSrc").exists()
         if (buildSrcExists(gradle.rootProject)) {
