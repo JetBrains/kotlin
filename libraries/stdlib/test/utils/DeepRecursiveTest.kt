@@ -39,7 +39,7 @@ class DeepRecursiveTest {
 
     @Test
     fun testDeepTreeOddEvenNodesMutual() {
-        val n = 100_000
+        val n = 50_000
         val dt = deepTree(n)
         val rec = MutualRec()
         assertEquals(n / 2, rec.even(dt))
