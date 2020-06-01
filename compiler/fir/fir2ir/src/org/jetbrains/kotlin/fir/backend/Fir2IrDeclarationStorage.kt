@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
@@ -434,12 +435,16 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun declareIrSimpleFunction(signature: IdSignature?, factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction): IrSimpleFunction {
+    private fun declareIrSimpleFunction(
+        signature: IdSignature?,
+        containerSource: DeserializedContainerSource?,
+        factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
+    ): IrSimpleFunction {
         if (signature == null) {
             val descriptor = WrappedSimpleFunctionDescriptor()
             return symbolTable.declareSimpleFunction(descriptor, factory).apply { descriptor.bind(this) }
         }
-        return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }, factory)
+        return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature, containerSource) }, factory)
     }
 
     fun createIrFunction(
@@ -465,7 +470,7 @@ class Fir2IrDeclarationStorage(
             else simpleFunction?.isSuspend == true
         val signature = signatureComposer.composeSignature(function)
         val created = function.convertWithOffsets { startOffset, endOffset ->
-            val result = declareIrSimpleFunction(signature) { symbol ->
+            val result = declareIrSimpleFunction(signature, simpleFunction?.containerSource) { symbol ->
                 IrFunctionImpl(
                     startOffset, endOffset, updatedOrigin, symbol,
                     name, visibility,
@@ -561,6 +566,7 @@ class Fir2IrDeclarationStorage(
 
     private fun declareIrAccessor(
         signature: IdSignature?,
+        containerSource: DeserializedContainerSource?,
         isGetter: Boolean,
         factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
     ): IrSimpleFunction {
@@ -570,7 +576,7 @@ class Fir2IrDeclarationStorage(
                 else WrappedPropertySetterDescriptor(Annotations.EMPTY, SourceElement.NO_SOURCE)
             return symbolTable.declareSimpleFunction(descriptor, factory).apply { descriptor.bind(this) }
         }
-        return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }, factory)
+        return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature, containerSource) }, factory)
     }
 
     private fun createIrPropertyAccessor(
@@ -587,7 +593,11 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunction {
         val prefix = if (isSetter) "set" else "get"
         val signature = signatureComposer.composeAccessorSignature(property, isSetter)
-        return declareIrAccessor(signature, isGetter = !isSetter) { symbol ->
+        return declareIrAccessor(
+            signature,
+            (correspondingProperty.descriptor as? WrappedPropertyDescriptorWithContainerSource)?.containerSource,
+            isGetter = !isSetter
+        ) { symbol ->
             val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
             IrFunctionImpl(
                 startOffset, endOffset, origin, symbol,
@@ -670,14 +680,18 @@ class Fir2IrDeclarationStorage(
             else -> Visibilities.PRIVATE
         }
 
-    private fun declareIrProperty(signature: IdSignature?, factory: (IrPropertySymbol) -> IrProperty): IrProperty {
+    private fun declareIrProperty(
+        signature: IdSignature?,
+        containerSource: DeserializedContainerSource?,
+        factory: (IrPropertySymbol) -> IrProperty
+    ): IrProperty {
         if (signature == null) {
             val descriptor = WrappedPropertyDescriptor()
             return symbolTable.declareProperty(0, 0, IrDeclarationOrigin.DEFINED, descriptor, isDelegated = false, factory).apply {
                 descriptor.bind(this)
             }
         }
-        return symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature) }, factory)
+        return symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature, containerSource) }, factory)
     }
 
     fun createIrProperty(
@@ -689,7 +703,7 @@ class Fir2IrDeclarationStorage(
         classifierStorage.preCacheTypeParameters(property)
         val signature = signatureComposer.composeSignature(property)
         return property.convertWithOffsets { startOffset, endOffset ->
-            val result = declareIrProperty(signature) { symbol ->
+            val result = declareIrProperty(signature, property.containerSource) { symbol ->
                 IrPropertyImpl(
                     startOffset, endOffset, origin, symbol,
                     property.name, property.visibility, property.modality!!,

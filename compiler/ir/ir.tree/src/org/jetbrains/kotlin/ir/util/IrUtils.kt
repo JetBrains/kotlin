@@ -271,7 +271,8 @@ val IrDeclarationWithName.fqNameWhenAvailable: FqName?
     }
 
 val IrDeclaration.parentAsClass: IrClass
-    get() = parent as? IrClass ?: error("Parent of this declaration is not a class: ${render()}")
+    get() = parent as? IrClass
+        ?: error("Parent of this declaration is not a class: ${render()}")
 
 fun IrClass.isLocalClass(): Boolean {
     var current: IrDeclarationParent? = this

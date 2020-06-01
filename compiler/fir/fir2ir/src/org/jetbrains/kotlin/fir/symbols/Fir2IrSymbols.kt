@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class Fir2IrClassSymbol(signature: IdSignature) :
     Fir2IrBindableSymbol<ClassDescriptor, IrClass>(signature),
@@ -34,15 +35,19 @@ class Fir2IrVariableSymbol(signature: IdSignature) :
     Fir2IrBindableSymbol<VariableDescriptor, IrVariable>(signature),
     IrVariableSymbol
 
-class Fir2IrSimpleFunctionSymbol(signature: IdSignature) :
-    Fir2IrBindableSymbol<FunctionDescriptor, IrSimpleFunction>(signature),
+class Fir2IrSimpleFunctionSymbol(
+    signature: IdSignature,
+    containerSource: DeserializedContainerSource? = null
+) : Fir2IrBindableSymbol<FunctionDescriptor, IrSimpleFunction>(signature, containerSource),
     IrSimpleFunctionSymbol
 
 class Fir2IrConstructorSymbol(signature: IdSignature) :
     Fir2IrBindableSymbol<ClassConstructorDescriptor, IrConstructor>(signature),
     IrConstructorSymbol
 
-class Fir2IrPropertySymbol(signature: IdSignature) :
-    Fir2IrBindableSymbol<PropertyDescriptor, IrProperty>(signature),
+class Fir2IrPropertySymbol(
+    signature: IdSignature,
+    containerSource: DeserializedContainerSource? = null
+) : Fir2IrBindableSymbol<PropertyDescriptor, IrProperty>(signature, containerSource),
     IrPropertySymbol
 
