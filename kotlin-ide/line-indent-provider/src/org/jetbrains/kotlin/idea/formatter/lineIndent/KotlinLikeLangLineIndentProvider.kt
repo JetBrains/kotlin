@@ -9,6 +9,7 @@ import com.intellij.formatting.Indent
 import com.intellij.lang.Language
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.codeStyle.lineIndent.LineIndentProvider
 import com.intellij.psi.impl.source.codeStyle.SemanticEditorPosition
 import com.intellij.psi.impl.source.codeStyle.lineIndent.IndentCalculator
 import com.intellij.psi.impl.source.codeStyle.lineIndent.JavaLikeLangLineIndentProvider
@@ -43,6 +44,14 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         }\nafter ${
             print(after)
         }\n=="
+    }
+
+    override fun getLineIndent(project: Project, editor: Editor, language: Language?, offset: Int): String? {
+        // HACK: TODO: KT-34566 investigate this hack (necessary for [org.jetbrains.kotlin.idea.editor.Kotlin.MultilineStringEnterHandler])
+        return if (offset > 0 && getPosition(editor, offset - 1).isAt(RegularStringPart))
+            LineIndentProvider.DO_NOT_ADJUST
+        else
+            super.getLineIndent(project, editor, language, offset)
     }
 
     override fun getIndent(project: Project, editor: Editor, language: Language?, offset: Int): IndentCalculator? {
