@@ -87,6 +87,8 @@ import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
@@ -457,6 +459,14 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): CompositeTransformResult<FirStatement> {
         return transformElement(expressionWithSmartcast, data)
+    }
+
+    open fun transformSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformElement(safeCallExpression, data)
+    }
+
+    open fun transformCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: D): CompositeTransformResult<FirStatement> {
+        return transformElement(checkedSafeCallSubject, data)
     }
 
     open fun transformGetClassCall(getClassCall: FirGetClassCall, data: D): CompositeTransformResult<FirStatement> {
@@ -933,6 +943,14 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): CompositeTransformResult<FirStatement> {
         return transformExpressionWithSmartcast(expressionWithSmartcast, data)
+    }
+
+    final override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformSafeCallExpression(safeCallExpression, data)
+    }
+
+    final override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: D): CompositeTransformResult<FirStatement> {
+        return transformCheckedSafeCallSubject(checkedSafeCallSubject, data)
     }
 
     final override fun visitGetClassCall(getClassCall: FirGetClassCall, data: D): CompositeTransformResult<FirStatement> {

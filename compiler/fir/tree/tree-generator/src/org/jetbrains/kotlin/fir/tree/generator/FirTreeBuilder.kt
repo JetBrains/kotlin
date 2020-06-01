@@ -102,6 +102,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val callableReferenceAccess = element("CallableReferenceAccess", Expression, qualifiedAccessExpression)
     val thisReceiverExpression = element("ThisReceiverExpression", Expression, qualifiedAccessExpression)
     val expressionWithSmartcast = element("ExpressionWithSmartcast", Expression, qualifiedAccessExpression)
+    val safeCallExpression = element("SafeCallExpression", Expression, expression)
+    val checkedSafeCallSubject = element("CheckedSafeCallSubject", Expression, expression)
     val getClassCall = element("GetClassCall", Expression, expression, call)
     val wrappedExpression = element("WrappedExpression", Expression, expression)
     val wrappedArgumentExpression = element("WrappedArgumentExpression", Expression, wrappedExpression)
