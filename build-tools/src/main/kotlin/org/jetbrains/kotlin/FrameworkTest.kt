@@ -4,7 +4,6 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
@@ -24,15 +23,11 @@ import java.nio.file.Paths
  * according to a pattern "compileKonan${frameworkName}".
  *
  * @property swiftSources  Swift-language test sources that use a given framework
- * @property testName test name
  * @property frameworks names of frameworks
  */
 open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     @Input
     lateinit var swiftSources: List<String>
-
-    @Input
-    lateinit var testName: String
 
     @Input
     lateinit var frameworks: MutableList<Framework>
@@ -54,32 +49,29 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
      * @param library library dependency name,
      * @param opts additional options for the compiler.
      */
-    data class Framework(
+    class Framework(
             val name: String,
-            val sources: List<String>,
-            val bitcode: Boolean = false,
-            val artifact: String = name,
-            val library: String? = null,
-            val opts: List<String> = emptyList()
+            var sources: List<String> = emptyList(),
+            var bitcode: Boolean = false,
+            var artifact: String = name,
+            var library: String? = null,
+            var opts: List<String> = emptyList()
     )
 
-    @JvmOverloads
-    fun createFramework(name: String,
-                        sources: List<String>,
-                        bitcode: Boolean = false,
-                        artifact: String = name,
-                        library: String? = null,
-                        opts: List<String> = emptyList()
-    ) = Framework(
-            name,
-            sources.toFiles(Language.Kotlin).map { it.path },
-            bitcode, artifact, library, opts
-    ).also {
-        if (!::frameworks.isInitialized) {
-            frameworks = mutableListOf(it)
-        } else {
-            frameworks.add(it)
+    fun framework(name: String, closure: Closure<Framework>): Framework {
+        val f = Framework(name).apply {
+            closure.delegate = this
+            closure.resolveStrategy = Closure.DELEGATE_FIRST
+            closure.call()
+            // map to file paths
+            sources = sources.toFiles(Language.Kotlin).map { it.path }
         }
+        if (!::frameworks.isInitialized) {
+            frameworks = mutableListOf(f)
+        } else {
+            frameworks.add(f)
+        }
+        return f
     }
 
     enum class Language(val extension: String) {
@@ -96,10 +88,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
                     .flatMap { it.files }
 
     override val executable: String
-        get() {
-            check(::testName.isInitialized) { "Test name should be set" }
-            return Paths.get(testOutput, testName, "swiftTestExecutable").toString()
-        }
+        get() = Paths.get(testOutput, name, "swiftTestExecutable").toString()
 
     override var doBeforeRun: Action<in Task>? = null
 
@@ -118,14 +107,12 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         group = LifecycleBasePlugin.VERIFICATION_GROUP
         description = "Kotlin/Native test infrastructure task"
 
-        check(::testName.isInitialized) { "Test name should be set" }
         check(::frameworks.isInitialized) { "Frameworks should be set" }
-
         return this
     }
 
     private fun buildTestExecutable() {
-        val frameworkParentDirPath = "$testOutput/$testName/${project.testTarget.name}"
+        val frameworkParentDirPath = "$testOutput/$name/${project.testTarget.name}"
         frameworks.forEach { framework ->
             val frameworkArtifact = framework.artifact
             val frameworkPath = "$frameworkParentDirPath/$frameworkArtifact.framework"
@@ -135,7 +122,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         }
 
         // create a test provider and get main entry point
-        val provider = Paths.get(testOutput, testName, "provider.swift")
+        val provider = Paths.get(testOutput, name, "provider.swift")
         FileWriter(provider.toFile()).use { writer ->
             val providers = swiftSources.toFiles(Language.Swift)
                     .map { it.name.toString().removeSuffix(".swift").capitalize() }

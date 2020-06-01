@@ -4018,7 +4018,8 @@ standaloneTest("fake_override_0") {
 
 Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
     return KotlinNativeTestKt.createTest(project, name, FrameworkTest) { task ->
-        task.configure(configurator)
+        configurator.delegate = task
+        configurator()
         if (task.enabled) {
             konanArtifacts {
                 task.frameworks.forEach { fr ->
@@ -4026,7 +4027,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
                         fr.sources.forEach { src ->
                             srcFiles src
                         }
-                        baseDir "$testOutputFramework/${task.testName}"
+                        baseDir "$testOutputFramework/${task.name}"
 
                         if (fr.library != null) {
                             libraries {
@@ -4055,8 +4056,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
 if (isAppleTarget(project)) {
     frameworkTest('testObjCExport') {
         final String frameworkName = 'Kt'
-        testName = "ObjCExport"
-        final String dir = "$testOutputFramework/$testName"
+        final String dir = "$testOutputFramework/$name"
         final File lazyHeader = file("$dir/$target-lazy.h")
 
         doLast {
@@ -4095,8 +4095,11 @@ if (isAppleTarget(project)) {
                 extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
             }
         }
-        it.createFramework(frameworkName, ['objcexport'], false,
-                frameworkName, libraryName, ["-Xemit-lazy-objc-header=$lazyHeader"])
+        framework(frameworkName) {
+            sources = ['objcexport']
+            library = libraryName
+            opts = ["-Xemit-lazy-objc-header=$lazyHeader"]
+        }
         swiftSources = ['objcexport']
     }
 
@@ -4119,21 +4122,29 @@ if (isAppleTarget(project)) {
             }
         }
 
-        testName = "ObjCExportStatic"
         codesign = false
-        it.createFramework(frameworkName, ['objcexport'], false, frameworkArtifactName, libraryName, ['-Xstatic-framework'])
+        framework(frameworkName) {
+            sources = ['objcexport']
+            bitcode = false
+            artifact = frameworkArtifactName
+            library = libraryName
+            opts = ['-Xstatic-framework']
+        }
         swiftSources = ['objcexport']
     }
 
     frameworkTest('testValuesGenericsFramework') {
-        testName = 'ValuesGenerics'
-        it.createFramework('ValuesGenerics', ['objcexport/values.kt', 'framework/values_generics'])
+        framework('ValuesGenerics') {
+            sources = ['objcexport/values.kt', 'framework/values_generics']
+        }
         swiftSources = ['framework/values_generics/']
     }
 
     frameworkTest("testStdlibFramework") {
-        testName = 'Stdlib'
-        it.createFramework('Stdlib', ['framework/stdlib'], true)
+        framework('Stdlib') {
+            sources = ['framework/stdlib']
+            bitcode = true
+        }
         if (cacheTesting == null) fullBitcode = true
         swiftSources = ['framework/stdlib/']
     }
@@ -4141,21 +4152,22 @@ if (isAppleTarget(project)) {
     if (cacheTesting != null && cacheTesting.isDynamic) {
         // testMultipleFrameworks disabled until https://youtrack.jetbrains.com/issue/KT-34262 is fixed.
     } else frameworkTest("testMultipleFrameworks") {
-        testName = "MultipleFrameworks"
-        it.createFramework('First',
-                ['framework/multiple/framework1', 'framework/multiple/shared'],
-                true  // bitcode
-        )
-        it.createFramework('Second',
-                ['framework/multiple/framework2', 'framework/multiple/shared'],
-                true // bitcode
-        )
+        framework('First') {
+            sources = ['framework/multiple/framework1', 'framework/multiple/shared']
+            bitcode = true
+        }
+        framework('Second') {
+            sources = ['framework/multiple/framework2', 'framework/multiple/shared']
+            bitcode = true
+        }
         swiftSources = ['framework/multiple']
     }
 
     frameworkTest("testGh3343Framework") {
-        testName = 'Gh3343'
-        it.createFramework('Gh3343', ['framework/gh3343'], false, 'Gh3343', 'objcGh3343')
+        framework('Gh3343') {
+            sources = ['framework/gh3343']
+            library = 'objcGh3343'
+        }
         swiftSources = ['framework/gh3343/']
     }
 }

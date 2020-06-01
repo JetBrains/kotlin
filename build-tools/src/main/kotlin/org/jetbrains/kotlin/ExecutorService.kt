@@ -503,7 +503,7 @@ fun KonanTestExecutable.configureXcodeBuild() {
                         // Copy each framework to the Frameworks dir.
                         it += frameworks.map { framework ->
                             val name = framework.artifact
-                            "cp -r \"$testOutput/$testName/${project.testTarget.name}/$name.framework\" " +
+                            "cp -r \"$testOutput/$name/${project.testTarget.name}/$name.framework\" " +
                                     "\"\$TARGET_BUILD_DIR/\$FRAMEWORKS_FOLDER_PATH/$name.framework\""
                         }
                     }
