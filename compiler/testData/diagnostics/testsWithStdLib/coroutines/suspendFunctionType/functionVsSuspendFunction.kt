@@ -15,5 +15,5 @@ fun test4(): suspend () -> Unit = useSuspendFn {}
 fun test5() = useSuspendFn {}
 
 fun test5(sfn: suspend () -> Unit) = ambiguous(sfn)
-fun test6(fn: () -> Unit) = <!COMPATIBILITY_WARNING!>ambiguous(fn)<!>
+fun test6(fn: () -> Unit) = ambiguous(fn)
 fun test7(): () -> Unit = <!OVERLOAD_RESOLUTION_AMBIGUITY!>ambiguous<!> {}

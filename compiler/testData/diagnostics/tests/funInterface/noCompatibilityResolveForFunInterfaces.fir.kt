@@ -35,7 +35,7 @@ object Test3 {
 
     fun test(f: () -> Unit) {
         val result = foo(1, f)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
     }
 }
 
