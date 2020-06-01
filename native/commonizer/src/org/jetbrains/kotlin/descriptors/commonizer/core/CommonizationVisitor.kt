@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
-import org.jetbrains.kotlin.descriptors.commonizer.cir.fqNameWithTypeParameters
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 
