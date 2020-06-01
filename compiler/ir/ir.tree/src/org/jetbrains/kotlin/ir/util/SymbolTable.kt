@@ -398,6 +398,18 @@ open class SymbolTable(
         )
     }
 
+    fun declareClass(
+        sig: IdSignature,
+        symbolFactory: () -> IrClassSymbol,
+        classFactory: (IrClassSymbol) -> IrClass
+    ): IrClass {
+        return classSymbolTable.declare(
+            sig,
+            symbolFactory,
+            classFactory
+        )
+    }
+
     fun declareClassIfNotExists(descriptor: ClassDescriptor, classFactory: (IrClassSymbol) -> IrClass): IrClass {
         return classSymbolTable.declareIfNotExists(descriptor, { createClassSymbol(descriptor) }, classFactory)
     }

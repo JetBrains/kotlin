@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -302,9 +303,10 @@ internal fun IrClass.findMatchingOverriddenSymbolsFromSupertypes(
     visited: MutableSet<IrClass> = mutableSetOf()
 ): List<IrSymbol> {
     for (superType in superTypes) {
-        val superTypeClass = superType.classOrNull
-        if (superTypeClass is IrClassSymbolImpl || superTypeClass is IrClassPublicSymbolImpl) {
-            superTypeClass.owner.findMatchingOverriddenSymbolsFromThisAndSupertypes(irBuiltIns, target, result, visited)
+        when (val superTypeClass = superType.classOrNull) {
+            is IrClassSymbolImpl, is IrClassPublicSymbolImpl, is Fir2IrClassSymbol -> {
+                superTypeClass.owner.findMatchingOverriddenSymbolsFromThisAndSupertypes(irBuiltIns, target, result, visited)
+            }
         }
     }
     return result

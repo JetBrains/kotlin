@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -159,15 +160,15 @@ class Fir2IrClassifierStorage(
         parent: IrDeclarationParent? = null,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     ): IrClass {
-        val descriptor = WrappedClassDescriptor()
         val visibility = regularClass.visibility
         val modality = if (regularClass.classKind == ClassKind.ENUM_CLASS) {
             regularClass.enumClassModality()
         } else {
             regularClass.modality ?: Modality.FINAL
         }
+        val signature = signatureComposer.composeSignature(regularClass)
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareClass(descriptor) { symbol ->
+            symbolTable.declareClass(signature, { Fir2IrClassSymbol(signature) }) { symbol ->
                 IrClassImpl(
                     startOffset,
                     endOffset,
@@ -185,8 +186,8 @@ class Fir2IrClassifierStorage(
                     isExpect = regularClass.isExpect,
                     isFun = regularClass.isFun
                 ).apply {
-                    metadata = FirMetadataSource.Class(regularClass, descriptor)
-                    descriptor.bind(this)
+                    val descriptor = symbol.descriptor
+                    metadata = FirMetadataSource.Class(regularClass, descriptor as WrappedClassDescriptor)
                 }
             }
         }
@@ -207,19 +208,19 @@ class Fir2IrClassifierStorage(
         name: Name = Name.special("<no name provided>"),
         irParent: IrDeclarationParent? = null
     ): IrClass {
-        val descriptor = WrappedClassDescriptor()
         val origin = IrDeclarationOrigin.DEFINED
         val modality = Modality.FINAL
+        val signature = signatureComposer.composeSignature(anonymousObject)
         val result = anonymousObject.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareClass(descriptor) { symbol ->
+            symbolTable.declareClass(signature, { Fir2IrClassSymbol(signature) }) { symbol ->
                 IrClassImpl(
                     startOffset, endOffset, origin, symbol, name,
                     // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
                     anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
                     visibility, modality
                 ).apply {
-                    metadata = FirMetadataSource.Class(anonymousObject, descriptor)
-                    descriptor.bind(this)
+                    val descriptor = symbol.descriptor
+                    metadata = FirMetadataSource.Class(anonymousObject, descriptor as WrappedClassDescriptor)
                     setThisReceiver(anonymousObject.typeParameters)
                     if (irParent != null) {
                         this.parent = irParent
