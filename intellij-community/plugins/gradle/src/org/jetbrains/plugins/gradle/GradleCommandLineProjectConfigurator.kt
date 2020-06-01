@@ -23,7 +23,9 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.lang.Exception
 
-private val LOG = Logger.getInstance("GradleImport")
+private val LOG = Logger.getInstance(GradleCommandLineProjectConfigurator::class.java)
+
+private val GRADLE_OUTPUT_LOG = Logger.getInstance("GradleOutput")
 
 class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigurator {
   override fun getName() = "gradle"
@@ -69,9 +71,7 @@ class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigu
   }
 
   private fun getImportSpecBuilder(project: Project): ImportSpecBuilder =
-    ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-      .use(MODAL_SYNC)
-      //.callback(Callback()) Can't use this callback cause it has to be null for correct project structure importing
+    ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).use(MODAL_SYNC)
 
   class TaskNotificationListener : ExternalSystemTaskNotificationListener {
     override fun onSuccess(id: ExternalSystemTaskId) {
@@ -83,18 +83,14 @@ class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigu
     }
 
     override fun onTaskOutput(id: ExternalSystemTaskId, text: String, stdOut: Boolean) {
-      if (stdOut) {
-        LOG.debug(text)
-      } else {
-        LOG.error("Gradle import error $text")
-      }
+      GRADLE_OUTPUT_LOG.debug("[Gradle ${if (stdOut) "STDOUT" else "STDERR" } ] $text")
     }
 
     override fun onStatusChange(event: ExternalSystemTaskNotificationEvent) {
     }
 
     override fun onCancel(id: ExternalSystemTaskId) {
-      LOG.error("Gradle import canceled")
+      LOG.warn("Gradle import canceled")
     }
 
     override fun onEnd(id: ExternalSystemTaskId) {
