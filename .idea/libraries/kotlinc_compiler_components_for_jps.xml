@@ -1,12 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
-<library name="kotlinc.compiler-components-for-jps" type="repository">
-  <properties include-transitive-deps="false" maven-id="org.jetbrains.kotlin:compiler-components-for-jps:1.4.0-dev-303" />
-  <CLASSES>
-    <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/compiler-components-for-jps/1.4.0-dev-303/compiler-components-for-jps-1.4.0-dev-303.jar!/" />
-  </CLASSES>
-  <JAVADOC />
-  <SOURCES>
-    <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/compiler-components-for-jps/1.4.0-dev-303/compiler-components-for-jps-1.4.0-dev-303-sources.jar!/" />
-  </SOURCES>
-</library>
+  <library name="kotlinc.compiler-components-for-jps" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.jetbrains.kotlin:compiler-components-for-jps:1.4.0-dev-304" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/compiler-components-for-jps/1.4.0-dev-304/compiler-components-for-jps-1.4.0-dev-304.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/compiler-components-for-jps/1.4.0-dev-304/compiler-components-for-jps-1.4.0-dev-304-sources.jar!/" />
+    </SOURCES>
+  </library>
 </component>

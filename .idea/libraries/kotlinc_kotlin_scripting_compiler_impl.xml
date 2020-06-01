@@ -1,11 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
-  <library name="kotlinc.kotlin-scripting-compiler-impl">
+  <library name="kotlinc.kotlin-scripting-compiler-impl" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.jetbrains.kotlin:kotlin-scripting-compiler-impl:1.4.0-dev-304" />
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-scripting-compiler-impl/1.4-SNAPSHOT/kotlin-scripting-compiler-impl-1.4-SNAPSHOT.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-scripting-compiler-impl/1.4.0-dev-304/kotlin-scripting-compiler-impl-1.4.0-dev-304.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-scripting-compiler-impl/1.4-SNAPSHOT/kotlin-scripting-compiler-impl-1.4-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-scripting-compiler-impl/1.4.0-dev-304/kotlin-scripting-compiler-impl-1.4.0-dev-304-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
