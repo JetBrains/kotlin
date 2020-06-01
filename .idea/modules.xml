@@ -1036,6 +1036,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-IntelliLang/intellij.cidr.langInjection.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-IntelliLang/intellij.cidr.langInjection.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-markdown/intellij.cidr.markdown.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-markdown/intellij.cidr.markdown.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-modulemap-language/intellij.cidr.modulemap.language.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-modulemap-language/intellij.cidr.modulemap.language.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-projectModel/intellij.cidr.projectModel.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-projectModel/intellij.cidr.projectModel.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-boost/intellij.cidr.test.boost.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-boost/intellij.cidr.test.boost.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-catch/intellij.cidr.test.catch.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-catch/intellij.cidr.test.catch.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-doctest/intellij.cidr.test.doctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-doctest/intellij.cidr.test.doctest.iml" />
@@ -1043,6 +1044,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-toolchains/intellij.cidr.toolchains.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-toolchains/intellij.cidr.toolchains.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-tools/intellij.cidr.tools.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-tools/intellij.cidr.tools.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-util/intellij.cidr.util.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-util/intellij.cidr.util.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-util/serializer/intellij.cidr.util.serializer.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-util/serializer/intellij.cidr.util.serializer.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-util/ui/intellij.cidr.util.ui.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-util/ui/intellij.cidr.util.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModel/intellij.cidr.workspaceModel.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModel/intellij.cidr.workspaceModel.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/xcode-model-core/intellij.cidr.xcodeModel.core.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/xcode-model-core/intellij.cidr.xcodeModel.core.iml" />
