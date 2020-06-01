@@ -80,6 +80,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
             PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("java.util", false));
             PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("kotlinx.android.synthetic", true));
+            PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("io.ktor", true));
         }
 
         // Many of test data actually depend on this order of imports,
