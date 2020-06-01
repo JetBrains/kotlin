@@ -1338,7 +1338,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/incremental-compilation-impl/test", "jps-plugin/testData") {
+        testGroup("compiler/incremental-compilation-impl/test", "compiler/incremental-compilation-impl/testData") {
             fun incrementalJvmTestData(targetBackend: TargetBackend): TestGroup.TestClass.() -> Unit = {
                 model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = targetBackend)
                 model("incremental/classHierarchyAffected", extension = null, recursive = false, targetBackend = targetBackend)
