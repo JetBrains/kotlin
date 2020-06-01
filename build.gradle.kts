@@ -608,7 +608,6 @@ tasks {
             ":compiler:fir:raw-fir:light-tree2fir:test",
             ":compiler:fir:analysis-tests:test",
             ":compiler:fir:fir2ir:test",
-            ":idea:idea-fir:test",
             ":plugins:fir:fir-plugin-prototype:test"
         )
     }
@@ -705,8 +704,7 @@ tasks {
             ":idea:jvm-debugger:jvm-debugger-evaluation:test",
             ":idea:jvm-debugger:jvm-debugger-sequence:test",
             ":idea:jvm-debugger:eval4j:test",
-            ":idea:scripting-support:test",
-            ":idea:idea-fir:test"
+            ":idea:scripting-support:test"
         )
     }
 
