@@ -29,7 +29,7 @@
     <orderEntry type="module" module-name="kotlin.idea" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.completion" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.compiler-plugins.sam-with-receiver" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
   </component>
 </module>

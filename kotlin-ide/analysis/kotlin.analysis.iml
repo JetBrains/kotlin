@@ -25,10 +25,11 @@
     <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="library" name="javax-inject" level="project" />
     <orderEntry type="library" name="Guava" level="project" />
-    <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-scripting-compiler" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-scripting-compiler-impl" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-scripting-common" level="project" />
+    <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="module" module-name="kotlin.common" />
     <orderEntry type="module" module-name="kotlin.core" />
     <orderEntry type="module" module-name="kotlin.jps-common" />
@@ -39,6 +40,5 @@
     <orderEntry type="module" module-name="intellij.platform.diff.impl" />
     <orderEntry type="module" module-name="intellij.java.impl" />
     <orderEntry type="module" module-name="intellij.xml.psi.impl" />
-    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

@@ -31,18 +31,18 @@
     <orderEntry type="module" module-name="kotlin.jvm-debugger.util" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.coroutines" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.evaluation" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.sequence" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.analysis" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.eval4j" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.common" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.jps.model" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.debugger.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.debugger.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.debugger.streams" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.aetherDependencyResolver" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
   </component>
 </module>

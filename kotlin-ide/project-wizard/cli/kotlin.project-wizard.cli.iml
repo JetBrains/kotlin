@@ -25,6 +25,7 @@
     <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlin-reflect" level="project" />
     <orderEntry type="library" name="kotlinx-collections-immutable-jvm" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="module-library">
       <library name="org.yaml:snakeyaml:1.24" type="repository">
         <properties maven-id="org.yaml:snakeyaml:1.24" />
@@ -38,8 +39,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="kotlin.project-wizard.core" />
-    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
-    <orderEntry type="library" scope="RUNTIME" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
   </component>
 </module>

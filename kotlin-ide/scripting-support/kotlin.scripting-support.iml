@@ -24,16 +24,6 @@
     <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-compiler" level="project" />
-    <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.analysis" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.idea" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.jvm" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.jvm-debugger.coroutines" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.editor" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.vcs.impl" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.java.psi" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-main-kts" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-scripting-compiler" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-scripting-compiler-impl" level="project" />
@@ -41,5 +31,15 @@
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-script-runtime" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-script-util" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-scripting-common" level="project" />
+    <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.analysis" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.idea" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.jvm" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.jvm-debugger.coroutines" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.editor" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.psi" scope="TEST" />
   </component>
 </module>

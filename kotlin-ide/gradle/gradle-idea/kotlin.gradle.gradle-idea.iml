@@ -44,13 +44,18 @@
     <orderEntry type="module" module-name="kotlin.gradle.gradle-tooling" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.coroutines" />
     <orderEntry type="module" module-name="kotlin.native" />
-    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.completion" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.gradle.gradle-native" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.kapt" scope="RUNTIME" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.scripting" scope="RUNTIME" />
+    <orderEntry type="module" module-name="kotlin.project-wizard.idea" scope="RUNTIME" />
+    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
     <orderEntry type="module" module-name="intellij.platform.projectModel.impl" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.diff.impl" />
     <orderEntry type="module" module-name="intellij.java.impl" />
     <orderEntry type="module" module-name="intellij.java.ui" />
     <orderEntry type="module" module-name="intellij.java.execution.impl" />
@@ -60,10 +65,5 @@
     <orderEntry type="module" module-name="intellij.testng" />
     <orderEntry type="module" module-name="intellij.gradle.java" />
     <orderEntry type="module" module-name="intellij.gradle.toolingExtension.impl" />
-    <orderEntry type="module" module-name="kotlin.compiler-plugins.kapt" scope="RUNTIME" />
-    <orderEntry type="module" module-name="kotlin.compiler-plugins.scripting" scope="RUNTIME" />
-    <orderEntry type="module" module-name="kotlin.project-wizard.idea" scope="RUNTIME" />
-    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.diff.impl" />
   </component>
 </module>

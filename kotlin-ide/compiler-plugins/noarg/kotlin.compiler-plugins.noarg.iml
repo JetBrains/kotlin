@@ -32,9 +32,9 @@
     <orderEntry type="module" module-name="kotlin.gradle.gradle-idea" />
     <orderEntry type="module" module-name="kotlin.gradle.gradle-tooling" />
     <orderEntry type="module" module-name="kotlin.compiler-plugins.annotation-based-compiler-support" />
+    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.psi.impl" />
     <orderEntry type="module" module-name="intellij.gradle.common" />
-    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
   </component>
 </module>

@@ -29,7 +29,6 @@
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-scripting-compiler-impl" level="project" />
     <orderEntry type="module" module-name="kotlin.common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.completion" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.analysis" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.gradle.gradle-tooling" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.idea" scope="TEST" />
@@ -39,9 +38,10 @@
     <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jps-common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.analysis.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.vcs.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.gradle.common" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
   </component>
 </module>

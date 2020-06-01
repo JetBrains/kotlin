@@ -51,12 +51,23 @@
     <orderEntry type="module" module-name="kotlin.live-templates" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.sequence" />
     <orderEntry type="module" module-name="kotlin.scripting" />
-    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.core" />
     <orderEntry type="module" module-name="kotlin.analysis" />
+    <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.repl" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.util" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.native" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.gradle.gradle-native" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.maven" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.uast.uast-kotlin" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.uast.uast-kotlin-idea" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.jvm-debugger.evaluation" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.sam-with-receiver" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.noarg" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.kotlinx-serialization" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.allopen" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.statistics" />
@@ -80,16 +91,5 @@
     <orderEntry type="module" module-name="intellij.statsCollector" />
     <orderEntry type="module" module-name="intellij.copyright" />
     <orderEntry type="module" module-name="intellij.properties.psi" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.native" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.gradle.gradle-native" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.maven" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.uast.uast-kotlin" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.uast.uast-kotlin-idea" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.compiler-plugins.sam-with-receiver" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.compiler-plugins.noarg" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.compiler-plugins.kotlinx-serialization" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.jvm-debugger.evaluation" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.compiler-plugins.allopen" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
   </component>
 </module>
