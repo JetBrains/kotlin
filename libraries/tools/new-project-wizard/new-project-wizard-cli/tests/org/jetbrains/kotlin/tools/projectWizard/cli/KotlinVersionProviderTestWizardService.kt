@@ -12,6 +12,6 @@ class KotlinVersionProviderTestWizardService : KotlinVersionProviderService, Tes
     override fun getKotlinVersion(): Version = TEST_KOTLIN_VERSION
 
     companion object {
-        val TEST_KOTLIN_VERSION = Version("1.4-M2-eap-83")
+        val TEST_KOTLIN_VERSION = Version("1.4.0-dev-8752")
     }
 }
