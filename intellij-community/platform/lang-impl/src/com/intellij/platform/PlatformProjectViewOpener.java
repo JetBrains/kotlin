@@ -6,7 +6,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Disposer;
@@ -41,7 +40,7 @@ public final class PlatformProjectViewOpener implements DirectoryProjectConfigur
       project.getMessageBus().connect(listener).subscribe(ToolWindowManagerListener.TOPIC, listener);
     }
     else {
-      StartupManager.getInstance(project).runWhenProjectIsInitialized((DumbAwareRunnable)() -> {
+      StartupManager.getInstance(project).runAfterOpened(() -> {
         activateProjectToolWindow(project, toolWindow);
       });
     }

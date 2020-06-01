@@ -261,7 +261,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
   public void loadState(@NotNull Element state) {
     myPendingState.set(readExternal(state));
 
-    StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
+    StartupManager.getInstance(myProject).runAfterOpened(() -> {
       ApplicationManager.getApplication().invokeLater(() -> {
         List<Bookmark> newList = myPendingState.getAndSet(null);
         if (newList != null) {
