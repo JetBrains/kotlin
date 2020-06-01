@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclarationWithVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
-import org.jetbrains.kotlin.descriptors.commonizer.cir.isVirtual
 
 abstract class VisibilityCommonizer(private val allowPrivate: Boolean) : Commonizer<CirDeclarationWithVisibility, Visibility> {
 
