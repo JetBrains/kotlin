@@ -3,9 +3,9 @@ package com.intellij.util.indexing.contentQueue;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -24,9 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -82,45 +80,55 @@ public final class IndexUpdateRunner {
 
     CachedFileContentLoader contentLoader = new CurrentProjectHintedCachedFileContentLoader(project);
     IndexingJob indexingJob = new IndexingJob(project, indicator, contentLoader, files);
-    ourIndexingJobs.add(indexingJob);
-
-    try {
-      Runnable indexingWorker = () -> {
-        while (!indexingJob.isOutdated()) {
-          // Fair alternating indexing of different projects.
-          for (IndexingJob job : ourIndexingJobs) {
-            if (job.isOutdated()) {
-              ourIndexingJobs.remove(job);
-              break;
-            }
-            try {
-              indexOneFileOfJob(job);
-            }
-            catch (ProcessCanceledException ignored) {
-              break;
-            }
+    if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
+      // If the current thread has acquired the write lock, we can't grant it to worker threads, so we must do the work in the current thread.
+      while (!indexingJob.areAllFilesProcessed()) {
+        indexOneFileOfJob(indexingJob);
+      }
+    }
+    else {
+      ourIndexingJobs.add(indexingJob);
+      try {
+        for (int i = 0; i < myNumberOfIndexingThreads; i++) {
+          myIndexingExecutor.execute(() -> indexJobsFairly());
+        }
+        while (!project.isDisposed() && !indexingJob.areAllFilesProcessed()) {
+          indicator.checkCanceled();
+          try {
+            //noinspection BusyWait
+            Thread.sleep(10);
+          }
+          catch (InterruptedException e) {
+            throw new ProcessCanceledException(e);
           }
         }
-      };
-
-      if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
-        // If the current thread has acquired the write lock, we can't grant it to worker threads, so we must do the work in the current thread.
-        indexingWorker.run();
+      } finally {
+        ourIndexingJobs.remove(indexingJob);
       }
-      else {
-        List<Future<?>> futures = new ArrayList<>(myNumberOfIndexingThreads);
-        for (int i = 0; i < myNumberOfIndexingThreads; i++) {
-          futures.add(myIndexingExecutor.submit(indexingWorker));
-        }
-        for (Future<?> future : futures) {
-          ProgressIndicatorUtils.awaitWithCheckCanceled(future, indicator);
-        }
-      }
-    }
-    finally {
-      ourIndexingJobs.remove(indexingJob);
     }
     return indexingJob.myStatistics;
+  }
+
+  // Index jobs one by one while there are some. Jobs may belong to different projects, and we index them fairly.
+  // Drops finished, cancelled and failed jobs from {@code ourIndexingJobs}. Does not throw exceptions.
+  private void indexJobsFairly() {
+    while (!ourIndexingJobs.isEmpty()) {
+      for (IndexingJob job : ourIndexingJobs) {
+        if (job.myProject.isDisposed() || job.myNoMoreFilesToProcess.get() || job.myIndicator.isCanceled()) {
+          ourIndexingJobs.remove(job);
+          continue;
+        }
+        try {
+          indexOneFileOfJob(job);
+        }
+        catch (Throwable e) {
+          if (!(e instanceof ControlFlowException)) {
+            FileBasedIndexImpl.LOG.warn("Indexing job for " + job.myProject + " has failed", e);
+          }
+          ourIndexingJobs.remove(job);
+        }
+      }
+    }
   }
 
   private void indexOneFileOfJob(@NotNull IndexingJob indexingJob) throws ProcessCanceledException {
@@ -146,7 +154,7 @@ public final class IndexUpdateRunner {
     }
 
     if (loadingResult == null) {
-      indexingJob.myIsFinished.set(true);
+      indexingJob.myNoMoreFilesToProcess.set(true);
       return;
     }
 
@@ -293,9 +301,9 @@ public final class IndexUpdateRunner {
     final CachedFileContentLoader myContentLoader;
     final BlockingQueue<VirtualFile> myQueueOfFiles;
     final ProgressIndicator myIndicator;
-    final AtomicInteger myNumberOfFilesProcessed = new AtomicInteger();
+    final AtomicInteger myNumberOfProcessedFiles = new AtomicInteger();
     final int myTotalFiles;
-    final AtomicBoolean myIsFinished = new AtomicBoolean();
+    final AtomicBoolean myNoMoreFilesToProcess = new AtomicBoolean();
     final IndexingJobStatistics myStatistics = new IndexingJobStatistics();
 
     IndexingJob(@NotNull Project project,
@@ -310,13 +318,17 @@ public final class IndexUpdateRunner {
     }
 
     public void oneMoreFileProcessed() {
-      double newFraction = myNumberOfFilesProcessed.incrementAndGet() / (double)myTotalFiles;
+      double newFraction = myNumberOfProcessedFiles.incrementAndGet() / (double)myTotalFiles;
       try {
         myIndicator.setFraction(newFraction);
       }
       catch (Exception ignored) {
         //Unexpected here. A misbehaved progress indicator must not break our code flow.
       }
+    }
+
+    boolean areAllFilesProcessed() {
+      return myNumberOfProcessedFiles.get() == myTotalFiles;
     }
 
     public void setLocationBeingIndexed(@NotNull VirtualFile virtualFile) {
@@ -327,10 +339,6 @@ public final class IndexUpdateRunner {
       else {
         myIndicator.setText2(presentableLocation);
       }
-    }
-
-    private boolean isOutdated() {
-      return myProject.isDisposed() || myIsFinished.get() || myIndicator.isCanceled();
     }
   }
 }
