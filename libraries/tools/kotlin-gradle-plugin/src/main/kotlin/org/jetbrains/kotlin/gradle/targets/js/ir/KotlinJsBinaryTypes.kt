@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-enum class JsBinaryType {
+enum class KotlinJsBinaryType {
     EXECUTABLE
 }
