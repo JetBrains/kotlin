@@ -69,13 +69,13 @@ constructor(
 
     internal fun executableIrInternal(compilation: KotlinJsCompilation) = createBinaries(
         compilation = compilation,
-        jsBinaryType = JsBinaryType.EXECUTABLE,
+        jsBinaryType = KotlinJsBinaryType.EXECUTABLE,
         create = ::Executable
     )
 
     private fun executableLegacyInternal(compilation: KotlinJsCompilation) = createBinaries(
         compilation = compilation,
-        jsBinaryType = JsBinaryType.EXECUTABLE,
+        jsBinaryType = KotlinJsBinaryType.EXECUTABLE,
         create = { compilation, name, type ->
             object : JsBinary {
                 override val compilation: KotlinJsCompilation = compilation
@@ -94,7 +94,7 @@ constructor(
     private fun <T : JsBinary> createBinaries(
         compilation: KotlinJsCompilation,
         modes: Collection<KotlinJsBinaryMode> = listOf(PRODUCTION, DEVELOPMENT),
-        jsBinaryType: JsBinaryType,
+        jsBinaryType: KotlinJsBinaryType,
         create: (compilation: KotlinJsCompilation, name: String, mode: KotlinJsBinaryMode) -> T
     ) {
         modes.forEach {
@@ -110,7 +110,7 @@ constructor(
     private fun <T : JsBinary> createBinary(
         compilation: KotlinJsCompilation,
         mode: KotlinJsBinaryMode,
-        jsBinaryType: JsBinaryType,
+        jsBinaryType: KotlinJsBinaryType,
         create: (compilation: KotlinJsCompilation, name: String, mode: KotlinJsBinaryMode) -> T
     ) {
         val name = generateBinaryName(
@@ -137,7 +137,7 @@ constructor(
         internal fun generateBinaryName(
             compilation: KotlinJsCompilation,
             mode: KotlinJsBinaryMode,
-            jsBinaryType: JsBinaryType?
+            jsBinaryType: KotlinJsBinaryType?
         ) =
             lowerCamelCaseName(
                 compilation.name.let { if (it == KotlinCompilation.MAIN_COMPILATION_NAME) null else it },
