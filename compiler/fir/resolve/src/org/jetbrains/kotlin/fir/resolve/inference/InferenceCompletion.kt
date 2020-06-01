@@ -259,6 +259,10 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
                 this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
             }
 
+            is FirSafeCallExpression -> {
+                this.regularQualifiedAccess.processAllContainingCallCandidates(processBlocks, processor)
+            }
+
             is FirWhenExpression -> {
                 processCandidateIfApplicable(processor, processBlocks)
                 this.branches.forEach { it.result.processAllContainingCallCandidates(processBlocks, processor) }

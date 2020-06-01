@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
@@ -162,6 +164,34 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             }
         }
         return result.compose()
+    }
+
+    override fun transformSafeCallExpression(
+        safeCallExpression: FirSafeCallExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        safeCallExpression.transformReceiver(this, ResolutionMode.ContextIndependent)
+
+        val receiver = safeCallExpression.receiver
+
+        dataFlowAnalyzer.enterSafeCallAfterNullCheck(safeCallExpression)
+
+        safeCallExpression.apply {
+            checkedSubject.value.propagateTypeFromOriginalReceiver(receiver, components.session)
+            transformRegularQualifiedAccess(this@FirExpressionsResolveTransformer, data)
+            propagateTypeFromQualifiedAccessAfterNullCheck(receiver, session)
+        }
+
+        dataFlowAnalyzer.exitSafeCall(safeCallExpression)
+
+        return safeCallExpression.compose()
+    }
+
+    override fun transformCheckedSafeCallSubject(
+        checkedSafeCallSubject: FirCheckedSafeCallSubject,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return checkedSafeCallSubject.compose()
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {

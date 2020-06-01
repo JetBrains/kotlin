@@ -289,7 +289,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             FirDataFlowAnalyzer.createFirDataFlowAnalyzer(this, context.dataFlowAnalyzerContext)
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
         override val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer =
-            IntegerLiteralTypeApproximationTransformer(symbolProvider, inferenceComponents.ctx)
+            IntegerLiteralTypeApproximationTransformer(symbolProvider, inferenceComponents.ctx, inferenceComponents.session)
         override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver =
             FirDoubleColonExpressionResolver(session, integerLiteralTypeApproximator)
         override val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater = IntegerOperatorsTypeUpdater(integerLiteralTypeApproximator)

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.scopes.impl.FirILTTypeRefPlaceHolder
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -32,21 +33,13 @@ import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun Candidate.resolveArgumentExpression(
-    /*
-    csBuilder: ConstraintSystemBuilder,
-    argument: KotlinCallArgument,
-    expectedType: UnwrappedType?,
-    diagnosticsHolder: KotlinDiagnosticsHolder,
-    isReceiver: Boolean
-     */
     csBuilder: ConstraintSystemBuilder,
     argument: FirExpression,
     expectedType: ConeKotlinType,
     expectedTypeRef: FirTypeRef,
     sink: CheckerSink,
     isReceiver: Boolean,
-    isDispatch: Boolean,
-    isSafeCall: Boolean
+    isDispatch: Boolean
 ) {
     when (argument) {
         is FirFunctionCall, is FirWhenExpression, is FirTryExpression, is FirCheckNotNullCall -> resolveSubCallArgument(
@@ -55,9 +48,39 @@ fun Candidate.resolveArgumentExpression(
             expectedType,
             sink,
             isReceiver,
-            isDispatch,
-            isSafeCall
+            isDispatch
         )
+        // x?.bar() is desugared to `x SAFE-CALL-OPERATOR { $not-null-receiver$.bar() }`
+        //
+        // If we have a safe-call as argument like in a call "foo(x SAFE-CALL-OPERATOR { $not-null-receiver$.bar() })"
+        // we obtain argument type (and argument's constraint system) from "$not-null-receiver$.bar()" (argument.regularQualifiedAccess)
+        // and then add constraint: typeOf(`$not-null-receiver$.bar()`).makeNullable() <: EXPECTED_TYPE
+        // NB: argument.regularQualifiedAccess is either a call or a qualified access
+        is FirSafeCallExpression -> {
+            val nestedQualifier = argument.regularQualifiedAccess
+            if (nestedQualifier is FirExpression) {
+                resolveSubCallArgument(
+                    csBuilder,
+                    nestedQualifier,
+                    expectedType,
+                    sink,
+                    isReceiver,
+                    isDispatch,
+                    useNullableArgumentType = true
+                )
+            } else {
+                // Assignment
+                checkApplicabilityForArgumentType(
+                    csBuilder,
+                    StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
+                    expectedType.type,
+                    SimpleConstraintSystemConstraintPosition,
+                    isReceiver = false,
+                    isDispatch = false,
+                    sink = sink
+                )
+            }
+        }
         is FirCallableReferenceAccess ->
             if (argument.calleeReference is FirResolvedNamedReference)
                 resolvePlainExpressionArgument(
@@ -66,8 +89,7 @@ fun Candidate.resolveArgumentExpression(
                     expectedType,
                     sink,
                     isReceiver,
-                    isDispatch,
-                    isSafeCall
+                    isDispatch
                 )
             else
                 preprocessCallableReference(argument, expectedType)
@@ -82,8 +104,7 @@ fun Candidate.resolveArgumentExpression(
             expectedTypeRef,
             sink,
             isReceiver,
-            isDispatch,
-            isSafeCall
+            isDispatch
         )
         is FirBlock -> resolveBlockArgument(
             csBuilder,
@@ -92,10 +113,9 @@ fun Candidate.resolveArgumentExpression(
             expectedTypeRef,
             sink,
             isReceiver,
-            isDispatch,
-            isSafeCall
+            isDispatch
         )
-        else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isDispatch, isSafeCall)
+        else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isDispatch)
     }
 }
 
@@ -106,8 +126,7 @@ private fun Candidate.resolveBlockArgument(
     expectedTypeRef: FirTypeRef,
     sink: CheckerSink,
     isReceiver: Boolean,
-    isDispatch: Boolean,
-    isSafeCall: Boolean
+    isDispatch: Boolean
 ) {
     val returnArguments = block.returnExpressions()
     if (returnArguments.isEmpty()) {
@@ -118,7 +137,6 @@ private fun Candidate.resolveBlockArgument(
             SimpleConstraintSystemConstraintPosition,
             isReceiver = false,
             isDispatch = false,
-            nullableExpectedType = expectedType.type.withNullability(ConeNullability.NULLABLE, sink.components.session.inferenceContext),
             sink = sink
         )
         return
@@ -131,8 +149,7 @@ private fun Candidate.resolveBlockArgument(
             expectedTypeRef,
             sink,
             isReceiver,
-            isDispatch,
-            isSafeCall
+            isDispatch
         )
     }
 }
@@ -144,7 +161,7 @@ fun Candidate.resolveSubCallArgument(
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    isSafeCall: Boolean
+    useNullableArgumentType: Boolean = false
 ) {
     val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(
         csBuilder,
@@ -153,7 +170,7 @@ fun Candidate.resolveSubCallArgument(
         sink,
         isReceiver,
         isDispatch,
-        isSafeCall
+        useNullableArgumentType
     )
     /*
      * It's important to extract type from argument neither from symbol, because of symbol contains
@@ -165,7 +182,7 @@ fun Candidate.resolveSubCallArgument(
         sink.components.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).coneTypeUnsafe()
     }
     val argumentType = candidate.substitutor.substituteOrSelf(type)
-    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isDispatch, isSafeCall)
+    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isDispatch, useNullableArgumentType)
 }
 
 fun Candidate.resolvePlainExpressionArgument(
@@ -175,11 +192,11 @@ fun Candidate.resolvePlainExpressionArgument(
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    isSafeCall: Boolean
+    useNullableArgumentType: Boolean = false
 ) {
     if (expectedType == null) return
     val argumentType = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
-    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isDispatch, isSafeCall)
+    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isDispatch, useNullableArgumentType)
     checkApplicabilityForIntegerOperatorCall(sink, argument)
 }
 
@@ -197,22 +214,22 @@ fun Candidate.resolvePlainArgumentType(
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    isSafeCall: Boolean
+    useNullableArgumentType: Boolean = false
 ) {
     val position = SimpleConstraintSystemConstraintPosition //TODO
 
     val session = sink.components.session
     val capturedType = prepareCapturedType(argumentType)
 
-    val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, session.inferenceContext)
-    if (isReceiver && isSafeCall) {
-        if (!isDispatch && !csBuilder.addSubtypeConstraintIfCompatible(capturedType, nullableExpectedType, position)) {
-            sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER) // TODO
-        }
-        return
-    }
+    val argumentTypeForApplicabilityCheck =
+        if (useNullableArgumentType)
+            capturedType.withNullability(ConeNullability.NULLABLE, session.inferenceContext)
+        else
+            capturedType
 
-    checkApplicabilityForArgumentType(csBuilder, capturedType, expectedType, position, isReceiver, isDispatch, nullableExpectedType, sink)
+    checkApplicabilityForArgumentType(
+        csBuilder, argumentTypeForApplicabilityCheck, expectedType, position, isReceiver, isDispatch, sink
+    )
 }
 
 fun Candidate.prepareCapturedType(argumentType: ConeKotlinType): ConeKotlinType {
@@ -238,7 +255,6 @@ private fun checkApplicabilityForArgumentType(
     position: SimpleConstraintSystemConstraintPosition,
     isReceiver: Boolean,
     isDispatch: Boolean,
-    nullableExpectedType: ConeKotlinType,
     sink: CheckerSink
 ) {
     if (isReceiver && isDispatch) {
@@ -252,6 +268,9 @@ private fun checkApplicabilityForArgumentType(
             csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
             return
         }
+
+        val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, sink.components.session.inferenceContext)
+
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
             sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER) // TODO
         } else {
@@ -277,8 +296,7 @@ internal fun Candidate.resolveArgument(
         parameter.returnTypeRef,
         sink,
         isReceiver,
-        false,
-        isSafeCall
+        false
     )
 }
 

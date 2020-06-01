@@ -55,7 +55,11 @@ class Fir2IrVisitor(
     fakeOverrideMode: FakeOverrideMode
 ) : Fir2IrComponents by components, FirDefaultVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
 
-    private val integerApproximator = IntegerLiteralTypeApproximationTransformer(session.firSymbolProvider, session.inferenceContext)
+    private val integerApproximator = IntegerLiteralTypeApproximationTransformer(
+        session.firSymbolProvider,
+        session.inferenceContext,
+        session
+    )
 
     private val conversionScope = Fir2IrConversionScope()
 

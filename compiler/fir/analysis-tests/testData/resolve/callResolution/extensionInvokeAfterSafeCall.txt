@@ -1,0 +1,9 @@
+FILE: extensionInvokeAfterSafeCall.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public final fun test_1(a: R|A?|, convert: R|A.() -> kotlin/String|): R|kotlin/Unit| {
+        lval s: R|kotlin/String?| = R|<local>/a|?.{ R|<local>/convert|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/String|>|($subj$) }
+    }
+    public final fun test_2(a: R|A|, convert: R|A.() -> kotlin/String|): R|kotlin/Unit| {
+        lval s: R|kotlin/String| = R|<local>/convert|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/String|>|(R|<local>/a|)
+    }

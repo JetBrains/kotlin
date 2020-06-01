@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.propagateTypeFromOriginalReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
@@ -31,7 +33,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class IntegerLiteralTypeApproximationTransformer(
     private val symbolProvider: FirSymbolProvider,
-    private val inferenceContext: ConeInferenceContext
+    private val inferenceContext: ConeInferenceContext,
+    private val session: FirSession
 ) : FirTransformer<ConeKotlinType?>() {
     override fun <E : FirElement> transformElement(element: E, data: ConeKotlinType?): CompositeTransformResult<E> {
         return element.compose()
@@ -126,6 +129,16 @@ class IntegerLiteralTypeApproximationTransformer(
     ): CompositeTransformResult<FirStatement> {
         typeOperatorCall.argumentList.transformArguments(this, null)
         return typeOperatorCall.compose()
+    }
+
+    override fun transformCheckedSafeCallSubject(
+        checkedSafeCallSubject: FirCheckedSafeCallSubject,
+        data: ConeKotlinType?
+    ): CompositeTransformResult<FirStatement> {
+        val newReceiver =
+            checkedSafeCallSubject.originalReceiverReference.value.transform<FirExpression, ConeKotlinType?>(this, data).single
+        checkedSafeCallSubject.propagateTypeFromOriginalReceiver(newReceiver, session)
+        return super.transformCheckedSafeCallSubject(checkedSafeCallSubject, data)
     }
 }
 

@@ -145,8 +145,7 @@ class PostponedArgumentsAnalyzer(
                 lambda.atom.returnTypeRef, // TODO: proper ref
                 checkerSink,
                 isReceiver = false,
-                isDispatch = false,
-                isSafeCall = false
+                isDispatch = false
             )
         }
 
