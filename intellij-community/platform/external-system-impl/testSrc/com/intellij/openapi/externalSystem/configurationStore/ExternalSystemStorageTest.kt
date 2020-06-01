@@ -42,10 +42,7 @@ import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -100,7 +97,9 @@ class ExternalSystemStorageTest {
     assertThat(regular.moduleTypeName).isEqualTo(ModuleTypeId.JAVA_MODULE)
     assertThat(ModuleRootManager.getInstance(imported).contentRootUrls.single()).isEqualTo(VfsUtil.pathToUrl("${project.basePath}/imported"))
     assertThat(ModuleRootManager.getInstance(regular).contentRootUrls.single()).isEqualTo(VfsUtil.pathToUrl("${project.basePath}/regular"))
-    assertThat(ExternalSystemModulePropertyManager.getInstance(imported).isMavenized()).isTrue()
+    val externalModuleProperty = ExternalSystemModulePropertyManager.getInstance(imported)
+    assertThat(externalModuleProperty.isMavenized()).isTrue()
+    assertThat(externalModuleProperty.getLinkedProjectPath()).isEqualTo("${project.basePath}/imported")
     assertThat(ExternalSystemModulePropertyManager.getInstance(regular).isMavenized()).isFalse()
   }
 

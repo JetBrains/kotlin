@@ -2,7 +2,7 @@
   <component name="DeprecatedModuleOptionManager">
     <option key="type" value="JAVA_MODULE" />
   </component>
-  <component name="ExternalSystem" externalSystem="Maven" />
+  <component name="ExternalSystem" externalSystem="Maven" linkedProjectPath="$MODULE_DIR$/imported" />
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$/imported" />
