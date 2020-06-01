@@ -313,6 +313,7 @@ class TowerResolver {
         override fun getSuccessfulCandidates(): Collection<C>? {
             if (!isSuccessful) return null
             var compatibilityCandidate: C? = null
+            var compatibilityGroup: Collection<C>? = null
             var firstGroupWithResolved: Collection<C>? = null
             outer@ for (group in candidateGroups) {
                 for (candidate in group) {
@@ -322,13 +323,14 @@ class TowerResolver {
                     }
 
                     if (compatibilityCandidate == null && isSuccessfulPreserveCompatibility(candidate)) {
+                        compatibilityGroup = group
                         compatibilityCandidate = candidate
                     }
                 }
             }
 
             if (firstGroupWithResolved == null) return null
-            if (compatibilityCandidate != null) {
+            if (compatibilityCandidate != null && compatibilityGroup !== firstGroupWithResolved) {
                 firstGroupWithResolved.forEach { it.addCompatibilityWarning(compatibilityCandidate) }
             }
 

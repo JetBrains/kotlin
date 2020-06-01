@@ -40,7 +40,7 @@ object Test3 {
     fun foo(n: Number, f: () -> Unit): String = ""
 
     fun test(f: () -> Unit) {
-        val result = <!COMPATIBILITY_WARNING!>foo(1, f)<!>
+        val result = foo(1, f)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
     }
 }
@@ -52,7 +52,7 @@ object Test4 {
     fun bar() {}
 
     fun test() {
-        val result = <!COMPATIBILITY_WARNING!>foo(1, ::bar)<!>
+        val result = foo(1, ::bar)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
     }
 }
