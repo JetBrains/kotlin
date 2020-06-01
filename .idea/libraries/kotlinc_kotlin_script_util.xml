@@ -1,11 +1,12 @@
 <component name="libraryTable">
-  <library name="kotlinc.kotlin-script-util">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-script-util/1.4-SNAPSHOT/kotlin-script-util-1.4-SNAPSHOT.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES>
-      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-script-util/1.4-SNAPSHOT/kotlin-script-util-1.4-SNAPSHOT-sources.jar!/" />
-    </SOURCES>
-  </library>
+<library name="kotlinc.kotlin-script-util" type="repository">
+  <properties include-transitive-deps="false" maven-id="org.jetbrains.kotlin:kotlin-script-util:1.4.0-dev-303" />
+  <CLASSES>
+    <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-script-util/1.4.0-dev-303/kotlin-script-util-1.4.0-dev-303.jar!/" />
+  </CLASSES>
+  <JAVADOC />
+  <SOURCES>
+    <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-script-util/1.4.0-dev-303/kotlin-script-util-1.4.0-dev-303-sources.jar!/" />
+  </SOURCES>
+</library>
 </component>
