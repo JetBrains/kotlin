@@ -1693,6 +1693,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         public void testSafeCallInvoke() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/safeCallInvoke.kt");
         }
+
+        @TestMetadata("secondaryConstructorCfg.kt")
+        public void testSecondaryConstructorCfg() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/secondaryConstructorCfg.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/properties")
