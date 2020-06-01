@@ -153,6 +153,15 @@ open class FirJvmMangleComputer(
             if (this in parent.typeParameters) {
                 return parent
             }
+            if (parent is FirCallableDeclaration<*>) {
+                val overriddenSymbol = parent.symbol.overriddenSymbol
+                if (overriddenSymbol != null) {
+                    val fir = overriddenSymbol.fir
+                    if (fir is FirTypeParametersOwner && this in fir.typeParameters) {
+                        return parent
+                    }
+                }
+            }
         }
         throw IllegalStateException("Should not be here!")
     }
