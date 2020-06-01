@@ -52,6 +52,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper.DISPATCH_PORT_SYS_PROP;
 import static com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunnableState.BUILD_PROCESS_DEBUGGER_PORT_KEY;
 import static com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunnableState.DEBUGGER_DISPATCH_PORT_KEY;
 import static com.intellij.util.containers.ContainerUtil.addAllNotNull;
@@ -100,6 +101,7 @@ public class GradleTaskManager implements ExternalSystemTaskManager<GradleExecut
     Function<ProjectConnection, Void> f = connection -> {
       try {
         setupGradleScriptDebugging(effectiveSettings);
+        setupDebuggerDispatchPort(effectiveSettings);
         appendInitScriptArgument(tasks, jvmParametersSetup, effectiveSettings);
         try {
           for (GradleBuildParticipant buildParticipant : effectiveSettings.getExecutionWorkspace().getBuildParticipants()) {
@@ -228,6 +230,13 @@ public class GradleTaskManager implements ExternalSystemTaskManager<GradleExecut
       boolean isJdk9orLater = ExternalSystemJdkUtil.isJdk9orLater(effectiveSettings.getJavaHome());
       String jvmOpt = ForkedDebuggerHelper.JVM_DEBUG_SETUP_PREFIX + (isJdk9orLater ? "127.0.0.1:" : "") + gradleScriptDebugPort;
       effectiveSettings.withVmOption(jvmOpt);
+    }
+  }
+
+  private static void setupDebuggerDispatchPort(@NotNull GradleExecutionSettings effectiveSettings) {
+    Integer dispatchPort = effectiveSettings.getUserData(DEBUGGER_DISPATCH_PORT_KEY);
+    if (dispatchPort != null) {
+      effectiveSettings.withVmOption(String.format("-D%s=%d", DISPATCH_PORT_SYS_PROP, dispatchPort));
     }
   }
 
