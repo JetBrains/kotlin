@@ -100,7 +100,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         compilation.binaries
             .all { binary ->
-                val type = binary.type
+                val type = binary.mode
 
                 val runTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
@@ -112,7 +112,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         compilation = compilation,
                         dceTaskProvider = dceTaskProvider,
                         devDceTaskProvider = devDceTaskProvider,
-                        type = type,
+                        mode = type,
                         nodeJs = nodeJs
                     )
 
@@ -128,7 +128,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     it.outputs.upToDateWhen { false }
                 }
 
-                if (type == KotlinJsBinaryType.DEVELOPMENT) {
+                if (type == KotlinJsBinaryMode.DEVELOPMENT) {
                     target.runTask.dependsOn(runTask)
                     commonRunTask.configure {
                         it.dependsOn(runTask)
@@ -161,7 +161,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         compilation.binaries
             .all { binary ->
-                val type = binary.type
+                val type = binary.mode
 
                 val webpackTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
@@ -174,7 +174,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         compilation = compilation,
                         dceTaskProvider = dceTaskProvider,
                         devDceTaskProvider = devDceTaskProvider,
-                        type = type,
+                        mode = type,
                         nodeJs = nodeJs
                     )
 
@@ -189,7 +189,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     it._destinationDirectory = distribution.directory
                 }
 
-                if (type == KotlinJsBinaryType.PRODUCTION) {
+                if (type == KotlinJsBinaryMode.PRODUCTION) {
                     assembleTask.dependsOn(webpackTask)
                     val webpackCommonTask = registerSubTargetTask<Task>(
                         disambiguateCamelCased(WEBPACK_TASK_NAME)
@@ -210,7 +210,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         compilation: KotlinJsCompilation,
         dceTaskProvider: TaskProvider<KotlinJsDceTask>,
         devDceTaskProvider: TaskProvider<KotlinJsDceTask>,
-        type: KotlinJsBinaryType,
+        mode: KotlinJsBinaryMode,
         nodeJs: NodeJsRootExtension
     ) {
         dependsOn(
@@ -218,7 +218,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
 
-        configureOptimization(type)
+        configureOptimization(mode)
 
         devServer = KotlinWebpackConfig.DevServer(
             open = true,
@@ -227,9 +227,9 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         outputs.upToDateWhen { false }
 
-        val actualDceTaskProvider = when (type) {
-            KotlinJsBinaryType.PRODUCTION -> dceTaskProvider
-            KotlinJsBinaryType.DEVELOPMENT -> devDceTaskProvider
+        val actualDceTaskProvider = when (mode) {
+            KotlinJsBinaryMode.PRODUCTION -> dceTaskProvider
+            KotlinJsBinaryMode.DEVELOPMENT -> devDceTaskProvider
         }
 
         entryProperty.set(
@@ -283,7 +283,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
     }
 
-    private fun KotlinWebpack.configureOptimization(kind: KotlinJsBinaryType) {
+    private fun KotlinWebpack.configureOptimization(kind: KotlinJsBinaryMode) {
         mode = getByKind(
             kind = kind,
             releaseValue = Mode.PRODUCTION,
@@ -298,12 +298,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     }
 
     private fun <T> getByKind(
-        kind: KotlinJsBinaryType,
+        kind: KotlinJsBinaryMode,
         releaseValue: T,
         debugValue: T
     ): T = when (kind) {
-        KotlinJsBinaryType.PRODUCTION -> releaseValue
-        KotlinJsBinaryType.DEVELOPMENT -> debugValue
+        KotlinJsBinaryMode.PRODUCTION -> releaseValue
+        KotlinJsBinaryMode.DEVELOPMENT -> debugValue
     }
 
     companion object {

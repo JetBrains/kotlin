@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType.DEVELOPMENT
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType.PRODUCTION
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -80,24 +80,24 @@ constructor(
             object : JsBinary {
                 override val compilation: KotlinJsCompilation = compilation
                 override val name: String = name
-                override val type: KotlinJsBinaryType = type
+                override val mode: KotlinJsBinaryMode = type
             }
         }
     )
 
     internal fun getIrBinaries(
-        type: KotlinJsBinaryType
+        mode: KotlinJsBinaryMode
     ): DomainObjectSet<JsIrBinary> =
         withType(JsIrBinary::class.java)
-            .matching { it.type == type }
+            .matching { it.mode == mode }
 
     private fun <T : JsBinary> createBinaries(
         compilation: KotlinJsCompilation,
-        types: Collection<KotlinJsBinaryType> = listOf(PRODUCTION, DEVELOPMENT),
+        modes: Collection<KotlinJsBinaryMode> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: JsBinaryType,
-        create: (compilation: KotlinJsCompilation, name: String, type: KotlinJsBinaryType) -> T
+        create: (compilation: KotlinJsCompilation, name: String, mode: KotlinJsBinaryMode) -> T
     ) {
-        types.forEach {
+        modes.forEach {
             createBinary(
                 compilation,
                 it,
@@ -109,13 +109,13 @@ constructor(
 
     private fun <T : JsBinary> createBinary(
         compilation: KotlinJsCompilation,
-        type: KotlinJsBinaryType,
+        mode: KotlinJsBinaryMode,
         jsBinaryType: JsBinaryType,
-        create: (compilation: KotlinJsCompilation, name: String, type: KotlinJsBinaryType) -> T
+        create: (compilation: KotlinJsCompilation, name: String, mode: KotlinJsBinaryMode) -> T
     ) {
         val name = generateBinaryName(
             compilation,
-            type,
+            mode,
             jsBinaryType
         )
 
@@ -125,7 +125,7 @@ constructor(
 
         binaryNames.add(name)
 
-        val binary = create(compilation, name, type)
+        val binary = create(compilation, name, mode)
         add(binary)
         // Allow accessing binaries as properties of the container in Groovy DSL.
         if (this is ExtensionAware) {
@@ -136,12 +136,12 @@ constructor(
     companion object {
         internal fun generateBinaryName(
             compilation: KotlinJsCompilation,
-            type: KotlinJsBinaryType,
+            mode: KotlinJsBinaryMode,
             jsBinaryType: JsBinaryType?
         ) =
             lowerCamelCaseName(
                 compilation.name.let { if (it == KotlinCompilation.MAIN_COMPILATION_NAME) null else it },
-                type.name.toLowerCase(),
+                mode.name.toLowerCase(),
                 jsBinaryType?.name?.toLowerCase()
             )
     }

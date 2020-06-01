@@ -69,7 +69,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             .all { binary ->
                 binary as Executable
 
-                val type = binary.type
+                val type = binary.mode
 
                 val runTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
@@ -95,7 +95,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     it.outputs.upToDateWhen { false }
                 }
 
-                if (type == KotlinJsBinaryType.DEVELOPMENT) {
+                if (type == KotlinJsBinaryMode.DEVELOPMENT) {
                     target.runTask.dependsOn(runTask)
                     commonRunTask.configure {
                         it.dependsOn(runTask)
@@ -129,7 +129,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             .all { binary ->
                 binary as Executable
 
-                val type = binary.type
+                val type = binary.mode
                 val webpackTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
                         binary.executeTaskBaseName,
@@ -151,7 +151,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     it._destinationDirectory = distribution.directory
                 }
 
-                if (type == KotlinJsBinaryType.PRODUCTION) {
+                if (type == KotlinJsBinaryMode.PRODUCTION) {
                     assembleTask.dependsOn(webpackTask)
                     val webpackCommonTask = registerSubTargetTask<Task>(
                         disambiguateCamelCased(WEBPACK_TASK_NAME)
@@ -173,7 +173,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         binary: Executable,
         nodeJs: NodeJsRootExtension
     ) {
-        val type = binary.type
+        val type = binary.mode
 
         dependsOn(
             nodeJs.npmInstallTask,
@@ -190,7 +190,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         }
     }
 
-    private fun KotlinWebpack.configureOptimization(kind: KotlinJsBinaryType) {
+    private fun KotlinWebpack.configureOptimization(kind: KotlinJsBinaryMode) {
         mode = getByKind(
             kind = kind,
             releaseValue = Mode.PRODUCTION,
@@ -205,12 +205,12 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     private fun <T> getByKind(
-        kind: KotlinJsBinaryType,
+        kind: KotlinJsBinaryMode,
         releaseValue: T,
         debugValue: T
     ): T = when (kind) {
-        KotlinJsBinaryType.PRODUCTION -> releaseValue
-        KotlinJsBinaryType.DEVELOPMENT -> debugValue
+        KotlinJsBinaryMode.PRODUCTION -> releaseValue
+        KotlinJsBinaryMode.DEVELOPMENT -> debugValue
     }
 
     companion object {

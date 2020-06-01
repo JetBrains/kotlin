@@ -9,20 +9,20 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 interface JsBinary {
     val compilation: KotlinJsCompilation
     val name: String
-    val type: KotlinJsBinaryType
+    val mode: KotlinJsBinaryMode
 }
 
 sealed class JsIrBinary(
     override val compilation: KotlinJsCompilation,
     override val name: String,
-    override val type: KotlinJsBinaryType
+    override val mode: KotlinJsBinaryMode
 ) : JsBinary {
     val linkTaskName: String = linkTaskName()
 
@@ -49,16 +49,16 @@ sealed class JsIrBinary(
 class Executable(
     compilation: KotlinJsCompilation,
     name: String,
-    type: KotlinJsBinaryType
+    mode: KotlinJsBinaryMode
 ) : JsIrBinary(
     compilation,
     name,
-    type
+    mode
 ) {
     val executeTaskBaseName: String =
         generateBinaryName(
             compilation,
-            type,
+            mode,
             null
         )
 }
@@ -67,6 +67,6 @@ class Executable(
 internal val JsBinary.executeTaskBaseName: String
     get() = generateBinaryName(
         compilation,
-        type,
+        mode,
         null
     )
