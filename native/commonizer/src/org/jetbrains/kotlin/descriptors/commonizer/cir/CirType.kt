@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.Variance
 
-sealed class CirType
+sealed class CirType {
+    abstract val fqNameWithTypeParameters: String
+}
 
 /**
  * All attributes except for [expandedTypeConstructorId] are read from the abbreviation type: [AbbreviatedType.abbreviation].
@@ -33,7 +35,6 @@ abstract class CirSimpleType : CirType() {
     abstract val isMarkedNullable: Boolean
     abstract val isDefinitelyNotNullType: Boolean
     abstract val expandedTypeConstructorId: CirTypeConstructorId
-    abstract val fqNameWithTypeParameters: String
 
     inline val isClassOrTypeAlias: Boolean get() = (kind == CLASS || kind == TYPE_ALIAS)
 }
@@ -53,10 +54,7 @@ data class CirTypeConstructorId(val fqName: FqName, val numberOfTypeParameters: 
 
 data class CirTypeProjection(val projectionKind: Variance, val isStarProjection: Boolean, val type: CirType)
 
-data class CirFlexibleType(val lowerBound: CirSimpleType, val upperBound: CirSimpleType) : CirType()
-
-val CirType.fqNameWithTypeParameters: String
-    get() = when (this) {
-        is CirSimpleType -> fqNameWithTypeParameters
-        is CirFlexibleType -> lowerBound.fqNameWithTypeParameters
-    }
+data class CirFlexibleType(val lowerBound: CirSimpleType, val upperBound: CirSimpleType) : CirType() {
+    override val fqNameWithTypeParameters: String
+        get() = lowerBound.fqNameWithTypeParameters
+}
