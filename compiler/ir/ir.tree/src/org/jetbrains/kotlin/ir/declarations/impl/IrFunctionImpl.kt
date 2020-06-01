@@ -127,7 +127,7 @@ class IrFunctionImpl(
         IrSimpleFunctionSymbolImpl(descriptor), returnType, descriptor
     )
 
-    override val descriptor: FunctionDescriptor = symbol.descriptor
+    override val descriptor: FunctionDescriptor get() = symbol.descriptor
 
     init {
         symbol.bind(this)
