@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -433,7 +434,11 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun declareIrSimpleFunction(signature: IdSignature, factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction): IrSimpleFunction {
+    private fun declareIrSimpleFunction(signature: IdSignature?, factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction): IrSimpleFunction {
+        if (signature == null) {
+            val descriptor = WrappedSimpleFunctionDescriptor()
+            return symbolTable.declareSimpleFunction(descriptor, factory).apply { descriptor.bind(this) }
+        }
         return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }, factory)
     }
 
@@ -519,7 +524,11 @@ class Fir2IrDeclarationStorage(
 
     fun getCachedIrConstructor(constructor: FirConstructor): IrConstructor? = constructorCache[constructor]
 
-    private fun declareIrConstructor(signature: IdSignature, factory: (IrConstructorSymbol) -> IrConstructor): IrConstructor {
+    private fun declareIrConstructor(signature: IdSignature?, factory: (IrConstructorSymbol) -> IrConstructor): IrConstructor {
+        if (signature == null) {
+            val descriptor = WrappedClassConstructorDescriptor()
+            return symbolTable.declareConstructor(descriptor, factory).apply { descriptor.bind(this) }
+        }
         return symbolTable.declareConstructor(signature, { Fir2IrConstructorSymbol(signature) }, factory)
     }
 
@@ -550,6 +559,20 @@ class Fir2IrDeclarationStorage(
         return created
     }
 
+    private fun declareIrAccessor(
+        signature: IdSignature?,
+        isGetter: Boolean,
+        factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
+    ): IrSimpleFunction {
+        if (signature == null) {
+            val descriptor =
+                if (isGetter) WrappedPropertyGetterDescriptor(Annotations.EMPTY, SourceElement.NO_SOURCE)
+                else WrappedPropertySetterDescriptor(Annotations.EMPTY, SourceElement.NO_SOURCE)
+            return symbolTable.declareSimpleFunction(descriptor, factory).apply { descriptor.bind(this) }
+        }
+        return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }, factory)
+    }
+
     private fun createIrPropertyAccessor(
         propertyAccessor: FirPropertyAccessor?,
         property: FirProperty,
@@ -564,7 +587,7 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunction {
         val prefix = if (isSetter) "set" else "get"
         val signature = signatureComposer.composeAccessorSignature(property, isSetter)
-        return declareIrSimpleFunction(signature) { symbol ->
+        return declareIrAccessor(signature, isGetter = !isSetter) { symbol ->
             val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
             IrFunctionImpl(
                 startOffset, endOffset, origin, symbol,
@@ -647,7 +670,13 @@ class Fir2IrDeclarationStorage(
             else -> Visibilities.PRIVATE
         }
 
-    private fun declareIrProperty(signature: IdSignature, factory: (IrPropertySymbol) -> IrProperty): IrProperty {
+    private fun declareIrProperty(signature: IdSignature?, factory: (IrPropertySymbol) -> IrProperty): IrProperty {
+        if (signature == null) {
+            val descriptor = WrappedPropertyDescriptor()
+            return symbolTable.declareProperty(0, 0, IrDeclarationOrigin.DEFINED, descriptor, isDelegated = false, factory).apply {
+                descriptor.bind(this)
+            }
+        }
         return symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature) }, factory)
     }
 
@@ -877,11 +906,14 @@ class Fir2IrDeclarationStorage(
         return when (val firDeclaration = firFunctionSymbol.fir) {
             is FirSimpleFunction, is FirAnonymousFunction -> {
                 getCachedIrFunction(firDeclaration)?.let { return it.symbol }
+                val signature = signatureComposer.composeSignature(firDeclaration)
                 val irParent = findIrParent(firDeclaration)
-                symbolTable.referenceSimpleFunctionIfAny(signatureComposer.composeSignature(firDeclaration))?.let { irFunctionSymbol ->
-                    val irFunction = irFunctionSymbol.owner
-                    functionCache[firDeclaration] = irFunction
-                    return irFunctionSymbol
+                if (signature != null) {
+                    symbolTable.referenceSimpleFunctionIfAny(signature)?.let { irFunctionSymbol ->
+                        val irFunction = irFunctionSymbol.owner
+                        functionCache[firDeclaration] = irFunction
+                        return irFunctionSymbol
+                    }
                 }
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 createIrFunction(firDeclaration, irParent, origin = parentOrigin).apply {
@@ -899,11 +931,14 @@ class Fir2IrDeclarationStorage(
         return when (val fir = firVariableSymbol.fir) {
             is FirProperty -> {
                 propertyCache[fir]?.let { return it.symbol }
+                val signature = signatureComposer.composeSignature(fir)
                 val irParent = findIrParent(fir)
-                symbolTable.referencePropertyIfAny(signatureComposer.composeSignature(fir))?.let { irPropertySymbol ->
-                    val irProperty = irPropertySymbol.owner
-                    propertyCache[fir] = irProperty
-                    return irPropertySymbol
+                if (signature != null) {
+                    symbolTable.referencePropertyIfAny(signature)?.let { irPropertySymbol ->
+                        val irProperty = irPropertySymbol.owner
+                        propertyCache[fir] = irProperty
+                        return irPropertySymbol
+                    }
                 }
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 createIrProperty(fir, irParent, origin = parentOrigin).apply {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.signaturer
 
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.Fir2IrSignatureComposer
 import org.jetbrains.kotlin.fir.declarations.*
@@ -53,7 +54,9 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
     private val CallableId.relativeCallableName: FqName
         get() = className?.child(callableName) ?: FqName.topLevel(callableName)
 
-    override fun composeSignature(declaration: FirDeclaration): IdSignature {
+    override fun composeSignature(declaration: FirDeclaration): IdSignature? {
+        if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
+        if (declaration is FirMemberDeclaration && declaration.effectiveVisibility == FirEffectiveVisibilityImpl.Local) return null
         val builder = SignatureBuilder()
         declaration.accept(builder)
         return when {
@@ -69,8 +72,8 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
         }
     }
 
-    override fun composeAccessorSignature(property: FirProperty, isSetter: Boolean): IdSignature {
-        val propertySignature = composeSignature(property) as IdSignature.PublicSignature
+    override fun composeAccessorSignature(property: FirProperty, isSetter: Boolean): IdSignature? {
+        val propertySignature = composeSignature(property) as? IdSignature.PublicSignature ?: return null
         val accessorFqName = if (isSetter) {
             propertySignature.declarationFqn.child(Name.special("<set-${property.name}>"))
         } else {

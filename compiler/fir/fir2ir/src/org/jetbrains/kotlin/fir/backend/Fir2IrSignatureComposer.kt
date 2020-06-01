@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.ir.util.IdSignature
 
 interface Fir2IrSignatureComposer {
-    fun composeSignature(declaration: FirDeclaration): IdSignature
-    fun composeAccessorSignature(property: FirProperty, isSetter: Boolean): IdSignature
+    fun composeSignature(declaration: FirDeclaration): IdSignature?
+    fun composeAccessorSignature(property: FirProperty, isSetter: Boolean): IdSignature?
 }

@@ -156,7 +156,11 @@ class Fir2IrClassifierStorage(
         return irClass
     }
 
-    private fun declareIrClass(signature: IdSignature, factory: (IrClassSymbol) -> IrClass): IrClass {
+    private fun declareIrClass(signature: IdSignature?, factory: (IrClassSymbol) -> IrClass): IrClass {
+        if (signature == null) {
+            val descriptor = WrappedClassDescriptor()
+            return symbolTable.declareClass(descriptor, factory).apply { descriptor.bind(this) }
+        }
         return symbolTable.declareClass(signature, { Fir2IrClassSymbol(signature) }, factory)
     }
 
@@ -360,7 +364,7 @@ class Fir2IrClassifierStorage(
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.LOCAL) {
             return createIrClass(firClass).symbol
         }
-        val signature = signatureComposer.composeSignature(firClass)
+        val signature = signatureComposer.composeSignature(firClass)!!
         symbolTable.referenceClassIfAny(signature)?.let { irClassSymbol ->
             val irClass = irClassSymbol.owner
             classCache[firClass as FirRegularClass] = irClass
