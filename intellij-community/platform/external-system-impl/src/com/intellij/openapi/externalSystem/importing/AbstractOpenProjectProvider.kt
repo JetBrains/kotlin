@@ -42,7 +42,7 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
     linkAndRefreshProject(projectDirectory.path, project)
     updateLastProjectLocation(projectDirectory.path)
     val path = Paths.get(projectDirectory.path)
-    PlatformProjectOpenProcessor.openExistingProject(path, path, OpenProjectTask(forceOpenInNewFrame = forceOpenInNewFrame, projectToClose = projectToClose, project = project))
+    PlatformProjectOpenProcessor.openExistingProject(path, OpenProjectTask(forceOpenInNewFrame = forceOpenInNewFrame, projectToClose = projectToClose, project = project))
     return project
   }
 

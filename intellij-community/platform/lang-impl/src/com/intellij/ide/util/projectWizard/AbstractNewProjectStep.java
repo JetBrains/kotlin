@@ -24,6 +24,7 @@ import com.intellij.platform.*;
 import com.intellij.platform.templates.ArchivedTemplatesFactory;
 import com.intellij.platform.templates.LocalArchivedTemplate;
 import com.intellij.platform.templates.TemplateProjectDirectoryGenerator;
+import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -189,15 +190,19 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
 
     RecentProjectsManager.getInstance().setLastProjectCreationLocation(location.getParent());
 
-    OpenProjectTask options = new OpenProjectTask(/* forceOpenInNewFrame = */ false, projectToClose);
-    options.isNewProject = true;
-    options.isRefreshVfsNeeded = false;
+    ProjectOpenedCallback callback = null;
     if (generator instanceof TemplateProjectDirectoryGenerator) {
       ((TemplateProjectDirectoryGenerator<?>)generator).generateProject(baseDir.getName(), locationString);
     }
     else if (generator != null) {
-      options.setCallback((p, module) -> generator.generateProject(p, baseDir, settings, module));
+      callback = (p, module) -> {
+        //noinspection unchecked
+        generator.generateProject(p, baseDir, settings, module);
+      };
     }
-    return PlatformProjectOpenProcessor.openExistingProject(location, location, options);
+
+    OpenProjectTask options = OpenProjectTask.newProjectWithCallback(projectToClose, callback);
+    options.isRefreshVfsNeeded = false;
+    return PlatformProjectOpenProcessor.openExistingProject(location, options);
   }
 }

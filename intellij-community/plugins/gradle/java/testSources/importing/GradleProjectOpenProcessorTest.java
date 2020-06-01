@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
@@ -15,6 +15,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.profile.codeInspection.InspectionProfileManager;
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.EdtTestUtilKt;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.messages.MessageBusConnection;
@@ -41,7 +42,6 @@ import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.exe
  * @author Vladislav.Soroka
  */
 public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
-
   /**
    * Needed only to reuse stuff in GradleImportingTestCase#setUp().
    */
@@ -89,12 +89,11 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
                          "  </component>\n" +
                          "</module>");
 
-    Project fooProject = executeOnEdt(() -> ProjectUtil.openProject(foo.getPath(), null, true));
+    Project fooProject = PlatformTestUtil.loadAndOpenProject(foo.toNioPath());
     AutoImportProjectTracker.getInstance(fooProject).enableAutoImportInTests();
 
     try {
-      assertTrue(fooProject.isOpen());
-      edt(() -> UIUtil.dispatchAllInvocationEvents());
+      EdtTestUtil.runInEdtAndWait(() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());
       assertModules(fooProject, "foo", "bar");
 
       AsyncPromise<?> promise = new AsyncPromise<>();

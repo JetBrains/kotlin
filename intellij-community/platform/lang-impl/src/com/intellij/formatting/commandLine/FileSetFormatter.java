@@ -1,7 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.formatting.commandLine;
 
 import com.intellij.application.options.CodeStyle;
+import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.lang.LanguageFormatting;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -24,12 +25,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.UUID;
 
-public class FileSetFormatter extends FileSetProcessor {
+public final class FileSetFormatter extends FileSetProcessor {
   private static final Logger LOG = Logger.getInstance(FileSetFormatter.class);
 
   private final static String PROJECT_DIR_PREFIX = PlatformUtils.getPlatformPrefix() + ".format.";
@@ -57,21 +59,17 @@ public class FileSetFormatter extends FileSetProcessor {
 
   private void createProject() throws IOException {
     ProjectManagerEx projectManager = ProjectManagerEx.getInstanceEx();
-    File projectDir = createProjectDir();
-    myProject = projectManager.createProject(myProjectUID, projectDir.getPath());
+    myProject = projectManager.newProject(createProjectDir(), myProjectUID, OpenProjectTask.newProject(true));
     if (myProject != null) {
       projectManager.openProject(myProject);
       CodeStyle.setMainProjectSettings(myProject, mySettings);
     }
   }
 
-  private File createProjectDir() throws IOException {
-    File tempDir = FileUtil.createTempDirectory(PROJECT_DIR_PREFIX, myProjectUID + PROJECT_DIR_SUFFIX);
-    File projectDir = new File(tempDir.getPath() + File.separator + PathMacroUtil.DIRECTORY_STORE_NAME);
-    if (projectDir.mkdirs()) {
-      return projectDir;
-    }
-    throw new IOException("Cannot create a temporary project at " + projectDir);
+  private @NotNull Path createProjectDir() throws IOException {
+    Path projectDir = FileUtil.createTempDirectory(PROJECT_DIR_PREFIX, myProjectUID + PROJECT_DIR_SUFFIX).toPath().resolve(PathMacroUtil.DIRECTORY_STORE_NAME);
+    Files.createDirectories(projectDir);
+    return projectDir;
   }
 
   private void closeProject() {
