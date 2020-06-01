@@ -5,8 +5,6 @@ public val kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
 @kotlin.SinceKotlin(version = "1.4")
 public val kotlin.Throwable.suppressedExceptions: kotlin.collections.List<kotlin.Throwable> { get; }
 
-public inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> kotlin.Int): kotlin.Comparator<T>
-
 @kotlin.internal.InlineOnly
 public inline fun TODO(): kotlin.Nothing
 
@@ -1023,7 +1021,7 @@ public interface Comparable<in T> {
     public abstract operator fun compareTo(other: T): kotlin.Int
 }
 
-public interface Comparator<T> {
+public fun interface Comparator<T> {
     @kotlin.js.JsName(name = "compare")
     public abstract fun compare(a: T, b: T): kotlin.Int
 }
