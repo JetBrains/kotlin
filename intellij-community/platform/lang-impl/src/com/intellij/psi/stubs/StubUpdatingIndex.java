@@ -137,7 +137,7 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
 
       @Override
       @Nullable
-      public SerializedStubTree computeValue(@NotNull final FileContent inputData, @NotNull StubBuilderType type) {
+      protected SerializedStubTree computeValue(@NotNull final FileContent inputData, @NotNull StubBuilderType type) {
         try {
           SerializedStubTree prebuiltTree = findPrebuiltSerializedStubTree(inputData);
           if (prebuiltTree != null) {
