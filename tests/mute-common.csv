@@ -61,4 +61,3 @@ org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithAPT.
 org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithoutAPT.testClassWithTypeParameter, KT-36448,,
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncLambdas, redesign test AsyncStackTraces,,
 org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testStepOverInlinedLambdaStdlib, fails after advancing bootstrap KT-37879,,
-org.jetbrains.kotlin.incremental.IncrementalJsKlibCompilerRunnerTestGenerated.ClassHierarchyAffected.testMethodRemoved, FO in klib required,,
