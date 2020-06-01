@@ -52,7 +52,6 @@ internal fun List<CirTypeParameter>.buildDescriptorsAndTypeParameterResolver(
     return ownTypeParameters to typeParameterResolver
 }
 
-
 internal fun List<CirValueParameter>.buildDescriptors(
     targetComponents: TargetDeclarationsBuilderComponents,
     typeParameterResolver: TypeParameterResolver,
@@ -111,7 +110,7 @@ internal fun CirSimpleType.buildType(
 
         CirSimpleTypeKind.TYPE_PARAMETER -> {
             typeParameterResolver.resolve(fqName.shortName())
-                ?: error("Type parameter $fqName not found in ${typeParameterResolver::class.java}, $typeParameterResolver")
+                ?: error("Type parameter $fqName not found in ${typeParameterResolver::class.java}, $typeParameterResolver for ${targetComponents.target}")
         }
 
         CirSimpleTypeKind.CLASS, CirSimpleTypeKind.TYPE_ALIAS -> {
@@ -150,13 +149,13 @@ internal fun findClassOrTypeAlias(
 
         // TODO: this works fine for Native as far as built-ins module contains full Native stdlib, but this is not enough for JVM and JS
         builtInsModule.resolveClassOrTypeAliasByFqName(fqName, NoLookupLocation.FOR_ALREADY_TRACKED)
-            ?: error("Classifier $fqName not found in built-ins module $builtInsModule")
+            ?: error("Classifier $fqName not found in built-ins module $builtInsModule for ${targetComponents.target}")
     }
 
     else -> {
         // otherwise, find the appropriate user classifier:
         targetComponents.findAppropriateClassOrTypeAlias(fqName)
-            ?: error("Classifier $fqName not found in created descriptors cache")
+            ?: error("Classifier $fqName not found in created descriptors cache for ${targetComponents.target}")
     }
 }
 
