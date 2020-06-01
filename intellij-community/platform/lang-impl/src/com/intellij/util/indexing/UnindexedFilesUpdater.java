@@ -159,11 +159,16 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
         long startTime = System.nanoTime();
         IndexingJobStatistics indexStatistics = indexUpdateRunner.indexFiles(myProject, providerFiles, subTaskIndicator);
         long totalTime = System.nanoTime() - startTime;
-        FileProviderIndexStatistics statistics = new FileProviderIndexStatistics(provider.getDebugName(),
-                                                                                 providerFiles.size(),
-                                                                                 totalTime,
-                                                                                 indexStatistics);
-        projectIndexingHistory.addProviderStatistics(statistics);
+        try {
+          FileProviderIndexStatistics statistics = new FileProviderIndexStatistics(provider.getDebugName(),
+                                                                                   providerFiles.size(),
+                                                                                   totalTime,
+                                                                                   indexStatistics);
+          projectIndexingHistory.addProviderStatistics(statistics);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to add indexing statistics for " + provider.getDebugName(), e);
+        }
       } finally {
         subTaskIndicator.finished();
       }
