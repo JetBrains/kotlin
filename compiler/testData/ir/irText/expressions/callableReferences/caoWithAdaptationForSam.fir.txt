@@ -141,13 +141,11 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
                 GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test4' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
             CALL 'public final fun set (i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
               $receiver: GET_VAR 'val tmp_2: <root>.A [val] declared in <root>.test4' type=<root>.A origin=null
-              i: TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
-                GET_VAR 'val tmp_3: <root>.IFoo [val] declared in <root>.test4' type=<root>.IFoo origin=null
+              i: GET_VAR 'val tmp_3: <root>.IFoo [val] declared in <root>.test4' type=<root>.IFoo origin=null
               newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
                 $this: CALL 'public final fun get (i: <root>.IFoo): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
                   $receiver: GET_VAR 'val tmp_2: <root>.A [val] declared in <root>.test4' type=<root>.A origin=null
-                  i: TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
-                    GET_VAR 'val tmp_3: <root>.IFoo [val] declared in <root>.test4' type=<root>.IFoo origin=null
+                  i: GET_VAR 'val tmp_3: <root>.IFoo [val] declared in <root>.test4' type=<root>.IFoo origin=null
                 other: CONST Int type=kotlin.Int value=1
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
