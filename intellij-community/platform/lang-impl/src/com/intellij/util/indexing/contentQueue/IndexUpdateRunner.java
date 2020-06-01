@@ -194,10 +194,16 @@ public final class IndexUpdateRunner {
     if (myFileBasedIndex.isTooLarge(file)) {
       throw new TooLargeContentException(file);
     }
-    long fileLength = file.getLength();
-    waitForFreeMemoryToLoadFileContent(indicator, fileLength);
-    CachedFileContent fileContent = indexingJob.myContentLoader.loadContent(file);
-    return new ContentLoadingResult(fileContent, fileLength);
+    try {
+      long fileLength = file.getLength();
+      waitForFreeMemoryToLoadFileContent(indicator, fileLength);
+      CachedFileContent fileContent = indexingJob.myContentLoader.loadContent(file);
+      return new ContentLoadingResult(fileContent, fileLength);
+    }
+    catch (ProcessCanceledException e) {
+      indexingJob.myQueueOfFiles.add(file);
+      throw e;
+    }
   }
 
   private static class ContentLoadingResult {
