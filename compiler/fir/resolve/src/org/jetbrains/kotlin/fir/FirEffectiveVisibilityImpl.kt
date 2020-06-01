@@ -183,10 +183,13 @@ sealed class FirEffectiveVisibilityImpl(
         override fun toVisibility() = Visibilities.PRIVATE
     }
 
-    override fun lowerBound(other: FirEffectiveVisibility) = when (relation(other)) {
-        Permissiveness.SAME, Permissiveness.LESS -> this
-        Permissiveness.MORE -> other
-        Permissiveness.UNKNOWN -> Private
+    override fun lowerBound(other: FirEffectiveVisibility): FirEffectiveVisibility {
+        if (this == Local || other == Local) return Local
+        return when (relation(other)) {
+            Permissiveness.SAME, Permissiveness.LESS -> this
+            Permissiveness.MORE -> other
+            Permissiveness.UNKNOWN -> Private
+        }
     }
 
     companion object {

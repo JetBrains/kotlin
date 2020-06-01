@@ -22,7 +22,7 @@ FILE: enum.kt
             public get(): R|Some|
 
         public final static enum entry FIRST: R|SomeEnum| = object : R|SomeEnum| {
-            private constructor(): R|anonymous| {
+            private[local] constructor(): R|anonymous| {
                 super<R|SomeEnum|>(Q|O1|)
             }
 
@@ -33,7 +33,7 @@ FILE: enum.kt
         }
 
         public final static enum entry SECOND: R|SomeEnum| = object : R|SomeEnum| {
-            private constructor(): R|anonymous| {
+            private[local] constructor(): R|anonymous| {
                 super<R|SomeEnum|>(Q|O2|)
             }
 
@@ -71,7 +71,7 @@ FILE: enum.kt
         }
 
         public final static enum entry E1: R|EnumClass| = object : R|EnumClass| {
-            private constructor(): R|anonymous| {
+            private[local] constructor(): R|anonymous| {
                 super<R|EnumClass|>()
             }
 
@@ -85,14 +85,14 @@ FILE: enum.kt
         }
 
         public final static enum entry E2: R|EnumClass| = object : R|EnumClass| {
-            private constructor(): R|anonymous| {
+            private[local] constructor(): R|anonymous| {
                 super<R|EnumClass|>()
             }
 
         }
 
         public final static enum entry E3: R|EnumClass| = object : R|EnumClass| {
-            private constructor(): R|anonymous| {
+            private[local] constructor(): R|anonymous| {
                 super<R|EnumClass|>()
             }
 

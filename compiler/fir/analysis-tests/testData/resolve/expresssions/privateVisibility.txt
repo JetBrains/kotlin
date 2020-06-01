@@ -68,7 +68,7 @@ FILE: first.kt
                 super<R|kotlin/Any|>()
             }
 
-            private final fun bar(): R|kotlin/Unit|
+            private[local] final fun bar(): R|kotlin/Unit|
 
             public[local] final fun baz(): R|kotlin/Unit| {
                 this@R|/Local|.R|/Local.bar|()
