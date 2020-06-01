@@ -1,0 +1,34 @@
+package
+
+public val kotlin.Int.x1: kotlin.String
+public val kotlin.String.x1: kotlin.String
+public fun </*0*/ K> bar1(/*0*/ f: kotlin.reflect.KFunction2<K, kotlin.String, kotlin.String>): kotlin.Unit
+public fun </*0*/ K> bar10(/*0*/ f: kotlin.reflect.KProperty1<K, kotlin.String>): kotlin.Unit
+public fun </*0*/ K> bar2(/*0*/ f: kotlin.reflect.KFunction2<out K, kotlin.String, kotlin.String>): kotlin.Unit
+public fun </*0*/ K> bar3(/*0*/ f: kotlin.Any?): kotlin.Unit
+public fun </*0*/ K> bar4(/*0*/ f: (K, kotlin.String) -> kotlin.String): kotlin.Unit
+public fun </*0*/ K> bar5(/*0*/ f: suspend (K, kotlin.String) -> kotlin.String): kotlin.Unit
+public fun </*0*/ K> bar6(/*0*/ f: kotlin.reflect.KSuspendFunction2<K, kotlin.String, kotlin.String>): kotlin.Unit
+public fun </*0*/ K> bar7(/*0*/ f: K.(kotlin.String) -> kotlin.String): kotlin.Unit
+public fun </*0*/ K> bar8(/*0*/ f: kotlin.reflect.KProperty2<K, kotlin.Int, kotlin.String>): kotlin.Unit
+public fun </*0*/ K> bar9(/*0*/ f: kotlin.reflect.KMutableProperty2<K, kotlin.Int, kotlin.String>): kotlin.Unit
+public fun </*0*/ T : Foo, /*1*/ R : kotlin.Number, /*2*/ D : kotlin.Int> main(): kotlin.Unit
+public fun resolve(/*0*/ var2: kotlin.Number, /*1*/ var1: kotlin.Int): kotlin.String
+public fun resolve(/*0*/ var2: kotlin.Number, /*1*/ var1: kotlin.String): kotlin.String
+
+public interface Foo {
+    public open val kotlin.Int.x1: kotlin.String
+    public open val kotlin.String.x1: kotlin.String
+    public open var kotlin.Int.x2: kotlin.String
+    public open var kotlin.String.x2: kotlin.String
+    public open val kotlin.Int.x3: kotlin.String
+    public open var kotlin.String.x3: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun resolve(/*0*/ var1: kotlin.Int): kotlin.String
+    public abstract fun resolve(/*0*/ var1: kotlin.String): kotlin.String
+    public abstract suspend fun resolve2(/*0*/ var1: kotlin.Int): kotlin.String
+    public abstract suspend fun resolve2(/*0*/ var1: kotlin.String): kotlin.String
+    public open fun </*0*/ T : Foo> test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

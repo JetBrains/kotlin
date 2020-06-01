@@ -10178,6 +10178,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/inference/kt37853.kt");
             }
 
+            @TestMetadata("kt39220.kt")
+            public void testKt39220() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt39220.kt");
+            }
+
             @TestMetadata("kt6175.kt")
             public void testKt6175() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/kt6175.kt");
