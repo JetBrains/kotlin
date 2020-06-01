@@ -79,7 +79,6 @@ fun runStartupActivities(project: Project) {
     with(StartupManager.getInstance(project) as StartupManagerImpl) {
         //scheduleInitialVfsRefresh()
         runStartupActivities()
-        runPostStartupActivities()
     }
 }
 

@@ -35,7 +35,6 @@ public class KdocRenameTest extends KotlinLightCodeInsightFixtureTestCase {
     @Override
     protected void setUp() {
         super.setUp();
-        ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
     }
 
     private void doTest(String newName) {
