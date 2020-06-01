@@ -250,13 +250,16 @@ class CandidateChosenUsingOverloadResolutionByLambdaAnnotation : KotlinCallDiagn
     }
 }
 
-class CompatibilityWarning : KotlinCallDiagnostic(RESOLVED) {
+class CompatibilityWarning(val candidate: CallableDescriptor) : KotlinCallDiagnostic(RESOLVED) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
 }
 
-class CompatibilityWarningOnArgument(val argument: CallableReferenceKotlinCallArgument) : KotlinCallDiagnostic(RESOLVED) {
+class CompatibilityWarningOnArgument(
+    val argument: CallableReferenceKotlinCallArgument,
+    val candidate: CallableDescriptor
+) : KotlinCallDiagnostic(RESOLVED) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(argument, this)
     }

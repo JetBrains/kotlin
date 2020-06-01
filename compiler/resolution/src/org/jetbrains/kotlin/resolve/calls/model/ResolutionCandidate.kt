@@ -166,8 +166,8 @@ class KotlinResolutionCandidate(
         }
 
     override fun addCompatibilityWarning(other: Candidate) {
-        if (this !== other) {
-            addDiagnostic(CompatibilityWarning())
+        if (this !== other && other is KotlinResolutionCandidate) {
+            addDiagnostic(CompatibilityWarning(other.resolvedCall.candidateDescriptor))
         }
     }
 

@@ -69,8 +69,8 @@ class CallableReferenceCandidate(
     override val resultingApplicability = getResultApplicability(diagnostics)
 
     override fun addCompatibilityWarning(other: Candidate) {
-        if (this !== other) {
-            mutableDiagnostics.add(CompatibilityWarning())
+        if (this !== other && other is CallableReferenceCandidate) {
+            mutableDiagnostics.add(CompatibilityWarning(other.candidate))
         }
     }
 

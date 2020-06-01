@@ -170,6 +170,10 @@ public class IdeErrorMessages {
                 KotlinIdeaAnalysisBundle.htmlMessage("html.0.method.may.be.missing.none.of.the.following.functions.will.be.called.ul.1.ul.html"),
                 STRING, HTML_NONE_APPLICABLE_CALLS);
 
+        MAP.put(COMPATIBILITY_WARNING,
+                KotlinIdeaAnalysisBundle.htmlMessage("html.candidate.resolution.will.be.changed.please.invoke.explicitly.ul.0.ul.html"),
+                HTML_COMPATIBILITY_CANDIDATE);
+
         MAP.put(CONFLICTING_JVM_DECLARATIONS, KotlinIdeaAnalysisBundle.htmlMessage("html.platform.declaration.clash.0.html"), HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ACCIDENTAL_OVERRIDE, KotlinIdeaAnalysisBundle.htmlMessage("html.accidental.override.0.html"), HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
 
