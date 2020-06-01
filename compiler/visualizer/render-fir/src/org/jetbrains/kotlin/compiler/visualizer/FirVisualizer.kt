@@ -406,6 +406,17 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             //skip rendering for as/as?/is/!is
         }
 
+        override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: StringBuilder) {
+            safeCallExpression.receiver.accept(this, data)
+            data.append("?.{ ")
+            safeCallExpression.regularQualifiedAccess.accept(this, data)
+            data.append(" }")
+        }
+
+        override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: StringBuilder) {
+            data.append("\$subj\$")
+        }
+
         override fun visitFunctionCall(functionCall: FirFunctionCall, data: StringBuilder) {
             when (val callee = functionCall.calleeReference) {
                 is FirResolvedNamedReference -> {
