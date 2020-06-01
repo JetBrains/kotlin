@@ -7,7 +7,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -15,7 +14,6 @@ import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem;
-import com.intellij.util.ExceptionUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.diagnostic.FileIndexingStatistics;
@@ -40,8 +38,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public final class IndexUpdateRunner {
 
   private static final long SOFT_MAX_TOTAL_BYTES_LOADED_INTO_MEMORY = 20 * FileUtilRt.MEGABYTE;
-
-  private static final Key<Boolean> FAILED_TO_INDEX = Key.create("FAILED_TO_INDEX");
 
   private static final CopyOnWriteArrayList<IndexingJob> ourIndexingJobs = new CopyOnWriteArrayList<>();
 
@@ -154,27 +150,33 @@ public final class IndexUpdateRunner {
 
     CachedFileContent fileContent = loadingResult.cachedFileContent;
     try {
-      FileIndexingStatistics fileIndexingStatistics = indexOneFileOfJob(indexingJob, fileContent);
-      if (fileIndexingStatistics != null) {
+      indexingJob.setLocationBeingIndexed(fileContent.getVirtualFile());
+      if (!fileContent.isDirectory()) {
+        FileIndexingStatistics fileIndexingStatistics = ReadAction
+          .nonBlocking(() -> myFileBasedIndex.indexFileContent(indexingJob.myProject, fileContent))
+          .expireWith(indexingJob.myProject)
+          .wrapProgress(indexingJob.myIndicator)
+          .executeSynchronously();
         indexingJob.myStatistics.addFileStatistics(fileIndexingStatistics, contentLoadingTime, loadingResult.fileLength);
       }
       indexingJob.oneMoreFileProcessed();
     }
     catch (ProcessCanceledException e) {
-      pushBackFile(indexingJob, fileContent.getVirtualFile());
+      pushBackFile(indexingJob, fileContent);
       throw e;
     }
     catch (Throwable e) {
       indexingJob.oneMoreFileProcessed();
-      ExceptionUtil.rethrow(e);
+      FileBasedIndexImpl.LOG.error("Error while indexing " + fileContent.getVirtualFile().getPresentableUrl() + "\n" +
+                                   "To reindex this file IDEA has to be restarted", e);
     }
     finally {
       signalThatFileIsUnloaded(loadingResult.fileLength);
     }
   }
 
-  private static void pushBackFile(@NotNull IndexingJob indexingJob, @NotNull VirtualFile file) {
-    indexingJob.myQueueOfFiles.add(file);
+  private static void pushBackFile(@NotNull IndexingJob indexingJob, @NotNull CachedFileContent fileContent) {
+    indexingJob.myQueueOfFiles.add(fileContent.getVirtualFile());
   }
 
   @Nullable
@@ -252,35 +254,6 @@ public final class IndexUpdateRunner {
     else {
       FileBasedIndexImpl.LOG.error(fileUrl, e);
     }
-  }
-
-  @Nullable
-  private FileIndexingStatistics indexOneFileOfJob(@NotNull IndexingJob indexingJob,
-                                                   @NotNull CachedFileContent fileContent) throws ProcessCanceledException {
-    Project project = indexingJob.myProject;
-    if (project.isDisposed() || indexingJob.myIndicator.isCanceled()) {
-      throw new ProcessCanceledException();
-    }
-
-    indexingJob.setLocationBeingIndexed(fileContent.getVirtualFile());
-    if (!fileContent.isDirectory() && !Boolean.TRUE.equals(fileContent.getUserData(FAILED_TO_INDEX))) {
-      try {
-        return ReadAction
-          .nonBlocking(() -> myFileBasedIndex.indexFileContent(project, fileContent))
-          .expireWith(project)
-          .wrapProgress(indexingJob.myIndicator)
-          .executeSynchronously();
-      }
-      catch (ProcessCanceledException e) {
-        throw e;
-      }
-      catch (Throwable e) {
-        fileContent.putUserData(FAILED_TO_INDEX, Boolean.TRUE);
-        FileBasedIndexImpl.LOG.error("Error while indexing " + fileContent.getVirtualFile().getPresentableUrl() + "\n" +
-                                     "To reindex this file IDEA has to be restarted", e);
-      }
-    }
-    return null;
   }
 
   @NotNull
