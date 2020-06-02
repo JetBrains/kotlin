@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoActual
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
@@ -66,6 +67,8 @@ abstract class KotlinIrLinker(
     abstract val fakeOverrideBuilderImpl: FakeOverrideBuilderImpl
 
     private val haveSeen = mutableSetOf<IrSymbol>()
+
+    private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
     abstract inner class BasicIrModuleDeserializer(moduleDescriptor: ModuleDescriptor, override val klib: IrLibrary, override val strategy: DeserializationStrategy) :
         IrModuleDeserializer(moduleDescriptor) {
@@ -518,6 +521,22 @@ abstract class KotlinIrLinker(
 
     protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
 
+    private fun tryResolveCustomDeclaration(symbol: IrSymbol): IrDeclaration? {
+        val descriptor = symbol.descriptor
+
+        if (descriptor is WrappedDeclarationDescriptor<*>) return null
+        if (descriptor is CallableMemberDescriptor) {
+            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                // skip fake overrides
+                return null
+            }
+        }
+
+        return linkerExtensions.firstNotNullResult { it.resolveSymbol(symbol) }?.also {
+            require(symbol.owner == it)
+        }
+    }
+
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
 
         if (!symbol.isPublicApi) {
@@ -529,7 +548,7 @@ abstract class KotlinIrLinker(
         }
 
         if (!symbol.isBound) {
-            findDeserializedDeclarationForSymbol(symbol) ?: return null
+            findDeserializedDeclarationForSymbol(symbol) ?: tryResolveCustomDeclaration(symbol) ?: return null
         }
 
         // TODO: we do have serializations for those, but let's just create a stub for now.
@@ -548,7 +567,8 @@ abstract class KotlinIrLinker(
     protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
         CurrentModuleDeserializer(moduleFragment, dependencies)
 
-    override fun init(moduleFragment: IrModuleFragment?) {
+    override fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrDeserializer.IrLinkerExtension>) {
+        linkerExtensions = extensions
         if (moduleFragment != null) {
             val currentModuleDependencies = moduleFragment.descriptor.allDependencyModules.map {
                 deserializersForModules[it] ?: error("No deserializer found for $it")
