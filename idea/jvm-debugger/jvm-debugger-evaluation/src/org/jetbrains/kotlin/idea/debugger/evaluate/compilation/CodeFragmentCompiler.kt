@@ -284,7 +284,7 @@ private class EvaluatorModuleDescriptor(
                     MemberScope.Empty
                 } else {
                     val scopes = fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName)
-                    ChainedMemberScope("package view scope for $fqName in ${module.name}", scopes)
+                    ChainedMemberScope.create("package view scope for $fqName in ${module.name}", scopes)
                 }
             }
 

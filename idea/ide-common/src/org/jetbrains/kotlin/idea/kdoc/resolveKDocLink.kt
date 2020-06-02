@@ -212,7 +212,7 @@ fun getKDocLinkMemberScope(descriptor: DeclarationDescriptor, contextScope: Lexi
         is PackageViewDescriptor -> descriptor.memberScope
 
         is ClassDescriptor -> {
-            ChainedMemberScope(
+            ChainedMemberScope.create(
                 "Member scope for KDoc resolve", listOfNotNull(
                     descriptor.unsubstitutedMemberScope,
                     descriptor.staticScope,
