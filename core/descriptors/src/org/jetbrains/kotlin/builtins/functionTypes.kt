@@ -54,6 +54,9 @@ val KotlinType.isSuspendFunctionTypeOrSubtype: Boolean
 val KotlinType.isBuiltinFunctionalTypeOrSubtype: Boolean
     get() = isTypeOrSubtypeOf { it.isBuiltinFunctionalType }
 
+fun KotlinType.isFunctionTypeOrSubtype(predicate: (KotlinType) -> Boolean): Boolean =
+    isTypeOrSubtypeOf { it.isFunctionType && predicate(it) }
+
 val KotlinType.isFunctionType: Boolean
     get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.Function
 
