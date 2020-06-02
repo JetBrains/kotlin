@@ -225,8 +225,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
         )
 
-        outputs.upToDateWhen { false }
-
         val actualDceTaskProvider = when (mode) {
             KotlinJsBinaryMode.PRODUCTION -> dceTaskProvider
             KotlinJsBinaryMode.DEVELOPMENT -> devDceTaskProvider
@@ -238,6 +236,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     .resolve(compilation.compileKotlinTask.outputFile.name)
             }
         )
+
+        dependsOn(actualDceTaskProvider)
 
         resolveFromModulesFirst = true
 
