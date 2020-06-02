@@ -4,10 +4,10 @@ package com.intellij.conversion.impl;
 
 import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ProjectLibrariesSettings;
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.serialization.library.JpsLibraryTableSerializer;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -23,6 +23,6 @@ public class ProjectLibrariesSettingsImpl extends MultiFilesSettings implements 
   @Override
   @NotNull
   public Collection<? extends Element> getProjectLibraries() {
-    return getSettings("libraryTable", LibraryImpl.ELEMENT);
+    return getSettings("libraryTable", JpsLibraryTableSerializer.LIBRARY_TAG);
   }
 }

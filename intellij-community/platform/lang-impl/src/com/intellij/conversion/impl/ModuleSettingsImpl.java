@@ -7,7 +7,6 @@ import com.intellij.conversion.ComponentManagerSettings;
 import com.intellij.conversion.ModuleSettings;
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.JDomSerializationUtil;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
+import org.jetbrains.jps.model.serialization.library.JpsLibraryTableSerializer;
 import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer;
 
 import java.io.File;
@@ -189,8 +189,8 @@ public class ModuleSettingsImpl extends ComponentManagerSettingsImpl implements 
   private Element findModuleLibraryElement(String libraryName) {
     for (Element element : getOrderEntries()) {
       if (JpsModuleRootModelSerializer.MODULE_LIBRARY_TYPE.equals(element.getAttributeValue(JpsModuleRootModelSerializer.TYPE_ATTRIBUTE))) {
-        final Element library = element.getChild(LibraryImpl.ELEMENT);
-        if (library != null && libraryName.equals(library.getAttributeValue(LibraryImpl.LIBRARY_NAME_ATTR))) {
+        final Element library = element.getChild(JpsLibraryTableSerializer.LIBRARY_TAG);
+        if (library != null && libraryName.equals(library.getAttributeValue(JpsLibraryTableSerializer.NAME_ATTRIBUTE))) {
           return library;
         }
       }
