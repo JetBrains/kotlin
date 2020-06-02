@@ -105,8 +105,11 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     internal var _destinationDirectory: File? = null
 
     @get:Internal
-    val destinationDirectory: File
+    var destinationDirectory: File
         get() = _destinationDirectory ?: project.buildDir.resolve(baseConventions!!.distsDirName)
+        set(value) {
+            _destinationDirectory = value
+        }
 
     @get:Internal
     var outputFileName: String by property {
