@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
+import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
@@ -167,6 +170,8 @@ private class FirSupertypeResolverVisitor(
     private val scopeForLocalClass: FirImmutableCompositeScope? = null,
     private val localClassesNavigationInfo: LocalClassesNavigationInfo? = null
 ) : FirDefaultVisitorVoid() {
+    private val supertypeGenerationExtensions = session.extensionService.supertypeGenerators
+
     override fun visitElement(element: FirElement) {}
 
     private fun prepareFileScope(file: FirFile): FirImmutableCompositeScope {
@@ -278,7 +283,7 @@ private class FirSupertypeResolverVisitor(
         }
 
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer ->
-            supertypeRefs.map {
+            supertypeRefs.mapTo(mutableListOf()) {
                 val superTypeRef = transformer.transformTypeRef(it, null).single
 
                 if (superTypeRef.coneTypeSafe<ConeTypeParameterType>() != null)
@@ -288,6 +293,18 @@ private class FirSupertypeResolverVisitor(
                     )
                 else
                     superTypeRef
+            }.also {
+                addSupertypesFromExtensions(classLikeDeclaration, it)
+            }
+        }
+    }
+
+    private fun addSupertypesFromExtensions(klass: FirClassLikeDeclaration<*>, supertypeRefs: MutableList<FirTypeRef>) {
+        if (supertypeGenerationExtensions.isEmpty()) return
+        val provider = session.predicateBasedProvider
+        for (extension in supertypeGenerationExtensions) {
+            if (provider.matches(extension.predicate, klass)) {
+                supertypeRefs += extension.computeAdditionalSupertypes(klass, supertypeRefs)
             }
         }
     }
