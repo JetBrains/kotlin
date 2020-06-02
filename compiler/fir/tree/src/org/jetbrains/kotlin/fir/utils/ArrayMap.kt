@@ -95,32 +95,19 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T>() {
     }
 
     override fun iterator(): Iterator<T> {
-        return object : Iterator<T> {
-            private var currentIndex = -1
-            private var nextIndex = 0
+        return object : AbstractIterator<T>() {
+            private var index = -1
 
-            override fun hasNext(): Boolean {
-                if (nextIndex < 0) return false
-                while (nextIndex < data.size && data[nextIndex] == null) {
-                    nextIndex++
-                }
-                return if (nextIndex >= data.size) {
-                    nextIndex = -1
-                    false
+            override fun computeNext() {
+                do {
+                    index++
+                } while (index < data.size && data[index] == null)
+                if (index >= data.size) {
+                    done()
                 } else {
-                    true
+                    @Suppress("UNCHECKED_CAST")
+                    setNext(data[index] as T)
                 }
-            }
-
-            override fun next(): T {
-                if (!hasNext()) throw NoSuchElementException()
-                if (currentIndex < 0) {
-                    currentIndex = nextIndex
-                }
-                @Suppress("UNCHECKED_CAST")
-                val result = data[currentIndex] as T
-                currentIndex = nextIndex++
-                return result
             }
         }
     }
