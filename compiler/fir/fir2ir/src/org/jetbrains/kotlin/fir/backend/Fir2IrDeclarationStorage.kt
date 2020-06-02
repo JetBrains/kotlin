@@ -629,6 +629,8 @@ class Fir2IrDeclarationStorage(
                 if (!isFakeOverride && thisReceiverOwner != null) {
                     it.populateOverriddenSymbols(thisReceiverOwner)
                 }
+            }.apply {
+                metadata = FirMetadataSource.Property(property, descriptor)
             }
         }
     }
