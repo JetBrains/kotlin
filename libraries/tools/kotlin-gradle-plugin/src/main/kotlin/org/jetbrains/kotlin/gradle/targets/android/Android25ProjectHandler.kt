@@ -149,7 +149,7 @@ class Android25ProjectHandler(
             project.addExtendsFromRelation(name, compilation.runtimeDependencyConfigurationName)
         }
 
-        val buildTypeAttrValue = project.objects.named(BuildTypeAttr::class.java, variant.name)
+        val buildTypeAttrValue = project.objects.named(BuildTypeAttr::class.java, variant.buildType.name)
         listOf(compilation.compileDependencyConfigurationName, compilation.runtimeDependencyConfigurationName).forEach {
             project.configurations.findByName(it)?.attributes?.attribute(BuildTypeAttr.ATTRIBUTE, buildTypeAttrValue)
         }
