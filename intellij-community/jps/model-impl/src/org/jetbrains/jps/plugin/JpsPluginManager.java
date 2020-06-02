@@ -15,11 +15,13 @@
  */
 package org.jetbrains.jps.plugin;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.service.JpsServiceManager;
 
 import java.util.Collection;
 
+@ApiStatus.Internal
 public abstract class JpsPluginManager {
   @NotNull
   public static JpsPluginManager getInstance() {
@@ -28,6 +30,8 @@ public abstract class JpsPluginManager {
 
   @NotNull
   public abstract <T> Collection<T> loadExtensions(@NotNull Class<T> extensionClass);
+
+  public abstract boolean isFullyLoaded();
 
   public abstract int getModificationStamp();
 }
