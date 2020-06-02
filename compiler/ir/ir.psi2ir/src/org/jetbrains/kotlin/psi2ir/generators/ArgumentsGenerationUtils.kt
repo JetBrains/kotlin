@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -619,10 +622,11 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
     for (i in underlyingValueParameters.indices) {
         val underlyingValueParameter = underlyingValueParameters[i]
 
+        val expectedSamConversionTypesForVararg = ArrayList<KotlinType?>()
         if (expectSamConvertedArgumentToBeAvailableInResolvedCall && resolvedCall is NewResolvedCallImpl<*>) {
-            // TODO support SAM conversion of varargs
-            val argument = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments?.singleOrNull() ?: continue
-            resolvedCall.getExpectedTypeForSamConvertedArgument(argument) ?: continue
+            val arguments = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments ?: continue
+            arguments.mapTo(expectedSamConversionTypesForVararg) { resolvedCall.getExpectedTypeForSamConvertedArgument(it) }
+            if (expectedSamConversionTypesForVararg.all { it == null }) continue
         } else {
             // When the method is `f(T)` with `T` = a SAM type, the substituted type is a SAM while the original is not;
             // when the method is `f(X<T>)` with `T` = `out V` where `X` is a SAM type, the substituted type is `Nothing`
@@ -678,11 +682,16 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
                     substitutedVarargType.toIrType(),
                     irSamType
                 ).apply {
-                    originalArgument.elements.mapTo(elements) {
-                        if (it is IrExpression)
-                            samConvertScalarExpression(it)
-                        else
+                    originalArgument.elements.mapIndexedTo(elements) { index, element ->
+                        if (element is IrExpression) {
+                            val samType = expectedSamConversionTypesForVararg[index]
+                            if (samType != null)
+                                samConvertScalarExpression(element)
+                            else
+                                element
+                        } else {
                             throw AssertionError("Unsupported: spread vararg element with SAM conversion")
+                        }
                     }
                 }
             }

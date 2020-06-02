@@ -35,21 +35,21 @@ FILE fqName:<root> fileName:/samConversionInVarargs.kt
     BLOCK_BODY
       CALL 'public final fun useVararg (vararg foos: <root>.IFoo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         foos: VARARG type=kotlin.Array<out <root>.IFoo> varargElementType=<root>.IFoo
-          TYPE_OP type=<root>.IFoo origin=IMPLICIT_CAST typeOperand=<root>.IFoo
+          TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
             FUN_EXPR type=kotlin.Function1<@[ParameterName(name = 'i')] kotlin.Int, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
                 VALUE_PARAMETER name:it index:0 type:kotlin.Int
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testSeveralLambdas'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          TYPE_OP type=<root>.IFoo origin=IMPLICIT_CAST typeOperand=<root>.IFoo
+          TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
             FUN_EXPR type=kotlin.Function1<@[ParameterName(name = 'i')] kotlin.Int, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
                 VALUE_PARAMETER name:it index:0 type:kotlin.Int
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testSeveralLambdas'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          TYPE_OP type=<root>.IFoo origin=IMPLICIT_CAST typeOperand=<root>.IFoo
+          TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
             FUN_EXPR type=kotlin.Function1<@[ParameterName(name = 'i')] kotlin.Int, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
                 VALUE_PARAMETER name:it index:0 type:kotlin.Int
