@@ -63,7 +63,7 @@ interface ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings {
                         dependencyName,
                         isInMppModule = module.kind
                             .let { it == ModuleKind.multiplatform || it == ModuleKind.target },
-                        version = KotlinPlugin::version.propertyValue,
+                        kotlinVersion = KotlinPlugin::version.propertyValue,
                         dependencyType = DependencyType.TEST
                     )
                 }

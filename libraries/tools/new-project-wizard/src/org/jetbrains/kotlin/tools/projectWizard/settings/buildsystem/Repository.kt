@@ -30,8 +30,8 @@ data class DefaultRepository(val type: Type) : Repository {
 
 interface CustomMavenRepository : Repository
 
-data class BintrayRepository(val repository: String) : CustomMavenRepository {
-    override val url: String = "https://dl.bintray.com/$repository"
+data class BintrayRepository(val repository: String, val base: String = "https://dl.bintray.com") : CustomMavenRepository {
+    override val url: String = "$base/$repository"
 
     override val idForMaven: String
         get() = "bintray." + repository.replace('/', '.')
