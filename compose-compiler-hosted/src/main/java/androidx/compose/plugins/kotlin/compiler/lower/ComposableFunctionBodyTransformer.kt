@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
@@ -130,6 +131,16 @@ import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isBoolean
+import org.jetbrains.kotlin.types.typeUtil.isByte
+import org.jetbrains.kotlin.types.typeUtil.isChar
+import org.jetbrains.kotlin.types.typeUtil.isDouble
+import org.jetbrains.kotlin.types.typeUtil.isFloat
+import org.jetbrains.kotlin.types.typeUtil.isInt
+import org.jetbrains.kotlin.types.typeUtil.isLong
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isShort
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
@@ -430,10 +441,31 @@ class ComposableFunctionBodyTransformer(
     private val changedDescriptor = composerTypeDescriptor
         .unsubstitutedMemberScope
         .findFirstFunction("changed") {
-            // this is the changed(value: T) variant.
-            // TODO(lmr): Add handling for different primitive types
-            it.typeParameters.size == 1
+            it.valueParameters.first().type.isNullableAny()
         }
+
+    fun KotlinType.toPrimitiveType(): PrimitiveType? = when {
+        isInt() -> PrimitiveType.INT
+        isBoolean() -> PrimitiveType.BOOLEAN
+        isFloat() -> PrimitiveType.FLOAT
+        isLong() -> PrimitiveType.LONG
+        isDouble() -> PrimitiveType.DOUBLE
+        isByte() -> PrimitiveType.BYTE
+        isChar() -> PrimitiveType.CHAR
+        isShort() -> PrimitiveType.SHORT
+        else -> null
+    }
+
+    private val changedDescriptors = composerTypeDescriptor
+        .unsubstitutedMemberScope
+        .getContributedFunctions(Name.identifier("changed"), NoLookupLocation.FROM_BACKEND)
+        .filter { it.name.identifier == "changed" }
+        .mapNotNull { desc ->
+            desc.valueParameters.first().type.toPrimitiveType()?.let { primitive ->
+                primitive to desc
+            }
+        }
+        .toMap()
 
     private val skipToGroupEndDescriptor = composerTypeDescriptor
         .unsubstitutedMemberScope
@@ -1731,9 +1763,13 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun irChanged(value: IrExpression): IrExpression {
-        return irMethodCall(irCurrentComposer(), changedDescriptor).also {
+        val descriptor = value
+            .type
+            .toKotlinType()
+            .toPrimitiveType()
+            .let { changedDescriptors[it] } ?: changedDescriptor
+        return irMethodCall(irCurrentComposer(), descriptor).also {
             it.putValueArgument(0, value)
-            it.putTypeArgument(0, value.type)
         }
     }
 

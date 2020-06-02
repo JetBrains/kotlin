@@ -86,6 +86,52 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     }
 
     @Test
+    fun testPrimitiveChangedCalls(): Unit = validateBytecode(
+        """
+        @Composable fun Foo(
+            a: Boolean,
+            b: Char,
+            c: Byte,
+            d: Short,
+            e: Int,
+            f: Float,
+            g: Long,
+            h: Double
+        ) {}
+        """
+    ) {
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (Z)Z"))
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (C)Z"))
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (B)Z"))
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (S)Z"))
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (I)Z"))
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (F)Z"))
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (J)Z"))
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (D)Z"))
+        assert(!it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (Ljava/lang/Object;)Z"))
+    }
+
+    @Test
+    fun testNonPrimitiveChangedCalls(): Unit = validateBytecode(
+        """
+        import androidx.compose.Stable
+
+        @Stable class Bar
+        @Composable fun Foo(a: Bar) {}
+        """
+    ) {
+        assert(!it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (Z)Z"))
+        assert(!it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (C)Z"))
+        assert(!it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (B)Z"))
+        assert(!it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (S)Z"))
+        assert(!it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (I)Z"))
+        assert(!it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (F)Z"))
+        assert(!it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (J)Z"))
+        assert(!it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (D)Z"))
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (Ljava/lang/Object;)Z"))
+    }
+
+    @Test
     fun testNoNullCheckForPassedParameters(): Unit = validateBytecode(
         """
         inline class Bar(val value: Int)
