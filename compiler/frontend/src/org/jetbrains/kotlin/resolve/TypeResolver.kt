@@ -440,9 +440,9 @@ class TypeResolver(
     private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): MemberScope {
         return when {
             c.checkBounds -> TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
-            else -> LazyScopeAdapter(LockBasedStorageManager.NO_LOCKS.createLazyValue {
+            else -> LazyScopeAdapter {
                 TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
-            })
+            }
         }
     }
 

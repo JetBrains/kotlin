@@ -281,12 +281,12 @@ open class WrappedTypeParameterDescriptor(
     private val _defaultType: SimpleType by lazy {
         KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
             Annotations.EMPTY, typeConstructor, emptyList(), false,
-            LazyScopeAdapter(LockBasedStorageManager.NO_LOCKS.createLazyValue {
+            LazyScopeAdapter {
                 TypeIntersectionScope.create(
                     "Scope for type parameter " + name.asString(),
                     upperBounds
                 )
-            })
+            }
         )
     }
 
