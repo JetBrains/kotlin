@@ -1763,13 +1763,23 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun irChanged(value: IrExpression): IrExpression {
-        val descriptor = value
-            .type
+        // compose has a unique opportunity to avoid inline class boxing for changed calls, since
+        // we know that the only thing that we are detecting here is "changed or not", we can
+        // just as easily pass in the underlying value, which will avoid boxing to check for
+        // equality on recompositions. As a result here we want to pass in the underlying
+        // property value for inline classes, not the instance itself. The inline class lowering
+        // will turn this into just passing the wrapped value later on. If the type is already
+        // boxed, then we don't want to unnecessarily _unbox_ it. Note that if Kotlin allows for
+        // an overridden equals method of inline classes in the future, we may have to avoid the
+        // boxing in a different way.
+        val type = value.type.unboxInlineClass()
+        val expr = value.unboxValueIfInline()
+        val descriptor = type
             .toKotlinType()
             .toPrimitiveType()
             .let { changedDescriptors[it] } ?: changedDescriptor
         return irMethodCall(irCurrentComposer(), descriptor).also {
-            it.putValueArgument(0, value)
+            it.putValueArgument(0, expr)
         }
     }
 

@@ -115,7 +115,9 @@ import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.endOffset
 import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
+import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.startOffset
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -247,6 +249,25 @@ abstract class AbstractComposeLowering(
         if (underlyingType.isNullable() || underlyingType.isPrimitiveType())
             return null
         return underlyingType.makeNullable()
+    }
+
+    protected fun IrExpression.unboxValueIfInline(): IrExpression {
+        if (type.isNullable()) return this
+        val classSymbol = type.classOrNull ?: return this
+        val klass = classSymbol.bindIfNecessary().owner
+        if (klass.isInline) {
+            val primaryValueParameter = klass
+                .primaryConstructor
+                ?.valueParameters
+                ?.get(0) ?: error("Expected a value parameter")
+            val fieldGetter = klass.getPropertyGetter(primaryValueParameter.name.identifier)
+                ?: error("Expected a getter")
+            return irCall(
+                symbol = fieldGetter,
+                dispatchReceiver = this
+            ).unboxValueIfInline()
+        }
+        return this
     }
 
     fun IrAnnotationContainer.hasComposableAnnotation(): Boolean {

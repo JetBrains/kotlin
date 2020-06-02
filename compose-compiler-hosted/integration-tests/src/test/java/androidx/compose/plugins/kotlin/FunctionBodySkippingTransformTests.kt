@@ -1221,7 +1221,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
               }
               if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(color)) 0b00010000 else 0b1000
+                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(color.value)) 0b00010000 else 0b1000
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {

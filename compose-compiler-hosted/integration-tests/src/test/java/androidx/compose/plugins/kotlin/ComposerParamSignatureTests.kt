@@ -132,6 +132,39 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     }
 
     @Test
+    fun testInlineClassChangedCalls(): Unit = validateBytecode(
+        """
+        inline class Bar(val value: Int)
+        @Composable fun Foo(a: Bar) {}
+        """
+    ) {
+        assert(!it.contains("INVOKESTATIC Bar.box-impl (I)LBar;"))
+        assert(it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (I)Z"))
+        assert(
+            !it.contains("INVOKEVIRTUAL androidx/compose/Composer.changed (Ljava/lang/Object;)Z")
+        )
+    }
+
+    @Test
+    fun testNullableInlineClassChangedCalls(): Unit = validateBytecode(
+        """
+        inline class Bar(val value: Int)
+        @Composable fun Foo(a: Bar?) {}
+        """
+    ) {
+        val testClass = it.split("public final class ").single { it.startsWith("TestKt") }
+        assert(!testClass.contains(
+            "INVOKEVIRTUAL Bar.unbox-impl ()I"
+        ))
+        assert(!testClass.contains(
+            "INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;"
+        ))
+        assert(testClass.contains(
+            "INVOKEVIRTUAL androidx/compose/Composer.changed (Ljava/lang/Object;)Z"
+        ))
+    }
+
+    @Test
     fun testNoNullCheckForPassedParameters(): Unit = validateBytecode(
         """
         inline class Bar(val value: Int)
