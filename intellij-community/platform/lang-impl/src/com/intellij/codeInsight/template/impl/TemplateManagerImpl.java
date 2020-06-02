@@ -179,7 +179,8 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
       else {
         editor.getSelectionModel().removeSelection();
       }
-      templateState.start(substituteTemplate((TemplateImpl)template, editor), processor, predefinedVarValues);
+      templateState
+        .start(substituteTemplate((TemplateImpl)template, InjectedLanguageUtil.getTopLevelEditor(editor)), processor, predefinedVarValues);
       myEventPublisher.templateStarted(templateState);
     };
     if (inSeparateCommand) {

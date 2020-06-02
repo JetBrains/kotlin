@@ -33,7 +33,9 @@ public final class TemplateSubstitutionContext {
   }
 
   public @NotNull PsiFile getPsiFile() {
-    return Objects.requireNonNull(PsiDocumentManager.getInstance(myProject).getPsiFile(myEditor.getDocument()));
+    Document document = myEditor.getDocument();
+    PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(document);
+    return Objects.requireNonNull(psiFile, () -> "Can't find a psi file for the " + document + " in " + myEditor);
   }
 
   /**
