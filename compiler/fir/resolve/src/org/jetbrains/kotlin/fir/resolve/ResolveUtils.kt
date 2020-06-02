@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
-import org.jetbrains.kotlin.fir.resolve.calls.isSuperReferenceExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -263,7 +262,6 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         source = sourceElement
         packageFqName = classId.packageFqName
         relativeClassFqName = classId.relativeClassName
-        safe = false
         typeArguments.addAll(typeArgumentsForQualifier)
         symbol = regularClass
     }.apply {
@@ -318,22 +316,6 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultTy
 }
 
 fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirResolvedTypeRef {
-    val makeNullable: Boolean by lazy {
-        if (access is FirQualifiedAccess && access.safe) {
-            val explicitReceiver = access.explicitReceiver
-                ?: throw AssertionError("Safe call without explicit receiver: ${access.render()}")
-            val receiverResultType = explicitReceiver.resultType
-            if (receiverResultType is FirResolvedTypeRef) {
-                receiverResultType.type.isNullable
-            } else if (receiverResultType !is FirComposedSuperTypeRef || !explicitReceiver.isSuperReferenceExpression()){
-                throw AssertionError("Receiver ${explicitReceiver.render()} type is unresolved: ${receiverResultType.render()}")
-            } else {
-                false
-            }
-        } else {
-            false
-        }
-    }
 
     return when (val newCallee = access.calleeReference) {
         is FirErrorNamedReference ->
@@ -342,10 +324,10 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
                 diagnostic = ConeStubDiagnostic(newCallee.diagnostic)
             }
         is FirNamedReferenceWithCandidate -> {
-            typeFromSymbol(newCallee.candidateSymbol, makeNullable)
+            typeFromSymbol(newCallee.candidateSymbol, false)
         }
         is FirResolvedNamedReference -> {
-            typeFromSymbol(newCallee.resolvedSymbol, makeNullable)
+            typeFromSymbol(newCallee.resolvedSymbol, false)
         }
         is FirThisReference -> {
             val labelName = newCallee.labelName

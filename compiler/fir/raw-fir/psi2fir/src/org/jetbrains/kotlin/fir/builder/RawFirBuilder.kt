@@ -1705,7 +1705,6 @@ class RawFirBuilder(
                     return firSelector.wrapWithSafeCall(receiver)
                 }
 
-                firSelector.safe = false
                 firSelector.explicitReceiver = receiver
             }
             return firSelector

@@ -118,8 +118,6 @@ internal class CallAndReferenceGenerator(
         typeRef: FirTypeRef,
         explicitReceiverExpression: IrExpression?
     ): IrExpression {
-        require(!qualifiedAccess.safe)
-
         val type = typeRef.toIrType()
         val samConstructorCall = qualifiedAccess.tryConvertToSamConstructorCall(type)
         if (samConstructorCall != null) return samConstructorCall

@@ -36,7 +36,6 @@ data class CallInfo(
 
     val explicitReceiver: FirExpression?,
     val argumentList: FirArgumentList,
-    val isSafeCall: Boolean,
     val isPotentialQualifierPart: Boolean,
 
     val typeArguments: List<FirTypeProjection>,

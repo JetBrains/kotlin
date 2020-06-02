@@ -473,7 +473,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     val firMemberAccess = left.convertQualified()
                     return if (firMemberAccess != null) {
                         explicitReceiver = firMemberAccess.explicitReceiver
-                        safe = firMemberAccess.safe
                         firMemberAccess.calleeReference
                     } else {
                         buildErrorNamedReference {
@@ -546,7 +545,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
         return buildVariableAssignment {
             source = baseSource
-            safe = false
             rValue = value
             calleeReference = initializeLValue(this@generateAssignment) { convert() as? FirQualifiedAccess }
         }
@@ -562,7 +560,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
         val assignment = buildVariableAssignment {
             source = baseSource
-            safe = false
             rValue = value
             calleeReference = nestedAccess.calleeReference
             explicitReceiver = safeCallNonAssignment.checkedSubject.value

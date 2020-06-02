@@ -344,7 +344,6 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     val assignment =
                         buildVariableAssignment {
                             source = operatorCall.source
-                            safe = false
                             rValue = resolvedOperatorCall
                             calleeReference = if (lhsIsVar)
                                 lhsReference!!

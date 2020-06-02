@@ -678,7 +678,6 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
             extensionReceiver = extensionReceiverExpression
             // NB: this should fix problem in DFA (KT-36014)
             explicitReceiver = info.explicitReceiver
-            safe = info.isSafeCall
         }
     }.build().let(::transformQualifiedAccessUsingSmartcastInfo)
 }

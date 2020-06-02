@@ -61,15 +61,7 @@ class FirCallCompletionResultsWriterTransformer(
         val declaration = subCandidate.symbol.phasedFir
         val typeArguments = computeTypeArguments(qualifiedAccess, subCandidate)
         val typeRef = if (declaration is FirTypedDeclaration) {
-            typeCalculator.tryCalculateReturnType(declaration).let {
-                if (qualifiedAccess.safe) {
-                    val nullableType =
-                        it.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.inferenceContext)
-                    it.withReplacedConeType(nullableType)
-                } else {
-                    it
-                }
-            }
+            typeCalculator.tryCalculateReturnType(declaration)
         } else {
             buildErrorTypeRef {
                 source = calleeReference.source

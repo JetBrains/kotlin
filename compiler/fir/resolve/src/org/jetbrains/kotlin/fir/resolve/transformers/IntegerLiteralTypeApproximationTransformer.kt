@@ -222,7 +222,6 @@ private fun FirFunctionCall.toOperatorCall(): FirIntegerOperatorCall {
         source,
         typeRef,
         annotations.toMutableList(),
-        safe,
         typeArguments.toMutableList(),
         explicitReceiver,
         dispatchReceiver,

@@ -88,7 +88,6 @@ class FirCallResolver(
                 dispatchReceiver = candidate.dispatchReceiverExpression(),
                 extensionReceiver = candidate.extensionReceiverExpression(),
                 argumentList = candidate.callInfo.argumentList,
-                safe = candidate.callInfo.isSafeCall,
             )
         } else {
             resultExpression
@@ -114,7 +113,6 @@ class FirCallResolver(
             name,
             explicitReceiver,
             argumentList,
-            qualifiedAccess.safe,
             isPotentialQualifierPart = qualifiedAccess !is FirFunctionCall &&
                     qualifiedAccess.explicitReceiver is FirResolvedQualifier &&
                     qualifiedResolver.isPotentialQualifierPartPosition(),
@@ -151,7 +149,7 @@ class FirCallResolver(
     fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T): FirStatement {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
-        qualifiedResolver.initProcessingQualifiedAccess(qualifiedAccess, callee)
+        qualifiedResolver.initProcessingQualifiedAccess(callee)
 
         @Suppress("NAME_SHADOWING")
         val qualifiedAccess = qualifiedAccess.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
@@ -274,7 +272,6 @@ class FirCallResolver(
             name,
             explicitReceiver = null,
             delegatedConstructorCall.argumentList,
-            isSafeCall = false,
             isPotentialQualifierPart = false,
             typeArguments = typeArguments,
             session,
@@ -329,7 +326,6 @@ class FirCallResolver(
             callableReferenceAccess.calleeReference.name,
             callableReferenceAccess.explicitReceiver,
             FirEmptyArgumentList,
-            false,
             isPotentialQualifierPart = false,
             emptyList(),
             session,

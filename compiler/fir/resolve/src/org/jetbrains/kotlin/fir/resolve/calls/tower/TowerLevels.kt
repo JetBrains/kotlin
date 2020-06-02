@@ -216,7 +216,6 @@ class ScopeTowerLevel(
                 val resolvedQualifier = buildResolvedQualifier {
                     packageFqName = holderId.packageFqName
                     relativeClassFqName = holderId.relativeClassName
-                    safe = false
                     this.symbol = symbol
                 }.apply {
                     resultType = bodyResolveComponents.typeForQualifier(this)

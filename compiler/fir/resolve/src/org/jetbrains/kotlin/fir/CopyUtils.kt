@@ -32,7 +32,6 @@ fun FirFunctionCall.copy(
     dispatchReceiver: FirExpression = this.dispatchReceiver,
     extensionReceiver: FirExpression = this.extensionReceiver,
     source: FirSourceElement? = this.source,
-    safe: Boolean = this.safe,
     typeArguments: List<FirTypeProjection> = this.typeArguments,
     resultType: FirTypeRef = this.typeRef
 ): FirFunctionCall {
@@ -47,7 +46,6 @@ fun FirFunctionCall.copy(
     }
     builder.apply {
         this.source = source
-        this.safe = safe
         this.annotations.addAll(annotations)
         this.argumentList = argumentList
         this.explicitReceiver = explicitReceiver

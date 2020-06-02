@@ -1304,11 +1304,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         val explicitReceiver = access.explicitReceiver
         if (explicitReceiver != null) {
             generate(explicitReceiver)
-            if (access.safe) {
-                +"?."
-            } else {
-                +"."
-            }
+            +"."
         }
     }
 
