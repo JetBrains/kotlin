@@ -17,7 +17,8 @@ dependencies {
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-
+    testCompileOnly(project(":kotlin-compiler"))
+    testCompile(project(":kotlin-scripting-jvm-host-unshaded"))
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     Platform[192].orHigher {
