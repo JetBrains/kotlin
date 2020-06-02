@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import java.util.*
 
 open class LazyClassMemberScope(
@@ -118,11 +119,38 @@ open class LazyClassMemberScope(
             by lazy(LazyThreadSafetyMode.PUBLICATION) {
                 mutableSetOf<Name>().apply {
                     addAll(declarationProvider.getDeclarationNames())
+                    addAll(c.syntheticResolveExtension.getSyntheticFunctionNames(thisDescriptor))
                     supertypes.flatMapTo(this) {
                         it.memberScope.getFunctionNames()
                     }
 
                     addAll(getDataClassRelatedFunctionNames())
+                }
+            }
+
+    private val _classifierNames: Set<Name>?
+            by lazy(LazyThreadSafetyMode.PUBLICATION) {
+                mutableSetOf<Name>().apply {
+                    supertypes.flatMapToNullable(this) {
+                        it.memberScope.getClassifierNames()
+                    } ?: return@lazy null
+
+                    addAll(declarationProvider.getDeclarationNames())
+                    with(c.syntheticResolveExtension) {
+                        getSyntheticCompanionObjectNameIfNeeded(thisDescriptor)?.let { add(it) }
+                        addAll(getSyntheticNestedClassNames(thisDescriptor))
+                    }
+                }
+            }
+
+    private val _allNames: Set<Name>?
+            by lazy(LazyThreadSafetyMode.PUBLICATION) {
+                val classifiers = getClassifierNames() ?: return@lazy null
+
+                mutableSetOf<Name>().apply {
+                    addAll(getVariableNames())
+                    addAll(getFunctionNames())
+                    addAll(classifiers)
                 }
             }
 
@@ -134,6 +162,11 @@ open class LazyClassMemberScope(
 
     override fun getVariableNames() = _variableNames
     override fun getFunctionNames() = _functionNames
+    override fun getClassifierNames() = _classifierNames
+
+    override fun definitelyDoesNotContainName(name: Name): Boolean {
+        return _allNames?.let { name !in it } ?: false
+    }
 
     private interface MemberExtractor<out T : CallableMemberDescriptor> {
         fun extract(extractFrom: KotlinType, name: Name): Collection<T>
