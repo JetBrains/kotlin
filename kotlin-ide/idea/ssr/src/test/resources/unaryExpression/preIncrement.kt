@@ -3,5 +3,6 @@ fun postIncrement(a: Int): Int {
     <warning descr="SSR">++b</warning>
     <warning descr="SSR">++(b)</warning>
     <warning descr="SSR">++(((b)))</warning>
+    <warning descr="SSR">b.inc()</warning>
     return b
 }

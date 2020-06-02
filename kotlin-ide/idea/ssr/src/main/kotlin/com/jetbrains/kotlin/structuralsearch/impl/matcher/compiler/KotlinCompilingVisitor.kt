@@ -86,7 +86,14 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     override fun visitBinaryExpression(expression: KtBinaryExpression) {
         super.visitBinaryExpression(expression)
         getHandler(expression).setFilter {
-            it is KtBinaryExpression || it is KtDotQualifiedExpression || it is KtPrefixExpression // op overload matching
+            it is KtBinaryExpression || it is KtDotQualifiedExpression || it is KtPrefixExpression // translated op matching
+        }
+    }
+
+    override fun visitUnaryExpression(expression: KtUnaryExpression) {
+        super.visitUnaryExpression(expression)
+        getHandler(expression).setFilter {
+            it is KtUnaryExpression || it is KtDotQualifiedExpression // translated op matching
         }
     }
 

@@ -10,7 +10,9 @@ import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstituti
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.fir.builder.toBinaryName
+import org.jetbrains.kotlin.fir.builder.toUnaryName
 import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
@@ -100,7 +102,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
         fun KtQualifiedExpression.match(text: String, receiver: KtExpression?, callEntry: KtExpression?): Boolean {
             val callExpr = callExpression
-            return callExpr is KtCallExpression && callExpr.calleeExpression?.text == text
+            return callExpr is KtCallExpression && calleeName == text
                     && myMatchingVisitor.match(receiver, receiverExpression)
                     && myMatchingVisitor.match(callEntry, callExpr.valueArguments.first().getArgumentExpression())
         }
@@ -120,7 +122,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtExpression>() ?: return
         when (other) {
             is KtBinaryExpression -> {
-                println("binary on binary ${other.text} ${expression.match(other)}")
                 if (myMatchingVisitor.setResult(expression.match(other))) return
                 when (expression.operationToken) { // translated matching
                     KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ -> { // a.compareTo(b) OP 0
@@ -177,9 +178,17 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitUnaryExpression(expression: KtUnaryExpression) {
-        val other = getTreeElementDepar<KtUnaryExpression>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(expression.baseExpression, other.baseExpression)
-                && myMatchingVisitor.match(expression.operationReference, other.operationReference)
+        val other = getTreeElementDepar<KtExpression>() ?: return
+        myMatchingVisitor.result = when(other) {
+            is KtDotQualifiedExpression -> {
+                myMatchingVisitor.match(expression.baseExpression, other.receiverExpression)
+                        && expression.operationToken.toUnaryName().toString() == other.calleeName
+            }
+            is KtUnaryExpression -> myMatchingVisitor.match(expression.baseExpression, other.baseExpression)
+                    && myMatchingVisitor.match(expression.operationReference, other.operationReference)
+            else -> false
+        }
+
     }
 
     override fun visitParenthesizedExpression(expression: KtParenthesizedExpression) {
