@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.computeAllNames
+import org.jetbrains.kotlin.util.collectionUtils.flatMapScopes
+import org.jetbrains.kotlin.util.collectionUtils.listOfNonEmptyScopes
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 
@@ -32,13 +34,13 @@ class AllUnderImportScope(
     excludedImportNames: Collection<FqName>
 ) : BaseImportingScope(null) {
 
-    private val scopes: List<MemberScope> = if (descriptor is ClassDescriptor) {
-        listOf(descriptor.staticScope, descriptor.unsubstitutedInnerClassesScope)
+    private val scopes: Array<MemberScope> = if (descriptor is ClassDescriptor) {
+        listOfNonEmptyScopes(descriptor.staticScope, descriptor.unsubstitutedInnerClassesScope).toTypedArray()
     } else {
         assert(descriptor is PackageViewDescriptor) {
             "Must be class or package view descriptor: $descriptor"
         }
-        listOf((descriptor as PackageViewDescriptor).memberScope)
+        listOfNonEmptyScopes((descriptor as PackageViewDescriptor).memberScope).toTypedArray()
     }
 
     private val excludedNames: Set<Name> = if (excludedImportNames.isEmpty()) { // optimization
@@ -49,7 +51,11 @@ class AllUnderImportScope(
         excludedImportNames.mapNotNull { if (it.parent() == fqName) it.shortName() else null }.toSet()
     }
 
-    override fun computeImportedNames(): Set<Name>? = scopes.flatMapToNullable(hashSetOf(), MemberScope::computeAllNames)
+    override fun computeImportedNames(): Set<Name>? = when (scopes.size) {
+        0 -> null
+        1 -> scopes[0].computeAllNames()
+        else -> scopes.asIterable().flatMapToNullable(hashSetOf(), MemberScope::computeAllNames)
+    }
 
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
@@ -64,23 +70,29 @@ class AllUnderImportScope(
 
         val noPackagesKindFilter = kindFilter.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)
         return scopes
-            .flatMap { it.getContributedDescriptors(noPackagesKindFilter, nameFilterToUse) }
+            .flatMapScopes { it.getContributedDescriptors(noPackagesKindFilter, nameFilterToUse) }
             .filter { it !is PackageViewDescriptor } // subpackages are not imported
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         if (name in excludedNames) return null
-        return scopes.asSequence().mapNotNull { it.getContributedClassifier(name, location) }.singleOrNull()
+        var single: ClassifierDescriptor? = null
+        for (scope in scopes) {
+            val res = scope.getContributedClassifier(name, location) ?: continue
+            if (single == null) single = res
+            else return null
+        }
+        return single
     }
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): List<VariableDescriptor> {
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         if (name in excludedNames) return emptyList()
-        return scopes.flatMap { it.getContributedVariables(name, location) }
+        return scopes.flatMapScopes { it.getContributedVariables(name, location) }
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): List<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         if (name in excludedNames) return emptyList()
-        return scopes.flatMap { it.getContributedFunctions(name, location) }
+        return scopes.flatMapScopes { it.getContributedFunctions(name, location) }
     }
 
     override fun recordLookup(name: Name, location: LookupLocation) {
@@ -91,4 +103,5 @@ class AllUnderImportScope(
         p.println(this::class.java.simpleName)
     }
 }
+
 

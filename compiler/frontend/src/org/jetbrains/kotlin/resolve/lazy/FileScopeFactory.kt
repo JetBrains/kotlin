@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportInfo
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -85,20 +85,20 @@ class FileScopeFactory(
         }
 
         val explicit = createDefaultImportResolver(
-            ExplicitImportsIndexed(defaultImportsFiltered),
+            makeExplicitImportsIndexed(defaultImportsFiltered, components.storageManager),
             tempTrace,
             packageFragment = null,
             aliasImportNames = aliasImportNames
         )
         val allUnder = createDefaultImportResolver(
-            AllUnderImportsIndexed(defaultImportsFiltered),
+            makeAllUnderImportsIndexed(defaultImportsFiltered),
             tempTrace,
             packageFragment = null,
             aliasImportNames = aliasImportNames,
             excludedImports = analyzerServices.excludedImports
         )
         val lowPriority = createDefaultImportResolver(
-            AllUnderImportsIndexed(defaultLowPriorityImports.also { imports ->
+            makeAllUnderImportsIndexed(defaultLowPriorityImports.also { imports ->
                 assert(imports.all { it.isAllUnder }) { "All low priority imports must be all-under: $imports" }
             }),
             tempTrace,
@@ -142,9 +142,13 @@ class FileScopeFactory(
         val imports = file.importDirectives
         val aliasImportNames = imports.mapNotNull { if (it.aliasName != null) it.importedFqName else null }
 
-        val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace, aliasImportNames, packageFragment)
+        val explicitImportResolver =
+            createImportResolver(
+                makeExplicitImportsIndexed(imports, components.storageManager),
+                bindingTrace, aliasImportNames, packageFragment
+            )
         val allUnderImportResolver = createImportResolver(
-            AllUnderImportsIndexed(imports),
+            makeAllUnderImportsIndexed(imports),
             bindingTrace,
             aliasImportNames,
             packageFragment

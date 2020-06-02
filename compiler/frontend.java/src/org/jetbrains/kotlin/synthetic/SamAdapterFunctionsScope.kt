@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
 import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.properties.Delegates
 
 interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor, FunctionInterfaceAdapterExtensionFunctionDescriptor {
@@ -244,14 +245,15 @@ class SamAdapterFunctionsScope(
         }
     }
 
-    private fun getAllSamConstructors(classifier: ClassifierDescriptor): List<FunctionDescriptor> {
-        return getSamAdaptersFromConstructors(classifier) + listOfNotNull(getSamConstructor(classifier))
-    }
+    private fun getAllSamConstructors(classifier: ClassifierDescriptor): List<FunctionDescriptor> =
+        getSamAdaptersFromConstructors(classifier).also {
+            it.addIfNotNull(getSamConstructor(classifier))
+        }
 
-    private fun getSamAdaptersFromConstructors(classifier: ClassifierDescriptor): List<FunctionDescriptor> {
-        if (!shouldGenerateAdditionalSamCandidate || classifier !is JavaClassDescriptor) return emptyList()
+    private fun getSamAdaptersFromConstructors(classifier: ClassifierDescriptor): MutableList<FunctionDescriptor> {
+        if (!shouldGenerateAdditionalSamCandidate || classifier !is JavaClassDescriptor) return SmartList()
 
-        return arrayListOf<FunctionDescriptor>().apply {
+        return SmartList<FunctionDescriptor>().apply {
             for (constructor in classifier.constructors) {
                 val samConstructor = getSyntheticConstructor(constructor) ?: continue
                 add(samConstructor)
