@@ -51,9 +51,7 @@ public class RenameHandlerRegistry {
 
   public boolean hasAvailableHandler(@NotNull DataContext dataContext) {
     for (RenameHandler renameHandler : RenameHandler.EP_NAME.getExtensionList()) {
-      if (renameHandler.isAvailableOnDataContext(dataContext)) {
-        return true;
-      }
+      if (renameHandler.isAvailableOnDataContext(dataContext)) return true;
     }
     return myDefaultElementRenameHandler.isAvailableOnDataContext(dataContext);
   }
