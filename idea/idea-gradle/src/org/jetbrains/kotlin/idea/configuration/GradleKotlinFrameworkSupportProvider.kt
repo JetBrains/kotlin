@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -25,8 +14,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil.createDirectoryIfMissing
 import com.intellij.psi.PsiFile
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
@@ -39,8 +26,6 @@ import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
-import java.io.File
-import java.io.Writer
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JTextPane
@@ -257,53 +242,7 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
         explicitPluginVersion: String?
     ) {
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
-
-        getNewFileWriter(module, "src/main/resources", "index.html")?.use {
-            it.write(
-                """
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>${module.name}</title>
-                    <script src="${module.name}.js"></script>
-                </head>
-                <body>
-                
-                </body>
-                </html>
-            """.trimIndent().trim()
-            )
-        }
-
-
-        getNewFileWriter(module, "src/main/kotlin", "main.kt")?.use {
-            it.write(
-                """
-                import kotlin.browser.document
-                
-                fun main() {
-                    document.write("Hello, world!")
-                }
-            """.trimIndent().trim()
-            )
-        }
-    }
-
-    /**
-     * create parent directories and file
-     * @return null if file already exists
-     */
-    private fun getNewFileWriter(module: Module, relativeDir: String, fileName: String): Writer? {
-        val contentEntryPath = module.gradleModuleBuilder?.contentEntryPath ?: return null
-        if (contentEntryPath.isEmpty()) return null
-        val contentRootDir = File(contentEntryPath)
-        val modelContentRootDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(contentRootDir) ?: return null
-
-        val dir = createDirectoryIfMissing(modelContentRootDir, relativeDir) ?: return null
-        if (dir.findChild(fileName) != null) return null
-        val file = dir.createChildData(null, fileName)
-        return file.getOutputStream(null).writer()
+        addBrowserSupport(module)
     }
 }
 
