@@ -47,8 +47,8 @@ object TeamCity {
         try {
             block()
         } finally {
+            statValue(name, durationMs ?: -1)
             if (errorDetails != null) {
-                statValue(name, -1)
                 testFailed(name, errorDetails)
             } else {
                 testFinished(name, durationMs)
