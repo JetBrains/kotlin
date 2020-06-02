@@ -16,8 +16,8 @@ import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ModuleRootModel;
-import com.intellij.openapi.roots.impl.ModuleRootManagerImpl;
 import com.intellij.openapi.roots.impl.ModuleRootManagerImpl.ModuleRootManagerState;
 import com.intellij.openapi.roots.impl.RootModelImpl;
 import com.intellij.openapi.util.Key;
@@ -147,7 +147,7 @@ public final class ClasspathStorage extends StateStorageBase<Boolean> {
     ApplicationManager.getApplication().runReadAction(() -> {
       ModifiableRootModel model = null;
       try {
-        model = ((ModuleRootManagerImpl)component).getModifiableModel();
+        model = ((ModuleRootManager)component).getModifiableModel();
         // IDEA-137969 Eclipse integration: external remove of classpathentry is not synchronized
         model.clear();
         try {
