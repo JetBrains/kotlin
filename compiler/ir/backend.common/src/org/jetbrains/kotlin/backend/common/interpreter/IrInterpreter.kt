@@ -41,10 +41,8 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     private val stack = StackImpl()
     private var commandCount = 0
 
-    companion object {
-        private val mapOfEnums = mutableMapOf<IrSymbol, Complex>()
-        private val mapOfObjects = mutableMapOf<IrSymbol, Complex>()
-    }
+    private val mapOfEnums = mutableMapOf<IrSymbol, Complex>()
+    private val mapOfObjects = mutableMapOf<IrSymbol, Complex>()
 
     private fun Any?.getType(defaultType: IrType): IrType {
         return when (this) {
