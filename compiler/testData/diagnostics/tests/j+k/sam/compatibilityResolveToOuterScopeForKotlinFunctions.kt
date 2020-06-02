@@ -18,7 +18,7 @@ object Test1 {
         fun foo(r: Runnable) {}
 
         fun test(f: () -> Unit) {
-            <!COMPATIBILITY_WARNING, DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!>foo(f)<!>
+            <!DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!><!COMPATIBILITY_WARNING!>foo<!>(f)<!>
         }
     }
 }
@@ -65,7 +65,7 @@ object Test5 {
         fun foo(r: Runnable) {}
 
         fun test() {
-            <!COMPATIBILITY_WARNING, DEBUG_INFO_CALL("fqName: Test5.foo; typeCall: function")!>foo { }<!>
+            <!DEBUG_INFO_CALL("fqName: Test5.foo; typeCall: function")!><!COMPATIBILITY_WARNING!>foo<!> { }<!>
         }
     }
 }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.reportTrailingLambdaErrorOr
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -81,9 +82,10 @@ class DiagnosticReporterByTrackingStrategy(
                 trace.report(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION.on(psiKotlinCall.psiCall.callElement))
             }
             CompatibilityWarning::class.java -> {
+                val callElement = psiKotlinCall.psiCall.callElement
                 trace.report(
                     COMPATIBILITY_WARNING.on(
-                        psiKotlinCall.psiCall.callElement,
+                        callElement.getCalleeExpressionIfAny() ?: callElement,
                         (diagnostic as CompatibilityWarning).candidate
                     )
                 )
