@@ -31,13 +31,11 @@ open class KotlinJsTargetPreset(
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
 
-    override fun useDisambiguitionClassifierAsSourcesetNamePreffix() = false
+    override fun useDisambiguitionClassifierAsSourcesetNamePreffix() = irPreset == null
 
     override fun overrideDisambiguitionClassifierOnIdeImport(): String? = if (isMpp) {
         irPreset?.let {
-            name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
-                .removeJsCompilerSuffix(KotlinJsCompilerType.IR)
-                .removeJsCompilerSuffix(KotlinJsCompilerType.BOTH)
+            name.removeJsCompilerSuffix(KotlinJsCompilerType.BOTH)
         }
     } else {
         null
