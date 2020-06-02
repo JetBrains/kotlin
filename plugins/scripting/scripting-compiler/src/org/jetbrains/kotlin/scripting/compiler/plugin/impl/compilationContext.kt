@@ -147,6 +147,8 @@ internal fun createInitialConfigurations(
         ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
     )
 
+    kotlinCompilerConfiguration.loadPlugins()
+
     initialScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]?.let { compilerOptions ->
         kotlinCompilerConfiguration.updateWithCompilerOptions(compilerOptions, messageCollector, ignoredOptionsReportingState, false)
     }
@@ -175,6 +177,8 @@ private fun CompilerConfiguration.updateWithCompilerOptions(
             ignoredOptionsReportingState
         )
     }
+
+    processPluginsCommandLine(compilerArguments)
 
     setupCommonArguments(compilerArguments)
 

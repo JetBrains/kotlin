@@ -77,44 +77,52 @@ object PluginCliParser {
         configuration: CompilerConfiguration,
         classLoader: URLClassLoader
     ) {
-        val optionValuesByPlugin = pluginOptions?.map(::parsePluginOption)?.groupBy {
-            if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments.PLUGIN_OPTION_FORMAT}")
-            it.pluginId
-        } ?: mapOf()
-
         // TODO issue a warning on using deprecated command line processors when all official plugin migrate to the newer convention
         val commandLineProcessors = ServiceLoaderLite.loadImplementations(CommandLineProcessor::class.java, classLoader)
 
-        for (processor in commandLineProcessors) {
-            val declaredOptions = processor.pluginOptions.associateBy { it.optionName }
-            val optionsToValues = MultiMap<AbstractCliOption, CliOptionValue>()
+        processCompilerPluginsOptions(configuration, pluginOptions, commandLineProcessors)
+    }
+}
 
-            for (optionValue in optionValuesByPlugin[processor.pluginId].orEmpty()) {
-                val option = declaredOptions[optionValue!!.optionName]
-                    ?: throw CliOptionProcessingException("Unsupported plugin option: $optionValue")
-                optionsToValues.putValue(option, optionValue)
+fun processCompilerPluginsOptions(
+    configuration: CompilerConfiguration,
+    pluginOptions: Iterable<String>?,
+    commandLineProcessors: List<CommandLineProcessor>
+) {
+    val optionValuesByPlugin = pluginOptions?.map(::parsePluginOption)?.groupBy {
+        if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments.PLUGIN_OPTION_FORMAT}")
+        it.pluginId
+    } ?: mapOf()
+
+    for (processor in commandLineProcessors) {
+        val declaredOptions = processor.pluginOptions.associateBy { it.optionName }
+        val optionsToValues = MultiMap<AbstractCliOption, CliOptionValue>()
+
+        for (optionValue in optionValuesByPlugin[processor.pluginId].orEmpty()) {
+            val option = declaredOptions[optionValue!!.optionName]
+                ?: throw CliOptionProcessingException("Unsupported plugin option: $optionValue")
+            optionsToValues.putValue(option, optionValue)
+        }
+
+        for (option in processor.pluginOptions) {
+            val values = optionsToValues[option]
+            if (option.required && values.isEmpty()) {
+                throw PluginCliOptionProcessingException(
+                    processor.pluginId,
+                    processor.pluginOptions,
+                    "Required plugin option not present: ${processor.pluginId}:${option.optionName}"
+                )
+            }
+            if (!option.allowMultipleOccurrences && values.size > 1) {
+                throw PluginCliOptionProcessingException(
+                    processor.pluginId,
+                    processor.pluginOptions,
+                    "Multiple values are not allowed for plugin option ${processor.pluginId}:${option.optionName}"
+                )
             }
 
-            for (option in processor.pluginOptions) {
-                val values = optionsToValues[option]
-                if (option.required && values.isEmpty()) {
-                    throw PluginCliOptionProcessingException(
-                        processor.pluginId,
-                        processor.pluginOptions,
-                        "Required plugin option not present: ${processor.pluginId}:${option.optionName}"
-                    )
-                }
-                if (!option.allowMultipleOccurrences && values.size > 1) {
-                    throw PluginCliOptionProcessingException(
-                        processor.pluginId,
-                        processor.pluginOptions,
-                        "Multiple values are not allowed for plugin option ${processor.pluginId}:${option.optionName}"
-                    )
-                }
-
-                for (value in values) {
-                    processor.processOption(option, value.value, configuration)
-                }
+            for (value in values) {
+                processor.processOption(option, value.value, configuration)
             }
         }
     }
