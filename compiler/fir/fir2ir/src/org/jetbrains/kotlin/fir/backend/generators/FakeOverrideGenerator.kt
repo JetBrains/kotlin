@@ -41,24 +41,6 @@ internal class FakeOverrideGenerator(
         return conversionScope.withProperty(conversionScope.applyParentFromStackTo(this), f)
     }
 
-    private fun IrProperty.setOverriddenSymbolsForAccessors(
-        property: FirProperty,
-        firOverriddenSymbol: FirPropertySymbol
-    ): IrProperty {
-
-        val irSymbol = declarationStorage.getIrPropertyOrFieldSymbol(firOverriddenSymbol) as? IrPropertySymbol ?: return this
-        val overriddenProperty = irSymbol.owner
-        getter?.apply {
-            overriddenProperty.getter?.symbol?.let { overriddenSymbols = listOf(it) }
-        }
-        if (property.isVar) {
-            setter?.apply {
-                overriddenProperty.setter?.symbol?.let { overriddenSymbols = listOf(it) }
-            }
-        }
-        return this
-    }
-
     private fun FirCallableMemberDeclaration<*>.allowsToHaveFakeOverrideIn(klass: FirClass<*>): Boolean {
         if (!allowsToHaveFakeOverride) return false
         if (this.visibility != JavaVisibilities.PACKAGE_VISIBILITY) return true
@@ -138,7 +120,7 @@ internal class FakeOverrideGenerator(
                             origin = origin
                         )
                         declarations += irProperty.withProperty {
-                            setOverriddenSymbolsForAccessors(originalProperty, firOverriddenSymbol = baseSymbol)
+                            setOverriddenSymbolsForAccessors(declarationStorage, originalProperty, firOverriddenSymbol = baseSymbol)
                         }
                     } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalProperty.allowsToHaveFakeOverrideIn(klass)) {
                         // Trivial fake override case
@@ -167,12 +149,29 @@ internal class FakeOverrideGenerator(
                             return@processPropertiesByName
                         }
                         declarations += irProperty.withProperty {
-                            setOverriddenSymbolsForAccessors(fakeOverrideProperty, firOverriddenSymbol = propertySymbol)
+                            setOverriddenSymbolsForAccessors(declarationStorage, fakeOverrideProperty, firOverriddenSymbol = propertySymbol)
                         }
                     }
                 }
             }
         }
     }
+}
 
+internal fun IrProperty.setOverriddenSymbolsForAccessors(
+    declarationStorage: Fir2IrDeclarationStorage,
+    property: FirProperty,
+    firOverriddenSymbol: FirPropertySymbol
+): IrProperty {
+    val irSymbol = declarationStorage.getIrPropertyOrFieldSymbol(firOverriddenSymbol) as? IrPropertySymbol ?: return this
+    val overriddenProperty = irSymbol.owner
+    getter?.apply {
+        overriddenProperty.getter?.symbol?.let { overriddenSymbols = listOf(it) }
+    }
+    if (property.isVar) {
+        setter?.apply {
+            overriddenProperty.setter?.symbol?.let { overriddenSymbols = listOf(it) }
+        }
+    }
+    return this
 }
