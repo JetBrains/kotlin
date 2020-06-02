@@ -343,6 +343,7 @@ public class InjectedLanguageUtil {
       result = SoftReference.deref(current.getUserData(INJECTED_PSI));
       if (result == null || !result.isModCountUpToDate(hostPsiFile) || !result.isValid()) {
         result = injectedManager.processInPlaceInjectorsFor(hostPsiFile, current);
+        preventResultFromGCWhileInjectedPsiIsReachable(result);
       }
 
       current = current.getParent();
@@ -391,6 +392,20 @@ public class InjectedLanguageUtil {
     for (PsiElement e = from; e != upUntil && e != null; e = e.getParent()) {
       ProgressManager.checkCanceled();
       e.putUserData(INJECTED_PSI, cachedRef);
+    }
+  }
+
+  private static final Key<InjectionResult> INJECTION_HOLDER_BACK_REFERENCE = Key.create("INJECTION_HOLDER_BACK_REFERENCE");
+
+  /**
+   * Prevents InjectionResult from being GC-ed while there are references to the PSI inside,
+   * to avoid new injected PSI being created when there's one alive already.
+   */
+  private static void preventResultFromGCWhileInjectedPsiIsReachable(@Nullable InjectionResult result) {
+    if (result != null && result.files != null) {
+      for (PsiFile injectedPsiFile : result.files) {
+        injectedPsiFile.getViewProvider().putUserData(INJECTION_HOLDER_BACK_REFERENCE, result);
+      }
     }
   }
 
