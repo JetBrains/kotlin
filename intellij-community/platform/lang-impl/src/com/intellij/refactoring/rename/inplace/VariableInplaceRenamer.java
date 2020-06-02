@@ -2,7 +2,6 @@
 package com.intellij.refactoring.rename.inplace;
 
 import com.intellij.CommonBundle;
-import com.intellij.codeInsight.hints.presentation.PresentationRenderer;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.ide.IdeBundle;
@@ -11,23 +10,19 @@ import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtension;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.command.impl.FinishMarkAction;
 import com.intellij.openapi.command.impl.StartMarkAction;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.Inlay;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -53,7 +48,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author ven
@@ -347,34 +341,6 @@ public class VariableInplaceRenamer extends InplaceRefactoring {
   protected void revertStateOnFinish() {
     if (myInsertedName == null || !isIdentifier(myInsertedName, myLanguage)) {
       revertState();
-    }
-  }
-
-  private final AtomicReference<Inlay<PresentationRenderer>> inlayReference = new AtomicReference<>();
-  @Override
-  public void afterTemplateStart() {
-    super.afterTemplateStart();
-    if (Registry.is("enable.rename.options.inplace", false)) {
-      TemplateState templateState = TemplateManagerImpl.getTemplateState(myEditor);
-      PsiNamedElement variable = getVariable();
-      if (templateState == null || variable == null) return;
-      TextRange variableRange = templateState.getCurrentVariableRange();
-      if (variableRange == null) return;
-      EditorImpl editor = (EditorImpl)templateState.getEditor();
-      SelectableInlayPresentation presentation = TemplateInlayUtil.createSettingsPanelPresentation(editor, variable, inlayReference);
-      int offset = variableRange.getEndOffset();
-      Inlay<PresentationRenderer> inlay = TemplateInlayUtil.createNavigatableButtonWithPopup(templateState,
-                                                                                             offset,
-                                                                                             presentation,
-                                                                                             TemplateInlayUtil.renamePanel(variable, editor));
-      if (inlay == null) return;
-      inlayReference.set(inlay);
-      Disposer.register(inlay, new Disposable() {
-        @Override
-        public void dispose() {
-          inlayReference.set(null);
-        }
-      });
     }
   }
 }

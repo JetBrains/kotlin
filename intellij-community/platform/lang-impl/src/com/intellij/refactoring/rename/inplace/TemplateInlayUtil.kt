@@ -2,7 +2,7 @@
 package com.intellij.refactoring.rename.inplace
 
 import com.intellij.codeInsight.hints.InlayPresentationFactory
-import com.intellij.codeInsight.hints.presentation.DynamicDelegatePresentation
+import com.intellij.codeInsight.hints.presentation.IconPresentation
 import com.intellij.codeInsight.hints.presentation.InlayPresentation
 import com.intellij.codeInsight.hints.presentation.PresentationFactory
 import com.intellij.codeInsight.hints.presentation.PresentationRenderer
@@ -17,6 +17,7 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.Inlay
+import com.intellij.openapi.editor.colors.ColorKey
 import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.ui.DialogPanel
@@ -26,6 +27,7 @@ import com.intellij.openapi.ui.popup.JBPopupListener
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.refactoring.util.TextOccurrencesUtil
@@ -33,10 +35,7 @@ import com.intellij.ui.layout.*
 import com.intellij.ui.popup.PopupFactoryImpl
 import org.jetbrains.annotations.ApiStatus
 import java.awt.Color
-import java.awt.Point
-import java.awt.event.MouseEvent
 import java.util.concurrent.atomic.AtomicReference
-import javax.swing.Icon
 import javax.swing.JLabel
 
 @ApiStatus.Experimental
@@ -113,94 +112,47 @@ object TemplateInlayUtil {
       inlayToUpdate = inlayToUpdate
     )
   }
-  
+
   @JvmStatic
-  fun createSettingsPanelPresentation(editor: EditorImpl,
-                                      elementToRename : PsiElement,
-                                      inlayToUpdate: AtomicReference<Inlay<PresentationRenderer>>): SelectableInlayPresentation {
+  fun createRenameSettingsInlay(templateState: TemplateState, offset: Int, elementToRename : PsiNamedElement, inlayReference : AtomicReference<Inlay<PresentationRenderer>>): Inlay<PresentationRenderer>? {
+    val editor = templateState.editor as EditorImpl
     val processor = RenamePsiElementProcessor.forElement(elementToRename)
+
     val factory = PresentationFactory(editor)
-    fun button(background: Color?, icon : Icon): InlayPresentation {
-      val button = factory.container(
-        presentation = factory.icon(icon),
-        padding = InlayPresentationFactory.Padding(0, 0, 4, 4),
-        roundedCorners = InlayPresentationFactory.RoundedCorners(6, 6),
-        background = background
-      )
-      return factory.container(button, padding = InlayPresentationFactory.Padding(3, 0, 0, 0), background = background)
-    }
-
     val colorsScheme = editor.colorsScheme
-    val renameInComments = SelectableInlayButton(
-      editor,
-      default = button(colorsScheme.getColor(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_DEFAULT),
-                       AllIcons.Actions.InlayRenameInComments),
-      active = button(colorsScheme.getColor(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_FOCUSED),
-                      AllIcons.Actions.InlayRenameInCommentsActive),
-      hovered = button(colorsScheme.getColor(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_HOVERED), AllIcons.Actions.InlayRenameInComments),
-      inlayToUpdate = inlayToUpdate
-    )
-    renameInComments.isSelected = processor.isToSearchInComments(elementToRename)
-    renameInComments.addSelectionListener(object : SelectableInlayPresentation.SelectionListener {
-      override fun selectionChanged(isSelected: Boolean) {
-        processor.setToSearchInComments(elementToRename, isSelected)
-      }
-    })
+    fun button(bgKey: ColorKey, iconPresentation: IconPresentation, second : Boolean = false) = factory.container(factory.container(
+      presentation = iconPresentation,
+      padding = InlayPresentationFactory.Padding(if (second) 0 else 4, 4, 4, 4),
+      background = colorsScheme.getColor(bgKey)
+    ), padding = InlayPresentationFactory.Padding(if (second) 0 else 3, if (second) 6 else 0, 0, 0))
 
-    var renameInNonCode : SelectableInlayButton? = null
+    var tooltip = "Rename also in comments and string literals"
+    val inCommentsIconPresentation = factory.icon(if (processor.isToSearchInComments(elementToRename)) AllIcons.Actions.InlayRenameInCommentsActive else AllIcons.Actions.InlayRenameInComments)
+    var defaultPresentation = button(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_DEFAULT, inCommentsIconPresentation)
+    var active = button(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_FOCUSED, inCommentsIconPresentation)
+    var hovered = button(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_HOVERED, inCommentsIconPresentation)
+
+    var inTextOccurrencesIconPresentation: IconPresentation? = null
     if (TextOccurrencesUtil.isSearchTextOccurrencesEnabled(elementToRename)) {
-
-      renameInNonCode = SelectableInlayButton(
-        editor,
-        default = button(colorsScheme.getColor(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_DEFAULT),
-                         AllIcons.Actions.InlayRenameInNoCodeFiles),
-        active = button(colorsScheme.getColor(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_FOCUSED),
-                        AllIcons.Actions.InlayRenameInNoCodeFilesActive),
-        hovered = button(colorsScheme.getColor(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_HOVERED),
-                         AllIcons.Actions.InlayRenameInNoCodeFiles),
-        inlayToUpdate = inlayToUpdate
-      )
-
-      renameInNonCode.isSelected = processor.isToSearchForTextOccurrences(elementToRename)
-      renameInNonCode.addSelectionListener(object : SelectableInlayPresentation.SelectionListener {
-        override fun selectionChanged(isSelected: Boolean) {
-          processor.setToSearchForTextOccurrences(elementToRename, isSelected)
-        }
-      })
+      inTextOccurrencesIconPresentation = factory.icon(if (processor.isToSearchForTextOccurrences(elementToRename)) AllIcons.Actions.InlayRenameInNoCodeFilesActive else AllIcons.Actions.InlayRenameInNoCodeFiles)
+      defaultPresentation = factory.seq(defaultPresentation, button(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_DEFAULT, inTextOccurrencesIconPresentation, true))
+      active = factory.seq(active, button(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_FOCUSED, inTextOccurrencesIconPresentation, true))
+      hovered = factory.seq(hovered, button(DefaultLanguageHighlighterColors.INLINE_REFACTORING_SETTINGS_HOVERED, inTextOccurrencesIconPresentation, true))
+      tooltip += " and in files that don’t contain explicit code references"
     }
 
-    val renameInCommentsWithTooltipPresentation = factory.withTooltip("Rename also in comments and string literals", renameInComments)
-    val presentation = if (renameInNonCode == null)
-      renameInCommentsWithTooltipPresentation
-    else factory.seq(renameInCommentsWithTooltipPresentation,
-                     factory.withTooltip("Rename also in files that don’t contain explicit code references", renameInNonCode))
-
-    class Selectable : DynamicDelegatePresentation(presentation), SelectableInlayPresentation {
-      private val selectionListeners: MutableList<SelectableInlayPresentation.SelectionListener> = mutableListOf()
-      override var isSelected = false
-        set(value)  {
-          field = value
-          selectionListeners.forEach { it.selectionChanged(value) }
-        }
-
-      override fun addSelectionListener(listener: SelectableInlayPresentation.SelectionListener) {
-        selectionListeners.add(listener)
-      }
-
-      override fun mouseClicked(event: MouseEvent, translated: Point) {
-        if (translated.x < renameInComments.width) {
-          renameInComments.isSelected = !renameInComments.isSelected
-        }
-        else if (renameInNonCode != null) {
-          renameInNonCode.isSelected = !renameInNonCode.isSelected
-        }
-      }
-    }
-    return Selectable()
+    val presentation = SelectableInlayButton(editor, defaultPresentation, active, hovered, inlayReference)
+    val panel = renamePanel(elementToRename, editor, inCommentsIconPresentation, inTextOccurrencesIconPresentation, inlayReference)
+    val inlay = createNavigatableButtonWithPopup(templateState, offset, presentation, panel) ?: return null
+    inlayReference.set(inlay)
+    return inlay
   }
 
-  @JvmStatic
-  fun renamePanel( elementToRename : PsiElement, editor: Editor): DialogPanel {
+  private fun renamePanel(elementToRename: PsiElement,
+                          editor: Editor,
+                          searchInCommentsPresentation: IconPresentation,
+                          searchForTextOccurrencesPresentation: IconPresentation?,
+                          inlayReference: AtomicReference<Inlay<PresentationRenderer>>): DialogPanel {
     val processor = RenamePsiElementProcessor.forElement(elementToRename)
     return panel {
       row("Also rename in:") {
@@ -208,7 +160,9 @@ object TemplateInlayUtil {
           cell {
             checkBox(RefactoringBundle.message("comments.and.strings"),
                      processor.isToSearchInComments(elementToRename),
-                     actionListener = { _, cb ->  processor.setToSearchInComments(elementToRename, cb.isSelected)}
+                     actionListener = { _, cb ->  processor.setToSearchInComments(elementToRename, cb.isSelected)
+                                                  searchInCommentsPresentation.icon = if (cb.isSelected) AllIcons.Actions.InlayRenameInCommentsActive else AllIcons.Actions.InlayRenameInComments
+                                                  inlayReference.get()?.repaint()}
             ).focused()
             component(JLabel(AllIcons.Actions.InlayRenameInComments))
           }
@@ -218,7 +172,9 @@ object TemplateInlayUtil {
             cell {
               checkBox(RefactoringBundle.message("text.occurrences"),
                        processor.isToSearchForTextOccurrences(elementToRename),
-                       actionListener = { _, cb -> processor.setToSearchForTextOccurrences(elementToRename, cb.isSelected)})
+                       actionListener = { _, cb -> processor.setToSearchForTextOccurrences(elementToRename, cb.isSelected)
+                                                   searchForTextOccurrencesPresentation?.icon = if (cb.isSelected) AllIcons.Actions.InlayRenameInNoCodeFilesActive else AllIcons.Actions.InlayRenameInNoCodeFiles
+                                                   inlayReference.get()?.repaint()})
               component(JLabel(AllIcons.Actions.InlayRenameInNoCodeFiles))
             }
           }
