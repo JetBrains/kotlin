@@ -155,7 +155,10 @@ class FirClassSubstitutionScope(
         if (newReturnType == null && newParameterTypes.all { it == null } && newTypeParameters === constructor.typeParameters) {
             return original
         }
-        return createFakeOverrideConstructor(FirConstructorSymbol(original.callableId, overriddenSymbol = original), session, constructor, null, newReturnType, newParameterTypes, newTypeParameters).symbol
+        return createFakeOverrideConstructor(
+            FirConstructorSymbol(original.callableId, overriddenSymbol = original),
+            session, constructor, newReturnType, newParameterTypes, newTypeParameters
+        ).symbol
     }
 
     // Returns a list of type parameters, and a substitutor that should be used for all other types
@@ -272,6 +275,29 @@ class FirClassSubstitutionScope(
     }
 
     companion object {
+        private fun FirFunctionBuilder.configureAnnotationsAndParameters(
+            baseFunction: FirFunction<*>,
+            newParameterTypes: List<ConeKotlinType?>?
+        ) {
+            annotations += baseFunction.annotations
+            valueParameters += baseFunction.valueParameters.zip(
+                newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
+            ) { valueParameter, newType ->
+                buildValueParameter {
+                    source = valueParameter.source
+                    this.session = session
+                    origin = FirDeclarationOrigin.FakeOverride
+                    returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
+                    name = valueParameter.name
+                    symbol = FirVariableSymbol(valueParameter.symbol.callableId)
+                    defaultValue = valueParameter.defaultValue
+                    isCrossinline = valueParameter.isCrossinline
+                    isNoinline = valueParameter.isNoinline
+                    isVararg = valueParameter.isVararg
+                }
+            }
+        }
+
         private fun createFakeOverrideFunction(
             fakeOverrideSymbol: FirFunctionSymbol<FirSimpleFunction>,
             session: FirSession,
@@ -292,24 +318,8 @@ class FirClassSubstitutionScope(
                 name = baseFunction.name
                 status = baseFunction.status
                 symbol = fakeOverrideSymbol
-                annotations += baseFunction.annotations
                 resolvePhase = baseFunction.resolvePhase
-                valueParameters += baseFunction.valueParameters.zip(
-                    newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
-                ) { valueParameter, newType ->
-                    buildValueParameter {
-                        source = valueParameter.source
-                        this.session = session
-                        origin = FirDeclarationOrigin.FakeOverride
-                        returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
-                        name = valueParameter.name
-                        symbol = FirVariableSymbol(valueParameter.symbol.callableId)
-                        defaultValue = valueParameter.defaultValue
-                        isCrossinline = valueParameter.isCrossinline
-                        isNoinline = valueParameter.isNoinline
-                        isVararg = valueParameter.isVararg
-                    }
-                }
+                configureAnnotationsAndParameters(baseFunction, newParameterTypes)
 
                 // TODO: Fix the hack for org.jetbrains.kotlin.fir.backend.Fir2IrVisitor.addFakeOverrides
                 // We might have added baseFunction.typeParameters in case new ones are null
@@ -423,7 +433,6 @@ class FirClassSubstitutionScope(
             fakeOverrideSymbol: FirConstructorSymbol,
             session: FirSession,
             baseConstructor: FirConstructor,
-            newReceiverType: ConeKotlinType? = null,
             newReturnType: ConeKotlinType? = null,
             newParameterTypes: List<ConeKotlinType?>? = null,
             newTypeParameters: List<FirTypeParameterRef>? = null
@@ -435,27 +444,11 @@ class FirClassSubstitutionScope(
                 this.session = session
                 origin = FirDeclarationOrigin.FakeOverride
                 returnTypeRef = baseConstructor.returnTypeRef.withReplacedReturnType(newReturnType)
-                receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(newReceiverType)
+                receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
                 status = baseConstructor.status
                 symbol = fakeOverrideSymbol
-                annotations += baseConstructor.annotations
                 resolvePhase = baseConstructor.resolvePhase
-                valueParameters += baseConstructor.valueParameters.zip(
-                    newParameterTypes ?: List(baseConstructor.valueParameters.size) { null }
-                ) { valueParameter, newType ->
-                    buildValueParameter {
-                        source = valueParameter.source
-                        this.session = session
-                        origin = FirDeclarationOrigin.FakeOverride
-                        returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
-                        name = valueParameter.name
-                        symbol = FirVariableSymbol(valueParameter.symbol.callableId)
-                        defaultValue = valueParameter.defaultValue
-                        isCrossinline = valueParameter.isCrossinline
-                        isNoinline = valueParameter.isNoinline
-                        isVararg = valueParameter.isVararg
-                    }
-                }
+                configureAnnotationsAndParameters(baseConstructor, newParameterTypes)
 
                 // TODO: Fix the hack for org.jetbrains.kotlin.fir.backend.Fir2IrVisitor.addFakeOverrides
                 // We might have added baseFunction.typeParameters in case new ones are null
