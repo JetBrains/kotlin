@@ -234,6 +234,7 @@ internal val psiToIrPhase = konanUnitPhase(
                 generatorContext,
                 environment.getSourceFiles(),
                 irProviders,
+                pluginExtensions,
                 // TODO: This is a hack to allow platform libs to build in reasonable time.
                 // referenceExpectsForUsedActuals() appears to be quadratic in time because of
                 // how ExpectedActualResolver is implemented.
