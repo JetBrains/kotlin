@@ -43,7 +43,9 @@ public class Continuation1<T1>(
     }
 
     public override operator fun invoke(p1: T1) {
-        val args = StableRef.create(Pair(stable, p1))
+        require(p1.isFrozen)
+
+        val args = StableRef.create(Pair(stable, p1).freeze())
         try {
             invoker(args.asCPointer())
         } finally {
@@ -72,7 +74,10 @@ public class Continuation2<T1, T2>(
     }
 
     public override operator fun invoke(p1: T1, p2: T2) {
-        val args = StableRef.create(Triple(stable, p1, p2))
+        require(p1.isFrozen)
+        require(p2.isFrozen)
+
+        val args = StableRef.create(Triple(stable, p1, p2).freeze())
         try {
             invoker(args.asCPointer())
         } finally {
