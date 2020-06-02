@@ -84,7 +84,7 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
         val newDisposable = newDisposable()
         val configData = mutableMapOf<String, Data>()
 
-        val workspace = OCWorkspace.getInstance(project).getModifiableModel(true)
+        val workspace = OCWorkspace.getInstance(project).getModifiableModel(CLIENT_KEY, true)
         val compilerInfoSession = CompilerInfoCache().createSession<String>(ProgressIndicatorProvider.getGlobalProgressIndicator()!!)
 
         val messages = MultiMap<String, CompilerInfoCache.Message>()
@@ -275,6 +275,7 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
         get() = synchronized(this) { konanFrameworkTargets }
 
     companion object {
+        private const val CLIENT_KEY = "GradleApple"
         private const val LOADING_GRADLE_APPLE_PROJECT = "Loading Gradle Apple Project..."
         private val LOG = Logger.getInstance(GradleAppleWorkspace::class.java)
         fun getInstance(project: Project): GradleAppleWorkspace = ServiceManager.getService(project, GradleAppleWorkspace::class.java)
