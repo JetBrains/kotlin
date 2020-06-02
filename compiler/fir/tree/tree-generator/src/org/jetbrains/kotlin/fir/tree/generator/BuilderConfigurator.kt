@@ -95,6 +95,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             default("argumentList") {
                 value = "FirEmptyArgumentList"
             }
+            default("resolveStatus", "FirAnnotationResolveStatus.Unresolved")
             useTypes(emptyArgumentListType)
         }
 

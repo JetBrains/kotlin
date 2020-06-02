@@ -22,7 +22,7 @@ abstract class FirAnnotationCall : FirExpression(), FirCall {
     abstract override val argumentList: FirArgumentList
     abstract val useSiteTarget: AnnotationUseSiteTarget?
     abstract val annotationTypeRef: FirTypeRef
-    abstract val resolved: Boolean
+    abstract val resolveStatus: FirAnnotationResolveStatus
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationCall(this, data)
 
@@ -30,7 +30,7 @@ abstract class FirAnnotationCall : FirExpression(), FirCall {
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
-    abstract fun replaceResolved(newResolved: Boolean)
+    abstract fun replaceResolveStatus(newResolveStatus: FirAnnotationResolveStatus)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall
 

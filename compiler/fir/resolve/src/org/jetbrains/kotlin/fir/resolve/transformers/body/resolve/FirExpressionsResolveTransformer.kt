@@ -622,13 +622,13 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
     }
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        if (annotationCall.resolved) return annotationCall.compose()
+        if (annotationCall.resolveStatus == FirAnnotationResolveStatus.Resolved) return annotationCall.compose()
         dataFlowAnalyzer.enterAnnotationCall(annotationCall)
         return withFirArrayOfCallTransformer {
             (annotationCall.transformChildren(transformer, data) as FirAnnotationCall).also {
                 // TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
                 it.argumentList.transformArguments(integerLiteralTypeApproximator, null)
-                it.replaceResolved(true)
+                it.replaceResolveStatus(FirAnnotationResolveStatus.Resolved)
                 dataFlowAnalyzer.exitAnnotationCall(it)
             }.compose()
         }

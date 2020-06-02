@@ -70,8 +70,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "annotationTypeRef"
                 withGetter = true
             }
-
-            defaultFalse("resolved")
         }
 
         impl(arrayOfCall)

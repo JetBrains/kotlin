@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolveStatus
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -23,9 +24,9 @@ internal class FirAnnotationCallImpl(
     override var argumentList: FirArgumentList,
     override val useSiteTarget: AnnotationUseSiteTarget?,
     override var annotationTypeRef: FirTypeRef,
+    override var resolveStatus: FirAnnotationResolveStatus,
 ) : FirAnnotationCall() {
     override val typeRef: FirTypeRef get() = annotationTypeRef
-    override var resolved: Boolean = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -56,7 +57,7 @@ internal class FirAnnotationCallImpl(
         argumentList = newArgumentList
     }
 
-    override fun replaceResolved(newResolved: Boolean) {
-        resolved = newResolved
+    override fun replaceResolveStatus(newResolveStatus: FirAnnotationResolveStatus) {
+        resolveStatus = newResolveStatus
     }
 }
