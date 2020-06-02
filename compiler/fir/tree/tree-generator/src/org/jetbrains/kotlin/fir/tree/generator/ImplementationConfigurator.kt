@@ -219,7 +219,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(typeOperatorCall)
 
         impl(resolvedQualifier) {
-            isMutable("packageFqName", "relativeClassFqName", "safe")
+            isMutable("packageFqName", "relativeClassFqName", "isNullableLHSForCallableReference")
             default("classId") {
                 value = """
                     |relativeClassFqName?.let {

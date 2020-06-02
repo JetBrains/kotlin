@@ -432,13 +432,13 @@ class ExpressionsConverter(
      */
     private fun convertCallableReferenceExpression(callableReferenceExpression: LighterASTNode): FirExpression {
         var isReceiver = true
-        var safe = false
+        var hasQuestionMarkAtLHS = false
         var firReceiverExpression: FirExpression? = null
         lateinit var firCallableReference: FirQualifiedAccess
         callableReferenceExpression.forEachChildren {
             when (it.tokenType) {
                 COLONCOLON -> isReceiver = false
-                QUEST -> safe = true
+                QUEST -> hasQuestionMarkAtLHS = true
                 else -> if (it.isExpression()) {
                     if (isReceiver) {
                         firReceiverExpression = getAsFirExpression(it, "Incorrect receiver expression")
@@ -453,7 +453,7 @@ class ExpressionsConverter(
             source = callableReferenceExpression.toFirSourceElement()
             calleeReference = firCallableReference.calleeReference as FirNamedReference
             explicitReceiver = firReceiverExpression
-            this.safe = safe
+            this.hasQuestionMarkAtLHS = hasQuestionMarkAtLHS
         }
     }
 
@@ -487,7 +487,6 @@ class ExpressionsConverter(
                 return it.wrapWithSafeCall(firReceiver!!)
             }
 
-            it.safe = false
             it.explicitReceiver = firReceiver
         }
         return firSelector

@@ -452,6 +452,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         callableReferenceAccess.configure {
             +field("calleeReference", namedReference, withReplace = true).withTransform()
+            +booleanField("hasQuestionMarkAtLHS", withReplace = true)
         }
 
         getClassCall.configure {
@@ -476,7 +477,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("relativeClassFqName", fqNameType, nullable = true)
             +field("classId", classIdType, nullable = true)
             +field("symbol", classLikeSymbolType, nullable = true)
-            +booleanField("safe", withReplace = true)
+            +booleanField("isNullableLHSForCallableReference", withReplace = true)
             +typeArguments.withTransform()
         }
 

@@ -34,7 +34,7 @@ class FirResolvedQualifierBuilder : FirAnnotationContainerBuilder, FirExpression
     lateinit var packageFqName: FqName
     var relativeClassFqName: FqName? = null
     var symbol: FirClassLikeSymbol<*>? = null
-    var safe: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    var isNullableLHSForCallableReference: Boolean = false
     val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
 
     override fun build(): FirResolvedQualifier {
@@ -45,7 +45,7 @@ class FirResolvedQualifierBuilder : FirAnnotationContainerBuilder, FirExpression
             packageFqName,
             relativeClassFqName,
             symbol,
-            safe,
+            isNullableLHSForCallableReference,
             typeArguments,
         )
     }

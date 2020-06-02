@@ -111,7 +111,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += qualifiedAccessBuilder
             defaultNull("explicitReceiver")
             defaultNoReceivers()
-            defaultFalse("safe")
+            defaultFalse("hasQuestionMarkAtLHS")
         }
 
         builder(componentCall) {
@@ -263,6 +263,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(anonymousInitializer) {
             default("symbol", "FirAnonymousInitializerSymbol()")
+        }
+
+        builder(resolvedQualifier) {
+            defaultFalse("isNullableLHSForCallableReference")
         }
 
         val elementsWithDefaultTypeRef = listOf(

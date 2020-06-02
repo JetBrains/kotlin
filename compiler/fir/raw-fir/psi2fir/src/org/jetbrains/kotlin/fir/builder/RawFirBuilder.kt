@@ -1812,7 +1812,7 @@ class RawFirBuilder(
                     name = expression.callableReference.getReferencedNameAsName()
                 }
                 explicitReceiver = expression.receiverExpression?.toFirExpression("Incorrect receiver expression")
-                safe = expression.hasQuestionMarks
+                hasQuestionMarkAtLHS = expression.hasQuestionMarks
             }
         }
 

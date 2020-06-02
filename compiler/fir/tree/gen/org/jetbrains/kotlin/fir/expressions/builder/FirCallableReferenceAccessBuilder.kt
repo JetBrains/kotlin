@@ -34,24 +34,24 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessBuilder, FirAnnotati
     override var source: FirSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var safe: Boolean = false
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     lateinit var calleeReference: FirNamedReference
+    var hasQuestionMarkAtLHS: Boolean = false
 
     override fun build(): FirCallableReferenceAccess {
         return FirCallableReferenceAccessImpl(
             source,
             typeRef,
             annotations,
-            safe,
             typeArguments,
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
             calleeReference,
+            hasQuestionMarkAtLHS,
         )
     }
 

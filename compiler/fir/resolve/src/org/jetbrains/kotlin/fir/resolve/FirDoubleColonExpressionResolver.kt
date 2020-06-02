@@ -71,7 +71,7 @@ class FirDoubleColonExpressionResolver(
 
     private fun shouldTryResolveLHSAsExpression(expression: FirCallableReferenceAccess): Boolean {
         val lhs = expression.explicitReceiver ?: return false
-        return lhs.canBeConsideredProperExpression() && !expression.safe
+        return lhs.canBeConsideredProperExpression() && !expression.hasQuestionMarkAtLHS
     }
 
     private fun shouldTryResolveLHSAsType(expression: FirCallableReferenceAccess): Boolean {
@@ -172,7 +172,7 @@ class FirDoubleColonExpressionResolver(
                     else -> ConeStarProjection
                 }
             },
-            isNullable = expression.safe
+            isNullable = resolvedExpression.isNullableLHSForCallableReference
         )
 
         return DoubleColonLHS.Type(type)

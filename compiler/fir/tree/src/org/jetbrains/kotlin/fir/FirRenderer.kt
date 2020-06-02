@@ -1018,7 +1018,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
         callableReferenceAccess.annotations.renderAnnotations()
         callableReferenceAccess.explicitReceiver?.accept(this)
-        if (callableReferenceAccess.safe && callableReferenceAccess.explicitReceiver !is FirResolvedQualifier) {
+        if (callableReferenceAccess.hasQuestionMarkAtLHS && callableReferenceAccess.explicitReceiver !is FirResolvedQualifier) {
             print("?")
         }
         print("::")
@@ -1127,7 +1127,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         } else {
             print(resolvedQualifier.packageFqName.asString().replace(".", "/"))
         }
-        if (resolvedQualifier.safe) {
+        if (resolvedQualifier.isNullableLHSForCallableReference) {
             print("?")
         }
         print("|")

@@ -25,12 +25,12 @@ internal class FirCallableReferenceAccessImpl(
     override val source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
-    override var safe: Boolean,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var calleeReference: FirNamedReference,
+    override var hasQuestionMarkAtLHS: Boolean,
 ) : FirCallableReferenceAccess(), FirModifiableQualifiedAccess {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -107,5 +107,9 @@ internal class FirCallableReferenceAccessImpl(
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         require(newCalleeReference is FirNamedReference)
         replaceCalleeReference(newCalleeReference)
+    }
+
+    override fun replaceHasQuestionMarkAtLHS(newHasQuestionMarkAtLHS: Boolean) {
+        hasQuestionMarkAtLHS = newHasQuestionMarkAtLHS
     }
 }

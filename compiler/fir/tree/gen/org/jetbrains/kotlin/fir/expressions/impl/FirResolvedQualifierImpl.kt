@@ -27,7 +27,7 @@ internal class FirResolvedQualifierImpl(
     override var packageFqName: FqName,
     override var relativeClassFqName: FqName?,
     override val symbol: FirClassLikeSymbol<*>?,
-    override var safe: Boolean,
+    override var isNullableLHSForCallableReference: Boolean,
     override val typeArguments: MutableList<FirTypeProjection>,
 ) : FirResolvedQualifier() {
     override val classId: ClassId? get() = relativeClassFqName?.let {
@@ -61,8 +61,8 @@ internal class FirResolvedQualifierImpl(
         typeRef = newTypeRef
     }
 
-    override fun replaceSafe(newSafe: Boolean) {
-        safe = newSafe
+    override fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean) {
+        isNullableLHSForCallableReference = newIsNullableLHSForCallableReference
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
