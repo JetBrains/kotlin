@@ -507,19 +507,21 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(declaration.body, other.body)
     }
 
-    private fun getSingleExpression(expression: KtExpression?): KtExpression? {
-        return if (expression is KtBlockExpression && expression.statements.size == 1) {
-            val firstStatement = expression.firstStatement
-            if (firstStatement is KtReturnExpression) {
-                firstStatement.returnedExpression
-            } else null
-        } else expression
-    }
+    private fun normalizeExpressionRet(expression: KtExpression?) = if (
+        expression is KtBlockExpression && expression.statements.size == 1
+    ) {
+        val firstExpr = expression.firstStatement
+        if(firstExpr is KtReturnExpression) firstExpr.returnedExpression else firstExpr
+    } else expression
+
+    private fun normalizeExpression(expression: KtExpression?) = if (
+        expression is KtBlockExpression && expression.statements.size == 1
+    ) expression.firstStatement else expression
 
     override fun visitNamedFunction(function: KtNamedFunction) {
         val other = getTreeElementDepar<KtNamedFunction>() ?: return
-        val funExpr = getSingleExpression(function.bodyExpression)
-        val othExpr = getSingleExpression(other.bodyExpression)
+        val funExpr = normalizeExpressionRet(function.bodyExpression)
+        val othExpr = normalizeExpressionRet(other.bodyExpression)
         myMatchingVisitor.result = matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(function.modifierList, other.modifierList)
                 && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)
@@ -540,29 +542,29 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitIfExpression(expression: KtIfExpression) {
         val other = getTreeElementDepar<KtIfExpression>() ?: return
-        val elseBranch = expression.`else`
+        val elseBranch = normalizeExpression(expression.`else`)
         myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
-                && myMatchingVisitor.match(expression.then, other.then)
-                && (elseBranch == null || myMatchingVisitor.match(elseBranch, other.`else`))
+                && myMatchingVisitor.match(normalizeExpression(expression.then), normalizeExpression(other.then))
+                && (elseBranch == null || myMatchingVisitor.match(elseBranch, normalizeExpression(other.`else`)))
     }
 
     override fun visitForExpression(expression: KtForExpression) {
         val other = getTreeElementDepar<KtForExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.loopParameter, other.loopParameter)
                 && myMatchingVisitor.match(expression.loopRange, other.loopRange)
-                && myMatchingVisitor.match(expression.body, other.body)
+                && myMatchingVisitor.match(normalizeExpression(expression.body), normalizeExpression(other.body))
     }
 
     override fun visitWhileExpression(expression: KtWhileExpression) {
         val other = getTreeElementDepar<KtWhileExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
-                && myMatchingVisitor.match(expression.body, other.body)
+                && myMatchingVisitor.match(normalizeExpression(expression.body), normalizeExpression(other.body))
     }
 
     override fun visitDoWhileExpression(expression: KtDoWhileExpression) {
         val other = getTreeElementDepar<KtDoWhileExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
-                && myMatchingVisitor.match(expression.body, other.body)
+                && myMatchingVisitor.match(normalizeExpression(expression.body), normalizeExpression(other.body))
     }
 
     override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {

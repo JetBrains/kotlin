@@ -8,6 +8,7 @@ fun foo() {
     if (true) {
         b = 2
     }
+    <warning descr="SSR">if (true) a = 1</warning>
     println(a + b)
 }
 

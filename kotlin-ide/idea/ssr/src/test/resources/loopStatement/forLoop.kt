@@ -10,4 +10,6 @@ fun a() {
     for(j in 0..10) {
         println(j)
     }
+
+    <warning descr="SSR">for(i in 0..10) println(i)</warning>
 }

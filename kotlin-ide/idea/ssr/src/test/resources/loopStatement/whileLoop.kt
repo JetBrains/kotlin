@@ -15,3 +15,7 @@ fun c() {
         println(1)
     }
 }
+
+fun d() {
+    <warning descr="SSR">while(true) println(0)</warning>
+}

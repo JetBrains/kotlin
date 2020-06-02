@@ -11,5 +11,7 @@ fun a(): Int {
     } else {
         a = 4
     }
+
+    <warning descr="SSR">if (a == 1) a = 2 else a = 3</warning>
     return a
 }
