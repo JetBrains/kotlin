@@ -156,12 +156,12 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
         descriptor.constructors.forEach { addFunctionDescriptor(it) }
     }
 
-    val scopeChain = listOfNotNull(
+    return LexicalChainedScope.create(
+        headerScope, descriptor, false, null, LexicalScopeKind.SYNTHETIC,
         descriptor.defaultType.memberScope,
         descriptor.staticScope,
         descriptor.companionObjectDescriptor?.defaultType?.memberScope
     )
-    return LexicalChainedScope(headerScope, descriptor, false, null, LexicalScopeKind.SYNTHETIC, scopeChain)
 }
 
 fun getKDocLinkResolutionScope(resolutionFacade: ResolutionFacade, contextDescriptor: DeclarationDescriptor): LexicalScope {
