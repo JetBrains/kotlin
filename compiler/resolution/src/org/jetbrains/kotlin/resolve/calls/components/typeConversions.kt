@@ -40,14 +40,23 @@ object TypeConversions {
         )
 
         val suspendConversionData = performConversionBeforeSubtyping(
-            candidate, argument, candidateParameter, samConversionData.convertedType ?: candidateExpectedType, SuspendTypeConversions
+            candidate, argument, candidateParameter,
+            candidateExpectedType = samConversionData.convertedType ?: candidateExpectedType,
+            SuspendTypeConversions
+        )
+
+        val unitConversionData = performConversionBeforeSubtyping(
+            candidate, argument, candidateParameter,
+            candidateExpectedType = suspendConversionData.convertedType ?: samConversionData.convertedType ?: candidateExpectedType,
+            UnitTypeConversions
         )
 
         return ConversionData(
-            convertedType = suspendConversionData.convertedType ?: samConversionData.convertedType,
-            wasConversion = samConversionData.wasConversion || suspendConversionData.wasConversion,
+            convertedType = unitConversionData.convertedType ?: suspendConversionData.convertedType ?: samConversionData.convertedType,
+            wasConversion = samConversionData.wasConversion || suspendConversionData.wasConversion || unitConversionData.wasConversion,
             conversionDefinitelyNotNeeded = samConversionData.conversionDefinitelyNotNeeded &&
-                    suspendConversionData.conversionDefinitelyNotNeeded
+                    suspendConversionData.conversionDefinitelyNotNeeded &&
+                    unitConversionData.conversionDefinitelyNotNeeded
         )
     }
 
@@ -60,10 +69,13 @@ object TypeConversions {
         val samConvertedType = performConversionAfterSubtyping(
             candidate, argument, candidateParameter, candidateExpectedType, SamTypeConversions
         )
-
         if (samConvertedType != null) return samConvertedType
 
-        return performConversionAfterSubtyping(candidate, argument, candidateParameter, candidateExpectedType, SuspendTypeConversions)
+        val suspendConvertedType =
+            performConversionAfterSubtyping(candidate, argument, candidateParameter, candidateExpectedType, SuspendTypeConversions)
+        if (suspendConvertedType != null) return suspendConvertedType
+
+        return performConversionAfterSubtyping(candidate, argument, candidateParameter, candidateExpectedType, UnitTypeConversions)
     }
 
     private fun performConversionAfterSubtyping(

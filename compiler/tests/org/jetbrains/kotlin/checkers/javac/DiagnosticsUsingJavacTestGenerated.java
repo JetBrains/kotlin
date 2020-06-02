@@ -24441,6 +24441,49 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/unitConversion")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class UnitConversion extends AbstractDiagnosticsUsingJavacTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInUnitConversion() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unitConversion"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("chainedFunSuspendUnitConversion.kt")
+            public void testChainedFunSuspendUnitConversion() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/chainedFunSuspendUnitConversion.kt");
+            }
+
+            @TestMetadata("chainedFunUnitConversion.kt")
+            public void testChainedFunUnitConversion() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/chainedFunUnitConversion.kt");
+            }
+
+            @TestMetadata("chainedUnitSuspendConversion.kt")
+            public void testChainedUnitSuspendConversion() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/chainedUnitSuspendConversion.kt");
+            }
+
+            @TestMetadata("unitConversionCompatibility.kt")
+            public void testUnitConversionCompatibility() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/unitConversionCompatibility.kt");
+            }
+
+            @TestMetadata("unitConversionForAllKinds.kt")
+            public void testUnitConversionForAllKinds() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/unitConversionForAllKinds.kt");
+            }
+
+            @TestMetadata("unitConversionForSubtypes.kt")
+            public void testUnitConversionForSubtypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/unitConversionForSubtypes.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/varargs")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
