@@ -15,6 +15,6 @@ interface IrDeserializer : IrProvider {
         fun resolveSymbol(symbol: IrSymbol): IrDeclaration? = null
     }
 
-    fun init(moduleFragment: IrModuleFragment?) {}
+    fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrLinkerExtension>) {}
     fun postProcess() {}
 }

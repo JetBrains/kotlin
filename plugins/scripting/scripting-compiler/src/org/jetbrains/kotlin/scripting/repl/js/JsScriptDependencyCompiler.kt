@@ -56,7 +56,7 @@ class JsScriptDependencyCompiler(
         val moduleFragment = irDependencies.last()
         val irProviders = listOf(jsLinker)
 
-        jsLinker.init(null)
+        jsLinker.init(null, emptyList())
 
         ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings)
             .generateUnboundSymbolsAsDependencies()

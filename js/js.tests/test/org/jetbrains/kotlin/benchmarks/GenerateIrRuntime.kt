@@ -478,7 +478,7 @@ class GenerateIrRuntime {
         val irProviders = listOf(irLinker)
 
         val psi2IrTranslator = Psi2IrTranslator(languageVersionSettings, psi2IrContext.configuration, signaturer)
-        return psi2IrTranslator.generateModuleFragment(psi2IrContext, files, irProviders, null)
+        return psi2IrTranslator.generateModuleFragment(psi2IrContext, files, irProviders, emptyList(), null)
     }
 
     private fun doSerializeModule(moduleFragment: IrModuleFragment, bindingContext: BindingContext, files: List<KtFile>, perFile: Boolean = false): String {
@@ -531,7 +531,7 @@ class GenerateIrRuntime {
         val jsLinker = JsIrLinker(moduleDescriptor, logger, irBuiltIns, symbolTable, functionFactory, null)
 
         val moduleFragment = jsLinker.deserializeFullModule(moduleDescriptor, moduleDescriptor.kotlinLibrary)
-        jsLinker.init(null)
+        jsLinker.init(null, emptyList())
         // Create stubs
         ExternalDependenciesGenerator(symbolTable, listOf(jsLinker), languageVersionSettings)
             .generateUnboundSymbolsAsDependencies()
@@ -562,7 +562,7 @@ class GenerateIrRuntime {
 
         val moduleFragment = jsLinker.deserializeFullModule(moduleDescriptor, moduleDescriptor.kotlinLibrary)
         // Create stubs
-        jsLinker.init(null)
+        jsLinker.init(null, emptyList())
         // Create stubs
         ExternalDependenciesGenerator(symbolTable, listOf(jsLinker), languageVersionSettings)
             .generateUnboundSymbolsAsDependencies()

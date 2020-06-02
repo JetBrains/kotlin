@@ -273,7 +273,7 @@ fun loadIr(
 
             val moduleFragment = deserializedModuleFragments.last()
 
-            irLinker.init(null)
+            irLinker.init(null, emptyList())
             ExternalDependenciesGenerator(symbolTable, listOf(irLinker), configuration.languageVersionSettings).generateUnboundSymbolsAsDependencies()
             irLinker.postProcess()
 
@@ -325,7 +325,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         }
     }
 
-    return psi2Ir.generateModuleFragment(this, files, listOf(irLinker), expectDescriptorToSymbol)
+    return psi2Ir.generateModuleFragment(this, files, listOf(irLinker), extensions, expectDescriptorToSymbol)
 }
 
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}
