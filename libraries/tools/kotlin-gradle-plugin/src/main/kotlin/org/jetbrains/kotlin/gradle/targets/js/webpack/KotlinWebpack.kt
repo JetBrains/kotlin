@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 import org.gradle.api.DefaultTask
 import org.gradle.api.Incubating
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.BasePluginConvention
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
-import org.jetbrains.kotlin.gradle.utils.newProperty
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
@@ -57,14 +57,14 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
 
     @get:Internal
     var entry: File
-        get() = entryProperty.get()
+        get() = entryProperty.asFile.get()
         set(value) {
             entryProperty.set(value)
         }
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
-    val entryProperty: Property<File> = project.newProperty {
+    val entryProperty: RegularFileProperty = project.newFileProperty {
         compilation.compileKotlinTask.outputFile
     }
 

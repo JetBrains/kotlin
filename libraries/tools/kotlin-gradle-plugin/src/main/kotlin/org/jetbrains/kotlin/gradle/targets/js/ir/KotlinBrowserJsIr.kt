@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFile
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
@@ -177,13 +178,12 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         dependsOn(
             nodeJs.npmInstallTask,
-            binary.linkTask,
             target.project.tasks.getByName(compilation.processResourcesTaskName)
         )
 
         configureOptimization(type)
 
-        entryProperty.set(binary.linkTask.map { it.outputFile })
+        entryProperty.set(binary.linkTask.map { RegularFile { it.outputFile } })
 
         commonRunConfigurations.forEach { configure ->
             configure()
