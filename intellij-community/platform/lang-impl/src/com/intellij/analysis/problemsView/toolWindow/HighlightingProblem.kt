@@ -10,7 +10,6 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.RangeMarker
-import com.intellij.openapi.util.text.StringUtil.isEmpty
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import javax.swing.Icon
@@ -40,20 +39,24 @@ internal class HighlightingProblem(val info: HighlightInfo) : Problem {
 
   override fun hasQuickFixActions(): Boolean {
     val markers = info.quickFixActionMarkers ?: return false
-    return markers.any { !isEmpty(it.first.action.text) && it.second.isValid }
+    return markers.any { it.second.isValid }
   }
 
   override fun getQuickFixActions(): Collection<AnAction> {
     val markers = info.quickFixActionMarkers ?: return emptyList()
-    return markers.filter { !isEmpty(it.first.action.text) && it.second.isValid }.map { QuickFixAction(it.first.action, it.second) }
+    return markers.filter { it.second.isValid }.map { QuickFixAction(it.first.action, it.second) }
   }
 }
 
-private class QuickFixAction(val action: IntentionAction, val marker: RangeMarker)
-  : AnAction(action.text, action.text, AllIcons.Actions.IntentionBulb) {
+private class QuickFixAction(val action: IntentionAction, val marker: RangeMarker) : AnAction(AllIcons.Actions.IntentionBulb) {
 
   override fun update(event: AnActionEvent) {
-    event.presentation.isEnabledAndVisible = getTopLevelFile(event) != null
+    event.presentation.isEnabledAndVisible = false
+    val file = getTopLevelFile(event) ?: return
+    if (!action.isAvailable(file.project, null, file)) return
+    val text = action.text // may throw an exception if action.isAvailable is not invoked
+    event.presentation.text = text
+    event.presentation.isEnabledAndVisible = text.isNotEmpty()
   }
 
   override fun actionPerformed(event: AnActionEvent) {
