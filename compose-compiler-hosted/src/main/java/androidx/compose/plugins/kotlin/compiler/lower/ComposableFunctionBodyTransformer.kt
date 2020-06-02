@@ -117,7 +117,6 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -882,7 +881,7 @@ class ComposableFunctionBodyTransformer(
         // boolean array mapped to parameters. true indicates that the type is unstable
         val unstableMask = realParams.map {
             val isStable = (it.varargElementType ?: it.type).toKotlinType().isStable()
-            if (!isStable && !it.hasDefaultValue()) {
+            if (!isStable && !it.hasDefaultValueSafe()) {
                 // if it has non-optional unstable params, the function can never skip
                 canSkipExecution = false
             }
