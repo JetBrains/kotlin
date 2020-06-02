@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.plugin.generators.AllOpenMemberGenerator
-import org.jetbrains.kotlin.fir.plugin.generators.AllOpenNestedClassGenerator
-import org.jetbrains.kotlin.fir.plugin.generators.AllOpenRecursiveNestedClassGenerator
-import org.jetbrains.kotlin.fir.plugin.generators.AllOpenTopLevelDeclarationsGenerator
+import org.jetbrains.kotlin.fir.plugin.generators.*
 
 class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AllOpenStatusTransformer
+        +::AllOpenSupertypeGenerator
+
+        // Declaration generators
         +::AllOpenMemberGenerator
         +::AllOpenNestedClassGenerator
         +::AllOpenAdditionalCheckers

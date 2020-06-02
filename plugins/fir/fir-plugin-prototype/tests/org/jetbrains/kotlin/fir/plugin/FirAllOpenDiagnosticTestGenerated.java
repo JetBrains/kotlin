@@ -101,4 +101,22 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
             runTest("plugins/fir/fir-plugin-prototype/testData/status/simpleAnnotation.kt");
         }
     }
+
+    @TestMetadata("plugins/fir/fir-plugin-prototype/testData/supertypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Supertypes extends AbstractFirAllOpenDiagnosticTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSupertypes() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir/fir-plugin-prototype/testData/supertypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/supertypes/simple.kt");
+        }
+    }
 }

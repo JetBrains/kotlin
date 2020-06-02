@@ -1,0 +1,18 @@
+FILE: simple.kt
+    @R|org/jetbrains/kotlin/fir/plugin/C|() public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class MyNested : R|org/jetbrains/kotlin/fir/plugin/LibraryClassWithNestedClass.NestedClass| {
+            public constructor(): R|A.MyNested| {
+                super<R|ERROR CLASS: Symbol not found, for `NestedClass`|>()
+            }
+
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            R|/A.MyNested.MyNested|().R|org/jetbrains/kotlin/fir/plugin/LibraryClassWithNestedClass.NestedClass.foo|()
+        }
+
+    }
