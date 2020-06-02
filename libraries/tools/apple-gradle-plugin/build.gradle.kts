@@ -10,7 +10,7 @@ plugins {
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val proprietaryRepositories: Project.() -> Unit by ultimateTools
 
-val clionVersion: String by rootProject.extra
+val cidrVersion = rootProject.extra["versions.cidrPlatform"] as String
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
 val isSnapshotIntellij = intellijVersion.endsWith("SNAPSHOT")
 val intellijRepo = "https://www.jetbrains.com/intellij-repository/" + if (isSnapshotIntellij) "snapshots" else "releases"
@@ -38,7 +38,7 @@ dependencies {
     shadow("com.jetbrains.intellij.platform:util-ex:$intellijVersion")
     shadow("com.jetbrains.intellij.platform:extensions:$intellijVersion")
     shadow("com.jetbrains.intellij.platform:core-impl:$intellijVersion")
-    shadow("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion")
+    shadow("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion")
 
     compile(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))
 }
