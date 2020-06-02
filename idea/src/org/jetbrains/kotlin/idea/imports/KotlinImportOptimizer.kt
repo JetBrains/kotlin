@@ -216,7 +216,15 @@ class KotlinImportOptimizer : ImportOptimizer {
 
             override fun resolve(bindingContext: BindingContext) = reference.resolveToDescriptors(bindingContext)
 
-            override fun toString() = reference.toString()
+            override fun toString() = when (reference) {
+                is SyntheticPropertyAccessorReferenceDescriptorImpl -> {
+                    reference.toString().replace(
+                        "SyntheticPropertyAccessorReferenceDescriptorImpl",
+                        if (reference.getter) "Getter" else "Setter"
+                    )
+                }
+                else -> reference.toString().replace("DescriptorsImpl", "")
+            }
         }
     }
 
