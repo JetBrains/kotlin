@@ -16,8 +16,10 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.List;
 
 /**
- * @author yole
+ * This class isn't used in the new implementation of project model, which is based on {@link com.intellij.workspaceModel.ide Workspace Model}.
+ * It shouldn't be used directly, its base class {@link com.intellij.openapi.roots.ModuleRootManagerEx} should be used instead.
  */
+
 @State(
   name = "NewModuleRootManager",
   storages = {
@@ -27,10 +29,10 @@ import java.util.List;
   // will be changed only on actual user change, so, to speed up module loading, disable
   useLoadedStateAsExisting = false
 )
-public class ModuleRootManagerComponent extends ModuleRootManagerImpl implements
+class ModuleRootManagerComponent extends ModuleRootManagerImpl implements
                                                                       PersistentStateComponentWithModificationTracker<ModuleRootManagerImpl.ModuleRootManagerState>,
                                                                       StateStorageChooserEx {
-  public ModuleRootManagerComponent(Module module) {
+  ModuleRootManagerComponent(Module module) {
     super(module);
   }
 
