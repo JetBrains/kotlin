@@ -16,7 +16,7 @@ import com.intellij.structuralsearch.plugin.ui.Configuration
 import com.intellij.util.SmartList
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinCompiledPattern
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinMatchingVisitor
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
+import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompilingVisitor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -71,7 +71,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         }
     }
 
-    inner class KotlinValidator : KotlinRecursiveElementVisitor() {
+    inner class KotlinValidator : KotlinRecursiveElementWalkingVisitor() {
         override fun visitErrorElement(element: PsiErrorElement) {
             super.visitErrorElement(element)
             if (shouldShowProblem(element)) {
