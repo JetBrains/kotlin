@@ -20,12 +20,13 @@ import java.util.List;
 
 public class ExternalSystemProjectsWatcherImpl implements ExternalSystemProjectsWatcher {
 
+  @NotNull
   private final Project project;
 
   private static final ExtensionPointName<Contributor> EP_NAME =
     ExtensionPointName.create("com.intellij.externalProjectWatcherContributor");
 
-  public ExternalSystemProjectsWatcherImpl(Project project) {
+  public ExternalSystemProjectsWatcherImpl(@NotNull Project project) {
     this.project = project;
   }
 
@@ -39,11 +40,11 @@ public class ExternalSystemProjectsWatcherImpl implements ExternalSystemProjects
         contributor.markDirtyAllExternalProjects(project);
       }
       projectTracker.scheduleProjectRefresh();
-    });
+    }, project.getDisposed());
   }
 
   @Override
-  public void markDirty(Module module) {
+  public void markDirty(@NotNull Module module) {
     ExternalSystemProjectTracker projectTracker = ExternalSystemProjectTracker.getInstance(project);
     String projectPath = ExternalSystemApiUtil.getExternalProjectPath(module);
     List<ExternalSystemProjectId> projectSettings = findAllProjectSettings();
@@ -55,11 +56,11 @@ public class ExternalSystemProjectsWatcherImpl implements ExternalSystemProjects
         contributor.markDirty(module);
       }
       projectTracker.scheduleProjectRefresh();
-    });
+    }, module.getDisposed());
   }
 
   @Override
-  public void markDirty(String projectPath) {
+  public void markDirty(@NotNull String projectPath) {
     ExternalSystemProjectTracker projectTracker = ExternalSystemProjectTracker.getInstance(project);
     List<ExternalSystemProjectId> projectSettings = findAllProjectSettings();
     ApplicationManager.getApplication().invokeLater(() -> {
@@ -70,7 +71,7 @@ public class ExternalSystemProjectsWatcherImpl implements ExternalSystemProjects
         contributor.markDirty(projectPath);
       }
       projectTracker.scheduleProjectRefresh();
-    });
+    }, project.getDisposed());
   }
 
   private List<ExternalSystemProjectId> findAllProjectSettings() {
