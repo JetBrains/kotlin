@@ -34,6 +34,10 @@ import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 import java.util.*;
 import java.util.function.Predicate;
 
+/**
+ * This class isn't used in the new implementation of project model, which is based on {@link com.intellij.workspaceModel.ide Workspace Model}.
+ * It shouldn't be used directly, its interface {@link FacetManager} should be used instead.
+ */
 @State(name = JpsFacetSerializer.FACET_MANAGER_COMPONENT_NAME, useLoadedStateAsExisting = false)
 @ApiStatus.Internal
 public final class FacetManagerImpl extends FacetManagerBase implements ModuleComponent, PersistentStateComponent<FacetManagerState> {

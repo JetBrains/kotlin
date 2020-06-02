@@ -10,11 +10,17 @@ import com.intellij.openapi.roots.ProjectModelExternalSource;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * This class isn't used in the new implementation of project model, which is based on {@link com.intellij.workspaceModel.ide Workspace Model}.
+ * It shouldn't be used directly, its interface {@link FacetModel} should be used instead.
+ */
+@ApiStatus.Internal
 public final class FacetModelImpl extends FacetModelBase implements ModifiableFacetModel {
   private static final Logger LOG = Logger.getInstance(FacetModelImpl.class);
   private final List<Facet<?>> myFacets = new ArrayList<>();

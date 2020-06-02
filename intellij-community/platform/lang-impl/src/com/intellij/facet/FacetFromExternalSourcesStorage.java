@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.facet.FacetManagerState;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
+/**
+ * This class isn't used in the new implementation of project model, which is based on {@link com.intellij.workspaceModel.ide Workspace Model}.
+ */
 @State(name = "External" + JpsFacetSerializer.FACET_MANAGER_COMPONENT_NAME, externalStorageOnly = true)
 public final class FacetFromExternalSourcesStorage implements PersistentStateComponent<FacetManagerState>, ProjectModelElement {
   private FacetManagerState myState = new FacetManagerState();

@@ -11,6 +11,10 @@ class ExternalStorageConfiguration : BaseState() {
   var enabled by property(false)
 }
 
+/**
+ * This class isn't used in the new implementation of project model, which is based on [Workspace Model][com.intellij.workspaceModel.ide].
+ * It shouldn't be used directly, its interface [ExternalStorageConfigurationManager] should be used instead.
+ */
 @State(name = "ExternalStorageConfigurationManager")
 internal class ExternalStorageConfigurationManagerImpl : SimplePersistentStateComponent<ExternalStorageConfiguration>(ExternalStorageConfiguration()), ExternalStorageConfigurationManager {
   override fun isEnabled(): Boolean = state.enabled
