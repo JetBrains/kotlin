@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
 class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
     fun `test stop translating after invalidation`() {
         val file = configure("class A")
-        val translatedSymbol = KtOCSymbolTranslator.translate(file).single() as KtOCInterfaceSymbol
+        val translatedSymbols = KtOCSymbolTranslator.translate(file)
+        assertSize(2, translatedSymbols)
+
+        val translatedSymbol = translatedSymbols.first() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
 
         runWriteAction {
@@ -24,7 +27,10 @@ class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
 
     fun `test stop translating after invalidation by adjacent file`() {
         val file = configure("class A")
-        val translatedSymbol = KtOCSymbolTranslator.translate(file).single() as KtOCInterfaceSymbol
+        val translatedSymbols = KtOCSymbolTranslator.translate(file)
+        assertSize(2, translatedSymbols)
+
+        val translatedSymbol = translatedSymbols.first() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
 
         configure("typealias B = Unit", fileName = "other")
@@ -41,8 +47,9 @@ class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
         val table = cache.forFile(virtualFile, context)
         assertNotNull("table could not be built", table)
         assertTrue("table not valid", table!!.isValid)
+        assertSize(2, table.contents)
 
-        val translatedSymbol = table.contents.single() as KtOCInterfaceSymbol
+        val translatedSymbol = table.contents.first() as KtOCInterfaceSymbol
         assertEquals("MyModuleA", translatedSymbol.name)
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
         assertOCInterfaceSymbol(translatedSymbol, "MyModuleBase", true)
@@ -58,8 +65,9 @@ class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
         val rebuiltTable = cache.forFile(virtualFile, context)
         assertNotNull("table was not rebuilt", rebuiltTable)
         assertTrue("table was not rebuilt", rebuiltTable!!.isValid)
+        assertSize(2, rebuiltTable.contents)
 
-        val translatedRebuiltSymbol = rebuiltTable.contents.single() as KtOCInterfaceSymbol
+        val translatedRebuiltSymbol = rebuiltTable.contents.first() as KtOCInterfaceSymbol
         assertEquals("MyModuleB", translatedRebuiltSymbol.name)
         assertFalse("state already loaded", translatedRebuiltSymbol.stateLoaded)
         assertOCInterfaceSymbol(translatedRebuiltSymbol, "MyModuleBase", true)
@@ -73,8 +81,9 @@ class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
         val table = cache.forFile(virtualFile, context)
         assertNotNull("table could not be built", table)
         assertTrue("table not valid", table!!.isValid)
+        assertSize(2, table.contents)
 
-        val translatedSymbol = table.contents.single() as KtOCInterfaceSymbol
+        val translatedSymbol = table.contents.first() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
 
         configure("typealias B = Unit", fileName = "other")
@@ -89,8 +98,9 @@ class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
         val rebuiltTable = cache.forFile(virtualFile, context)
         assertNotNull("table was not rebuilt", rebuiltTable)
         assertTrue("table was not rebuilt", rebuiltTable!!.isValid)
+        assertSize(2, rebuiltTable.contents)
 
-        val translatedRebuiltSymbol = rebuiltTable.contents.single() as KtOCInterfaceSymbol
+        val translatedRebuiltSymbol = rebuiltTable.contents.first() as KtOCInterfaceSymbol
         assertEquals("MyModuleA", translatedRebuiltSymbol.name)
         assertFalse("state already loaded", translatedRebuiltSymbol.stateLoaded)
         assertOCInterfaceSymbol(translatedRebuiltSymbol, "MyModuleBase", true)
@@ -104,8 +114,9 @@ class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
         val table = cache.forFile(virtualFile, context)
         assertNotNull("table could not be built", table)
         assertTrue("table not valid", table!!.isValid)
+        assertSize(2, table.contents)
 
-        val translatedSymbol = table.contents.single() as KtOCInterfaceSymbol
+        val translatedSymbol = table.contents.first() as KtOCInterfaceSymbol
 
         configure("typealias B = Unit", fileName = "other")
 
@@ -119,8 +130,9 @@ class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
         val rebuiltTable = cache.forFile(virtualFile, context)
         assertNotNull("table was not rebuilt", rebuiltTable)
         assertTrue("table was not rebuilt", rebuiltTable!!.isValid)
+        assertSize(2, rebuiltTable.contents)
 
-        val translatedRebuiltSymbol = rebuiltTable.contents.single() as KtOCInterfaceSymbol
+        val translatedRebuiltSymbol = rebuiltTable.contents.first() as KtOCInterfaceSymbol
         assertEquals("MyModuleA", translatedRebuiltSymbol.name)
         assertFalse("state already loaded", translatedRebuiltSymbol.stateLoaded)
         assertOCInterfaceSymbol(translatedRebuiltSymbol, "MyModuleBase", true)
@@ -137,8 +149,9 @@ class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
         val table = cache.forFile(virtualFile, context)
         assertNotNull("table could not be built", table)
         assertTrue("table not valid", table!!.isValid)
+        assertSize(2, table.contents)
 
-        val translatedSymbol = table.contents.single() as KtOCInterfaceSymbol
+        val translatedSymbol = table.contents.first() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
         assertOCInterfaceSymbol(translatedSymbol, "MyModuleBase", true)
 
@@ -160,8 +173,9 @@ class KtSymbolInvalidationTest : KtSymbolTranslatorTestCase() {
         val table = cache.forFile(virtualFile, context)
         assertNotNull("table could not be built", table)
         assertTrue("table not valid", table!!.isValid)
+        assertSize(2, table.contents)
 
-        val translatedSymbol = table.contents.single() as KtOCInterfaceSymbol
+        val translatedSymbol = table.contents.first() as KtOCInterfaceSymbol
         assertEquals("MyModuleToTranslateKt", translatedSymbol.name)
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
         assertOCInterfaceSymbol(translatedSymbol, "MyModuleBase", true)

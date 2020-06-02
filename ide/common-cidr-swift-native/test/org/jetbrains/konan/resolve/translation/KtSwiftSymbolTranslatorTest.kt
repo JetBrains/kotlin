@@ -6,7 +6,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 class KtSwiftSymbolTranslatorTest : KtSymbolTranslatorTestCase() {
     fun `test simple class translation`() {
         val file = configure("class A")
-        val translatedSymbol = KtSwiftSymbolTranslator.translate(file).single() as KtSwiftClassSymbol
+        val translatedSymbols = KtSwiftSymbolTranslator.translate(file)
+        assertSize(2, translatedSymbols)
+
+        val translatedSymbol = translatedSymbols.first() as KtSwiftClassSymbol
         assertEquals("A", translatedSymbol.name)
         assertEquals("A", translatedSymbol.qualifiedName)
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
@@ -15,7 +18,10 @@ class KtSwiftSymbolTranslatorTest : KtSymbolTranslatorTestCase() {
 
     fun `test nested class translation`() {
         val file = configure("class A { class B }")
-        val translatedSymbol = KtSwiftSymbolTranslator.translate(file).single() as KtSwiftClassSymbol
+        val translatedSymbols = KtSwiftSymbolTranslator.translate(file)
+        assertSize(2, translatedSymbols)
+
+        val translatedSymbol = translatedSymbols.first() as KtSwiftClassSymbol
         val nestedSymbol = translatedSymbol.members.firstIsInstance<KtSwiftClassSymbol>()
         assertSwiftInterfaceSymbol(translatedSymbol, "MyModuleBase", true, null, nestedSymbol)
         assertEquals("B", nestedSymbol.name)

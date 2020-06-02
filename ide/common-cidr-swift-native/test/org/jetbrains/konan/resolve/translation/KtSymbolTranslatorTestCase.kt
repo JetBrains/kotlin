@@ -98,8 +98,8 @@ abstract class KtSymbolTranslatorTestCase : KotlinLightCodeInsightFixtureTestCas
         assertEquals("unexpected loaded state", expectLoaded, translatedSymbol.stateLoaded)
     }
 
-    protected fun <T : KtSymbol> KtFileTranslator<T, *>.translate(file: KtFile): List<T> =
-        mutableListOf<T>().also { translate(file, TestTarget.productModuleName, it) }
+    protected fun <T : KtSymbol> KtFileTranslator<T, *>.translate(file: KtFile): List<KtSymbol> =
+        mutableListOf<KtSymbol>().also { translate(file, TestTarget.productModuleName, it) }
 
     protected val KtOCClassSymbol<*, *>.members: Collection<OCMemberSymbol>
         get() = CommonProcessors.CollectProcessor<OCMemberSymbol>().also {

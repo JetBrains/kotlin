@@ -8,7 +8,10 @@ import org.jetbrains.konan.resolve.symbols.objc.KtOCInterfaceSymbol
 class KtOCSymbolTranslatorTest : KtSymbolTranslatorTestCase() {
     fun `test simple class translation`() {
         val file = configure("class A")
-        val translatedSymbol = KtOCSymbolTranslator.translate(file).single() as KtOCInterfaceSymbol
+        val translatedSymbols = KtOCSymbolTranslator.translate(file)
+        assertSize(2, translatedSymbols)
+
+        val translatedSymbol = translatedSymbols.first() as KtOCInterfaceSymbol
         assertEquals("MyModuleA", translatedSymbol.name)
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
         assertOCInterfaceSymbol(translatedSymbol, "MyModuleBase", true)
@@ -17,8 +20,9 @@ class KtOCSymbolTranslatorTest : KtSymbolTranslatorTestCase() {
     fun `test nested class translation`() {
         val file = configure("class A { class B }")
         val translatedSymbols = KtOCSymbolTranslator.translate(file)
-        assertSize(2, translatedSymbols)
-        val nestedSymbol = translatedSymbols.last() as KtOCInterfaceSymbol
+        assertSize(3, translatedSymbols)
+
+        val nestedSymbol = translatedSymbols[1] as KtOCInterfaceSymbol
         assertEquals("MyModuleAB", nestedSymbol.name)
         assertFalse("state already loaded", nestedSymbol.stateLoaded)
         assertOCInterfaceSymbol(nestedSymbol, "MyModuleBase", true)
@@ -26,7 +30,10 @@ class KtOCSymbolTranslatorTest : KtSymbolTranslatorTestCase() {
 
     fun `test NSString pointer nullability`() {
         val file = configure("class A { fun a(): String? = \"a\"; fun b(): String = \"b\" }")
-        val translatedSymbol = KtOCSymbolTranslator.translate(file).single() as KtOCInterfaceSymbol
+        val translatedSymbols = KtOCSymbolTranslator.translate(file)
+        assertSize(2, translatedSymbols)
+
+        val translatedSymbol = translatedSymbols.first() as KtOCInterfaceSymbol
         val (a, b) = translatedSymbol.members
             .filterIsInstance<OCMethodSymbol>().filter { it.name == "a" || it.name == "b" }.sortedBy { it.name }
 

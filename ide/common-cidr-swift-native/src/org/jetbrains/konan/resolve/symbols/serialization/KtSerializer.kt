@@ -6,6 +6,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.cidr.lang.symbols.symtable.serialization.FileSymbolTableSerializer
 import com.jetbrains.cidr.lang.symbols.symtable.serialization.SerializerProvider
 import com.jetbrains.swift.symbols.impl.registerProjectAndFileOwnerSerializer
+import org.jetbrains.konan.resolve.symbols.KtDependencyMarker
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.konan.resolve.symbols.swift.*
@@ -36,6 +37,8 @@ class KtSerializer : SerializerProvider {
         serializer.registerFieldSerializer(KtSwiftClassSymbol.ClassState::class.java, KtSwiftClassSymbol::ClassState)
         serializer.registerFieldSerializer(KtSwiftProtocolSymbol.ProtocolState::class.java, KtSwiftProtocolSymbol::ProtocolState)
         serializer.registerFieldSerializer(KtSwiftExtensionSymbol.ExtensionState::class.java, KtSwiftExtensionSymbol::ExtensionState)
+
+        serializer.kryo.register(KtDependencyMarker::class.java, KtDependencyMarkerSerializer(serializer))
     }
 
     private inline fun <T : KtOCLazySymbol<*, *>> FileSymbolTableSerializer.registerOCLazySymbolSerializer(
@@ -56,7 +59,7 @@ class KtSerializer : SerializerProvider {
         }
     }
 
-    override fun getVersion(): Int = 7
+    override fun getVersion(): Int = 8
 
     companion object {
         @JvmStatic
