@@ -31,6 +31,7 @@ import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.ui.layout.*
 import com.intellij.ui.popup.PopupFactoryImpl
+import org.jetbrains.annotations.ApiStatus
 import java.awt.Color
 import java.awt.Point
 import java.awt.event.MouseEvent
@@ -38,6 +39,7 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.swing.Icon
 import javax.swing.JLabel
 
+@ApiStatus.Experimental
 object TemplateInlayUtil {
 
   @JvmStatic
