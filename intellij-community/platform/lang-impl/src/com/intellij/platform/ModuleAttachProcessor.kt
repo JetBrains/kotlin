@@ -9,7 +9,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.module.impl.ModuleManagerImpl
+import com.intellij.openapi.module.impl.ModuleManagerEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.project.modifyModules
@@ -120,7 +120,7 @@ class ModuleAttachProcessor : ProjectAttachProcessor() {
 }
 
 private fun findMainModule(project: Project, projectDir: Path): Module? {
-  projectDir.directoryStreamIfExists({ path -> path.fileName.toString().endsWith(ModuleManagerImpl.IML_EXTENSION) }) { directoryStream ->
+  projectDir.directoryStreamIfExists({ path -> path.fileName.toString().endsWith(ModuleManagerEx.IML_EXTENSION) }) { directoryStream ->
     for (file in directoryStream) {
       return attachModule(project, file)
     }

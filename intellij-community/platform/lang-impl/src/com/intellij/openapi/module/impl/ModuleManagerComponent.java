@@ -21,6 +21,7 @@ import com.intellij.openapi.project.ProjectServiceContainerInitializedListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.model.serialization.JpsProjectLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 @State(
-  name = ModuleManagerImpl.COMPONENT_NAME,
+  name = JpsProjectLoader.MODULE_MANAGER_COMPONENT,
   storages = @Storage("modules.xml"),
   useLoadedStateAsExisting = false /* why after loadState we get empty state on getState, test CMakeWorkspaceContentRootsTest */
 )

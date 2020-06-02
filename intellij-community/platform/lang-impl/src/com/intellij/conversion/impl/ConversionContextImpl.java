@@ -12,7 +12,6 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ExpandMacroToPathMap;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.impl.ModuleManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
@@ -34,6 +33,7 @@ import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.JDomSerializationUtil;
+import org.jetbrains.jps.model.serialization.JpsProjectLoader;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 import org.jetbrains.jps.model.serialization.library.JpsLibraryTableSerializer;
 
@@ -250,16 +250,16 @@ public final class ConversionContextImpl implements ConversionContext {
 
   @NotNull
   private List<Path> findModuleFiles(@NotNull Element root) {
-    Element modulesManager = JDomSerializationUtil.findComponent(root, ModuleManagerImpl.COMPONENT_NAME);
-    Element modules = modulesManager == null ? null : modulesManager.getChild(ModuleManagerImpl.ELEMENT_MODULES);
+    Element modulesManager = JDomSerializationUtil.findComponent(root, JpsProjectLoader.MODULE_MANAGER_COMPONENT);
+    Element modules = modulesManager == null ? null : modulesManager.getChild(JpsProjectLoader.MODULES_TAG);
     if (modules == null) {
       return Collections.emptyList();
     }
 
     ExpandMacroToPathMap macros = createExpandMacroMap();
     List<Path> files = new ArrayList<>();
-    for (Element module : modules.getChildren(ModuleManagerImpl.ELEMENT_MODULE)) {
-      String filePath = module.getAttributeValue(ModuleManagerImpl.ATTRIBUTE_FILEPATH);
+    for (Element module : modules.getChildren(JpsProjectLoader.MODULE_TAG)) {
+      String filePath = module.getAttributeValue(JpsProjectLoader.FILE_PATH_ATTRIBUTE);
       if (filePath != null) {
         filePath = macros.substitute(filePath, true);
         files.add(Paths.get(filePath));
