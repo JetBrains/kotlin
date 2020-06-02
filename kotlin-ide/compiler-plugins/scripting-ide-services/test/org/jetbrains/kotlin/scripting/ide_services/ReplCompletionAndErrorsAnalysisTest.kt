@@ -15,11 +15,14 @@ import org.jetbrains.kotlin.scripting.ide_services.test_util.SourceCodeTestImpl
 import org.jetbrains.kotlin.scripting.ide_services.test_util.simpleScriptCompilationConfiguration
 import org.jetbrains.kotlin.scripting.ide_services.test_util.toList
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
+import java.io.Writer
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 import kotlin.script.experimental.api.*
+import kotlin.system.measureTimeMillis
 
 class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     @Test
@@ -290,6 +293,98 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             }
     }
 
+    @Test
+    fun testLongRunningCompletion() = test {
+        // This test normally completes in about half a minute
+        // Log should show slow _linear_ compilation/completion time growth
+
+        val compileWriter = System.out.writer() // FileWriter("$csvDir/compilations.csv")
+        val completeWriter = System.out.writer() // FileWriter("$csvDir/completions.csv")
+
+        for (i in 1..230) {
+            run {
+                code = """
+                    val dataFrame = mapOf("x" to 45)
+                    val e = "str"
+                """.trimIndent()
+                doCompile
+
+                loggingInfo = CSVLoggingInfo(compile = CSVLoggingInfoItem(compileWriter, i, "compile;"))
+            }
+
+            run {
+                code = """
+                    val x = mapOf("a" to dataFrame., "b" to 12, e to 42)
+                """.trimIndent()
+                cursor = 31
+
+                doComplete
+                expect {
+                    completions.mode = ComparisonType.INCLUDES
+                    addCompletion("entries", "entries", "Set<Map.Entry<String, Int>>", "property")
+                }
+
+                loggingInfo = CSVLoggingInfo(complete = CSVLoggingInfoItem(completeWriter, i, "complete;"))
+            }
+
+        }
+    }
+
+    @Test
+    fun testImplicitExtensions() = test {
+        run {
+            code = """
+                class A {
+                    fun String.foooo() = 42
+                }
+            """.trimIndent()
+            doCompile
+        }
+        run {
+            code = """
+                with(A()) {
+                    with("bar") {
+                        foo
+                    }
+                }
+            """.trimIndent()
+            cursor = code.indexOf("foo") + 3
+            expect {
+                completions.mode = ComparisonType.EQUALS
+                addCompletion("foooo()", "foooo()", "Int", "method")
+            }
+        }
+    }
+
+    @Test
+    fun testDefaultImports() = test {
+        run(setupDefaultImportsCompletionRun)
+    }
+
+    @Ignore("Should be fixed by KT-39314")
+    @Test
+    fun ignore_testDefaultImportsNotFirst() = test {
+        run {
+            code = "1"
+            doCompile
+        }
+        run(setupDefaultImportsCompletionRun)
+    }
+
+    private val setupDefaultImportsCompletionRun: (TestConf.Run).() -> Unit = {
+        compilationConfiguration = ScriptCompilationConfiguration {
+            defaultImports(listOf("kotlin.math.atan"))
+        }
+
+        code = "ata"
+        cursor = 3
+
+        expect {
+            completions.mode = ComparisonType.INCLUDES
+            addCompletion("atan(", "atan(Double)", "Double", "method")
+        }
+    }
+
     class TestConf {
         private val runs = mutableListOf<Run>()
 
@@ -325,13 +420,23 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             var code: String = ""
             private var _expected: Expected = Expected(this)
 
+            var loggingInfo: CSVLoggingInfo? = null
+
             fun expect(setup: (Expected).() -> Unit) {
                 _expected = Expected(this)
                 _expected.setup()
             }
 
             fun collect(): Pair<RunRequest, ExpectedResult> {
-                return RunRequest(cursor, code, _doCompile, _doComplete, _doErrorCheck, compilationConfiguration) to _expected.collect()
+                return RunRequest(
+                    cursor,
+                    code,
+                    _doCompile,
+                    _doComplete,
+                    _doErrorCheck,
+                    compilationConfiguration,
+                    loggingInfo
+                ) to _expected.collect()
             }
 
             class Expected(private val run: Run) {
@@ -375,13 +480,31 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         COMPARE_SIZE, INCLUDES, EQUALS, DONT_CHECK
     }
 
+    data class CSVLoggingInfoItem(
+        val writer: Writer,
+        val xValue: Int,
+        val prefix: String = "",
+    ) {
+        fun writeValue(value: Any) {
+            writer.write("$prefix$xValue;$value\n")
+            writer.flush()
+        }
+    }
+
+    data class CSVLoggingInfo(
+        val compile: CSVLoggingInfoItem? = null,
+        val complete: CSVLoggingInfoItem? = null,
+        val analyze: CSVLoggingInfoItem? = null,
+    )
+
     data class RunRequest(
         val cursor: Int?,
         val code: String,
         val doCompile: Boolean,
         val doComplete: Boolean,
         val doErrorCheck: Boolean,
-        val compilationConfiguration: ScriptCompilationConfiguration?
+        val compilationConfiguration: ScriptCompilationConfiguration?,
+        val loggingInfo: CSVLoggingInfo?,
     )
 
     interface ExpectedOptions {
@@ -453,15 +576,27 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
                 val pos = SourceCode.Position(0, 0, cursor)
                 val codeLine = nextCodeLine(code)
                 val completionRes = if (doComplete && cursor != null) {
-                    val res = compiler.complete(codeLine, pos, newCompilationConfiguration)
-                    res.toList().filter { it.tail != "keyword" }
+                    var res: ResultWithDiagnostics<ReplCompletionResult>?
+                    val timeMillis = measureTimeMillis { res = compiler.complete(codeLine, pos, newCompilationConfiguration) }
+
+                    loggingInfo?.complete?.writeValue(timeMillis)
+
+                    res!!.toList().filter { it.tail != "keyword" }
                 } else {
                     emptyList()
                 }
 
                 val analysisResult = if (doErrorCheck) {
                     val codeLineForErrorCheck = nextCodeLine(code)
-                    compiler.analyze(codeLineForErrorCheck, SourceCode.Position(0, 0), newCompilationConfiguration).valueOrNull()
+
+                    var res: ReplAnalyzerResult?
+                    val timeMillis = measureTimeMillis {
+                        res = compiler.analyze(codeLineForErrorCheck, SourceCode.Position(0, 0), newCompilationConfiguration).valueOrNull()
+                    }
+
+                    loggingInfo?.analyze?.writeValue(timeMillis)
+
+                    res
                 } else {
                     null
                 } ?: ReplAnalyzerResult()
@@ -471,7 +606,10 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
 
                 if (doCompile) {
                     val codeLineForCompilation = nextCodeLine(code)
-                    compiler.compile(codeLineForCompilation, newCompilationConfiguration)
+
+                    val timeMillis = measureTimeMillis { compiler.compile(codeLineForCompilation, newCompilationConfiguration) }
+
+                    loggingInfo?.compile?.writeValue(timeMillis)
                 }
 
                 ActualResult(completionRes, errorsSequence.toList(), resultType).asSuccess()
