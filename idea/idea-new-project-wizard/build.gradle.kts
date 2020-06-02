@@ -64,4 +64,5 @@ testsJar()
 projectTest {
     dependsOn(":dist")
     workingDir = rootDir
+    systemProperty("cacheRedirectorEnabled", findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true)
 }

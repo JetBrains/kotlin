@@ -14,17 +14,20 @@ import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.asNullable
 import org.jetbrains.kotlin.tools.projectWizard.core.safe
 import org.jetbrains.kotlin.tools.projectWizard.core.service.EapVersionDownloader
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.runWithProgressBar
 
-class IdeaKotlinVersionProviderService : KotlinVersionProviderService, IdeaWizardService {
-    override fun getKotlinVersion(): Version =
-        getPatchedKotlinVersion()
+class IdeaKotlinVersionProviderService : KotlinVersionProviderService(), IdeaWizardService {
+    override fun getKotlinVersion(): WizardKotlinVersion {
+        val version = getPatchedKotlinVersion()
             ?: getKotlinVersionFromCompiler()
             ?: VersionsDownloader.downloadLatestEapOrStableKotlinVersion()
             ?: Versions.KOTLIN
+        return kotlinVersionWithDefaultValues(version)
+    }
 
     private fun getPatchedKotlinVersion() =
         if (ApplicationManager.getApplication().isInternal) {

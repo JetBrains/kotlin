@@ -5,6 +5,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
@@ -19,7 +20,7 @@ data class ModulesToIrConversionData(
     val rootModules: List<Module>,
     val projectPath: Path,
     val projectName: String,
-    val kotlinVersion: Version,
+    val kotlinVersion: WizardKotlinVersion,
     val buildSystemType: BuildSystemType,
     val pomIr: PomIR
 ) {
@@ -147,7 +148,7 @@ class ModulesToIRsConverter(
                         KotlinStdlibDependencyIR(
                             type = stdlibType,
                             isInMppModule = false,
-                            version = data.kotlinVersion,
+                            kotlinVersion = data.kotlinVersion,
                             dependencyType = DependencyType.MAIN
                         )
                     }
@@ -243,7 +244,7 @@ class ModulesToIRsConverter(
                             KotlinStdlibDependencyIR(
                                 type = stdlibType,
                                 isInMppModule = true,
-                                version = data.kotlinVersion,
+                                kotlinVersion = data.kotlinVersion,
                                 dependencyType = DependencyType.MAIN
                             )
                         }
