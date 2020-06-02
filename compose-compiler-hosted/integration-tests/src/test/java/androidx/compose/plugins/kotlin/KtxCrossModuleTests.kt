@@ -195,6 +195,42 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
+    fun testParentNotInitializedBug(): Unit = ensureSetup {
+        compile(
+            mapOf(
+                "library module" to mapOf(
+                    "x/Base.kt" to """
+                    package x
+
+                    import androidx.compose.Composable
+
+                    class Foo
+
+                    abstract class Base {
+                        @Composable abstract fun content(a: Foo)
+                    }
+                 """
+                ),
+                "Main" to mapOf(
+                    "b/Extends.kt" to """
+                    package b
+
+                    import androidx.compose.Composable
+                    import x.Base
+                    import x.Foo
+
+                    abstract class Extends : Base() {
+                        @Composable
+                        override fun content(a: Foo) {
+                        }
+                    }
+                """
+                )
+            )
+        )
+    }
+
+    @Test
     fun testConstCrossModule(): Unit = ensureSetup {
         compile(
             mapOf(

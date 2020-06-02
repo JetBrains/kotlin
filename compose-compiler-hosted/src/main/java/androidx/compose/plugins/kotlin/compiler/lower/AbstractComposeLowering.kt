@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -134,6 +135,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class AbstractComposeLowering(
@@ -215,6 +217,22 @@ abstract class AbstractComposeLowering(
         }
         return this
     }
+
+    // IR external stubs don't have their value parameters' parent properly mapped to the
+    // function itself. This normally isn't a problem because nothing in the IR lowerings ask for
+    // the parent of the parameters, but we do. I believe this should be considered a bug in
+    // kotlin proper, but this works around it.
+    fun IrValueParameter.hasDefaultValueSafe(): Boolean = DFS.ifAny(
+        listOf(this),
+        { current ->
+            (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { fn ->
+                fn.owner.valueParameters[current.index].also { p ->
+                    p.parent = fn.owner
+                }
+            } ?: listOf()
+        },
+        { current -> current.defaultValue != null }
+    )
 
     // NOTE(lmr): This implementation mimics the kotlin-provided unboxInlineClass method, except
     // this one makes sure to bind the symbol if it is unbound, so is a bit safer to use.
