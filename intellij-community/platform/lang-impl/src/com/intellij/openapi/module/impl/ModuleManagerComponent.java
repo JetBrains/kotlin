@@ -20,6 +20,7 @@ import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.project.ProjectServiceContainerInitializedListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.messages.MessageBusConnection;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.serialization.JpsProjectLoader;
 
@@ -28,11 +29,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * This class isn't used in the new implementation of project model, which is based on {@link com.intellij.workspaceModel.ide Workspace Model}.
+ * It shouldn't be used directly, its base class {@link ModuleManagerEx} should be used instead.
+ */
 @State(
   name = JpsProjectLoader.MODULE_MANAGER_COMPONENT,
   storages = @Storage("modules.xml"),
   useLoadedStateAsExisting = false /* why after loadState we get empty state on getState, test CMakeWorkspaceContentRootsTest */
 )
+@ApiStatus.Internal
 public class ModuleManagerComponent extends ModuleManagerImpl {
   private final MessageBusConnection myMessageBusConnection;
 
