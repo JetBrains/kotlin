@@ -13,7 +13,6 @@ import com.intellij.openapi.externalSystem.service.execution.TestUnknownSdkResol
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.externalSystem.util.environment.Environment
 import com.intellij.openapi.externalSystem.util.environment.TestEnvironment
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
@@ -22,7 +21,6 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.SdkTestCase
 import com.intellij.openapi.roots.ui.configuration.SdkTestCase.TestSdk
 import com.intellij.openapi.roots.ui.configuration.SdkTestCase.TestSdkGenerator
-import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver
 import com.intellij.testFramework.replaceService
 import org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject
 import org.jetbrains.plugins.gradle.util.isSupported
@@ -41,35 +39,10 @@ abstract class GradleProjectResolverTestCase : GradleImportingTestCase() {
     application.replaceService(ExternalSystemJdkProvider::class.java, TestJdkProvider(), testRootDisposable)
 
     SdkType.EP_NAME.point.registerExtension(SdkTestCase.TestSdkType, testRootDisposable)
-    UnknownSdkResolver.EP_NAME.point.registerExtension(TestUnknownSdkResolver, testRootDisposable)
 
     environment.variables(ExternalSystemJdkUtil.JAVA_HOME to null)
 
-    TestUnknownSdkResolver.useLocalSdkFix = true
-  }
-
-  override fun tearDown() {
-    /**
-     * Cleanup references on test sdks.
-     * @see com.intellij.openapi.projectRoots.impl.UnknownSdkCollector.collectSdksUnderReadAction
-     */
-    setProjectSdk(null)
-    invokeAndWaitIfNeeded {
-      runWriteAction {
-        val projectRootManager = ProjectRootManager.getInstance(myProject)
-        projectRootManager.projectSdk = null
-        val moduleManager = ModuleManager.getInstance(myProject)
-        moduleManager.modules.forEach {
-          val moduleRootManager = ModuleRootManager.getInstance(it)
-          val modifiableModel = moduleRootManager.modifiableModel
-          modifiableModel.sdk = null
-          modifiableModel.commit()
-        }
-      }
-    }
-
-
-    super.tearDown()
+    TestUnknownSdkResolver.unknownSdkFixMode = TestUnknownSdkResolver.TestUnknownSdkFixMode.TEST_LOCAL_FIX
   }
 
   fun loadProject() {

@@ -2,6 +2,8 @@
 package com.intellij.openapi.externalSystem.service.execution
 
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.*
+import com.intellij.openapi.externalSystem.service.execution.TestUnknownSdkResolver.TestUnknownSdkFixMode.TEST_DOWNLOADABLE_FIX
+import com.intellij.openapi.externalSystem.service.execution.TestUnknownSdkResolver.TestUnknownSdkFixMode.TEST_LOCAL_FIX
 import com.intellij.openapi.roots.ui.configuration.SdkLookupProvider.SdkInfo
 
 class ExternalSystemJdkNonblockingUtilTest : ExternalSystemJdkNonblockingUtilTestCase() {
@@ -33,29 +35,29 @@ class ExternalSystemJdkNonblockingUtilTest : ExternalSystemJdkNonblockingUtilTes
 
     sdkLookupProvider.newLookupBuilder()
       .testSuggestedSdkFirst { sdk }
-      .onSdkNameResolved { it -> assertSdkInfo(createResolvingSdkInfo(it!!), null) }
-      .onSdkResolved { it -> assertSdkInfo(it!!, null) }
+      .onSdkNameResolved { assertSdkInfo(createResolvingSdkInfo(it!!), null) }
+      .onSdkResolved { assertSdkInfo(it!!, null) }
       .executeLookup()
     waitForLookup()
     assertSdkInfo(sdk, null)
 
     assertUnexpectedSdksRegistration {
-      TestUnknownSdkResolver.useLocalSdkFix = true
+      TestUnknownSdkResolver.unknownSdkFixMode = TEST_LOCAL_FIX
       sdkLookupProvider.newLookupBuilder()
         .withSdkType(TestSdkType)
-        .onSdkNameResolved { it -> assertSdkInfo(createResolvingSdkInfo(it!!), null) }
-        .onSdkResolved { it -> assertSdkInfo(it!!, null) }
+        .onSdkNameResolved { assertSdkInfo(createResolvingSdkInfo(it!!), null) }
+        .onSdkResolved { assertSdkInfo(it!!, null) }
         .executeLookup()
       waitForLookup()
       assertSdkInfo(sdk, null)
     }
 
     assertNewlyRegisteredSdks({ TestSdkGenerator.getCurrentSdk() }) {
-      TestUnknownSdkResolver.useLocalSdkFix = false
+      TestUnknownSdkResolver.unknownSdkFixMode = TEST_DOWNLOADABLE_FIX
       sdkLookupProvider.newLookupBuilder()
         .withSdkType(TestSdkType)
-        .onSdkNameResolved { it -> assertSdkInfo(createResolvingSdkInfo(it!!), null) }
-        .onSdkResolved { it -> assertSdkInfo(it!!, null) }
+        .onSdkNameResolved { assertSdkInfo(createResolvingSdkInfo(it!!), null) }
+        .onSdkResolved { assertSdkInfo(it!!, null) }
         .executeLookup()
       waitForLookup()
       assertSdkInfo(TestSdkGenerator.getCurrentSdk(), null)

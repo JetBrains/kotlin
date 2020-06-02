@@ -3,6 +3,8 @@ package org.jetbrains.plugins.gradle.util
 
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.*
 import com.intellij.openapi.externalSystem.service.execution.TestUnknownSdkResolver
+import com.intellij.openapi.externalSystem.service.execution.TestUnknownSdkResolver.TestUnknownSdkFixMode.TEST_DOWNLOADABLE_FIX
+import com.intellij.openapi.externalSystem.service.execution.TestUnknownSdkResolver.TestUnknownSdkFixMode.TEST_LOCAL_FIX
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_DIRECTORY_PATH_KEY
 import org.junit.Test
 
@@ -31,9 +33,9 @@ class GradleJdkResolutionTest : GradleJdkResolutionTestCase() {
 
   @Test
   fun `test gradle jvm resolution (heuristic suggestion)`() {
-    TestUnknownSdkResolver.useLocalSdkFix = true
+    TestUnknownSdkResolver.unknownSdkFixMode = TEST_LOCAL_FIX
     assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
-    TestUnknownSdkResolver.useLocalSdkFix = false
+    TestUnknownSdkResolver.unknownSdkFixMode = TEST_DOWNLOADABLE_FIX
     assertGradleJvmSuggestion(expected = { TestSdkGenerator.getCurrentSdk() }, expectsSdkRegistration = true)
   }
 

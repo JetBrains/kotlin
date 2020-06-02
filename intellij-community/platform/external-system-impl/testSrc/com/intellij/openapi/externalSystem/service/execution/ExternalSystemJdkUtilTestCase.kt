@@ -30,7 +30,7 @@ abstract class ExternalSystemJdkUtilTestCase : SdkTestCase() {
 
     environment.variables(ExternalSystemJdkUtil.JAVA_HOME to null)
 
-    TestUnknownSdkResolver.useLocalSdkFix = true
+    TestUnknownSdkResolver.unknownSdkFixMode = TestUnknownSdkResolver.TestUnknownSdkFixMode.TEST_LOCAL_FIX
   }
 
   class TestJdkProvider : ExternalSystemJdkProvider, Disposable {
