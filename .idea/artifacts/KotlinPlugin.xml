@@ -152,6 +152,7 @@
         </element>
         <element id="library" level="project" name="javaslang" />
         <element id="library" level="project" name="kotlinx-collections-immutable-jvm" />
+        <element id="library" level="project" name="javax-inject" />
       </element>
     </root>
   </artifact>
