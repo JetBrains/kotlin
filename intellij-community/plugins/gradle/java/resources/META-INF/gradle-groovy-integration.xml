@@ -86,7 +86,7 @@
   </extensions>
 
   <actions>
-    <group>
+    <group id="GenerateGradleDslGroup">
       <action id="AddGradleDslPluginAction" class="org.jetbrains.plugins.gradle.codeInsight.actions.AddGradleDslPluginAction"/>
       <add-to-group group-id="Gradle.GenerateGroup" anchor="first"/>
     </group>
