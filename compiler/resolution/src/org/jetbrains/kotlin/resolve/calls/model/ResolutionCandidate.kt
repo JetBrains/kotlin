@@ -193,6 +193,7 @@ class MutableResolvedCallAtom(
     lateinit var argumentToCandidateParameter: Map<KotlinCallArgument, ValueParameterDescriptor>
     private var samAdapterMap: HashMap<KotlinCallArgument, SamConversionDescription>? = null
     private var suspendAdapterMap: HashMap<KotlinCallArgument, UnwrappedType>? = null
+    private var unitAdapterMap: HashMap<KotlinCallArgument, UnwrappedType>? = null
     private var signedUnsignedConstantConversions: HashMap<KotlinCallArgument, IntegerValueTypeConstant>? = null
 
     val hasSamConversion: Boolean
@@ -206,6 +207,9 @@ class MutableResolvedCallAtom(
 
     override val argumentsWithSuspendConversion: Map<KotlinCallArgument, UnwrappedType>
         get() = suspendAdapterMap ?: emptyMap()
+
+    override val argumentsWithUnitConversion: Map<KotlinCallArgument, UnwrappedType>
+        get() = unitAdapterMap ?: emptyMap()
 
     override val argumentsWithConstantConversion: Map<KotlinCallArgument, IntegerValueTypeConstant>
         get() = signedUnsignedConstantConversions ?: emptyMap()
@@ -222,6 +226,13 @@ class MutableResolvedCallAtom(
             suspendAdapterMap = hashMapOf()
 
         suspendAdapterMap!![argument] = convertedType
+    }
+
+    fun registerArgumentWithUnitConversion(argument: KotlinCallArgument, convertedType: UnwrappedType) {
+        if (unitAdapterMap == null)
+            unitAdapterMap = hashMapOf()
+
+        unitAdapterMap!![argument] = convertedType
     }
 
     fun registerArgumentWithConstantConversion(argument: KotlinCallArgument, convertedConstant: IntegerValueTypeConstant) {

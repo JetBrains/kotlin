@@ -24478,6 +24478,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/unitConversion/unitConversionCompatibility.kt");
             }
 
+            @TestMetadata("unitConversionDisabledForSimpleArguments.kt")
+            public void testUnitConversionDisabledForSimpleArguments() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/unitConversionDisabledForSimpleArguments.kt");
+            }
+
             @TestMetadata("unitConversionForAllKinds.kt")
             public void testUnitConversionForAllKinds() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/unitConversion/unitConversionForAllKinds.kt");
