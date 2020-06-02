@@ -71,7 +71,7 @@ private class LoweringVisibilityCommonizer(allowPrivate: Boolean) : VisibilityCo
 }
 
 /**
- * Make sure that visibilities of all member descriptors are equal are not private according to [Visibilities.isPrivate].
+ * Make sure that visibilities of all member descriptors are equal and are not private according to [Visibilities.isPrivate].
  */
 private class EqualizingVisibilityCommonizer : VisibilityCommonizer(false) {
     override fun canBeCommonized(next: CirDeclarationWithVisibility) = true
