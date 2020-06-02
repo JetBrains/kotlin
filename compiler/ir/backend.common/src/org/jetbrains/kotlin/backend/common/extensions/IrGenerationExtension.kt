@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.backend.common.extensions
 
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 
-interface IrGenerationExtension {
+interface IrGenerationExtension : IrDeserializer.IrLinkerExtension {
     companion object :
         ProjectExtensionDescriptor<IrGenerationExtension>(
             "org.jetbrains.kotlin.irGenerationExtension", IrGenerationExtension::class.java
