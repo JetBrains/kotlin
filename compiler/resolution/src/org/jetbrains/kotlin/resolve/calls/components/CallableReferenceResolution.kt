@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RE
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.EXTENSION_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
@@ -213,7 +214,7 @@ class CallableReferencesCandidateFactory(
             callComponents.builtIns
         )
 
-        if (needCompatibilityWarning(callableReferenceAdaptation)) {
+        if (needCompatibilityWarning(callableReferenceAdaptation, candidateDescriptor)) {
             diagnostics.add(LowerPriorityToPreserveCompatibility)
         }
 
@@ -261,7 +262,13 @@ class CallableReferencesCandidateFactory(
         )
     }
 
-    private fun needCompatibilityWarning(callableReferenceAdaptation: CallableReferenceAdaptation?): Boolean {
+    private fun needCompatibilityWarning(
+        callableReferenceAdaptation: CallableReferenceAdaptation?,
+        candidate: CallableDescriptor
+    ): Boolean {
+        // KT-13934: reference to companion object member via class name
+        if (candidate.containingDeclaration.isCompanionObject() && argument.lhsResult is LHSResult.Type) return true
+
         if (callableReferenceAdaptation == null) return false
 
         return callableReferenceAdaptation.defaults != 0 ||

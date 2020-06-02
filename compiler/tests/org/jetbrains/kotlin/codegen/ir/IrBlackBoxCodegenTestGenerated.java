@@ -2685,6 +2685,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/callableReference/function/privateClassMember.kt");
             }
 
+            @TestMetadata("referenceToCompanionMember.kt")
+            public void testReferenceToCompanionMember() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/function/referenceToCompanionMember.kt");
+            }
+
             @TestMetadata("sortListOfStrings.kt")
             public void testSortListOfStrings() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/sortListOfStrings.kt");
