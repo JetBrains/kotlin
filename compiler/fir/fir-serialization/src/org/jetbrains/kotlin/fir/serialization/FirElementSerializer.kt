@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.deserialization.CONTINUATION_INTERFACE_CLASS_ID
+import org.jetbrains.kotlin.fir.evaluate.CompileTimeConstantEvaluator
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -39,10 +40,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.resolve.constants.IntValue
-import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.types.Variance
 
@@ -55,6 +53,7 @@ class FirElementSerializer private constructor(
     private val versionRequirementTable: MutableVersionRequirementTable?,
     private val serializeTypeTableToFunction: Boolean,
 ) {
+    private val constantEvaluator = CompileTimeConstantEvaluator()
     private val contractSerializer = FirContractSerializer()
 
     fun packagePartProto(packageFqName: FqName, file: FirFile): ProtoBuf.Package.Builder {
@@ -199,8 +198,8 @@ class FirElementSerializer private constructor(
         var hasGetter = false
         var hasSetter = false
 
-        //val compileTimeConstant = property.compileTimeInitializer
-        val hasConstant = false // TODO: compileTimeConstant != null && compileTimeConstant !is NullValue
+        val compileTimeConstant = property.initializer?.let { constantEvaluator.evaluate(it) }
+        val hasConstant = !property.isVar && compileTimeConstant != null && compileTimeConstant !is NullValue
 
         val hasAnnotations = property.nonSourceAnnotations(session).isNotEmpty()
         // TODO: hasAnnotations(descriptor) || hasAnnotations(descriptor.backingField) || hasAnnotations(descriptor.delegateField)
