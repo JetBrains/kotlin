@@ -132,6 +132,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     }
 
     if (totalFiles == 0 || SystemProperties.getBooleanProperty("idea.indexes.pretendNoFiles", false)) {
+      FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.noFilesFoundToProcessIndexingProject(myProject, indicator));
       return;
     }
 

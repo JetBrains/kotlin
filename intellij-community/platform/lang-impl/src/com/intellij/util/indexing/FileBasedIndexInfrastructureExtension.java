@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @ApiStatus.Internal
 public interface FileBasedIndexInfrastructureExtension {
-  ExtensionPointName<FileBasedIndexInfrastructureExtension> EP_NAME =  ExtensionPointName.create("com.intellij.fileBasedIndexInfrastructureExtension");
+  ExtensionPointName<FileBasedIndexInfrastructureExtension> EP_NAME = ExtensionPointName.create("com.intellij.fileBasedIndexInfrastructureExtension");
 
   /**
    * This notification is sent from the IDE to let the extension point implementation
@@ -24,6 +24,10 @@ public interface FileBasedIndexInfrastructureExtension {
    */
   void processIndexingProject(@NotNull Project project, @NotNull ProgressIndicator indexingIndicator);
 
+  /**
+   * This notification is sent when the indexing is started and there are no files detected to index
+   */
+  void noFilesFoundToProcessIndexingProject(@NotNull Project project, @NotNull ProgressIndicator indexingIndicator);
 
   interface FileIndexingStatusProcessor {
     /**
