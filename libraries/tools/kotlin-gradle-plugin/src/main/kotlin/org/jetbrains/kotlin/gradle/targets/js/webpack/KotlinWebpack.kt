@@ -11,6 +11,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
@@ -127,10 +128,20 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     var report: Boolean = false
 
     open val reportDir: File
-        @OutputDirectory get() = project.reportsDir.resolve("webpack").resolve(entry.nameWithoutExtension)
+        @Internal get() = reportDirProvider.get()
+
+    open val reportDirProvider: Provider<File>
+        @OutputDirectory get() = entryProperty
+            .map { it.asFile.nameWithoutExtension }
+            .map {
+                project.reportsDir.resolve("webpack").resolve(it)
+            }
 
     open val evaluatedConfigFile: File
-        @OutputFile get() = reportDir.resolve("webpack.config.evaluated.js")
+        @Internal get() = evaluatedConfigFileProvider.get()
+
+    open val evaluatedConfigFileProvider: Provider<File>
+        @OutputFile get() = reportDirProvider.map { it.resolve("webpack.config.evaluated.js") }
 
     @Input
     var bin: String = "webpack/bin/webpack.js"
