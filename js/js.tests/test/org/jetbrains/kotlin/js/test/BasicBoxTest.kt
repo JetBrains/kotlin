@@ -104,8 +104,6 @@ abstract class BasicBoxTest(
         doTest(filePath, "OK", MainCallParameters.noCall(), coroutinesPackage)
     }
 
-    open fun dontRunOnSpecificPlatform(targetBackend: TargetBackend): Boolean = false
-
     open fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String = "") {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
@@ -258,7 +256,7 @@ abstract class BasicBoxTest(
                     globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles
 
 
-            val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file) || dontRunOnSpecificPlatform(targetBackend)
+            val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file)
 
             if (!dontRunGeneratedCode && generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
                 val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
@@ -278,15 +276,6 @@ abstract class BasicBoxTest(
 
                 if (runIrPir && !skipDceDriven) {
                     runGeneratedCode(pirAllJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
-                }
-            } else {
-                val ignored = InTextDirectivesUtils.isIgnoredTarget(
-                    targetBackend, file,
-                    InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX
-                )
-
-                if (ignored) {
-                    throw AssertionError("Ignored test hasn't been ran. Emulate its failing")
                 }
             }
 
