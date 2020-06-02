@@ -277,11 +277,6 @@ private class FirSupertypeResolverVisitor(
         classLikeDeclaration: FirClassLikeDeclaration<*>,
         supertypeRefs: List<FirTypeRef>
     ): List<FirTypeRef> {
-        // TODO: this if is a temporary hack for built-in types (because we can't load file for them)
-        if (supertypeRefs.all { it is FirResolvedTypeRef }) {
-            return supertypeRefs
-        }
-
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer ->
             supertypeRefs.mapTo(mutableListOf()) {
                 val superTypeRef = transformer.transformTypeRef(it, null).single
