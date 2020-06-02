@@ -2,10 +2,12 @@
 package com.intellij.codeInsight.daemon.impl
 
 import com.intellij.codeInsight.daemon.DaemonBundle.message
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightLevelUtil.forceRootHighlighting
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager
 import com.intellij.lang.Language
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.CommonDataKeys.PSI_FILE
 import com.intellij.openapi.editor.markup.InspectionsLevel
@@ -62,6 +64,8 @@ private class LevelAction(val level: InspectionsLevel, val provider: FileViewPro
       InspectionsLevel.ERRORS -> FileHighlightingSetting.SKIP_INSPECTION
       InspectionsLevel.ALL -> FileHighlightingSetting.FORCE_HIGHLIGHTING
     })
+    InjectedLanguageManager.getInstance(file.project).dropFileCaches(file)
+    DaemonCodeAnalyzer.getInstance(file.project).restart()
   }
 }
 
