@@ -70,7 +70,7 @@ public abstract class TodoPanel extends SimpleToolWindowPanel implements Occuren
   private final Content myContent;
 
   private final Tree myTree;
-  private final MyTreeExpander myTreeExpander;
+  private final TreeExpander myTreeExpander;
   private final MyOccurenceNavigator myOccurenceNavigator;
   protected final TodoTreeBuilder myTodoTreeBuilder;
   private MyVisibilityWatcher myVisibilityWatcher;
@@ -93,7 +93,7 @@ public abstract class TodoPanel extends SimpleToolWindowPanel implements Occuren
 
     DefaultTreeModel model = new DefaultTreeModel(new DefaultMutableTreeNode());
     myTree = new Tree(model);
-    myTreeExpander = new MyTreeExpander();
+    myTreeExpander = new DefaultTreeExpander(myTree);
     myOccurenceNavigator = new MyOccurenceNavigator();
     initUI();
     myTodoTreeBuilder = setupTreeStructure();
@@ -473,32 +473,6 @@ public abstract class TodoPanel extends SimpleToolWindowPanel implements Occuren
         });
       }).executeSynchronously();
     }, 300);
-  }
-
-  TreeExpander getTreeExpander() {
-    return myTreeExpander;
-  }
-  
-  private final class MyTreeExpander implements TreeExpander {
-    @Override
-    public boolean canCollapse() {
-      return true;
-    }
-
-    @Override
-    public boolean canExpand() {
-      return true;
-    }
-
-    @Override
-    public void collapseAll() {
-      TreeUtil.collapseAll(myTree, 0);
-    }
-
-    @Override
-    public void expandAll() {
-      TreeUtil.expandAll(myTree);
-    }
   }
 
   /**

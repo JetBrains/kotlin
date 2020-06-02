@@ -956,26 +956,10 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
   protected void createTitleActions(@NotNull List<? super AnAction> titleActions) {
     titleActions.add(new ScrollFromSourceAction());
-    AnAction collapseAllAction = CommonActionsManager.getInstance().createCollapseAllAction(new TreeExpander() {
-      @Override
-      public boolean canExpand() {
-        return false;
-      }
-
-      @Override
-      public void collapseAll() {
-        AbstractProjectViewPane pane = getCurrentProjectViewPane();
-        JTree tree = pane.myTree;
-        if (tree != null) {
-          TreeUtil.collapseAll(tree, 0);
-        }
-      }
-
-      @Override
-      public boolean canCollapse() {
-        return true;
-      }
-    }, getComponent());
+    AnAction collapseAllAction = CommonActionsManager.getInstance().createCollapseAllAction(new DefaultTreeExpander(() -> {
+      AbstractProjectViewPane pane = getCurrentProjectViewPane();
+      return pane == null ? null : pane.myTree;
+    }), getComponent());
     collapseAllAction.getTemplatePresentation().setIcon(AllIcons.Actions.Collapseall);
     titleActions.add(collapseAllAction);
   }

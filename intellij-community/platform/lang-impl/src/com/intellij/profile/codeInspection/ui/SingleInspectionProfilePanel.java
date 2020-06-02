@@ -48,6 +48,7 @@ import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.labels.LinkLabel;
+import com.intellij.ui.treeStructure.treetable.DefaultTreeTableExpander;
 import com.intellij.util.Alarm;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -615,17 +616,7 @@ public class SingleInspectionProfilePanel extends JPanel {
       }
     });
 
-    myTreeExpander = new DefaultTreeExpander(myTreeTable.getTree()) {
-      @Override
-      public boolean canExpand() {
-        return myTreeTable.isShowing();
-      }
-
-      @Override
-      public boolean canCollapse() {
-        return myTreeTable.isShowing();
-      }
-    };
+    myTreeExpander = new DefaultTreeTableExpander(myTreeTable);
     myProfileFilter = new MyFilterComponent();
 
     return scrollPane;

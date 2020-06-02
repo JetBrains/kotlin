@@ -6,6 +6,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.CommonActionsManager;
+import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ide.TreeExpander;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.Disposable;
@@ -433,33 +434,22 @@ public class ModulesDependenciesPanel extends JPanel implements Disposable {
     }
   }
 
-  private static class MyTreeExpander implements TreeExpander {
-    private final Tree myTree;
+  private static class MyTreeExpander extends DefaultTreeExpander {
     private final boolean myEnableExpandAll;
 
     MyTreeExpander(Tree tree, boolean enableExpandAll) {
-      myTree = tree;
+      super(tree);
       myEnableExpandAll = enableExpandAll;
     }
 
     @Override
-    public void expandAll() {
-      TreeUtil.expandAll(myTree);
-    }
-
-    @Override
     public boolean canExpand() {
-      return myEnableExpandAll;
+      return myEnableExpandAll && super.canExpand();
     }
 
     @Override
-    public void collapseAll() {
-      TreeUtil.collapseAll(myTree, 3);
-    }
-
-    @Override
-    public boolean canCollapse() {
-      return true;
+    protected void collapseAll(@NotNull JTree tree, int keepSelectionLevel) {
+      super.collapseAll(tree, 3);
     }
   }
 }
