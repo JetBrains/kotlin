@@ -3,18 +3,18 @@ pluginManagement {
         rootDir.resolve("../gradle.properties").reader().use(::load)
     }
 
-    val kotlinCompilerRepo: String by rootProperties
-    val kotlinVersion: String by rootProperties
+    val buildKotlinCompilerRepo: String by rootProperties
+    val buildKotlinVersion: String by rootProperties
 
     repositories {
-        maven(kotlinCompilerRepo)
+        maven(buildKotlinCompilerRepo)
         maven("https://cache-redirector.jetbrains.com/maven-central")
     }
 
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "kotlin") {
-                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:$buildKotlinVersion")
             }
         }
     }
