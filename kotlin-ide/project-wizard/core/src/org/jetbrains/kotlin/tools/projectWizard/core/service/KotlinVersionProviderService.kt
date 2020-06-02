@@ -20,28 +20,47 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.util.stream.Collectors
 
-interface KotlinVersionProviderService : WizardService {
-    fun getKotlinVersion(): Version
-}
+data class WizardKotlinVersion(val version: Version, val kind: KotlinVersionKind, val repository: Repository)
 
-class KotlinVersionProviderServiceImpl : KotlinVersionProviderService, IdeaIndependentWizardService {
-    override fun getKotlinVersion(): Version = Versions.KOTLIN
-}
+abstract class KotlinVersionProviderService : WizardService {
+    abstract fun getKotlinVersion(): WizardKotlinVersion
 
+    protected fun kotlinVersionWithDefaultValues(version: Version) = WizardKotlinVersion(
+        version,
+        getKotlinVersionKind(version),
+        getKotlinVersionRepository(version)
+    )
 
-val Version.kotlinVersionKind
-    get() = when {
-        "eap" in toString().toLowerCase() -> KotlinVersionKind.EAP
-        "dev" in toString().toLowerCase() -> KotlinVersionKind.DEV
-        "m" in toString().toLowerCase() -> KotlinVersionKind.M
-        else -> KotlinVersionKind.STABLE
+    protected open fun getKotlinVersionRepository(versionKind: KotlinVersionKind): Repository = when (versionKind) {
+        KotlinVersionKind.STABLE -> DefaultRepository.MAVEN_CENTRAL
+        KotlinVersionKind.EAP -> Repositories.KOTLIN_EAP_BINTRAY
+        KotlinVersionKind.M -> Repositories.KOTLIN_EAP_BINTRAY
+        KotlinVersionKind.DEV -> Repositories.KOTLIN_DEV_BINTRAY
     }
 
-enum class KotlinVersionKind(val repository: Repository) {
-    STABLE(repository = DefaultRepository.MAVEN_CENTRAL),
-    EAP(repository = Repositories.KOTLIN_EAP_BINTRAY),
-    DEV(repository = Repositories.KOTLIN_DEV_BINTRAY),
-    M(repository = Repositories.KOTLIN_EAP_BINTRAY)
+    private fun getKotlinVersionRepository(version: Version) =
+        getKotlinVersionRepository(getKotlinVersionKind(version))
+
+    private fun getKotlinVersionKind(version: Version) = when {
+        "eap" in version.toString().toLowerCase() -> KotlinVersionKind.EAP
+        "dev" in version.toString().toLowerCase() -> KotlinVersionKind.DEV
+        "m" in version.toString().toLowerCase() -> KotlinVersionKind.M
+        else -> KotlinVersionKind.STABLE
+    }
+}
+
+
+class KotlinVersionProviderServiceImpl : KotlinVersionProviderService(), IdeaIndependentWizardService {
+    override fun getKotlinVersion(): WizardKotlinVersion =
+        kotlinVersionWithDefaultValues(Versions.KOTLIN)
+}
+
+
+enum class KotlinVersionKind {
+    STABLE,
+    EAP,
+    DEV,
+    M
 }
 
 val KotlinVersionKind.isStable

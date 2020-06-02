@@ -78,13 +78,13 @@ class SimpleJsClientTemplate : Template() {
 
             val kotlinVersion = KotlinPlugin::version.propertyValue
             if (renderEngine.reference.settingValue != RenderEngine.KOTLINX_HTML) {
-                +Dependencies.KOTLIN_REACT(kotlinVersion)
-                +Dependencies.KOTLIN_REACT_DOM(kotlinVersion)
+                +Dependencies.KOTLIN_REACT(kotlinVersion.version)
+                +Dependencies.KOTLIN_REACT_DOM(kotlinVersion.version)
                 +Dependencies.NPM_REACT
                 +Dependencies.NPM_REACT_DOM
                 if (renderEngine.reference.settingValue == RenderEngine.REACT_WITH_STYLED) {
                     +Dependencies.NPM_REACT_IS
-                    +Dependencies.KOTLIN_STYLED(kotlinVersion)
+                    +Dependencies.KOTLIN_STYLED(kotlinVersion.version)
                     +Dependencies.NPM_STYLED_COMPONENTS
                     +Dependencies.NPM_INLINE_STYLE_PREFIXER
                 }

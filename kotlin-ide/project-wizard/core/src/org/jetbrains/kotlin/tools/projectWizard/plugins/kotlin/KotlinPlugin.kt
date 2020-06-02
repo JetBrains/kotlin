@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 
 class KotlinPlugin(context: Context) : Plugin(context) {
-    val version by property(Versions.KOTLIN)
+    val version by property(
+        // todo do not hardcode kind & repository
+        WizardKotlinVersion(Versions.KOTLIN, KotlinVersionKind.M, Repositories.KOTLIN_EAP_BINTRAY)
+    )
 
     val initKotlinVersions by pipelineTask(GenerationPhase.PREPARE_GENERATION) {
         title = KotlinNewProjectWizardBundle.message("plugin.kotlin.downloading.kotlin.versions")
@@ -93,10 +96,9 @@ class KotlinPlugin(context: Context) : Plugin(context) {
     val createPluginRepositories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runBefore(BuildSystemPlugin::createModules)
         withAction {
-            val pluginRepository = KotlinPlugin::version.propertyValue.kotlinVersionKind
-                .takeUnless(KotlinVersionKind::isStable)
-                ?.repository
-                ?: return@withAction UNIT_SUCCESS
+            val version = KotlinPlugin::version.propertyValue
+            if (version.kind.isStable) return@withAction UNIT_SUCCESS
+            val pluginRepository = version.repository
             BuildSystemPlugin::pluginRepositoreis.addValues(pluginRepository) andThen
                     updateBuildFiles { buildFile ->
                         buildFile.withIrs(RepositoryIR(pluginRepository)).asSuccess()

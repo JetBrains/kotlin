@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfi
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
-import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidConfigIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
@@ -111,11 +111,11 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
     }
 
     companion object {
-        fun createRepositories(kotlinVersion: Version) = buildList<Repository> {
+        fun createRepositories(kotlinVersion: WizardKotlinVersion) = buildList<Repository> {
             +DefaultRepository.GRADLE_PLUGIN_PORTAL
             +DefaultRepository.GOOGLE
             +DefaultRepository.JCENTER
-            addIfNotNull(kotlinVersion.kotlinVersionKind.repository)
+            +kotlinVersion.repository
         }
     }
 }

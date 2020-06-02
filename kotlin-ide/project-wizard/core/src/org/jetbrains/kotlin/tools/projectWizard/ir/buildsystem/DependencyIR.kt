@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
-import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.library.LibraryArtifact
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
@@ -8,9 +8,7 @@ import org.jetbrains.kotlin.tools.projectWizard.library.NpmArtifact
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository.Companion.MAVEN_CENTRAL
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModulePath
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
@@ -112,14 +110,15 @@ data class ArtifactBasedLibraryDependencyIR(
 
 abstract class KotlinLibraryDependencyIR(
     val artifactName: String,
-    override val version: Version,
     override val dependencyType: DependencyType
 ) : LibraryDependencyIR {
+    abstract val kotlinVersion: WizardKotlinVersion
+    final override val version: Version get() = kotlinVersion.version
     abstract val isInMppModule: Boolean
 
     override val artifact: LibraryArtifact
         get() = MavenArtifact(
-            version.kotlinVersionKind.repository,
+            kotlinVersion.repository,
             "org.jetbrains.kotlin",
             "kotlin-$artifactName"
         )
@@ -153,18 +152,18 @@ abstract class KotlinLibraryDependencyIR(
 data class KotlinStdlibDependencyIR(
     val type: StdlibType,
     override val isInMppModule: Boolean,
-    override val version: Version,
+    override val kotlinVersion: WizardKotlinVersion,
     override val dependencyType: DependencyType
-) : KotlinLibraryDependencyIR(type.artifact, version, dependencyType) {
+) : KotlinLibraryDependencyIR(type.artifact, dependencyType) {
     override fun withDependencyType(type: DependencyType): KotlinStdlibDependencyIR = copy(dependencyType = type)
 }
 
 data class KotlinArbitraryDependencyIR(
     val name: String,
     override val isInMppModule: Boolean,
-    override val version: Version,
+    override val kotlinVersion: WizardKotlinVersion,
     override val dependencyType: DependencyType
-) : KotlinLibraryDependencyIR(name, version, dependencyType) {
+) : KotlinLibraryDependencyIR(name, dependencyType) {
     override fun withDependencyType(type: DependencyType): KotlinArbitraryDependencyIR = copy(dependencyType = type)
 }
 
