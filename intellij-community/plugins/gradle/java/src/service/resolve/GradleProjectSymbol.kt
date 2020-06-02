@@ -7,7 +7,6 @@ import com.intellij.model.presentation.SymbolPresentation
 import icons.GradleIcons
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.jetbrains.plugins.gradle.util.GradleBundle
-import javax.swing.Icon
 
 @Internal
 class GradleProjectSymbol(private val myQualifiedName: List<String>) : PresentableSymbol {
@@ -21,12 +20,12 @@ class GradleProjectSymbol(private val myQualifiedName: List<String>) : Presentab
   val projectName: String get() = myQualifiedName.last()
   val qualifiedName: String get() = myQualifiedName.joinToString(separator = ":")
 
-  private val myPresentation = object : SymbolPresentation {
-    override fun getIcon(): Icon? = GradleIcons.Gradle
-    override fun getShortNameString(): String = projectName
-    override fun getShortDescription(): String = GradleBundle.message("gradle.project.0", projectName)
-    override fun getLongDescription(): String = GradleBundle.message("gradle.project.0", qualifiedName)
-  }
+  private val myPresentation = SymbolPresentation.create(
+    GradleIcons.Gradle,
+    projectName,
+    GradleBundle.message("gradle.project.0", projectName),
+    GradleBundle.message("gradle.project.0", qualifiedName)
+  )
 
   override fun getSymbolPresentation(): SymbolPresentation = myPresentation
 
