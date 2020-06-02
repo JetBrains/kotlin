@@ -33,15 +33,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
-interface IrProvider {
-    fun getDeclaration(symbol: IrSymbol): IrDeclaration?
-}
-
-interface IrDeserializer : IrProvider {
-    fun init(moduleFragment: IrModuleFragment?) {}
-    fun postProcess() {}
-}
-
 interface ReferenceSymbolTable {
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol
 
