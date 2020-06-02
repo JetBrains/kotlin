@@ -192,6 +192,9 @@ class FirJvmClassCodegen(
     }
 
     override fun bindFieldMetadata(field: IrField, fieldType: Type, fieldName: String) {
-        // TODO
+        val metadata = field.metadata
+        if (metadata is FirMetadataSource.Property) {
+            state.globalSerializationBindings.put(FirJvmSerializerExtension.FIELD_FOR_PROPERTY, metadata.property, fieldType to fieldName)
+        }
     }
 }

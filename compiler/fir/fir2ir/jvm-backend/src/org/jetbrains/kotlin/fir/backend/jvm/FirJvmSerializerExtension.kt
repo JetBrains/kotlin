@@ -247,14 +247,13 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         val getterMethod = if (getter == null) null else getBinding(METHOD_FOR_FIR_FUNCTION, getter)
         val setterMethod = if (setter == null) null else getBinding(METHOD_FOR_FIR_FUNCTION, setter)
 
-        // TODO: FIR field metadata
-        //val field = getBinding(JvmSerializationBindings.FIELD_FOR_PROPERTY, property)
+        val field = getBinding(FIELD_FOR_PROPERTY, property)
         val syntheticMethod = getBinding(SYNTHETIC_METHOD_FOR_FIR_VARIABLE, property)
 
         val signature = signatureSerializer.propertySignature(
             property,
-            null, //field?.second,
-            null, //field?.first?.descriptor,
+            field?.second,
+            field?.first?.descriptor,
             if (syntheticMethod != null) signatureSerializer.methodSignature(null, syntheticMethod) else null,
             if (getterMethod != null) signatureSerializer.methodSignature(null, getterMethod) else null,
             if (setterMethod != null) signatureSerializer.methodSignature(null, setterMethod) else null
@@ -399,7 +398,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
 
     companion object {
         val METHOD_FOR_FIR_FUNCTION = JvmSerializationBindings.SerializationMappingSlice.create<FirFunction<*>, Method>()
-
+        val FIELD_FOR_PROPERTY = JvmSerializationBindings.SerializationMappingSlice.create<FirProperty, Pair<Type, String>>()
         val SYNTHETIC_METHOD_FOR_FIR_VARIABLE = JvmSerializationBindings.SerializationMappingSlice.create<FirVariable<*>, Method>()
     }
 

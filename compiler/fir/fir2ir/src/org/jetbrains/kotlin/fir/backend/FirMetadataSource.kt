@@ -35,6 +35,13 @@ interface FirMetadataSource : MetadataSource {
             get() = function.session
     }
 
+    class Property(
+        val property: FirProperty, descriptor: PropertyDescriptor
+    ) : MetadataSource.Property(descriptor), FirMetadataSource {
+        override val session: FirSession
+            get() = property.session
+    }
+
     class Variable(
         val variable: FirVariable<*>,
         descriptor: PropertyDescriptor
