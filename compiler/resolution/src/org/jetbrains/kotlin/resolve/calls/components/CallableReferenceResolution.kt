@@ -214,7 +214,7 @@ class CallableReferencesCandidateFactory(
             callComponents.builtIns
         )
 
-        if (needCompatibilityWarning(callableReferenceAdaptation, candidateDescriptor)) {
+        if (needCompatibilityResolveForCallableReference(callableReferenceAdaptation, candidateDescriptor)) {
             diagnostics.add(LowerPriorityToPreserveCompatibility)
         }
 
@@ -262,7 +262,7 @@ class CallableReferencesCandidateFactory(
         )
     }
 
-    private fun needCompatibilityWarning(
+    private fun needCompatibilityResolveForCallableReference(
         callableReferenceAdaptation: CallableReferenceAdaptation?,
         candidate: CallableDescriptor
     ): Boolean {

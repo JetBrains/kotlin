@@ -87,7 +87,7 @@ object SamTypeConversions : ParameterTypeConversion {
             SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!)
         )
 
-        if (needCompatibilityResolve(candidate, expectedParameterType)) {
+        if (needCompatibilityResolveForSAM(candidate, expectedParameterType)) {
             candidate.addDiagnostic(LowerPriorityToPreserveCompatibility)
         }
 
@@ -99,7 +99,7 @@ object SamTypeConversions : ParameterTypeConversion {
         return convertedTypeByCandidate
     }
 
-    private fun needCompatibilityResolve(candidate: KotlinResolutionCandidate, typeToConvert: UnwrappedType): Boolean {
+    private fun needCompatibilityResolveForSAM(candidate: KotlinResolutionCandidate, typeToConvert: UnwrappedType): Boolean {
         // fun interfaces is a new feature with a new modifier, so no compatibility resolve is needed
         val descriptor = typeToConvert.constructor.declarationDescriptor
         if (descriptor is ClassDescriptor && descriptor.isFun) return false
