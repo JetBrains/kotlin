@@ -12,7 +12,7 @@ object Test1 {
         fun call(r: SuspendRunnable) {}
 
         fun bar(f: () -> Unit) {
-            <!COMPATIBILITY_WARNING, DEBUG_INFO_CALL("fqName: Test1.call; typeCall: function")!>call(f)<!>
+            <!DEBUG_INFO_CALL("fqName: Test1.call; typeCall: function")!><!COMPATIBILITY_WARNING!>call<!>(f)<!>
         }
     }
 }
