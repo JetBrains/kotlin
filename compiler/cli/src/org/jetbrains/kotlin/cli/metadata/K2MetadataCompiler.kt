@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -112,7 +111,12 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
                 MetadataSerializer(metadataVersion, true).serialize(environment)
             }
         } catch (e: CompilationException) {
-            collector.report(EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))
+            collector.report(
+                EXCEPTION,
+                OutputMessageUtil.renderException(e),
+                MessageUtil.psiElementToMessageLocation(e.element)
+            )
+
             return ExitCode.INTERNAL_ERROR
         }
 

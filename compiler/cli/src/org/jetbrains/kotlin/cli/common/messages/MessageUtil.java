@@ -32,21 +32,27 @@ public class MessageUtil {
     private MessageUtil() {}
 
     @Nullable
-    public static CompilerMessageLocation psiElementToMessageLocation(@Nullable PsiElement element) {
+    public static CompilerMessageExtendedLocation psiElementToMessageLocation(@Nullable PsiElement element) {
         if (element == null) return null;
         PsiFile file = element.getContainingFile();
-        return psiFileToMessageLocation(file, "<no path>", DiagnosticUtils.getLineAndColumnInPsiFile(file, element.getTextRange()));
+        return psiFileToMessageLocation(file, "<no path>", DiagnosticUtils.getLineAndColumnRangeInPsiFile(file, element.getTextRange()));
     }
 
     @Nullable
-    public static CompilerMessageLocation psiFileToMessageLocation(
+    public static CompilerMessageExtendedLocation psiFileToMessageLocation(
             @NotNull PsiFile file,
             @Nullable String defaultValue,
-            @NotNull PsiDiagnosticUtils.LineAndColumn lineAndColumn
+            @NotNull PsiDiagnosticUtils.LineAndColumnRange range
     ) {
         VirtualFile virtualFile = file.getVirtualFile();
         String path = virtualFile != null ? virtualFileToPath(virtualFile) : defaultValue;
-        return CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn(), lineAndColumn.getLineContent());
+        PsiDiagnosticUtils.LineAndColumn start = range.getStart();
+        PsiDiagnosticUtils.LineAndColumn end = range.getEnd();
+        return CompilerMessageExtendedLocation.create(
+                CompilerMessageLocation.create(path, start.getLine(), start.getColumn(), start.getLineContent()),
+                end.getLine(),
+                end.getColumn()
+        );
     }
 
     @NotNull

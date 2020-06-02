@@ -88,7 +88,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
                 performanceManager.notifyCompilationFinished()
                 if (arguments.reportPerf) {
                     performanceManager.getMeasurementResults()
-                        .forEach { it -> configuration.get(MESSAGE_COLLECTOR_KEY)!!.report(INFO, "PERF: " + it.render(), null) }
+                        .forEach { it -> configuration.get(MESSAGE_COLLECTOR_KEY)!!.report(INFO, "PERF: " + it.render()) }
                 }
 
                 if (arguments.dumpPerf != null) {
@@ -122,7 +122,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
     private fun MessageCollector.reportCompilationCancelled(e: CompilationCanceledException) {
         if (e !is IncrementalNextRoundException) {
-            report(INFO, "Compilation was canceled", null)
+            report(INFO, "Compilation was canceled")
         }
     }
 

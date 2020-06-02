@@ -374,7 +374,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 }
                 else -> {
                     val message = "Invalid value of -Xcoroutines (should be: enable, warn or error): " + coroutinesState
-                    collector.report(CompilerMessageSeverity.ERROR, message, null)
+                    collector.report(CompilerMessageSeverity.ERROR, message)
                 }
             }
 
@@ -596,7 +596,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             ?: run {
                 val versionStrings = LanguageVersion.values().filterNot(LanguageVersion::isUnsupported).map(LanguageVersion::description)
                 val message = "Unknown $versionOf version: $value\nSupported $versionOf versions: ${versionStrings.joinToString(", ")}"
-                collector.report(CompilerMessageSeverity.ERROR, message, null)
+                collector.report(CompilerMessageSeverity.ERROR, message)
                 null
             }
 

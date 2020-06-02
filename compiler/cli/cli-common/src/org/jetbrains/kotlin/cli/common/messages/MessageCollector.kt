@@ -21,6 +21,11 @@ interface MessageCollector {
 
     fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation? = null)
 
+    @JvmDefault
+    fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageExtendedLocation?) {
+        report(severity, message, location?.location)
+    }
+
     fun hasErrors(): Boolean
 
     companion object {

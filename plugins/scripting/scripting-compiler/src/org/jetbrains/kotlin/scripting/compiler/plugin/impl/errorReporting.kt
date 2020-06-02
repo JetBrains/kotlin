@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.scripting.definitions.MessageReporter
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.reflect.KMutableProperty1
@@ -46,6 +44,34 @@ class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: Mess
             }
             _diagnostics.add(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message, mappedSeverity, location?.path, mappedLocation))
         }
+        parentMessageCollector?.report(severity, message, location)
+    }
+
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageExtendedLocation?) {
+        val mappedSeverity = severity.toScriptingSeverity()
+        if (mappedSeverity != null) {
+            val mappedLocation = location?.let {
+                if (it.line < 0 && it.column < 0) null // special location created by CompilerMessageLocation.create
+                else if (it.lineEnd < 0 && it.columnEnd < 0) SourceCode.Location(
+                    SourceCode.Position(
+                        it.line,
+                        it.column
+                    )
+                )
+                else SourceCode.Location(
+                    SourceCode.Position(
+                        it.line,
+                        it.column
+                    ),
+                    SourceCode.Position(
+                        it.lineEnd,
+                        it.columnEnd
+                    )
+                )
+            }
+            _diagnostics.add(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message, mappedSeverity, location?.path, mappedLocation))
+        }
+
         parentMessageCollector?.report(severity, message, location)
     }
 }

@@ -101,7 +101,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 return OK
             }
             if (arguments.includes.isNullOrEmpty()) {
-                messageCollector.report(ERROR, "Specify at least one source file or directory", null)
+                messageCollector.report(ERROR, "Specify at least one source file or directory")
                 return COMPILATION_ERROR
             }
         }
@@ -130,7 +130,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val outputFilePath = arguments.outputFile
         if (outputFilePath == null) {
-            messageCollector.report(ERROR, "IR: Specify output file via -output", null)
+            messageCollector.report(ERROR, "IR: Specify output file via -output")
             return ExitCode.COMPILATION_ERROR
         }
 
@@ -139,7 +139,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         if (sourcesFiles.isEmpty() && !IncrementalCompilation.isEnabledForJs() && arguments.includes.isNullOrEmpty()) {
-            messageCollector.report(ERROR, "No source files", null)
+            messageCollector.report(ERROR, "No source files")
             return COMPILATION_ERROR
         }
 
@@ -161,7 +161,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         try {
             config.configuration.put(JSConfigurationKeys.OUTPUT_DIR, outputDir.canonicalFile)
         } catch (e: IOException) {
-            messageCollector.report(ERROR, "Could not resolve output directory", null)
+            messageCollector.report(ERROR, "Could not resolve output directory")
             return ExitCode.COMPILATION_ERROR
         }
 
@@ -260,13 +260,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         // TODO: Support source maps
         if (arguments.sourceMap) {
-            messageCollector.report(WARNING, "source-map argument is not supported yet", null)
+            messageCollector.report(WARNING, "source-map argument is not supported yet")
         } else {
             if (arguments.sourceMapPrefix != null) {
-                messageCollector.report(WARNING, "source-map-prefix argument has no effect without source map", null)
+                messageCollector.report(WARNING, "source-map-prefix argument has no effect without source map")
             }
             if (arguments.sourceMapBaseDirs != null) {
-                messageCollector.report(WARNING, "source-map-source-root argument has no effect without source map", null)
+                messageCollector.report(WARNING, "source-map-source-root argument has no effect without source map")
             }
         }
 
@@ -292,7 +292,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         var moduleKind: ModuleKind? = if (moduleKindName != null) moduleKindMap[moduleKindName] else ModuleKind.PLAIN
         if (moduleKind == null) {
             messageCollector.report(
-                ERROR, "Unknown module kind: $moduleKindName. Valid values are: plain, amd, commonjs, umd", null
+                ERROR, "Unknown module kind: $moduleKindName. Valid values are: plain, amd, commonjs, umd"
             )
             moduleKind = ModuleKind.PLAIN
         }
@@ -312,13 +312,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (sourceMapContentEmbedding == null) {
             val message = "Unknown source map source embedding mode: " + sourceMapEmbedContentString + ". Valid values are: " +
                     StringUtil.join(sourceMapContentEmbeddingMap.keys, ", ")
-            messageCollector.report(ERROR, message, null)
+            messageCollector.report(ERROR, message)
             sourceMapContentEmbedding = SourceMapSourceEmbedding.INLINING
         }
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapContentEmbedding)
 
         if (!arguments.sourceMap && sourceMapEmbedContentString != null) {
-            messageCollector.report(WARNING, "source-map-embed-sources argument has no effect without source map", null)
+            messageCollector.report(WARNING, "source-map-embed-sources argument has no effect without source map")
         }
 
         configuration.put(JSConfigurationKeys.PRINT_REACHABILITY_INFO, arguments.irDcePrintReachabilityInfo)
@@ -366,7 +366,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     file.name + " (no virtual file)"
                 }
             }
-            messageCollector.report(LOGGING, "Compiling source files: " + join(fileNames, ", "), null)
+            messageCollector.report(LOGGING, "Compiling source files: " + join(fileNames, ", "))
         }
 
         private fun configureLibraries(libraryString: String?): List<String> =

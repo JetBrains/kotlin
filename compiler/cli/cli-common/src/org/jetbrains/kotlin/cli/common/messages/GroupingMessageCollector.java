@@ -75,7 +75,7 @@ public class GroupingMessageCollector implements MessageCollector {
         boolean hasExplicitErrors = hasExplicitErrors();
 
         if (treatWarningsAsErrors && !hasExplicitErrors && hasWarnings()) {
-            report(CompilerMessageSeverity.ERROR, "warnings found and -Werror specified", null);
+            report(CompilerMessageSeverity.ERROR, "warnings found and -Werror specified", (CompilerMessageLocation) null);
         }
 
         List<CompilerMessageLocation> sortedKeys =

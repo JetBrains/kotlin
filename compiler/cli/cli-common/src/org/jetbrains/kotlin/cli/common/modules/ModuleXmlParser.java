@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.modules.JavaRootPath;
@@ -103,7 +104,7 @@ public class ModuleXmlParser {
             MessageCollectorUtil.reportException(messageCollector, e);
         }
         catch (SAXException e) {
-            messageCollector.report(ERROR, "Build file does not have a valid XML: " + e, null);
+            messageCollector.report(ERROR, "Build file does not have a valid XML: " + e, (CompilerMessageLocation) null);
         }
         return ModuleChunk.EMPTY;
     }

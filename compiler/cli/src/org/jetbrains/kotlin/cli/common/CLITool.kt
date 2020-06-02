@@ -63,8 +63,8 @@ abstract class CLITool<A : CommonToolArguments> {
 
             val errorMessage = validateArguments(arguments.errors)
             if (errorMessage != null) {
-                collector.report(CompilerMessageSeverity.ERROR, errorMessage, null)
-                collector.report(CompilerMessageSeverity.INFO, "Use -help for more information", null)
+                collector.report(CompilerMessageSeverity.ERROR, errorMessage)
+                collector.report(CompilerMessageSeverity.INFO, "Use -help for more information")
                 return ExitCode.COMPILATION_ERROR
             }
 

@@ -64,7 +64,7 @@ fun getLibraryFromHome(
     messageCollector.report(
         CompilerMessageSeverity.STRONG_WARNING, "Unable to find " + libraryName + " in the Kotlin home directory. " +
                 "Pass either " + noLibraryArgument + " to prevent adding it to the classpath, " +
-                "or the correct '-kotlin-home'", null
+                "or the correct '-kotlin-home'"
     )
     return null
 }

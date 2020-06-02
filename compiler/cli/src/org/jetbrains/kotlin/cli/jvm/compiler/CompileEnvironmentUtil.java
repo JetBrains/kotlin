@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
@@ -39,13 +40,13 @@ public class CompileEnvironmentUtil {
     @NotNull
     public static ModuleChunk loadModuleChunk(File buildFile, MessageCollector messageCollector) {
         if (!buildFile.exists()) {
-            messageCollector.report(ERROR, "Module definition file does not exist: " + buildFile, null);
+            messageCollector.report(ERROR, "Module definition file does not exist: " + buildFile, (CompilerMessageLocation) null);
             return ModuleChunk.EMPTY;
         }
         if ("xml".equalsIgnoreCase(FilesKt.getExtension(buildFile))) {
             return ModuleXmlParser.parseModuleScript(buildFile.getPath(), messageCollector);
         }
-        messageCollector.report(ERROR, "Unknown module definition type: " + buildFile, null);
+        messageCollector.report(ERROR, "Unknown module definition type: " + buildFile, (CompilerMessageLocation) null);
         return ModuleChunk.EMPTY;
     }
 

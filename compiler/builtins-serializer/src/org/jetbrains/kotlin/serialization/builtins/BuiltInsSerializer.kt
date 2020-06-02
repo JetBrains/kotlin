@@ -82,7 +82,7 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
             // Only report diagnostics without a particular location because there's plenty of errors in built-in sources
             // (functions without bodies, incorrect combination of modifiers, etc.)
             if (location == null) {
-                super.report(severity, message, location)
+                super.report(severity, message, location as CompilerMessageLocation?)
             }
         }
     }
