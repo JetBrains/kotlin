@@ -1193,27 +1193,27 @@ public final class TemplateState implements Disposable {
 
   private void initTabStopHighlighters() {
     final Set<String> vars = new HashSet<>();
-    for (int i = 0; i < myTemplate.getVariableCount(); i++) {
-      String variableName = myTemplate.getVariableNameAt(i);
+    for (Variable variable : myTemplate.getVariables()) {
+      String variableName = variable.getName();
       if (!vars.add(variableName)) continue;
       int segmentNumber = myTemplate.getVariableSegmentNumber(variableName);
       if (segmentNumber < 0) continue;
-      RangeHighlighter segmentHighlighter = getSegmentHighlighter(segmentNumber, false, false);
+      RangeHighlighter segmentHighlighter = getSegmentHighlighter(segmentNumber, variable, false, false);
       myTabStopHighlighters.add(segmentHighlighter);
     }
 
     int endSegmentNumber = myTemplate.getEndSegmentNumber();
     if (endSegmentNumber >= 0) {
-      RangeHighlighter segmentHighlighter = getSegmentHighlighter(endSegmentNumber, false, true);
+      RangeHighlighter segmentHighlighter = getSegmentHighlighter(endSegmentNumber, null, false, true);
       myTabStopHighlighters.add(segmentHighlighter);
     }
   }
 
-  private RangeHighlighter getSegmentHighlighter(int segmentNumber, boolean isSelected, boolean isEnd) {
+  private RangeHighlighter getSegmentHighlighter(int segmentNumber, @Nullable Variable var, boolean isSelected, boolean isEnd) {
     boolean newStyle = Registry.is("live.templates.highlight.all.variables");
     TextAttributesKey attributesKey = isEnd ? null :
                                       isSelected ? EditorColors.LIVE_TEMPLATE_ATTRIBUTES :
-                                      newStyle ? EditorColors.LIVE_TEMPLATE_INACTIVE_SEGMENT :
+                                      newStyle && mightStopAtVariable(var, segmentNumber) ? EditorColors.LIVE_TEMPLATE_INACTIVE_SEGMENT :
                                       null;
 
     int start = mySegments.getSegmentStart(segmentNumber);
@@ -1235,6 +1235,12 @@ public final class TemplateState implements Disposable {
     return segmentHighlighter;
   }
 
+  private boolean mightStopAtVariable(@Nullable Variable var, int segmentNumber) {
+    if (var == null) return false;
+    if (var.isAlwaysStopAt()) return true;
+    return var.getDefaultValueExpression().calculateQuickResult(getExpressionContextForSegment(segmentNumber)) == null;
+  }
+
   private void focusCurrentHighlighter(boolean toSelect) {
     if (isFinished()) {
       return;
@@ -1245,7 +1251,7 @@ public final class TemplateState implements Disposable {
     RangeHighlighter segmentHighlighter = myTabStopHighlighters.get(myCurrentVariableNumber);
     if (segmentHighlighter != null) {
       final int segmentNumber = getCurrentSegmentNumber();
-      RangeHighlighter newSegmentHighlighter = getSegmentHighlighter(segmentNumber, toSelect, false);
+      RangeHighlighter newSegmentHighlighter = getSegmentHighlighter(segmentNumber, myTemplate.getVariables().get(myCurrentVariableNumber), toSelect, false);
       segmentHighlighter.dispose();
       myTabStopHighlighters.set(myCurrentVariableNumber, newSegmentHighlighter);
     }
