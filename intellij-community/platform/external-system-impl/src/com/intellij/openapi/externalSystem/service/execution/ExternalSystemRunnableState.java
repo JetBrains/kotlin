@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.execution;
 
 import com.intellij.build.*;
@@ -12,6 +12,7 @@ import com.intellij.execution.*;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.SimpleJavaParameters;
+import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -50,6 +51,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.util.Arrays;
 
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUtil.convert;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUtil.getConsoleManagerFor;
@@ -150,10 +152,14 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
       Disposer.register(consoleView, processHandler);
       restartActions = consoleManager.getRestartActions(consoleView);
     }
+    DefaultBuildDescriptor buildDescriptor =
+      new DefaultBuildDescriptor(task.getId(), executionName, task.getExternalProjectPath(), System.currentTimeMillis());
     Class<? extends BuildProgressListener> progressListenerClazz = task.getUserData(ExternalSystemRunConfiguration.PROGRESS_LISTENER_KEY);
+    Filter[] filters = consoleManager.getCustomExecutionFilters(myProject, task, myEnv);
+    Arrays.stream(filters).forEach(buildDescriptor::withExecutionFilter);
     final BuildProgressListener progressListener =
       progressListenerClazz != null ? ServiceManager.getService(myProject, progressListenerClazz)
-                                    : createBuildView(task.getId(), executionName, task.getExternalProjectPath(), consoleView);
+                                    : createBuildView(buildDescriptor, consoleView);
 
     ExternalSystemRunConfiguration.EP_NAME
       .forEachExtensionSafe(extension -> extension.attachToProcess(myConfiguration, processHandler, myEnv.getRunnerSettings()));
@@ -174,12 +180,11 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
           @Override
           public void onStart(@NotNull ExternalSystemTaskId id, String workingDir) {
             if (progressListener != null) {
-              long eventTime = System.currentTimeMillis();
               AnAction rerunTaskAction = new ExternalSystemRunConfiguration.MyTaskRerunAction(progressListener, myEnv, myContentDescriptor);
               BuildViewSettingsProvider viewSettingsProvider =
                 consoleView instanceof BuildViewSettingsProvider ?
                 new BuildViewSettingsProviderAdapter((BuildViewSettingsProvider)consoleView) : null;
-              BuildDescriptor buildDescriptor = new DefaultBuildDescriptor(id, executionName, workingDir, eventTime)
+              buildDescriptor
                 .withProcessHandler(processHandler, view -> ExternalSystemRunConfiguration
                   .foldGreetingOrFarewell(consoleView, greeting, true))
                 .withContentDescriptor(() -> myContentDescriptor)
@@ -301,11 +306,7 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
     return nullize(jvmParametersSetup);
   }
 
-  private BuildProgressListener createBuildView(ExternalSystemTaskId id,
-                                                String executionName,
-                                                String workingDir,
-                                                ExecutionConsole executionConsole) {
-    BuildDescriptor buildDescriptor = new DefaultBuildDescriptor(id, executionName, workingDir, System.currentTimeMillis());
+  private BuildView createBuildView(DefaultBuildDescriptor buildDescriptor, ExecutionConsole executionConsole) {
     return new BuildView(myProject, executionConsole, buildDescriptor, "build.toolwindow.run.selection.state",
                          new ViewManager() {
                            @Override

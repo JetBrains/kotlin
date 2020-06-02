@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.execution.build.output
 
 import com.intellij.build.FilePosition
@@ -54,6 +54,7 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
     else {
       parentId = reader.parentEventId
     }
+
     description.appendln(reason)
     loop@ while (true) {
       val nextLine = reader.readLine() ?: return false
@@ -65,18 +66,31 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
       }
       when {
         nextLine.isEmpty() -> break@loop
-        nextLine == "* Try:" -> break@loop
+        nextLine == "* Try:" -> {
+          reader.pushBack()
+          break@loop
+        }
       }
     }
 
+    var trySuggestions: StringBuilder? = null
     var exception: StringBuilder? = null
     while (true) {
       val nextLine = reader.readLine() ?: break
-      if (nextLine == "BUILD FAILED" || nextLine == "* Get more help at https://help.gradle.org") break
-      if (nextLine == "* Exception is:")  {
+      if (nextLine == "BUILD FAILED" || nextLine == "* Get more help at https://help.gradle.org" || nextLine.startsWith("CONFIGURE FAILED")) break
+      if (nextLine == "* Exception is:") {
         exception = StringBuilder()
-      } else {
-        exception?.appendln(nextLine)
+      }
+      else if (nextLine == "* Try:") {
+        trySuggestions = StringBuilder()
+      }
+      else {
+        if (exception != null) {
+          exception.appendln(nextLine)
+        }
+        else if (trySuggestions != null && nextLine.isNotBlank()) {
+          trySuggestions.appendln(nextLine)
+        }
       }
     }
 
@@ -89,20 +103,28 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
     val filePosition: FilePosition?
     if (filter != null) {
       filePosition = FilePosition(File(filter.filteredFileName), filter.filteredLineNumber - 1, 0)
-    } else {
+    }
+    else {
       filePosition = null
     }
 
     val errorText = description.toString()
     for (issueChecker in GradleIssueChecker.getKnownIssuesCheckList()) {
-      if (issueChecker.consumeBuildOutputFailureMessage(errorText, reason, exception.toString(), filePosition,parentId, messageConsumer)) {
+      if (issueChecker.consumeBuildOutputFailureMessage(errorText, reason, exception.toString(), filePosition, parentId, messageConsumer)) {
         return true
       }
     }
 
+    val detailedMessage = StringBuilder(errorText)
+    if (!trySuggestions.isNullOrBlank()) {
+      detailedMessage.append("\n* Try:\n$trySuggestions")
+    }
+    if (!exception.isNullOrBlank()) {
+      detailedMessage.append("\n* Exception is:\n$exception")
+    }
     if (filePosition != null) {
       messageConsumer.accept(object : FileMessageEventImpl(
-        parentId, MessageEvent.Kind.ERROR, null, reason, errorText, filePosition), DuplicateMessageAware {}
+        parentId, MessageEvent.Kind.ERROR, null, reason, detailedMessage.toString(), filePosition), DuplicateMessageAware {}
       )
     }
     else {
@@ -112,7 +134,7 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
       }
       else {
         messageConsumer.accept(object : MessageEventImpl(parentId, MessageEvent.Kind.ERROR, null, reason,
-                                                         errorText), DuplicateMessageAware {})
+                                                         detailedMessage.toString()), DuplicateMessageAware {})
       }
     }
     return true
