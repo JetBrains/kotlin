@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFile
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -232,12 +233,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         entryProperty.set(
             actualDceTaskProvider.map {
-                it.destinationDir
-                    .resolve(compilation.compileKotlinTask.outputFile.name)
+                RegularFile {
+                    it.destinationDir
+                        .resolve(compilation.compileKotlinTask.outputFile.name)
+                }
             }
         )
-
-        dependsOn(actualDceTaskProvider)
 
         resolveFromModulesFirst = true
 
