@@ -1939,6 +1939,16 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/callableReference/referenceAdaptationCompatibility.kt");
         }
 
+        @TestMetadata("referenceToCompanionObjectMemberViaClassName.kt")
+        public void testReferenceToCompanionObjectMemberViaClassName() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/callableReference/referenceToCompanionObjectMemberViaClassName.kt");
+        }
+
+        @TestMetadata("referenceToCompanionObjectMemberViaClassNameCompatibility.kt")
+        public void testReferenceToCompanionObjectMemberViaClassNameCompatibility() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/callableReference/referenceToCompanionObjectMemberViaClassNameCompatibility.kt");
+        }
+
         @TestMetadata("rewriteAtSliceOnGetOperator.kt")
         public void testRewriteAtSliceOnGetOperator() throws Exception {
             runTest("compiler/testData/diagnostics/tests/callableReference/rewriteAtSliceOnGetOperator.kt");
