@@ -189,7 +189,9 @@ val mergeSources by tasks.creating(Jar::class.java) {
     dependsOn(sources)
     isPreserveFileTimestamps = false
     isReproducibleFileOrder = true
-    from(provider { sources.map(::zipTree) })
+    if (!kotlinBuildProperties.isTeamcityBuild) {
+        from(provider { sources.map(::zipTree) })
+    }
     destinationDirectory.set(File(repoDir, sources.name))
     archiveBaseName.set("intellij")
     archiveClassifier.set("sources")
