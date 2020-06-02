@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.TopDownAnalysisContext
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.*
@@ -265,11 +266,19 @@ open class ReplCodeAnalyzerBase(
         }
 
         private fun computeFileScopes(lineInfo: LineInfo, fileScopeFactory: FileScopeFactory): FileScopes? {
+            val linePsi = lineInfo.linePsi
+            val hasImports = linePsi.importDirectives.isNotEmpty() ||
+                    ExtraImportsProviderExtension.getInstance(linePsi.project).getExtraImports(linePsi).isNotEmpty()
+
             // create scope that wraps previous line lexical scope and adds imports from this line
             val lexicalScopeAfterLastLine = lineInfo.parentLine?.lineDescriptor?.scopeForInitializerResolution ?: return null
             val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.first { it is ImportingScope } as ImportingScope
-            val scopesForThisLine = fileScopeFactory.createScopesForFile(lineInfo.linePsi, lastLineImports)
-            val combinedLexicalScopes = lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
+            val scopesForThisLine = fileScopeFactory.createScopesForFile(linePsi, lastLineImports)
+            val combinedLexicalScopes = if (hasImports)
+                lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
+            else
+                lexicalScopeAfterLastLine
+
             return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importForceResolver)
         }
     }
