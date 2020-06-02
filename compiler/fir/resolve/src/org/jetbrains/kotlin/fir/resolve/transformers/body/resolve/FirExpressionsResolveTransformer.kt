@@ -177,7 +177,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         dataFlowAnalyzer.enterSafeCallAfterNullCheck(safeCallExpression)
 
         safeCallExpression.apply {
-            checkedSubject.value.propagateTypeFromOriginalReceiver(receiver, components.session)
+            checkedSubjectRef.value.propagateTypeFromOriginalReceiver(receiver, components.session)
             transformRegularQualifiedAccess(this@FirExpressionsResolveTransformer, data)
             propagateTypeFromQualifiedAccessAfterNullCheck(receiver, session)
         }

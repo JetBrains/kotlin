@@ -136,7 +136,7 @@ class IntegerLiteralTypeApproximationTransformer(
         data: ConeKotlinType?
     ): CompositeTransformResult<FirStatement> {
         val newReceiver =
-            checkedSafeCallSubject.originalReceiverReference.value.transform<FirExpression, ConeKotlinType?>(this, data).single
+            checkedSafeCallSubject.originalReceiverRef.value.transform<FirExpression, ConeKotlinType?>(this, data).single
         checkedSafeCallSubject.propagateTypeFromOriginalReceiver(newReceiver, session)
         return super.transformCheckedSafeCallSubject(checkedSafeCallSubject, data)
     }

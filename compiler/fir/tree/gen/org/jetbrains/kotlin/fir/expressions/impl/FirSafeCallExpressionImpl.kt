@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import org.jetbrains.kotlin.fir.FirSafeCallCheckedSubjectReference
+import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -24,7 +25,7 @@ internal class FirSafeCallExpressionImpl(
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
     override var receiver: FirExpression,
-    override val checkedSubject: FirSafeCallCheckedSubjectReference,
+    override val checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>,
     override var regularQualifiedAccess: FirQualifiedAccess,
 ) : FirSafeCallExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

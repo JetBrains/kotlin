@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.fir.FirSafeCallCheckedSubjectReference
+import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -31,7 +32,7 @@ class FirSafeCallExpressionBuilder : FirAnnotationContainerBuilder, FirExpressio
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var receiver: FirExpression
-    lateinit var checkedSubject: FirSafeCallCheckedSubjectReference
+    lateinit var checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>
     lateinit var regularQualifiedAccess: FirQualifiedAccess
 
     override fun build(): FirSafeCallExpression {
@@ -40,7 +41,7 @@ class FirSafeCallExpressionBuilder : FirAnnotationContainerBuilder, FirExpressio
             typeRef,
             annotations,
             receiver,
-            checkedSubject,
+            checkedSubjectRef,
             regularQualifiedAccess,
         )
     }

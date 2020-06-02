@@ -269,6 +269,18 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             defaultFalse("isNullableLHSForCallableReference")
         }
 
+//        builder(safeCallExpression) {
+//            useTypes(safeCallCheckedSubjectType)
+//        }
+//
+//        builder(checkedSafeCallSubject) {
+//            useTypes(expressionType)
+//        }
+//
+//        builder(whenSubjectExpression) {
+//            useTypes(whenExpressionType)
+//        }
+
         val elementsWithDefaultTypeRef = listOf(
             thisReceiverExpression,
             callableReferenceAccess,

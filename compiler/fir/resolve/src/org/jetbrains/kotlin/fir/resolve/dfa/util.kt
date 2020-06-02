@@ -122,7 +122,7 @@ internal val FirElement.symbol: AbstractFirBasedSymbol<*>?
     get() = when (this) {
         is FirResolvable -> symbol
         is FirSymbolOwner<*> -> symbol
-        is FirWhenSubjectExpression -> whenSubject.whenExpression.subject?.symbol
+        is FirWhenSubjectExpression -> whenRef.value.subject?.symbol
         is FirSafeCallExpression -> regularQualifiedAccess.symbol
         else -> null
     }?.takeIf { this is FirThisReceiverExpression || (it !is FirFunctionSymbol<*> && it !is FirAccessorSymbol) }

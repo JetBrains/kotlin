@@ -286,9 +286,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(whenSubjectExpression) {
             default("typeRef") {
-                value = "whenSubject.whenExpression.subject!!.typeRef"
+                value = "whenRef.value.subject!!.typeRef"
                 withGetter = true
             }
+            useTypes(whenExpressionType)
         }
 
         impl(wrappedDelegateExpression) {
@@ -441,6 +442,14 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                     delegate = "typeRef"
                 }
             }
+        }
+
+        impl(safeCallExpression) {
+            useTypes(safeCallCheckedSubjectType)
+        }
+
+        impl(checkedSafeCallSubject) {
+            useTypes(expressionType)
         }
 
         noImpl(userTypeRef)

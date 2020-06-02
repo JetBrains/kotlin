@@ -562,7 +562,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             source = baseSource
             rValue = value
             calleeReference = nestedAccess.calleeReference
-            explicitReceiver = safeCallNonAssignment.checkedSubject.value
+            explicitReceiver = safeCallNonAssignment.checkedSubjectRef.value
         }
 
         safeCallNonAssignment.replaceRegularQualifiedAccess(

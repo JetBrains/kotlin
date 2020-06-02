@@ -441,13 +441,13 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         safeCallExpression.configure {
             +field("receiver", expression).withTransform()
             // Special node that might be used as a reference to receiver of a safe call after null check
-            +field("checkedSubject", safeCallCheckedSubjectReferenceType)
+            +field("checkedSubjectRef", safeCallCheckedSubjectReferenceType)
             // One that uses checkedReceiver as a receiver
             +field("regularQualifiedAccess", qualifiedAccess, withReplace = true).withTransform()
         }
 
         checkedSafeCallSubject.configure {
-            +field("originalReceiverReference", safeCallReceiverReferenceType)
+            +field("originalReceiverRef", safeCallOriginalReceiverReferenceType)
         }
 
         callableReferenceAccess.configure {
@@ -498,7 +498,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         whenSubjectExpression.configure {
-            +field("whenSubject", whenSubjectType)
+            +field("whenRef", whenRefType)
         }
 
         wrappedExpression.configure {

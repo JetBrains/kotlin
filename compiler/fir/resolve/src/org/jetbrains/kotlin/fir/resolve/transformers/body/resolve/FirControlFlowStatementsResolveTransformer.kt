@@ -125,7 +125,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         whenSubjectExpression: FirWhenSubjectExpression,
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
-        val parentWhen = whenSubjectExpression.whenSubject.whenExpression
+        val parentWhen = whenSubjectExpression.whenRef.value
         val subjectType = parentWhen.subject?.resultType ?: parentWhen.subjectVariable?.returnTypeRef
         if (subjectType != null) {
             whenSubjectExpression.resultType = subjectType

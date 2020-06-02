@@ -43,10 +43,10 @@ class VariableStorage(private val session: FirSession) {
     }
 
     private fun FirElement.unwrapElement(): FirElement = when (this) {
-        is FirWhenSubjectExpression -> whenSubject.whenExpression.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
+        is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
         is FirExpressionWithSmartcast -> originalExpression.unwrapElement()
         is FirSafeCallExpression -> regularQualifiedAccess.unwrapElement()
-        is FirCheckedSafeCallSubject -> originalReceiverReference.value.unwrapElement()
+        is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
         else -> this
     }
 
@@ -71,7 +71,7 @@ class VariableStorage(private val session: FirSession) {
         val isThisReference: Boolean
         val expression: FirQualifiedAccess? = when (originalFir) {
             is FirQualifiedAccessExpression -> originalFir
-            is FirWhenSubjectExpression -> originalFir.whenSubject.whenExpression.subject as? FirQualifiedAccessExpression
+            is FirWhenSubjectExpression -> originalFir.whenRef.value.subject as? FirQualifiedAccessExpression
             is FirVariableAssignment -> originalFir
             else -> null
         }

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.builder
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi.*
 
 internal fun KtWhenCondition.toFirWhenCondition(
-    subject: FirWhenSubject,
+    whenRefWithSibject: FirExpressionRef<FirWhenExpression>,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val baseSource = this.toFirPsiSourceElement()
     val firSubjectExpression = buildWhenSubjectExpression {
         source = baseSource
-        whenSubject = subject
+        whenRef = whenRefWithSibject
     }
     return when (this) {
         is KtWhenConditionWithExpression -> {
@@ -68,7 +68,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
 
 internal fun Array<KtWhenCondition>.toFirWhenCondition(
     baseSource: FirSourceElement?,
-    subject: FirWhenSubject,
+    subject: FirExpressionRef<FirWhenExpression>,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {

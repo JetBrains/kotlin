@@ -37,9 +37,15 @@ val classIdType = type(ClassId::class)
 val annotationUseSiteTargetType = type(AnnotationUseSiteTarget::class)
 val operationKindType = type("fir.expressions", "LogicOperationKind")
 val coneKotlinTypeType = type(ConeKotlinType::class)
-val whenSubjectType = type("fir", "FirWhenSubject")
-val safeCallReceiverReferenceType = type("fir", "FirSafeCallOriginalReceiverReference")
-val safeCallCheckedSubjectReferenceType = type("fir", "FirSafeCallCheckedSubjectReference")
+
+val whenExpressionType = generatedType("expressions", "FirWhenExpression")
+val expressionType = generatedType("expressions", "FirExpression")
+val safeCallCheckedSubjectType = generatedType("expressions", "FirCheckedSafeCallSubject")
+
+val whenRefType = generatedType("", "FirExpressionRef<FirWhenExpression>")
+val safeCallOriginalReceiverReferenceType = generatedType("", "FirExpressionRef<FirExpression>")
+val safeCallCheckedSubjectReferenceType = generatedType("", "FirExpressionRef<FirCheckedSafeCallSubject>")
+
 val firSessionType = type("fir", "FirSession")
 val emptyCfgReferenceType = generatedType("references.impl", "FirEmptyControlFlowGraphReference")
 val noReceiverExpressionType = generatedType("expressions.impl", "FirNoReceiverExpression")

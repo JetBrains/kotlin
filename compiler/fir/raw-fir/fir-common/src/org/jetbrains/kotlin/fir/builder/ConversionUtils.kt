@@ -147,10 +147,12 @@ fun FirExpression.generateNotNullOrOther(
 ): FirWhenExpression {
     val subjectName = Name.special("<$caseId>")
     val subjectVariable = generateTemporaryVariable(session, baseSource, subjectName, this)
-    val subject = FirWhenSubject()
+
+    @OptIn(FirContractViolation::class)
+    val ref = FirExpressionRef<FirWhenExpression>()
     val subjectExpression = buildWhenSubjectExpression {
         source = baseSource
-        whenSubject = subject
+        whenRef = ref
     }
 
     return buildWhenExpression {
@@ -176,7 +178,7 @@ fun FirExpression.generateNotNullOrOther(
             result = buildSingleExpressionBlock(generateResolvedAccessExpression(baseSource, subjectVariable))
         }
     }.also {
-        subject.bind(it)
+        ref.bind(it)
     }
 }
 
@@ -487,6 +489,7 @@ private fun FirExpression.checkReceiver(name: String?): Boolean {
     return receiverName == name
 }
 
+
 fun FirModifiableQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExpression {
     // TODO: Refactor tree to make FirModifiableQualifiedAccess inherit FirQualifiedAccess
     require(this is FirQualifiedAccess) {
@@ -494,13 +497,19 @@ fun FirModifiableQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirS
     }
 
     val checkedSafeCallSubject = buildCheckedSafeCallSubject {
-        this.originalReceiverReference = FirSafeCallOriginalReceiverReference(receiver)
+        @OptIn(FirContractViolation::class)
+        this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
+            bind(receiver)
+        }
     }
 
     explicitReceiver = checkedSafeCallSubject
     return buildSafeCallExpression {
         this.receiver = receiver
-        this.checkedSubject = FirSafeCallCheckedSubjectReference(checkedSafeCallSubject)
+        @OptIn(FirContractViolation::class)
+        this.checkedSubjectRef = FirExpressionRef<FirCheckedSafeCallSubject>().apply {
+            bind(checkedSafeCallSubject)
+        }
         this.regularQualifiedAccess = this@wrapWithSafeCall
         this.source = this@wrapWithSafeCall.source
     }

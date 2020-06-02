@@ -1343,7 +1343,8 @@ class RawFirBuilder(
                 else -> null
             }
             val hasSubject = subjectExpression != null
-            val subject = FirWhenSubject()
+            @OptIn(FirContractViolation::class)
+            val ref = FirExpressionRef<FirWhenExpression>()
             return buildWhenExpression {
                 source = expression.toFirSourceElement()
                 this.subject = subjectExpression
@@ -1358,7 +1359,7 @@ class RawFirBuilder(
                                 source = entrySource
                                 condition = entry.conditions.toFirWhenCondition(
                                     entrySource,
-                                    subject,
+                                    ref,
                                     { toFirExpression(it) },
                                     { toFirOrErrorType() },
                                 )
@@ -1382,7 +1383,7 @@ class RawFirBuilder(
                 }
             }.also {
                 if (hasSubject) {
-                    subject.bind(it)
+                    ref.bind(it)
                 }
             }
         }
