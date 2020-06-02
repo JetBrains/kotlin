@@ -115,7 +115,6 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::disableStandardScript,
         K2JVMCompilerArguments::disableDefaultScriptingPlugin,
         K2JVMCompilerArguments::pluginClasspaths,
-        K2JVMCompilerArguments::pluginOptions,
         K2JVMCompilerArguments::useJavac,
         K2JVMCompilerArguments::compileJava,
         K2JVMCompilerArguments::reportPerf,
