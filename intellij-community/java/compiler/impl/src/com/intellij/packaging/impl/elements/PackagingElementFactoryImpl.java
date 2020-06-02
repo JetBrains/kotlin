@@ -7,7 +7,7 @@ import com.intellij.openapi.module.ModulePointer;
 import com.intellij.openapi.module.ModulePointerManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableImplUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
@@ -197,7 +197,7 @@ public class PackagingElementFactoryImpl extends PackagingElementFactory {
       return Collections.singletonList(createLibraryFiles(libraryName, table.getTableLevel(), null));
     }
     if (libraryName != null) {
-      final Module module = ((LibraryImpl)library).getModule();
+      final Module module = ((LibraryEx)library).getModule();
       if (module != null) {
         return Collections.singletonList(createLibraryFiles(libraryName, LibraryTableImplUtil.MODULE_LEVEL, module.getName()));
       }

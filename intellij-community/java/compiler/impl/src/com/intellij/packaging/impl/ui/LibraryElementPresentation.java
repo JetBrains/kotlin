@@ -18,7 +18,7 @@ package com.intellij.packaging.impl.ui;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.impl.ModuleLibraryTable;
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablePresentation;
@@ -91,7 +91,7 @@ public class LibraryElementPresentation extends PackagingElementPresentation {
       displayName = libraryTable.getPresentation().getDisplayName(false);
     }
     else {
-      Module module = ((LibraryImpl)library).getModule();
+      Module module = ((LibraryEx)library).getModule();
       String tableName = getLibraryTableDisplayName(library);
       displayName = module != null ? "'" + module.getName() + "' " + tableName : tableName;
     }
