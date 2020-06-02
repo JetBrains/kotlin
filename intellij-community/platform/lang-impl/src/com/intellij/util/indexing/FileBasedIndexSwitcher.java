@@ -18,9 +18,8 @@ public final class FileBasedIndexSwitcher {
 
   @NotNull
   private final FileBasedIndexImpl myFileBasedIndex;
-
-  // accessed only in EDT
-  private Semaphore myDumbModeSemaphore;
+  @NotNull
+  private final Semaphore myDumbModeSemaphore = new Semaphore();
 
   @TestOnly
   public FileBasedIndexSwitcher() {
@@ -37,7 +36,7 @@ public final class FileBasedIndexSwitcher {
     LOG.assertTrue(!app.isWriteAccessAllowed());
     boolean unitTestMode = app.isUnitTestMode();
     if (!unitTestMode) {
-      myDumbModeSemaphore = new Semaphore(1);
+      myDumbModeSemaphore.down();
       for (Project project : ProjectUtil.getOpenProjects()) {
         DumbService dumbService = DumbService.getInstance(project);
         dumbService.cancelAllTasksAndWait();
