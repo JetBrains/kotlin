@@ -13,7 +13,6 @@ import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
@@ -43,10 +42,10 @@ abstract class AbstractKotlinTarget(
     override val defaultConfigurationName: String
         get() = disambiguateName("default")
 
-    override var useDisambiguitionClassifierAsSourcesetNamePreffix: Boolean = true
+    override var useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true
         internal set
 
-    override var overrideDisambiguitionClassifierOnIdeImport: String? = null
+    override var overrideDisambiguationClassifierOnIdeImport: String? = null
         internal set
 
     override val apiElementsConfigurationName: String

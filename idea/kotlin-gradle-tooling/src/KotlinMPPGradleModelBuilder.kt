@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -366,11 +366,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val platformId = (getPlatformType.invoke(gradleTarget) as? Named)?.name ?: return null
         val platform = KotlinPlatform.byId(platformId) ?: return null
         val useDisambiguationClassifier =
-            targetClass.getMethodOrNull("getUseDisambiguitionClassifierAsSourcesetNamePreffix")?.invoke(gradleTarget) as? Boolean ?: true
+            targetClass.getMethodOrNull("getUseDisambiguationClassifierAsSourceSetNamePrefix")?.invoke(gradleTarget) as? Boolean ?: true
         val disambiguationClassifier = if (useDisambiguationClassifier)
             getDisambiguationClassifier(gradleTarget) as? String
         else {
-            targetClass.getMethodOrNull("getOverrideDisambiguitionClassifierOnIdeImport")?.invoke(gradleTarget) as? String
+            targetClass.getMethodOrNull("getOverrideDisambiguationClassifierOnIdeImport")?.invoke(gradleTarget) as? String
         }
         val getPreset = targetClass.getMethodOrNull("getPreset")
         val targetPresetName: String?
