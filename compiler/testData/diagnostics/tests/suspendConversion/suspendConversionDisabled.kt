@@ -20,7 +20,7 @@ fun test(
     foo2(<!UNSUPPORTED_FEATURE!>f2<!>)
     foo3(<!UNSUPPORTED_FEATURE!>f3<!>)
 
-    foo1(<!UNSUPPORTED_FEATURE!>::bar<!>)
+    foo1(::bar)
 
     foo1(<!TYPE_MISMATCH, UNSUPPORTED_FEATURE!>f2<!>)
     foo1(<!TYPE_MISMATCH, UNSUPPORTED_FEATURE!>f3<!>)

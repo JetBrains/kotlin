@@ -10,7 +10,7 @@ object Test1 {
         fun bar(x: Int = 42): String = ""
 
         fun test() {
-            val result = foo(<!UNSUPPORTED_FEATURE!>::bar<!>)
+            val result = foo(::bar)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
         }
     }

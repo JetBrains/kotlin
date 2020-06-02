@@ -35,25 +35,5 @@ object SuspendConversionCallChecker : CallChecker {
                 )
             )
         }
-
-        for ((parameter, argument) in resolvedCall.argumentMappingByOriginal) {
-            if (!parameter.type.isSuspendFunctionType) continue
-            if (argument !is ResolvedCallArgument.SimpleArgument) continue
-
-            val callArgument = argument.callArgument
-            if (callArgument !is CallableReferenceKotlinCallArgument) continue
-
-            val callableReferenceExpression = callArgument.psiExpression as? KtCallableReferenceExpression ?: continue
-            val argumentCall = callableReferenceExpression.callableReference.getResolvedCall(context.trace.bindingContext) ?: continue
-            val target = argumentCall.resultingDescriptor as? FunctionDescriptor ?: continue
-            if (!target.isSuspend) {
-                context.trace.report(
-                    Errors.UNSUPPORTED_FEATURE.on(
-                        callableReferenceExpression,
-                        LanguageFeature.SuspendConversion to context.languageVersionSettings
-                    )
-                )
-            }
-        }
     }
 }
