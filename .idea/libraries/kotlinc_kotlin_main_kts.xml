@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="kotlinc.kotlin-main-kts">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-main-kts/1.4-SNAPSHOT/kotlin-main-kts-1.4-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-main-kts/1.4-SNAPSHOT/kotlin-main-kts-1.4-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
