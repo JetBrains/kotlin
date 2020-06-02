@@ -37,7 +37,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class FileDownloaderImpl implements FileDownloader {
+class FileDownloaderImpl implements FileDownloader {
   private static final Logger LOG = Logger.getInstance(FileDownloaderImpl.class);
   private static final String LIB_SCHEMA = "lib://";
 
@@ -47,7 +47,7 @@ public class FileDownloaderImpl implements FileDownloader {
   private String myDirectoryForDownloadedFilesPath;
   private final String myDialogTitle;
 
-  public FileDownloaderImpl(@NotNull List<? extends DownloadableFileDescription> fileDescriptions,
+  FileDownloaderImpl(@NotNull List<? extends DownloadableFileDescription> fileDescriptions,
                             @Nullable Project project,
                             @Nullable JComponent parentComponent,
                             @NotNull String presentableDownloadName) {

@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.net.URL;
 import java.util.List;
 
-public class DownloadableFileServiceImpl extends DownloadableFileService {
+class DownloadableFileServiceImpl extends DownloadableFileService {
   @NotNull
   @Override
   public DownloadableFileDescription createFileDescription(@NotNull String downloadUrl, @NotNull String fileName) {
