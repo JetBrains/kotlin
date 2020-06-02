@@ -305,13 +305,20 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Block -----------------------------------
 
     fun enterBlock(block: FirBlock): BlockEnterNode? {
-        val lastNode = lastNode
-        return if (lastNode is FunctionEnterNode) {
-            blocksOfFunctions[block] = lastNode.fir
-            null
-        } else {
-            createBlockEnterNode(block).also { addNewSimpleNode(it) }.also { levelCounter++ }
+        when (val lastNode = lastNode) {
+            is FunctionEnterNode -> {
+                blocksOfFunctions[block] = lastNode.fir
+                return null
+            }
+            is DelegatedConstructorCallNode -> {
+                val ownerEnterNode = lastNode.owner.enterNode
+                if (ownerEnterNode is FunctionEnterNode) {
+                    blocksOfFunctions[block] = ownerEnterNode.fir
+                    return null
+                }
+            }
         }
+        return createBlockEnterNode(block).also { addNewSimpleNode(it) }.also { levelCounter++ }
     }
 
     fun exitBlock(block: FirBlock): CFGNode<*> {
