@@ -23,6 +23,8 @@ data class ProjectIndexingHistory(val projectName: String) {
   val totalStatsPerIndexer = hashMapOf<String /* Index ID */, StatsPerIndexer>()
 
   var totalNumberOfTooLargeFiles: Int = 0
+  val totalTooLargeFiles = LimitedPriorityQueue<TooLargeForIndexingFile>(5, compareBy { it.fileSize })
+
   var totalNumberOfFailedToLoadFiles: Int = 0
   var totalNumberOfFailedToIndexFiles: Int = 0
 
@@ -55,7 +57,8 @@ data class ProjectIndexingHistory(val projectName: String) {
       totalStats.totalIndexingTimeInAllThreads += stats.indexingTime.sumTime
     }
 
-    totalNumberOfTooLargeFiles += statistics.indexingStatistics.numberOfTooLargeFiles.get()
+    totalNumberOfTooLargeFiles += statistics.indexingStatistics.numberOfTooLargeForIndexingFiles.get()
+    statistics.indexingStatistics.tooLargeForIndexingFiles.biggestElements.forEach { totalTooLargeFiles.addElement(it) }
     totalNumberOfFailedToLoadFiles += statistics.indexingStatistics.numberOfFailedToLoadFiles.get()
     totalNumberOfFailedToIndexFiles += statistics.indexingStatistics.numberOfFailedToIndexFiles.get()
   }

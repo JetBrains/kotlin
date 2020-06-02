@@ -10,13 +10,15 @@ data class JsonProjectIndexingHistory(
   val totalNumberOfFiles: Int,
   val times: JsonProjectIndexingHistoryTimes,
   val numberOfIndexingThreads: Int,
-  val totalNumberOfTooLargeFiles: PositiveInt,
+  val totalNumberOfTooLargeForIndexingFiles: PositiveInt,
+  val tooLargeForIndexingFiles: List<JsonTooLargeForIndexingFile>?,
   val totalNumberOfFailedToLoadFiles: PositiveInt,
   val totalNumberOfFailedToIndexFiles: PositiveInt,
   val totalStatsPerFileType: List<JsonStatsPerFileType>,
   val totalStatsPerIndexer: List<JsonStatsPerIndexer>,
   val fileProviderStatistics: List<JsonFileProviderIndexStatistics>
 ) {
+
   data class JsonStatsPerFileType(
     val fileType: String,
     val partOfTotalIndexingTime: JsonPercentages,

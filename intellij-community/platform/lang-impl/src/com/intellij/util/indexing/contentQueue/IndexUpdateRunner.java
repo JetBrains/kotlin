@@ -17,6 +17,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.diagnostic.FileIndexingStatistics;
 import com.intellij.util.indexing.diagnostic.IndexingJobStatistics;
+import com.intellij.util.indexing.diagnostic.TooLargeForIndexingFile;
 import com.intellij.util.progress.SubTaskProgressIndicator;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -158,7 +159,8 @@ public final class IndexUpdateRunner {
     }
     catch (TooLargeContentException e) {
       indexingJob.oneMoreFileProcessed();
-      indexingJob.myStatistics.getNumberOfTooLargeFiles().incrementAndGet();
+      indexingJob.myStatistics.getNumberOfTooLargeForIndexingFiles().incrementAndGet();
+      indexingJob.myStatistics.getTooLargeForIndexingFiles().addElement(new TooLargeForIndexingFile(e.getFile().getName(), e.getFile().getLength()));
       FileBasedIndexImpl.LOG.info("File: " + e.getFile().getUrl() + " is too large for indexing");
       return;
     }

@@ -13,7 +13,9 @@ class IndexingJobStatistics {
   val statsPerFileType: Map<String /* File type name */, StatsPerFileType>
     @Synchronized get() = _statsPerFileType.toMap()
 
-  val numberOfTooLargeFiles = AtomicInteger()
+  val numberOfTooLargeForIndexingFiles = AtomicInteger()
+  val tooLargeForIndexingFiles = LimitedPriorityQueue<TooLargeForIndexingFile>(5, compareBy { it.fileSize })
+
   val numberOfFailedToLoadFiles = AtomicInteger()
   val numberOfFailedToIndexFiles = AtomicInteger()
 

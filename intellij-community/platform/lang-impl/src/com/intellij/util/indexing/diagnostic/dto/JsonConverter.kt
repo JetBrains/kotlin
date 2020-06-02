@@ -25,7 +25,8 @@ fun FileProviderIndexStatistics.toJson(): JsonFileProviderIndexStatistics {
     providerDebugName,
     numberOfFiles,
     JsonTime(totalTime),
-    indexingStatistics.numberOfTooLargeFiles.get().toPositiveInt(),
+    indexingStatistics.numberOfTooLargeForIndexingFiles.get().toPositiveInt(),
+    indexingStatistics.tooLargeForIndexingFiles.biggestElements.map { it.toJson() }.takeIf { it.isNotEmpty() },
     indexingStatistics.numberOfFailedToLoadFiles.get().toPositiveInt(),
     indexingStatistics.numberOfFailedToIndexFiles.get().toPositiveInt(),
     statsPerFileType.sortedByDescending { it.partOfTotalIndexingTime.percentages },
@@ -107,6 +108,7 @@ fun ProjectIndexingHistory.toJson() =
     times.toJson(),
     numberOfIndexingThreads,
     totalNumberOfTooLargeFiles.toPositiveInt(),
+    totalTooLargeFiles.biggestElements.map { it.toJson() }.takeIf { it.isNotEmpty() },
     totalNumberOfFailedToLoadFiles.toPositiveInt(),
     totalNumberOfFailedToIndexFiles.toPositiveInt(),
     aggregateStatsPerFileType().sortedByDescending { it.partOfTotalIndexingTime.percentages },
@@ -154,14 +156,7 @@ private fun ProjectIndexingHistory.aggregateStatsPerFileType(): List<JsonProject
   }
 }
 
-private fun IndexedFileStat.toJson() =
-  JsonIndexedFileStat(
-    fileName,
-    fileType,
-    JsonFileSize(fileSize),
-    JsonTime(indexingTime),
-    JsonTime(contentLoadingTime)
-  )
+private fun TooLargeForIndexingFile.toJson() = JsonTooLargeForIndexingFile(fileName, JsonFileSize(fileSize))
 
 private fun ProjectIndexingHistory.aggregateStatsPerIndexer(): List<JsonProjectIndexingHistory.JsonStatsPerIndexer> {
   val totalIndexingTime = totalStatsPerIndexer.values.map { it.totalIndexingTimeInAllThreads }.sum()
