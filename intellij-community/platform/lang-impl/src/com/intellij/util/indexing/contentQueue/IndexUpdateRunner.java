@@ -89,10 +89,20 @@ public final class IndexUpdateRunner {
     else {
       ourIndexingJobs.add(indexingJob);
       try {
-        for (int i = 0; i < myNumberOfIndexingThreads; i++) {
-          myIndexingExecutor.execute(() -> indexJobsFairly());
-        }
+        AtomicInteger numberOfRunningWorkers = new AtomicInteger();
+        Runnable worker = () -> {
+          try {
+            indexJobsFairly();
+          }
+          finally {
+            numberOfRunningWorkers.decrementAndGet();
+          }
+        };
         while (!project.isDisposed() && !indexingJob.areAllFilesProcessed() && indexingJob.myError.get() == null) {
+          if (numberOfRunningWorkers.get() < myNumberOfIndexingThreads) {
+            numberOfRunningWorkers.incrementAndGet();
+            myIndexingExecutor.execute(worker);
+          }
           indicator.checkCanceled();
           try {
             //noinspection BusyWait
