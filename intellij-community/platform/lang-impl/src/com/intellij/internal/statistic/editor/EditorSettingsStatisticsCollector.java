@@ -190,7 +190,7 @@ final class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector
       Set<MetricEvent> set = new HashSet<>();
       CodeInsightWorkspaceSettings ciws = CodeInsightWorkspaceSettings.getInstance(project);
       CodeInsightWorkspaceSettings ciwsDefault = new CodeInsightWorkspaceSettings();
-      addBoolIfDiffers(set, ciws, ciwsDefault, s -> s.optimizeImportsOnTheFly, "autoOptimizeImports");
+      addBoolIfDiffers(set, ciws, ciwsDefault, s -> s.isOptimizeImportsOnTheFly(), "autoOptimizeImports");
       return set;
     }
   }
