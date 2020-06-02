@@ -8,7 +8,6 @@ import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.externalSystem.model.project.ProjectId;
-import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.environment.Environment;
@@ -36,11 +35,9 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.plugins.gradle.service.project.wizard.AbstractGradleModuleBuilder;
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleStructureWizardStep;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
@@ -48,7 +45,6 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static com.intellij.openapi.externalSystem.test.ExternalSystemTestCase.collectRootsInside;
 
@@ -63,7 +59,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
 
   public void testGradleProject() throws Exception {
     final String projectName = "testProject";
-    Project project = createProject(step -> {
+    Project project = GradleCreateProjectTestCase.waitForProjectReload(true, () -> createProject(step -> {
       if (step instanceof ProjectTypeStep) {
         assertTrue(((ProjectTypeStep)step).setSelectedTemplate("Gradle", null));
         List<ModuleWizardStep> steps = myWizard.getSequence().getSelectedSteps();
@@ -74,11 +70,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
         gradleProjectBuilder.setName(projectName);
         gradleProjectBuilder.setProjectId(new ProjectId("", null, null));
       }
-    });
-    AsyncPromise<?> promise = new AsyncPromise<>();
-    MessageBusConnection myBusConnection = project.getMessageBus().connect();
-    myBusConnection.subscribe(ProjectDataImportListener.TOPIC, path -> promise.setResult(null));
-    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> PlatformTestUtil.waitForPromise(promise, TimeUnit.SECONDS.toMillis(30)));
+    }));
 
     assertEquals(projectName, project.getName());
     assertModules(project, projectName, projectName + ".main", projectName + ".test");
