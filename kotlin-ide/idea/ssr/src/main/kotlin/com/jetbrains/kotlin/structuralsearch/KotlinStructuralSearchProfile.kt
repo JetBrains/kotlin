@@ -4,23 +4,32 @@ import com.intellij.dupLocator.util.NodeFilter
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.*
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
+import com.intellij.structuralsearch.impl.matcher.predicates.MatchPredicate
+import com.intellij.structuralsearch.impl.matcher.predicates.NotPredicate
 import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.ui.Configuration
+import com.intellij.structuralsearch.plugin.ui.UIUtil
 import com.intellij.util.SmartList
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinCompiledPattern
+import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinExprTypePredicate
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinMatchingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompilingVisitor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 class KotlinStructuralSearchProfile : StructuralSearchProfile() {
@@ -112,6 +121,40 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
                 else SSRBundle.message("search.template.is.not.expression.error.message")
             )
         }
+    }
+
+    override fun isIdentifier(element: PsiElement?) = element != null && element.node.elementType == KtTokens.IDENTIFIER
+
+    override fun isApplicableConstraint(
+        constraintName: String?,
+        variableNode: PsiElement?,
+        completePattern: Boolean,
+        target: Boolean
+    ): Boolean {
+        when(constraintName) {
+            UIUtil.TYPE -> variableNode?.let { varNode ->
+                val parent = varNode.parent
+                if(parent is KtExpression) return@isApplicableConstraint true
+            } ?: return false
+        }
+        return super.isApplicableConstraint(constraintName, variableNode, completePattern, target)
+    }
+
+    override fun getCustomPredicates(
+        constraint: MatchVariableConstraint?,
+        name: String,
+        options: MatchOptions
+    ): MutableList<MatchPredicate> {
+        val result = SmartList<MatchPredicate>()
+        if (!StringUtil.isEmptyOrSpaces(constraint!!.expressionTypes)) {
+            val predicate = KotlinExprTypePredicate(
+                searchedTypeName = constraint.expressionTypes,
+                withinHierachy = constraint.isExprTypeWithinHierarchy,
+                ignoreCase = !options.isCaseSensitiveMatch
+            )
+            result.add(if (constraint.isInvertExprType) NotPredicate(predicate) else predicate)
+        }
+        return result
     }
 
     private fun isProbableExpression(pattern: String, fileType: LanguageFileType, dialect: Language, project: Project): Boolean {
