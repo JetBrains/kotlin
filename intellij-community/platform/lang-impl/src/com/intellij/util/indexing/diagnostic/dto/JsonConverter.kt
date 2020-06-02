@@ -104,10 +104,11 @@ fun ProjectIndexingHistory.toJson() =
     projectName,
     providerStatistics.size,
     aggregateTotalNumberOfFiles(),
+    times.toJson(),
+    numberOfIndexingThreads,
     totalNumberOfTooLargeFiles.toPositiveInt(),
     totalNumberOfFailedToLoadFiles.toPositiveInt(),
     totalNumberOfFailedToIndexFiles.toPositiveInt(),
-    times.toJson(),
     aggregateStatsPerFileType().sortedByDescending { it.partOfTotalIndexingTime.percentages },
     aggregateStatsPerIndexer().sortedByDescending { it.partOfTotalIndexingTime.percentages },
     providerStatistics.sortedByDescending { it.totalIndexingTime.nano }
