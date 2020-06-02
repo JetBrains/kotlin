@@ -91,6 +91,7 @@ interface KotlinPaths {
         AllOpenPlugin(PathUtil.ALLOPEN_PLUGIN_NAME),
         NoArgPlugin(PathUtil.NOARG_PLUGIN_NAME),
         SamWithReceiver(PathUtil.SAM_WITH_RECEIVER_PLUGIN_NAME),
+        SerializationPlugin(PathUtil.SERIALIZATION_PLUGIN_NAME),
         Trove4j(PathUtil.TROVE4J_NAME),
         Compiler(PathUtil.KOTLIN_COMPILER_NAME),
         ScriptingPlugin(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME),
