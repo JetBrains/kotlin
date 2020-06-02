@@ -150,7 +150,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(functionCall) {
             parents += qualifiedAccessBuilder
             parents += callBuilder
-            defaultFalse("safe")
             defaultNoReceivers()
             openBuilder()
             default("argumentList") {
@@ -161,7 +160,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(qualifiedAccessExpression) {
             parents += qualifiedAccessBuilder
-            defaultFalse("safe")
             defaultNoReceivers()
         }
 

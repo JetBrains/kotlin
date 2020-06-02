@@ -21,7 +21,6 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val safe: Boolean
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression

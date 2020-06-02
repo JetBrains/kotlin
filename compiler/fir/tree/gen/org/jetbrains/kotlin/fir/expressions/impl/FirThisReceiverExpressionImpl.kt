@@ -29,7 +29,6 @@ internal class FirThisReceiverExpressionImpl(
     override val typeArguments: MutableList<FirTypeProjection>,
     override var calleeReference: FirThisReference,
 ) : FirThisReceiverExpression(), FirModifiableQualifiedAccess {
-    override var safe: Boolean = false
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression

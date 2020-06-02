@@ -48,13 +48,6 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotatio
     }
 
 
-    @Deprecated("Modification of 'safe' has no impact for FirThisReceiverExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override var safe: Boolean
-        get() = throw IllegalStateException()
-        set(value) {
-            throw IllegalStateException()
-        }
-
     @Deprecated("Modification of 'explicitReceiver' has no impact for FirThisReceiverExpressionBuilder", level = DeprecationLevel.HIDDEN)
     override var explicitReceiver: FirExpression?
         get() = throw IllegalStateException()

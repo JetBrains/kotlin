@@ -38,7 +38,6 @@ open class FirFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder, F
     override var source: FirSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var safe: Boolean = false
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
@@ -52,7 +51,6 @@ open class FirFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder, F
             source,
             typeRef,
             annotations,
-            safe,
             typeArguments,
             explicitReceiver,
             dispatchReceiver,

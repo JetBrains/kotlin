@@ -185,7 +185,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         qualifiedAccessWithoutCallee.configure {
-            +booleanField("safe")
             +typeArguments.withTransform()
             +receivers
         }

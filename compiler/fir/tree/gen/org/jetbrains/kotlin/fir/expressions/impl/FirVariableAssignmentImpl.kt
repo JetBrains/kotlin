@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirVariableAssignmentImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
-    override var safe: Boolean,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,

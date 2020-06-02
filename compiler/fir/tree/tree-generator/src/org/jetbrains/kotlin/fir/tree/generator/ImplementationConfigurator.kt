@@ -76,19 +76,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(arrayOfCall)
 
-        val modifiableQualifiedAccess = impl(qualifiedAccessWithoutCallee, "FirModifiableQualifiedAccess") {
-            isMutable("safe")
-        }
+        val modifiableQualifiedAccess = impl(qualifiedAccessWithoutCallee, "FirModifiableQualifiedAccess") {}
 
         impl(callableReferenceAccess) {
             parents += modifiableQualifiedAccess
         }
 
         impl(componentCall) {
-            default("safe") {
-                value = "false"
-                withGetter = true
-            }
             default("calleeReference", "FirSimpleNamedReference(source, Name.identifier(\"component\$componentIndex\"), null)")
             useTypes(simpleNamedReferenceType, nameType)
             optInToInternals()
@@ -255,10 +249,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(thisReceiverExpression) {
             parents += modifiableQualifiedAccess
-            default("safe") {
-                value = "false"
-                withGetter = true
-            }
             defaultNoReceivers()
         }
 

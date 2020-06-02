@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirQualifiedAccess : FirQualifiedAccessWithoutCallee, FirResolvable {
     override val source: FirSourceElement?
     override val annotations: List<FirAnnotationCall>
-    override val safe: Boolean
     override val typeArguments: List<FirTypeProjection>
     override val explicitReceiver: FirExpression?
     override val dispatchReceiver: FirExpression
