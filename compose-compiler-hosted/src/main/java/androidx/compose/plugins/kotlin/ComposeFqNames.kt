@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.types.KotlinType
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 object ComposeFqNames {
     val Composable = ComposeUtils.composeFqName("Composable")
     val CurrentComposerIntrinsic = ComposeUtils.composeFqName("<get-currentComposer>")
-    val Direct = ComposeUtils.composeFqName("Direct")
+    val ComposableContract = ComposeUtils.composeFqName("ComposableContract")
     val restartableFunction = FqName.fromSegments(listOf(
         "androidx",
         "compose",
@@ -78,8 +79,14 @@ fun KotlinType.isMarkedStable(): Boolean =
                     (constructor.declarationDescriptor?.annotations?.hasStableMarker() ?: false))
 fun Annotated.hasComposableAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Composable) != null
-fun Annotated.hasDirectAnnotation(): Boolean =
-    annotations.findAnnotation(ComposeFqNames.Direct) != null
+fun Annotated.composableRestartableContract(): Boolean? {
+    val contract = annotations.findAnnotation(ComposeFqNames.ComposableContract) ?: return null
+    return contract.argumentValue("restartable")?.value as? Boolean
+}
+fun Annotated.composableReadonlyContract(): Boolean? {
+    val contract = annotations.findAnnotation(ComposeFqNames.ComposableContract) ?: return null
+    return contract.argumentValue("readonly")?.value as? Boolean
+}
 fun Annotated.hasUntrackedAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Untracked) != null
 

@@ -19,7 +19,8 @@ package androidx.compose.plugins.kotlin.compiler.lower
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
-import androidx.compose.plugins.kotlin.hasDirectAnnotation
+import androidx.compose.plugins.kotlin.composableReadonlyContract
+import androidx.compose.plugins.kotlin.composableRestartableContract
 import androidx.compose.plugins.kotlin.hasUntrackedAnnotation
 import androidx.compose.plugins.kotlin.irTrace
 import androidx.compose.plugins.kotlin.isEmitInline
@@ -635,7 +636,7 @@ class ComposableFunctionBodyTransformer(
     // 1. They are inline
     // 2. They have a return value (may get relaxed in the future)
     // 3. They are a lambda (we use RestartableFunction<...> class for this instead)
-    // 4. They are annotated as @Direct
+    // 4. They are annotated as @ComposableContract(restartable = false)
     private fun IrFunction.shouldBeRestartable(): Boolean {
         // Only insert observe scopes in non-empty composable function
         if (body == null)
@@ -647,7 +648,7 @@ class ComposableFunctionBodyTransformer(
         if (descriptor.isInline)
             return false
 
-        if (descriptor.hasDirectAnnotation())
+        if (descriptor.composableRestartableContract() == false)
             return false
 
         // Do not insert an observe scope in an inline composable lambda
@@ -688,6 +689,17 @@ class ComposableFunctionBodyTransformer(
         return false
     }
 
+    private fun IrFunction.shouldElideGroups(): Boolean {
+        var readOnly = descriptor.composableReadonlyContract()
+        if (readOnly == null && this is IrSimpleFunction) {
+            readOnly = correspondingPropertySymbol
+                ?.owner
+                ?.descriptor
+                ?.composableReadonlyContract()
+        }
+        return readOnly == true
+    }
+
     private fun IrFunction.isLambda(): Boolean {
         // There is probably a better way to determine this, but if there is, it isn't obvious
         return descriptor.name.asString() == "<anonymous>"
@@ -705,6 +717,8 @@ class ComposableFunctionBodyTransformer(
         defaultParam: IrDefaultBitMaskValue?
     ): IrStatement {
         val body = declaration.body!!
+
+        val elideGroups = declaration.shouldElideGroups()
 
         val skipPreamble = mutableStatementContainer()
         val bodyPreamble = mutableStatementContainer()
@@ -736,17 +750,20 @@ class ComposableFunctionBodyTransformer(
 
         transformed = transformed.transformChildren()
 
-        scope.realizeGroup(::irEndReplaceableGroup)
+        if (!elideGroups) scope.realizeGroup(::irEndReplaceableGroup)
 
         declaration.body = IrBlockBodyImpl(
             body.startOffset,
             body.endOffset,
             listOfNotNull(
-                irStartReplaceableGroup(body, irGet(scope.keyParameter!!)),
+                if (!elideGroups)
+                    irStartReplaceableGroup(body, irGet(scope.keyParameter!!))
+                else
+                    null,
                 *skipPreamble.statements.toTypedArray(),
                 *bodyPreamble.statements.toTypedArray(),
                 *transformed.statements.toTypedArray(),
-                irEndReplaceableGroup(),
+                if (!elideGroups) irEndReplaceableGroup() else null,
                 returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
             )
         )
