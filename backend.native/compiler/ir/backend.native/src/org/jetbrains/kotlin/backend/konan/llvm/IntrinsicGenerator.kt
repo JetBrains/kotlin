@@ -144,21 +144,11 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         if (!function.isTypedIntrinsic) {
             return null
         }
-        val intrinsicType = getIntrinsicType(callSite)
-        return when (intrinsicType) {
+        return when (getIntrinsicType(callSite)) {
             IntrinsicType.IMMUTABLE_BLOB -> {
                 @Suppress("UNCHECKED_CAST")
                 val arg = callSite.getValueArgument(0) as IrConst<String>
                 context.llvm.staticData.createImmutableBlob(arg)
-            }
-            IntrinsicType.OBJC_INIT_BY -> {
-                val receiver = environment.evaluateExpression(callSite.extensionReceiver!!)
-                val irConstructorCall = callSite.getValueArgument(0) as IrConstructorCall
-                val constructorDescriptor = irConstructorCall.symbol.owner
-                val constructorArgs = environment.evaluateExplicitArgs(irConstructorCall)
-                val args = listOf(receiver) + constructorArgs
-                environment.evaluateCall(constructorDescriptor, args, Lifetime.IRRELEVANT)
-                receiver
             }
             IntrinsicType.OBJC_GET_SELECTOR -> {
                 val selector = (callSite.getValueArgument(0) as IrConst<*>).value as String

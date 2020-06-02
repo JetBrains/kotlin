@@ -2142,21 +2142,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             lifetime = resultLifetime(callee), exceptionHandler = currentCodeContext.exceptionHandler)
                 }
 
-                // TODO: OBJC-CONSTRUCTOR-CALL. Move to InteropLowering.
-                constructedClass.isObjCClass() -> {
-                    assert(constructedClass.isKotlinObjCClass()) // Calls to other ObjC class constructors must be lowered.
-                    val symbols = context.ir.symbols
-                    val rawPtr = callDirect(
-                            symbols.interopAllocObjCObject.owner,
-                            listOf(genGetObjCClass(constructedClass)),
-                            Lifetime.IRRELEVANT
-                    )
-
-                    callDirect(symbols.interopInterpretObjCPointer.owner, listOf(rawPtr), resultLifetime(callee)).also {
-                        // Balance pointer retained by alloc:
-                        callDirect(symbols.interopObjCRelease.owner, listOf(rawPtr), Lifetime.IRRELEVANT)
-                    }
-                }
+                constructedClass.isObjCClass() -> error("Call should've been lowered: ${callee.dump()}")
 
                 else -> functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee))
             }

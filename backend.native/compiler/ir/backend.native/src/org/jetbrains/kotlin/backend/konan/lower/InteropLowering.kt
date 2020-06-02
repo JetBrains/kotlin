@@ -672,18 +672,21 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
         expression.transformChildrenVoid()
 
         val callee = expression.symbol.owner
-        val initMethod = callee.getObjCInitMethod() ?: return expression
+        val initMethod = callee.getObjCInitMethod()
+        if (initMethod != null) {
+            val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
+            assert(expression.extensionReceiver == null)
+            assert(expression.dispatchReceiver == null)
 
-        val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
-        assert(expression.extensionReceiver == null)
-        assert(expression.dispatchReceiver == null)
-
-        val constructedClass = callee.constructedClass
-        val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
-        return builder.at(expression).run {
-            val classPtr = getObjCClass(constructedClass.symbol)
-            ensureObjCReferenceNotNull(callAllocAndInit(classPtr, initMethodInfo, arguments, expression, initMethod))
+            val constructedClass = callee.constructedClass
+            val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
+            return builder.at(expression).run {
+                val classPtr = getObjCClass(constructedClass.symbol)
+                ensureObjCReferenceNotNull(callAllocAndInit(classPtr, initMethodInfo, arguments, expression, initMethod))
+            }
         }
+
+        return expression
     }
 
     private fun IrBuilderWithScope.ensureObjCReferenceNotNull(expression: IrExpression): IrExpression =
@@ -896,13 +899,35 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         expression.transformChildrenVoid(this)
 
-        val function = expression.symbol.owner
-        val inlinedClass = function.returnType.getInlinedClassNative()
+        val callee = expression.symbol.owner
+        val inlinedClass = callee.returnType.getInlinedClassNative()
         if (inlinedClass?.descriptor == interop.cPointer || inlinedClass?.descriptor == interop.nativePointed) {
             context.reportCompilationError("Native interop types constructors must not be called directly",
                 irFile, expression)
         }
-        return expression
+
+        val constructedClass = callee.constructedClass
+        if (!constructedClass.isObjCClass())
+            return expression
+
+        assert(constructedClass.isKotlinObjCClass()) // Calls to other ObjC class constructors must be lowered.
+        return builder.at(expression).irBlock {
+            val rawPtr = irTemporary(irCall(symbols.interopAllocObjCObject.owner).apply {
+                putValueArgument(0, getObjCClass(symbols, constructedClass.symbol))
+            })
+            val instance = irTemporary(irCall(symbols.interopInterpretObjCPointer.owner).apply {
+                putValueArgument(0, irGet(rawPtr))
+            })
+            // Balance pointer retained by alloc:
+            +irCall(symbols.interopObjCRelease.owner).apply {
+                putValueArgument(0, irGet(rawPtr))
+            }
+            +irCall(symbols.initInstance).apply {
+                putValueArgument(0, irGet(instance))
+                putValueArgument(1, expression)
+            }
+            +irGet(instance)
+        }
     }
 
     /**
@@ -933,6 +958,38 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
+        val intrinsicType = tryGetIntrinsicType(expression)
+        if (intrinsicType == IntrinsicType.OBJC_INIT_BY) {
+            // Need to do this separately as otherwise [expression.transformChildrenVoid(this)] would be called
+            // and the [IrConstructorCall] would be transformed which is not what we want.
+            val intrinsic = interop.objCObjectInitBy.name
+
+            val argument = expression.getValueArgument(0)!!
+            val constructorCall = argument as? IrConstructorCall
+                    ?: context.reportCompilationError("Argument of '$intrinsic' must be a constructor call",
+                            irFile, argument)
+
+            val constructedClass = constructorCall.symbol.owner.constructedClass
+
+            val extensionReceiver = expression.extensionReceiver!!
+            if (extensionReceiver !is IrGetValue ||
+                    !extensionReceiver.symbol.owner.isDispatchReceiverFor(constructedClass)) {
+
+                context.reportCompilationError("Receiver of '$intrinsic' must be a 'this' of the constructed class",
+                        irFile, extensionReceiver)
+            }
+
+            constructorCall.transformChildrenVoid(this)
+
+            return builder.at(expression).irBlock {
+                val instance = extensionReceiver.symbol.owner
+                +irCall(symbols.initInstance).apply {
+                    putValueArgument(0, irGet(instance))
+                    putValueArgument(1, constructorCall)
+                }
+                +irGet(instance)
+            }
+        }
 
         expression.transformChildrenVoid(this)
         builder.at(expression)
@@ -956,8 +1013,6 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         tryGenerateInteropMemberAccess(expression, symbols, builder, failCompilation)?.let { return it }
 
         tryGenerateInteropConstantRead(expression)?.let { return it }
-
-        val intrinsicType = tryGetIntrinsicType(expression)
 
         if (intrinsicType != null) {
             return when (intrinsicType) {
@@ -1096,26 +1151,6 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                 }
                 IntrinsicType.INTEROP_MEMORY_COPY -> {
                     TODO("So far unsupported")
-                }
-                IntrinsicType.OBJC_INIT_BY -> {
-                    val intrinsic = interop.objCObjectInitBy.name
-
-                    val argument = expression.getValueArgument(0)!!
-                    val constructedClass = (argument as? IrConstructorCall)?.symbol?.owner?.constructedClass
-
-                    if (constructedClass == null) {
-                        context.reportCompilationError("Argument of '$intrinsic' must be a constructor call",
-                                irFile, argument)
-                    }
-
-                    val extensionReceiver = expression.extensionReceiver!!
-                    if (extensionReceiver !is IrGetValue ||
-                            !extensionReceiver.symbol.owner.isDispatchReceiverFor(constructedClass)) {
-
-                        context.reportCompilationError("Receiver of '$intrinsic' must be a 'this' of the constructed class",
-                                irFile, extensionReceiver)
-                    }
-                    expression
                 }
                 IntrinsicType.WORKER_EXECUTE -> {
                     val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(2)!!)
