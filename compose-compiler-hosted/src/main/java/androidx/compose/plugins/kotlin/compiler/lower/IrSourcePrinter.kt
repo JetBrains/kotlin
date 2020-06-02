@@ -442,7 +442,10 @@ private class IrSourcePrinterVisitor(
         }
     }
 
-    private fun IrFunctionAccessExpression.printArgumentList() {
+    private fun IrFunctionAccessExpression.printArgumentList(
+        forceParameterNames: Boolean = false,
+        forceSingleLine: Boolean = false
+    ) {
         val descriptor = symbol.descriptor
         val arguments = mutableListOf<IrExpression>()
         val paramNames = mutableListOf<String>()
@@ -450,7 +453,7 @@ private class IrSourcePrinterVisitor(
         val isEmit = descriptor is ComposableEmitDescriptor
         val isCompoundEmit = descriptor is ComposableEmitDescriptor && descriptor.hasChildren
         val isLeafEmit = isEmit && !isCompoundEmit
-        var useParameterNames = isEmit
+        var useParameterNames = forceParameterNames || isEmit
         for (i in 0 until valueArgumentsCount) {
             val arg = getValueArgument(i)
             if (arg != null) {
@@ -471,34 +474,41 @@ private class IrSourcePrinterVisitor(
                 useParameterNames = true
             }
         }
+        val multiline = useParameterNames && !forceSingleLine
         if (arguments.isNotEmpty() || trailingLambda == null) {
             print("(")
-            if (useParameterNames) {
+            if (multiline) {
                 // if we are using parameter names, we go on multiple lines
                 println()
                 indented {
                     arguments.zip(paramNames).forEachIndexed { i, (arg, name) ->
-                        print(name)
-                        print(" = ")
+                        if (useParameterNames) {
+                            print(name)
+                            print(" = ")
+                        }
                         arg.print()
                         if (i < arguments.size - 1) println(", ")
                     }
                 }
                 println()
             } else {
-                arguments.forEachIndexed { index, it ->
-                    when (paramNames[index]) {
+                arguments.zip(paramNames).forEachIndexed { i, (arg, name) ->
+                    if (useParameterNames) {
+                        print(name)
+                        print(" = ")
+                    }
+                    when (name) {
                         KtxNameConventions.DEFAULT_PARAMETER.identifier,
                         KtxNameConventions.CHANGED_PARAMETER.identifier -> {
                             withIntsAsBinaryLiterals {
-                                it.print()
+                                arg.print()
                             }
                         }
                         else -> {
-                            it.print()
+                            arg.print()
                         }
                     }
-                    if (index < arguments.size - 1) print(", ")
+                    if (i < arguments.size - 1) print(", ")
                 }
             }
             print(")")
@@ -566,8 +576,23 @@ private class IrSourcePrinterVisitor(
             print(".")
         }
         print(name)
-        if (expression.valueArgumentsCount > 0 || !isAnnotation) {
-            expression.printArgumentList()
+
+        val printArgumentList = if (!isAnnotation) true else {
+            var hasArguments = false
+            for (i in 0 until expression.valueArgumentsCount) {
+                val arg = expression.getValueArgument(i)
+                if (arg != null) {
+                    hasArguments = true
+                    break
+                }
+            }
+            hasArguments
+        }
+        if (printArgumentList) {
+            expression.printArgumentList(
+                forceParameterNames = isAnnotation,
+                forceSingleLine = isAnnotation
+            )
         }
     }
 
