@@ -238,9 +238,13 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
             }
 
             fun addTargetFiles(targetMemberships: Array<PBXTarget>, group: PBXGroup, sourceDirectorySet: SourceDirectorySet) {
-                for (file in sourceDirectorySet.srcDirs.flatMap {
-                    it.listFiles()?.apply { sort() }?.asList() ?: emptyList()
-                }) { // don't flatten
+                sourceDirectorySet.srcDirs.flatMap { dir ->
+                    dir.listFiles()
+                        ?.filterNot { it.name.startsWith(".") }
+                        ?.sorted()
+                        ?: emptyList()
+                }.forEach { file ->
+                    // don't flatten
                     addFile(file.path, targetMemberships, group, false)
                 }
             }
