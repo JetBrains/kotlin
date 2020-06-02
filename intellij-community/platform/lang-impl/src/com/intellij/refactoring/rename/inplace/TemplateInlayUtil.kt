@@ -8,9 +8,14 @@ import com.intellij.codeInsight.hints.presentation.PresentationFactory
 import com.intellij.codeInsight.hints.presentation.PresentationRenderer
 import com.intellij.codeInsight.template.impl.TemplateState
 import com.intellij.icons.AllIcons
+import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.keymap.KeymapUtil
@@ -193,7 +198,7 @@ object TemplateInlayUtil {
   }
 
   @JvmStatic
-  fun renamePanel( elementToRename : PsiElement): DialogPanel {
+  fun renamePanel( elementToRename : PsiElement, editor: Editor): DialogPanel {
     val processor = RenamePsiElementProcessor.forElement(elementToRename)
     return panel {
       row("Also rename in:") {
@@ -218,8 +223,19 @@ object TemplateInlayUtil {
         }
       }
       row {
-        link("More options", null) { }
-        comment(KeymapUtil.getFirstKeyboardShortcutText(ActionManager.getInstance().getAction(IdeActions.ACTION_RENAME)))
+        cell {
+          val renameAction = ActionManager.getInstance().getAction(IdeActions.ACTION_RENAME)
+          link("More options", null) {
+            val event = AnActionEvent(null,
+                                      DataManager.getInstance().getDataContext(editor.component),
+                                      ActionPlaces.UNKNOWN, renameAction.templatePresentation.clone(),
+                                      ActionManager.getInstance(), 0)
+            if (ActionUtil.lastUpdateAndCheckDumb(renameAction, event, true)) {
+              ActionUtil.performActionDumbAware(renameAction, event)
+            }
+          }
+          comment(KeymapUtil.getFirstKeyboardShortcutText(renameAction))
+        }
       }
     }
   }

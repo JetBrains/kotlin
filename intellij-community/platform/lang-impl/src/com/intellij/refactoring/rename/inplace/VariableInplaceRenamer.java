@@ -360,12 +360,13 @@ public class VariableInplaceRenamer extends InplaceRefactoring {
       if (templateState == null || variable == null) return;
       TextRange variableRange = templateState.getCurrentVariableRange();
       if (variableRange == null) return;
-      SelectableInlayPresentation presentation = TemplateInlayUtil.createSettingsPanelPresentation((EditorImpl)templateState.getEditor(), variable, inlayReference);
+      EditorImpl editor = (EditorImpl)templateState.getEditor();
+      SelectableInlayPresentation presentation = TemplateInlayUtil.createSettingsPanelPresentation(editor, variable, inlayReference);
       int offset = variableRange.getEndOffset();
       Inlay<PresentationRenderer> inlay = TemplateInlayUtil.createNavigatableButtonWithPopup(templateState,
                                                                                              offset,
                                                                                              presentation,
-                                                                                             TemplateInlayUtil.renamePanel(variable));
+                                                                                             TemplateInlayUtil.renamePanel(variable, editor));
       if (inlay == null) return;
       inlayReference.set(inlay);
       Disposer.register(inlay, new Disposable() {
