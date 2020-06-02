@@ -33,19 +33,17 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.TypePath
 import java.lang.annotation.RetentionPolicy
 
 abstract class AnnotationCodegen(
@@ -139,8 +137,14 @@ abstract class AnnotationCodegen(
 
         val type = when (declaration) {
             is IrFunction -> declaration.returnType
-            is IrField -> declaration.type
             is IrValueDeclaration -> declaration.type
+            is IrField ->
+                if (declaration.correspondingPropertySymbol?.owner?.isLateinit == true) {
+                    // Lateinit fields are nullable, but should be marked as NotNull to match the JVM backend.
+                    declaration.type.makeNotNull()
+                } else {
+                    declaration.type
+                }
             else -> return
         }
 

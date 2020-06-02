@@ -74,6 +74,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/jvmStaticWithDefaultParameters.kt");
     }
 
+    @TestMetadata("lateInitNotNull.kt")
+    public void testLateInitNotNull() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/lateInitNotNull.kt");
+    }
+
     @TestMetadata("noCollectionStubMethodsInInterface.kt")
     public void testNoCollectionStubMethodsInInterface() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/noCollectionStubMethodsInInterface.kt");
