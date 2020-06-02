@@ -42,6 +42,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
 
     /**
      * Framework description.
+     *
      * @param name is the framework name,
      * @param sources framework sources,
      * @param bitcode bitcode embedding in the framework,
@@ -58,6 +59,9 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             var opts: List<String> = emptyList()
     )
 
+    /**
+     * Used for the framework configuration in the task's closure.
+     */
     fun framework(name: String, closure: Closure<Framework>): Framework {
         val f = Framework(name).apply {
             closure.delegate = this
@@ -79,7 +83,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     }
 
     fun Language.filesFrom(dir: String): FileTree = project.fileTree(dir) {
-        // include only files with 
+        // include only files with the language extension
         it.include("*${this.extension}")
     }
 

@@ -4030,6 +4030,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
                         baseDir "$testOutputFramework/${task.name}"
 
                         if (fr.library != null) {
+                            dependsOn konanArtifacts[fr.library].getByTarget(target.name)
                             libraries {
                                 file konanArtifacts[fr.library].getArtifactByTarget(target.name)
                             }
@@ -4056,7 +4057,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
 if (isAppleTarget(project)) {
     frameworkTest('testObjCExport') {
         final String frameworkName = 'Kt'
-        final String dir = "$testOutputFramework/$name"
+        final String dir = "$testOutputFramework/testObjCExport"
         final File lazyHeader = file("$dir/$target-lazy.h")
 
         doLast {
