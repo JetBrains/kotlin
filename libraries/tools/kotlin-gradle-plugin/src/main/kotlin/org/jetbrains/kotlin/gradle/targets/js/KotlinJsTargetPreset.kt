@@ -33,9 +33,9 @@ open class KotlinJsTargetPreset(
 
     override fun useDisambiguitionClassifierAsSourcesetNamePreffix() = irPreset == null
 
-    override fun overrideDisambiguitionClassifierOnIdeImport(): String? = if (isMpp) {
+    override fun overrideDisambiguitionClassifierOnIdeImport(name: String): String? = if (isMpp) {
         irPreset?.let {
-            name.removeJsCompilerSuffix(KotlinJsCompilerType.BOTH)
+            name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
         }
     } else {
         null
