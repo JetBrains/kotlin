@@ -166,7 +166,6 @@ public final class IndexUpdateRunner {
     }
     catch (FailedToLoadContentException e) {
       indexingJob.oneMoreFileProcessed();
-      indexingJob.myStatistics.getNumberOfFailedToLoadFiles().incrementAndGet();
       logFailedToLoadContentException(e);
       return;
     }
@@ -200,7 +199,6 @@ public final class IndexUpdateRunner {
     }
     catch (Throwable e) {
       indexingJob.oneMoreFileProcessed();
-      indexingJob.myStatistics.getNumberOfFailedToIndexFiles().incrementAndGet();
       FileBasedIndexImpl.LOG.error("Error while indexing " + file.getPresentableUrl() + "\n" +
                                    "To reindex this file IDEA has to be restarted", e);
     }

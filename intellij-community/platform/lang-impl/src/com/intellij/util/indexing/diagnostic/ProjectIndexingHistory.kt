@@ -25,9 +25,6 @@ data class ProjectIndexingHistory(val projectName: String) {
   var totalNumberOfTooLargeFiles: Int = 0
   val totalTooLargeFiles = LimitedPriorityQueue<TooLargeForIndexingFile>(5, compareBy { it.fileSize })
 
-  var totalNumberOfFailedToLoadFiles: Int = 0
-  var totalNumberOfFailedToIndexFiles: Int = 0
-
   fun addProviderStatistics(statistics: FileProviderIndexStatistics) {
     // Convert to Json to release memory occupied by statistic values.
     providerStatistics += statistics.toJson()
@@ -59,8 +56,6 @@ data class ProjectIndexingHistory(val projectName: String) {
 
     totalNumberOfTooLargeFiles += statistics.indexingStatistics.numberOfTooLargeForIndexingFiles.get()
     statistics.indexingStatistics.tooLargeForIndexingFiles.biggestElements.forEach { totalTooLargeFiles.addElement(it) }
-    totalNumberOfFailedToLoadFiles += statistics.indexingStatistics.numberOfFailedToLoadFiles.get()
-    totalNumberOfFailedToIndexFiles += statistics.indexingStatistics.numberOfFailedToIndexFiles.get()
   }
 
   data class StatsPerFileType(

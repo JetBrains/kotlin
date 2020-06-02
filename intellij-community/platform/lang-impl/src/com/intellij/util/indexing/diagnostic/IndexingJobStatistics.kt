@@ -16,9 +16,6 @@ class IndexingJobStatistics {
   val numberOfTooLargeForIndexingFiles = AtomicInteger()
   val tooLargeForIndexingFiles = LimitedPriorityQueue<TooLargeForIndexingFile>(5, compareBy { it.fileSize })
 
-  val numberOfFailedToLoadFiles = AtomicInteger()
-  val numberOfFailedToIndexFiles = AtomicInteger()
-
   data class StatsPerIndexer(
     val indexingTime: TimeStats,
     var numberOfFiles: Int,

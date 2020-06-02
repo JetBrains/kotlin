@@ -27,8 +27,6 @@ fun FileProviderIndexStatistics.toJson(): JsonFileProviderIndexStatistics {
     JsonTime(totalTime),
     indexingStatistics.numberOfTooLargeForIndexingFiles.get().toPositiveInt(),
     indexingStatistics.tooLargeForIndexingFiles.biggestElements.map { it.toJson() }.takeIf { it.isNotEmpty() },
-    indexingStatistics.numberOfFailedToLoadFiles.get().toPositiveInt(),
-    indexingStatistics.numberOfFailedToIndexFiles.get().toPositiveInt(),
     statsPerFileType.sortedByDescending { it.partOfTotalIndexingTime.percentages },
     statsPerIndexer.sortedByDescending { it.partOfTotalIndexingTime.percentages },
     fastIndexers.map { it.indexId }.sorted()
@@ -109,8 +107,6 @@ fun ProjectIndexingHistory.toJson() =
     numberOfIndexingThreads,
     totalNumberOfTooLargeFiles.toPositiveInt(),
     totalTooLargeFiles.biggestElements.map { it.toJson() }.takeIf { it.isNotEmpty() },
-    totalNumberOfFailedToLoadFiles.toPositiveInt(),
-    totalNumberOfFailedToIndexFiles.toPositiveInt(),
     aggregateStatsPerFileType().sortedByDescending { it.partOfTotalIndexingTime.percentages },
     aggregateStatsPerIndexer().sortedByDescending { it.partOfTotalIndexingTime.percentages },
     providerStatistics.sortedByDescending { it.totalIndexingTime.nano }
