@@ -11,7 +11,7 @@ public open class Exec {
 @SamWithReceiver1 public interface Sam {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun run(/*0*/ a: kotlin.String!): kotlin.Unit
+    public abstract fun run(/*0*/ a: kotlin.String!, /*1*/ b: kotlin.String!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
