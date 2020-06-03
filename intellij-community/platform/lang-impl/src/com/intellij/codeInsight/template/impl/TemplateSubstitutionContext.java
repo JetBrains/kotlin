@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.impl;
 
-import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -34,9 +33,6 @@ public final class TemplateSubstitutionContext {
   }
 
   public @NotNull PsiFile getPsiFile() {
-    if (myEditor instanceof EditorWindow) {
-      return ((EditorWindow)myEditor).getInjectedFile();
-    }
     Document document = myEditor.getDocument();
     PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(document);
     return Objects.requireNonNull(psiFile, () -> "Can't find a psi file for the " + document + " in " + myEditor);
