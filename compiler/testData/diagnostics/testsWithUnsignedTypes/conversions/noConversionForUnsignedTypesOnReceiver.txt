@@ -1,0 +1,7 @@
+package
+
+public fun test(): kotlin.Unit
+public fun kotlin.UByte.fUByte(): kotlin.Unit
+public fun kotlin.UInt.fUInt(): kotlin.Unit
+public fun kotlin.ULong.fULong(): kotlin.Unit
+public fun kotlin.UShort.fUShort(): kotlin.Unit
