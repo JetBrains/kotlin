@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.idea.artifacts
 
 object KotlinArtifactNames {
     const val KOTLIN_STDLIB = "kotlin-stdlib.jar"
+    const val KOTLIN_STDLIB_SOURCES = "kotlin-stdlib-sources.jar"
     const val KOTLIN_REFLECT = "kotlin-reflect.jar"
     const val KOTLIN_STDLIB_JS = "kotlin-stdlib-js.jar"
     const val KOTLIN_TEST = "kotlin-test.jar"

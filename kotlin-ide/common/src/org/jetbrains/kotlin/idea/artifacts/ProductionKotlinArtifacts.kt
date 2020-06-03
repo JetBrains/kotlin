@@ -21,6 +21,7 @@ object ProductionKotlinArtifacts : KotlinArtifacts() {
     override val kotlincDirectory = findFile(kotlinPluginDirectory, "kotlinc")
 
     override val kotlinStdlib = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_STDLIB)
+    override val kotlinStdlibSources = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_STDLIB_SOURCES)
     override val kotlinReflect = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_REFLECT)
     override val kotlinStdlibJs = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS)
     override val kotlinTest = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_TEST)

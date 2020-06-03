@@ -30,7 +30,16 @@ private fun substitutePathVariables(path: String): String {
     return path
 }
 
-private fun findLibrary(repoLocation: String, library: String, group: String, artifact: String): File {
+private enum class LibraryFileKind {
+    CLASSES, SOURCES
+}
+
+private fun findLibrary(
+    repoLocation: String,
+    library: String,
+    group: String, artifact: String,
+    kind: LibraryFileKind = LibraryFileKind.CLASSES
+): File {
     val librariesDir = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "../.idea/libraries")
     if (!librariesDir.exists()) {
         throw IllegalStateException("Can't find $librariesDir")
@@ -48,7 +57,7 @@ private fun findLibrary(repoLocation: String, library: String, group: String, ar
 
     val root = document.rootElement
         .getChild("library")
-        ?.getChild("CLASSES")
+        ?.getChild(kind.name)
         ?.getChildren("root")
         ?.singleOrNull { (it.getAttributeValue("url") ?: "").startsWith(pathPrefix) }
         ?: error("Root '$pathInRepository' not found in library $library")
@@ -80,6 +89,7 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     private val kotlincLibDirectory = findFile(artifactDirectory, "lib")
 
     override val kotlinStdlib by lazy { findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib") }
+    override val kotlinStdlibSources by lazy { findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib", LibraryFileKind.SOURCES) }
     override val kotlinReflect by lazy { findLibrary(repoPath, "kotlin_reflect.xml", "org.jetbrains.kotlin", "kotlin-reflect") }
     override val kotlinStdlibJs by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS) }
     override val kotlinTest by lazy { findLibrary(MAVEN_REPOSITORY, "kotlin_test.xml", "org.jetbrains.kotlin", "kotlin-test") }
