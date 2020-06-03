@@ -22,6 +22,7 @@ class FileSystemDependenciesResolver(vararg paths: File) : ExternalDependenciesR
 
     override fun addRepository(
         repositoryCoordinates: RepositoryCoordinates,
+        options: ExternalDependenciesResolver.Options,
         sourceCodeLocation: SourceCode.LocationWithId?
     ): ResultWithDiagnostics<Boolean> {
         if (!acceptsRepository(repositoryCoordinates)) return false.asSuccess()
@@ -36,6 +37,7 @@ class FileSystemDependenciesResolver(vararg paths: File) : ExternalDependenciesR
 
     override suspend fun resolve(
         artifactCoordinates: String,
+        options: ExternalDependenciesResolver.Options,
         sourceCodeLocation: SourceCode.LocationWithId?
     ): ResultWithDiagnostics<List<File>> {
         if (!acceptsArtifact(artifactCoordinates)) throw IllegalArgumentException("Path is invalid")
