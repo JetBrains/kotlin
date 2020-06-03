@@ -40,7 +40,7 @@ class EmitTransformTests : AbstractIrTransformTest() {
     ) = verifyComposeIrTransform(
         """
             import androidx.compose.Composable
-            import androidx.compose.Direct
+            import androidx.compose.ComposableContract
             import android.widget.TextView
             import android.widget.LinearLayout
 
@@ -49,7 +49,7 @@ class EmitTransformTests : AbstractIrTransformTest() {
         expectedTransformed,
         """
             import androidx.compose.Composable
-            import androidx.compose.Direct
+            import androidx.compose.ComposableContract
             import android.widget.TextView
             import android.widget.LinearLayout
 
@@ -106,7 +106,7 @@ class EmitTransformTests : AbstractIrTransformTest() {
                     cond.value = !cond.value
                   }
                 }, %composer, <>, 0)
-                %composer.emit(1124847890, { context: @[ParameterName(name = 'context')] Context ->
+                %composer.emit(1124847878, { context: @[ParameterName(name = 'context')] Context ->
                   Button(context)
                 }
                 ) {
