@@ -49,6 +49,11 @@ gradleEnterprise {
             setTermsOfServiceUrl("https://gradle.com/terms-of-service")
             setTermsOfServiceAgree("yes")
         }
+        obfuscation {
+            ipAddresses { addresses -> ["0.0.0.0"] }
+            hostname { host -> "<unknown>" }
+            username { name -> "<unknown>" }
+        }
     }
 }
 
