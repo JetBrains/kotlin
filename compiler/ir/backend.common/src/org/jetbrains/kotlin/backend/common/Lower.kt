@@ -67,6 +67,14 @@ interface BodyLoweringPass : FileLoweringPass {
 
 fun FileLoweringPass.lower(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { lower(it) }
 
+//fun FileLoweringPass.lower(modules: Iterable<IrModuleFragment>) {
+//    modules.forEach { module ->
+//        module.files.forEach {
+//            lower(it)
+//        }
+//    }
+//}
+
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
     irFile.acceptVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
