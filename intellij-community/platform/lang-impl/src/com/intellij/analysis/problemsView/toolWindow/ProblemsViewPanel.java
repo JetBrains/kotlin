@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow;
 
+import com.intellij.ide.DefaultTreeExpander;
+import com.intellij.ide.TreeExpander;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option;
@@ -58,6 +60,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   private final ActionToolbar myToolbar;
   private final Insets myToolbarInsets = JBUI.insetsRight(1);
   private final JTree myTree;
+  private final TreeExpander myTreeExpander;
 
   private final Option myAutoscrollToSource = new Option() {
     @Override
@@ -151,6 +154,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     EditSourceOnDoubleClickHandler.install(myTree);
     EditSourceOnEnterKeyHandler.install(myTree);
     PopupHandler.installPopupHandler(myTree, "ProblemsView.ToolWindow.TreePopup", ActionPlaces.POPUP);
+    myTreeExpander = new DefaultTreeExpander(myTree);
 
     ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction("ProblemsView.ToolWindow.Toolbar");
     myToolbar = ActionManager.getInstance().createActionToolbar(getClass().getName(), group, false);
@@ -174,6 +178,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   @Override
   public @Nullable Object getData(@NotNull String dataId) {
     if (CommonDataKeys.PROJECT.is(dataId)) return getProject();
+    if (PlatformDataKeys.TREE_EXPANDER.is(dataId)) return getTreeExpander();
     OpenFileDescriptor descriptor = getSelectedDescriptor();
     if (descriptor != null) {
       if (CommonDataKeys.NAVIGATABLE.is(dataId)) return descriptor;
@@ -237,6 +242,10 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
 
   final @NotNull JTree getTree() {
     return myTree;
+  }
+
+  @Nullable TreeExpander getTreeExpander() {
+    return myTreeExpander;
   }
 
   void orientationChangedTo(boolean vertical) {

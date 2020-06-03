@@ -3,6 +3,7 @@ package com.intellij.analysis.problemsView.toolWindow
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.SeverityRegistrar.getSeverityRegistrar
+import com.intellij.ide.TreeExpander
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option
 import com.intellij.openapi.fileEditor.*
@@ -22,6 +23,7 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
 
   override fun getDisplayName() = ProblemsViewBundle.message("problems.view.highlighting")
   override fun getSortFoldersFirst(): Option? = null
+  override fun getTreeExpander(): TreeExpander? = null
 
   override fun selectionChangedTo(selected: Boolean) {
     super.selectionChangedTo(selected)
