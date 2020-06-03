@@ -35,8 +35,8 @@ object IndexDiagnosticDumper {
       jacksonMapper.writeValue(diagnosticJson.toFile(), jsonIndexDiagnostic)
 
       val limitOfHistories = 20
-      val survivedHistories = Files.list(indexDiagnosticDirectory)
-        .asSequence()
+      val survivedHistories = Files.list(indexDiagnosticDirectory).use { files ->
+        files.asSequence()
         .filter { it.fileName.toString().startsWith(fileNamePrefix) && it.fileName.toString().endsWith(".json") }
         .sortedByDescending { file ->
           val timeStamp = file.fileName.toString().substringAfter(fileNamePrefix).substringBefore(".json").toLongOrNull()
@@ -44,8 +44,9 @@ object IndexDiagnosticDumper {
         }
         .take(limitOfHistories)
         .toSet()
+      }
 
-      val toBeRemovedFiles = Files.list(indexDiagnosticDirectory).asSequence().filterNot { it in survivedHistories }
+      val toBeRemovedFiles = Files.list(indexDiagnosticDirectory).use { files -> files.asSequence().filterNot { it in survivedHistories }}
       toBeRemovedFiles.forEach { it.delete() }
     }
     catch (e: Exception) {
