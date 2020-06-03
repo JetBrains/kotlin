@@ -1547,16 +1547,14 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
                 @Composable
                 fun Counter() {
-                    Observe {
-                        var count = state { 0 }
-                        TextView(
-                            text=("Count: " + count.value),
-                            onClick={
-                                count.value += 1
-                            },
-                            id=42
-                        )
-                    }
+                    var count = state { 0 }
+                    TextView(
+                        text=("Count: " + count.value),
+                        onClick={
+                            count.value += 1
+                        },
+                        id=42
+                    )
                 }
             """,
             { mapOf<String, String>() },
@@ -1581,16 +1579,14 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
                 @Composable
                 fun Counter() {
-                    Observe {
-                        var count = state { 0 }
-                        TextView(
-                            text=("Count: " + count.value),
-                            onClick={
-                                count.value += 1
-                            },
-                            id=42
-                        )
-                    }
+                    var count = state { 0 }
+                    TextView(
+                        text=("Count: " + count.value),
+                        onClick={
+                            count.value += 1
+                        },
+                        id=42
+                    )
                 }
             """,
             { mapOf<String, String>() },
@@ -1616,22 +1612,20 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
                 @Composable
                 fun Counter(log: StringBuilder) {
-                    Observe {
-                        var count = state { 0 }
-                        onCommit {
-                            log.append("a")
-                        }
-                        onActive {
-                            log.append("b")
-                        }
-                        TextView(
-                            text=("Count: " + count.value),
-                            onClick={
-                                count.value += 1
-                            },
-                            id=42
-                        )
+                    var count = state { 0 }
+                    onCommit {
+                        log.append("a")
                     }
+                    onActive {
+                        log.append("b")
+                    }
+                    TextView(
+                        text=("Count: " + count.value),
+                        onClick={
+                            count.value += 1
+                        },
+                        id=42
+                    )
                 }
             """,
             { mapOf("log" to log) },
@@ -1668,17 +1662,15 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
                 @Composable
                 fun Counter(log: StringBuilder) {
-                    Observe {
-                        var count = state { 0 }
-                        printer(log, "" + count.value)
-                        TextView(
-                            text=("Count: " + count.value),
-                            onClick={
-                                count.value += 1
-                            },
-                            id=42
-                        )
-                    }
+                    var count = state { 0 }
+                    printer(log, "" + count.value)
+                    TextView(
+                        text=("Count: " + count.value),
+                        onClick={
+                            count.value += 1
+                        },
+                        id=42
+                    )
                 }
             """,
             { mapOf("log" to log) },
@@ -1828,22 +1820,20 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             @Composable
             fun Reordering() {
-                Observe {
-                    val items = state { listOf(1, 2, 3, 4, 5) }
+                val items = state { listOf(1, 2, 3, 4, 5) }
 
-                    LinearLayout(orientation=LinearLayout.VERTICAL) {
-                        items.value.forEachIndexed { index, id ->
-                            key(id) {
-                                Item(
-                                    id=id,
-                                    onMove={ amount ->
-                                        val next = index + amount
-                                        if (next >= 0 && next < items.value.size) {
-                                            items.value = items.value.move(index, index + amount)
-                                        }
+                LinearLayout(orientation=LinearLayout.VERTICAL) {
+                    items.value.forEachIndexed { index, id ->
+                        key(id) {
+                            Item(
+                                id=id,
+                                onMove={ amount ->
+                                    val next = index + amount
+                                    if (next >= 0 && next < items.value.size) {
+                                        items.value = items.value.move(index, index + amount)
                                     }
-                                )
-                            }
+                                }
+                            )
                         }
                     }
                 }
@@ -1852,14 +1842,12 @@ class FcsCodegenTests : AbstractCodegenTest() {
             @Composable
             // TODO: Investigate making this private; looks like perhaps a compiler bug as of rebase
             fun Item(id: Int, onMove: (Int) -> Unit) {
-                Observe {
-                    val count = state { 0 }
-                    LinearLayout(orientation=LinearLayout.HORIZONTAL) {
-                        TextView(id=(id+$tvId), text="id: ${'$'}id amt: ${'$'}{count.value}")
-                        Button(id=(id+$btnIdAdd), text="+", onClick={ count.value++ })
-                        Button(id=(id+$btnIdUp), text="Up", onClick={ onMove(1) })
-                        Button(id=(id+$btnIdDown), text="Down", onClick={ onMove(-1) })
-                    }
+                val count = state { 0 }
+                LinearLayout(orientation=LinearLayout.HORIZONTAL) {
+                    TextView(id=(id+$tvId), text="id: ${'$'}id amt: ${'$'}{count.value}")
+                    Button(id=(id+$btnIdAdd), text="+", onClick={ count.value++ })
+                    Button(id=(id+$btnIdUp), text="Up", onClick={ onMove(1) })
+                    Button(id=(id+$btnIdDown), text="Down", onClick={ onMove(-1) })
                 }
             }
             """, noParameters,
