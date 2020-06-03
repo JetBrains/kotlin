@@ -110,6 +110,13 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         val fileName = "$className.kt"
 
         val loader = classLoader("""
+           @file:OptIn(
+             ExperimentalComposeApi::class,
+             InternalComposeApi::class,
+             ComposeCompilerApi::class
+           )
+           package test
+
            import androidx.compose.*
 
            $src

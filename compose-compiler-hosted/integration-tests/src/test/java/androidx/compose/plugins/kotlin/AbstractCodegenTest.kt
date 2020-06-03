@@ -118,6 +118,16 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
 
     protected fun testCompileEmittable(source: String, dumpClasses: Boolean = false) = testCompile(
         """
+        @file:OptIn(
+          ExperimentalComposeApi::class,
+          InternalComposeApi::class,
+          ComposeCompilerApi::class
+        )
+        package text
+
+        import androidx.compose.ExperimentalComposeApi
+        import androidx.compose.InternalComposeApi
+        import androidx.compose.ComposeCompilerApi
         import androidx.compose.Applier
         import androidx.compose.ApplyAdapter
         import androidx.compose.Composer
