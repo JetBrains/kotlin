@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.wizard
 
 import com.intellij.ide.IdeBundle
@@ -28,7 +28,6 @@ import javax.swing.JTextField
 import javax.swing.ListCellRenderer
 
 abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardContext) : ModuleWizardStep() {
-
   abstract fun createView(data: Data): DataView<Data>
 
   abstract fun findAllParents(): List<Data>
@@ -272,7 +271,7 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
   override fun updateDataModel() {
     val location = location
     context.projectName = entityName
-    context.projectFileDirectory = location
+    context.setProjectFileDirectory(location)
     createDirectory(File(location))
     updateProjectData()
   }

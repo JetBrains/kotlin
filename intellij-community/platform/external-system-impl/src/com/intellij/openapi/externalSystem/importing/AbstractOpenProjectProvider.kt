@@ -40,8 +40,8 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
 
     val project = createProject(projectDirectory) ?: return null
     linkAndRefreshProject(projectDirectory.path, project)
-    updateLastProjectLocation(projectDirectory.path)
-    val path = Paths.get(projectDirectory.path)
+    val path = projectDirectory.toNioPath()
+    updateLastProjectLocation(path)
     ProjectManagerEx.getInstanceEx().loadAndOpenProject(path, OpenProjectTask(forceOpenInNewFrame = forceOpenInNewFrame, projectToClose = projectToClose, project = project))
     return project
   }
