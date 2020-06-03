@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
+import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -540,13 +541,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {
                 val symbol = lhs.symbol
-                val typeRef =
-                    symbol?.constructType(
-                        Array((symbol.phasedFir as? FirTypeParameterRefsOwner)?.typeParameters?.size ?: 0) {
-                            ConeStarProjection
-                        },
-                        isNullable = false,
-                    )
+                val typeRef = symbol?.constructType(lhs.typeArguments.map { it.toConeTypeProjection() }.toTypedArray(), isNullable = false)
                 if (typeRef != null) {
                     lhs.replaceTypeRef(buildResolvedTypeRef { type = typeRef })
                     typeRef

@@ -184,6 +184,16 @@ fun ConeKotlinType.toTypeProjection(variance: Variance): ConeTypeProjection =
         Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(this)
     }
 
+internal fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection =
+    when (this) {
+        is FirStarProjection -> ConeStarProjection
+        is FirTypeProjectionWithVariance -> {
+            val type = (this.typeRef as FirResolvedTypeRef).type
+            type.toTypeProjection(this.variance)
+        }
+        else -> error("!")
+    }
+
 fun ConeClassLikeLookupTag.constructClassType(
     typeArguments: Array<out ConeTypeProjection>,
     isNullable: Boolean,
