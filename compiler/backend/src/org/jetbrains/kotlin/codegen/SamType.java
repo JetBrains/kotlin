@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils;
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImplKt;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 public class SamType {
@@ -44,6 +45,10 @@ public class SamType {
         } else {
             singleArgumentType = valueParameter.getType();
             originalSingleArgumentType = valueParameter.getOriginal().getType();
+        }
+
+        if (KotlinTypeKt.isError(singleArgumentType) || KotlinTypeKt.isError(originalSingleArgumentType)) {
+            return null;
         }
 
         KotlinType originalTypeToUse =
