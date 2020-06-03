@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -41,6 +42,15 @@ fun KtDeclaration.resolveToDescriptorIfAny(
     } else {
         context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
     }
+}
+
+fun KtAnnotationEntry.resolveToDescriptorIfAny(
+    resolutionFacade: ResolutionFacade,
+    bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL
+): AnnotationDescriptor? {
+    //TODO: BodyResolveMode.PARTIAL is not quite safe!
+    val context = analyze(resolutionFacade, bodyResolveMode)
+    return context.get(BindingContext.ANNOTATION, this)
 }
 
 fun KtClassOrObject.resolveToDescriptorIfAny(
