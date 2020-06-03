@@ -5,11 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.roots.*
-import com.intellij.openapi.roots.impl.ModulesOrderEnumerator
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase

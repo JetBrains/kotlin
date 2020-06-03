@@ -56,8 +56,12 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
 
         // TODO(dsavvinov): review how it behaves in HMPP environment
         private val PLATFORM_TO_STDLIB_DETECTORS: Map<TargetPlatform, (Array<VirtualFile>) -> Boolean> = mapOf(
-            JvmPlatforms.unspecifiedJvmPlatform to { roots: Array<VirtualFile> -> JavaRuntimeDetectionUtil.getRuntimeJar(roots.toList()) != null },
-            JsPlatforms.defaultJsPlatform to { roots: Array<VirtualFile> -> JsLibraryStdDetectionUtil.getJsStdLibJar(roots.toList()) != null },
+            JvmPlatforms.unspecifiedJvmPlatform to { roots: Array<VirtualFile> ->
+                JavaRuntimeDetectionUtil.getRuntimeJar(roots.toList()) != null
+            },
+            JsPlatforms.defaultJsPlatform to { roots: Array<VirtualFile> ->
+                JsLibraryStdDetectionUtil.getJsStdLibJar(roots.toList()) != null
+            },
             CommonPlatforms.defaultCommonPlatform to { roots: Array<VirtualFile> ->
                 getLibraryJar(roots, PathUtil.KOTLIN_STDLIB_COMMON_JAR_PATTERN) != null
             }

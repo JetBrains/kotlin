@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
-import com.intellij.openapi.roots.impl.ModulesOrderEnumerator
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.idea.util.sourceRoots
@@ -94,7 +93,7 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
 
         val jvmMainModule = ModuleManager.getInstance(project).modules.first { it.name == "project_jvmMain" }
 
-        val enumerator = ModulesOrderEnumerator(listOf(jvmMainModule))
+        val enumerator = ProjectRootManager.getInstance(project).orderEntries(listOf(jvmMainModule))
         val roots = enumerator.classesRoots
 
         fun isRootPresent(file: File) = roots.any { it.path == ExternalSystemApiUtil.toCanonicalPath(file.path) }

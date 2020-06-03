@@ -78,10 +78,7 @@ fun closeProject(project: Project) {
 }
 
 fun runStartupActivities(project: Project) {
-    with(StartupManager.getInstance(project) as StartupManagerImpl) {
-        //scheduleInitialVfsRefresh()
-        runStartupActivities(project)
-    }
+    // obsolete
 }
 
 fun waitForAllEditorsFinallyLoaded(project: Project) {
