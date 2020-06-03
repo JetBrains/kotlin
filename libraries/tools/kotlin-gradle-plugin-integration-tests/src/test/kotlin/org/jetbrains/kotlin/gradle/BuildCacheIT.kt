@@ -34,7 +34,7 @@ class BuildCacheIT : BaseGradleIT() {
 
         build("assemble") {
             assertSuccessful()
-            assertContains("Packing task ':compileKotlin'")
+            assertTaskPackedToCache(":compileKotlin")
         }
 
         build("clean", "assemble", "-Dkotlin.caching.enabled=false") {
@@ -49,7 +49,7 @@ class BuildCacheIT : BaseGradleIT() {
 
         build("assemble") {
             assertSuccessful()
-            assertContains("Packing task ':compileKotlin'")
+            assertTaskPackedToCache(":compileKotlin")
         }
         build("clean", "assemble") {
             assertSuccessful()
@@ -65,7 +65,7 @@ class BuildCacheIT : BaseGradleIT() {
         build("assemble") {
             assertSuccessful()
             // Should store the output into the cache:
-            assertContains("Packing task ':compileKotlin'")
+            assertTaskPackedToCache(":compileKotlin")
         }
 
         val sourceFile = File(projectDir, "src/main/kotlin/helloWorld.kt")
@@ -75,7 +75,7 @@ class BuildCacheIT : BaseGradleIT() {
 
         build("assemble") {
             assertSuccessful()
-            assertContains("Packing task ':compileKotlin'")
+            assertTaskPackedToCache(":compileKotlin")
         }
 
         sourceFile.writeText(originalSource)
@@ -102,7 +102,7 @@ class BuildCacheIT : BaseGradleIT() {
         // First build, should be stored into the build cache:
         build("assemble") {
             assertSuccessful()
-            assertContains("Packing task ':compileKotlin'")
+            assertTaskPackedToCache(":compileKotlin")
         }
 
         // A cache hit:
@@ -134,8 +134,8 @@ class BuildCacheIT : BaseGradleIT() {
             )
             build(options = options, params = *arrayOf("clean", ":app:build")) {
                 assertSuccessful()
-                assertContains("Packing task ':app:kaptGenerateStubsKotlin'")
-                assertContains("Packing task ':app:kaptKotlin'")
+                assertTaskPackedToCache(":app:kaptGenerateStubsKotlin")
+                assertTaskPackedToCache(":app:kaptKotlin")
             }
 
             // copy project to a new location
@@ -157,4 +157,10 @@ fun BaseGradleIT.Project.prepareLocalBuildCache(directory: File = File(projectDi
     }
     File(projectDir, "settings.gradle").appendText("\nbuildCache.local.directory = '${directory.absolutePath.replace("\\", "/")}'")
     return directory
+}
+
+internal fun BaseGradleIT.CompiledProject.assertTaskPackedToCache(taskPath: String) {
+    with(project.testCase) {
+        assertContainsRegex(Regex("(?:Packing|Stored cache entry for) task '${Regex.escape(taskPath)}'"))
+    }
 }
