@@ -314,7 +314,7 @@ artifacts {
     publishedArtifacts javadocJar
     sources sourcesJar
     distSources distSourcesJar
-    distLibrary libraryJarWithoutIr
+    distLibrary libraryJarWithIr
 
     compileJs.outputs.files.forEach { artifact ->
         distJs(artifact) { builtBy(compileJs) }
