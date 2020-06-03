@@ -24,16 +24,17 @@ import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
 @State(name = "KotlinIdeAnchorService", storages = [Storage("anchors.xml")])
 class KotlinIdeResolutionAnchorService(
     val project: Project
-) : ResolutionAnchorProvider, 
+) : ResolutionAnchorProvider,
     PersistentStateComponent<KotlinIdeResolutionAnchorService.State> {
 
     data class State(
         var moduleNameToAnchorName: Map<String, String> = emptyMap()
     )
-    
+
     private val logger = logger<KotlinIdeResolutionAnchorService>()
 
     @JvmField
+    @Volatile
     var myState: State = State()
 
     private fun buildMapping(): Map<ModuleInfo, ModuleInfo> {
@@ -52,7 +53,7 @@ class KotlinIdeResolutionAnchorService(
             module to anchor
         }.toMap()
     }
-    
+
     private fun notFoundModule(moduleName: String): Nothing? {
         logger.warn("Module <${moduleName}> not found in project model")
         return null
@@ -63,15 +64,12 @@ class KotlinIdeResolutionAnchorService(
             buildMapping()
         }
 
-    @Synchronized
     override fun getState(): State = myState
 
-    @Synchronized
     override fun loadState(state: State) {
         XmlSerializerUtil.copyBean(state, myState)
     }
 
-    @Synchronized
     override fun getResolutionAnchor(moduleDescriptor: ModuleDescriptor): ModuleDescriptor? {
         if (!project.libraryToSourceAnalysisEnabled) return null
         val moduleInfo = moduleDescriptor.moduleInfo ?: return null
