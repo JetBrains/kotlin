@@ -582,9 +582,9 @@ class GenerateIrRuntime {
 
         jsPhases.invokeToplevel(phaseConfig, context, listOf(module))
 
-        val transformer = IrModuleToJsTransformer(context, null, null)
+        val transformer = IrModuleToJsTransformer(context, null)
 
-        return transformer.generateModule(module)
+        return transformer.generateModule(listOf(module))
     }
 
     fun compile(files: List<KtFile>): String {

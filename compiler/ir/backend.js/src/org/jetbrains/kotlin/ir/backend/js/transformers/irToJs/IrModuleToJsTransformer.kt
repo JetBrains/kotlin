@@ -35,7 +35,7 @@ class IrModuleToJsTransformer(
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
-    fun generateModule(module: IrModuleFragment, fullJs: Boolean = true, dceJs: Boolean = false): CompilerResult {
+    fun generateModule(modules: Iterable<IrModuleFragment>, fullJs: Boolean = true, dceJs: Boolean = false): CompilerResult {
         val additionalPackages = with(backendContext) {
             externalPackageFragment.values + listOf(
                 bodilessBuiltInsPackageFragment,
@@ -43,28 +43,32 @@ class IrModuleToJsTransformer(
             ) + packageLevelJsModules
         }
 
-        val exportedModule = ExportModelGenerator(backendContext).generateExport(module)
+        val exportedModule = ExportModelGenerator(backendContext).generateExport(modules)
         val dts = exportedModule.toTypeScript()
 
-        module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
+        modules.forEach { module ->
+            module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
+        }
 
-        namer.merge(module.files, additionalPackages)
+        modules.forEach { module ->
+            namer.merge(module.files, additionalPackages)
+        }
 
-        val jsCode = if (fullJs) generateWrappedModuleBody(module, exportedModule, namer) else null
+        val jsCode = if (fullJs) generateWrappedModuleBody(modules, exportedModule, namer) else null
 
         val dceJsCode = if (dceJs) {
-            eliminateDeadDeclarations(module, backendContext, mainFunction)
+            eliminateDeadDeclarations(modules, backendContext, mainFunction)
             // Use a fresh namer for DCE so that we could compare the result with DCE-driven
             // TODO: is this mode relevant for scripting? If yes, refactor so that the external name tables are used here when needed.
             val namer = NameTables(emptyList())
-            namer.merge(module.files, additionalPackages)
-            generateWrappedModuleBody(module, exportedModule, namer)
+            namer.merge(modules.flatMap { it.files }, additionalPackages)
+            generateWrappedModuleBody(modules, exportedModule, namer)
         } else null
 
         return CompilerResult(jsCode, dceJsCode, dts)
     }
 
-    private fun generateWrappedModuleBody(module: IrModuleFragment, exportedModule: ExportedModule, namer: NameTables): String {
+    private fun generateWrappedModuleBody(modules: Iterable<IrModuleFragment>, exportedModule: ExportedModule, namer: NameTables): String {
         val program = JsProgram()
 
         val nameGenerator = IrNamerImpl(
@@ -88,7 +92,7 @@ class IrModuleToJsTransformer(
                 declareFreshGlobal = { JsName(sanitizeName(it)) } // TODO: Declare fresh name
             )
 
-        val moduleBody = generateModuleBody(module, rootContext)
+        val moduleBody = generateModuleBody(modules, rootContext)
         val exportStatements = ExportModelToJsStatements(internalModuleName, namer)
             .generateModuleExport(exportedModule)
 
@@ -123,7 +127,7 @@ class IrModuleToJsTransformer(
         return program.toString()
     }
 
-    private fun generateModuleBody(module: IrModuleFragment, context: JsGenerationContext): List<JsStatement> {
+    private fun generateModuleBody(modules: Iterable<IrModuleFragment>, context: JsGenerationContext): List<JsStatement> {
         val statements = mutableListOf<JsStatement>().also {
             if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
         }
@@ -136,31 +140,33 @@ class IrModuleToJsTransformer(
         val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
         val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
 
-        module.files.forEach {
-            val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
-            if (fileStatements.isNotEmpty()) {
-                var startComment = ""
+        modules.forEach { module ->
+            module.files.forEach {
+                val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
+                if (fileStatements.isNotEmpty()) {
+                    var startComment = ""
 
-                if (generateRegionComments) {
-                    startComment = "region "
+                    if (generateRegionComments) {
+                        startComment = "region "
+                    }
+
+                    if (generateRegionComments || generateFilePaths) {
+                        val originalPath = it.path
+                        val path = pathPrefixMap.entries
+                            .find { (k, _) -> originalPath.startsWith(k) }
+                            ?.let { (k, v) -> v + originalPath.substring(k.length) }
+                            ?: originalPath
+
+                        startComment += "file: $path"
+                    }
+
+                    if (startComment.isNotEmpty()) {
+                        statements.add(JsSingleLineComment(startComment))
+                    }
+
+                    statements.addAll(fileStatements)
+                    statements.endRegion()
                 }
-
-                if (generateRegionComments || generateFilePaths) {
-                    val originalPath = it.path
-                    val path = pathPrefixMap.entries
-                        .find { (k, _) -> originalPath.startsWith(k) }
-                        ?.let { (k, v) -> v + originalPath.substring(k.length) }
-                        ?: originalPath
-
-                    startComment += "file: $path"
-                }
-
-                if (startComment.isNotEmpty()) {
-                    statements.add(JsSingleLineComment(startComment))
-                }
-
-                statements.addAll(fileStatements)
-                statements.endRegion()
             }
         }
 

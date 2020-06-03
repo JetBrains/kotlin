@@ -36,10 +36,10 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
         }
     }
 
-    fun generateExport(module: IrModuleFragment): ExportedModule =
+    fun generateExport(modules: Iterable<IrModuleFragment>): ExportedModule =
         ExportedModule(
             sanitizeName(context.configuration[CommonConfigurationKeys.MODULE_NAME]!!),
-            (context.externalPackageFragment.values + module.files).flatMap {
+            (context.externalPackageFragment.values + modules.flatMap { it.files }).flatMap {
                 generateExport(it)
             }
         )

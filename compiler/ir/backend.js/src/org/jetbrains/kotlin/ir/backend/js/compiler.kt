@@ -67,28 +67,27 @@ fun compile(
         is MainModule.Klib -> dependencyModules
     }
 
-    val irFiles = allModules.flatMap { it.files }
-
     deserializer.postProcess()
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
-    moduleFragment.files.clear()
-    moduleFragment.files += irFiles
-
-    moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
+    allModules.forEach { module ->
+        moveBodilessDeclarationsToSeparatePlace(context, module)
+    }
 
     if (dceDriven) {
 
         // TODO we should only generate tests for the current module
         // TODO should be done incrementally
-        generateTests(context, moduleFragment)
+        allModules.forEach { module ->
+            generateTests(context, module)
+        }
 
         val controller = MutableController(context, pirLowerings)
         stageController = controller
 
         controller.currentStage = controller.lowerings.size + 1
 
-        eliminateDeadDeclarations(moduleFragment, context, mainFunction)
+        eliminateDeadDeclarations(allModules, context, mainFunction)
 
         // TODO investigate whether this is needed anymore
         stageController = object : StageController {
@@ -96,11 +95,11 @@ fun compile(
         }
 
         val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
-        return transformer.generateModule(moduleFragment, fullJs = true, dceJs = false)
+        return transformer.generateModule(allModules, fullJs = true, dceJs = false)
     } else {
-        jsPhases.invokeToplevel(phaseConfig, context, listOf(moduleFragment))
+        jsPhases.invokeToplevel(phaseConfig, context, allModules)
         val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
-        return transformer.generateModule(moduleFragment, generateFullJs, generateDceJs)
+        return transformer.generateModule(allModules, generateFullJs, generateDceJs)
     }
 }
 
@@ -113,5 +112,5 @@ fun generateJsCode(
     jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
 
     val transformer = IrModuleToJsTransformer(context, null, null, true, nameTables)
-    return transformer.generateModule(moduleFragment).jsCode!!
+    return transformer.generateModule(listOf(moduleFragment)).jsCode!!
 }
