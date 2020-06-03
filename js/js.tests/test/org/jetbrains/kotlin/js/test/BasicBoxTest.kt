@@ -67,15 +67,15 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 abstract class BasicBoxTest(
-        protected val pathToTestDir: String,
-        testGroupOutputDirPrefix: String,
-        pathToRootOutputDir: String = BasicBoxTest.TEST_DATA_DIR_PATH,
-        private val typedArraysEnabled: Boolean = true,
-        private val generateSourceMap: Boolean = false,
-        private val generateNodeJsRunner: Boolean = true,
-        private val targetBackend: TargetBackend = TargetBackend.JS
+    protected val pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+    pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
+    private val typedArraysEnabled: Boolean = true,
+    private val generateSourceMap: Boolean = false,
+    private val generateNodeJsRunner: Boolean = true,
+    private val targetBackend: TargetBackend = TargetBackend.JS
 ) : KotlinTestWithEnvironment() {
-    val additionalCommonFileDirectories = mutableListOf<String>()
+    private val additionalCommonFileDirectories = mutableListOf<String>()
 
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
     private val testGroupOutputDirForMinification = File(pathToRootOutputDir + "out-min/" + testGroupOutputDirPrefix)
@@ -145,8 +145,8 @@ abstract class BasicBoxTest(
                 coroutinesPackage
             )
             val modules = inputFiles
-                    .map { it.module }.distinct()
-                    .map { it.name to it }.toMap()
+                .map { it.module }.distinct()
+                .map { it.name to it }.toMap()
 
             fun TestModule.allTransitiveDependencies(): Set<String> {
                 return dependenciesSymbols.toSet() + dependenciesSymbols.flatMap { modules[it]!!.allTransitiveDependencies() }
@@ -218,13 +218,13 @@ abstract class BasicBoxTest(
                 JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/", JavaScript.EXTENSION)
             }
             val inputJsFiles = inputFiles
-                    .filter { it.fileName.endsWith(".js") }
-                    .map { inputJsFile ->
-                        val sourceFile = File(inputJsFile.fileName)
-                        val targetFile = File(outputDir, inputJsFile.module.outputFileSimpleName() + "-js-" + sourceFile.name)
-                        FileUtil.copy(File(inputJsFile.fileName), targetFile)
-                        targetFile.absolutePath
-                    }
+                .filter { it.fileName.endsWith(".js") }
+                .map { inputJsFile ->
+                    val sourceFile = File(inputJsFile.fileName)
+                    val targetFile = File(outputDir, inputJsFile.module.outputFileSimpleName() + "-js-" + sourceFile.name)
+                    FileUtil.copy(File(inputJsFile.fileName), targetFile)
+                    targetFile.absolutePath
+                }
 
             val additionalFiles = mutableListOf<String>()
 
@@ -562,21 +562,10 @@ abstract class BasicBoxTest(
         val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
 
         translateFiles(
-            translationUnits,
-            recompiledOutputFile,
-            recompiledOutputFile,
-            recompiledOutputFile,
-            recompiledConfig,
-            outputPrefixFile,
-            outputPostfixFile,
-            mainCallParameters,
-            incrementalData,
-            remap,
-            testPackage,
-            testFunction,
-            needsFullIrRuntime,
-            isMainModule = false,
-            skipDceDriven = true,
+            translationUnits, recompiledOutputFile, recompiledOutputFile, recompiledOutputFile, recompiledConfig,
+            outputPrefixFile, outputPostfixFile,
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime,
+            isMainModule = false, skipDceDriven = true,
             splitPerModule = false,
             propertyLazyInitialization = false,
         )
@@ -586,23 +575,27 @@ abstract class BasicBoxTest(
         assertEquals("Output file changed after recompilation", originalOutput, recompiledOutput)
 
         val originalSourceMap = FileUtil.loadFile(File(outputFile.parentFile, outputFile.name + ".map"))
-        val recompiledSourceMap = removeRecompiledSuffix(
-                FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.name + ".map")))
+        val recompiledSourceMap =
+            removeRecompiledSuffix(FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.name + ".map")))
         if (originalSourceMap != recompiledSourceMap) {
             val originalSourceMapParse = SourceMapParser.parse(originalSourceMap)
             val recompiledSourceMapParse = SourceMapParser.parse(recompiledSourceMap)
             if (originalSourceMapParse is SourceMapSuccess && recompiledSourceMapParse is SourceMapSuccess) {
-                assertEquals("Source map file changed after recompilation",
-                             originalSourceMapParse.toDebugString(),
-                             recompiledSourceMapParse.toDebugString())
+                assertEquals(
+                    "Source map file changed after recompilation",
+                    originalSourceMapParse.toDebugString(),
+                    recompiledSourceMapParse.toDebugString()
+                )
             }
             assertEquals("Source map file changed after recompilation", originalSourceMap, recompiledSourceMap)
         }
 
         if (multiModule) {
             val originalMetadata = FileUtil.loadFile(File(outputFile.parentFile, outputFile.nameWithoutExtension + ".meta.js"))
-            val recompiledMetadata = removeRecompiledSuffix(
-                    FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + ".meta.js")))
+            val recompiledMetadata =
+                removeRecompiledSuffix(
+                    FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + ".meta.js"))
+                )
             assertEquals(
                 "Metadata file changed after recompilation",
                 metadataAsString(originalMetadata),
@@ -775,13 +768,11 @@ abstract class BasicBoxTest(
         })
     }
 
-    protected fun createPsiFile(fileName: String): KtFile {
+    private fun createPsiFile(fileName: String): KtFile {
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
-        val file = fileSystem.findFileByPath(fileName)
-        if (file == null)
-            error("File not found: ${fileName}")
+        val file = fileSystem.findFileByPath(fileName) ?: error("File not found: ${fileName}")
 
         return psiManager.findFile(file) as KtFile
     }
@@ -1061,10 +1052,10 @@ abstract class BasicBoxTest(
         @JvmStatic
         protected val runTestInNashorn = getBoolean("kotlin.js.useNashorn")
 
-        val TEST_MODULE = "JS_TESTS"
-        private val DEFAULT_MODULE = "main"
-        private val TEST_FUNCTION = "box"
-        private val OLD_MODULE_SUFFIX = "-old"
+        const val TEST_MODULE = "JS_TESTS"
+        private const val DEFAULT_MODULE = "main"
+        private const val TEST_FUNCTION = "box"
+        private const val OLD_MODULE_SUFFIX = "-old"
 
         const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
         private val engineForMinifier =
