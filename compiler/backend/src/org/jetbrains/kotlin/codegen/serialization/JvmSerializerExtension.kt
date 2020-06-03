@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPrivateApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
+import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer.Companion.writeVersionRequirement
@@ -202,7 +203,10 @@ class JvmSerializerExtension @JvmOverloads constructor(
             versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
         }
 
-        if (requiresFunctionNameManglingForReturnType(descriptor)) {
+        if (requiresFunctionNameManglingForReturnType(descriptor) &&
+            !DescriptorUtils.hasJvmNameAnnotation(descriptor) &&
+            !requiresFunctionNameManglingForParameterTypes(descriptor)
+        ) {
             versionRequirementTable?.writeFunctionNameManglingForReturnTypeRequirement(proto::addVersionRequirement)
         }
     }
@@ -267,7 +271,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
             versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
         }
 
-        if (requiresFunctionNameManglingForReturnType(descriptor)) {
+        if (!DescriptorUtils.hasJvmNameAnnotation(descriptor) && requiresFunctionNameManglingForReturnType(descriptor)) {
             versionRequirementTable?.writeFunctionNameManglingForReturnTypeRequirement(proto::addVersionRequirement)
         }
     }
