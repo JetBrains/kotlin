@@ -14,6 +14,7 @@ import com.android.build.gradle.tasks.MergeResources
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
@@ -151,7 +152,7 @@ class Android25ProjectHandler(
 
         val buildTypeAttrValue = project.objects.named(BuildTypeAttr::class.java, variant.buildType.name)
         listOf(compilation.compileDependencyConfigurationName, compilation.runtimeDependencyConfigurationName).forEach {
-            project.configurations.findByName(it)?.attributes?.attribute(BuildTypeAttr.ATTRIBUTE, buildTypeAttrValue)
+            project.configurations.findByName(it)?.attributes?.attribute(Attribute.of(BuildTypeAttr::class.java), buildTypeAttrValue)
         }
 
         // TODO this code depends on the convention that is present in the Android plugin as there's no public API
