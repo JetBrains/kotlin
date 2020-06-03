@@ -122,7 +122,30 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
 
         val targetPlist = mutableMapOf<String, Any>().also { plist ->
             target.launchStoryboard?.let { plist["UILaunchStoryboardName"] = it }
-            target.mainStoryboard?.let { plist["UIMainStoryboardFile"] = it }
+            val mainStoryboard = target.mainStoryboard
+            val sceneDelegateClass = target.sceneDelegateClass
+
+            if (mainStoryboard != null && sceneDelegateClass != null) {
+                logger.warn("Both mainStoryboard and sceneDelegateClass are specified, sceneDelegateClass will be ignored")
+            }
+
+            if (mainStoryboard != null) {
+                plist["UIMainStoryboardFile"] = mainStoryboard
+            } else if (sceneDelegateClass != null) {
+                plist["UIApplicationSceneManifest"] = Plist().also {
+                    it["UIApplicationSupportsMultipleScenes"] = false
+                    it["UISceneConfigurations"] = Plist().also {
+                        it["UIWindowSceneSessionRoleApplication"] = listOf(
+                            Plist().also {
+                                it["UISceneConfigurationName"] = "Default Configuration"
+                                it["UISceneDelegateClassName"] = "\$(PRODUCT_MODULE_NAME).$sceneDelegateClass"
+                            }
+                        )
+                    }
+                }
+            } else {
+                logger.warn("Please specify either mainStoryboard and sceneDelegateClass")
+            }
         }
         val infoPlistFile = writePlist("Info-${target.name}", targetPlist)
         val testInfoPlistFile = writePlist("Info-${target.name}Tests", emptyMap())
@@ -435,6 +458,7 @@ private open class DefaultAppleTarget @Inject constructor(
 
     override var launchStoryboard: String? = null
     override var mainStoryboard: String? = null
+    override var sceneDelegateClass: String? = null
     override var bridgingHeader: String? = null
 }
 

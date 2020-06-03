@@ -15,5 +15,6 @@ interface AppleTarget : Serializable {
 
     var launchStoryboard: String?
     var mainStoryboard: String?
+    var sceneDelegateClass: String?
     var bridgingHeader: String?
 }
