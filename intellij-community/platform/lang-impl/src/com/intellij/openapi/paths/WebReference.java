@@ -91,6 +91,6 @@ public class WebReference extends PsiReferenceBase<PsiElement> {
    * @return true if the element is able to contain WebReference
    */
   public static boolean isWebReferenceWorthy(@NotNull PsiElement element) {
-    return element instanceof PsiLanguageInjectionHost || element instanceof HintedReferenceHost || element instanceof ContributedReferenceHost || element instanceof PsiExternalReferenceHost;
+    return element instanceof HintedReferenceHost || element instanceof ContributedReferenceHost || element instanceof PsiExternalReferenceHost;
   }
 }
