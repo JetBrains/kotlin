@@ -25,6 +25,9 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.lang.UrlClassLoader;
 import gnu.trove.THashSet;
+import org.apache.velocity.runtime.ParserPool;
+import org.apache.velocity.runtime.RuntimeServices;
+import org.apache.velocity.runtime.RuntimeSingleton;
 import org.apache.velocity.runtime.directive.Stop;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,6 +72,7 @@ class FileTemplatesLoader implements Disposable {
         public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
           // this shouldn't be necessary once we update to a new Velocity Engine with this leak fixed (IDEA-240449, IDEABKL-7932)
           clearClassLeakViaStaticExceptionTrace();
+          resetParserPool();
         }
 
         private void clearClassLeakViaStaticExceptionTrace() {
@@ -80,6 +84,22 @@ class FileTemplatesLoader implements Disposable {
             catch (Throwable e) {
               LOG.info(e);
             }
+          }
+        }
+
+        private void resetParserPool() {
+          try {
+            RuntimeServices ri = RuntimeSingleton.getRuntimeServices();
+            Field ppField = ReflectionUtil.getDeclaredField(ri.getClass(), "parserPool");
+            if (ppField != null) {
+              Object pp = ppField.get(ri);
+              if (pp instanceof ParserPool) {
+                ((ParserPool)pp).initialize(ri);
+              }
+            }
+          }
+          catch (Throwable e) {
+            LOG.info(e);
           }
         }
 
