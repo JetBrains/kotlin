@@ -183,22 +183,6 @@ class CompileTimeConstantEvaluator {
     private fun <T : Number> FirConstKind<T>.toConstExpression(source: FirSourceElement?, value: Number): FirConstExpression<T> =
         @Suppress("UNCHECKED_CAST")
         buildConstExpression(source, this, value as T)
-
-    // TODO: extension functions, e.g., Byte.and
-    // TODO: toChar?, toString?
-    companion object {
-        private val unaryOperatorNames: Set<String> = setOf(
-            "hashCode",
-            "dec", "inc", "unaryMinus", "unaryPlus",
-            "toByte", "toDouble", "toFloat", "toInt", "toLong", "toShort"
-        )
-
-        // TODO: rangeTo?
-        private val binaryOperatorNames: Set<String> = setOf(
-            // TODO: "compareTo", "equals",
-            "div", "minus", "mod", "plus", "rem", "times"
-        )
-    }
 }
 
 val <T> FirConstExpression<T>.typedValue: T

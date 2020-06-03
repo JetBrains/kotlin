@@ -73,6 +73,14 @@ fun generateFirMap(): String {
     p.renderBinaryOperations(binaryOperationsMap)
     p.popIndent()
     p.println(")")
+    p.println()
+
+    p.println(
+        """
+        |internal val unaryOperatorNames = unaryOperations.map { it.key.opName }.toHashSet()
+        |internal val binaryOperatorNames = binaryOperations.map { it.key.opName }.toHashSet()
+    """.trimMargin()
+    )
 
     return sb.toString()
 }
