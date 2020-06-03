@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.Errors.CAPTURED_VAL_INITIALIZATION
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE
-import org.jetbrains.kotlin.resolve.BindingContext.FIELD_CAPTURED_IN_EXACLY_ONCE_CLOSURE
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -35,6 +35,7 @@ class CapturingInClosureChecker : CallChecker {
         val variableDescriptor = variableResolvedCall.resultingDescriptor as? VariableDescriptor
         if (variableDescriptor != null) {
             checkCapturingInClosure(variableDescriptor, context.trace, context.scope)
+            checkFieldInExactlyOnceLambdaInitialization(variableDescriptor, context.trace, context.scope.ownerDescriptor, reportOn)
         }
     }
 
@@ -47,12 +48,23 @@ class CapturingInClosureChecker : CallChecker {
                 return
             }
         }
-        // Check whether a field is captured in EXACTLY_ONCE contract
-        if (variable !is PropertyDescriptor || scopeContainer !is AnonymousFunctionDescriptor) return
+    }
+
+    private fun checkFieldInExactlyOnceLambdaInitialization(
+        variable: VariableDescriptor,
+        trace: BindingTrace,
+        scopeContainer: DeclarationDescriptor,
+        reportOn: PsiElement
+    ) {
+        if (variable !is PropertyDescriptor || scopeContainer !is AnonymousFunctionDescriptor || variable.isVar) return
         val scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer) as? KtFunction ?: return
         if (scopeContainer.containingDeclaration !is ConstructorDescriptor) return
-        if (isExactlyOnceContract(trace.bindingContext, scopeDeclaration)) {
-            trace.record(FIELD_CAPTURED_IN_EXACLY_ONCE_CLOSURE, variable)
+        if (!isExactlyOnceContract(trace.bindingContext, scopeDeclaration)) return
+        if (trace.bindingContext[CAPTURED_IN_CLOSURE, variable] == CaptureKind.NOT_INLINE) return
+        val (callee, param) = getCalleeDescriptorAndParameter(trace.bindingContext, scopeDeclaration) ?: return
+        if (callee !is FunctionDescriptor) return
+        if (!callee.isInline || (param.isCrossinline || !InlineUtil.isInlineParameter(param))) {
+            trace.report(CAPTURED_VAL_INITIALIZATION.on(reportOn as KtExpression, variable))
         }
     }
 
