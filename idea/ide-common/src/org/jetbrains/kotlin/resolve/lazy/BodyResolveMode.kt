@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.resolve.BindingTraceFilter
 
-enum class BodyResolveMode(val bindingTraceFilter: BindingTraceFilter, val doControlFlowAnalysis: Boolean) {
+enum class BodyResolveMode(val bindingTraceFilter: BindingTraceFilter, val doControlFlowAnalysis: Boolean, val resolveAdditionals: Boolean = true) {
     // All body statements are analyzed, diagnostics included
     FULL(BindingTraceFilter.ACCEPT_ALL, doControlFlowAnalysis = true),
 
@@ -21,8 +21,10 @@ enum class BodyResolveMode(val bindingTraceFilter: BindingTraceFilter, val doCon
     PARTIAL_WITH_CFA(BindingTraceFilter.NO_DIAGNOSTICS, doControlFlowAnalysis = true),
 
     // Analyzes only dependent statements, including only used declaration statements, does not perform control flow analysis
-    PARTIAL(BindingTraceFilter.NO_DIAGNOSTICS, doControlFlowAnalysis = false)
+    PARTIAL(BindingTraceFilter.NO_DIAGNOSTICS, doControlFlowAnalysis = false),
 
+    // Resolve mode to resolve only the element itself without the additional elements (annotation resolve would not lead to function resolve or default parameters)
+    PARTIAL_NO_ADDITIONAL(BindingTraceFilter.NO_DIAGNOSTICS, doControlFlowAnalysis = false, resolveAdditionals = false)
     ;
 
     fun doesNotLessThan(other: BodyResolveMode): Boolean {

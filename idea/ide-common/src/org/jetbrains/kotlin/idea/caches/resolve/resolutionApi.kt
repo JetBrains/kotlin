@@ -94,7 +94,7 @@ fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescrip
 }
 
 fun KtAnnotationEntry.resolveToDescriptorIfAny(
-    bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL
+    bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL_NO_ADDITIONAL
 ): AnnotationDescriptor? =
     resolveToDescriptorIfAny(getResolutionFacade(), bodyResolveMode)
 
