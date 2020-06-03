@@ -98,7 +98,7 @@ fun compile(
         val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
         return transformer.generateModule(moduleFragment, fullJs = true, dceJs = false)
     } else {
-        jsPhases.invokeToplevel(phaseConfig, context, moduleFragment)
+        jsPhases.invokeToplevel(phaseConfig, context, listOf(moduleFragment))
         val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
         return transformer.generateModule(moduleFragment, generateFullJs, generateDceJs)
     }
@@ -110,7 +110,7 @@ fun generateJsCode(
     nameTables: NameTables
 ): String {
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
-    jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, moduleFragment)
+    jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
 
     val transformer = IrModuleToJsTransformer(context, null, null, true, nameTables)
     return transformer.generateModule(moduleFragment).jsCode!!
