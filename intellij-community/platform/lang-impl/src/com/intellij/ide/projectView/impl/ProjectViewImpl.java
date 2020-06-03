@@ -959,7 +959,12 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     AnAction collapseAllAction = CommonActionsManager.getInstance().createCollapseAllAction(new DefaultTreeExpander(() -> {
       AbstractProjectViewPane pane = getCurrentProjectViewPane();
       return pane == null ? null : pane.myTree;
-    }), getComponent());
+    }) {
+      @Override
+      protected void collapseAll(@NotNull JTree tree, boolean strict, int keepSelectionLevel) {
+        super.collapseAll(tree, false, keepSelectionLevel);
+      }
+    }, getComponent());
     collapseAllAction.getTemplatePresentation().setIcon(AllIcons.Actions.Collapseall);
     titleActions.add(collapseAllAction);
   }
