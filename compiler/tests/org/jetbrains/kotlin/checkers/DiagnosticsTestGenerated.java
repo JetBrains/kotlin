@@ -3823,6 +3823,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/fieldAsClassDelegate.kt");
             }
 
+            @TestMetadata("fieldInitialization.kt")
+            public void testFieldInitialization() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/fieldInitialization.kt");
+            }
+
             @TestMetadata("infiniteLoops.kt")
             public void testInfiniteLoops() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/infiniteLoops.kt");

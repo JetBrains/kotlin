@@ -5097,11 +5097,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/contracts/exception.kt");
         }
 
-        @TestMetadata("field.kt")
-        public void testField() throws Exception {
-            runTest("compiler/testData/codegen/box/contracts/field.kt");
-        }
-
         @TestMetadata("forLoop.kt")
         public void testForLoop() throws Exception {
             runTest("compiler/testData/codegen/box/contracts/forLoop.kt");
