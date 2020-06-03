@@ -672,7 +672,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     if (filter == GlobalSearchScope.EMPTY_SCOPE) {
       return false;
     }
-    boolean dumbModeAccessRestricted = ourDumbModeAccessTypeStack.get() == null;
+    boolean dumbModeAccessRestricted = ourDumbModeAccessTypeStack.get().isEmpty();
     if (dumbModeAccessRestricted && ActionUtil.isDumbMode(project)) {
       handleDumbMode(project);
     }
