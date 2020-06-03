@@ -169,7 +169,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
         inline class Bar(val value: Int)
         fun nonNull(bar: Bar) {}
-        @Direct @Composable fun Foo(bar: Bar = Bar(123)) {
+        @ComposableContract(restartable = false) @Composable fun Foo(bar: Bar = Bar(123)) {
             nonNull(bar)
         }
         """

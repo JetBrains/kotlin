@@ -27,14 +27,14 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
     ) = verifyComposeIrTransform(
         """
             import androidx.compose.Composable
-            import androidx.compose.Direct
+            import androidx.compose.ComposableContract
 
             $checked
         """.trimIndent(),
         expectedTransformed,
         """
             import androidx.compose.Composable
-            import androidx.compose.Direct
+            import androidx.compose.ComposableContract
 
             $unchecked
         """.trimIndent(),
@@ -1014,17 +1014,17 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """,
         """
             open class Foo {
-                @Direct @Composable fun foo(x: Int = 0) {}
+                @ComposableContract(restartable = false) @Composable fun foo(x: Int = 0) {}
             }
             class Bar: Foo() {
-                @Direct @Composable fun Example() {
+                @ComposableContract(restartable = false) @Composable fun Example() {
                     foo()
                 }
             }
         """,
         """
             open class Foo {
-              @Direct
+              @ComposableContract(restartable = false)
               @Composable
               fun foo(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
                 %composer.startReplaceableGroup(%key)
@@ -1033,7 +1033,7 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
               }
             }
             class Bar : Foo {
-              @Direct
+              @ComposableContract(restartable = false)
               @Composable
               fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
                 %composer.startReplaceableGroup(%key)

@@ -27,7 +27,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
     ) = verifyComposeIrTransform(
         """
             import androidx.compose.Composable
-            import androidx.compose.Direct
+            import androidx.compose.ComposableContract
 
             $checked
         """.trimIndent(),
@@ -2143,6 +2143,50 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
                 Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, %composer, %key, %changed or 0b0001, %changed1, %default)
               }
+            }
+        """
+    )
+
+    @Test
+    fun testGrouplessProperty(): Unit = comparisonPropagation(
+        """
+        """,
+        """
+            import androidx.compose.currentComposer
+
+            open class Foo {
+                @ComposableContract(readonly = true)
+                @Composable
+                inline val current: Int get() = currentComposer.hashCode()
+
+                @ComposableContract(readonly = true)
+                @Composable
+                fun getHashCode(): Int = currentComposer.hashCode()
+            }
+
+            @ComposableContract(readonly = true)
+            @Composable
+            fun getHashCode(): Int = currentComposer.hashCode()
+        """,
+        """
+            open class Foo {
+              val current: Int
+                get() {
+                  val tmp0 = %composer.hashCode()
+                  return tmp0
+                }
+              @ComposableContract(readonly = true)
+              @Composable
+              fun getHashCode(%composer: Composer<*>?, %key: Int, %changed: Int): Int {
+                val tmp0 = %composer.hashCode()
+                return tmp0
+              }
+            }
+            @ComposableContract(readonly = true)
+            @Composable
+            fun getHashCode(%composer: Composer<*>?, %key: Int, %changed: Int): Int {
+              val tmp0 = %composer.hashCode()
+              return tmp0
             }
         """
     )
