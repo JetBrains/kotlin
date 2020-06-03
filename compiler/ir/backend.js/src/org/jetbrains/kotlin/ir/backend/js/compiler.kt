@@ -98,8 +98,7 @@ fun compile(
         val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
         return transformer.generateModule(moduleFragment, fullJs = true, dceJs = false)
     } else {
-        val phases = if (es6mode) jsEs6Phases else jsPhases
-        phases.invokeToplevel(phaseConfig, context, moduleFragment)
+        jsPhases.invokeToplevel(phaseConfig, context, moduleFragment)
         val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
         return transformer.generateModule(moduleFragment, generateFullJs, generateDceJs)
     }

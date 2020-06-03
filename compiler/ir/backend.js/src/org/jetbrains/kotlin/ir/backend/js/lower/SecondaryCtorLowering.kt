@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 class SecondaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        assert(!context.es6mode)
+        if (context.es6mode) return null
 
         if (declaration is IrConstructor && !declaration.isPrimary) {
             val irClass = declaration.parentAsClass

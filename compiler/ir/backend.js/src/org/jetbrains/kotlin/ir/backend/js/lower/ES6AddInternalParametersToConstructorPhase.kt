@@ -55,7 +55,7 @@ class ES6AddInternalParametersToConstructorPhase(val context: JsIrBackendContext
     object ES6_RESULT_TYPE_PARAMETER : IrDeclarationOriginImpl("ES6_RESULT_TYPE_PARAMETER")
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        assert(context.es6mode)
+        if (!context.es6mode) return
 
         container.transform(CallSiteTransformer(), null)
 
