@@ -1031,6 +1031,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-core/intellij.cidr.core.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-core/intellij.cidr.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-coverage/intellij.cidr.coverage.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-coverage/intellij.cidr.coverage.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/intellij.cidr.debugger.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/intellij.cidr.debugger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.api.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/commandInterpreterLang/intellij.cidr.debugger.commandInterpreterLang.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/commandInterpreterLang/intellij.cidr.debugger.commandInterpreterLang.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-external-system/intellij.cidr.externalSystem.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-external-system/intellij.cidr.externalSystem.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-ide/intellij.cidr.ide.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-ide/intellij.cidr.ide.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-IntelliLang/intellij.cidr.langInjection.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-IntelliLang/intellij.cidr.langInjection.iml" />
@@ -1047,6 +1049,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-util/serializer/intellij.cidr.util.serializer.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-util/serializer/intellij.cidr.util.serializer.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-util/ui/intellij.cidr.util.ui.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-util/ui/intellij.cidr.util.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModel/intellij.cidr.workspaceModel.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModel/intellij.cidr.workspaceModel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModelBridge/intellij.cidr.workspaceModelBridge.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-workspaceModelBridge/intellij.cidr.workspaceModelBridge.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/xcode-model-core/intellij.cidr.xcodeModel.core.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/xcode-model-core/intellij.cidr.xcodeModel.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/xctest/intellij.cidr.xctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/xctest/intellij.cidr.xctest.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client/intellij.client.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client/intellij.client.iml" />
@@ -1211,6 +1214,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-prebuilt-stubs/intellij.go.prebuiltStubs.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-prebuilt-stubs/intellij.go.prebuiltStubs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-statsCollector/intellij.go.statsCollector.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-statsCollector/intellij.go.statsCollector.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/template/intellij.go.template.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/template/intellij.go.template.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/template-integration/intellij.go.template.integration.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/template-integration/intellij.go.template.integration.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/testing/intellij.go.testing.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/testing/intellij.go.testing.iml" />
@@ -1758,10 +1762,10 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/vcs-tests/intellij.platform.vcs.tests.iml" filepath="$PROJECT_DIR$/intellij/community/platform/vcs-tests/intellij.platform.vcs.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/webcore/intellij.platform.webide.iml" filepath="$PROJECT_DIR$/intellij/webcore/intellij.platform.webide.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/webcore/impl/intellij.platform.webide.impl.iml" filepath="$PROJECT_DIR$/intellij/webcore/impl/intellij.platform.webide.impl.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/workspaceModel-core/intellij.platform.workspaceModel.core.iml" filepath="$PROJECT_DIR$/intellij/community/platform/workspaceModel-core/intellij.platform.workspaceModel.core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/workspaceModel-core-tests/intellij.platform.workspaceModel.core.tests.iml" filepath="$PROJECT_DIR$/intellij/community/platform/workspaceModel-core-tests/intellij.platform.workspaceModel.core.tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/workspaceModel-ide/intellij.platform.workspaceModel.ide.iml" filepath="$PROJECT_DIR$/intellij/community/platform/workspaceModel-ide/intellij.platform.workspaceModel.ide.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/workspaceModel-ide-tests/intellij.platform.workspaceModel.ide.tests.iml" filepath="$PROJECT_DIR$/intellij/community/platform/workspaceModel-ide-tests/intellij.platform.workspaceModel.ide.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/workspaceModel/ide/intellij.platform.workspaceModel.ide.iml" filepath="$PROJECT_DIR$/intellij/community/platform/workspaceModel/ide/intellij.platform.workspaceModel.ide.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/workspaceModel/ide/tests/intellij.platform.workspaceModel.ide.tests.iml" filepath="$PROJECT_DIR$/intellij/community/platform/workspaceModel/ide/tests/intellij.platform.workspaceModel.ide.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/workspaceModel/storage/intellij.platform.workspaceModel.storage.iml" filepath="$PROJECT_DIR$/intellij/community/platform/workspaceModel/storage/intellij.platform.workspaceModel.storage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/workspaceModel/storage/tests/intellij.platform.workspaceModel.storage.tests.iml" filepath="$PROJECT_DIR$/intellij/community/platform/workspaceModel/storage/tests/intellij.platform.workspaceModel.storage.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/play/intellij.play.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/play/intellij.play.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/postcss/intellij.postcss.iml" filepath="$PROJECT_DIR$/intellij/contrib/postcss/intellij.postcss.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/prettierJS/intellij.prettierJS.iml" filepath="$PROJECT_DIR$/intellij/contrib/prettierJS/intellij.prettierJS.iml" />
@@ -2037,6 +2041,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/webDeployment/envTests/intellij.webDeployment.envTests.iml" filepath="$PROJECT_DIR$/intellij/plugins/webDeployment/envTests/intellij.webDeployment.envTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/webDeployment/intellij.webDeployment.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/webDeployment/intellij.webDeployment.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/javaee/webDeployment-transport/intellij.webDeployment.transport.iml" filepath="$PROJECT_DIR$/intellij/plugins/javaee/webDeployment-transport/intellij.webDeployment.transport.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/webp/intellij.webp.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/webp/intellij.webp.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/WebStorm/intellij.webstorm.iml" filepath="$PROJECT_DIR$/intellij/WebStorm/intellij.webstorm.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/WebStorm/intellij.webstorm.branding.iml" filepath="$PROJECT_DIR$/intellij/WebStorm/intellij.webstorm.branding.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/WebStorm/intellij.webstorm.build.iml" filepath="$PROJECT_DIR$/intellij/WebStorm/intellij.webstorm.build.iml" />

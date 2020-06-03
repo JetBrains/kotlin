@@ -1065,7 +1065,7 @@
       <option name="m_reportEmptyBlocks" value="false" />
     </inspection_tool>
     <inspection_tool class="EmptySynchronizedStatement" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="EmptyTryBlock" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="EmptyTryBlock" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EmptyTryBlockJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="EmptyWebServiceClass" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="EndBlockNamesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -2463,9 +2463,9 @@
       <option name="m_limit" value="5" />
     </inspection_tool>
     <inspection_tool class="PathAnnotation" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PatternNotApplicable" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="PatternNotApplicable" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="PatternOverriddenByNonAnnotatedMethod" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PatternValidation" enabled="false" level="WARNING" enabled_by_default="false">
+    <inspection_tool class="PatternValidation" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="CHECK_NON_CONSTANT_VALUES" value="true" />
     </inspection_tool>
     <inspection_tool class="PatternVariableCanBeUsed" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -3192,7 +3192,7 @@
     <inspection_tool class="SimplifyFor" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="SimplifyForEach" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="SimplifyNegatedBinaryExpression" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-    <inspection_tool class="SimplifyOptionalCallChains" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="SimplifyOptionalCallChains" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SimplifyStreamApiCallChains" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false" />
     </inspection_tool>
@@ -3718,7 +3718,7 @@
     <inspection_tool class="TestMethodInProductCode" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="TestMethodIsPublicVoidNoArg" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="TestMethodWithoutAssertion" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="TestNGDataProvider" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="TestNGDataProvider" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TestNGMethodNamingConvention" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="TestOnlyProblems" enabled="false" level="WARNING" enabled_by_default="true">
       <scope name="test-framework" level="WARNING" enabled="false" />
@@ -3953,7 +3953,7 @@
     <inspection_tool class="UnresolvedReference" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="UnresolvedRestParam" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="UnsafeCastFromDynamic" enabled="false" level="INFO" enabled_by_default="false" />
-    <inspection_tool class="UnsafeReturnStatementVisitor" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="UnsafeReturnStatementVisitor" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnsafeVfsRecursion" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnsecureRandomNumberGeneration" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnsortedPropertiesFile" enabled="false" level="INFO" enabled_by_default="false" />

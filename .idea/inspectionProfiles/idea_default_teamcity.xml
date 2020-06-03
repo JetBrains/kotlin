@@ -2835,7 +2835,7 @@
       <scope name="Tests" level="WARNING" enabled="false">
         <option name="loggerClassName" value="java.util.logging.Logger" />
       </scope>
-      <option name="loggerClassName" value="java.util.logging.Logger" />
+      <option name="loggerClassName" value="java.util.logging.Logger,com.intellij.openapi.diagnostic.Logger" />
     </inspection_tool>
     <inspection_tool class="NonSynchronizedMethodOverridesSynchronizedMethod" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="android" level="WARNING" enabled="false" />

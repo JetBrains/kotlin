@@ -273,6 +273,7 @@
       <option name="m_reportEmptyBlocks" value="false" />
     </inspection_tool>
     <inspection_tool class="EmptySynchronizedStatement" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="EmptyTryBlock" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EndlessStream" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EqualsBetweenInconvertibleTypes" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EqualsOnSuspiciousObject" enabled="true" level="Strong Warning" enabled_by_default="true" />
@@ -692,7 +693,7 @@
       <scope name="Tests" level="WARNING" enabled="false">
         <option name="loggerClassName" value="java.util.logging.Logger" />
       </scope>
-      <option name="loggerClassName" value="java.util.logging.Logger" />
+      <option name="loggerClassName" value="java.util.logging.Logger,com.intellij.openapi.diagnostic.Logger" />
     </inspection_tool>
     <inspection_tool class="NonSynchronizedMethodOverridesSynchronizedMethod" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NullableProblems" enabled="true" level="WARNING" enabled_by_default="true">
@@ -737,6 +738,9 @@
     <inspection_tool class="PackageInfoWithoutPackage" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="PagesModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="ParameterCanBeLocal" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="PatternValidation" enabled="true" level="Strong Warning" enabled_by_default="true">
+      <option name="CHECK_NON_CONSTANT_VALUES" value="true" />
+    </inspection_tool>
     <inspection_tool class="PluginXmlDynamicPlugin" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="highlightNonDynamicEPUsages" value="true" />
     </inspection_tool>
@@ -1385,6 +1389,7 @@
     <inspection_tool class="SimplifiableAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SimplifiableBooleanExpression" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="SimplifyCollector" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="SimplifyOptionalCallChains" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="SimplifyStreamApiCallChains" enabled="true" level="Strong Warning" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="true" />
     </inspection_tool>
@@ -1640,6 +1645,7 @@
     <inspection_tool class="TestCaseWithNoTestMethods" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreSupers" value="true" />
     </inspection_tool>
+    <inspection_tool class="TestNGDataProvider" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="TestOnlyProblems" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="test-framework" level="WARNING" enabled="false" />
     </inspection_tool>
@@ -1734,6 +1740,7 @@
     <inspection_tool class="UnnecessaryUnboxing" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnreachableCodeJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnresolvedReference" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="UnsafeReturnStatementVisitor" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="UnsortedPropertiesFile" enabled="false" level="INFO" enabled_by_default="false" />
     <inspection_tool class="UnstableApiUsage" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnusedLabel" enabled="true" level="Strong Warning" enabled_by_default="true" />
