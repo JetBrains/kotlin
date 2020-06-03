@@ -44,7 +44,7 @@ class FirPluginAnnotationsResolveTransformer(
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
-        if (!extensionService.hasExtensions) return file.compose()
+        if (!extensionService.hasPredicateBasedExtensions) return file.compose()
         val registeredPluginAnnotations = file.session.registeredPluginAnnotations
         file.replaceResolvePhase(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS)
         val newAnnotations = file.resolveAnnotations(registeredPluginAnnotations.annotations, registeredPluginAnnotations.metaAnnotations)

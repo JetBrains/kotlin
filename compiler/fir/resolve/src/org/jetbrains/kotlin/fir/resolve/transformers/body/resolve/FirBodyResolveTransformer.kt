@@ -39,7 +39,7 @@ open class FirBodyResolveTransformer(
     final override val components: BodyResolveTransformerComponents =
         BodyResolveTransformerComponents(session, scopeSession, this, context)
 
-    internal val expressionsTransformer = FirExpressionsResolveTransformer(this)
+    internal open val expressionsTransformer = FirExpressionsResolveTransformer(this)
     protected open val declarationsTransformer = FirDeclarationsResolveTransformer(this)
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
 

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
+open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
     var enableArrayOfCallTransformation = false
@@ -74,7 +74,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
-        qualifiedAccessExpression.annotations.forEach { it.accept(this, data) }
+        qualifiedAccessExpression.transformAnnotations(this, data)
         qualifiedAccessExpression.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
 
         var result = when (val callee = qualifiedAccessExpression.calleeReference) {
@@ -148,6 +148,9 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
                 if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null) {
+                    if (!transformedCallee.isAcceptableResolvedQualifiedAccess()) {
+                        return qualifiedAccessExpression.compose()
+                    }
                     callCompleter.completeCall(transformedCallee, data.expectedType).result
                 } else {
                     transformedCallee
@@ -165,6 +168,10 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             }
         }
         return result.compose()
+    }
+
+    protected open fun FirQualifiedAccessExpression.isAcceptableResolvedQualifiedAccess(): Boolean {
+        return true
     }
 
     override fun transformSafeCallExpression(
@@ -623,15 +630,24 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         if (annotationCall.resolveStatus == FirAnnotationResolveStatus.Resolved) return annotationCall.compose()
+        return resolveAnnotationCall(annotationCall, data, FirAnnotationResolveStatus.Resolved)
+    }
+
+    protected fun resolveAnnotationCall(
+        annotationCall: FirAnnotationCall,
+        data: ResolutionMode,
+        status: FirAnnotationResolveStatus
+    ): CompositeTransformResult<FirAnnotationCall> {
         dataFlowAnalyzer.enterAnnotationCall(annotationCall)
         return withFirArrayOfCallTransformer {
             (annotationCall.transformChildren(transformer, data) as FirAnnotationCall).also {
                 // TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
                 it.argumentList.transformArguments(integerLiteralTypeApproximator, null)
-                it.replaceResolveStatus(FirAnnotationResolveStatus.Resolved)
+                it.replaceResolveStatus(status)
                 dataFlowAnalyzer.exitAnnotationCall(it)
             }.compose()
         }
+
     }
 
     private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {
