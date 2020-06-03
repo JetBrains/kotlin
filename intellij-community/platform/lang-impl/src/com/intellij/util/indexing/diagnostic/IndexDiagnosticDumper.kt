@@ -46,8 +46,12 @@ object IndexDiagnosticDumper {
         .toSet()
       }
 
-      val toBeRemovedFiles = Files.list(indexDiagnosticDirectory).use { files -> files.asSequence().filterNot { it in survivedHistories }}
-      toBeRemovedFiles.forEach { it.delete() }
+      Files
+        .list(indexDiagnosticDirectory)
+        .use { files -> files
+          .asSequence()
+          .filterNot { it in survivedHistories }
+          .forEach { it.delete() }}
     }
     catch (e: Exception) {
       LOG.warn("Failed to dump index diagnostic", e)
