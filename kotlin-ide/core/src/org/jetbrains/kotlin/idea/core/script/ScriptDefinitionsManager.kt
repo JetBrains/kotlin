@@ -67,7 +67,7 @@ class LoadScriptDefinitionsStartupActivity : StartupActivity {
             // In IDE script won't be highlighted before all definitions are loaded, then the highlighting will be restarted
             ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitionsIfNeeded()
         } else {
-            executeOnPooledThread {
+            ApplicationManager.getApplication().executeOnPooledThread {
                 ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitionsIfNeeded()
             }
         }
