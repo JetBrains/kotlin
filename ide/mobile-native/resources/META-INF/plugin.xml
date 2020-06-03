@@ -72,6 +72,8 @@
                             id="swift_source_kit_completion"
                             implementationClass="com.jetbrains.swift.completion.SwiftSourceKitCompletionContributor" />
 
+    <highlightingPassFactory implementation="com.jetbrains.swift.codeinsight.highlighting.MobileSwiftSourceKitHighlighterFactory"/>
+
     <!--<externalAnnotator implementationClass="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator"
                        language="Swift"/>-->
 
