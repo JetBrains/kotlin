@@ -21,7 +21,7 @@ import com.intellij.openapi.application.impl.LaterInvocator;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorActivityManager;
-import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.impl.ImaginaryEditor;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -176,14 +176,9 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
     if (actions.isEmpty()) return;
     Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     if (document == null) return;
-    Editor editor = EditorFactory.getInstance().createEditor(document, file.getProject());
-    try {
-      for (HintAction action : actions) {
-        action.fixSilently(editor);
-      }
-    }
-    finally {
-      EditorFactory.getInstance().releaseEditor(editor);
+    Editor editor = new ImaginaryEditor(file.getProject(), document);
+    for (HintAction action : actions) {
+      action.fixSilently(editor);
     }
   }
   @NotNull
@@ -206,7 +201,6 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
     });
 
     List<HintAction> result = new ArrayList<>(infos.get().size());
-    Editor editor = null;
     for (HighlightInfo info : infos.get()) {
       for (HintAction action : extractHints(info)) {
         if (action.isAvailable(project, null, file)) {
