@@ -17,7 +17,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.UnknownModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
-import com.intellij.openapi.project.ProjectServiceContainerInitializedListener;
+import com.intellij.openapi.project.impl.ProjectServiceContainerInitializedListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.ApiStatus;

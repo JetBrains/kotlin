@@ -3,6 +3,7 @@ package com.intellij.configurationStore
 
 import com.intellij.configurationStore.schemeManager.SchemeChangeApplicator
 import com.intellij.configurationStore.schemeManager.SchemeChangeEvent
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
@@ -28,7 +29,6 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.UserDataHolderEx
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManagerListener
-import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.ui.AppUIUtil
 import com.intellij.util.ExceptionUtil
 import com.intellij.util.SingleAlarm
@@ -365,6 +365,6 @@ private fun doReloadProject(project: Project) {
       return@submit
     }
 
-    PlatformProjectOpenProcessor.openExistingProject(Paths.get(presentableUrl))
+    ProjectManagerEx.getInstanceEx().loadAndOpenProject(Paths.get(presentableUrl), OpenProjectTask())
   }
 }

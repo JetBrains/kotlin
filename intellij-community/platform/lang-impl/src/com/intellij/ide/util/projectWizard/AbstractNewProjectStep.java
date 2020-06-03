@@ -13,6 +13,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -201,8 +202,7 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
       };
     }
 
-    OpenProjectTask options = OpenProjectTask.newProjectWithCallback(projectToClose, callback);
-    options.isRefreshVfsNeeded = false;
-    return PlatformProjectOpenProcessor.openExistingProject(location, options);
+    OpenProjectTask options = OpenProjectTask.newProjectWithCallback(projectToClose, callback, /* isRefreshVfsNeeded = */ false);
+    return ProjectManagerEx.getInstanceEx().loadAndOpenProject(location, options);
   }
 }
