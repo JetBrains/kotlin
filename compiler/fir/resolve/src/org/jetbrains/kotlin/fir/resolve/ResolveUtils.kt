@@ -188,19 +188,8 @@ fun FirClassifierSymbol<*>.constructType(
             }
         }
 
-
-private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> = asReversed().flatMap {
-    it.typeArguments.map { typeArgument ->
-        when (typeArgument) {
-            is FirStarProjection -> ConeStarProjection
-            is FirTypeProjectionWithVariance -> {
-                val type = (typeArgument.typeRef as FirResolvedTypeRef).type
-                type.toTypeProjection(typeArgument.variance)
-            }
-            else -> error("!")
-        }
-    }
-}.toTypedArray()
+private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
+    asReversed().flatMap { it.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
 
 fun FirFunction<*>.constructFunctionalTypeRef(session: FirSession, isSuspend: Boolean = false): FirResolvedTypeRef {
     val receiverTypeRef = when (this) {
