@@ -800,7 +800,8 @@ tasks {
                 ":kotlin-stdlib:publish",
                 ":kotlin-stdlib-jdk7:publish",
                 ":kotlin-stdlib-jdk8:publish",
-                ":kotlin-reflect:publish"
+                ":kotlin-reflect:publish",
+                ":kotlin-main-kts:publish"
             )
         }
     }
