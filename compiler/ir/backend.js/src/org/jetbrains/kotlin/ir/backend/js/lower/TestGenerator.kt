@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.name.FqName
 
 fun generateTests(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
-    val generator = TestGenerator(context)
+    val generator = TestGenerator(context) { context.createTestContainerFun(moduleFragment) }
 
-    moduleFragment.files.forEach {
+    moduleFragment.files.toList().forEach {
         generator.lower(it)
     }
 }
 
-class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
+class TestGenerator(val context: JsIrBackendContext, val testContainerFactory: () -> IrSimpleFunction) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
         irFile.declarations.forEach {
@@ -44,7 +44,7 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
     private val packageSuites = mutableMapOf<FqName, FunctionWithBody>()
 
     private fun suiteForPackage(fqName: FqName) = packageSuites.getOrPut(fqName) {
-        context.suiteFun!!.createInvocation(fqName.asString(), context.testContainer)
+        context.suiteFun!!.createInvocation(fqName.asString(), testContainerFactory())
     }
 
     private data class FunctionWithBody(val function: IrSimpleFunction, val body: IrBlockBody)

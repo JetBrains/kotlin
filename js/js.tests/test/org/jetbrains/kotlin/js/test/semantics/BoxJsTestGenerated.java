@@ -797,6 +797,104 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/crossModuleRefIR")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CrossModuleRefIR extends AbstractBoxJsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCrossModuleRefIR() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/crossModuleRefIR"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @TestMetadata("callableObjectRef.kt")
+        public void testCallableObjectRef() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/callableObjectRef.kt");
+        }
+
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/constructor.kt");
+        }
+
+        @TestMetadata("export.kt")
+        public void testExport() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/export.kt");
+        }
+
+        @TestMetadata("inheritance.kt")
+        public void testInheritance() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/inheritance.kt");
+        }
+
+        @TestMetadata("inlineJsModule.kt")
+        public void testInlineJsModule() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/inlineJsModule.kt");
+        }
+
+        @TestMetadata("inlineJsModuleNonIdentifier.kt")
+        public void testInlineJsModuleNonIdentifier() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/inlineJsModuleNonIdentifier.kt");
+        }
+
+        @TestMetadata("inlineJsModulePackage.kt")
+        public void testInlineJsModulePackage() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/inlineJsModulePackage.kt");
+        }
+
+        @TestMetadata("inlineModule.kt")
+        public void testInlineModule() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/inlineModule.kt");
+        }
+
+        @TestMetadata("inlineModuleNonIndentifier.kt")
+        public void testInlineModuleNonIndentifier() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/inlineModuleNonIndentifier.kt");
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/lambda.kt");
+        }
+
+        @TestMetadata("object.kt")
+        public void testObject() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/object.kt");
+        }
+
+        @TestMetadata("objectInInlineClosure.kt")
+        public void testObjectInInlineClosure() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/objectInInlineClosure.kt");
+        }
+
+        @TestMetadata("objectIsObject.kt")
+        public void testObjectIsObject() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/objectIsObject.kt");
+        }
+
+        @TestMetadata("topLevelExtension.kt")
+        public void testTopLevelExtension() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelExtension.kt");
+        }
+
+        @TestMetadata("topLevelFunction.kt")
+        public void testTopLevelFunction() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelFunction.kt");
+        }
+
+        @TestMetadata("topLevelMutableProperty.kt")
+        public void testTopLevelMutableProperty() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelMutableProperty.kt");
+        }
+
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/topLevelProperty.kt");
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/dataClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

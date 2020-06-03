@@ -229,14 +229,20 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     mainArguments = mainCallArguments,
                     generateFullJs = !arguments.irDce,
                     generateDceJs = arguments.irDce,
-                    dceDriven = arguments.irDceDriven
+                    dceDriven = arguments.irDceDriven,
+                    multiModule = arguments.irPerModule
                 )
             } catch (e: JsIrCompilationError) {
                 return COMPILATION_ERROR
             }
 
             val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
-            outputFile.writeText(jsCode)
+            outputFile.writeText(jsCode.mainModule)
+            jsCode.dependencies.forEach { (name, content) ->
+                val nodeModules = outputFile.resolveSibling("node_modules")
+                if (nodeModules.exists()) check(nodeModules.isDirectory) else nodeModules.mkdir()
+                nodeModules.resolve("$name.js").writeText(content)
+            }
             if (arguments.generateDts) {
                 val dtsFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "d.ts")!!
                 dtsFile.writeText(compiledModule.tsDefinitions ?: error("No ts definitions"))

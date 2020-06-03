@@ -618,12 +618,6 @@ private val callsLoweringPhase = makeBodyLoweringPhase(
     description = "Handle intrinsics"
 )
 
-private val testGenerationPhase = makeJsModulePhase(
-    ::TestGenerator,
-    name = "TestGenerationLowering",
-    description = "Generate invocations to kotlin.test suite and test functions"
-).toModuleLowering()
-
 private val staticMembersLoweringPhase = makeDeclarationTransformerPhase(
     ::StaticMembersLowering,
     name = "StaticMembersLowering",
@@ -651,7 +645,6 @@ private val cleanupLoweringPhase = makeBodyLoweringPhase(
 val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
-    testGenerationPhase,
     expectDeclarationsRemovingPhase,
     stripTypeAliasDeclarationsPhase,
     arrayConstructorPhase,

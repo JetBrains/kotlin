@@ -129,6 +129,7 @@ abstract class BasicBoxTest(
         val expectActualLinker = EXPECT_ACTUAL_LINKER.matcher(fileContent).find()
 
         val skipDceDriven = SKIP_DCE_DRIVEN.matcher(fileContent).find()
+        val splitPerModule = SPLIT_PER_MODULE.matcher(fileContent).find()
 
         TestFileFactoryImpl(coroutinesPackage).use { testFactory ->
             val inputFiles = TestFiles.createTestFiles(
@@ -173,7 +174,7 @@ abstract class BasicBoxTest(
                     testFactory.tmpDir,
                     file.parent, module, outputFileName, dceOutputFileName, pirOutputFileName, dependencies, allDependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(), outputPrefixFile, outputPostfixFile,
-                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule, expectActualLinker, skipDceDriven
+                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule, expectActualLinker, skipDceDriven, splitPerModule
                 )
 
                 when {
@@ -395,7 +396,8 @@ abstract class BasicBoxTest(
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
         expectActualLinker: Boolean,
-        skipDceDriven: Boolean
+        skipDceDriven: Boolean,
+        splitPerModule: Boolean
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -419,7 +421,7 @@ abstract class BasicBoxTest(
         val incrementalData = IncrementalData()
         translateFiles(
             psiFiles.map(TranslationUnit::SourceFile), outputFile, dceOutputFile, pirOutputFile, config, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule, skipDceDriven
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule, skipDceDriven, splitPerModule
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
@@ -471,7 +473,7 @@ abstract class BasicBoxTest(
 
         translateFiles(
             translationUnits, recompiledOutputFile, recompiledOutputFile, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false, true
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false, true, false
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -544,7 +546,8 @@ abstract class BasicBoxTest(
         testFunction: String,
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
-        skipDceDriven: Boolean
+        skipDceDriven: Boolean,
+        splitPerModule: Boolean
     ) {
         val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
@@ -929,6 +932,7 @@ abstract class BasicBoxTest(
         private val KJS_WITH_FULL_RUNTIME = Pattern.compile("^// *KJS_WITH_FULL_RUNTIME *\$", Pattern.MULTILINE)
         private val EXPECT_ACTUAL_LINKER = Pattern.compile("^// EXPECT_ACTUAL_LINKER *$", Pattern.MULTILINE)
         private val SKIP_DCE_DRIVEN = Pattern.compile("^// *SKIP_DCE_DRIVEN *$", Pattern.MULTILINE)
+        private val SPLIT_PER_MODULE = Pattern.compile("^// *SPLIT_PER_MODULE *$", Pattern.MULTILINE)
 
         @JvmStatic
         protected val runTestInNashorn = getBoolean("kotlin.js.useNashorn")

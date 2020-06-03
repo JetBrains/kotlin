@@ -582,7 +582,7 @@ class GenerateIrRuntime {
 
         jsPhases.invokeToplevel(phaseConfig, context, listOf(module))
 
-        val transformer = IrModuleToJsTransformer(context, null, null)
+        val transformer = IrModuleToJsTransformer(context, null)
 
         return transformer.generateModule(listOf(module))
     }

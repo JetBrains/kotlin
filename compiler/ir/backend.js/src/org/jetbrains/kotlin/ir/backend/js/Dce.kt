@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.ir.isMemberOfOpenClass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
-import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.isAssociatedObjectAnnotatedAnnotation
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -26,11 +23,10 @@ import java.util.*
 
 fun eliminateDeadDeclarations(
     modules: Iterable<IrModuleFragment>,
-    context: JsIrBackendContext,
-    mainFunction: IrSimpleFunction?
+    context: JsIrBackendContext
 ) {
 
-    val allRoots = stageController.withInitialIr { buildRoots(modules, context, mainFunction) }
+    val allRoots = stageController.withInitialIr { buildRoots(modules, context) }
 
     val usefulDeclarations = usefulDeclarations(allRoots, context)
 
@@ -43,7 +39,7 @@ private fun IrField.isConstant(): Boolean {
     return correspondingPropertySymbol?.owner?.isConst ?: false
 }
 
-private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext, mainFunction: IrSimpleFunction?): Iterable<IrDeclaration> {
+private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext): Iterable<IrDeclaration> {
     val rootDeclarations =
         (modules.flatMap { it.files } + context.packageLevelJsModules + context.externalPackageFragment.values).flatMapTo(mutableListOf()) { file ->
             file.declarations.flatMap { if (it is IrProperty) listOfNotNull(it.backingField, it.getter, it.setter) else listOf(it) }
@@ -56,9 +52,9 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
                 }.filter { !(it is IrField && it.isConstant() && !it.isExported(context)) }
         }
 
-    if (context.hasTests) rootDeclarations += context.testContainer
+    rootDeclarations += context.testRoots.values
 
-    if (mainFunction != null) {
+    JsMainFunctionDetector.getMainFunctionOrNull(modules.last())?.let { mainFunction ->
         rootDeclarations += mainFunction
         if (mainFunction.isSuspend) {
             rootDeclarations += context.coroutineEmptyContinuation.owner
