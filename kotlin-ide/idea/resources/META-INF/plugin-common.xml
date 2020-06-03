@@ -322,6 +322,10 @@
         id="kotlinAwareJavaMoveClassesOrPackagesHandler"
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveClassesOrPackages.KotlinAwareJavaMoveClassesOrPackagesHandler"
         order="first" />
+    <refactoring.moveHandler
+        id="kotlin.moveMethod"
+        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveMethod.MoveKotlinMethodHandler"
+        order="first,before kotlin.moveTopLevelDeclarations" />
     <moveFileHandler implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
     <moveFileHandler
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.FqNameFixingMoveJavaFileHandler"
