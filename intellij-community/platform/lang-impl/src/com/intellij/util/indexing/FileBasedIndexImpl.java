@@ -95,7 +95,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   private static final ThreadLocal<VirtualFile> ourIndexedFile = new ThreadLocal<>();
   private static final ThreadLocal<VirtualFile> ourFileToBeIndexed = new ThreadLocal<>();
   @SuppressWarnings("SSBasedInspection")
-  private static final ThreadLocal<Stack<DumbModeAccessType>> ourDumbModeAccessTypeStack = ThreadLocal.withInitial(Stack::new);
+  private static final ThreadLocal<Stack<DumbModeAccessType>> ourDumbModeAccessTypeStack = ThreadLocal.withInitial(() -> new Stack<>());
   public static final Logger LOG = Logger.getInstance(FileBasedIndexImpl.class);
 
   private volatile RegisteredIndexes myRegisteredIndexes;
