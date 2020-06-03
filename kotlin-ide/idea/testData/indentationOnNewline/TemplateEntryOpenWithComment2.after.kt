@@ -7,5 +7,3 @@ fun a() {
         a
     }"
 }
-
-// IGNORE_FORMATTER
