@@ -63,11 +63,17 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
 //        println(debugInfo(currentPosition))
         // ~~~ TESTING ~~~
 
-        val before = currentPosition.beforeWhitespacesAndComments()
+        val before = currentPosition.beforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
+        val after = currentPosition.afterOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
         when {
             before.isAt(TemplateEntryOpen) -> {
                 val baseLineOffset = before.startOffset
-                return factory.createIndentCalculator(Indent.getNormalIndent()) { baseLineOffset }
+                val indent = if (!currentPosition.hasEmptyLineAfter(offset) && after.isAt(TemplateEntryClose))
+                    Indent.getNoneIndent()
+                else
+                    Indent.getNormalIndent()
+
+                return factory.createIndentCalculator(indent) { baseLineOffset }
             }
 
             before.isAtAnyOf(TryKeyword, FinallyKeyword) -> return factory.createIndentCalculator(
@@ -75,20 +81,17 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
                 IndentCalculator.LINE_BEFORE,
             )
 
-            before.isInControlFlowStatement() -> {
-                val afterWhitespacesAndComments = currentPosition.afterWhitespacesAndComments()
-                return factory.createIndentCalculator(
-                    when {
-                        afterWhitespacesAndComments.isAt(LeftParenthesis) -> Indent.getContinuationIndent()
-                        afterWhitespacesAndComments.isAtAnyOf(BlockOpeningBrace, Arrow) -> Indent.getNoneIndent()
-                        else -> Indent.getNormalIndent()
-                    },
-                    IndentCalculator.LINE_BEFORE,
-                )
-            }
+            before.isInControlFlowStatement() -> return factory.createIndentCalculator(
+                when {
+                    after.isAt(LeftParenthesis) -> Indent.getContinuationIndent()
+                    after.isAtAnyOf(BlockOpeningBrace, Arrow) -> Indent.getNoneIndent()
+                    else -> Indent.getNormalIndent()
+                },
+                IndentCalculator.LINE_BEFORE,
+            )
         }
 
-        currentPosition.afterWhitespacesAndComments()
+        after
             .takeIf { it.isAt(TemplateEntryClose) }
             ?.let { templateEntryPosition ->
                 val indent = if (currentPosition.hasEmptyLineAfter(offset)) Indent.getNormalIndent() else Indent.getNoneIndent()
@@ -100,34 +103,18 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         return null
     }
 
-    private fun SemanticEditorPosition.beforeWhitespacesAndComments(): SemanticEditorPosition = beforeOptionalMix(
-        Whitespace,
-        LineComment,
-        BlockComment,
-    )
-
-    private fun SemanticEditorPosition.afterWhitespacesAndComments(): SemanticEditorPosition = afterOptionalMix(
-        Whitespace,
-        LineComment,
-        BlockComment,
-    )
-
-    private fun SemanticEditorPosition.moveBeforeWhitespacesAndComments(): SemanticEditorPosition = apply {
-        moveBeforeOptionalMix(Whitespace, LineComment, BlockComment)
-    }
-
     private fun SemanticEditorPosition.isInControlFlowStatement(): Boolean = with(copy()) {
         if (isAt(BlockOpeningBrace)) {
             moveBefore()
             moveBeforeParentheses(LeftParenthesis, RightParenthesis)
-            moveBeforeWhitespacesAndComments()
+            moveBeforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
         }
 
         if (currElement in CONTROL_FLOW_CONSTRUCTIONS) return true
         if (!isAt(RightParenthesis)) return false
 
         moveBeforeParentheses(LeftParenthesis, RightParenthesis)
-        moveBeforeWhitespacesAndComments()
+        moveBeforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
 
         return currElement in CONTROL_FLOW_CONSTRUCTIONS
     }
@@ -141,6 +128,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         FinallyKeyword,
         WhileKeyword,
         RegularStringPart,
+        KDoc,
     }
 
     companion object {
@@ -150,6 +138,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             KtTokens.LONG_TEMPLATE_ENTRY_END to TemplateEntryClose,
             KtTokens.EOL_COMMENT to LineComment,
             KtTokens.BLOCK_COMMENT to BlockComment,
+            KtTokens.DOC_COMMENT to KDoc,
             KtTokens.ARROW to Arrow,
             KtTokens.LBRACE to BlockOpeningBrace,
             KtTokens.RBRACE to BlockClosingBrace,
@@ -165,6 +154,8 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             KtTokens.DO_KEYWORD to DoKeyword,
             KtTokens.FOR_KEYWORD to ForKeyword,
             KtTokens.REGULAR_STRING_PART to RegularStringPart,
+            KtTokens.LBRACKET to ArrayOpeningBracket,
+            KtTokens.RBRACKET to ArrayClosingBracket,
         )
 
         private val CONTROL_FLOW_CONSTRUCTIONS: HashSet<SemanticEditorPosition.SyntaxElement> = hashSetOf(
@@ -177,6 +168,12 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             TryKeyword,
             CatchKeyword,
             FinallyKeyword,
+        )
+
+        private val WHITE_SPACE_OR_COMMENT_BIT_SET: Array<SemanticEditorPosition.SyntaxElement> = arrayOf(
+            Whitespace,
+            LineComment,
+            BlockComment,
         )
     }
 }
