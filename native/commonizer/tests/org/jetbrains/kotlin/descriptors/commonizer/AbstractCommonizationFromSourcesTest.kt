@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import com.intellij.openapi.Disposable
 import com.intellij.testFramework.PlatformTestUtil.lowercaseFirstLetter
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -14,14 +17,19 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.commonizer.SourceModuleRoot.Companion.COMMON_TARGET_NAME
 import org.jetbrains.kotlin.descriptors.commonizer.utils.assertCommonizationPerformed
 import org.jetbrains.kotlin.descriptors.commonizer.utils.assertIsDirectory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.assertModulesAreEqual
 import org.jetbrains.kotlin.descriptors.commonizer.utils.assertValidModule
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
@@ -85,8 +93,6 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
     }
 }
 
-private const val COMMON_TARGET_NAME = "common"
-
 private data class SourceModuleRoot(
     val targetName: String,
     val root: File
@@ -100,6 +106,8 @@ private data class SourceModuleRoot(
             targetName = directory.name,
             root = directory
         )
+
+        const val COMMON_TARGET_NAME = "common"
     }
 }
 
@@ -145,6 +153,7 @@ private class AnalyzedModule<T : Target>(
         fun <T : Target> create(
             target: T,
             sourceModuleRoot: SourceModuleRoot,
+            commonSourceModuleRoot: SourceModuleRoot? = null,
             parentDisposable: Disposable
         ): AnalyzedModule<T> {
             val moduleName: String = sourceModuleRoot.root.parentFile.parentFile.name
@@ -155,6 +164,7 @@ private class AnalyzedModule<T : Target>(
                 module = analyze(
                     moduleName = moduleName,
                     moduleRoot = sourceModuleRoot.root,
+                    commonModuleRoot = commonSourceModuleRoot?.root,
                     parentDisposable = parentDisposable
                 )
             )
@@ -163,6 +173,37 @@ private class AnalyzedModule<T : Target>(
         private fun analyze(
             moduleName: String,
             moduleRoot: File,
+            commonModuleRoot: File?,
+            parentDisposable: Disposable
+        ): ModuleDescriptor {
+            val commonModule: ModuleDescriptor? = if (commonModuleRoot != null) {
+                analyzeModule(
+                    moduleName = "common" + moduleName.capitalize(),
+                    moduleRoot = commonModuleRoot,
+                    dependencyContainer = null, // common module does not have any specific dependencies
+                    parentDisposable = parentDisposable
+                )
+            } else null
+
+            val module: ModuleDescriptor = analyzeModule(
+                moduleName = moduleName,
+                moduleRoot = moduleRoot,
+                dependencyContainer = commonModule?.let(::CommonizedCommonDependenciesContainer), // platform module has dependencies to common module
+                parentDisposable = parentDisposable
+            )
+
+            if (commonModule != null) {
+                check(commonModule in module.expectedByModules)
+                check(commonModule in module.allDependencyModules)
+            }
+
+            return module
+        }
+
+        private fun analyzeModule(
+            moduleName: String,
+            moduleRoot: File,
+            dependencyContainer: CommonDependenciesContainer?,
             parentDisposable: Disposable
         ): ModuleDescriptor {
             val configuration: CompilerConfiguration = newConfiguration()
@@ -186,7 +227,8 @@ private class AnalyzedModule<T : Target>(
                 moduleName = Name.special("<$moduleName>"),
                 dependOnBuiltIns = true,
                 languageVersionSettings = environment.configuration.languageVersionSettings,
-                targetPlatform = CommonPlatforms.defaultCommonPlatform
+                targetPlatform = CommonPlatforms.defaultCommonPlatform,
+                dependenciesContainer = dependencyContainer
             ) { content ->
                 environment.createPackagePartProvider(content.moduleContentScope)
             }.moduleDescriptor
@@ -224,6 +266,7 @@ private class AnalyzedModules(
 
             val commonizedPlatformModules: Map<InputTarget, AnalyzedModule<InputTarget>> = createInputTargetModules(
                 sourceModuleRoots = sourceModuleRoots.commonizedPlatformRoots,
+                commonSourceModuleRoot = sourceModuleRoots.commonizedCommonRoot,
                 parentDisposable = parentDisposable
             )
 
@@ -236,15 +279,46 @@ private class AnalyzedModules(
 
         private fun createInputTargetModules(
             sourceModuleRoots: Map<String, SourceModuleRoot>,
+            commonSourceModuleRoot: SourceModuleRoot? = null,
             parentDisposable: Disposable
         ): Map<InputTarget, AnalyzedModule<InputTarget>> = sourceModuleRoots.map { (targetName, sourceModuleRoot) ->
             AnalyzedModule.create(
                 target = InputTarget(targetName),
                 sourceModuleRoot = sourceModuleRoot,
+                commonSourceModuleRoot = commonSourceModuleRoot,
                 parentDisposable = parentDisposable
             )
         }.associateBy { it.target }
     }
+}
+
+private class CommonizedCommonDependenciesContainer(
+    private val commonModule: ModuleDescriptor
+) : CommonDependenciesContainer {
+    private val commonModuleInfo = object : ModuleInfo {
+        override val name: Name get() = commonModule.name
+
+        override fun dependencies(): List<ModuleInfo> = listOf(this)
+        override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.LAST
+
+        override val platform: TargetPlatform get() = CommonPlatforms.defaultCommonPlatform
+        override val analyzerServices: PlatformDependentAnalyzerServices get() = CommonPlatformAnalyzerServices
+    }
+
+    override val moduleInfos: List<ModuleInfo> get() = listOf(commonModuleInfo)
+
+    override fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor {
+        if (moduleInfo !== commonModuleInfo)
+            error("Unknown module info $moduleInfo")
+
+        return commonModule
+    }
+
+    override fun registerDependencyForAllModules(moduleInfo: ModuleInfo, descriptorForModule: ModuleDescriptorImpl) = Unit
+    override fun packageFragmentProviderForModuleInfo(moduleInfo: ModuleInfo): PackageFragmentProvider? = null
+
+    override val friendModuleInfos: List<ModuleInfo> get() = emptyList()
+    override val refinesModuleInfos: List<ModuleInfo> get() = listOf(commonModuleInfo)
 }
 
 private fun Map<InputTarget, ModuleDescriptor>.toCommonizationParameters(): Parameters = Parameters().also {
