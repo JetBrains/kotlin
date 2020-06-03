@@ -145,6 +145,7 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
         doTest(
             VersionRequirement.Version(1, 3, 0), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
             fqNamesWithRequirements = listOf(
+                "test.C.returnsInlineClassTypeJvmName",
                 "test.returnsInlineClassType",
                 "test.propertyOfInlineClassType"
             ),

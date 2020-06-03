@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
@@ -24,10 +25,13 @@ fun getManglingSuffixBasedOnKotlinSignature(
     if (descriptor is ConstructorDescriptor) return null
     if (InlineClassDescriptorResolver.isSynthesizedBoxOrUnboxMethod(descriptor)) return null
 
+    // Don't mangle functions with '@JvmName' annotation.
+    // Some stdlib functions ('Result.success', 'Result.failure') are annotated with '@JvmName' as a workaround for forward compatibility.
+    if (DescriptorUtils.hasJvmNameAnnotation(descriptor)) return null
+
     // If a function accepts inline class parameters, mangle its name.
-    val actualValueParameterTypes = listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type }
-    if (requiresFunctionNameManglingForParameterTypes(actualValueParameterTypes)) {
-        return "-" + md5base64(collectSignatureForMangling(actualValueParameterTypes))
+    if (requiresFunctionNameManglingForParameterTypes(descriptor)) {
+        return "-" + md5base64(collectSignatureForMangling(descriptor))
     }
 
     // If a class member function returns inline class value, mangle its name.
@@ -42,8 +46,10 @@ fun getManglingSuffixBasedOnKotlinSignature(
     return null
 }
 
-private fun collectSignatureForMangling(types: List<KotlinType>) =
-    types.joinToString { getSignatureElementForMangling(it) }
+private fun collectSignatureForMangling(descriptor: CallableMemberDescriptor): String {
+    val types = listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type }
+    return types.joinToString { getSignatureElementForMangling(it) }
+}
 
 private fun getSignatureElementForMangling(type: KotlinType): String = buildString {
     val descriptor = type.constructor.declarationDescriptor ?: return ""

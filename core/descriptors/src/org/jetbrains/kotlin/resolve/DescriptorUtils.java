@@ -569,6 +569,10 @@ public class DescriptorUtils {
         return annotated.getAnnotations().findAnnotation(JVM_NAME);
     }
 
+    public static boolean hasJvmNameAnnotation(@NotNull Annotated annotated) {
+        return findJvmNameAnnotation(annotated) != null;
+    }
+
     @NotNull
     public static SourceFile getContainingSourceFile(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof PropertySetterDescriptor) {
