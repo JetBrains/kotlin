@@ -27,6 +27,7 @@ val rootBuildDirectory by extra(file(".."))
 apply(from="../gradle/loadRootProperties.gradle")
 
 val kotlinVersion: String by extra
+val buildKotlinVersion: String by extra
 val konanVersion: String by extra
 val kotlinCompilerRepo: String by extra
 val buildKotlinCompilerRepo: String by extra
@@ -68,6 +69,8 @@ tasks.jar {
 }
 
 dependencies {
+    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$buildKotlinVersion")
+
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
