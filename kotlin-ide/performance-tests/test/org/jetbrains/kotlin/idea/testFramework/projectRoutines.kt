@@ -9,6 +9,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.ide.impl.OpenProjectTask
+import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.lang.LanguageAnnotators
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.lang.annotation.Annotator
@@ -18,6 +19,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.ExtensionTestUtil
