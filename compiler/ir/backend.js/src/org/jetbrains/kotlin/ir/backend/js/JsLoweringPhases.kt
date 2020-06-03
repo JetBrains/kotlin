@@ -33,19 +33,22 @@ private fun makeJsModulePhase(
     name: String,
     description: String,
     prerequisite: Set<AnyNamedPhase> = emptySet()
-) = makeIrModulePhase<JsIrBackendContext>(lowering, name, description, prerequisite, actions = setOf(validationAction, defaultDumper))
+) = makeCustomJsModulePhase(
+    op = { context, moduleFragment -> lowering(context).lower(moduleFragment) },
+    name = name,
+    description = description,
+    prerequisite = prerequisite
+)
 
 private fun makeCustomJsModulePhase(
     op: (JsIrBackendContext, IrModuleFragment) -> Unit,
     description: String,
     name: String,
     prerequisite: Set<AnyNamedPhase> = emptySet()
-) = namedIrModulePhase(
-    name,
-    description,
-    prerequisite,
-    actions = setOf(defaultDumper, validationAction),
-    nlevels = 0,
+) = SameTypeNamedPhaseWrapper(
+    name = name,
+    description = description,
+    prerequisite = prerequisite,
     lower = object : SameTypeCompilerPhase<JsIrBackendContext, IrModuleFragment> {
         override fun invoke(
             phaseConfig: PhaseConfig,
@@ -56,7 +59,12 @@ private fun makeCustomJsModulePhase(
             op(context, input)
             return input
         }
-    }
+    },
+    preconditions = emptySet(),
+    postconditions = emptySet(),
+    stickyPostconditions = emptySet(),
+    actions = setOf(defaultDumper, validationAction),
+    nlevels = 0
 )
 
 sealed class Lowering(val name: String) {
