@@ -131,6 +131,11 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       }
 
       @Override
+      public boolean needsForwardIndexWhenSharing() {
+        return false;
+      }
+
+      @Override
       public @NotNull DataIndexer<K, Void, FileContent> getIndexer() {
         return i -> {
           throw new AssertionError();
