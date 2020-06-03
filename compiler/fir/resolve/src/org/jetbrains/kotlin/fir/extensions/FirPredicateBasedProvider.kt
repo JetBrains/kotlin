@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
-import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.Multimap
 import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.extensions.predicate.*
 import org.jetbrains.kotlin.fir.resolve.fqName
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 
 abstract class FirPredicateBasedProvider : FirSessionComponent {
     companion object {
@@ -39,6 +36,8 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
         declarations: Collection<FirAnnotatedDeclaration>,
         predicate: DeclarationPredicate
     ): List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>>
+
+    abstract fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirAnnotatedDeclaration>?
 
     abstract fun registerAnnotatedDeclaration(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>)
     abstract fun registerGeneratedDeclaration(declaration: FirAnnotatedDeclaration, owner: FirAnnotatedDeclaration)
@@ -89,6 +88,10 @@ private class FirPredicateBasedProviderImpl(private val session: FirSession) : F
         if (matchingAnnotations.isEmpty()) return
         matchingAnnotations.forEach { cache.declarationByAnnotation.put(it, declaration) }
         cache.annotationsOfDeclaration.putAll(declaration, matchingAnnotations)
+    }
+
+    override fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirAnnotatedDeclaration>? {
+        return cache.ownersForDeclaration[declaration]
     }
 
     override fun registerGeneratedDeclaration(declaration: FirAnnotatedDeclaration, owner: FirAnnotatedDeclaration) {
