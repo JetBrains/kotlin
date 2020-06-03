@@ -113,9 +113,11 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
         """,
         """
             import androidx.compose.Untracked
+            import androidx.compose.ExperimentalComposeApi
 
             @Composable
             fun Test(x: Int = 0, y: Int = 0) {
+                @OptIn(ExperimentalComposeApi::class)
                 Wrap @Untracked {
                     A(x)
                 }
@@ -2153,6 +2155,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
         """,
         """
             import androidx.compose.currentComposer
+            import androidx.compose.ExperimentalComposeApi
 
             open class Foo {
                 @ComposableContract(readonly = true)

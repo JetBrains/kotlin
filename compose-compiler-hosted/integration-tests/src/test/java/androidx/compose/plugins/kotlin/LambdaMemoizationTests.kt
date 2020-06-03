@@ -664,6 +664,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         @Composable
         fun Example(model: String) {
           workToBeRepeated()
+          @OptIn(androidx.compose.ExperimentalComposeApi::class)
           Wrapper @Untracked {
             workToBeAvoided()
             ValidateModel(model)
