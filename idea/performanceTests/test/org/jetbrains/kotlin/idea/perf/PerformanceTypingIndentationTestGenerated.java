@@ -78,6 +78,21 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/BinaryWithTypeExpressions.kt");
     }
 
+    @TestMetadata("Catch.kt")
+    public void testCatch() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Catch.kt");
+    }
+
+    @TestMetadata("Catch2.kt")
+    public void testCatch2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Catch2.kt");
+    }
+
+    @TestMetadata("Catch3.kt")
+    public void testCatch3() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Catch3.kt");
+    }
+
     @TestMetadata("ConsecutiveCallsAfterDot.kt")
     public void testConsecutiveCallsAfterDot() throws Exception {
         runTest("idea/testData/indentationOnNewline/ConsecutiveCallsAfterDot.kt");
@@ -93,9 +108,64 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/ConsecutiveCallsInSafeCallsEnd.kt");
     }
 
+    @TestMetadata("Do2.kt")
+    public void testDo2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Do2.kt");
+    }
+
     @TestMetadata("DoInFun.kt")
     public void testDoInFun() throws Exception {
         runTest("idea/testData/indentationOnNewline/DoInFun.kt");
+    }
+
+    @TestMetadata("DoWithBraces.kt")
+    public void testDoWithBraces() throws Exception {
+        runTest("idea/testData/indentationOnNewline/DoWithBraces.kt");
+    }
+
+    @TestMetadata("DoWithBraces2.kt")
+    public void testDoWithBraces2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/DoWithBraces2.kt");
+    }
+
+    @TestMetadata("ElseIf.kt")
+    public void testElseIf() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ElseIf.kt");
+    }
+
+    @TestMetadata("ElseInWhenWithOption.kt")
+    public void testElseInWhenWithOption() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ElseInWhenWithOption.kt");
+    }
+
+    @TestMetadata("ElseInWhenWithoutOption.kt")
+    public void testElseInWhenWithoutOption() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ElseInWhenWithoutOption.kt");
+    }
+
+    @TestMetadata("ElseWithBrace.kt")
+    public void testElseWithBrace() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ElseWithBrace.kt");
+    }
+
+    @TestMetadata("ElseWithBraceAndComment.kt")
+    public void testElseWithBraceAndComment() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ElseWithBraceAndComment.kt");
+    }
+
+    @TestMetadata("ElseWithBraceAndComment2.kt")
+    public void testElseWithBraceAndComment2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ElseWithBraceAndComment2.kt");
+    }
+
+    @TestMetadata("ElseWithoutBrace.kt")
+    public void testElseWithoutBrace() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ElseWithoutBrace.kt");
+    }
+
+    @TestMetadata("ElseWithoutBrace2.kt")
+    public void testElseWithoutBrace2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ElseWithoutBrace2.kt");
     }
 
     @TestMetadata("EmptyParameters.kt")
@@ -103,9 +173,39 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/EmptyParameters.kt");
     }
 
+    @TestMetadata("Finally.kt")
+    public void testFinally() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Finally.kt");
+    }
+
+    @TestMetadata("Finally2.kt")
+    public void testFinally2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Finally2.kt");
+    }
+
+    @TestMetadata("Finally3.kt")
+    public void testFinally3() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Finally3.kt");
+    }
+
     @TestMetadata("For.kt")
     public void testFor() throws Exception {
         runTest("idea/testData/indentationOnNewline/For.kt");
+    }
+
+    @TestMetadata("ForWithBlock.kt")
+    public void testForWithBlock() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ForWithBlock.kt");
+    }
+
+    @TestMetadata("ForWithCondition.kt")
+    public void testForWithCondition() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ForWithCondition.kt");
+    }
+
+    @TestMetadata("ForWithoutCondition.kt")
+    public void testForWithoutCondition() throws Exception {
+        runTest("idea/testData/indentationOnNewline/ForWithoutCondition.kt");
     }
 
     @TestMetadata("FunctionBlock.kt")
@@ -121,6 +221,36 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
     @TestMetadata("If.kt")
     public void testIf() throws Exception {
         runTest("idea/testData/indentationOnNewline/If.kt");
+    }
+
+    @TestMetadata("IfBeforeCondition.kt")
+    public void testIfBeforeCondition() throws Exception {
+        runTest("idea/testData/indentationOnNewline/IfBeforeCondition.kt");
+    }
+
+    @TestMetadata("IfBeforeCondition2.kt")
+    public void testIfBeforeCondition2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/IfBeforeCondition2.kt");
+    }
+
+    @TestMetadata("IfBeforeCondition3.kt")
+    public void testIfBeforeCondition3() throws Exception {
+        runTest("idea/testData/indentationOnNewline/IfBeforeCondition3.kt");
+    }
+
+    @TestMetadata("IfBeforeCondition4.kt")
+    public void testIfBeforeCondition4() throws Exception {
+        runTest("idea/testData/indentationOnNewline/IfBeforeCondition4.kt");
+    }
+
+    @TestMetadata("IfWithBraces.kt")
+    public void testIfWithBraces() throws Exception {
+        runTest("idea/testData/indentationOnNewline/IfWithBraces.kt");
+    }
+
+    @TestMetadata("IfWithBraces2.kt")
+    public void testIfWithBraces2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/IfWithBraces2.kt");
     }
 
     @TestMetadata("InBinaryExpressionInMiddle.kt")
@@ -398,9 +528,59 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/TemplateEntryOpenWithoutContent5.kt");
     }
 
+    @TestMetadata("Try.kt")
+    public void testTry() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Try.kt");
+    }
+
+    @TestMetadata("Try2.kt")
+    public void testTry2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Try2.kt");
+    }
+
+    @TestMetadata("WhenWithCondition.kt")
+    public void testWhenWithCondition() throws Exception {
+        runTest("idea/testData/indentationOnNewline/WhenWithCondition.kt");
+    }
+
+    @TestMetadata("WhenWithCondition2.kt")
+    public void testWhenWithCondition2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/WhenWithCondition2.kt");
+    }
+
+    @TestMetadata("WhenWithoutCondition.kt")
+    public void testWhenWithoutCondition() throws Exception {
+        runTest("idea/testData/indentationOnNewline/WhenWithoutCondition.kt");
+    }
+
     @TestMetadata("While.kt")
     public void testWhile() throws Exception {
         runTest("idea/testData/indentationOnNewline/While.kt");
+    }
+
+    @TestMetadata("While2.kt")
+    public void testWhile2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/While2.kt");
+    }
+
+    @TestMetadata("While3.kt")
+    public void testWhile3() throws Exception {
+        runTest("idea/testData/indentationOnNewline/While3.kt");
+    }
+
+    @TestMetadata("WhileWithBlock.kt")
+    public void testWhileWithBlock() throws Exception {
+        runTest("idea/testData/indentationOnNewline/WhileWithBlock.kt");
+    }
+
+    @TestMetadata("WhileWithCondition.kt")
+    public void testWhileWithCondition() throws Exception {
+        runTest("idea/testData/indentationOnNewline/WhileWithCondition.kt");
+    }
+
+    @TestMetadata("WhileWithoutCondition.kt")
+    public void testWhileWithoutCondition() throws Exception {
+        runTest("idea/testData/indentationOnNewline/WhileWithoutCondition.kt");
     }
 
     @TestMetadata("idea/testData/indentationOnNewline/script")

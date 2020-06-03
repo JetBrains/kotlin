@@ -12,7 +12,7 @@ fun test() {
     }
 
     when (var i = 2
-        ) {
+    ) {
 
     }
 

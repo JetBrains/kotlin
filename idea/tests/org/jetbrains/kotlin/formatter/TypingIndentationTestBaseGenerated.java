@@ -80,6 +80,21 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/BinaryWithTypeExpressions.after.kt");
         }
 
+        @TestMetadata("Catch.after.kt")
+        public void testCatch() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Catch.after.kt");
+        }
+
+        @TestMetadata("Catch2.after.kt")
+        public void testCatch2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Catch2.after.kt");
+        }
+
+        @TestMetadata("Catch3.after.kt")
+        public void testCatch3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Catch3.after.kt");
+        }
+
         @TestMetadata("ConsecutiveCallsAfterDot.after.kt")
         public void testConsecutiveCallsAfterDot() throws Exception {
             runTest("idea/testData/indentationOnNewline/ConsecutiveCallsAfterDot.after.kt");
@@ -95,9 +110,64 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/ConsecutiveCallsInSafeCallsEnd.after.kt");
         }
 
+        @TestMetadata("Do2.after.kt")
+        public void testDo2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Do2.after.kt");
+        }
+
         @TestMetadata("DoInFun.after.kt")
         public void testDoInFun() throws Exception {
             runTest("idea/testData/indentationOnNewline/DoInFun.after.kt");
+        }
+
+        @TestMetadata("DoWithBraces.after.kt")
+        public void testDoWithBraces() throws Exception {
+            runTest("idea/testData/indentationOnNewline/DoWithBraces.after.kt");
+        }
+
+        @TestMetadata("DoWithBraces2.after.kt")
+        public void testDoWithBraces2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/DoWithBraces2.after.kt");
+        }
+
+        @TestMetadata("ElseIf.after.kt")
+        public void testElseIf() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ElseIf.after.kt");
+        }
+
+        @TestMetadata("ElseInWhenWithOption.after.kt")
+        public void testElseInWhenWithOption() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ElseInWhenWithOption.after.kt");
+        }
+
+        @TestMetadata("ElseInWhenWithoutOption.after.kt")
+        public void testElseInWhenWithoutOption() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ElseInWhenWithoutOption.after.kt");
+        }
+
+        @TestMetadata("ElseWithBrace.after.kt")
+        public void testElseWithBrace() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ElseWithBrace.after.kt");
+        }
+
+        @TestMetadata("ElseWithBraceAndComment.after.kt")
+        public void testElseWithBraceAndComment() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ElseWithBraceAndComment.after.kt");
+        }
+
+        @TestMetadata("ElseWithBraceAndComment2.after.kt")
+        public void testElseWithBraceAndComment2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ElseWithBraceAndComment2.after.kt");
+        }
+
+        @TestMetadata("ElseWithoutBrace.after.kt")
+        public void testElseWithoutBrace() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ElseWithoutBrace.after.kt");
+        }
+
+        @TestMetadata("ElseWithoutBrace2.after.kt")
+        public void testElseWithoutBrace2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ElseWithoutBrace2.after.kt");
         }
 
         @TestMetadata("EmptyParameters.after.kt")
@@ -105,9 +175,39 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/EmptyParameters.after.kt");
         }
 
+        @TestMetadata("Finally.after.kt")
+        public void testFinally() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Finally.after.kt");
+        }
+
+        @TestMetadata("Finally2.after.kt")
+        public void testFinally2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Finally2.after.kt");
+        }
+
+        @TestMetadata("Finally3.after.kt")
+        public void testFinally3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Finally3.after.kt");
+        }
+
         @TestMetadata("For.after.kt")
         public void testFor() throws Exception {
             runTest("idea/testData/indentationOnNewline/For.after.kt");
+        }
+
+        @TestMetadata("ForWithBlock.after.kt")
+        public void testForWithBlock() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ForWithBlock.after.kt");
+        }
+
+        @TestMetadata("ForWithCondition.after.kt")
+        public void testForWithCondition() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ForWithCondition.after.kt");
+        }
+
+        @TestMetadata("ForWithoutCondition.after.kt")
+        public void testForWithoutCondition() throws Exception {
+            runTest("idea/testData/indentationOnNewline/ForWithoutCondition.after.kt");
         }
 
         @TestMetadata("FunctionBlock.after.kt")
@@ -123,6 +223,36 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("If.after.kt")
         public void testIf() throws Exception {
             runTest("idea/testData/indentationOnNewline/If.after.kt");
+        }
+
+        @TestMetadata("IfBeforeCondition.after.kt")
+        public void testIfBeforeCondition() throws Exception {
+            runTest("idea/testData/indentationOnNewline/IfBeforeCondition.after.kt");
+        }
+
+        @TestMetadata("IfBeforeCondition2.after.kt")
+        public void testIfBeforeCondition2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/IfBeforeCondition2.after.kt");
+        }
+
+        @TestMetadata("IfBeforeCondition3.after.kt")
+        public void testIfBeforeCondition3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/IfBeforeCondition3.after.kt");
+        }
+
+        @TestMetadata("IfBeforeCondition4.after.kt")
+        public void testIfBeforeCondition4() throws Exception {
+            runTest("idea/testData/indentationOnNewline/IfBeforeCondition4.after.kt");
+        }
+
+        @TestMetadata("IfWithBraces.after.kt")
+        public void testIfWithBraces() throws Exception {
+            runTest("idea/testData/indentationOnNewline/IfWithBraces.after.kt");
+        }
+
+        @TestMetadata("IfWithBraces2.after.kt")
+        public void testIfWithBraces2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/IfWithBraces2.after.kt");
         }
 
         @TestMetadata("InBinaryExpressionInMiddle.after.kt")
@@ -400,9 +530,59 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/TemplateEntryOpenWithoutContent5.after.kt");
         }
 
+        @TestMetadata("Try.after.kt")
+        public void testTry() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Try.after.kt");
+        }
+
+        @TestMetadata("Try2.after.kt")
+        public void testTry2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Try2.after.kt");
+        }
+
+        @TestMetadata("WhenWithCondition.after.kt")
+        public void testWhenWithCondition() throws Exception {
+            runTest("idea/testData/indentationOnNewline/WhenWithCondition.after.kt");
+        }
+
+        @TestMetadata("WhenWithCondition2.after.kt")
+        public void testWhenWithCondition2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/WhenWithCondition2.after.kt");
+        }
+
+        @TestMetadata("WhenWithoutCondition.after.kt")
+        public void testWhenWithoutCondition() throws Exception {
+            runTest("idea/testData/indentationOnNewline/WhenWithoutCondition.after.kt");
+        }
+
         @TestMetadata("While.after.kt")
         public void testWhile() throws Exception {
             runTest("idea/testData/indentationOnNewline/While.after.kt");
+        }
+
+        @TestMetadata("While2.after.kt")
+        public void testWhile2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/While2.after.kt");
+        }
+
+        @TestMetadata("While3.after.kt")
+        public void testWhile3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/While3.after.kt");
+        }
+
+        @TestMetadata("WhileWithBlock.after.kt")
+        public void testWhileWithBlock() throws Exception {
+            runTest("idea/testData/indentationOnNewline/WhileWithBlock.after.kt");
+        }
+
+        @TestMetadata("WhileWithCondition.after.kt")
+        public void testWhileWithCondition() throws Exception {
+            runTest("idea/testData/indentationOnNewline/WhileWithCondition.after.kt");
+        }
+
+        @TestMetadata("WhileWithoutCondition.after.kt")
+        public void testWhileWithoutCondition() throws Exception {
+            runTest("idea/testData/indentationOnNewline/WhileWithoutCondition.after.kt");
         }
 
         @TestMetadata("idea/testData/indentationOnNewline/script")

@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.codeStyle.lineIndent.LineIndentProvider
 import com.intellij.testFramework.EditorTestUtil
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.formatter.KotlinLineIndentProvider
 import org.jetbrains.kotlin.idea.test.KotlinLightPlatformCodeInsightTestCase
@@ -70,11 +71,9 @@ abstract class AbstractTypingIndentationTestBase : KotlinLightPlatformCodeInsigh
         withoutCustomLineIndentProvider: Boolean,
         ignoreFormatter: Boolean
     ) {
-        if (!ignoreFormatter) {
-            KotlinLineIndentProvider.useFormatter = true
-            typeAndCheck(beforeFilePath, afterFilePath, "with FormatterBasedLineIndentProvider")
-            KotlinLineIndentProvider.useFormatter = false
-        }
+        KotlinLineIndentProvider.useFormatter = true
+        typeAndCheck(beforeFilePath, afterFilePath, "with FormatterBasedLineIndentProvider", ignoreFormatter)
+        KotlinLineIndentProvider.useFormatter = false
 
         if (!withoutCustomLineIndentProvider) {
             typeAndCheck(beforeFilePath, afterFilePath, "with ${customLineIndentProvider.javaClass.simpleName}")
@@ -98,7 +97,7 @@ abstract class AbstractTypingIndentationTestBase : KotlinLightPlatformCodeInsigh
         )
     }
 
-    private fun typeAndCheck(beforeFilePath: String, afterFilePath: String, errorMessage: String) {
+    private fun typeAndCheck(beforeFilePath: String, afterFilePath: String, errorMessage: String, invertResult: Boolean = false) {
         configureByFile(beforeFilePath)
         executeAction(IdeActions.ACTION_EDITOR_ENTER)
         val actualTextWithCaret = StringBuilder(editor.document.text).insert(
@@ -106,7 +105,14 @@ abstract class AbstractTypingIndentationTestBase : KotlinLightPlatformCodeInsigh
             EditorTestUtil.CARET_TAG
         ).toString()
 
-        KotlinTestUtils.assertEqualsToFile(errorMessage, File(afterFilePath), actualTextWithCaret)
+        val result = kotlin.runCatching {
+            KotlinTestUtils.assertEqualsToFile(errorMessage, File(afterFilePath), actualTextWithCaret)
+        }
+
+        if (invertResult)
+            Assert.assertTrue("Remove // IGNORE_FORMATTER", result.isFailure)
+        else
+            result.getOrThrow()
     }
 
     override fun getTestDataPath(): String = ""

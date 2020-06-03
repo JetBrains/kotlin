@@ -63,22 +63,73 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
 //        println(debugInfo(currentPosition))
         // ~~~ TESTING ~~~
 
-        currentPosition.beforeOptionalMix(Whitespace, LineComment)
-            .takeIf { it.isAt(TemplateEntryOpen) }
-            ?.let { templateEntryPosition ->
-                val baseLineOffset = templateEntryPosition.startOffset
+        val before = currentPosition.beforeWhitespacesAndComments()
+        when {
+            before.isAt(TemplateEntryOpen) -> {
+                val baseLineOffset = before.startOffset
                 return factory.createIndentCalculator(Indent.getNormalIndent()) { baseLineOffset }
             }
 
-        currentPosition.afterOptionalMix(Whitespace, LineComment)
+            before.isAtAnyOf(TryKeyword, FinallyKeyword) -> return factory.createIndentCalculator(
+                Indent.getNoneIndent(),
+                IndentCalculator.LINE_BEFORE,
+            )
+
+            before.isInControlFlowStatement() -> {
+                val afterWhitespacesAndComments = currentPosition.afterWhitespacesAndComments()
+                return factory.createIndentCalculator(
+                    when {
+                        afterWhitespacesAndComments.isAt(LeftParenthesis) -> Indent.getContinuationIndent()
+                        afterWhitespacesAndComments.isAtAnyOf(BlockOpeningBrace, Arrow) -> Indent.getNoneIndent()
+                        else -> Indent.getNormalIndent()
+                    },
+                    IndentCalculator.LINE_BEFORE,
+                )
+            }
+        }
+
+        currentPosition.afterWhitespacesAndComments()
             .takeIf { it.isAt(TemplateEntryClose) }
             ?.let { templateEntryPosition ->
-                val baseLineOffset = templateEntryPosition.beforeParentheses(TemplateEntryOpen, TemplateEntryClose).startOffset
                 val indent = if (currentPosition.hasEmptyLineAfter(offset)) Indent.getNormalIndent() else Indent.getNoneIndent()
+                templateEntryPosition.moveBeforeParentheses(TemplateEntryOpen, TemplateEntryClose)
+                val baseLineOffset = templateEntryPosition.startOffset
                 return factory.createIndentCalculator(indent) { baseLineOffset }
             }
 
         return null
+    }
+
+    private fun SemanticEditorPosition.beforeWhitespacesAndComments(): SemanticEditorPosition = beforeOptionalMix(
+        Whitespace,
+        LineComment,
+        BlockComment,
+    )
+
+    private fun SemanticEditorPosition.afterWhitespacesAndComments(): SemanticEditorPosition = afterOptionalMix(
+        Whitespace,
+        LineComment,
+        BlockComment,
+    )
+
+    private fun SemanticEditorPosition.moveBeforeWhitespacesAndComments(): SemanticEditorPosition = apply {
+        moveBeforeOptionalMix(Whitespace, LineComment, BlockComment)
+    }
+
+    private fun SemanticEditorPosition.isInControlFlowStatement(): Boolean = with(copy()) {
+        if (isAt(BlockOpeningBrace)) {
+            moveBefore()
+            moveBeforeParentheses(LeftParenthesis, RightParenthesis)
+            moveBeforeWhitespacesAndComments()
+        }
+
+        if (currElement in CONTROL_FLOW_CONSTRUCTIONS) return true
+        if (!isAt(RightParenthesis)) return false
+
+        moveBeforeParentheses(LeftParenthesis, RightParenthesis)
+        moveBeforeWhitespacesAndComments()
+
+        return currElement in CONTROL_FLOW_CONSTRUCTIONS
     }
 
     enum class KotlinElement : SemanticEditorPosition.SyntaxElement {
@@ -86,19 +137,46 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         TemplateEntryClose,
         Arrow,
         WhenKeyword,
+        CatchKeyword,
+        FinallyKeyword,
+        WhileKeyword,
+        RegularStringPart,
     }
 
     companion object {
-        private val SYNTAX_MAP: LinkedHashMap<IElementType, SemanticEditorPosition.SyntaxElement> = linkedMapOf(
+        private val SYNTAX_MAP: Map<IElementType, SemanticEditorPosition.SyntaxElement> = hashMapOf(
             KtTokens.WHITE_SPACE to Whitespace,
             KtTokens.LONG_TEMPLATE_ENTRY_START to TemplateEntryOpen,
             KtTokens.LONG_TEMPLATE_ENTRY_END to TemplateEntryClose,
             KtTokens.EOL_COMMENT to LineComment,
+            KtTokens.BLOCK_COMMENT to BlockComment,
             KtTokens.ARROW to Arrow,
             KtTokens.LBRACE to BlockOpeningBrace,
             KtTokens.RBRACE to BlockClosingBrace,
+            KtTokens.LPAR to LeftParenthesis,
+            KtTokens.RPAR to RightParenthesis,
+            KtTokens.IF_KEYWORD to IfKeyword,
             KtTokens.ELSE_KEYWORD to ElseKeyword,
             KtTokens.WHEN_KEYWORD to WhenKeyword,
+            KtTokens.TRY_KEYWORD to TryKeyword,
+            KtTokens.CATCH_KEYWORD to CatchKeyword,
+            KtTokens.FINALLY_KEYWORD to FinallyKeyword,
+            KtTokens.WHILE_KEYWORD to WhileKeyword,
+            KtTokens.DO_KEYWORD to DoKeyword,
+            KtTokens.FOR_KEYWORD to ForKeyword,
+            KtTokens.REGULAR_STRING_PART to RegularStringPart,
+        )
+
+        private val CONTROL_FLOW_CONSTRUCTIONS: HashSet<SemanticEditorPosition.SyntaxElement> = hashSetOf(
+            WhenKeyword,
+            IfKeyword,
+            ElseKeyword,
+            DoKeyword,
+            WhileKeyword,
+            ForKeyword,
+            TryKeyword,
+            CatchKeyword,
+            FinallyKeyword,
         )
     }
 }

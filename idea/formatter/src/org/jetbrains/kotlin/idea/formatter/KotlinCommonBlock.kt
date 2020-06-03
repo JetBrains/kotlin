@@ -178,7 +178,7 @@ abstract class KotlinCommonBlock(
         if (node.wrapForFirstCallInChainIsAllowed && node.receiverIsCall())
             Wrap.createWrap(
                 settings.kotlinCommonSettings.METHOD_CALL_CHAIN_WRAP,
-                true /* wrapFirstElement */,
+                true, /* wrapFirstElement */
             )
         else
             null
@@ -339,7 +339,7 @@ abstract class KotlinCommonBlock(
                 null,
             )
 
-            TRY -> ChildAttributes(Indent.getNoneIndent(), null)
+            TRY, CATCH, FINALLY -> ChildAttributes(Indent.getNoneIndent(), null)
 
             in QUALIFIED_EXPRESSIONS -> ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null)
 
@@ -924,11 +924,6 @@ private val INDENT_RULES = arrayOf(
         .within(BODY).notForType(BLOCK)
         .set(Indent.getNormalIndent()),
 
-    strategy("For WHEN content")
-        .within(WHEN)
-        .notForType(RBRACE, LBRACE, WHEN_KEYWORD)
-        .set(Indent.getNormalIndent()),
-
     strategy("For single statement in THEN and ELSE")
         .within(THEN, ELSE).notForType(BLOCK)
         .set(Indent.getNormalIndent()),
@@ -1038,20 +1033,25 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Opening parenthesis for conditions")
         .forType(LPAR)
-        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE)
+        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE, FOR, WHEN)
         .set(Indent.getContinuationWithoutFirstIndent(true)),
 
     strategy("Closing parenthesis for conditions")
         .forType(RPAR)
         .forElement { node -> !hasErrorElementBefore(node) }
-        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE)
+        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE, FOR, WHEN)
         .set(Indent.getNoneIndent()),
 
     strategy("Closing parenthesis for incomplete conditions")
         .forType(RPAR)
         .forElement { node -> hasErrorElementBefore(node) }
-        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE)
+        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE, FOR, WHEN)
         .set(Indent.getContinuationWithoutFirstIndent()),
+
+    strategy("For WHEN content")
+        .within(WHEN)
+        .notForType(RBRACE, LBRACE, WHEN_KEYWORD)
+        .set(Indent.getNormalIndent()),
 
     strategy("KDoc comment indent")
         .within(KDOC_CONTENT)

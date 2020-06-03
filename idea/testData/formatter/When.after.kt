@@ -22,14 +22,14 @@ fun some(x: Any) {
     }
 
     when
-        (true) {
+            (true) {
 
     }
 
     when
 
 
-        (true) {
+            (true) {
 
     }
 
