@@ -87,6 +87,7 @@ class ResolversTest : ResolversTestBase() {
 
         override suspend fun resolve(
             artifactCoordinates: String,
+            options: ExternalDependenciesResolver.Options,
             sourceCodeLocation: SourceCode.LocationWithId?
         ): ResultWithDiagnostics<List<File>> {
             if (!acceptsArtifact(artifactCoordinates)) throw Exception("Path is invalid")
@@ -97,6 +98,7 @@ class ResolversTest : ResolversTestBase() {
 
         override fun addRepository(
             repositoryCoordinates: RepositoryCoordinates,
+            options: ExternalDependenciesResolver.Options,
             sourceCodeLocation: SourceCode.LocationWithId?
         ): ResultWithDiagnostics<Boolean> {
             if (!acceptsRepository(repositoryCoordinates)) return false.asSuccess()
