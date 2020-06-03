@@ -34,6 +34,7 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
+import com.intellij.openapi.editor.impl.ImaginaryEditor;
 import com.intellij.openapi.editor.markup.*;
 import com.intellij.openapi.fileEditor.impl.text.AsyncEditorLoader;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -163,14 +164,14 @@ public final class TemplateState implements Disposable {
     CaretListener listener = new CaretListener() {
       @Override
       public void caretAdded(@NotNull CaretEvent e) {
-        if (isMultiCaretMode()) {
+        if (!isInteractiveModeSupported()) {
           finishTemplate(false);
         }
       }
 
       @Override
       public void caretRemoved(@NotNull CaretEvent e) {
-        if (isMultiCaretMode()) {
+        if (!isInteractiveModeSupported()) {
           finishTemplate(false);
         }
       }
@@ -210,8 +211,8 @@ public final class TemplateState implements Disposable {
     return false;
   }
 
-  private boolean isMultiCaretMode() {
-    return myEditor != null && myEditor.getCaretModel().getCaretCount() > 1;
+  private boolean isInteractiveModeSupported() {
+    return myEditor != null && myEditor.getCaretModel().getCaretCount() <= 1 && !(myEditor instanceof ImaginaryEditor);
   }
 
   @Override
@@ -413,11 +414,13 @@ public final class TemplateState implements Disposable {
       }
       else {
         setCurrentVariableNumber(nextVariableNumber);
-        initTabStopHighlighters();
-        initListeners();
+        if (isInteractiveModeSupported()) {
+          initTabStopHighlighters();
+          initListeners();
+        }
         focusCurrentExpression();
         fireCurrentVariableChanged(-1);
-        if (isMultiCaretMode()) {
+        if (!isInteractiveModeSupported()) {
           finishTemplate(false);
         }
       }
@@ -1060,7 +1063,7 @@ public final class TemplateState implements Disposable {
       }
     }
 
-    if (isMultiCaretMode() && getCurrentVariableNumber() > -1) {
+    if (isInteractiveModeSupported() && getCurrentVariableNumber() > -1) {
       offset = -1; //do not move caret in multicaret mode if at least one tab had been made already
     }
 
