@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.highlighter
+package org.jetbrains.kotlin.idea.fir.highlighter
 
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.openapi.editor.colors.TextAttributesKey

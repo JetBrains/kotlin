@@ -3,16 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.highlighter.visitors
+package org.jetbrains.kotlin.idea.fir.highlighter.visitors
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.fir.highlighter.isAnnotationClass
+import org.jetbrains.kotlin.idea.fir.highlighter.textAttributesKeyForTypeDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
 import org.jetbrains.kotlin.idea.highlighter.NameHighlighter
-import org.jetbrains.kotlin.idea.highlighter.isAnnotationClass
-import org.jetbrains.kotlin.idea.highlighter.textAttributesKeyForTypeDeclaration
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors as Colors

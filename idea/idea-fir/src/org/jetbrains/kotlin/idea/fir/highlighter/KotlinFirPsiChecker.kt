@@ -3,14 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.highlighter
+package org.jetbrains.kotlin.idea.fir.highlighter
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.fir.highlighter.visitors.FirAfterResolveHighlightingVisitor
 import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.AnalysisSessionFirImpl
-import org.jetbrains.kotlin.idea.highlighter.visitors.FirAfterResolveHighlightingVisitor
+import org.jetbrains.kotlin.idea.highlighter.AbstractKotlinPsiChecker
+import org.jetbrains.kotlin.idea.highlighter.Diagnostic2Annotation
+import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
