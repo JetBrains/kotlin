@@ -33,6 +33,7 @@ import com.intellij.util.indexing.diagnostic.IndexDiagnosticDumper;
 import com.intellij.util.indexing.diagnostic.IndexingJobStatistics;
 import com.intellij.util.indexing.diagnostic.ProjectIndexingHistory;
 import com.intellij.util.indexing.roots.IndexableFilesProvider;
+import com.intellij.util.indexing.roots.SdkIndexableFilesProvider;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.progress.ConcurrentTasksProgressManager;
 import com.intellij.util.progress.SubTaskProgressIndicator;
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 public final class UnindexedFilesUpdater extends DumbModeTask {
   private static final Logger LOG = Logger.getInstance(UnindexedFilesUpdater.class);
@@ -113,7 +115,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
 
     projectIndexingHistory.getTimes().setScanFilesStart(Instant.now());
 
-    List<IndexableFilesProvider> orderedProviders = myIndex.getOrderedIndexableFilesProviders(myProject);
+    List<IndexableFilesProvider> orderedProviders = getOrderedProviders();
 
     Map<IndexableFilesProvider, List<VirtualFile>> providerToFiles = collectIndexableFilesConcurrently(myProject, indicator, orderedProviders);
 
@@ -187,6 +189,26 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
 
     FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.noFilesFoundToProcessIndexingProject(myProject, indicator));
     myIndex.dumpIndexStatistics();
+  }
+
+  /**
+   * Returns providers of files. Since LAB-22 (Smart Dumb Mode) is not implemented yet, the order of the providers is not strictly specified.
+   * For shared indexes it is a good idea to index JDKs in the last turn (because they likely have shared index available)
+   * so this method moves all SDK providers to the end.
+   */
+  @NotNull
+  private List<IndexableFilesProvider> getOrderedProviders() {
+    List<IndexableFilesProvider> originalOrderedProviders = myIndex.getOrderedIndexableFilesProviders(myProject);
+
+    List<IndexableFilesProvider> orderedProviders = new ArrayList<>();
+    originalOrderedProviders.stream()
+      .filter(p -> !(p instanceof SdkIndexableFilesProvider))
+      .collect(Collectors.toCollection(() -> orderedProviders));
+
+    originalOrderedProviders.stream()
+      .filter(p -> p instanceof SdkIndexableFilesProvider)
+      .collect(Collectors.toCollection(() -> orderedProviders));
+    return orderedProviders;
   }
 
   @NotNull
