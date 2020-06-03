@@ -429,7 +429,7 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
     val unsubstitutedExpectedType = conversionDataBeforeSubtyping?.convertedType ?: candidateExpectedType
     val expectedType = unsubstitutedExpectedType?.let { prepareExpectedType(it) }
 
-    val convertedArgument = if (expectedType != null && shouldRunConversionForConstants(expectedType)) {
+    val convertedArgument = if (expectedType != null && !isReceiver && shouldRunConversionForConstants(expectedType)) {
         val convertedConstant = resolutionCallbacks.convertSignedConstantToUnsigned(argument)
         if (convertedConstant != null) {
             resolvedCall.registerArgumentWithConstantConversion(argument, convertedConstant)
