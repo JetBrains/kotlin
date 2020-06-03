@@ -67,7 +67,7 @@ class CustomSourceRootTypeTest {
   @Test
   fun `edit custom root properties`() {
     Assume.assumeTrue("Editing of custom root properties isn't correctly implemented in the current project model",
-                      Registry.`is`("ide.new.project.model"))
+                      ProjectModelRule.isWorkspaceModelEnabled)
     TestCustomRootModelSerializerExtension.registerTestCustomSourceRootType(tempDirectory.newDirectory(), disposable.disposable)
     val srcDir = projectModel.baseProjectDir.newVirtualDirectory("src")
     val committed = run {

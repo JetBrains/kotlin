@@ -75,7 +75,7 @@ class ModuleModelTest {
       assertThat(model.modules).containsExactly(module)
       assertThat(model.getModuleToBeRenamed("a")).isNull()
       assertThat(model.getActualName(module)).isEqualTo("b")
-      if (Registry.`is`("ide.new.project.model")) {
+      if (ProjectModelRule.isWorkspaceModelEnabled) {
         //in the old model newly added module doesn't get the new name until commit; it looks like a bug
         assertThat(model.findModuleByName("a")).isNull()
         assertThat(model.findModuleByName("b")).isEqualTo(module)
