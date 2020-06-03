@@ -80,7 +80,7 @@ fun closeProject(project: Project) {
 fun runStartupActivities(project: Project) {
     with(StartupManager.getInstance(project) as StartupManagerImpl) {
         //scheduleInitialVfsRefresh()
-        runStartupActivities()
+        runStartupActivities(project)
     }
 }
 
