@@ -7,6 +7,8 @@
 // TODO fix statics export in DCE-driven mode
 // SKIP_DCE_DRIVEN
 
+// IGNORE_BACKEND: JS_IR_ES6
+
 @file:JsExport
 
 class ClassWithDefaultCtor {
