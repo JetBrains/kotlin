@@ -41,8 +41,8 @@
     public open override /*1*/ fun toString(): kotlin.String
 
     public companion object Companion {
-        @kotlin.internal.InlineOnly public final inline fun </*0*/ T> failure(/*0*/ exception: kotlin.Throwable): kotlin.Result<T>
-        @kotlin.internal.InlineOnly public final inline fun </*0*/ T> success(/*0*/ value: T): kotlin.Result<T>
+        @kotlin.internal.InlineOnly @kotlin.jvm.JvmName(name = "failure") public final inline fun </*0*/ T> failure(/*0*/ exception: kotlin.Throwable): kotlin.Result<T>
+        @kotlin.internal.InlineOnly @kotlin.jvm.JvmName(name = "success") public final inline fun </*0*/ T> success(/*0*/ value: T): kotlin.Result<T>
     }
 }
 

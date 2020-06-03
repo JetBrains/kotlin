@@ -1,9 +1,9 @@
 package kotlin.reflect
 
 @kotlin.SinceKotlin(version = "1.3") @kotlin.ExperimentalStdlibApi public inline fun </*0*/ reified T> typeOf(): kotlin.reflect.KType
-@kotlin.SinceKotlin(version = "1.3") @kotlin.ExperimentalStdlibApi @kotlin.internal.LowPriorityInOverloadResolution public fun </*0*/ T : kotlin.Any> kotlin.reflect.KClass<T>.cast(/*0*/ value: kotlin.Any?): T
+@kotlin.SinceKotlin(version = "1.4") @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class}) @kotlin.internal.LowPriorityInOverloadResolution public fun </*0*/ T : kotlin.Any> kotlin.reflect.KClass<T>.cast(/*0*/ value: kotlin.Any?): T
 @kotlin.reflect.ExperimentalAssociatedObjects public inline fun </*0*/ reified T : kotlin.Annotation> kotlin.reflect.KClass<*>.findAssociatedObject(): kotlin.Any?
-@kotlin.SinceKotlin(version = "1.3") @kotlin.ExperimentalStdlibApi @kotlin.internal.LowPriorityInOverloadResolution public fun </*0*/ T : kotlin.Any> kotlin.reflect.KClass<T>.safeCast(/*0*/ value: kotlin.Any?): T?
+@kotlin.SinceKotlin(version = "1.4") @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class}) @kotlin.internal.LowPriorityInOverloadResolution public fun </*0*/ T : kotlin.Any> kotlin.reflect.KClass<T>.safeCast(/*0*/ value: kotlin.Any?): T?
 
 @kotlin.reflect.ExperimentalAssociatedObjects @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) public final annotation class AssociatedObjectKey : kotlin.Annotation {
     /*primary*/ public constructor AssociatedObjectKey()

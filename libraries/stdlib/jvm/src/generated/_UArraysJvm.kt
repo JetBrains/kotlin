@@ -291,6 +291,7 @@ public fun UShortArray.binarySearch(element: UShort, fromIndex: Int = 0, toIndex
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfBigDecimal")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -308,6 +309,7 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> java.math.BigDecimal): jav
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfBigDecimal")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -325,6 +327,7 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> java.math.BigDecimal): j
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfBigDecimal")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -342,6 +345,7 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> java.math.BigDecimal): j
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfBigDecimal")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -359,6 +363,7 @@ public inline fun UShortArray.sumOf(selector: (UShort) -> java.math.BigDecimal):
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfBigInteger")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -376,6 +381,7 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> java.math.BigInteger): jav
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfBigInteger")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -393,6 +399,7 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> java.math.BigInteger): j
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfBigInteger")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -410,6 +417,7 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> java.math.BigInteger): j
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfBigInteger")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
