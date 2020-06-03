@@ -128,7 +128,7 @@ public class ProjectListBuilder extends AbstractListBuilder {
 
     private MyPsiTreeChangeListener() {
       myModificationTracker = PsiManager.getInstance(myProject).getModificationTracker();
-      myOutOfCodeBlockModificationCount = myModificationTracker.getOutOfCodeBlockModificationCount();
+      myOutOfCodeBlockModificationCount = myModificationTracker.getModificationCount();
     }
 
     @Override
@@ -164,7 +164,7 @@ public class ProjectListBuilder extends AbstractListBuilder {
     }
 
     private void childrenChanged() {
-      long newModificationCount = myModificationTracker.getOutOfCodeBlockModificationCount();
+      long newModificationCount = myModificationTracker.getModificationCount();
       if (newModificationCount == myOutOfCodeBlockModificationCount) return;
       myOutOfCodeBlockModificationCount = newModificationCount;
       addUpdateRequest();
