@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSuppo
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
-import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.isFinalizeMethod
@@ -63,9 +62,9 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOpt
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.idea.search.projectScope
-import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
+import org.jetbrains.kotlin.idea.search.usagesSearch.isDataClassProperty
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
@@ -284,7 +283,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (declaration is KtProperty && declaration.isSerializationImplicitlyUsedField()) return
             if (declaration is KtNamedFunction && declaration.isSerializationImplicitlyUsedMethod()) return
             // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
-            if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return
+            if (declaration is KtParameter && declaration.isDataClassProperty()) return
             // experimental annotations
             if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ANNOTATION_CLASS) {
                 val fqName = descriptor.fqNameSafe.asString()
@@ -592,9 +591,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         list.add(SafeDeleteFix(declaration))
 
         for (annotationEntry in declaration.annotationEntries) {
-            val typeElement = annotationEntry.typeReference?.typeElement as? KtUserType ?: continue
-            val target = typeElement.referenceExpression?.resolveMainReferenceToDescriptors()?.singleOrNull() ?: continue
-            val fqName = target.importableFqName?.asString() ?: continue
+            val resolvedName = annotationEntry.resolveToDescriptorIfAny() ?: continue
+            val fqName = resolvedName.fqName?.asString() ?: continue
 
             // checks taken from com.intellij.codeInspection.util.SpecialAnnotationsUtilBase.createAddToSpecialAnnotationFixes
             if (fqName.startsWith("kotlin.")
