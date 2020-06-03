@@ -1,10 +1,13 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow
 
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorFactory.getInstance
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.EditorKind
+import com.intellij.openapi.editor.colors.EditorColorsUtil.getGlobalOrDefaultColorScheme
+import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import javax.swing.BorderFactory.createEmptyBorder
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -14,7 +17,7 @@ internal class ProblemsViewPreview(private val panel: ProblemsViewPanel)
 
   private var preview: Editor? = null
     set(value) {
-      field?.let { getInstance().releaseEditor(it) }
+      field?.let { EditorFactory.getInstance().releaseEditor(it) }
       field = value
     }
 
@@ -24,12 +27,18 @@ internal class ProblemsViewPreview(private val panel: ProblemsViewPanel)
     return editor
   }
 
-  fun preview(document: Document?, show: Boolean): Editor? {
-    if (!show) return update(null, null) // hide preview
-    if (document == null) return update(null, this) // show label preview
+  fun preview(descriptor: OpenFileDescriptor?, show: Boolean): Editor? {
+    if (!show) return update(null, null)
+    val file = descriptor?.file ?: return update(null, null)
+    val document = ProblemsView.getDocument(panel.project, file) ?: return update(null, null)
     if (preview?.document === document) return preview // nothing is changed
 
-    val editor = getInstance().createEditor(document, panel.project, EditorKind.PREVIEW)
+    val editor = EditorFactory.getInstance().createEditor(document, panel.project, EditorKind.PREVIEW)
+    if (editor is EditorEx) {
+      val scheme = getGlobalOrDefaultColorScheme()
+      editor.colorsScheme = scheme
+      editor.highlighter = EditorHighlighterFactory.getInstance().createEditorHighlighter(file, scheme, panel.project)
+    }
     with(editor.settings) {
       isAnimatedScrolling = false
       isRefrainFromScrolling = false

@@ -303,8 +303,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   }
 
   private void updatePreview(@Nullable OpenFileDescriptor descriptor) {
-    Document document = descriptor == null ? null : ProblemsView.getDocument(getProject(), descriptor.getFile());
-    Editor editor = myPreview.preview(document, document != null && isNotNullAndSelected(getShowPreview()));
+    Editor editor = myPreview.preview(descriptor, isNotNullAndSelected(getShowPreview()));
     if (editor != null && descriptor != null) {
       invokeLater(() -> {
         if (editor.getComponent().isShowing()) {
