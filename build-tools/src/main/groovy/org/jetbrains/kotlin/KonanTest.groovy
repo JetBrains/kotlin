@@ -491,8 +491,10 @@ fun runTest() {
                     def files = compileList.stream()
                             .map { it.path }
                             .collect(Collectors.toList())
-                    runCompiler(files, klibPath, flags + ["-p", "library"])
-                    runCompiler([], executablePath(), flags + ["-Xinclude=$klibPath"])
+                    if (!files.empty) {
+                        runCompiler(files, klibPath, flags + ["-p", "library"])
+                        runCompiler([], executablePath(), flags + ["-Xinclude=$klibPath"])
+                    }
                 } else {
                     // Regular compilation with modules.
                     Map<String, TestModule> modules = compileList.stream()
