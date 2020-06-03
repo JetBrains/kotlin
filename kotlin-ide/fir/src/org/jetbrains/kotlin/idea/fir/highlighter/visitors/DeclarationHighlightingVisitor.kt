@@ -3,10 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.highlighter.visitors
+package org.jetbrains.kotlin.idea.fir.highlighter.visitors
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.util.PsiUtilCore
+import org.jetbrains.kotlin.idea.fir.highlighter.textAttributesForClass
+import org.jetbrains.kotlin.idea.fir.highlighter.textAttributesForKtParameterDeclaration
+import org.jetbrains.kotlin.idea.fir.highlighter.textAttributesForKtPropertyDeclaration
 import org.jetbrains.kotlin.idea.highlighter.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*

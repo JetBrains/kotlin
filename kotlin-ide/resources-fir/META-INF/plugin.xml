@@ -74,7 +74,7 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
   <!--  </extensions>-->
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
-    <beforeResolveHighlightingVisitor implementation="org.jetbrains.kotlin.idea.highlighter.visitors.DeclarationHighlightingExtension"/>
+    <beforeResolveHighlightingVisitor implementation="org.jetbrains.kotlin.idea.fir.highlighter.visitors.DeclarationHighlightingExtension"/>
   </extensions>
 
 
@@ -90,8 +90,8 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
                         serviceImplementation="org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor"/>
     <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService"/>
-    <highlightRangeExtension implementation="org.jetbrains.kotlin.idea.highlighter.KotlinFirPsiChecker"/>
-    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinFirPsiChecker"/>
+    <highlightRangeExtension implementation="org.jetbrains.kotlin.idea.fir.highlighter.KotlinFirPsiChecker"/>
+    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.fir.highlighter.KotlinFirPsiChecker"/>
     <projectService serviceInterface="org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService"
                     serviceImplementation="org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateServiceImpl"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
