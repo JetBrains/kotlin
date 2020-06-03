@@ -11,6 +11,8 @@ class KotlinSSBinaryExpressionTest : KotlinSSResourceInspectionTest() {
 
     fun testTwoBinaryExpressions() { doTest("a = 1 \n b = 2") }
 
+    fun testBinarySameVariable() { doTest("'_x + '_x") }
+
     fun testBinaryPlus() { doTest("1 + 2") }
 
     fun testBinaryMinus() { doTest("1 - 2") }

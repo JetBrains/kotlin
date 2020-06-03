@@ -3,7 +3,6 @@ package com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor.OccurenceKind.COMMENT
@@ -14,7 +13,6 @@ import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandl
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
 import com.jetbrains.kotlin.structuralsearch.impl.matcher.getCommentText
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.handlers.DeclarationHandler
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -54,14 +52,20 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     }
 
     override fun visitElement(element: PsiElement) {
-        super.visitElement(element)
         myCompilingVisitor.handle(element)
-
         when (element) {
             is LeafPsiElement -> visitLeafPsiElement(element)
             is KDoc -> visitKDoc(element)
             is KDocLink -> visitKDocLink(element)
         }
+
+        super.visitElement(element)
+    }
+
+    override fun visitReferenceExpression(expression: KtReferenceExpression) {
+        visitElement(expression)
+        if (getHandler(expression) is SubstitutionHandler)
+            getHandler(expression).setFilter { it is PsiElement }
     }
 
     private fun visitLeafPsiElement(element: LeafPsiElement) {
@@ -70,10 +74,6 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         when (element.elementType) {
             KDocTokens.TEXT, KDocTokens.TAG_NAME -> processPatternStringWithFragments(element)
         }
-    }
-
-    private fun visitKDoc(kDoc: KDoc) {
-        getHandler(kDoc).setFilter { it is KDoc }
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
@@ -116,24 +116,6 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
-    override fun visitReferenceExpression(expression: KtReferenceExpression) {
-        visitElement(expression)
-        super.visitReferenceExpression(expression)
-    }
-
-    override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-        visitElement(expression)
-        getHandler(expression).let { handler ->
-            if (handler is SubstitutionHandler) handler.setFilter { true }
-        }
-    }
-
-    override fun visitStringTemplateEntry(entry: KtStringTemplateEntry) {
-        super.visitStringTemplateEntry(entry)
-
-        getHandler(entry).setFilter { it is KtStringTemplateEntry }
-    }
-
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry) {
         super.visitLiteralStringTemplateEntry(entry)
         processPatternStringWithFragments(entry)
@@ -142,6 +124,8 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitSimpleNameStringTemplateEntry(entry: KtSimpleNameStringTemplateEntry) {
         super.visitSimpleNameStringTemplateEntry(entry)
+        getHandler(entry).setFilter { it is KtSimpleNameStringTemplateEntry || it is KtBlockStringTemplateEntry }
+
         val expression = entry.expression ?: return
         val exprHandler = getHandler(expression)
 
@@ -164,18 +148,33 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitDeclaration(dcl: KtDeclaration) {
         super.visitDeclaration(dcl)
+        getHandler(dcl).setFilter {
+            it is KtDeclaration || it is KtTypeProjection || it is KtTypeElement || it is KtNameReferenceExpression
+        }
+        /*if (dcl is KtParameter) return
 
         val handler = DeclarationHandler()
         handler.setFilter { it is KtDeclaration || it is PsiComment }
         setHandler(dcl, handler)
 
         val lastElement = PsiTreeUtil.skipWhitespacesBackward(dcl)
-        if (lastElement is PsiComment) setHandler(lastElement, handler)
+        if (lastElement is PsiComment) setHandler(lastElement, handler)*/
+    }
+
+    override fun visitParameter(parameter: KtParameter) {
+        super.visitParameter(parameter)
+        getHandler(parameter).setFilter {
+            it is KtDeclaration || it is KtUserType || it is KtNameReferenceExpression
+        }
     }
 
     override fun visitComment(comment: PsiComment) {
         super.visitComment(comment)
         processPatternStringWithFragments(comment, getCommentText(comment).trim())
+    }
+
+    private fun visitKDoc(kDoc: KDoc) {
+        getHandler(kDoc).setFilter { it is KDoc }
     }
 
     private fun visitKDocLink(link: KDocLink) {

@@ -7,6 +7,8 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
 
     fun testFun() { doTest("fun a() { '_* }") }
 
+    fun testFunAny() { doTest("fun '_( '_* )") }
+
     fun testFunLocal() { doTest("fun b() { '_* }") }
 
     fun testFunParam() { doTest("fun '_(b: Int, c: String) { '_* }") }

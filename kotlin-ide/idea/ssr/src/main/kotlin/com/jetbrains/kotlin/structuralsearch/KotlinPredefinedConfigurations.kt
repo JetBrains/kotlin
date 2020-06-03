@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 object KotlinPredefinedConfigurations {
     private val CLASS_TYPE = KSSRBundle.message("class.category")
     private val EXPRESSION_TYPE = KSSRBundle.message("expressions.category")
+    private val METHOD_TYPE = KSSRBundle.message("methods.category")
     private val OPERATOR_TYPE = KSSRBundle.message("operators.category")
     private val COMMENT_TYPE = KSSRBundle.message("comments.category")
 
@@ -85,6 +86,13 @@ object KotlinPredefinedConfigurations {
             KSSRBundle.message("predefined.configuration.strings.with.long.template"),
             """ "$$'_EntryBefore*${'$'}{ '_LongTemplateExpr }$$'_EntryAfter*" """,
             EXPRESSION_TYPE
+        ),
+
+        // Methods
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.method.signature"),
+            "fun '_Name('_Param*) : '_Type",
+            METHOD_TYPE
         ),
 
         // Comments, KDoc and Metadata
