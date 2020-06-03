@@ -30,7 +30,7 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
 
     override fun transformFile(file: FirFile, data: D): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup(towerScope.scopes) {
-            towerScope.addScopes(createImportingScopes(file, session, scopeSession))
+            towerScope.addScopes(createImportingScopes(file, session, scopeSession, useCaching = false))
             val state = beforeChildren(file)
             file.transformDeclarations(this, data)
             afterChildren(state)
