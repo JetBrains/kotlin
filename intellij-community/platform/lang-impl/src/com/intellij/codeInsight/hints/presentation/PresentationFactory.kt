@@ -158,8 +158,6 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
     suffix: InlayPresentation,
     startWithPlaceholder: Boolean = true): InlayPresentation {
     val (matchingPrefix, matchingSuffix) = matchingBraces(prefix, suffix)
-    val prefixExposed = EventExposingPresentation(matchingPrefix)
-    val suffixExposed = EventExposingPresentation(matchingSuffix)
     var presentationToChange: BiStatePresentation? = null
 
     val content = BiStatePresentation(first = {
@@ -169,13 +167,15 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
               })
     }, second = { expanded() }, initiallyFirstEnabled = startWithPlaceholder)
     presentationToChange = content
-    val listener = object : InputHandler {
+
+    class ContentFlippingPresentation(base: InlayPresentation) : StaticDelegatePresentation(base) {
       override fun mouseClicked(event: MouseEvent, translated: Point) {
         content.flipState()
       }
     }
-    prefixExposed.addInputListener(listener)
-    suffixExposed.addInputListener(listener)
+
+    val prefixExposed = ContentFlippingPresentation(matchingPrefix)
+    val suffixExposed = ContentFlippingPresentation(matchingSuffix)
     return seq(prefixExposed, content, suffixExposed)
   }
 

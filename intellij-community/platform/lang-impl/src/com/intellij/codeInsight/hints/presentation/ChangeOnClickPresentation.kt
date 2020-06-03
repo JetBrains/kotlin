@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent
  */
 class ChangeOnClickPresentation(
   private val notClicked: InlayPresentation,
-  val onClick: () -> InlayPresentation
+  private val onClick: () -> InlayPresentation
 ) : StatefulPresentation<ChangeOnClickPresentation.State>(State(false), ourMark) {
   private var cached : InlayPresentation? = null
 

@@ -6,7 +6,7 @@ import java.awt.Point
 import java.awt.event.MouseEvent
 
 /**
- * Pure presentation. If you need to preserve state between updates, you should use [StatefulPresentation]
+ * Pure presentation. If you need to preserve state between updates you should use [StatefulPresentation]
  */
 class OnHoverPresentation(
   presentation: InlayPresentation,

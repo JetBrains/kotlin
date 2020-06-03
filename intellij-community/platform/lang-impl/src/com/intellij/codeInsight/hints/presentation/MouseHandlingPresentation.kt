@@ -7,7 +7,7 @@ import java.awt.Point
 import java.awt.event.MouseEvent
 
 /**
- * Presentation, that allow to setup reaction to mouse actions.
+ * Presentation that allow to setup reaction to mouse actions.
  */
 @ApiStatus.Experimental
 class MouseHandlingPresentation(

@@ -10,7 +10,7 @@ import javax.swing.Icon
 /**
  * Draws image. If you need to position image inside inlay, use [InsetPresentation]
  */
-class IconPresentation(var icon: Icon, var component: Component) : BasePresentation() {
+class IconPresentation(private val icon: Icon, private val component: Component) : BasePresentation() {
   override val width: Int
     get() = icon.iconWidth
   override val height: Int
