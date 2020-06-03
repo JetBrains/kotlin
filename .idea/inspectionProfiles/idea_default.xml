@@ -141,13 +141,13 @@
     <inspection_tool class="ArraysAsListWithZeroOrOneArgument" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="INFO" enabled="true" />
     </inspection_tool>
-    <inspection_tool class="AssignmentToForLoopParameter" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_checkForeachParameters" value="false" />
-    </inspection_tool>
     <inspection_tool class="AssertBetweenInconvertibleTypes" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="AssertEqualsBetweenInconvertibleTypes" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="AssertEqualsBetweenInconvertibleTypesTestNG" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="AssertWithSideEffects" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="AssignmentToForLoopParameter" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_checkForeachParameters" value="false" />
+    </inspection_tool>
     <inspection_tool class="AssignmentToStaticFieldFromInstanceMethod" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false" />
     </inspection_tool>
@@ -1352,22 +1352,20 @@
         <constraint name="collection" nameOfExprType="java\.util\.Collection" exprTypeWithinHierarchy="true" within="" contains="" />
         <constraint name="__context__" within="" contains="" />
       </replaceConfiguration>
-      <searchConfiguration name="Explicit cast to specific SwiftType" uuid="4728e433-2984-33d6-8696-3fd7f55d9252"
-                           description="a type can be a type alias or a single-item tuple of a desired type. And you most likely want to support them as well"
-                           suppressId="explicit.cast.to.swift.type"
-                           problemDescriptor="Please use `SwiftTypeUtil.as&lt;type&gt;` method instead" text="$ref$ instanceof $SwiftType$"
-                           recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
-        <constraint name="__context__" within="" contains=""/>
-        <constraint name="ref" within="" contains=""/>
-        <constraint name="SwiftType"
-                    regexp="Swift.+Type"
-                    within="" contains=""/>
+      <searchConfiguration name="Explicit cast to specific SwiftType" uuid="4728e433-2984-33d6-8696-3fd7f55d9252" description="a type can be a type alias or a single-item tuple of a desired type. And you most likely want to support them as well" suppressId="explicit.cast.to.swift.type" problemDescriptor="Please use `SwiftTypeUtil.as&lt;type&gt;` method instead" text="$ref$ instanceof $SwiftType$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="ref" within="" contains="" />
+        <constraint name="SwiftType" regexp="Swift.+Type" within="" contains="" />
       </searchConfiguration>
       <replaceConfiguration name="Manual TextRange.substring implementation" description="Reports code pattern like str.substring(range.getStartOffset(), range.getEndOffset()). This code could be replaced with range.substring(str)" problemDescriptor="TextRange.substring() could be used" text="$str$.substring($range$.getStartOffset(), $range$.getEndOffset())" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="true" replacement="$range$.substring($str$)">
         <constraint name="__context__" within="" contains="" />
         <constraint name="str" nameOfExprType="java\.lang\.String" within="" contains="" />
         <constraint name="range" nameOfExprType="com\.intellij\.openapi\.util\.TextRange" within="" contains="" />
       </replaceConfiguration>
+      <searchConfiguration name="Change to lambda for lazier class loading" text="$CLASS$::new" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="CLASS" script="&quot;__context__.containingFile.name.matches(&quot;.*ElementType.*\\.java&quot;)&quot;" within="" contains="" />
+      </searchConfiguration>
     </inspection_tool>
     <inspection_tool class="SafeVarargsDetector" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SeamAnnotationIncorrectSignatureInspection" enabled="false" level="ERROR" enabled_by_default="false" />
