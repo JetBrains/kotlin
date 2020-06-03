@@ -15,7 +15,8 @@ private val EXCLUDED_FUNCTIONS: List<String> = listOf(
     "not", "toChar", "toString",
     "and", "or", "xor", "shl", "shr", "ushr",
     "compareTo", "equals",
-    "rangeTo", "subSequence")
+    "rangeTo", "subSequence"
+)
 private val EXCLUDED_TYPES: List<String> = listOf("Boolean", "Char", "String")
 
 fun main() {
@@ -27,7 +28,8 @@ fun generateFirMap(): String {
     val p = Printer(sb)
     p.println(File("license/COPYRIGHT.txt").readText())
 
-    p.println("""
+    p.println(
+        """
         |package org.jetbrains.kotlin.fir.evaluate
         |
         |import org.jetbrains.kotlin.fir.expressions.FirConstKind
@@ -51,7 +53,8 @@ fun generateFirMap(): String {
         |    opName: String,
         |    operation: Function2<T, U, Number>
         |) = BinaryOperationKey(t, u, opName) to operation as Function2<Number, Number, Number>
-    """.trimMargin())
+    """.trimMargin()
+    )
     p.println()
 
     val unaryOperationsMap = arrayListOf<Triple<String, List<KotlinType>, Boolean>>()
@@ -70,6 +73,14 @@ fun generateFirMap(): String {
     p.renderBinaryOperations(binaryOperationsMap)
     p.popIndent()
     p.println(")")
+    p.println()
+
+    p.println(
+        """
+        |internal val unaryOperatorNames = unaryOperations.map { it.key.opName }.toHashSet()
+        |internal val binaryOperatorNames = binaryOperations.map { it.key.opName }.toHashSet()
+    """.trimMargin()
+    )
 
     return sb.toString()
 }

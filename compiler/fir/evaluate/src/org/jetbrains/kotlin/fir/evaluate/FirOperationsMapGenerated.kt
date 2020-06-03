@@ -291,3 +291,6 @@ internal val binaryOperations: HashMap<BinaryOperationKey<*, *>, Function2<Numbe
     binaryOperation(FirConstKind.Short, FirConstKind.Long, "times", { a, b -> a.times(b) }),
     binaryOperation(FirConstKind.Short, FirConstKind.Short, "times", { a, b -> a.times(b) }),
 )
+
+internal val unaryOperatorNames = unaryOperations.map { it.key.opName }.toHashSet()
+internal val binaryOperatorNames = binaryOperations.map { it.key.opName }.toHashSet()
