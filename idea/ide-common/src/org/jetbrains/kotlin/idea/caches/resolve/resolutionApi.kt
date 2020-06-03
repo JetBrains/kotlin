@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -92,6 +93,10 @@ fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescrip
     return facade.resolveImportReference(facade.moduleDescriptor, fqName)
 }
 
+fun KtAnnotationEntry.resolveToDescriptorIfAny(
+    bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL
+): AnnotationDescriptor? =
+    resolveToDescriptorIfAny(getResolutionFacade(), bodyResolveMode)
 
 // This and next functions are used for 'normal' element analysis
 // This analysis *should* provide all information extractable from this KtElement except:
