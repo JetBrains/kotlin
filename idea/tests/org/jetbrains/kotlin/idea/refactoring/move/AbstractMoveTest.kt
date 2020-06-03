@@ -29,14 +29,19 @@ import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
 import org.jetbrains.kotlin.idea.refactoring.move.moveClassesOrPackages.KotlinAwareDelegatingMoveDestination
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
+import org.jetbrains.kotlin.idea.refactoring.move.moveMethod.MoveKotlinMethodProcessor
 import org.jetbrains.kotlin.idea.refactoring.runRefactoringTest
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 abstract class AbstractMoveTest : AbstractMultifileRefactoringTest() {
@@ -282,6 +287,30 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
                 }
             val descriptor = MoveDeclarationsDescriptor(project, MoveSource(elementToMove), moveTarget, delegate)
             MoveKotlinDeclarationsProcessor(descriptor).run()
+        }
+    },
+
+    MOVE_KOTLIN_METHOD {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
+            val project = mainFile.project
+            val method =
+                KotlinFunctionShortNameIndex.getInstance().get(config.getString("methodToMove"), project, project.projectScope()).first()
+            val methodParameterName = config.getNullableString("methodParameter")
+            val sourcePropertyName = config.getNullableString("sourceProperty")
+            val targetObjectName = config.getNullableString("targetObject")
+            val targetVariable = when {
+                methodParameterName != null -> method.valueParameters.find { it.name == methodParameterName }!!
+                sourcePropertyName != null -> KotlinPropertyShortNameIndex.getInstance()
+                    .get(sourcePropertyName, project, project.projectScope()).first()
+                else -> KotlinFullClassNameIndex.getInstance().get(targetObjectName!!, project, project.projectScope()).first()
+
+            }
+            val oldClassParameterNames = mutableMapOf<KtClass, String>()
+            val outerInstanceParameter = config.getNullableString("outerInstanceParameter")
+            if (outerInstanceParameter != null) {
+                oldClassParameterNames[method.containingClassOrObject as KtClass] = outerInstanceParameter
+            }
+            MoveKotlinMethodProcessor(method, targetVariable, oldClassParameterNames).run()
         }
     };
 }
