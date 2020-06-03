@@ -5,5 +5,7 @@ import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
 class KotlinSSArrayAccessExpressionTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "arrayAccessExpression"
 
-    fun testConstantExpressionAccess() { doTest("a[0]") }
+    fun testConstAccess() { doTest("a[0]") }
+
+    fun testConstAccessGet() { doTest("a[0]") }
 }

@@ -40,4 +40,16 @@ class KotlinSSBinaryExpressionTest : KotlinSSResourceInspectionTest() {
     fun testBinaryInEquality() { doTest("a != b") }
 
     fun testElvis() { doTest("'_ ?: '_") }
+
+    fun testBinaryPlusAssign() { doTest("1 += 2") }
+
+    fun testBinaryMinusAssign() { doTest("1 -= 2") }
+
+    fun testBinaryTimesAssign() { doTest("1 *= 2") }
+
+    fun testBinaryDivAssign() { doTest("1 /= 2") }
+
+    fun testBinaryRemAssign() { doTest("1 %= 2") }
+
+    fun testBinarySet() { doTest("a[0] = 1 + 2") }
 }

@@ -31,7 +31,7 @@ class KotlinSSCallExpression : KotlinSSResourceInspectionTest() {
 
     fun testFunArgCallBoundedCountFilter() { doTest("listOf('_{4,4})") }
 
-    fun testFunCall() { doTest("a()") }
+    fun testFunCall() { doTest("'_()") }
 
     fun testFunExtensionCall() { doTest("0.a()") }
 
@@ -50,4 +50,8 @@ class KotlinSSCallExpression : KotlinSSResourceInspectionTest() {
     fun testFunTypeArgCall() { doTest("a<Int, String>(0, \"a\")") }
 
     fun testFunVarargCall() { doTest("a(*intArrayOf(1, 2, 3))") }
+
+    fun testLambdaCallInvoke() { doTest("a()") }
+
+    fun testLambdaCallInvokeArgs() { doTest("a(0, 0)") }
 }

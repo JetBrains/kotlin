@@ -97,6 +97,18 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
+        super.visitArrayAccessExpression(expression)
+        getHandler(expression).setFilter {
+            it is KtArrayAccessExpression || it is KtDotQualifiedExpression
+        }
+    }
+
+    override fun visitCallExpression(expression: KtCallExpression) {
+        super.visitCallExpression(expression)
+        getHandler(expression).setFilter { it is KtCallExpression || it is KtDotQualifiedExpression } // translated op matching
+    }
+
     override fun visitConstantExpression(expression: KtConstantExpression) {
         super.visitConstantExpression(expression)
         getHandler(expression).setFilter {
