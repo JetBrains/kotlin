@@ -584,7 +584,7 @@ class GenerateIrRuntime {
 
         val transformer = IrModuleToJsTransformer(context, null, null)
 
-        return transformer.generateModule(module)
+        return transformer.generateModule(listOf(module))
     }
 
     fun compile(files: List<KtFile>): String {
