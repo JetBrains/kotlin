@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.plugin.generators.*
 class FirAllOpenComponentRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AllOpenStatusTransformer
+        +::AllOpenVisibilityTransformer
         +::AllOpenSupertypeGenerator
 
         // Declaration generators

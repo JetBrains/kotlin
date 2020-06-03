@@ -17,3 +17,9 @@ annotation class D
 annotation class E
 annotation class F
 annotation class G
+
+annotation class AllPublic(val visibility: Visibility)
+
+enum class Visibility {
+    Public, Internal, Private, Protected
+}

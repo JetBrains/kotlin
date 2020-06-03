@@ -100,6 +100,11 @@ public class FirAllOpenDiagnosticTestGenerated extends AbstractFirAllOpenDiagnos
         public void testSimpleAnnotation() throws Exception {
             runTest("plugins/fir/fir-plugin-prototype/testData/status/simpleAnnotation.kt");
         }
+
+        @TestMetadata("visibilityTransformation.kt")
+        public void testVisibilityTransformation() throws Exception {
+            runTest("plugins/fir/fir-plugin-prototype/testData/status/visibilityTransformation.kt");
+        }
     }
 
     @TestMetadata("plugins/fir/fir-plugin-prototype/testData/supertypes")
