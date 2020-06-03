@@ -190,8 +190,15 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     private fun attachLibraries() {
         runWriteAction {
             val model = ModuleRootManager.getInstance(myModule).modifiableModel
-            attachLibrary(model, KOTLIN_LIBRARY_NAME, TestKotlinArtifacts.kotlinStdlib, TestKotlinArtifacts.kotlinStdlibSources)
-            attachLibrary(model, TEST_LIBRARY_NAME, libraryOutputDirectory, librarySrcDirectory)
+
+            attachLibrary(
+                model, KOTLIN_LIBRARY_NAME,
+                listOf(TestKotlinArtifacts.kotlinStdlib, TestKotlinArtifacts.jetbrainsAnnotations),
+                listOf(TestKotlinArtifacts.kotlinStdlibSources)
+            )
+
+            attachLibrary(model, TEST_LIBRARY_NAME, listOf(libraryOutputDirectory), listOf(librarySrcDirectory))
+
             model.commit()
         }
     }
@@ -203,12 +210,12 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         })
     }
 
-    private fun attachLibrary(model: ModifiableRootModel, libraryName: String, classes: File, sources: File) {
+    private fun attachLibrary(model: ModifiableRootModel, libraryName: String, classes: List<File>, sources: List<File>) {
         val customLibEditor = NewLibraryEditor().apply {
             name = libraryName
 
-            addRoot(VfsUtil.getUrlForLibraryRoot(classes), OrderRootType.CLASSES)
-            addRoot(VfsUtil.getUrlForLibraryRoot(sources), OrderRootType.SOURCES)
+            classes.forEach { addRoot(VfsUtil.getUrlForLibraryRoot(it), OrderRootType.CLASSES) }
+            sources.forEach { addRoot(VfsUtil.getUrlForLibraryRoot(it), OrderRootType.SOURCES) }
         }
 
         ConfigLibraryUtil.addLibrary(customLibEditor, model, null)

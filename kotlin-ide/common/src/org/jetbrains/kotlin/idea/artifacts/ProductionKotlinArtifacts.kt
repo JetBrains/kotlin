@@ -20,6 +20,7 @@ private val kotlinPluginDirectory: File = run {
 object ProductionKotlinArtifacts : KotlinArtifacts() {
     override val kotlincDirectory = findFile(kotlinPluginDirectory, "kotlinc")
 
+    override val jetbrainsAnnotations = findFile(kotlincDirectory, KotlinArtifactNames.JETBRAINS_ANNOTATIONS)
     override val kotlinStdlib = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_STDLIB)
     override val kotlinStdlibSources = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_STDLIB_SOURCES)
     override val kotlinReflect = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_REFLECT)

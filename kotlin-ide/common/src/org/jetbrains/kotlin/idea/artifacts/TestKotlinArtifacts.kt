@@ -88,6 +88,7 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     override val kotlincDirectory = findFile(artifactDirectory, "kotlinc")
     private val kotlincLibDirectory = findFile(artifactDirectory, "lib")
 
+    override val jetbrainsAnnotations by lazy { findLibrary(MAVEN_REPOSITORY, "jetbrains_annotations.xml", "org.jetbrains", "annotations") }
     override val kotlinStdlib by lazy { findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib") }
     override val kotlinStdlibSources by lazy { findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib", LibraryFileKind.SOURCES) }
     override val kotlinReflect by lazy { findLibrary(repoPath, "kotlin_reflect.xml", "org.jetbrains.kotlin", "kotlin-reflect") }

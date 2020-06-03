@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.idea.artifacts
 
 object KotlinArtifactNames {
+    const val JETBRAINS_ANNOTATIONS = "annotations-13.0.jar"
     const val KOTLIN_STDLIB = "kotlin-stdlib.jar"
     const val KOTLIN_STDLIB_SOURCES = "kotlin-stdlib-sources.jar"
     const val KOTLIN_REFLECT = "kotlin-reflect.jar"
