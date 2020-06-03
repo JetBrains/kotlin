@@ -264,6 +264,9 @@ object Aggregates : TemplateGroupBase() {
             }
             annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
             annotation("@OverloadResolutionByLambdaReturnType")
+            specialFor(ArraysOfUnsigned) {
+                annotation("""@Suppress("INAPPLICABLE_JVM_NAME")""")
+            }
             annotation("""@kotlin.jvm.JvmName("sumOf$typeShortName")""") // should not be needed if inline return type is mangled
             if (selectorType.startsWith("U"))
                 annotation("@ExperimentalUnsignedTypes")

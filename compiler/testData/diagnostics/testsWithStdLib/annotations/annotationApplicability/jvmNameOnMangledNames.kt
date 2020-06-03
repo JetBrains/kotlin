@@ -25,3 +25,6 @@ class C {
     <!INAPPLICABLE_JVM_NAME!>@JvmName("test")<!>
     fun returnsKotlinResult(a: Result<Int>): Result<Int> = a
 }
+
+<!INAPPLICABLE_JVM_NAME!>@JvmName("extensionFun")<!>
+fun Foo.extensionFun() {}
