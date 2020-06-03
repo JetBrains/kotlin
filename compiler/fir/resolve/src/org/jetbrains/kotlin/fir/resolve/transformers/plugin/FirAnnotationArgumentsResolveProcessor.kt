@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -30,13 +31,14 @@ class FirAnnotationArgumentsResolveProcessor(
 class FirAnnotationArgumentsResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
     private val transformer = FirAnnotationArgumentsResolveTransformer(session, scopeSession)
     private val hasAnnotations = session.registeredPluginAnnotations.annotations.isNotEmpty()
+    private val predicateBasedProvider = session.predicateBasedProvider
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        if (!hasAnnotations) return file.compose()
+        if (!hasAnnotations || !predicateBasedProvider.fileHasPluginAnnotations(file)) return file.compose()
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
 }

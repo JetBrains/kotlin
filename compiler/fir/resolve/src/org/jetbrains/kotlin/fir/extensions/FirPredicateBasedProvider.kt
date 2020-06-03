@@ -11,7 +11,9 @@ import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.predicate.*
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.fqName
 
 abstract class FirPredicateBasedProvider : FirSessionComponent {
@@ -38,6 +40,8 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
     ): List<Pair<FirAnnotatedDeclaration, List<FirAnnotatedDeclaration>>>
 
     abstract fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirAnnotatedDeclaration>?
+
+    abstract fun fileHasPluginAnnotations(file: FirFile): Boolean
 
     abstract fun registerAnnotatedDeclaration(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>)
     abstract fun registerGeneratedDeclaration(declaration: FirAnnotatedDeclaration, owner: FirAnnotatedDeclaration)
@@ -78,6 +82,10 @@ private class FirPredicateBasedProviderImpl(private val session: FirSession) : F
         return this.map { it to cache.ownersForDeclaration.getValue(it) }
     }
 
+    override fun fileHasPluginAnnotations(file: FirFile): Boolean {
+        return file in cache.filesWithPluginAnnotations
+    }
+
     override fun registerAnnotatedDeclaration(declaration: FirAnnotatedDeclaration, owners: PersistentList<FirAnnotatedDeclaration>) {
         cache.ownersForDeclaration[declaration] = owners
         registerOwnersDeclarations(declaration, owners)
@@ -88,6 +96,8 @@ private class FirPredicateBasedProviderImpl(private val session: FirSession) : F
         if (matchingAnnotations.isEmpty()) return
         matchingAnnotations.forEach { cache.declarationByAnnotation.put(it, declaration) }
         cache.annotationsOfDeclaration.putAll(declaration, matchingAnnotations)
+        val file = owners.first() as FirFile
+        cache.filesWithPluginAnnotations += file
     }
 
     override fun getOwnersOfDeclaration(declaration: FirAnnotatedDeclaration): List<FirAnnotatedDeclaration>? {
@@ -172,6 +182,8 @@ private class FirPredicateBasedProviderImpl(private val session: FirSession) : F
         val parentAnnotationsOfDeclaration: LinkedHashMultimap<FirAnnotatedDeclaration, AnnotationFqn> = LinkedHashMultimap.create()
 
         val ownersForDeclaration: MutableMap<FirAnnotatedDeclaration, PersistentList<FirAnnotatedDeclaration>> = mutableMapOf()
+
+        val filesWithPluginAnnotations: MutableSet<FirFile> = mutableSetOf()
     }
 }
 
