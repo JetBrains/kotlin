@@ -14,12 +14,10 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
-import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.stageController
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -27,10 +25,12 @@ import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 
 class CompilerResult(
-    val jsCode: String?,
-    val dceJsCode: String?,
+    val jsCode: JsCode?,
+    val dceJsCode: JsCode?,
     val tsDefinitions: String? = null
 )
+
+class JsCode(val mainModule: String, val dependencies: Iterable<Pair<String, String>> = emptyList())
 
 fun compile(
     project: Project,
@@ -45,7 +45,9 @@ fun compile(
     generateFullJs: Boolean = true,
     generateDceJs: Boolean = false,
     dceDriven: Boolean = false,
-    es6mode: Boolean = false
+    es6mode: Boolean = false,
+    multiModule: Boolean = false,
+    relativeRequirePath: Boolean = false
 ): CompilerResult {
     stageController = object : StageController {}
 
@@ -54,18 +56,16 @@ fun compile(
 
     val moduleDescriptor = moduleFragment.descriptor
 
-    val mainFunction = JsMainFunctionDetector.getMainFunctionOrNull(moduleFragment)
-
-    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration, es6mode = es6mode)
-
-    // Load declarations referenced during `context` initialization
-    val irProviders = listOf(deserializer)
-    ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings).generateUnboundSymbolsAsDependencies()
-
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
         is MainModule.Klib -> dependencyModules
     }
+
+    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, allModules.first(), exportedDeclarations, configuration, es6mode = es6mode)
+
+    // Load declarations referenced during `context` initialization
+    val irProviders = listOf(deserializer)
+    ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings).generateUnboundSymbolsAsDependencies()
 
     deserializer.postProcess()
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
@@ -74,32 +74,42 @@ fun compile(
         moveBodilessDeclarationsToSeparatePlace(context, module)
     }
 
+    // TODO should be done incrementally
+    generateTests(context, allModules.last())
+
     if (dceDriven) {
-
-        // TODO we should only generate tests for the current module
-        // TODO should be done incrementally
-        allModules.forEach { module ->
-            generateTests(context, module)
-        }
-
         val controller = MutableController(context, pirLowerings)
         stageController = controller
 
         controller.currentStage = controller.lowerings.size + 1
 
-        eliminateDeadDeclarations(allModules, context, mainFunction)
+        eliminateDeadDeclarations(allModules, context)
 
         // TODO investigate whether this is needed anymore
         stageController = object : StageController {
             override val currentStage: Int = controller.currentStage
         }
 
-        val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
-        return transformer.generateModule(allModules, fullJs = true, dceJs = false)
+        val transformer = IrModuleToJsTransformer(
+            context,
+            mainArguments,
+            fullJs = true,
+            dceJs = false,
+            multiModule = multiModule,
+            relativeRequirePath = relativeRequirePath
+        )
+        return transformer.generateModule(allModules)
     } else {
         jsPhases.invokeToplevel(phaseConfig, context, allModules)
-        val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
-        return transformer.generateModule(allModules, generateFullJs, generateDceJs)
+        val transformer = IrModuleToJsTransformer(
+            context,
+            mainArguments,
+            fullJs = generateFullJs,
+            dceJs = generateDceJs,
+            multiModule = multiModule,
+            relativeRequirePath = relativeRequirePath
+        )
+        return transformer.generateModule(allModules)
     }
 }
 
@@ -111,6 +121,6 @@ fun generateJsCode(
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
     jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
 
-    val transformer = IrModuleToJsTransformer(context, null, null, true, nameTables)
-    return transformer.generateModule(listOf(moduleFragment)).jsCode!!
+    val transformer = IrModuleToJsTransformer(context, null, true, nameTables)
+    return transformer.generateModule(listOf(moduleFragment)).jsCode!!.mainModule
 }

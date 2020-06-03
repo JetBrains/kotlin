@@ -92,8 +92,12 @@ class JsIrBackendContext(
 
     private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
     val implicitDeclarationFile = run {
-        IrFileImpl(object : SourceManager.FileEntry {
-            override val name = "<implicitDeclarations>"
+        syntheticFile("implicitDeclarations", irModuleFragment)
+    }
+
+    private fun syntheticFile(name: String, module: IrModuleFragment): IrFile {
+        return IrFileImpl(object : SourceManager.FileEntry {
+            override val name = "<$name>"
             override val maxOffset = UNDEFINED_OFFSET
 
             override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int) =
@@ -110,20 +114,24 @@ class JsIrBackendContext(
             override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
             override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
         }, internalPackageFragmentDescriptor).also {
-            irModuleFragment.files += it
+            module.files += it
         }
     }
 
-    private var testContainerField: IrSimpleFunction? = null
+    private val testContainerFuns = mutableMapOf<IrModuleFragment, IrSimpleFunction>()
 
-    val hasTests get() = testContainerField != null
-
-    val testContainer: IrSimpleFunction
-        get() = testContainerField ?: JsIrBuilder.buildFunction("test fun", irBuiltIns.unitType, implicitDeclarationFile).apply {
-            body = JsIrBuilder.buildBlockBody(emptyList())
-            testContainerField = this
-            implicitDeclarationFile.declarations += this
+    fun createTestContainerFun(module: IrModuleFragment): IrSimpleFunction {
+        return testContainerFuns.getOrPut(module) {
+            val file = syntheticFile("tests", module)
+            JsIrBuilder.buildFunction("test fun", irBuiltIns.unitType, file).apply {
+                body = JsIrBuilder.buildBlockBody(emptyList())
+                file.declarations += this
+            }
         }
+    }
+
+    val testRoots: Map<IrModuleFragment, IrSimpleFunction>
+        get() = testContainerFuns
 
     override val mapping = JsMapping()
     override val declarationFactory = JsDeclarationFactory(mapping)

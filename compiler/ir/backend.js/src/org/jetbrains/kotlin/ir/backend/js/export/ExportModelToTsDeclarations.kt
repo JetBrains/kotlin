@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.export
 
+import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
+
 // TODO: Support module kinds other than plain
 
 fun ExportedModule.toTypeScript(): String {
     val prefix = "    type Nullable<T> = T | null | undefined\n"
     val body = declarations.joinToString("\n") { it.toTypeScript("    ") }
-    return "declare namespace $name {\n$prefix$body\n}\n"
+    return "declare namespace ${sanitizeName(name)} {\n$prefix$body\n}\n"
 }
 
 fun List<ExportedDeclaration>.toTypeScript(indent: String): String =

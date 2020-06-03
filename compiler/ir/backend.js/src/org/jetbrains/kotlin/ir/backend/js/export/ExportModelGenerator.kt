@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.*
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
@@ -22,11 +21,12 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ExportModelGenerator(val context: JsIrBackendContext) {
 
-    private fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
+    fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.fqName
         val exports = file.declarations.flatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
         return when {
@@ -38,7 +38,8 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
     fun generateExport(modules: Iterable<IrModuleFragment>): ExportedModule =
         ExportedModule(
-            sanitizeName(context.configuration[CommonConfigurationKeys.MODULE_NAME]!!),
+            context.configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+            context.configuration[JSConfigurationKeys.MODULE_KIND]!!,
             (context.externalPackageFragment.values + modules.flatMap { it.files }).flatMap {
                 generateExport(it)
             }
