@@ -29,7 +29,7 @@ object ES6_THIS_VARIABLE_ORIGIN : IrDeclarationOriginImpl("ES6_THIS_VARIABLE_ORI
 
 class ES6ConstructorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        assert(context.es6mode)
+        if (!context.es6mode) return
 
         if (container !is IrConstructor) return
 

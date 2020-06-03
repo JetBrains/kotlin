@@ -107,20 +107,19 @@ abstract class BasicIrBoxTest(
         if (isMainModule) {
             val debugMode = getBoolean("kotlin.js.debugMode")
 
-            val phases = if (runEs6Mode) jsEs6Phases else jsPhases
             val phaseConfig = if (debugMode) {
-                val allPhasesSet = phases.toPhaseMap().values.toSet()
+                val allPhasesSet = jsPhases.toPhaseMap().values.toSet()
                 val dumpOutputDir = File(outputFile.parent, outputFile.nameWithoutExtension + "-irdump")
                 println("\n ------ Dumping phases to file://$dumpOutputDir")
                 PhaseConfig(
-                    phases,
+                    jsPhases,
                     dumpToDirectory = dumpOutputDir.path,
                     toDumpStateAfter = allPhasesSet,
                     toValidateStateAfter = allPhasesSet,
                     dumpOnlyFqName = null
                 )
             } else {
-                PhaseConfig(phases)
+                PhaseConfig(jsPhases)
             }
 
             if (!skipRegularMode) {
