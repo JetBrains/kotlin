@@ -4,7 +4,7 @@ fun a() {
                 select
                 ${
                     <caret>
-    }
+                }
                 from T                
                 """
 }

@@ -308,6 +308,21 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/InExpressionsParentheses.kt");
     }
 
+    @TestMetadata("InExpressionsParentheses2.kt")
+    public void testInExpressionsParentheses2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/InExpressionsParentheses2.kt");
+    }
+
+    @TestMetadata("InExpressionsParentheses3.kt")
+    public void testInExpressionsParentheses3() throws Exception {
+        runTest("idea/testData/indentationOnNewline/InExpressionsParentheses3.kt");
+    }
+
+    @TestMetadata("InExpressionsParentheses4.kt")
+    public void testInExpressionsParentheses4() throws Exception {
+        runTest("idea/testData/indentationOnNewline/InExpressionsParentheses4.kt");
+    }
+
     @TestMetadata("InExpressionsParenthesesBeforeOperand.kt")
     public void testInExpressionsParenthesesBeforeOperand() throws Exception {
         runTest("idea/testData/indentationOnNewline/InExpressionsParenthesesBeforeOperand.kt");

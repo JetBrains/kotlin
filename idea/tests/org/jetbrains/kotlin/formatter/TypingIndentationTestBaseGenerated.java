@@ -310,6 +310,21 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/InExpressionsParentheses.after.kt");
         }
 
+        @TestMetadata("InExpressionsParentheses2.after.kt")
+        public void testInExpressionsParentheses2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/InExpressionsParentheses2.after.kt");
+        }
+
+        @TestMetadata("InExpressionsParentheses3.after.kt")
+        public void testInExpressionsParentheses3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/InExpressionsParentheses3.after.kt");
+        }
+
+        @TestMetadata("InExpressionsParentheses4.after.kt")
+        public void testInExpressionsParentheses4() throws Exception {
+            runTest("idea/testData/indentationOnNewline/InExpressionsParentheses4.after.kt");
+        }
+
         @TestMetadata("InExpressionsParenthesesBeforeOperand.after.kt")
         public void testInExpressionsParenthesesBeforeOperand() throws Exception {
             runTest("idea/testData/indentationOnNewline/InExpressionsParenthesesBeforeOperand.after.kt");
@@ -704,11 +719,6 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("InEnumInitializerListNotEmpty.after.inv.kt")
         public void testInEnumInitializerListNotEmpty() throws Exception {
             runTest("idea/testData/indentationOnNewline/InEnumInitializerListNotEmpty.after.inv.kt");
-        }
-
-        @TestMetadata("InExpressionsParentheses.after.inv.kt")
-        public void testInExpressionsParentheses() throws Exception {
-            runTest("idea/testData/indentationOnNewline/InExpressionsParentheses.after.inv.kt");
         }
 
         @TestMetadata("InExpressionsParenthesesBeforeOperand.after.inv.kt")
