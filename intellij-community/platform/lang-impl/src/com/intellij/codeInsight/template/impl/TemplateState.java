@@ -1063,7 +1063,7 @@ public final class TemplateState implements Disposable {
       }
     }
 
-    if (isInteractiveModeSupported() && getCurrentVariableNumber() > -1) {
+    if (!isInteractiveModeSupported() && getCurrentVariableNumber() > -1) {
       offset = -1; //do not move caret in multicaret mode if at least one tab had been made already
     }
 
