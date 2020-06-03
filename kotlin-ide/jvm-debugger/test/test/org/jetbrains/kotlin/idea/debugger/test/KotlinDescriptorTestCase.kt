@@ -9,8 +9,6 @@ import com.intellij.debugger.impl.DescriptorTestCase
 import com.intellij.debugger.impl.OutputChecker
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.process.ProcessOutputTypes
-import com.intellij.jarRepository.JarRepositoryManager
-import com.intellij.jarRepository.RemoteRepositoryDescription
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootManager
@@ -23,7 +21,6 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.xdebugger.XDebugSession
-import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
@@ -33,15 +30,12 @@ import org.jetbrains.kotlin.idea.debugger.test.util.KotlinOutputChecker
 import org.jetbrains.kotlin.idea.debugger.test.util.LogPropagator
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.test.Directives
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.ComparisonFailure
 import java.io.File
-import org.jetbrains.jps.model.library.JpsMavenRepositoryLibraryDescriptor as JpsMavenRepositoryLibraryDescriptor
 
 internal const val KOTLIN_LIBRARY_NAME = "KotlinLibrary"
 internal const val TEST_LIBRARY_NAME = "TestLibrary"
@@ -68,7 +62,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     private var oldValues: OldValuesStorage? = null
 
     override fun runBare() {
-        testAppDirectory = KotlinTestUtils.tmpDir("debuggerTestSources")
+        testAppDirectory = tmpDir("debuggerTestSources")
         sourcesOutputDirectory = File(testAppDirectory, "src").apply { mkdirs() }
 
         librarySrcDirectory = File(testAppDirectory, "libSrc").apply { mkdirs() }
@@ -98,8 +92,16 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         super.tearDown()
     }
 
-    fun doTest(path: String) {
-        val wholeFile = File(path)
+    protected fun testDataFile(fileName: String): File = File(getTestDataPath(), fileName)
+
+    protected fun testDataFile(): File = testDataFile(fileName())
+
+    protected open fun fileName(): String = getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
+
+    fun getTestDataPath(): String = getTestsRoot(this::class.java)
+
+    fun doTest(unused: String) {
+        val wholeFile = testDataFile()
         val wholeFileContents = FileUtil.loadFile(wholeFile, true)
 
         val testFiles = createTestFiles(wholeFile, wholeFileContents)
@@ -153,7 +155,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     abstract fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences)
 
     override fun initOutputChecker(): OutputChecker {
-        return KotlinOutputChecker(getTestDirectoryPath(), testAppPath, appOutputPath)
+        return KotlinOutputChecker(getTestDataPath(), testAppPath, appOutputPath)
     }
 
     override fun setUpModule() {
@@ -213,14 +215,14 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     }
 
     override fun checkTestOutput() {
-        if (KotlinTestUtils.isAllFilesPresentTest(getTestName(false))) {
+        if (isAllFilesPresentTest(getTestName(false))) {
             return
         }
 
         try {
             super.checkTestOutput()
         } catch (e: ComparisonFailure) {
-            KotlinTestUtils.assertEqualsToFile(File(getTestDirectoryPath(), getTestName(true) + ".out"), e.actual)
+            assertEqualsToFile(File(getTestDataPath(), getTestName(true) + ".out"), e.actual)
         }
 
     }
@@ -237,7 +239,4 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this)
     }
 
-    protected fun getTestDirectoryPath(): String {
-        return "${KotlinTestUtils.getHomeDirectory()}/${javaClass.getAnnotation(TestMetadata::class.java).value}"
-    }
 }
