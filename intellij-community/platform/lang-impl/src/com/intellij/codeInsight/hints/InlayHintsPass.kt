@@ -4,7 +4,6 @@ package com.intellij.codeInsight.hints
 import com.intellij.codeHighlighting.EditorBoundHighlightingPass
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager
 import com.intellij.codeInsight.hints.presentation.PresentationFactory
-import com.intellij.codeInsight.hints.presentation.PresentationListener
 import com.intellij.concurrency.JobLauncher
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.Inlay
@@ -19,8 +18,6 @@ import com.intellij.psi.SyntaxTraverser
 import com.intellij.util.Processor
 import gnu.trove.TIntHashSet
 import gnu.trove.TIntObjectHashMap
-import java.awt.Dimension
-import java.awt.Rectangle
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.stream.IntStream
 
@@ -68,18 +65,6 @@ class InlayHintsPass(
     positionKeeper.restorePosition(false)
     if (rootElement === myFile) {
       InlayHintsPassFactory.putCurrentModificationStamp(myEditor, myFile)
-    }
-  }
-
-
-  class InlayContentListener(private val inlay: Inlay<out PresentationContainerRenderer<*>>) : PresentationListener {
-    // TODO more precise redraw, requires changes in Inlay
-    override fun contentChanged(area: Rectangle) {
-      inlay.repaint()
-    }
-
-    override fun sizeChanged(previous: Dimension, current: Dimension) {
-      inlay.update()
     }
   }
 
