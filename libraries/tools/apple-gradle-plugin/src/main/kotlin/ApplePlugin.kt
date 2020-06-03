@@ -129,22 +129,24 @@ private open class AppleGenerateXcodeProjectTask @Inject constructor(
                 logger.warn("Both mainStoryboard and sceneDelegateClass are specified, sceneDelegateClass will be ignored")
             }
 
-            if (mainStoryboard != null) {
-                plist["UIMainStoryboardFile"] = mainStoryboard
-            } else if (sceneDelegateClass != null) {
-                plist["UIApplicationSceneManifest"] = Plist().also {
-                    it["UIApplicationSupportsMultipleScenes"] = false
-                    it["UISceneConfigurations"] = Plist().also {
-                        it["UIWindowSceneSessionRoleApplication"] = listOf(
-                            Plist().also {
-                                it["UISceneConfigurationName"] = "Default Configuration"
-                                it["UISceneDelegateClassName"] = "\$(PRODUCT_MODULE_NAME).$sceneDelegateClass"
-                            }
-                        )
+            when {
+                mainStoryboard != null -> {
+                    plist["UIMainStoryboardFile"] = mainStoryboard
+                }
+                sceneDelegateClass != null -> {
+                    plist["UIApplicationSceneManifest"] = Plist().also {
+                        it["UIApplicationSupportsMultipleScenes"] = false
+                        it["UISceneConfigurations"] = Plist().also {
+                            it["UIWindowSceneSessionRoleApplication"] = listOf(
+                                Plist().also {
+                                    it["UISceneConfigurationName"] = "Default Configuration"
+                                    it["UISceneDelegateClassName"] = "\$(PRODUCT_MODULE_NAME).$sceneDelegateClass"
+                                }
+                            )
+                        }
                     }
                 }
-            } else {
-                logger.warn("Please specify either mainStoryboard and sceneDelegateClass")
+                else -> logger.warn("Please specify either mainStoryboard or sceneDelegateClass")
             }
         }
         val infoPlistFile = writePlist("Info-${target.name}", targetPlist)
