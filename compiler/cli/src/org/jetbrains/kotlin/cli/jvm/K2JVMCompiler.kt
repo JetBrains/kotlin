@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
+import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -50,8 +51,6 @@ import java.io.File
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
-    override val performanceManager = K2JVMCompilerPerformanceManager()
-
     override fun doExecute(
         arguments: K2JVMCompilerArguments,
         configuration: CompilerConfiguration,
@@ -60,6 +59,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
+        configuration.putIfNotNull(CLIConfigurationKeys.REPEAT_COMPILE_MODULES, arguments.repeatCompileModules?.toIntOrNull())
         configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(jvmPhases, arguments, messageCollector))
 
         if (!configuration.configureJdkHome(arguments)) return COMPILATION_ERROR
@@ -219,7 +219,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        performanceManager.notifyCompilerInitialized()
+        configuration[CLIConfigurationKeys.PERF_MANAGER]?.notifyCompilerInitialized()
 
         return if (messageCollector.hasErrors()) null else environment
     }
@@ -262,6 +262,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             CLITool.doMain(K2JVMCompiler(), args)
         }
 
+    }
+
+    override val performanceManager: CommonCompilerPerformanceManager
+        get() = error("Unsupported")
+
+    override fun createPerformanceManager(arguments: K2JVMCompilerArguments): CommonCompilerPerformanceManager {
+        val argument = arguments.profileCompilerCommand ?: return K2JVMCompilerPerformanceManager()
+        return ProfilingCompilerPerformanceManager.create(argument)
     }
 }
 

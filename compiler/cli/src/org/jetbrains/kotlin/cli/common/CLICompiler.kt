@@ -45,6 +45,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
     protected abstract val performanceManager: CommonCompilerPerformanceManager
 
+    protected open fun createPerformanceManager(arguments: A): CommonCompilerPerformanceManager = performanceManager
+
     // Used in CompilerRunnerUtil#invokeExecMethod, in Eclipse plugin (KotlinCLICompiler) and in kotlin-gradle-plugin (GradleCompilerRunner)
     fun execAndOutputXml(errStream: PrintStream, services: Services, vararg args: String): ExitCode {
         return exec(errStream, services, MessageRenderer.XML, args)
@@ -56,7 +58,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
     }
 
     public override fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
-        val performanceManager = performanceManager
+        val performanceManager = createPerformanceManager(arguments)
         if (arguments.reportPerf || arguments.dumpPerf != null) {
             performanceManager.enableCollectingPerformanceStatistics()
         }
