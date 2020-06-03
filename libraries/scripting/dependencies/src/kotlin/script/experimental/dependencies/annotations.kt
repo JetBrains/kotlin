@@ -8,6 +8,7 @@ package kotlin.script.experimental.dependencies
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.filterByAnnotationType
+import kotlin.script.experimental.dependencies.impl.SimpleExternalDependenciesResolverOptionsParser
 
 /**
  * A common annotation that could be used in a script to denote a dependency
@@ -17,7 +18,7 @@ import kotlin.script.experimental.util.filterByAnnotationType
 @Target(AnnotationTarget.FILE)
 @Repeatable
 @Retention(AnnotationRetention.SOURCE)
-annotation class DependsOn(vararg val artifactsCoordinates: String)
+annotation class DependsOn(vararg val artifactsCoordinates: String, val options: Array<String> = [])
 
 /**
  * A common annotation that could be used in a script to denote a repository for an ExternalDependenciesResolver
@@ -27,7 +28,7 @@ annotation class DependsOn(vararg val artifactsCoordinates: String)
 @Target(AnnotationTarget.FILE)
 @Repeatable
 @Retention(AnnotationRetention.SOURCE)
-annotation class Repository(vararg val repositoriesCoordinates: String)
+annotation class Repository(vararg val repositoriesCoordinates: String, val options: Array<String> = [])
 
 /**
  * An extension function that configures repositories and resolves artifacts denoted by the [Repository] and [DependsOn] annotations
@@ -39,8 +40,11 @@ suspend fun ExternalDependenciesResolver.resolveFromScriptSourceAnnotations(
     annotations.forEach { (annotation, locationWithId) ->
         when (annotation) {
             is Repository -> {
+                val options = SimpleExternalDependenciesResolverOptionsParser(*annotation.options, locationWithId = locationWithId)
+                    .valueOr { return it }
+
                 for (coordinates in annotation.repositoriesCoordinates) {
-                    val added = addRepository(coordinates, locationWithId)
+                    val added = addRepository(coordinates, options, locationWithId)
                         .also { reports.addAll(it.reports) }
                         .valueOr { return it }
 
@@ -58,8 +62,13 @@ suspend fun ExternalDependenciesResolver.resolveFromScriptSourceAnnotations(
 
     return reports + annotations.filterByAnnotationType<DependsOn>()
         .flatMapSuccess { (annotation, locationWithId) ->
-            annotation.artifactsCoordinates.asIterable().flatMapSuccess { artifactCoordinates ->
-                resolve(artifactCoordinates, locationWithId)
+            SimpleExternalDependenciesResolverOptionsParser(
+                *annotation.options,
+                locationWithId = locationWithId
+            ).onSuccess { options ->
+                annotation.artifactsCoordinates.asIterable().flatMapSuccess { artifactCoordinates ->
+                    resolve(artifactCoordinates, options, locationWithId)
+                }
             }
         }
 }

@@ -55,6 +55,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
 
     override suspend fun resolve(
         artifactCoordinates: String,
+        options: ExternalDependenciesResolver.Options,
         sourceCodeLocation: SourceCode.LocationWithId?
     ): ResultWithDiagnostics<List<File>> {
 
@@ -76,6 +77,7 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
 
     override fun addRepository(
         repositoryCoordinates: RepositoryCoordinates,
+        options: ExternalDependenciesResolver.Options,
         sourceCodeLocation: SourceCode.LocationWithId?
     ): ResultWithDiagnostics<Boolean> {
         val url = repositoryCoordinates.toRepositoryUrlOrNull()

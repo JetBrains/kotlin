@@ -26,6 +26,7 @@ class CompoundDependenciesResolver(private val resolvers: List<ExternalDependenc
 
     override fun addRepository(
         repositoryCoordinates: RepositoryCoordinates,
+        options: ExternalDependenciesResolver.Options,
         sourceCodeLocation: SourceCode.LocationWithId?
     ): ResultWithDiagnostics<Boolean> {
         var success = false
@@ -34,7 +35,7 @@ class CompoundDependenciesResolver(private val resolvers: List<ExternalDependenc
 
         for (resolver in resolvers) {
             if (resolver.acceptsRepository(repositoryCoordinates)) {
-                when (val resolveResult = resolver.addRepository(repositoryCoordinates, sourceCodeLocation)) {
+                when (val resolveResult = resolver.addRepository(repositoryCoordinates, options, sourceCodeLocation)) {
                     is ResultWithDiagnostics.Success -> {
                         success = true
                         repositoryAdded = repositoryAdded || resolveResult.value
@@ -57,13 +58,14 @@ class CompoundDependenciesResolver(private val resolvers: List<ExternalDependenc
 
     override suspend fun resolve(
         artifactCoordinates: String,
+        options: ExternalDependenciesResolver.Options,
         sourceCodeLocation: SourceCode.LocationWithId?
     ): ResultWithDiagnostics<List<File>> {
         val reports = mutableListOf<ScriptDiagnostic>()
 
         for (resolver in resolvers) {
             if (resolver.acceptsArtifact(artifactCoordinates)) {
-                when (val resolveResult = resolver.resolve(artifactCoordinates, sourceCodeLocation)) {
+                when (val resolveResult = resolver.resolve(artifactCoordinates, options, sourceCodeLocation)) {
                     is ResultWithDiagnostics.Failure -> reports.addAll(resolveResult.reports)
                     else -> return resolveResult
                 }
