@@ -34,7 +34,6 @@ fun DeclarationDescriptor.expectedDescriptors(): List<DeclarationDescriptor> = w
     else -> emptyList()
 }
 
-
 fun KtDeclaration.expectedDeclarations(): List<KtDeclaration> =
     (toDescriptor() as? MemberDescriptor)?.expectedDescriptors()?.mapNotNull {
         DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
@@ -65,10 +64,8 @@ fun KtDeclaration.actualDeclarations(): Set<KtDeclaration> =
             DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
         } ?: emptySet()
 
-fun KtDeclaration.isEffectivelyExpect(): Boolean = if (hasExpectModifier())
-    true
-else
-    containingClassOrObject?.isEffectivelyExpect() == true
+fun KtDeclaration.isEffectivelyExpect(): Boolean =
+    generateSequence(this) { it.containingClassOrObject }.any { it.hasExpectModifier() }
 
 fun KtDeclaration.isEffectivelyActual(checkConstructor: Boolean = true): Boolean = when {
     hasActualModifier() -> true
