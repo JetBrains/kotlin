@@ -6,12 +6,17 @@
 package org.jetbrains.kotlin.idea.codeInsight.codevision
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.utils.inlays.InlayHintsProviderTestCase
-import org.jetbrains.kotlin.idea.codeInsight.codevision.KotlinCodeVisionProvider.KotlinCodeVisionSettings
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
 open class AbstractKotlinCodeVisionProviderTest : InlayHintsProviderTestCase() { // Abstract- prefix is just a convention for GenerateTests
+
+    companion object {
+        const val INHERITORS_KEY = "kotlin.code-vision.inheritors"
+        const val USAGES_KEY = "kotlin.code-vision.usages"
+    }
 
     fun doTest(testPath: String) { // named according to the convention imposed by GenerateTests
         assertThatActualHintsMatch(testPath)
@@ -27,21 +32,18 @@ open class AbstractKotlinCodeVisionProviderTest : InlayHintsProviderTestCase() {
         codeVisionProvider.usagesLimit = usagesLimit
         codeVisionProvider.inheritorsLimit = inheritorsLimit
 
-        val mode: KotlinCodeVisionSettings = when (InTextDirectivesUtils.findStringWithPrefixes(fileContents, "// MODE: ")) {
-            "inheritors" -> inheritorsEnabled()
-            "usages" -> usagesEnabled()
-            "usages-&-inheritors" -> usagesAndInheritorsEnabled()
-            else -> codeVisionDisabled()
+        when (InTextDirectivesUtils.findStringWithPrefixes(fileContents, "// MODE: ")) {
+            "inheritors" -> mode(usages = false, inheritors = true)
+            "usages" -> mode(usages = true, inheritors = false)
+            "usages-&-inheritors" -> mode(usages = true, inheritors = true)
+            else -> mode(usages = false, inheritors = false)
         }
 
-        testProvider("kotlinCodeVision.kt", fileContents, codeVisionProvider, mode)
+        testProvider("kotlinCodeVision.kt", fileContents, codeVisionProvider)
     }
 
-    private fun usagesAndInheritorsEnabled(): KotlinCodeVisionSettings = KotlinCodeVisionSettings(showUsages = true, showInheritors = true)
-
-    private fun inheritorsEnabled(): KotlinCodeVisionSettings = KotlinCodeVisionSettings(showUsages = false, showInheritors = true)
-
-    private fun usagesEnabled(): KotlinCodeVisionSettings = KotlinCodeVisionSettings(showUsages = true, showInheritors = false)
-
-    private fun codeVisionDisabled(): KotlinCodeVisionSettings = KotlinCodeVisionSettings(showUsages = false, showInheritors = false)
+    private fun mode(usages: Boolean, inheritors: Boolean) {
+        Registry.get(USAGES_KEY).setValue(usages)
+        Registry.get(INHERITORS_KEY).setValue(inheritors)
+    }
 }

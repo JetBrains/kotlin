@@ -14,7 +14,6 @@ import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.openapi.project.Project
 import com.intellij.ui.layout.panel
-import org.jetbrains.kotlin.idea.KotlinBundle
 import javax.swing.JPanel
 
 
@@ -27,27 +26,12 @@ fun logUsageStatistics(project: Project?, groupId: String, eventId: String) =
 fun logUsageStatistics(project: Project?, groupId: String, eventId: String, data: FeatureUsageData) =
     FUCounterUsageLogger.getInstance().logEvent(project, groupId, eventId, data)
 
-fun createImmediateConfigurable(settings: KotlinCodeVisionProvider.KotlinCodeVisionSettings): ImmediateConfigurable {
+fun createImmediateConfigurable(): ImmediateConfigurable {
     return object : ImmediateConfigurable {
-        override fun createComponent(listener: ChangeListener): JPanel {
-            return panel {}
-        }
+        override fun createComponent(listener: ChangeListener): JPanel = panel {}
 
-        override val cases: List<ImmediateConfigurable.Case>
-            get() = listOf(
-                ImmediateConfigurable.Case(
-                    KotlinBundle.message("hints.title.codevision.usages"),
-                    "usages",
-                    settings::showUsages
-                ),
-                ImmediateConfigurable.Case(
-                    KotlinBundle.message("hints.title.codevision.inheritors"),
-                    "inheritors",
-                    settings::showInheritors
-                )
-            )
+        override val cases: List<ImmediateConfigurable.Case> = emptyList()
 
-        override val mainCheckboxText: String
-            get() = KotlinBundle.message("hints.title.codevision.show.hints.for")
+        override val mainCheckboxText: String = ""
     }
 }
