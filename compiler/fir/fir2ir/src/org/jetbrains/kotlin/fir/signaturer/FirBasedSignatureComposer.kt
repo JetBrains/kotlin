@@ -49,6 +49,10 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
             hashId = mangler.run { property.signatureMangle }
             setExpected(property.isExpect)
         }
+
+        override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+            setExpected(enumEntry.isExpect)
+        }
     }
 
     private val CallableId.relativeCallableName: FqName

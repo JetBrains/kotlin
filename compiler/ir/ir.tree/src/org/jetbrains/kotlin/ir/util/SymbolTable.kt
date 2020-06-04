@@ -515,6 +515,12 @@ open class SymbolTable(
             factory
         )
 
+    fun declareEnumEntry(
+        sig: IdSignature,
+        symbolFactory: () -> IrEnumEntrySymbol,
+        enumEntryFactory: (IrEnumEntrySymbol) -> IrEnumEntry
+    ): IrEnumEntry = enumEntrySymbolTable.declare(sig, symbolFactory, enumEntryFactory)
+
     fun declareEnumEntryIfNotExists(descriptor: ClassDescriptor, factory: (IrEnumEntrySymbol) -> IrEnumEntry): IrEnumEntry {
         return enumEntrySymbolTable.declareIfNotExists(descriptor, { createEnumEntrySymbol(descriptor) }, factory)
     }

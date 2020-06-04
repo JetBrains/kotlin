@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
+import org.jetbrains.kotlin.fir.symbols.Fir2IrEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -322,19 +324,26 @@ class Fir2IrClassifierStorage(
 
     fun getCachedIrEnumEntry(enumEntry: FirEnumEntry): IrEnumEntry? = enumEntryCache[enumEntry]
 
+    private fun declareIrEnumEntry(signature: IdSignature?, factory: (IrEnumEntrySymbol) -> IrEnumEntry): IrEnumEntry {
+        if (signature == null) {
+            val descriptor = WrappedEnumEntryDescriptor()
+            return symbolTable.declareEnumEntry(0, 0, IrDeclarationOrigin.DEFINED, descriptor, factory).apply { descriptor.bind(this) }
+        }
+        return symbolTable.declareEnumEntry(signature, { Fir2IrEnumEntrySymbol(signature) }, factory)
+    }
+
     fun createIrEnumEntry(
         enumEntry: FirEnumEntry,
         irParent: IrClass?,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     ): IrEnumEntry {
         return enumEntry.convertWithOffsets { startOffset, endOffset ->
-            val desc = WrappedEnumEntryDescriptor()
-            declarationStorage.enterScope(desc)
-            val result = symbolTable.declareEnumEntry(startOffset, endOffset, origin, desc) { symbol ->
+            val signature = signatureComposer.composeSignature(enumEntry)
+            val result = declareIrEnumEntry(signature) { symbol ->
                 IrEnumEntryImpl(
                     startOffset, endOffset, origin, symbol, enumEntry.name
                 ).apply {
-                    desc.bind(this)
+                    declarationStorage.enterScope(descriptor)
                     val irType = enumEntry.returnTypeRef.toIrType()
                     if (irParent != null) {
                         this.parent = irParent
@@ -350,9 +359,9 @@ class Fir2IrClassifierStorage(
                             IrEnumConstructorCallImpl(startOffset, endOffset, irType, irParent.constructors.first().symbol)
                         )
                     }
+                    declarationStorage.leaveScope(descriptor)
                 }
             }
-            declarationStorage.leaveScope(desc)
             enumEntryCache[enumEntry] = result
             result
         }
