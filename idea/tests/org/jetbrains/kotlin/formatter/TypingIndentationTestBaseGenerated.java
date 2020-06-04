@@ -120,6 +120,41 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/DoInFun.after.kt");
         }
 
+        @TestMetadata("DoWhile.after.kt")
+        public void testDoWhile() throws Exception {
+            runTest("idea/testData/indentationOnNewline/DoWhile.after.kt");
+        }
+
+        @TestMetadata("DoWhile2.after.kt")
+        public void testDoWhile2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/DoWhile2.after.kt");
+        }
+
+        @TestMetadata("DoWhile3.after.kt")
+        public void testDoWhile3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/DoWhile3.after.kt");
+        }
+
+        @TestMetadata("DoWhile4.after.kt")
+        public void testDoWhile4() throws Exception {
+            runTest("idea/testData/indentationOnNewline/DoWhile4.after.kt");
+        }
+
+        @TestMetadata("DoWhile5.after.kt")
+        public void testDoWhile5() throws Exception {
+            runTest("idea/testData/indentationOnNewline/DoWhile5.after.kt");
+        }
+
+        @TestMetadata("DoWhile6.after.kt")
+        public void testDoWhile6() throws Exception {
+            runTest("idea/testData/indentationOnNewline/DoWhile6.after.kt");
+        }
+
+        @TestMetadata("DoWhile7.after.kt")
+        public void testDoWhile7() throws Exception {
+            runTest("idea/testData/indentationOnNewline/DoWhile7.after.kt");
+        }
+
         @TestMetadata("DoWithBraces.after.kt")
         public void testDoWithBraces() throws Exception {
             runTest("idea/testData/indentationOnNewline/DoWithBraces.after.kt");

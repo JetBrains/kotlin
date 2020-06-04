@@ -118,6 +118,41 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/DoInFun.kt");
     }
 
+    @TestMetadata("DoWhile.kt")
+    public void testDoWhile() throws Exception {
+        runTest("idea/testData/indentationOnNewline/DoWhile.kt");
+    }
+
+    @TestMetadata("DoWhile2.kt")
+    public void testDoWhile2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/DoWhile2.kt");
+    }
+
+    @TestMetadata("DoWhile3.kt")
+    public void testDoWhile3() throws Exception {
+        runTest("idea/testData/indentationOnNewline/DoWhile3.kt");
+    }
+
+    @TestMetadata("DoWhile4.kt")
+    public void testDoWhile4() throws Exception {
+        runTest("idea/testData/indentationOnNewline/DoWhile4.kt");
+    }
+
+    @TestMetadata("DoWhile5.kt")
+    public void testDoWhile5() throws Exception {
+        runTest("idea/testData/indentationOnNewline/DoWhile5.kt");
+    }
+
+    @TestMetadata("DoWhile6.kt")
+    public void testDoWhile6() throws Exception {
+        runTest("idea/testData/indentationOnNewline/DoWhile6.kt");
+    }
+
+    @TestMetadata("DoWhile7.kt")
+    public void testDoWhile7() throws Exception {
+        runTest("idea/testData/indentationOnNewline/DoWhile7.kt");
+    }
+
     @TestMetadata("DoWithBraces.kt")
     public void testDoWithBraces() throws Exception {
         runTest("idea/testData/indentationOnNewline/DoWithBraces.kt");
