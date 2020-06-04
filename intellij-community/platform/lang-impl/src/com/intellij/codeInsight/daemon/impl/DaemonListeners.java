@@ -367,6 +367,7 @@ public final class DaemonListeners implements Disposable {
         ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
         stopDaemonAndRestartAllFiles("Plugin will be uninstalled");
         removeHighlightersOnPluginUnload(pluginDescriptor);
+        IntentionsUI.getInstance(project).invalidate();
       }
     });
     connection.subscribe(FileHighlightingSettingListener.SETTING_CHANGE, (root, setting) ->
