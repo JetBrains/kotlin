@@ -72,6 +72,10 @@ public final class FileBasedIndexSwitcher {
   }
 
   public void turnOn() {
+    turnOn(() -> {});
+  }
+
+  public void turnOn(@NotNull Runnable beforeIndexTasksStarted) {
     LOG.assertTrue(ApplicationManager.getApplication().isWriteThread());
 
     myNestedLevelCount--;
@@ -87,6 +91,8 @@ public final class FileBasedIndexSwitcher {
       if (!unitTestMode) {
         myDumbModeSemaphore.up();
       }
+
+      beforeIndexTasksStarted.run();
 
       FileBasedIndexImpl.cleanupProcessedFlag();
       for (Project project : ProjectUtil.getOpenProjects()) {
