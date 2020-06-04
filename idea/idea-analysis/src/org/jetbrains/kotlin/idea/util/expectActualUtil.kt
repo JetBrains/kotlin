@@ -45,15 +45,6 @@ fun KtDeclaration.expectedDeclarations(): List<KtDeclaration> =
 fun DeclarationDescriptor.expectedDescriptor(): DeclarationDescriptor? = expectedDescriptors().firstOrNull()
 fun KtDeclaration.expectedDeclaration(): KtDeclaration? = expectedDeclarations().firstOrNull()
 
-private fun MemberDescriptor.isEffectivelyActual(checkConstructor: Boolean = true): Boolean =
-    isActual || isEnumEntryInActual() || isConstructorInActual(checkConstructor)
-
-private fun MemberDescriptor.isConstructorInActual(checkConstructor: Boolean) =
-    checkConstructor && this is ClassConstructorDescriptor && containingDeclaration.isEffectivelyActual(checkConstructor)
-
-private fun MemberDescriptor.isEnumEntryInActual() =
-    (DescriptorUtils.isEnumEntry(this) && (containingDeclaration as? MemberDescriptor)?.isActual == true)
-
 fun DeclarationDescriptor.actualDescriptors(): Collection<DeclarationDescriptor> {
     if (this is MemberDescriptor) {
         if (!this.isExpect) return emptyList()
