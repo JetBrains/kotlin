@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class IdeaResolverForProject(
     debugName: String,
@@ -96,6 +95,12 @@ class IdeaResolverForProject(
             moduleByJavaClass = { javaClass: JavaClass ->
                 val psiClass = (javaClass as JavaClassImpl).psi
                 psiClass.getPlatformModuleInfo(JvmPlatforms.unspecifiedJvmPlatform)?.platformModule ?: psiClass.getNullableModuleInfo()
+            },
+            resolverForReferencedModule = { targetModuleInfo, referencingModuleInfo ->
+                require(targetModuleInfo is IdeaModuleInfo && referencingModuleInfo is IdeaModuleInfo) {
+                    "Unexpected modules passed through JvmPlatformParameters to IDE resolver ($targetModuleInfo, $referencingModuleInfo)"
+                }
+                tryGetResolverForModuleWithResolutionAnchorFallback(targetModuleInfo, referencingModuleInfo)
             }
         )
 
@@ -150,7 +155,7 @@ class IdeaResolverForProject(
         }
     }
 
-    override fun tryGetResolverForModuleWithResolutionAnchorFallback(
+    private fun tryGetResolverForModuleWithResolutionAnchorFallback(
         targetModuleInfo: IdeaModuleInfo,
         referencingModuleInfo: IdeaModuleInfo,
     ): ResolverForModule? {
@@ -158,9 +163,9 @@ class IdeaResolverForProject(
 
         return getResolverForProjectUsingResolutionAnchor(targetModuleInfo, referencingModuleInfo)
     }
-    
+
     private fun getResolverForProjectUsingResolutionAnchor(
-        targetModuleInfo: IdeaModuleInfo, 
+        targetModuleInfo: IdeaModuleInfo,
         referencingModuleInfo: IdeaModuleInfo
     ): ResolverForModule? {
         val moduleDescriptorOfReferencingModule = descriptorByModule[referencingModuleInfo]?.moduleDescriptor
@@ -173,7 +178,9 @@ class IdeaResolverForProject(
             ?.getResolverForProject()
             ?: return null
 
-        if (resolverForProjectFromAnchorModule !is IdeaResolverForProject) return null
+        require(resolverForProjectFromAnchorModule is IdeaResolverForProject) {
+            "Resolution via anchor modules is expected to be used only from IDE resolvers"
+        }
 
         return resolverForProjectFromAnchorModule.tryGetResolverForModule(targetModuleInfo)
     }

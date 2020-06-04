@@ -64,9 +64,6 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
         return resolverForModuleDescriptor(doGetDescriptorForModule(moduleInfo))
     }
 
-    override fun tryGetResolverForModuleWithResolutionAnchorFallback(targetModuleInfo: M, referencingModuleInfo: M): ResolverForModule? =
-        tryGetResolverForModule(targetModuleInfo)
-
     private fun setupModuleDescriptor(module: M, moduleDescriptor: ModuleDescriptorImpl) {
         moduleDescriptor.setDependencies(
             LazyModuleDependencies(
