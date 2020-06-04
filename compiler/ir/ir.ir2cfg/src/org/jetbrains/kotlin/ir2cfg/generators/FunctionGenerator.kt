@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir2cfg.generators
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -177,9 +176,9 @@ class FunctionGenerator(val function: IrFunction) {
         override fun visitMemberAccess(expression: IrMemberAccessExpression, data: Boolean): IrStatement? {
             expression.dispatchReceiver?.process()
             expression.extensionReceiver?.process()
-            val descriptor = expression.symbol.descriptor as CallableDescriptor
-            for (valueParameter in descriptor.valueParameters) {
-                expression.getValueArgument(valueParameter)?.process()
+            val callee = expression.symbol.owner as IrFunction
+            for (valueParameter in callee.valueParameters) {
+                expression.getValueArgument(valueParameter.index)?.process()
             }
             if (data) {
                 builder.add(expression)
