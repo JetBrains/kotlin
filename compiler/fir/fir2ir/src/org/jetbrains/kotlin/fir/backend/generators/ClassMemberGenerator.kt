@@ -57,7 +57,7 @@ internal class ClassMemberGenerator(
                     convertFunctionContent(irPrimaryConstructor, primaryConstructor)
                 }
             }
-            val processedCallableNames = klass.declarations.mapNotNullTo(mutableListOf()) {
+            val processedCallableNames = klass.declarations.mapNotNullTo(mutableSetOf()) {
                 when (it) {
                     is FirSimpleFunction -> it.name
                     is FirProperty -> it.name

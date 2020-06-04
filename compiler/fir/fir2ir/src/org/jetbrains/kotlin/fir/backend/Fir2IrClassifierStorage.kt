@@ -109,12 +109,20 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass<*>): IrClass {
+    private fun IrClass.declareTypeParameters(klass: FirClass<*>) {
         if (klass is FirRegularClass) {
             preCacheTypeParameters(klass)
             setTypeParameters(klass)
         }
+    }
+
+    private fun IrClass.declareSupertypes(klass: FirClass<*>) {
         superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }
+    }
+
+    private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass<*>): IrClass {
+        declareTypeParameters(klass)
+        declareSupertypes(klass)
         return this
     }
 
@@ -153,8 +161,9 @@ class Fir2IrClassifierStorage(
     }
 
     fun processClassHeader(regularClass: FirRegularClass, irClass: IrClass = getCachedIrClass(regularClass)!!): IrClass {
-        irClass.declareSupertypesAndTypeParameters(regularClass)
+        irClass.declareTypeParameters(regularClass)
         irClass.setThisReceiver(regularClass.typeParameters)
+        irClass.declareSupertypes(regularClass)
         return irClass
     }
 

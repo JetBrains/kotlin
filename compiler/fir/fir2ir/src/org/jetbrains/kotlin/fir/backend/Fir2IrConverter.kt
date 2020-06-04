@@ -179,8 +179,9 @@ class Fir2IrConverter(
             BuiltinSymbolsBase(builtIns, moduleDescriptor.builtIns, symbolTable)
             val sourceManager = PsiSourceManager()
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns, mangler)
-            val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
+            val conversionScope = Fir2IrConversionScope()
             val classifierStorage = Fir2IrClassifierStorage(components)
+            val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor, classifierStorage, conversionScope, fakeOverrideMode)
             val typeConverter = Fir2IrTypeConverter(components)
             components.declarationStorage = declarationStorage
             components.classifierStorage = classifierStorage
@@ -209,7 +210,7 @@ class Fir2IrConverter(
                 converter.processFileAndClassMembers(firFile)
             }
 
-            val fir2irVisitor = Fir2IrVisitor(converter, components, fakeOverrideMode)
+            val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope, fakeOverrideMode)
             for (firFile in firFiles) {
                 val irFile = firFile.accept(fir2irVisitor, null) as IrFile
                 val fileEntry = sourceManager.getOrCreateFileEntry(firFile.psi as KtFile)

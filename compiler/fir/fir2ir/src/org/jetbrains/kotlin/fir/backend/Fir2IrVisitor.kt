@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 class Fir2IrVisitor(
     private val converter: Fir2IrConverter,
     private val components: Fir2IrComponents,
+    private val conversionScope: Fir2IrConversionScope,
     fakeOverrideMode: FakeOverrideMode
 ) : Fir2IrComponents by components, FirDefaultVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
 
@@ -59,8 +60,6 @@ class Fir2IrVisitor(
         session.inferenceContext,
         session
     )
-
-    private val conversionScope = Fir2IrConversionScope()
 
     private val callGenerator = CallAndReferenceGenerator(components, this, conversionScope)
 

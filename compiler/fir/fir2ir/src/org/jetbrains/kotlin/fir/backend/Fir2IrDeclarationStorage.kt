@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.fir.backend.generators.setOverriddenSymbolsForAccessors
+import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -48,8 +48,15 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
-    private val moduleDescriptor: FirModuleDescriptor
+    private val moduleDescriptor: FirModuleDescriptor,
+    classifierStorage: Fir2IrClassifierStorage,
+    conversionScope: Fir2IrConversionScope,
+    fakeOverrideMode: FakeOverrideMode
 ) : Fir2IrComponents by components {
+    private val fakeOverrideGenerator = FakeOverrideGenerator(
+        session, components.scopeSession, classifierStorage, this, conversionScope, fakeOverrideMode
+    )
+
     private val firSymbolProvider = session.firSymbolProvider
 
     private val firProvider = session.firProvider
@@ -203,6 +210,7 @@ class Fir2IrDeclarationStorage(
             scope.processDeclaredConstructors {
                 irClass.declarations += createIrConstructor(it.fir, irClass)
             }
+            classifierStorage.processClassHeader(regularClass, irClass)
             for (declaration in regularClass.declarations) {
                 when (declaration) {
                     is FirSimpleFunction -> {
@@ -247,58 +255,8 @@ class Fir2IrDeclarationStorage(
                     else -> continue
                 }
             }
-            // TODO: better to refactor somehow so as to entirely reuse FakeOverrideGenerator's logic.
-            val allNames = regularClass.collectCallableNamesFromSupertypes(session)
-            for (name in allNames) {
-                if (name in processedNames) continue
-                processedNames += name
-                scope.processFunctionsByName(name) { functionSymbol ->
-                    if (functionSymbol is FirNamedFunctionSymbol) {
-                        val originalFunction = functionSymbol.fir
-                        if (functionSymbol.isFakeOverride) {
-                            // Substitution case
-                            val baseSymbol = functionSymbol.deepestOverriddenSymbol() as FirNamedFunctionSymbol
-                            val irFunction = createIrFunction(
-                                originalFunction, irParent = irClass,
-                                thisReceiverOwner = findIrParent(baseSymbol.fir) as? IrClass,
-                                origin = IrDeclarationOrigin.FAKE_OVERRIDE
-                            )
-                            val overriddenSymbol = getIrFunctionSymbol(baseSymbol) as IrSimpleFunctionSymbol
-                            irClass.declarations += irFunction.apply {
-                                overriddenSymbols = listOf(overriddenSymbol)
-                            }
-                        } else {
-                            val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideFunction(
-                                session, originalFunction, functionSymbol, derivedClassId = regularClass.symbol.classId
-                            )
-                            classifierStorage.preCacheTypeParameters(functionSymbol.fir)
-                            irClass.declarations += createIrFunction(fakeOverrideSymbol.fir, irClass)
-                        }
-                    }
-                }
-                scope.processPropertiesByName(name) { propertySymbol ->
-                    if (propertySymbol is FirPropertySymbol) {
-                        val originalProperty = propertySymbol.fir
-                        if (propertySymbol.isFakeOverride) {
-                            // Substitution case
-                            val baseSymbol = propertySymbol.deepestOverriddenSymbol() as FirPropertySymbol
-                            val irProperty = createIrProperty(
-                                originalProperty, irParent = irClass,
-                                thisReceiverOwner = findIrParent(baseSymbol.fir) as? IrClass,
-                                origin = IrDeclarationOrigin.FAKE_OVERRIDE
-                            )
-                            irClass.declarations += irProperty.apply {
-                                setOverriddenSymbolsForAccessors(declarationStorage, originalProperty, baseSymbol)
-                            }
-                        } else {
-                            val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideProperty(
-                                session, originalProperty, propertySymbol, derivedClassId = regularClass.symbol.classId
-                            )
-                            classifierStorage.preCacheTypeParameters(propertySymbol.fir)
-                            irClass.declarations += createIrProperty(fakeOverrideSymbol.fir, irClass)
-                        }
-                    }
-                }
+            with(fakeOverrideGenerator) {
+                irClass.addFakeOverrides(regularClass, processedNames)
             }
             for (irDeclaration in irClass.declarations) {
                 irDeclaration.parent = irClass
@@ -421,7 +379,8 @@ class Fir2IrDeclarationStorage(
                 if (function !is FirAnonymousFunction && containingClass != null && !isStatic) {
                     dispatchReceiverParameter = declareThisReceiverParameter(
                         symbolTable,
-                        thisType = containingClass.thisReceiver!!.type,
+                        thisType = containingClass.thisReceiver?.type
+                            ?: throw AssertionError(),
                         thisOrigin = thisOrigin
                     )
                 }

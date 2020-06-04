@@ -34,11 +34,11 @@ internal class FakeOverrideGenerator(
 ) {
 
     private fun IrSimpleFunction.withFunction(f: IrSimpleFunction.() -> Unit): IrSimpleFunction {
-        return conversionScope.withFunction(conversionScope.applyParentFromStackTo(this), f)
+        return conversionScope.withFunction(this, f)
     }
 
     private fun IrProperty.withProperty(f: IrProperty.() -> Unit): IrProperty {
-        return conversionScope.withProperty(conversionScope.applyParentFromStackTo(this), f)
+        return conversionScope.withProperty(this, f)
     }
 
     private fun FirCallableMemberDeclaration<*>.allowsToHaveFakeOverrideIn(klass: FirClass<*>): Boolean {
@@ -55,7 +55,7 @@ internal class FakeOverrideGenerator(
         }
     }
 
-    fun IrClass.addFakeOverrides(klass: FirClass<*>, processedCallableNames: MutableList<Name>) {
+    fun IrClass.addFakeOverrides(klass: FirClass<*>, processedCallableNames: MutableSet<Name>) {
         if (fakeOverrideMode == FakeOverrideMode.NONE) return
         val superTypesCallableNames = klass.collectCallableNamesFromSupertypes(session)
         val useSiteMemberScope = klass.buildUseSiteMemberScope(session, scopeSession) ?: return
@@ -81,6 +81,7 @@ internal class FakeOverrideGenerator(
                         // parent of *original* function (base class) is used for dispatch receiver,
                         // but fake override itself uses parent from its containing (derived) class
                         val overriddenSymbol = declarationStorage.getIrFunctionSymbol(baseSymbol) as IrSimpleFunctionSymbol
+                        irFunction.parent = this
                         declarations += irFunction.withFunction {
                             overriddenSymbols = listOf(overriddenSymbol)
                         }
@@ -101,6 +102,7 @@ internal class FakeOverrideGenerator(
                             return@processFunctionsByName
                         }
                         val overriddenSymbol = declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
+                        irFunction.parent = this
                         declarations += irFunction.withFunction {
                             overriddenSymbols = listOf(overriddenSymbol)
                         }
@@ -119,6 +121,7 @@ internal class FakeOverrideGenerator(
                             thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
                             origin = origin
                         )
+                        irProperty.parent = this
                         declarations += irProperty.withProperty {
                             setOverriddenSymbolsForAccessors(declarationStorage, originalProperty, firOverriddenSymbol = baseSymbol)
                         }
@@ -148,6 +151,7 @@ internal class FakeOverrideGenerator(
                         ) {
                             return@processPropertiesByName
                         }
+                        irProperty.parent = this
                         declarations += irProperty.withProperty {
                             setOverriddenSymbolsForAccessors(declarationStorage, fakeOverrideProperty, firOverriddenSymbol = propertySymbol)
                         }
@@ -156,22 +160,23 @@ internal class FakeOverrideGenerator(
             }
         }
     }
+
+    private fun IrProperty.setOverriddenSymbolsForAccessors(
+        declarationStorage: Fir2IrDeclarationStorage,
+        property: FirProperty,
+        firOverriddenSymbol: FirPropertySymbol
+    ): IrProperty {
+        val irSymbol = declarationStorage.getIrPropertyOrFieldSymbol(firOverriddenSymbol) as? IrPropertySymbol ?: return this
+        val overriddenProperty = irSymbol.owner
+        getter?.apply {
+            overriddenProperty.getter?.symbol?.let { overriddenSymbols = listOf(it) }
+        }
+        if (property.isVar) {
+            setter?.apply {
+                overriddenProperty.setter?.symbol?.let { overriddenSymbols = listOf(it) }
+            }
+        }
+        return this
+    }
 }
 
-internal fun IrProperty.setOverriddenSymbolsForAccessors(
-    declarationStorage: Fir2IrDeclarationStorage,
-    property: FirProperty,
-    firOverriddenSymbol: FirPropertySymbol
-): IrProperty {
-    val irSymbol = declarationStorage.getIrPropertyOrFieldSymbol(firOverriddenSymbol) as? IrPropertySymbol ?: return this
-    val overriddenProperty = irSymbol.owner
-    getter?.apply {
-        overriddenProperty.getter?.symbol?.let { overriddenSymbols = listOf(it) }
-    }
-    if (property.isVar) {
-        setter?.apply {
-            overriddenProperty.setter?.symbol?.let { overriddenSymbols = listOf(it) }
-        }
-    }
-    return this
-}
