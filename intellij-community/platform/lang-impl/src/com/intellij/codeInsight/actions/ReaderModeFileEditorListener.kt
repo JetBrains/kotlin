@@ -33,12 +33,7 @@ class ReaderModeFileEditorListener : FileEditorManagerListener {
         ReaderMode.LIBRARIES ->
           FileIndexFacade.getInstance(project).isInLibraryClasses(file) || FileIndexFacade.getInstance(project).isInLibrarySource(file)
         ReaderMode.READ_ONLY -> !file.isWritable
-        ReaderMode.UNMODIFIED_MODULE_FILES -> checkUnmodifiedModules(file)
       }
-    }
-
-    private fun checkUnmodifiedModules(file: VirtualFile): Boolean {
-      return false
     }
   }
 }

@@ -45,12 +45,6 @@ class ReaderModeConfigurable(val project: Project) : BoundSearchableConfigurable
                       { settings.mode = READ_ONLY })
             .enableIf(enabled.selected)
         }
-        row {
-          radioButton(LangBundle.message("radio.reader.unmodified.modules"),
-                      { return@radioButton settings.mode == UNMODIFIED_MODULE_FILES },
-                      { settings.mode = UNMODIFIED_MODULE_FILES })
-            .enableIf(enabled.selected)
-        }
       }.enableIf(enabled.selected)
       titledRow(LangBundle.message("titled.border.reader.mode.settings")) {
         row {
@@ -82,7 +76,7 @@ class ReaderModeConfigurable(val project: Project) : BoundSearchableConfigurable
 }
 
 enum class ReaderMode {
-  LIBRARIES, READ_ONLY, UNMODIFIED_MODULE_FILES
+  LIBRARIES, READ_ONLY
 }
 
 @State(name = "ReaderModeSettings", storages = [Storage("editor.xml")])
