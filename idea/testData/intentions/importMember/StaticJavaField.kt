@@ -1,10 +1,10 @@
-// INTENTION_TEXT: "Add import for 'javax.swing.SwingConstants.CENTER'"
+// INTENTION_TEXT: "Add import for 'java.util.regex.Pattern.CASE_INSENSITIVE'"
 // WITH_RUNTIME
 
-import javax.swing.SwingConstants
+import java.util.regex.Pattern
 
 fun foo() {
-    val v = SwingConstants.CENTER
+    val v = Pattern.CASE_INSENSITIVE
 
-    SwingConstants.<caret>CENTER
+    Pattern.<caret>CASE_INSENSITIVE
 }
