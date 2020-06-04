@@ -10,6 +10,13 @@ import java.io.File
 import java.util.*
 import javax.lang.model.element.Modifier
 
+fun File.toRelativeStringSystemIndependent(base: File): String {
+    val path = this.toRelativeString(base)
+    return if (File.separatorChar == '\\') {
+        path.replace('\\', '/')
+    } else path
+}
+
 interface TestMethod: RenderElement {
     val methodName: String
 }
@@ -36,7 +43,7 @@ class SuiteElement private constructor(
             for (file in rootFile.listFiles().orEmpty()) {
                 if (depth > 0 && file.isDirectory && file.name !in model.excludedDirectories) {
                     val nestedClassName = file.toJavaIdentifier().capitalize()
-                    val nestedModel = model.copy(path = file.toRelativeString(group.testDataRoot), testClassName = nestedClassName)
+                    val nestedModel = model.copy(path = file.toRelativeStringSystemIndependent(group.testDataRoot), testClassName = nestedClassName)
                     val nestedElement = collect(group, suite, nestedModel, depth - 1, nestedClassName, isNested = true)
                     if (nestedElement.methods.isNotEmpty() || nestedElement.nestedSuites.isNotEmpty()) {
                         if (model.flatten) {
@@ -51,8 +58,8 @@ class SuiteElement private constructor(
                 val match = model.pattern.matchEntire(file.name) ?: continue
                 assert(match.groupValues.size >= 2) { "Invalid pattern, test method name group should be defined" }
                 val methodNameBase = getTestMethodNameBase(match.groupValues[1])
-                val path = file.toRelativeString(group.moduleRoot)
-                methods += TestCaseMethod(methodNameBase, if (file.isDirectory) "$path/" else path, file.toRelativeString(rootFile))
+                val path = file.toRelativeStringSystemIndependent(group.moduleRoot)
+                methods += TestCaseMethod(methodNameBase, if (file.isDirectory) "$path/" else path, file.toRelativeStringSystemIndependent(rootFile))
             }
 
             if (methods.isNotEmpty()) {
@@ -78,7 +85,7 @@ class SuiteElement private constructor(
     }
 
     override fun Code.render() {
-        val testDataPath = File(group.testDataRoot, model.path).toRelativeString(group.moduleRoot)
+        val testDataPath = File(group.testDataRoot, model.path).toRelativeStringSystemIndependent(group.moduleRoot)
 
         appendAnnotation(TAnnotation<RunWith>(JUnit3RunnerWithInners::class.java))
         appendAnnotation(TAnnotation<TestMetadata>(testDataPath))

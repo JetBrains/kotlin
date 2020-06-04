@@ -67,7 +67,7 @@ object TestGenerator {
         if (content != oldContent) {
             file.writeText(content)
             val kotlinDir = File(KotlinTestUtils.getHomeDirectory())
-            val path = file.toRelativeString(kotlinDir)
+            val path = file.toRelativeStringSystemIndependent(kotlinDir)
             println("Updated $path")
         }
     }
