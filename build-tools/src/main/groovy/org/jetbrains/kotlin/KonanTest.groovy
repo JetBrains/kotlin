@@ -502,7 +502,7 @@ fun runTest() {
                             .distinct()
                             .collect(Collectors.toMap({ it.name }, UnaryOperator.identity() ))
 
-                    List<TestModule> orderedModules = DFS.topologicalOrder(modules.values()) { module ->
+                    List<TestModule> orderedModules = DFS.INSTANCE.topologicalOrder(modules.values()) { module ->
                         module.dependencies.collect { modules[it] }.findAll { it != null }
                     }
                     def libsFlags = []
