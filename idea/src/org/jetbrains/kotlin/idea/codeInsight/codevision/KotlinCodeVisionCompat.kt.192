@@ -27,25 +27,8 @@ fun logUsageStatistics(project: Project?, groupId: String, eventId: String, data
     project?.let { FUCounterUsageLogger.getInstance().logEvent(project, groupId, eventId, data) }
 }
 
-fun createImmediateConfigurable(settings: KotlinCodeVisionProvider.KotlinCodeVisionSettings): ImmediateConfigurable {
+fun createImmediateConfigurable(): ImmediateConfigurable {
     return object : ImmediateConfigurable {
-        val usagesText = KotlinBundle.message("hints.title.codevision.usages")
-        val inheritorsText = KotlinBundle.message("hints.title.codevision.inheritors")
-
-        private val usagesField = JBCheckBox(usagesText, settings.showUsages)
-        private val inheritorsField = JBCheckBox(inheritorsText, settings.showInheritors)
-
-        override fun createComponent(listener: ChangeListener): JPanel {
-            usagesField.isSelected = settings.showUsages
-            usagesField.addActionListener { settings.showUsages = usagesField.isSelected }
-
-            inheritorsField.isSelected = settings.showInheritors
-            inheritorsField.addActionListener { settings.showInheritors = inheritorsField.isSelected }
-
-            return panel {
-                row { usagesField(pushX) }
-                row { inheritorsField(pushX) }
-            }
-        }
+        override fun createComponent(listener: ChangeListener): JPanel = panel {}
     }
 }
