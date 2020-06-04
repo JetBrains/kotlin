@@ -58,11 +58,11 @@ class FileScopeFactory(
         override val importedFqName: FqName? get() = importPath.fqName
     }
 
-    fun createScopesForFile(file: KtFile, existingImports: ImportingScope? = null): FileScopes {
+    fun createScopesForFile(file: KtFile, existingImports: ImportingScope? = null, createDefaultImportingScopes: Boolean = true): FileScopes {
         val packageView = components.moduleDescriptor.getPackage(file.packageFqName)
         val packageFragment = topLevelDescriptorProvider.getPackageFragmentOrDiagnoseFailure(file.packageFqName, file)
 
-        return FilesScopesBuilder(file, existingImports, packageFragment, packageView).result
+        return FilesScopesBuilder(file, existingImports, packageFragment, packageView, createDefaultImportingScopes).result
     }
 
     private data class DefaultImportResolvers(
@@ -137,7 +137,8 @@ class FileScopeFactory(
         private val file: KtFile,
         private val existingImports: ImportingScope?,
         private val packageFragment: PackageFragmentDescriptor,
-        private val packageView: PackageViewDescriptor
+        private val packageView: PackageViewDescriptor,
+        private val createDefaultImportingScopes: Boolean,
     ) {
         val imports = file.importDirectives
         val aliasImportNames = imports.mapNotNull { if (it.aliasName != null) it.importedFqName else null }
@@ -197,15 +198,17 @@ class FileScopeFactory(
 
             val dummyContainerDescriptor = DummyContainerDescriptor(file, packageFragment)
 
-            var scope: ImportingScope
+            var scope: ImportingScope? = existingImports
 
             val debugName = "LazyFileScope for file " + file.name
 
-            scope = LazyImportScope(
-                existingImports, defaultAllUnderImportResolver, defaultLowPriorityImportResolver,
-                LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
-                "Default all under imports in $debugName (invisible classes only)"
-            )
+            if (createDefaultImportingScopes) {
+                scope = LazyImportScope(
+                    scope, defaultAllUnderImportResolver, defaultLowPriorityImportResolver,
+                    LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
+                    "Default all under imports in $debugName (invisible classes only)"
+                )
+            }
 
             scope = LazyImportScope(
                 scope, allUnderImportResolver, null, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
@@ -214,20 +217,24 @@ class FileScopeFactory(
 
             scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.INVISIBLE_CLASSES, scope)
 
-            scope = LazyImportScope(
-                scope, defaultAllUnderImportResolver, defaultLowPriorityImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
-                "Default all under imports in $debugName (visible classes)"
-            )
+            if (createDefaultImportingScopes) {
+                scope = LazyImportScope(
+                    scope, defaultAllUnderImportResolver, defaultLowPriorityImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
+                    "Default all under imports in $debugName (visible classes)"
+                )
+            }
 
             scope = LazyImportScope(
                 scope, allUnderImportResolver, null, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "All under imports in $debugName (visible classes)"
             )
 
-            scope = LazyImportScope(
-                scope, defaultExplicitImportResolver, null, LazyImportScope.FilteringKind.ALL,
-                "Default explicit imports in $debugName"
-            )
+            if (createDefaultImportingScopes) {
+                scope = LazyImportScope(
+                    scope, defaultExplicitImportResolver, null, LazyImportScope.FilteringKind.ALL,
+                    "Default explicit imports in $debugName"
+                )
+            }
 
             scope = SubpackagesImportingScope(scope, components.moduleDescriptor, FqName.ROOT)
 
