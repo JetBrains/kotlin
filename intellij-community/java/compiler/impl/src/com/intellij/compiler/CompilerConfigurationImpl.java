@@ -727,6 +727,11 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
   }
 
   @Override
+  public void noStateLoaded() {
+    loadStateFromExternalStorage();
+  }
+
+  @Override
   public void loadState(@NotNull Element parentNode) {
     myState = XmlSerializer.deserialize(parentNode, State.class);
     if (!myProject.isDefault()) {
@@ -816,7 +821,12 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
       readByteTargetLevel(parentNode, myModuleBytecodeTarget);
     }
 
-    Map<String, String> externalState = ExternalCompilerConfigurationStorage.getInstance(myProject).getLoadedState();
+    loadStateFromExternalStorage();
+  }
+
+  private void loadStateFromExternalStorage() {
+    ExternalCompilerConfigurationStorage externalStorage = ExternalCompilerConfigurationStorage.getInstance(myProject);
+    Map<String, String> externalState = externalStorage.getLoadedState();
     if (externalState != null) {
       myModuleBytecodeTarget.putAll(externalState);
     }

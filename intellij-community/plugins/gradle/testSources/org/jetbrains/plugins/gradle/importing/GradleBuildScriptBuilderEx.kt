@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.importing
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.Consumer
 import java.io.File
 
 class GradleBuildScriptBuilderEx : GradleBuildScriptBuilder() {
@@ -41,6 +42,12 @@ class GradleBuildScriptBuilderEx : GradleBuildScriptBuilder() {
       }
     """.trimIndent())
   }
+
+  fun withPrefix(configure: Consumer<GroovyBuilder>) =
+    withPrefix(configure::consume)
+
+  fun withTaskConfiguration(name: String, configure: Consumer<GroovyBuilder>) =
+    withTaskConfiguration(name, configure::consume)
 
   fun withPrefix(configure: GroovyBuilder.() -> Unit) = apply {
     addPrefix(GroovyBuilder.generate(configure = configure))
