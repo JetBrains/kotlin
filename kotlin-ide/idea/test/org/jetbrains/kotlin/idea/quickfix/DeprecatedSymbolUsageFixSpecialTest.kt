@@ -20,7 +20,6 @@ import org.junit.runner.RunWith
 
 @TestMetadata("idea/testData/quickfix.special/deprecatedSymbolUsage")
 @TestDataPath("\$PROJECT_ROOT")
-@RunWith(Enclosed::class)
 class DeprecatedSymbolUsageFixSpecialTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 
