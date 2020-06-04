@@ -17,5 +17,5 @@ fun editorTrackerProjectOpened(project: Project) {
 
 // FIX ME WHEN BUNCH 193 REMOVED
 fun runPostStartupActivitiesOnce(project: Project) {
-    (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
+    (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivitiesRegisteredDynamically()
 }

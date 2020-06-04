@@ -26,7 +26,7 @@ abstract class AbstractKotlinNavBarTest : KotlinLightCodeInsightFixtureTestCase(
             .invoke(model, (myFixture.editor as EditorEx).dataContext)
 
         val actualItems = (0 until model.size()).map {
-            NavBarPresentation.calcPresentableText(model[it])
+            NavBarPresentation.calcPresentableText(model[it], false)
         }
         val expectedItems = InTextDirectivesUtils.findListWithPrefixes(psiFile.text, "// NAV_BAR_ITEMS:")
         assertOrderedEquals(actualItems, expectedItems)

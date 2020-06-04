@@ -5,9 +5,28 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.FileTypeIndex
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.concurrency.AppExecutorUtil
+import java.util.concurrent.Callable
 
-// FIX ME WHEN BUNCH 193 REMOVED
+// FIX ME WHEN BUNCH 201 REMOVED
+
 fun runActivity(project: Project) {
-    // nothing for 193
+    nonBlocking(Callable {
+        return@Callable FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+    })
+        .inSmartMode(project)
+        .expireWith(project)
+        .finishOnUiThread(ModalityState.any()) { hasKotlinFiles ->
+            if (!hasKotlinFiles) return@finishOnUiThread
+
+            val daemonCodeAnalyzer = DaemonCodeAnalyzerImpl.getInstanceEx(project) as DaemonCodeAnalyzerImpl
+            daemonCodeAnalyzer.runLocalInspectionPassAfterCompletionOfGeneralHighlightPass(true)
+        }
+        .submit(AppExecutorUtil.getAppExecutorService())
 }

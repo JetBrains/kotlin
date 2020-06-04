@@ -1,4 +1,4 @@
-// NAV_BAR_ITEMS: src, SeveralClassesInFile.kt
+// NAV_BAR_ITEMS: src, SeveralClassesInFile.kt, SeveralClassesInFile
 
 class Foo {
 
