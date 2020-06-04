@@ -5,4 +5,12 @@
 
 package org.jetbrains.kotlin.idea.formatter.lineIndent
 
-interface KotlinIndentationAdjuster
+interface KotlinIndentationAdjuster {
+    // ALIGN_MULTILINE_METHOD_BRACKETS
+    val alignWhenMultilineFunctionParentheses: Boolean
+        get() = false
+
+    // ALIGN_MULTILINE_BINARY_OPERATION
+    val alignWhenMultilineBinaryExpression: Boolean
+        get() = false
+}
