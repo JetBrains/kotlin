@@ -6,6 +6,7 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.codeInspection.ex.ScopeToolState;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeTooltip;
 import com.intellij.ide.IdeTooltipManager;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -444,9 +445,18 @@ public class InspectionsConfigTreeTable extends TreeTable {
           break;
         }
       }
-      return allScopesHasMixedSeverity
-             ? ScopesAndSeveritiesTable.MIXED_FAKE_LEVEL.getIcon()
-             : new MultiScopeSeverityIcon(computedSeverities, myDefaultScopeName, inspectionProfile);
+
+      if (allScopesHasMixedSeverity) {
+        return ScopesAndSeveritiesTable.MIXED_FAKE_LEVEL.getIcon();
+      }
+
+      if (computedSeverities.size() == 1) {
+        HighlightSeverity severity = computedSeverities.values().iterator().next();
+        return HighlightDisplayLevel.find(severity).getIcon();
+      }
+      else {
+        return AllIcons.General.InspectionsMixed;
+      }
     }
 
     @Nullable
