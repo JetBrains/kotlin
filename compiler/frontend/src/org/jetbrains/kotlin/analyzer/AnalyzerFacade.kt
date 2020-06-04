@@ -43,7 +43,6 @@ class ResolverForModule(
 abstract class ResolverForProject<M : ModuleInfo> {
     fun resolverForModule(moduleInfo: M): ResolverForModule = resolverForModuleDescriptor(descriptorForModule(moduleInfo))
     abstract fun tryGetResolverForModule(moduleInfo: M): ResolverForModule?
-    abstract fun tryGetResolverForModuleWithResolutionAnchorFallback(targetModuleInfo: M, referencingModuleInfo: M): ResolverForModule?
     abstract fun descriptorForModule(moduleInfo: M): ModuleDescriptor
     abstract fun moduleInfoForModuleDescriptor(moduleDescriptor: ModuleDescriptor): M
     abstract fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule
@@ -75,9 +74,6 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     override fun descriptorForModule(moduleInfo: M) = diagnoseUnknownModuleInfo(listOf(moduleInfo))
     override val allModules: Collection<M> = listOf()
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) = throw IllegalStateException("Should not be called for $infos")
-
-    override fun tryGetResolverForModuleWithResolutionAnchorFallback(targetModuleInfo: M, referencingModuleInfo: M) =
-        diagnoseUnknownModuleInfo(listOf(targetModuleInfo))
 
     override fun moduleInfoForModuleDescriptor(descriptor: ModuleDescriptor): M {
         throw IllegalStateException("$descriptor is not contained in this resolver")

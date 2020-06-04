@@ -21,6 +21,13 @@ import org.jetbrains.kotlin.idea.project.libraryToSourceAnalysisEnabled
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
 
+/**
+ * This component provides capabilities for correct highlighting for projects with source-dependent libraries.
+ * The issue with this kind of libraries is that their declarations are resolved by ResolverForProject
+ * that have no access to project sources by itself. The necessary path back to project sources can be provided
+ * manually for the libraries in project via resolution anchors. Anchor by itself is a source module which is mapped
+ * to a library and used during resolution as a fallback.
+ */
 @State(name = "KotlinIdeAnchorService", storages = [Storage("anchors.xml")])
 class KotlinIdeResolutionAnchorService(
     val project: Project
