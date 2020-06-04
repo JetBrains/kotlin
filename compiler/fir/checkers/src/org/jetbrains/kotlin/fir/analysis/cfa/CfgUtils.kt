@@ -20,37 +20,12 @@ fun <D> ControlFlowGraph.traverse(
     visitor: ControlFlowGraphVisitor<*, D>,
     data: D
 ) {
-    val visitedNodes = mutableSetOf<CFGNode<*>>()
-    // used to prevent infinite cycle
-    val delayedNodes = mutableSetOf<CFGNode<*>>()
-    val stack = ArrayDeque<CFGNode<*>>()
-    val initialNode = when (direction) {
-        TraverseDirection.Forward -> enterNode
-        TraverseDirection.Backward -> exitNode
+    val nodes = when (direction) {
+        TraverseDirection.Forward -> nodes
+        TraverseDirection.Backward -> nodes.reversed()
     }
-    stack.addFirst(initialNode)
-    while (stack.isNotEmpty()) {
-        val node = stack.removeFirst()
-        visitedNodes.add(node)
-        val previousNodes = when (direction) {
-            TraverseDirection.Forward -> node.previousNodes
-            TraverseDirection.Backward -> node.followingNodes
-        }
-        if (!previousNodes.all { it in visitedNodes }) {
-            if (!delayedNodes.add(node)) {
-                throw IllegalArgumentException("Infinite loop")
-            }
-            stack.addLast(node)
-        }
-
+    for (node in nodes) {
         node.accept(visitor, data)
-
-        val followingNodes = when (direction) {
-            TraverseDirection.Forward -> node.followingNodes
-            TraverseDirection.Backward -> node.previousNodes
-        }
-
-        followingNodes.filterNot { visitedNodes.contains(it) }.forEach { stack.addFirst(it) }
     }
 }
 

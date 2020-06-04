@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
-    private val _nodes: MutableList<CFGNode<*>> = mutableListOf()
+    private var _nodes: MutableList<CFGNode<*>> = mutableListOf()
 
-    val nodes: List<CFGNode<*>> get() = _nodes
+    val nodes: List<CFGNode<*>>
+        get() = _nodes
 
     internal fun addNode(node: CFGNode<*>) {
         assertState(State.Building)
-        _nodes += node
+        _nodes.add(node)
     }
 
     lateinit var enterNode: CFGNode<*>
@@ -34,6 +35,13 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     internal fun complete() {
         assertState(State.Building)
         state = State.Completed
+        val sortedNodes = orderNodes()
+        assert(sortedNodes.size == _nodes.size)
+        for (node in _nodes) {
+            assert(node in sortedNodes)
+        }
+        _nodes.clear()
+        _nodes.addAll(sortedNodes)
     }
 
     internal fun addSubGraph(graph: ControlFlowGraph) {
@@ -82,4 +90,56 @@ enum class EdgeKind(val usedInDfa: Boolean, val isBack: Boolean) {
     Dfg(usedInDfa = true, isBack = false),
     Back(usedInDfa = false, isBack = true),
     DeadBack(usedInDfa = false, isBack = true)
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
+    val visitedNodes = LinkedHashSet<CFGNode<*>>()
+    /*
+     * [delayedNodes] is needed to accomplish next order contract:
+     *   for each node all previous node lays before it
+     */
+    val delayedNodes = LinkedHashSet<CFGNode<*>>()
+    val stack = ArrayDeque<CFGNode<*>>()
+    stack.addFirst(enterNode)
+    while (stack.isNotEmpty()) {
+        val node = stack.removeFirst()
+        val previousNodes = node.previousNodes
+        if (previousNodes.any { it !in visitedNodes && it.owner == this && !node.incomingEdges.getValue(it).isBack }) {
+            delayedNodes.add(node)
+            stack.addLast(node)
+            continue
+        }
+        if (!visitedNodes.add(node)) continue
+        val followingNodes = node.followingNodes
+
+        for (followingNode in followingNodes) {
+            if (followingNode.owner == this) {
+                if (followingNode !in visitedNodes) {
+                    stack.addFirst(followingNode)
+                }
+            } else {
+                walkThrowSubGraphs(followingNode.owner, visitedNodes, stack)
+            }
+        }
+    }
+    return visitedNodes
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+private fun ControlFlowGraph.walkThrowSubGraphs(
+    otherGraph: ControlFlowGraph,
+    visitedNodes: Set<CFGNode<*>>,
+    stack: ArrayDeque<CFGNode<*>>
+) {
+    if (otherGraph.owner != this) return
+    for (otherNode in otherGraph.exitNode.followingNodes) {
+        if (otherNode.owner == this) {
+            if (otherNode !in visitedNodes) {
+                stack.addFirst(otherNode)
+            }
+        } else if (otherNode.owner != otherGraph) {
+            walkThrowSubGraphs(otherNode.owner, visitedNodes, stack)
+        }
+    }
 }
