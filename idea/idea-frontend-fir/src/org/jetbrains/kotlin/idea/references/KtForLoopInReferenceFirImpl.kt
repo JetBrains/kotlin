@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
-import org.jetbrains.kotlin.idea.fir.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.getResolvedSymbolOfNameReference
@@ -20,11 +19,9 @@ import org.jetbrains.kotlin.psi.KtForExpression
 
 open class KtForLoopInReferenceFirImpl(expression: KtForExpression) : KtForLoopInReference(expression), FirKtReference {
     override fun getResolvedToPsi(
-        analysisSession: AnalysisSessionFirImpl,
-        session: FirSession,
-        state: FirModuleResolveState
+        analysisSession: AnalysisSessionFirImpl
     ): Collection<PsiElement> {
-        val firLoop = expression.getOrBuildFirSafe<FirWhileLoop>(state) ?: return emptyList()
+        val firLoop = expression.getOrBuildFirSafe<FirWhileLoop>() ?: return emptyList()
         val condition = firLoop.condition as? FirFunctionCall
         val iterator = run {
             val callee = (condition?.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference
@@ -32,10 +29,11 @@ open class KtForLoopInReferenceFirImpl(expression: KtForExpression) : KtForLoopI
         }
         val hasNext = condition?.calleeReference?.getResolvedSymbolOfNameReference()
         val next = (firLoop.block.statements.firstOrNull() as? FirProperty?)?.getInitializerFunctionCall()
+        val project = element.project
         return listOfNotNull(
-            iterator?.fir?.findPsi(session),
-            hasNext?.fir?.findPsi(session),
-            next?.fir?.findPsi(session),
+            iterator?.fir?.findPsi(project),
+            hasNext?.fir?.findPsi(project),
+            next?.fir?.findPsi(project),
         )
     }
 

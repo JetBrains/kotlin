@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir
+package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 
-interface FirIdeResolveStateService {
+internal interface FirIdeResolveStateService {
     companion object {
         fun getInstance(project: Project): FirIdeResolveStateService =
             ServiceManager.getService(project, FirIdeResolveStateService::class.java)!!
@@ -32,7 +32,7 @@ private class FirModuleData(val state: FirModuleResolveState, val modificationTr
     }
 }
 
-class FirIdeResolveStateServiceImpl(val project: Project) : FirIdeResolveStateService {
+internal class FirIdeResolveStateServiceImpl(val project: Project) : FirIdeResolveStateService {
     private val stateCache = mutableMapOf<IdeaModuleInfo, FirModuleData>()
 
     private fun createResolveState(): FirModuleResolveState {

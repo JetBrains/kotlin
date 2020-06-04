@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -21,17 +20,16 @@ class KtPropertyDelegationMethodsReferenceFirImpl(
     element: KtPropertyDelegate
 ) : KtPropertyDelegationMethodsReference(element), FirKtReference {
     override fun getResolvedToPsi(
-        analysisSession: AnalysisSessionFirImpl,
-        session: FirSession,
-        state: FirModuleResolveState
+        analysisSession: AnalysisSessionFirImpl
     ): Collection<PsiElement> {
-        val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>(state) ?: return emptyList()
+        val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>() ?: return emptyList()
         if (property.delegate == null) return emptyList()
         val getValueSymbol = (property.getter?.singleStatementOfType<FirReturnExpression>()?.result as? FirFunctionCall)?.getCalleeSymbol()
         val setValueSymbol = property.setter?.singleStatementOfType<FirFunctionCall>()?.getCalleeSymbol()
+        val project = element.project
         return listOfNotNull(
-            getValueSymbol?.fir?.findPsi(session),
-            setValueSymbol?.fir?.findPsi(session)
+            getValueSymbol?.fir?.findPsi(project),
+            setValueSymbol?.fir?.findPsi(project)
         )
     }
 

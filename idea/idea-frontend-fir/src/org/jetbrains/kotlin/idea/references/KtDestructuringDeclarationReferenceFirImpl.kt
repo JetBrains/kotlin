@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.idea.fir.*
@@ -19,12 +18,10 @@ class KtDestructuringDeclarationReferenceFirImpl(
     override fun canRename(): Boolean = false //todo
 
     override fun getResolvedToPsi(
-        analysisSession: AnalysisSessionFirImpl,
-        session: FirSession,
-        state: FirModuleResolveState
+        analysisSession: AnalysisSessionFirImpl
     ): Collection<PsiElement> {
-        val fir = expression.getOrBuildFirSafe<FirProperty>(state) ?: return emptyList()
+        val fir = expression.getOrBuildFirSafe<FirProperty>() ?: return emptyList()
         val componentFunctionSymbol = (fir.initializer as? FirComponentCall)?.getCalleeSymbol() ?: return emptyList()
-        return listOfNotNull(componentFunctionSymbol.fir.findPsi(session))
+        return listOfNotNull(componentFunctionSymbol.fir.findPsi(element.project))
     }
 }

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir
+package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-interface FirModuleResolveState {
+internal interface FirModuleResolveState {
     val sessionProvider: FirProjectSessionProvider
 
     fun getSession(psi: KtElement): FirSession {
@@ -65,7 +65,7 @@ interface FirModuleResolveState {
     fun setDiagnosticsForFile(file: KtFile, fir: FirFile, diagnostics: Iterable<FirDiagnostic<*>> = emptyList())
 }
 
-class FirModuleResolveStateImpl(override val sessionProvider: FirProjectSessionProvider) : FirModuleResolveState {
+internal class FirModuleResolveStateImpl(override val sessionProvider: FirProjectSessionProvider) : FirModuleResolveState {
     private val cache = mutableMapOf<KtElement, FirElement>()
 
     private val diagnosticCache = mutableMapOf<KtElement, MutableList<Diagnostic>>()
@@ -115,5 +115,5 @@ class FirModuleResolveStateImpl(override val sessionProvider: FirProjectSessionP
     }
 }
 
-fun KtElement.firResolveState(): FirModuleResolveState =
+internal fun KtElement.firResolveState(): FirModuleResolveState =
     FirIdeResolveStateService.getInstance(project).getResolveState(getModuleInfo())

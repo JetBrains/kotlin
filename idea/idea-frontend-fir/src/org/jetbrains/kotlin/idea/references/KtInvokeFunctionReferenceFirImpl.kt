@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.idea.fir.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.VariableAsFunctionLikeCallInfo
 import org.jetbrains.kotlin.idea.frontend.api.fir.AnalysisSessionFirImpl
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -18,11 +16,7 @@ class KtInvokeFunctionReferenceFirImpl(expression: KtCallExpression) : KtInvokeF
         TODO("Not yet implemented")
     }
 
-    override fun getResolvedToPsi(
-        analysisSession: AnalysisSessionFirImpl,
-        session: FirSession,
-        state: FirModuleResolveState
-    ): Collection<PsiElement> {
+    override fun getResolvedToPsi(analysisSession: AnalysisSessionFirImpl): Collection<PsiElement> {
         val call = analysisSession.resolveCall(expression) ?: return emptyList()
         if (call is VariableAsFunctionLikeCallInfo) {
             return listOf(call.invokeFunction)

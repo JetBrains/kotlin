@@ -313,6 +313,8 @@ include ":kotlin-build-common",
         ":kotlin-serialization-unshaded",
         ":kotlin-serialization:plugin-marker"
 
+include ":idea:idea-frontend-fir:idea-fir-low-level-api"
+
 include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide",

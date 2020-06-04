@@ -20,18 +20,16 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper.toTargetPsi
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-class AnalysisSessionFirImpl internal constructor(
-    private val state: FirModuleResolveState
-) : FrontendAnalysisSession() {
+class AnalysisSessionFirImpl : FrontendAnalysisSession() {
 
     override fun getSmartCastedToTypes(expression: KtExpression): Collection<KotlinTypeMarker>? {
         // TODO filter out not used smartcasts
@@ -41,7 +39,7 @@ class AnalysisSessionFirImpl internal constructor(
     @OptIn(ExperimentalStdlibApi::class)
     override fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast> {
         // TODO filter out not used smartcasts
-        val qualifiedExpression = expression.getOrBuildFir(state) as? FirQualifiedAccessExpression ?: return emptyList()
+        val qualifiedExpression = expression.getOrBuildFirSafe<FirQualifiedAccessExpression>() ?: return emptyList()
         if (qualifiedExpression.dispatchReceiver !is FirExpressionWithSmartcast
             && qualifiedExpression.extensionReceiver !is FirExpressionWithSmartcast
         ) return emptyList()
@@ -67,15 +65,13 @@ class AnalysisSessionFirImpl internal constructor(
     override fun isSubclassOf(klass: KtClassOrObject, superClassId: ClassId): Boolean {
         var result = false
         forEachSubClass(klass.toFir() ?: return false) { type ->
-            result = result || type.firClassLike(state.getSession(klass))?.symbol?.classId == superClassId
+            result = result || type.firClassLike(klass.session)?.symbol?.classId == superClassId
         }
         return result
     }
 
-    override fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic> {
-        element.containingKtFile.getOrBuildFirWithDiagnostics(state)
-        return state.getDiagnostics(element)
-    }
+    override fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic> =
+        LowLevelFirApiFacade.getDiagnosticsFor(element)
 
     override fun resolveCall(call: KtBinaryExpression): CallInfo? {
         val firCall = call.toFir<FirFunctionCall>() ?: return null
@@ -88,7 +84,7 @@ class AnalysisSessionFirImpl internal constructor(
     }
 
     private fun resolveCall(firCall: FirFunctionCall, callExpression: KtExpression): CallInfo? {
-        val session = callExpression.getSession()
+        val session = callExpression.session
         val resolvedFunctionPsi = firCall.calleeReference.toTargetPsi(session)
         val resolvedCalleeSymbol = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
         return when {
@@ -124,10 +120,8 @@ class AnalysisSessionFirImpl internal constructor(
         else -> null
     }
 
-    private fun KtElement.getSession() = state.getSession(this)
-
     private inline fun <reified F : FirElement> KtElement.toFir(phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE): F? =
-        getOrBuildFir(state, phase) as? F
+        getOrBuildFir(phase) as? F
 
     private fun forEachSubClass(firClass: FirClass<*>, action: (FirResolvedTypeRef) -> Unit) {
         firClass.superTypeRefs.forEach { superType ->
@@ -137,9 +131,6 @@ class AnalysisSessionFirImpl internal constructor(
     }
 
     companion object {
-        fun forElement(element: KtElement): FrontendAnalysisSession =
-            AnalysisSessionFirImpl(element.firResolveState())
-
         private fun KotlinTypeMarker.asConeType(): ConeKotlinType =
             this as? ConeKotlinType ?: error("$this should be ConeKotlinType")
 
@@ -150,5 +141,4 @@ class AnalysisSessionFirImpl internal constructor(
             )
         }
     }
-
 }

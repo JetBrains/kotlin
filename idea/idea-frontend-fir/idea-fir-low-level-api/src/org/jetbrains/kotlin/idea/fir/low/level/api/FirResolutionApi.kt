@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir
+package org.jetbrains.kotlin.idea.fir.low.level.api
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
@@ -73,7 +72,7 @@ private fun FirFile.findCallableMember(
         ?: error("Cannot find FIR callable declaration ${CallableId(packageFqName, klassFqName, declName)}")
 }
 
-fun KtCallableDeclaration.getOrBuildFir(
+internal fun KtCallableDeclaration.getOrBuildFir(
     state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirCallableDeclaration<*> {
@@ -97,7 +96,7 @@ fun KtCallableDeclaration.getOrBuildFir(
     return firMemberDeclaration
 }
 
-fun KtClassOrObject.getOrBuildFir(
+internal fun KtClassOrObject.getOrBuildFir(
     state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirMemberDeclaration {
@@ -131,7 +130,7 @@ private fun KtFile.getOrBuildRawFirFile(state: FirModuleResolveState): Pair<FirI
     return firProvider to firProvider.getOrBuildFile(this)
 }
 
-fun KtFile.getOrBuildFir(
+internal fun KtFile.getOrBuildFir(
     state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): FirFile {
@@ -145,7 +144,7 @@ fun KtFile.getOrBuildFir(
     return firFile
 }
 
-fun KtFile.getOrBuildFirWithDiagnostics(state: FirModuleResolveState): FirFile {
+internal fun KtFile.getOrBuildFirWithDiagnostics(state: FirModuleResolveState): FirFile {
     val (_, firFile) = getOrBuildRawFirFile(state)
     val currentResolvePhase = firFile.resolvePhase
     if (currentResolvePhase < FirResolvePhase.BODY_RESOLVE) {
@@ -224,11 +223,6 @@ private class FirDesignatedBodyResolveTransformerForIDE(
     }
 }
 
-inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
-    state: FirModuleResolveState,
-    phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
-) = getOrBuildFir(state, phase) as? E
-
 
 private fun KtElement.getNonLocalContainingDeclarationWithFqName(): KtDeclaration? {
     var container = parent
@@ -247,7 +241,7 @@ private fun KtElement.getNonLocalContainingDeclarationWithFqName(): KtDeclaratio
     return null
 }
 
-fun KtElement.getOrBuildFir(
+internal fun KtElement.getOrBuildFir(
     state: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
 ): FirElement {

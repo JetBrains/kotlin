@@ -39,6 +39,7 @@ dependencies {
     testCompile(projectTests(":idea:idea-maven"))
     testCompile(projectTests(":idea:idea-fir"))
     testCompile(projectTests(":idea:idea-frontend-fir"))
+    testCompile(projectTests(":idea:idea-frontend-fir:idea-fir-low-level-api"))
     testCompile(projectTests(":j2k"))
     testCompile(projectTests(":nj2k"))
     if (Ide.IJ()) {

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir
+package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 
 
-class FirIdeJavaModuleBasedSession(
+internal class FirIdeJavaModuleBasedSession(
     moduleInfo: ModuleInfo,
     sessionProvider: FirProjectSessionProvider
 ) : FirModuleBasedSession(moduleInfo, sessionProvider) {

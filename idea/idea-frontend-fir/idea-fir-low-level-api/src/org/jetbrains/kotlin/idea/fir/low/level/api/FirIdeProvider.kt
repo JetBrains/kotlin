@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir
+package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-class FirIdeProvider(
+internal class FirIdeProvider(
     val project: Project,
     val scope: GlobalSearchScope,
     val session: FirSession,
@@ -163,4 +163,4 @@ class FirIdeProvider(
     }
 }
 
-val FirSession.firIdeProvider: FirIdeProvider by FirSession.sessionComponentAccessor()
+internal val FirSession.firIdeProvider: FirIdeProvider by FirSession.sessionComponentAccessor()
