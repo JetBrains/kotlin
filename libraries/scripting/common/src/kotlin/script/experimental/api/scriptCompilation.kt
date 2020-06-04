@@ -85,6 +85,19 @@ val ScriptCompilationConfigurationKeys.filePathPattern by PropertiesCollection.k
 val ScriptCompilationConfigurationKeys.baseClass by PropertiesCollection.key<KotlinType>(KotlinType(Any::class)) // script base class
 
 /**
+ * Classes for which instances extensions should not be resolved if they are used in implicit context
+ */
+val ScriptCompilationConfigurationKeys.skipExtensionsResolutionForImplicits
+        by PropertiesCollection.key<Collection<KotlinType>>(emptyList())
+
+/**
+ * Extensions resolution for these classes in implicit context of their instances will be done only for innermost instance
+ * in scopes chain. Instances of each class in collection are handled separately.
+ */
+val ScriptCompilationConfigurationKeys.skipExtensionsResolutionForImplicitsExceptInnermost
+        by PropertiesCollection.key<Collection<KotlinType>>(emptyList())
+
+/**
  * The list of classes that will be used as implicit receivers in the script body, as if the whole body is wrapped with "with" calls:
  * <pre>
  * {@code
