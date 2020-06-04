@@ -227,53 +227,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
     }
 
     @Test
-    fun testBuildAndClean() {
-        val project = Project("kotlin2JsProject")
-
-        project.build("build") {
-            assertSuccessful()
-            assertReportExists()
-            checkIrCompilationMessage()
-
-            assertTasksExecuted(
-                ":libraryProject:jarSources",
-                ":mainProject:compileKotlin2Js",
-                ":libraryProject:compileKotlin2Js"
-            )
-
-            assertFileExists("mainProject/web/js/app.js")
-            if (!irBackend) {
-                assertFileExists("mainProject/web/js/lib/kotlin.js")
-                assertFileExists("libraryProject/build/kotlin2js/main/test-library.js")
-                assertFileExists("mainProject/web/js/app.js.map")
-            }
-        }
-
-        project.build("build") {
-            assertSuccessful()
-            assertTasksUpToDate(":mainProject:compileKotlin2Js")
-            assertContainsRegex(":libraryProject:compileTestKotlin2Js (UP-TO-DATE|NO-SOURCE)".toRegex())
-        }
-
-        project.build("clean") {
-            assertSuccessful()
-            assertReportExists()
-
-            // Test that we don't accidentally remove the containing directory
-            // This would fail if we used the default clean task of the copy task
-            assertFileExists("mainProject/web/js/lib")
-
-            assertNoSuchFile("main/project/web/js/app.js.map")
-            assertNoSuchFile("main/project/web/js/example/main.kt")
-        }
-
-        project.build("clean") {
-            assertSuccessful()
-            assertReportExists()
-        }
-    }
-
-    @Test
     fun testJarIncludesJsDefaultOutput() {
         val project = Project("kotlin2JsNoOutputFileProject")
 
@@ -443,17 +396,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
             assertTrue("Source map should contain reference to foo.kt") { map.contains("\"./src/main/kotlin/foo.kt\"") }
             assertTrue("Source map should contain source of main.kt") { map.contains("\"fun main(args: Array<String>) {") }
             assertTrue("Source map should contain source of foo.kt") { map.contains("\"inline fun foo(): String {") }
-        }
-    }
-
-    /** Issue: KT-18495 */
-    @Test
-    fun testNoSeparateClassesDirWarning() {
-        val project = Project("kotlin2JsProject")
-        project.build("build") {
-            assertSuccessful()
-            checkIrCompilationMessage()
-            assertNotContains("this build assumes a single directory for all classes from a source set")
         }
     }
 
