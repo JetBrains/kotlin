@@ -43,16 +43,14 @@ fun KtDeclaration.expectedDeclarations(): List<KtDeclaration> =
 fun DeclarationDescriptor.expectedDescriptor(): DeclarationDescriptor? = expectedDescriptors().firstOrNull()
 fun KtDeclaration.expectedDeclaration(): KtDeclaration? = expectedDeclarations().firstOrNull()
 
-fun DeclarationDescriptor.actualDescriptors(): Collection<DeclarationDescriptor> {
-    if (this is MemberDescriptor) {
-        return module.implementingDescriptors.flatMap { it.actualsFor(this) }
+fun DeclarationDescriptor.actualDescriptors(): Collection<DeclarationDescriptor> = when (this) {
+    is MemberDescriptor -> {
+        module.implementingDescriptors.flatMap { it.actualsFor(this) }
     }
-
-    if (this is ValueParameterDescriptor) {
-        return containingDeclaration.actualDescriptors().mapNotNull { (it as? CallableDescriptor)?.valueParameters?.getOrNull(index) }
+    is ValueParameterDescriptor -> {
+        containingDeclaration.actualDescriptors().mapNotNull { (it as? CallableDescriptor)?.valueParameters?.getOrNull(index) }
     }
-
-    return emptyList()
+    else -> emptyList()
 }
 
 fun KtDeclaration.actualDeclarations(): Set<KtDeclaration> =
