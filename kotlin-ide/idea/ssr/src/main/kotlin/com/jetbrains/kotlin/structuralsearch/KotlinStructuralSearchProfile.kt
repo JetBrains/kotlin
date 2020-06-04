@@ -102,7 +102,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     override fun shouldShowProblem(error: PsiErrorElement): Boolean {
         val description = error.errorDescription
         val parent = error.parent
-        if (parent is KtTryExpression && KSSRBundle.message("expected.catch.or.finally") == description) {
+        if (parent is KtTryExpression && KSSRBundle.message("message.expected.catch.or.finally") == description) {
             // searching for naked try allowed
             return false
         }
