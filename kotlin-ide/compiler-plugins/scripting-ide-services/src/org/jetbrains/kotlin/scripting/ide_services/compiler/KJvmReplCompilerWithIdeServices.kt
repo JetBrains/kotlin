@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.failure
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollector
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.*
 import org.jetbrains.kotlin.scripting.ide_services.compiler.impl.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -22,8 +19,8 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.calcAbsolute
 
 class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration) :
-    KJvmReplCompilerBase<IdeLikeReplCodeAnalyzer>(hostConfiguration, {
-        IdeLikeReplCodeAnalyzer(it.environment)
+    KJvmReplCompilerBase<IdeLikeReplCodeAnalyzer>(hostConfiguration, { sharedScriptCompilationContext, scopeProcessor ->
+        IdeLikeReplCodeAnalyzer(sharedScriptCompilationContext.environment, scopeProcessor)
     }),
     ReplCompleter, ReplCodeAnalyzer {
 
@@ -99,6 +96,8 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
         cursor: SourceCode.Position? = null,
         getNewSnippet: (SourceCode, Int) -> SourceCode = { code, _ -> code }
     ): ResultWithDiagnostics<AnalyzeWithCursorResult> {
+        updateResolutionFilter(configuration)
+
         val initialConfiguration = configuration.refineBeforeParsing(snippet).valueOr {
             return it
         }
