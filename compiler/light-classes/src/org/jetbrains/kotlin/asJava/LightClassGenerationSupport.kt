@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -41,6 +42,8 @@ abstract class LightClassGenerationSupport {
     abstract fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor?
 
     abstract fun analyze(element: KtElement): BindingContext
+
+    abstract fun analyzeAnnotation(element: KtAnnotationEntry): AnnotationDescriptor?
 
     abstract fun analyzeWithContent(element: KtClassOrObject): BindingContext
 

@@ -66,7 +66,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 it.shortName == fqName.shortName() || owner.containingKtFile.hasAlias(it.shortName)
             }
             for (entry in candidates) {
-                val descriptor = analyze(entry).get(BindingContext.ANNOTATION, entry)
+                val descriptor = analyzeAnnotation(entry)
                 if (descriptor?.fqName == fqName) {
                     return Pair(entry, descriptor)
                 }
@@ -217,6 +217,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun analyze(element: KtElement) = element.analyze(BodyResolveMode.PARTIAL)
+
+    override fun analyzeAnnotation(element: KtAnnotationEntry): AnnotationDescriptor? = element.resolveToDescriptorIfAny()
 
     override fun analyzeWithContent(element: KtClassOrObject) = element.analyzeWithContent()
 }
