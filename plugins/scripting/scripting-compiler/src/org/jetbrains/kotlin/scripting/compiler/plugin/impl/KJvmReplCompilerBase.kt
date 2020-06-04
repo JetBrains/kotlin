@@ -18,10 +18,15 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplImplicitsExtensionsResolutionFilter
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerStageHistory
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicits
+import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicitsExceptInnermost
+import org.jetbrains.kotlin.utils.addToStdlib.min
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -33,18 +38,19 @@ import kotlin.script.experimental.util.add
 
 open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected constructor(
     protected val hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
-    val initAnalyzer: (SharedScriptCompilationContext) -> AnalyzerT
+    val initAnalyzer: (SharedScriptCompilationContext, ImplicitsExtensionsResolutionFilter) -> AnalyzerT
 ) : ReplCompiler<KJvmCompiledScript>, ScriptCompiler {
     val state = JvmReplCompilerState({ createReplCompilationState(it, initAnalyzer) })
     val history = JvmReplCompilerStageHistory(state)
     protected val scriptPriority = AtomicInteger()
+    private val resolutionFilter = ReplImplicitsExtensionsResolutionFilter()
 
     override var lastCompiledSnippet: LinkedSnippetImpl<KJvmCompiledScript>? = null
         protected set
 
     fun createReplCompilationState(
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
-        initAnalyzer: (SharedScriptCompilationContext) -> AnalyzerT /* = { ReplCodeAnalyzer1(it.environment) } */
+        initAnalyzer: (SharedScriptCompilationContext, ImplicitsExtensionsResolutionFilter) -> AnalyzerT /* = { ReplCodeAnalyzer1(it.environment) } */
     ): ReplCompilationState<AnalyzerT> {
         val context = withMessageCollectorAndDisposable(disposeOnSuccess = false) { messageCollector, disposable ->
             createIsolatedCompilationContext(
@@ -54,7 +60,10 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
                 disposable
             ).asSuccess()
         }.valueOr { throw IllegalStateException("Unable to initialize repl compiler:\n  ${it.reports.joinToString("\n  ")}") }
-        return ReplCompilationState(context, initAnalyzer)
+
+        updateResolutionFilter(scriptCompilationConfiguration)
+
+        return ReplCompilationState(context, initAnalyzer, resolutionFilter)
     }
 
     override suspend fun compile(
@@ -63,6 +72,8 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
     ): ResultWithDiagnostics<LinkedSnippet<KJvmCompiledScript>> =
         snippets.map { snippet ->
             withMessageCollector(snippet) { messageCollector ->
+                updateResolutionFilter(configuration)
+
                 val initialConfiguration = configuration.refineBeforeParsing(snippet).valueOr {
                     return it
                 }
@@ -225,10 +236,44 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
             ).asSuccess()
         }
 
+    protected fun updateResolutionFilter(configuration: ScriptCompilationConfiguration) {
+        val updatedConfiguration = updateConfigurationWithPreviousScripts(configuration)
+
+        val classesToSkip =
+            updatedConfiguration[ScriptCompilationConfiguration.skipExtensionsResolutionForImplicits]!!
+        val classesToSkipAfterFirstTime =
+            updatedConfiguration[ScriptCompilationConfiguration.skipExtensionsResolutionForImplicitsExceptInnermost]!!
+
+        resolutionFilter.update(classesToSkip, classesToSkipAfterFirstTime)
+    }
+
+    private fun updateConfigurationWithPreviousScripts(
+        configuration: ScriptCompilationConfiguration
+    ): ScriptCompilationConfiguration {
+        val allPreviousLines =
+            generateSequence(lastCompiledSnippet) { it.previous }
+                .map { KotlinType(it.get().scriptClassFQName) }
+                .toList()
+
+        val skipFirstTime = allPreviousLines.subList(0, min(1, allPreviousLines.size))
+        val skipAlways =
+            if (allPreviousLines.isEmpty()) emptyList()
+            else allPreviousLines.subList(1, allPreviousLines.size)
+
+        return ScriptCompilationConfiguration(configuration) {
+            skipExtensionsResolutionForImplicits.update {
+                it?.also { it.toMutableList().addAll(skipAlways) } ?: skipAlways
+            }
+            skipExtensionsResolutionForImplicitsExceptInnermost.update {
+                it?.also { it.toMutableList().addAll(skipFirstTime) } ?: skipFirstTime
+            }
+        }
+    }
+
     companion object {
         fun create(hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration) =
-            KJvmReplCompilerBase(hostConfiguration) {
-                ReplCodeAnalyzerBase(it.environment)
+            KJvmReplCompilerBase(hostConfiguration) { context, resolutionFilter ->
+                ReplCodeAnalyzerBase(context.environment, implicitsResolutionFilter = resolutionFilter)
             }
     }
 
@@ -236,13 +281,14 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
 
 class ReplCompilationState<AnalyzerT : ReplCodeAnalyzerBase>(
     val context: SharedScriptCompilationContext,
-    val analyzerInit: (context: SharedScriptCompilationContext) -> AnalyzerT
+    val analyzerInit: (context: SharedScriptCompilationContext, implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter) -> AnalyzerT,
+    override val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter
 ) : JvmReplCompilerState.Compilation {
     override val disposable: Disposable? get() = context.disposable
     override val baseScriptCompilationConfiguration: ScriptCompilationConfiguration get() = context.baseScriptCompilationConfiguration
     override val environment: KotlinCoreEnvironment get() = context.environment
     override val analyzerEngine: AnalyzerT by lazy {
         // ReplCodeAnalyzer1(context.environment)
-        analyzerInit(context)
+        analyzerInit(context, implicitsResolutionFilter)
     }
 }
