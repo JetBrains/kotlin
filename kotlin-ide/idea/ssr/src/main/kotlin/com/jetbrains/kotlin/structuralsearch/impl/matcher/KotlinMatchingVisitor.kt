@@ -233,7 +233,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtElement>() ?: return
         val handler = getHandler(expression)
         myMatchingVisitor.result = when (handler) {
-            is SubstitutionHandler -> handler.validate(other, myMatchingVisitor.matchContext)
+            is SubstitutionHandler -> handler.handle(other, myMatchingVisitor.matchContext)
             else -> matchTextOrVariable(
                 expression.getReferencedNameElement(),
                 if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other
@@ -693,7 +693,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElement<KtStringTemplateEntry>() ?: return
         val handler = getHandler(entry)
         if (handler is SubstitutionHandler) {
-            myMatchingVisitor.result = handler.validate(other, myMatchingVisitor.matchContext)
+            myMatchingVisitor.result = handler.handle(other, myMatchingVisitor.matchContext)
             return
         }
         myMatchingVisitor.result = when (other) {
