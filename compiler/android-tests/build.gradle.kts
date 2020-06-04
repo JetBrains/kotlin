@@ -30,9 +30,6 @@ dependencies {
     }
 
     testCompile(intellijDep()) { includeJars("util", "idea", "idea_rt", "groovy-all", rootProject = rootProject) }
-    Platform[191].orLower {
-        testCompile(intellijDep()) { includeJars("jps-builders") }
-    }
     Platform[192].orHigher {
         testCompile(intellijPluginDep("java")) { includeJars("jps-builders") }
     }

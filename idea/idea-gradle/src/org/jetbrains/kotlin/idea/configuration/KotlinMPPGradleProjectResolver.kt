@@ -935,8 +935,6 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     }
                 }
 
-                // FIX ME WHEN BUNCH 191 REMOVED Can't use property because there's no getter in 192 and thus it isn't property anymore
-                @Suppress("UsePropertyAccessSyntax")
                 sourceSet.setSources(sourcesWithTypes.toMap())
             }
         }
@@ -952,8 +950,6 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 sourceSet.targetCompatibility = ktSourceSetData.targetCompatibility
                 sourceSet.dependencies += ktSourceSet.dependencies.mapNotNull { mppModel.dependencyMap[it] }
 
-                // FIX ME WHEN BUNCH 191 REMOVED Can't use property because there's no getter in 192 and thus it isn't property anymore
-                @Suppress("UsePropertyAccessSyntax")
                 sourceSet.setSources(linkedMapOf(
                     ktSourceSet.sourceType to DefaultExternalSourceDirectorySet().also { dirSet ->
                         dirSet.srcDirs = ktSourceSet.sourceDirs

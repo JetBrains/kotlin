@@ -18,9 +18,6 @@ dependencies {
     testCompileOnly(intellijDep())
     testRuntime(intellijDep())
 
-    if (Platform[191].orLower()) {
-        testRuntimeOnly(intellijPluginDep("Groovy"))
-    }
     Platform[192].orHigher {
         testCompileOnly(intellijPluginDep("java"))
         testRuntime(intellijPluginDep("java"))

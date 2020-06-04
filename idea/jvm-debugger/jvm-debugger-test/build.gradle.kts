@@ -19,10 +19,6 @@ dependencies {
 
     testCompile(intellijPluginDep("stream-debugger"))
 
-    Platform[191].orLower {
-        testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
-
     Platform[192].orHigher {
         testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "aether-dependency-resolver") }
         testRuntime(intellijPluginDep("java"))
