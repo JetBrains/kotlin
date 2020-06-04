@@ -12,6 +12,9 @@ sealed class ArrayMap<T : Any> : Iterable<T> {
     abstract operator fun get(index: Int): T?
 }
 
+fun ArrayMap<*>.isEmpty(): Boolean = size == 0
+fun ArrayMap<*>.isNotEmpty(): Boolean = size != 0
+
 internal object EmptyArrayMap : ArrayMap<Nothing>() {
     override val size: Int
         get() = 0

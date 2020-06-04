@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     override val possibleTypes: Collection<ConeClassLikeType>
 
+    override val attributes: ConeAttributes
+        get() = ConeAttributes.Empty
+
     constructor(value: Long, isUnsigned: Boolean, nullability: ConeNullability = ConeNullability.NOT_NULL) : super(value, isUnsigned, nullability) {
         possibleTypes = mutableListOf()
 
