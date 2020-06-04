@@ -388,6 +388,8 @@ public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
  * and returns the result of predicate evaluation on the element.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public fun <T> Sequence<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): Sequence<T> {
     // TODO: Rewrite with generalized MapFilterIndexingSequence
@@ -400,6 +402,8 @@ public fun <T> Sequence<T>.filterIndexed(predicate: (index: Int, T) -> Boolean):
  * and returns the result of predicate evaluation on the element.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -412,6 +416,8 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(d
  * Returns a sequence containing all elements that are instances of specified type parameter R.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstance
  */
 public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.internal.NoInfer R> {
     @Suppress("UNCHECKED_CAST")
@@ -422,6 +428,8 @@ public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.i
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstanceTo
  */
 public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
@@ -455,6 +463,8 @@ public fun <T : Any> Sequence<T?>.filterNotNull(): Sequence<T> {
  * Appends all elements that are not `null` to the given [destination].
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterNotNullTo
  */
 public fun <C : MutableCollection<in T>, T : Any> Sequence<T?>.filterNotNullTo(destination: C): C {
     for (element in this) if (element != null) destination.add(element)
@@ -465,6 +475,8 @@ public fun <C : MutableCollection<in T>, T : Any> Sequence<T?>.filterNotNullTo(d
  * Appends all elements not matching the given [predicate] to the given [destination].
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -475,6 +487,8 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterNotTo(desti
  * Appends all elements matching the given [predicate] to the given [destination].
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)

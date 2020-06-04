@@ -1842,6 +1842,8 @@ public inline fun UShortArray.filter(predicate: (UShort) -> Boolean): List<UShor
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1854,6 +1856,8 @@ public inline fun UIntArray.filterIndexed(predicate: (index: Int, UInt) -> Boole
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1866,6 +1870,8 @@ public inline fun ULongArray.filterIndexed(predicate: (index: Int, ULong) -> Boo
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1878,6 +1884,8 @@ public inline fun UByteArray.filterIndexed(predicate: (index: Int, UByte) -> Boo
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1890,6 +1898,8 @@ public inline fun UShortArray.filterIndexed(predicate: (index: Int, UShort) -> B
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1905,6 +1915,8 @@ public inline fun <C : MutableCollection<in UInt>> UIntArray.filterIndexedTo(des
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1920,6 +1932,8 @@ public inline fun <C : MutableCollection<in ULong>> ULongArray.filterIndexedTo(d
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1935,6 +1949,8 @@ public inline fun <C : MutableCollection<in UByte>> UByteArray.filterIndexedTo(d
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1996,6 +2012,8 @@ public inline fun UShortArray.filterNot(predicate: (UShort) -> Boolean): List<US
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2007,6 +2025,8 @@ public inline fun <C : MutableCollection<in UInt>> UIntArray.filterNotTo(destina
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2018,6 +2038,8 @@ public inline fun <C : MutableCollection<in ULong>> ULongArray.filterNotTo(desti
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2029,6 +2051,8 @@ public inline fun <C : MutableCollection<in UByte>> UByteArray.filterNotTo(desti
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2040,6 +2064,8 @@ public inline fun <C : MutableCollection<in UShort>> UShortArray.filterNotTo(des
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2051,6 +2077,8 @@ public inline fun <C : MutableCollection<in UInt>> UIntArray.filterTo(destinatio
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2062,6 +2090,8 @@ public inline fun <C : MutableCollection<in ULong>> ULongArray.filterTo(destinat
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2073,6 +2103,8 @@ public inline fun <C : MutableCollection<in UByte>> UByteArray.filterTo(destinat
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
