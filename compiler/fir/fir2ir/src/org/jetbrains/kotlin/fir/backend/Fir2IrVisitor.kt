@@ -87,7 +87,7 @@ class Fir2IrVisitor(
                 it.accept(this@Fir2IrVisitor, data) as? IrConstructorCall
             }
 
-            (this as IrFileImpl).metadata = FirMetadataSource.File(file, components.session, declarations.map { it.descriptor })
+            (this as IrFileImpl).metadata = FirMetadataSource.File(file, components.session)
         }
     }
 

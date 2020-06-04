@@ -18,8 +18,8 @@ interface FirMetadataSource : MetadataSource {
     val session: FirSession
 
     class File(
-        val file: FirFile, override val session: FirSession, descriptors: List<DeclarationDescriptor>
-    ) : MetadataSource.File(descriptors), FirMetadataSource
+        val file: FirFile, override val session: FirSession
+    ) : MetadataSource.File(emptyList()), FirMetadataSource
 
     class Class(
         val klass: FirClass<*>, descriptor: WrappedClassDescriptor
