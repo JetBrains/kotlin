@@ -205,17 +205,17 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             listOf(innerJvmProject to ":libJvm", innerJsProject to ":libJs").forEach { (project, dependency) ->
                 gradleBuildScript(project.projectName).appendText(
                     "\n" + """
-                        configurations.create('foo')
                         dependencies {
-                            foo project('$dependency')
-                            compile project('$dependency')
-                            foo project(':lib')
-                            compile project(':lib')
+                            implementation project('$dependency')
+                            implementation project(':lib')
                         }
                     """.trimIndent()
                 )
 
-                testResolveAllConfigurations(project.projectName)
+                testResolveAllConfigurations(
+                    project.projectName,
+                    excludePredicate = "it.name in ['compile', 'runtime', 'testCompile', 'testRuntime', 'default']"
+                )
             }
         }
     }
