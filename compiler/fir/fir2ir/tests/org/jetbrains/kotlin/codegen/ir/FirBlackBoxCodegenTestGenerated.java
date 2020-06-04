@@ -5078,6 +5078,10 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
+        private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+        }
+
         public void testAllFilesPresentInContracts() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
@@ -5110,6 +5114,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("functionParameter.kt")
         public void testFunctionParameter() throws Exception {
             runTest("compiler/testData/codegen/box/contracts/functionParameter.kt");
+        }
+
+        @TestMetadata("kt39374.kt")
+        public void testKt39374_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/contracts/kt39374.kt", "kotlin.coroutines");
         }
 
         @TestMetadata("lambdaParameter.kt")
