@@ -64,8 +64,8 @@ digraph lambdas_kt {
     17 -> {6};
     18 -> {6};
     19 -> {20 21};
-    20 -> {19};
     20 -> {14} [color=green];
+    20 -> {19} [color=green style=dashed];
     21 -> {22};
     22 -> {20};
 
@@ -166,8 +166,8 @@ digraph lambdas_kt {
     52 -> {53} [style=dotted];
     53 -> {48} [style=dotted];
     54 -> {55 56};
-    55 -> {54};
     55 -> {50} [color=green];
+    55 -> {54} [color=green style=dashed];
     56 -> {57};
     57 -> {48};
     57 -> {58} [style=dotted];
@@ -203,8 +203,8 @@ digraph lambdas_kt {
     64 -> {65} [style=dotted];
     65 -> {60} [style=dotted];
     66 -> {67 68};
-    67 -> {66};
     67 -> {62} [color=green];
+    67 -> {66} [color=green style=dashed];
     68 -> {69};
     69 -> {60};
     69 -> {70} [style=dotted];

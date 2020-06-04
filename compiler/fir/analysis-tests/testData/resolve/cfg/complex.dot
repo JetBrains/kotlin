@@ -260,7 +260,7 @@ digraph complex_kt {
     79 -> {68} [style=dotted];
     80 -> {68};
     81 -> {82};
-    82 -> {58};
+    82 -> {58} [color=green style=dashed];
     83 -> {84};
     84 -> {52};
     84 -> {85} [style=dotted];

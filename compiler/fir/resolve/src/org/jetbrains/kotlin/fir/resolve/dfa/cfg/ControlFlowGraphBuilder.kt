@@ -151,7 +151,7 @@ class ControlFlowGraphBuilder {
             val enterNode = functionEnterNodes.pop()
             @Suppress("NON_EXHAUSTIVE_WHEN")
             when (invocationKind) {
-                InvocationKind.AT_LEAST_ONCE, InvocationKind.UNKNOWN -> addEdge(exitNode, enterNode, propagateDeadness = false)
+                InvocationKind.AT_LEAST_ONCE, InvocationKind.UNKNOWN -> addBackEdge(exitNode, enterNode)
             }
             if (postponedExitNode != null) {
                 CFGNode.addEdge(lastNodes.pop(), postponedExitNode, propagateDeadness = true, kind = EdgeKind.Cfg)
@@ -399,7 +399,7 @@ class ControlFlowGraphBuilder {
             is FirBreakExpression -> loopExitNodes[jump.target.labeledElement]
             else -> throw IllegalArgumentException("Unknown jump type: ${jump.render()}")
         }
-        addNodeWithJump(node, nextNode)
+        addNodeWithJump(node, nextNode, isBack = jump is FirContinueExpression)
         return node
     }
 
@@ -502,7 +502,7 @@ class ControlFlowGraphBuilder {
         if (lastNodes.isNotEmpty) {
             val conditionEnterNode = lastNodes.pop()
             require(conditionEnterNode is LoopConditionEnterNode) { loop.render() }
-            addEdge(loopBlockExitNode, conditionEnterNode, propagateDeadness = false)
+            addBackEdge(loopBlockExitNode, conditionEnterNode)
         }
         val loopExitNode = loopExitNodes.pop()
         loopExitNode.updateDeadStatus()
@@ -543,7 +543,7 @@ class ControlFlowGraphBuilder {
         addEdge(lastNodes.pop(), conditionExitNode)
         val blockEnterNode = lastNodes.pop()
         require(blockEnterNode is LoopBlockEnterNode)
-        addEdge(conditionExitNode, blockEnterNode, propagateDeadness = false, isDead = conditionBooleanValue == false)
+        addBackEdge(conditionExitNode, blockEnterNode, isDead = conditionBooleanValue == false)
         val loopExit = loopExitNodes.pop()
         addEdge(conditionExitNode, loopExit, propagateDeadness = false, isDead = conditionBooleanValue == true)
         loopExit.updateDeadStatus()
@@ -903,13 +903,17 @@ class ControlFlowGraphBuilder {
          * it will be replaced after correct implementation of CFG for class initialization
          */
         val exitNode: CFGNode<*> = exitNodes.top()
-        addNodeWithJump(node, exitNode, preferredKind)
+        addNodeWithJump(node, exitNode)
     }
 
-    private fun addNodeWithJump(node: CFGNode<*>, targetNode: CFGNode<*>?, preferredKind: EdgeKind = EdgeKind.Simple) {
+    private fun addNodeWithJump(node: CFGNode<*>, targetNode: CFGNode<*>?, isBack: Boolean = false) {
         addEdge(lastNodes.pop(), node)
         if (targetNode != null) {
-            addEdge(node, targetNode)
+            if (isBack) {
+                addBackEdge(node, targetNode)
+            } else {
+                addEdge(node, targetNode)
+            }
         }
         val stub = createStubNode()
         addEdge(node, stub)
@@ -933,10 +937,21 @@ class ControlFlowGraphBuilder {
         to: CFGNode<*>,
         propagateDeadness: Boolean = true,
         isDead: Boolean = false,
-        preferredKind: EdgeKind = EdgeKind.Simple
+        isBack: Boolean = false,
+        preferredKind: EdgeKind = EdgeKind.Simple,
     ) {
-        val kind = if (isDead || from.isDead || to.isDead) EdgeKind.Dead else preferredKind
+        val kind = if (isDead || from.isDead || to.isDead) {
+            if (isBack) EdgeKind.DeadBack else EdgeKind.Dead
+        } else preferredKind
         CFGNode.addEdge(from, to, kind, propagateDeadness)
+    }
+
+    private fun addBackEdge(
+        from: CFGNode<*>,
+        to: CFGNode<*>,
+        isDead: Boolean = false
+    ) {
+        addEdge(from, to, propagateDeadness = false, isDead = isDead, isBack = true, preferredKind = EdgeKind.Back)
     }
 
     private val FirFunction<*>.invocationKind: InvocationKind?

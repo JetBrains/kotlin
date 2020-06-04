@@ -280,8 +280,8 @@ digraph tryCatch_kt {
     79 -> {80};
     80 -> {47};
     81 -> {82};
-    82 -> {39};
     82 -> {83} [style=dotted];
+    82 -> {39} [color=green style=dashed];
     83 -> {84} [style=dotted];
     84 -> {85} [style=dotted];
     85 -> {47} [style=dotted];
@@ -294,7 +294,7 @@ digraph tryCatch_kt {
     91 -> {92};
     92 -> {93};
     93 -> {94};
-    94 -> {41};
+    94 -> {41} [color=green style=dashed];
     95 -> {96};
     96 -> {38};
 

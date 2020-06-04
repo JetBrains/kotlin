@@ -191,7 +191,7 @@ digraph jumps_kt {
     63 -> {64} [style=dotted];
     64 -> {65} [style=dotted];
     65 -> {66} [style=dotted];
-    66 -> {56} [style=dotted];
+    66 -> {56} [color=green style=dotted];
     67 -> {68};
     68 -> {53};
 
@@ -241,7 +241,8 @@ digraph jumps_kt {
     80 -> {81} [style=dotted];
     81 -> {82} [style=dotted];
     82 -> {83} [style=dotted];
-    83 -> {73 72} [style=dotted];
+    83 -> {72} [style=dotted];
+    83 -> {73} [color=green style=dotted];
     84 -> {85};
     85 -> {70};
 
@@ -307,14 +308,14 @@ digraph jumps_kt {
     99 -> {100 106};
     100 -> {101};
     101 -> {102};
-    102 -> {88};
     102 -> {103} [style=dotted];
+    102 -> {88} [color=green style=dashed];
     103 -> {104} [style=dotted];
     104 -> {105} [style=dotted];
     105 -> {96} [style=dotted];
     106 -> {96};
     107 -> {108};
-    108 -> {90};
+    108 -> {90} [color=green style=dashed];
 
     subgraph cluster_30 {
         color=red
@@ -346,8 +347,8 @@ digraph jumps_kt {
     115 -> {116};
     116 -> {113};
     117 -> {118 119};
-    118 -> {117};
     118 -> {115} [color=green];
+    118 -> {117} [color=green style=dashed];
     119 -> {118};
     119 -> {120} [style=dotted];
     120 -> {118} [style=dotted];

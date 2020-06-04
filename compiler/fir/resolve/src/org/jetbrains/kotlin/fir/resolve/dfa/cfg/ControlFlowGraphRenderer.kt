@@ -30,6 +30,8 @@ class FirControlFlowGraphRenderVisitor(
                 EdgeKind.Dead to "[style=dotted]",
                 EdgeKind.Cfg to "[color=green]",
                 EdgeKind.Dfg to "[color=red]",
+                EdgeKind.Back to "[color=green style=dashed]",
+                EdgeKind.DeadBack to "[color=green style=dotted]"
             )
         )
     }

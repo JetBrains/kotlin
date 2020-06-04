@@ -308,7 +308,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             val toKind = to.incomingEdges.getValue(from)
             TestCase.assertEquals(fromKind, toKind)
             if (from.isDead || to.isDead) {
-                KtUsefulTestCase.assertContainsElements(listOf(EdgeKind.Dead, EdgeKind.Cfg), toKind)
+                KtUsefulTestCase.assertContainsElements(listOf(EdgeKind.Dead, EdgeKind.Cfg, EdgeKind.DeadBack, EdgeKind.Back), toKind)
             }
         }
     }

@@ -69,9 +69,11 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     }
 }
 
-enum class EdgeKind(val usedInDfa: Boolean) {
-    Simple(usedInDfa = true),
-    Dead(usedInDfa = false),
-    Cfg(usedInDfa = false),
-    Dfg(usedInDfa = true)
+enum class EdgeKind(val usedInDfa: Boolean, val isBack: Boolean) {
+    Simple(usedInDfa = true, isBack = false),
+    Dead(usedInDfa = false, isBack = false),
+    Cfg(usedInDfa = false, isBack = false),
+    Dfg(usedInDfa = true, isBack = false),
+    Back(usedInDfa = false, isBack = true),
+    DeadBack(usedInDfa = false, isBack = true)
 }

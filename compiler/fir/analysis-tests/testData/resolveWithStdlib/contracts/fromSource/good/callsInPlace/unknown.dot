@@ -48,8 +48,8 @@ digraph unknown_kt {
     12 -> {13};
     13 -> {7};
     14 -> {15 16};
-    15 -> {14};
     15 -> {10} [color=green];
+    15 -> {14} [color=green style=dashed];
     16 -> {17};
     17 -> {15};
 
@@ -80,8 +80,8 @@ digraph unknown_kt {
     24 -> {25};
     25 -> {19};
     26 -> {27 28};
-    27 -> {26};
     27 -> {22} [color=green];
+    27 -> {26} [color=green style=dashed];
     28 -> {29};
     29 -> {27};
 

@@ -46,7 +46,7 @@ digraph loops_kt {
     10 -> {11};
     11 -> {12};
     12 -> {13};
-    13 -> {4};
+    13 -> {4} [color=green style=dashed];
     14 -> {15};
     15 -> {1};
 
@@ -93,7 +93,8 @@ digraph loops_kt {
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {20 19};
+    29 -> {19};
+    29 -> {20} [color=green style=dashed];
     30 -> {31};
     31 -> {17};
 
@@ -158,7 +159,7 @@ digraph loops_kt {
     51 -> {52};
     52 -> {53};
     53 -> {54};
-    54 -> {41};
+    54 -> {41} [color=green style=dashed];
     55 -> {56};
     56 -> {33};
 
@@ -201,7 +202,7 @@ digraph loops_kt {
     65 -> {66};
     66 -> {67};
     67 -> {68};
-    68 -> {61};
+    68 -> {61} [color=green style=dashed];
     69 -> {58} [style=dotted];
 
     subgraph cluster_20 {
@@ -275,7 +276,7 @@ digraph loops_kt {
     89 -> {80} [style=dotted];
     90 -> {80};
     91 -> {92};
-    92 -> {74};
+    92 -> {74} [color=green style=dashed];
     93 -> {71};
 
     subgraph cluster_28 {
@@ -317,7 +318,7 @@ digraph loops_kt {
     102 -> {103} [style=dotted];
     103 -> {104} [style=dotted];
     104 -> {105} [style=dotted];
-    105 -> {98} [style=dotted];
+    105 -> {98} [color=green style=dotted];
     106 -> {95};
 
     subgraph cluster_33 {
@@ -358,8 +359,8 @@ digraph loops_kt {
     115 -> {116};
     116 -> {117};
     117 -> {118};
-    118 -> {111};
     118 -> {110} [style=dotted];
+    118 -> {111} [color=green style=dashed];
     119 -> {108} [style=dotted];
 
     subgraph cluster_38 {
@@ -432,8 +433,8 @@ digraph loops_kt {
     139 -> {140};
     140 -> {141};
     141 -> {142};
-    142 -> {124};
     142 -> {123} [style=dotted];
+    142 -> {124} [color=green style=dashed];
     143 -> {121};
 
     subgraph cluster_46 {
@@ -475,7 +476,7 @@ digraph loops_kt {
     153 -> {154};
     154 -> {155};
     155 -> {147};
-    155 -> {148} [style=dotted];
+    155 -> {148} [color=green style=dotted];
     156 -> {145};
 
 }

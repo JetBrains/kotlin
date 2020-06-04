@@ -91,6 +91,6 @@ digraph dataFlowInfoFromWhileCondition_kt {
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {14};
+    29 -> {14} [color=green style=dashed];
 
 }

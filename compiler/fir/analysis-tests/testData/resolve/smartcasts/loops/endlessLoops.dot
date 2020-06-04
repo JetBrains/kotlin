@@ -93,7 +93,7 @@ digraph endlessLoops_kt {
     25 -> {16} [style=dotted];
     26 -> {16};
     27 -> {28};
-    28 -> {8};
+    28 -> {8} [color=green style=dashed];
     29 -> {30};
     30 -> {5};
 
@@ -173,7 +173,7 @@ digraph endlessLoops_kt {
     52 -> {41} [style=dotted];
     53 -> {41};
     54 -> {55};
-    55 -> {35};
+    55 -> {35} [color=green style=dashed];
     56 -> {57};
     57 -> {32};
 
@@ -287,7 +287,7 @@ digraph endlessLoops_kt {
     91 -> {82} [style=dotted];
     92 -> {82};
     93 -> {94};
-    94 -> {62};
+    94 -> {62} [color=green style=dashed];
     95 -> {96};
     96 -> {59};
 
@@ -372,7 +372,7 @@ digraph endlessLoops_kt {
     120 -> {121} [style=dotted];
     121 -> {122} [style=dotted];
     122 -> {123} [style=dotted];
-    123 -> {101} [style=dotted];
+    123 -> {101} [color=green style=dotted];
     124 -> {125};
     125 -> {98};
 
@@ -451,8 +451,8 @@ digraph endlessLoops_kt {
     147 -> {148};
     148 -> {149};
     149 -> {150};
-    150 -> {130};
     150 -> {129} [style=dotted];
+    150 -> {130} [color=green style=dashed];
     151 -> {152};
     152 -> {127};
 
@@ -531,8 +531,8 @@ digraph endlessLoops_kt {
     174 -> {175};
     175 -> {176};
     176 -> {177};
-    177 -> {157};
     177 -> {156} [style=dotted];
+    177 -> {157} [color=green style=dashed];
     178 -> {179};
     179 -> {154};
 
@@ -577,8 +577,8 @@ digraph endlessLoops_kt {
     189 -> {190};
     190 -> {191};
     191 -> {192};
-    192 -> {184};
     192 -> {183} [style=dotted];
+    192 -> {184} [color=green style=dashed];
     193 -> {194} [style=dotted];
     194 -> {181} [style=dotted];
 

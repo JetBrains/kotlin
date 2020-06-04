@@ -34,8 +34,8 @@ digraph postponedLambdas_kt {
     7 -> {8};
     8 -> {3};
     9 -> {10 11};
-    10 -> {9};
     10 -> {6} [color=green];
+    10 -> {9} [color=green style=dashed];
     11 -> {10};
 
 }

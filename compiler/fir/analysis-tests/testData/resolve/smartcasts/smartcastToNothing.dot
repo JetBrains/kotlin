@@ -250,7 +250,7 @@ digraph smartcastToNothing_kt {
     81 -> {70} [style=dotted];
     82 -> {70} [style=dotted];
     83 -> {84} [style=dotted];
-    84 -> {56} [style=dotted];
+    84 -> {56} [color=green style=dotted];
     85 -> {86 87};
     86 -> {88};
     87 -> {48} [style=dotted];

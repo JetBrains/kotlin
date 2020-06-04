@@ -177,8 +177,8 @@ digraph propertiesAndInitBlocks_kt {
     67 -> {64};
     20 -> {21 22};
     20 -> {26 35 38} [color=red];
-    21 -> {20};
     21 -> {66} [color=green];
+    21 -> {20} [color=green style=dashed];
     22 -> {23};
     23 -> {24};
     24 -> {64};

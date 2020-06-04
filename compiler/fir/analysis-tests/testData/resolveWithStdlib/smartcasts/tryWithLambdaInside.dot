@@ -94,8 +94,8 @@ finally {
     23 -> {24} [style=dotted];
     24 -> {8} [style=dotted];
     25 -> {26 27};
-    26 -> {25};
     26 -> {16} [color=green];
+    26 -> {25} [color=green style=dashed];
     27 -> {26};
 
     subgraph cluster_9 {

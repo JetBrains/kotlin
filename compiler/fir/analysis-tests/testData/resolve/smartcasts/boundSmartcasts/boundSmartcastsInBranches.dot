@@ -124,8 +124,8 @@ digraph boundSmartcastsInBranches_kt {
     36 -> {37};
     37 -> {38};
     38 -> {39};
-    39 -> {17};
     39 -> {40} [style=dotted];
+    39 -> {17} [color=green style=dashed];
     40 -> {41} [style=dotted];
     41 -> {42} [style=dotted];
     42 -> {29} [style=dotted];
@@ -133,7 +133,7 @@ digraph boundSmartcastsInBranches_kt {
     44 -> {45};
     45 -> {46};
     46 -> {47};
-    47 -> {19};
+    47 -> {19} [color=green style=dashed];
 
     subgraph cluster_12 {
         color=red

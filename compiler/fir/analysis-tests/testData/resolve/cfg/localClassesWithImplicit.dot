@@ -184,8 +184,8 @@ digraph localClassesWithImplicit_kt {
     31 -> {32} [style=dotted];
     32 -> {27} [style=dotted];
     33 -> {34 35};
-    34 -> {33};
     34 -> {29} [color=green];
+    34 -> {33} [color=green style=dashed];
     35 -> {36};
     36 -> {37};
     37 -> {39};
@@ -217,8 +217,8 @@ digraph localClassesWithImplicit_kt {
     62 -> {63} [style=dotted];
     63 -> {58} [style=dotted];
     64 -> {65 66};
-    65 -> {64};
     65 -> {60} [color=green];
+    65 -> {64} [color=green style=dashed];
     66 -> {67};
     67 -> {68};
     68 -> {69};
@@ -320,8 +320,8 @@ digraph localClassesWithImplicit_kt {
     86 -> {87} [style=dotted];
     87 -> {82} [style=dotted];
     88 -> {89 90};
-    89 -> {88};
     89 -> {84} [color=green];
+    89 -> {88} [color=green style=dashed];
     90 -> {91};
     91 -> {92};
     92 -> {94};
@@ -379,8 +379,8 @@ digraph localClassesWithImplicit_kt {
     117 -> {118} [style=dotted];
     118 -> {113} [style=dotted];
     119 -> {120 121};
-    120 -> {119};
     120 -> {115} [color=green];
+    120 -> {119} [color=green style=dashed];
     121 -> {122};
     122 -> {123};
     123 -> {124};
