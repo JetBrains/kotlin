@@ -27,6 +27,7 @@ import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.EditSourceOnEnterKeyHandler;
+import com.intellij.util.SingleAlarm;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -61,6 +62,11 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   private final Insets myToolbarInsets = JBUI.insetsRight(1);
   private final JTree myTree;
   private final TreeExpander myTreeExpander;
+  private final SingleAlarm mySelectionAlarm = new SingleAlarm(() -> {
+    OpenFileDescriptor descriptor = getSelectedDescriptor();
+    updateAutoscroll(descriptor);
+    updatePreview(descriptor);
+  }, 50, stateForComponent(this), this);
 
   private final Option myAutoscrollToSource = new Option() {
     @Override
@@ -71,7 +77,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     @Override
     public void setSelected(boolean selected) {
       myState.setAutoscrollToSource(selected);
-      updateAutoscroll(getSelectedDescriptor());
+      if (selected) updateAutoscroll(getSelectedDescriptor());
     }
   };
   private final Option myShowPreview = new Option() {
@@ -145,11 +151,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     myTree.setRootVisible(false);
     myTree.getSelectionModel().setSelectionMode(SINGLE_TREE_SELECTION);
     myTree.addTreeSelectionListener(new RestoreSelectionListener());
-    myTree.addTreeSelectionListener(event -> {
-      OpenFileDescriptor descriptor = getSelectedDescriptor();
-      updateAutoscroll(descriptor);
-      updatePreview(descriptor);
-    });
+    myTree.addTreeSelectionListener(event -> mySelectionAlarm.cancelAndRequest());
     new TreeSpeedSearch(myTree);
     EditSourceOnDoubleClickHandler.install(myTree);
     EditSourceOnEnterKeyHandler.install(myTree);
@@ -242,6 +244,10 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
 
   final @NotNull JTree getTree() {
     return myTree;
+  }
+
+  final @NotNull ProblemsViewPreview getPreview() {
+    return myPreview;
   }
 
   @Nullable TreeExpander getTreeExpander() {

@@ -9,6 +9,8 @@ import com.intellij.icons.AllIcons
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
@@ -52,22 +54,31 @@ private class QuickFixAction(val action: IntentionAction, val marker: RangeMarke
 
   override fun update(event: AnActionEvent) {
     event.presentation.isEnabledAndVisible = false
-    val file = getTopLevelFile(event) ?: return
-    if (!action.isAvailable(file.project, null, file)) return
+    val panel = ProblemsView.getSelectedPanel(event.project) ?: return
+    val file = getTopLevelFile(panel) ?: return
+    if (!isAvailable(file, panel.preview.findEditor(marker.document))) return
     val text = action.text // may throw an exception if action.isAvailable is not invoked
     event.presentation.text = text
     event.presentation.isEnabledAndVisible = text.isNotEmpty()
   }
 
   override fun actionPerformed(event: AnActionEvent) {
-    val file = getTopLevelFile(event) ?: return
-    chooseActionAndInvoke(file, null, action, action.text)
+    val panel = ProblemsView.getSelectedPanel(event.project) ?: return
+    val file = getTopLevelFile(panel) ?: return
+    chooseActionAndInvoke(file, panel.preview.findEditor(marker.document), action, action.text)
   }
 
-  private fun getTopLevelFile(event: AnActionEvent): PsiFile? {
+  private fun getTopLevelFile(panel: ProblemsViewPanel): PsiFile? {
     if (!marker.isValid) return null
-    val project = event.project ?: return null
-    val file = PsiDocumentManager.getInstance(project).getPsiFile(marker.document) ?: return null
-    return InjectedLanguageManager.getInstance(project).getTopLevelFile(file)
+    val file = PsiDocumentManager.getInstance(panel.project).getPsiFile(marker.document) ?: return null
+    return InjectedLanguageManager.getInstance(panel.project).getTopLevelFile(file)
+  }
+
+  private fun isAvailable(file: PsiFile, editor: Editor?) = try {
+    action.isAvailable(file.project, editor, file)
+  }
+  catch (exception: Exception) {
+    logger<HighlightingProblem>().warn(exception)
+    false
   }
 }
