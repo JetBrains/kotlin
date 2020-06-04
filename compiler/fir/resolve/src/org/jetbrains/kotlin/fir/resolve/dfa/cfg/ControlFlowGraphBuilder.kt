@@ -173,6 +173,7 @@ class ControlFlowGraphBuilder {
         exitNode.updateDeadStatus()
         val graph = graphs.pop().also { graph ->
             exitsFromCompletedPostponedAnonymousFunctions.removeAll { it.owner == graph }
+            graph.complete()
         }
         val previousGraph = parentGraphForAnonymousFunctions.remove(function.symbol) ?: graphs.top()
         if (previousGraph.kind == ControlFlowGraph.Kind.Function) {
@@ -252,7 +253,7 @@ class ControlFlowGraphBuilder {
         }
         val exitNode = createClassExitNode(klass)
         addEdge(node, exitNode, preferredKind = EdgeKind.Cfg)
-        return graphs.pop()
+        return graphs.pop().also { it.complete() }
     }
 
     fun prepareForLocalClassMembers(members: Collection<FirSymbolOwner<*>>) {
@@ -361,7 +362,7 @@ class ControlFlowGraphBuilder {
         levelCounter--
         exitNodes.pop()
         lexicalScopes.pop()
-        return topLevelVariableExitNode to graphs.pop()
+        return topLevelVariableExitNode to graphs.pop().also { it.complete() }
     }
 
     // ----------------------------------- Delegate -----------------------------------
@@ -854,7 +855,7 @@ class ControlFlowGraphBuilder {
         }
         lexicalScopes.pop()
         exitNodes.pop()
-        val graph = graphs.pop()
+        val graph = graphs.pop().also { it.complete() }
         return exitNode to graph
     }
 

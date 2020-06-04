@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("Reformat")
-
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -15,19 +13,28 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     val nodes: List<CFGNode<*>> get() = _nodes
 
     internal fun addNode(node: CFGNode<*>) {
+        assertState(State.Building)
         _nodes += node
     }
 
     lateinit var enterNode: CFGNode<*>
         internal set
+
     lateinit var exitNode: CFGNode<*>
         internal set
-
     var owner: ControlFlowGraph? = null
+        private set
+
+    var state: State = State.Building
         private set
 
     private val _subGraphs: MutableList<ControlFlowGraph> = mutableListOf()
     val subGraphs: List<ControlFlowGraph> get() = _subGraphs
+
+    internal fun complete() {
+        assertState(State.Building)
+        state = State.Completed
+    }
 
     internal fun addSubGraph(graph: ControlFlowGraph) {
         assert(graph.owner == null) {
@@ -44,6 +51,17 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
 
         CFGNode.removeAllIncomingEdges(graph.enterNode)
         CFGNode.removeAllOutgoingEdges(graph.exitNode)
+    }
+
+    private fun assertState(state: State) {
+        assert(this.state == state) {
+            "This action can not be performed at $this state"
+        }
+    }
+
+    enum class State {
+        Building,
+        Completed;
     }
 
     enum class Kind {
