@@ -829,11 +829,131 @@ class Collections {
         }
 
         @Sample
+        fun filterTo() {
+            val numbers: List<Int> = listOf(1, 2, 3, 4, 5, 6, 7)
+            val evenNumbers = mutableListOf<Int>()
+            val notMultiplesOf3 = mutableListOf<Int>()
+
+            assertPrints(evenNumbers, "[]")
+
+            numbers.filterTo(evenNumbers) { it % 2 == 0 }
+            numbers.filterNotTo(notMultiplesOf3) { number -> number % 3 == 0 }
+
+            assertPrints(evenNumbers, "[2, 4, 6]")
+            assertPrints(notMultiplesOf3, "[1, 2, 4, 5, 7]")
+        }
+
+        @Sample
         fun filterNotNull() {
             val numbers: List<Int?> = listOf(1, 2, null, 4)
             val nonNullNumbers = numbers.filterNotNull()
 
             assertPrints(nonNullNumbers, "[1, 2, 4]")
         }
+
+        @Sample
+        fun filterNotNullTo() {
+            val numbers: List<Int?> = listOf(1, 2, null, 4)
+            val nonNullNumbers = mutableListOf<Int>()
+
+            assertPrints(nonNullNumbers, "[]")
+
+            numbers.filterNotNullTo(nonNullNumbers)
+
+            assertPrints(nonNullNumbers, "[1, 2, 4]")
+        }
+
+        @Sample
+        fun filterIndexed() {
+            val numbers: List<Int> = listOf(0, 1, 2, 3, 4, 8, 6)
+            val numbersOnSameIndexAsValue = numbers.filterIndexed { index, i -> index == i }
+
+            assertPrints(numbersOnSameIndexAsValue, "[0, 1, 2, 3, 4, 6]")
+        }
+
+        @Sample
+        fun filterIndexedTo() {
+            val numbers: List<Int> = listOf(0, 1, 2, 3, 4, 8, 6)
+            val numbersOnSameIndexAsValue = mutableListOf<Int>()
+
+            assertPrints(numbersOnSameIndexAsValue, "[]")
+
+            numbers.filterIndexedTo(numbersOnSameIndexAsValue) { index, i -> index == i }
+
+            assertPrints(numbersOnSameIndexAsValue, "[0, 1, 2, 3, 4, 6]")
+        }
+
+        @Sample
+        fun filterIsInstance() {
+            open class Animal(val name: String) {
+                override fun toString(): String {
+                    return name
+                }
+            }
+            class Dog(name: String): Animal(name)
+            class Cat(name: String): Animal(name)
+
+            val animals: List<Animal> = listOf(Cat("Scratchy"), Dog("Poochie"))
+            val cats = animals.filterIsInstance<Cat>()
+
+            assertPrints(cats, "[Scratchy]")
+        }
+
+        @Sample
+        fun filterIsInstanceJVM() {
+            open class Animal(val name: String) {
+                override fun toString(): String {
+                    return name
+                }
+            }
+            class Dog(name: String): Animal(name)
+            class Cat(name: String): Animal(name)
+
+            val animals: List<Animal> = listOf(Cat("Scratchy"), Dog("Poochie"))
+            val cats = animals.filterIsInstance(Cat::class.java)
+
+            assertPrints(cats, "[Scratchy]")
+        }
+
+        @Sample
+        fun filterIsInstanceTo() {
+            open class Animal(val name: String) {
+                override fun toString(): String {
+                    return name
+                }
+            }
+            class Dog(name: String): Animal(name)
+            class Cat(name: String): Animal(name)
+
+            val animals: List<Animal> = listOf(Cat("Scratchy"), Dog("Poochie"))
+            val cats = mutableListOf<Cat>()
+
+            assertPrints(cats, "[]")
+
+            animals.filterIsInstanceTo<Cat, MutableList<Cat>>(cats)
+
+            assertPrints(cats, "[Scratchy]")
+        }
+
+        @Sample
+        fun filterIsInstanceToJVM() {
+            open class Animal(val name: String) {
+                override fun toString(): String {
+                    return name
+                }
+            }
+            class Dog(name: String): Animal(name)
+            class Cat(name: String): Animal(name)
+
+            val animals: List<Animal> = listOf(Cat("Scratchy"), Dog("Poochie"))
+            val cats = mutableListOf<Cat>()
+
+            assertPrints(cats, "[]")
+
+            animals.filterIsInstanceTo(cats, Cat::class.java)
+
+            assertPrints(cats, "[Scratchy]")
+        }
+
     }
 }

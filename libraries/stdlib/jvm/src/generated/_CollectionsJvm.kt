@@ -18,6 +18,8 @@ import kotlin.ranges.reversed
 
 /**
  * Returns a list containing all elements that are instances of specified class.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstanceJVM
  */
 public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
     return filterIsInstanceTo(ArrayList<R>(), klass)
@@ -25,6 +27,8 @@ public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
 
 /**
  * Appends all elements that are instances of specified class to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstanceToJVM
  */
 public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     @Suppress("UNCHECKED_CAST")
