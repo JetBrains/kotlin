@@ -102,7 +102,7 @@ class Fir2IrVisitor(
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?): IrElement {
         val irEnumEntry = classifierStorage.getCachedIrEnumEntry(enumEntry)!!
         val correspondingClass = irEnumEntry.correspondingClass ?: return irEnumEntry
-        declarationStorage.enterScope(irEnumEntry.descriptor)
+        declarationStorage.enterScope(irEnumEntry)
         classifierStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
         converter.processAnonymousObjectMembers(enumEntry.initializer as FirAnonymousObject, correspondingClass)
         conversionScope.withParent(correspondingClass) {
@@ -114,7 +114,7 @@ class Fir2IrVisitor(
                 )
             )
         }
-        declarationStorage.leaveScope(irEnumEntry.descriptor)
+        declarationStorage.leaveScope(irEnumEntry)
         return irEnumEntry
     }
 
@@ -176,9 +176,9 @@ class Fir2IrVisitor(
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Any?): IrElement {
         val irAnonymousInitializer = declarationStorage.getCachedIrAnonymousInitializer(anonymousInitializer)!!
-        declarationStorage.enterScope(irAnonymousInitializer.descriptor)
+        declarationStorage.enterScope(irAnonymousInitializer)
         irAnonymousInitializer.body = convertToIrBlockBody(anonymousInitializer.body!!)
-        declarationStorage.leaveScope(irAnonymousInitializer.descriptor)
+        declarationStorage.leaveScope(irAnonymousInitializer)
         return irAnonymousInitializer
     }
 

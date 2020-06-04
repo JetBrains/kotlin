@@ -69,7 +69,7 @@ class Fir2IrClassifierStorage(
     }
 
     private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
-        symbolTable.enterScope(descriptor)
+        symbolTable.enterScope(this)
         val typeArguments = typeParameters.map {
             IrSimpleTypeImpl(getCachedIrTypeParameter(it.symbol.fir)!!.symbol, false, emptyList(), emptyList())
         }
@@ -78,7 +78,7 @@ class Fir2IrClassifierStorage(
             thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
             thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
         )
-        symbolTable.leaveScope(descriptor)
+        symbolTable.leaveScope(this)
     }
 
     internal fun preCacheTypeParameters(owner: FirTypeParameterRefsOwner) {
@@ -343,7 +343,7 @@ class Fir2IrClassifierStorage(
                 IrEnumEntryImpl(
                     startOffset, endOffset, origin, symbol, enumEntry.name
                 ).apply {
-                    declarationStorage.enterScope(descriptor)
+                    declarationStorage.enterScope(this)
                     val irType = enumEntry.returnTypeRef.toIrType()
                     if (irParent != null) {
                         this.parent = irParent
@@ -359,7 +359,7 @@ class Fir2IrClassifierStorage(
                             IrEnumConstructorCallImpl(startOffset, endOffset, irType, irParent.constructors.first().symbol)
                         )
                     }
-                    declarationStorage.leaveScope(descriptor)
+                    declarationStorage.leaveScope(this)
                 }
             }
             enumEntryCache[enumEntry] = result

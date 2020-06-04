@@ -947,8 +947,16 @@ open class SymbolTable(
         scopedSymbolTables.forEach { it.enterScope(owner) }
     }
 
+    fun enterScope(owner: IrDeclaration) {
+        enterScope(owner.descriptor)
+    }
+
     override fun leaveScope(owner: DeclarationDescriptor) {
         scopedSymbolTables.forEach { it.leaveScope(owner) }
+    }
+
+    fun leaveScope(owner: IrDeclaration) {
+        leaveScope(owner.descriptor)
     }
 
     fun referenceValue(value: ValueDescriptor): IrValueSymbol =

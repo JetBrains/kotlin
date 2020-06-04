@@ -135,26 +135,26 @@ class Fir2IrDeclarationStorage(
         return fileCache[firFile]!!
     }
 
-    fun enterScope(descriptor: DeclarationDescriptor) {
-        symbolTable.enterScope(descriptor)
-        if (descriptor is WrappedSimpleFunctionDescriptor ||
-            descriptor is WrappedClassConstructorDescriptor ||
-            descriptor is WrappedPropertyDescriptor ||
-            descriptor is WrappedEnumEntryDescriptor
+    fun enterScope(declaration: IrDeclaration) {
+        symbolTable.enterScope(declaration)
+        if (declaration is IrSimpleFunction ||
+            declaration is IrConstructor ||
+            declaration is IrProperty ||
+            declaration is IrEnumEntry
         ) {
             localStorage.enterCallable()
         }
     }
 
-    fun leaveScope(descriptor: DeclarationDescriptor) {
-        if (descriptor is WrappedSimpleFunctionDescriptor ||
-            descriptor is WrappedClassConstructorDescriptor ||
-            descriptor is WrappedPropertyDescriptor ||
-            descriptor is WrappedEnumEntryDescriptor
+    fun leaveScope(declaration: IrDeclaration) {
+        if (declaration is IrSimpleFunction ||
+            declaration is IrConstructor ||
+            declaration is IrProperty ||
+            declaration is IrEnumEntry
         ) {
             localStorage.leaveCallable()
         }
-        symbolTable.leaveScope(descriptor)
+        symbolTable.leaveScope(declaration)
     }
 
     private fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
@@ -485,17 +485,17 @@ class Fir2IrDeclarationStorage(
                     isOperator = simpleFunction?.isOperator == true
                 ).apply {
                     metadata = FirMetadataSource.Function(function, descriptor)
-                    enterScope(descriptor)
+                    enterScope(this)
                     bindAndDeclareParameters(
                         function, irParent,
                         thisReceiverOwner, isStatic = simpleFunction?.isStatic == true
                     )
+                    leaveScope(this)
                 }
             }
             result
         }
 
-        leaveScope(created.descriptor)
         if (visibility == Visibilities.LOCAL) {
             localStorage.putLocalFunction(function, created)
             return created
@@ -554,9 +554,9 @@ class Fir2IrDeclarationStorage(
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
                 ).apply {
                     metadata = FirMetadataSource.Function(constructor, descriptor)
-                    enterScope(descriptor)
+                    enterScope(this)
                     bindAndDeclareParameters(constructor, irParent, isStatic = false)
-                    leaveScope(descriptor)
+                    leaveScope(this)
                 }
             }
         }
@@ -624,12 +624,12 @@ class Fir2IrDeclarationStorage(
                         property.returnTypeRef.toIrType(ConversionTypeContext.DEFAULT.inSetter())
                     )
                 }
-                enterScope(descriptor)
+                enterScope(this)
                 bindAndDeclareParameters(
                     propertyAccessor, irParent,
                     thisReceiverOwner, isStatic = irParent !is IrClass, parentPropertyReceiverType = property.receiverTypeRef
                 )
-                leaveScope(descriptor)
+                leaveScope(this)
                 if (irParent != null) {
                     parent = irParent
                 }
@@ -717,7 +717,7 @@ class Fir2IrDeclarationStorage(
                     isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
                 ).apply {
                     metadata = FirMetadataSource.Variable(property, descriptor)
-                    enterScope(descriptor)
+                    enterScope(this)
                     if (irParent != null) {
                         parent = irParent
                     }
@@ -775,7 +775,7 @@ class Fir2IrDeclarationStorage(
                             startOffset, endOffset
                         )
                     }
-                    leaveScope(descriptor)
+                    leaveScope(this)
                 }
             }
             propertyCache[property] = result

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -46,13 +45,13 @@ internal class ClassMemberGenerator(
     private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
 
     fun convertClassContent(irClass: IrClass, klass: FirClass<*>) {
-        declarationStorage.enterScope(irClass.descriptor)
+        declarationStorage.enterScope(irClass)
         conversionScope.withClass(irClass) {
             val primaryConstructor = klass.getPrimaryConstructorIfAny()
             val irPrimaryConstructor = primaryConstructor?.let { declarationStorage.getCachedIrConstructor(it)!! }
             if (irPrimaryConstructor != null) {
                 with(declarationStorage) {
-                    enterScope(irPrimaryConstructor.descriptor)
+                    enterScope(irPrimaryConstructor)
                     irPrimaryConstructor.valueParameters.forEach { symbolTable.introduceValueParameter(it) }
                     irPrimaryConstructor.putParametersInScope(primaryConstructor)
                     convertFunctionContent(irPrimaryConstructor, primaryConstructor)
@@ -92,20 +91,19 @@ internal class ClassMemberGenerator(
             }
             annotationGenerator.generate(irClass, klass)
             if (irPrimaryConstructor != null) {
-                declarationStorage.leaveScope(irPrimaryConstructor.descriptor)
+                declarationStorage.leaveScope(irPrimaryConstructor)
             }
         }
-        declarationStorage.leaveScope(irClass.descriptor)
+        declarationStorage.leaveScope(irClass)
     }
 
     fun <T : IrFunction> convertFunctionContent(irFunction: T, firFunction: FirFunction<*>?): T {
-        val descriptor = irFunction.descriptor
         conversionScope.withParent(irFunction) {
             if (firFunction != null) {
                 if (irFunction !is IrConstructor || !irFunction.isPrimary) {
                     // Scope for primary constructor should be entered before class declaration processing
                     with(declarationStorage) {
-                        enterScope(descriptor)
+                        enterScope(irFunction)
                         irFunction.valueParameters.forEach { symbolTable.introduceValueParameter(it) }
                         irFunction.putParametersInScope(firFunction)
                     }
@@ -160,18 +158,17 @@ internal class ClassMemberGenerator(
             }
             if (irFunction !is IrConstructor || !irFunction.isPrimary) {
                 // Scope for primary constructor should be left after class declaration
-                declarationStorage.leaveScope(descriptor)
+                declarationStorage.leaveScope(irFunction)
             }
         }
         return irFunction
     }
 
     fun convertPropertyContent(irProperty: IrProperty, property: FirProperty): IrProperty {
-        val descriptor = irProperty.descriptor
         val initializer = property.initializer
         val delegate = property.delegate
         val propertyType = property.returnTypeRef.toIrType()
-        irProperty.initializeBackingField(property, descriptor, initializerExpression = initializer ?: delegate)
+        irProperty.initializeBackingField(property, initializerExpression = initializer ?: delegate)
         irProperty.getter?.setPropertyAccessorContent(
             property, property.getter, irProperty, propertyType, property.getter is FirDefaultPropertyGetter
         )
@@ -186,17 +183,16 @@ internal class ClassMemberGenerator(
 
     private fun IrProperty.initializeBackingField(
         property: FirProperty,
-        descriptor: PropertyDescriptor,
         initializerExpression: FirExpression?
     ) {
         val irField = backingField ?: return
         conversionScope.withParent(irField) {
-            declarationStorage.enterScope(descriptor)
+            declarationStorage.enterScope(this@initializeBackingField)
             // NB: initializer can be already converted
             if (initializer == null && initializerExpression != null) {
                 initializer = IrExpressionBodyImpl(visitor.convertToIrExpression(initializerExpression))
             }
-            declarationStorage.leaveScope(descriptor)
+            declarationStorage.leaveScope(this@initializeBackingField)
         }
         annotationGenerator.generate(irField, property)
     }
@@ -213,7 +209,7 @@ internal class ClassMemberGenerator(
             convertFunctionContent(this, propertyAccessor)
             if (isDefault) {
                 conversionScope.withParent(this) {
-                    declarationStorage.enterScope(descriptor)
+                    declarationStorage.enterScope(this)
                     val backingField = correspondingProperty.backingField
                     val fieldSymbol = symbolTable.referenceField(correspondingProperty.descriptor)
                     val declaration = this
@@ -235,7 +231,7 @@ internal class ClassMemberGenerator(
                             )
                         )
                     }
-                    declarationStorage.leaveScope(descriptor)
+                    declarationStorage.leaveScope(this)
                 }
             }
         }
