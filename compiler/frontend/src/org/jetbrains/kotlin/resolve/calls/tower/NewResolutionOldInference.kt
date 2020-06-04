@@ -74,6 +74,7 @@ class NewResolutionOldInference(
     private val coroutineInferenceSupport: CoroutineInferenceSupport,
     private val deprecationResolver: DeprecationResolver,
     private val typeApproximator: TypeApproximator,
+    private val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter,
     private val callResolver: CallResolver,
     private val candidateInterceptor: CandidateInterceptor
 ) {
@@ -174,7 +175,7 @@ class NewResolutionOldInference(
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
         val scopeTower = ImplicitScopeTowerImpl(
-            context, dynamicScope, syntheticScopes, context.call.createLookupLocation(), typeApproximator, callResolver, candidateInterceptor
+            context, dynamicScope, syntheticScopes, context.call.createLookupLocation(), typeApproximator, implicitsResolutionFilter, callResolver, candidateInterceptor
         )
 
         val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
@@ -362,6 +363,7 @@ class NewResolutionOldInference(
         override val syntheticScopes: SyntheticScopes,
         override val location: LookupLocation,
         override val typeApproximator: TypeApproximator,
+        override val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter,
         val callResolver: CallResolver,
         val candidateInterceptor: CandidateInterceptor
     ) : ImplicitScopeTower {
