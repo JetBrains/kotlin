@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.testFramework
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.lang.LanguageAnnotators
 import com.intellij.lang.LanguageExtensionPoint
@@ -19,6 +20,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.startup.StartupManager
+import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.ExtensionTestUtil
@@ -70,7 +72,7 @@ fun dispatchAllInvocationEvents() {
 }
 
 fun loadProjectWithName(path: String, name: String): Project? =
-    ProjectManagerEx.getInstanceEx().loadProject(Paths.get(path), name)
+    PlatformProjectOpenProcessor.openExistingProject(Paths.get(path), Paths.get(path), OpenProjectTask(projectName = name))
 
 fun TestApplicationManager.closeProject(project: Project) {
     val name = project.name
@@ -92,11 +94,7 @@ fun TestApplicationManager.closeProject(project: Project) {
 }
 
 fun runStartupActivities(project: Project) {
-    with(StartupManager.getInstance(project) as StartupManagerImpl) {
-        //scheduleInitialVfsRefresh()
-        runStartupActivities()
-    }
-    runPostStartupActivitiesOnce(project)
+    // obsolete
 }
 
 fun waitForAllEditorsFinallyLoaded(project: Project) {
