@@ -10,6 +10,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.jetbrains.kotlin.konan.target.AppleConfigurables
 
 /**
  * Test task for -Xcoverage and -Xlibraries-to-cover flags. Requires a binary to be built by the Konan plugin
@@ -30,7 +31,14 @@ open class CoverageTest : DefaultTask() {
 
     private val target = project.testTarget
     private val platform = project.platformManager.platform(target)
-    private val llvmBin = "${platform.configurables.absoluteLlvmHome}/bin"
+    private val configurables = platform.configurables
+
+    // Use the same LLVM version as compiler when producing machine code:
+    private val llvmToolsDir = if (configurables is AppleConfigurables) {
+        "${configurables.absoluteTargetToolchain}/usr/bin"
+    } else {
+        "${configurables.absoluteLlvmHome}/bin"
+    }
 
     @Input
     lateinit var binaryName: String
@@ -83,7 +91,7 @@ open class CoverageTest : DefaultTask() {
     }
 
     private fun exec(llvmTool: String, vararg args: String): ProcessOutput {
-        val executable = "$llvmBin/$llvmTool"
+        val executable = "$llvmToolsDir/$llvmTool"
         val result = runProcess(localExecutor(project), executable, args.toList())
         if (result.exitCode != 0) {
             println("""
