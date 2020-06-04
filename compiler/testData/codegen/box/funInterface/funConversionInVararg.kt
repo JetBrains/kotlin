@@ -1,5 +1,6 @@
 // !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument
 // IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_FIR: JS_IR
 
 fun interface MyRunnable {
     fun run()

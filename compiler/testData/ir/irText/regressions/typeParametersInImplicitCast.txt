@@ -8,11 +8,11 @@ FILE fqName:<root> fileName:/typeParametersInImplicitCast.kt
           <T>: kotlin.collections.List<T of <root>.problematic>
           <R>: T of <root>.problematic?
           $receiver: GET_VAR 'lss: kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>> declared in <root>.problematic' type=kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>> origin=null
-          transform: FUN_EXPR type=kotlin.Function1<kotlin.collections.List<T of <root>.problematic>, kotlin.collections.Iterable<T of <root>.problematic?>> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.collections.List<T of <root>.problematic>) returnType:kotlin.collections.Iterable<T of <root>.problematic?>
+          transform: FUN_EXPR type=kotlin.Function1<kotlin.collections.List<T of <root>.problematic>, kotlin.collections.List<T of <root>.problematic?>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.collections.List<T of <root>.problematic>) returnType:kotlin.collections.List<T of <root>.problematic?>
               VALUE_PARAMETER name:it index:0 type:kotlin.collections.List<T of <root>.problematic>
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<T of <root>.problematic>): kotlin.collections.Iterable<T of <root>.problematic?> declared in <root>.problematic'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<T of <root>.problematic>): kotlin.collections.List<T of <root>.problematic?> declared in <root>.problematic'
                   TYPE_OP type=kotlin.collections.List<T of <root>.problematic?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.collections.List<T of <root>.problematic?>
                     CALL 'public/*package*/ open fun id <T> (v: kotlin.collections.List<T of <root>.ListId.id?>?): kotlin.collections.List<T of <root>.ListId.id?> declared in <root>.ListId' type=kotlin.collections.List<T of <root>.problematic?> origin=null
                       <T>: T of <root>.problematic?
