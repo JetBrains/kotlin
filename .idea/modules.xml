@@ -1033,6 +1033,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/intellij.cidr.debugger.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/intellij.cidr.debugger.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.api.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.api.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/commandInterpreterLang/intellij.cidr.debugger.commandInterpreterLang.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/commandInterpreterLang/intellij.cidr.debugger.commandInterpreterLang.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-execution/intellij.cidr.execution.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-execution/intellij.cidr.execution.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-external-system/intellij.cidr.externalSystem.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-external-system/intellij.cidr.externalSystem.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-ide/intellij.cidr.ide.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-ide/intellij.cidr.ide.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-IntelliLang/intellij.cidr.langInjection.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-IntelliLang/intellij.cidr.langInjection.iml" />
@@ -1062,6 +1063,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/intellij-client-tests/intellij.client.tests.iml" filepath="$PROJECT_DIR$/intellij/platform/intellij-client-tests/intellij.client.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion/intellij.clion.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion/intellij.clion.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-build/intellij.clion.build.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-build/intellij.clion.build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-cmake/intellij.clion.cmake.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-cmake/intellij.clion.cmake.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-compdb/intellij.clion.compdb.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-compdb/intellij.clion.compdb.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/cpp-diagnostics/intellij.clion.diagnostics.iml" filepath="$PROJECT_DIR$/intellij/contrib/cpp-diagnostics/intellij.clion.diagnostics.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-embedded/intellij.clion.embedded.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-embedded/intellij.clion.embedded.iml" />
@@ -1178,6 +1180,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/uml/intellij.diagram.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/uml/intellij.diagram.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/dql/intellij.dql.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/dql/intellij.dql.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/drupal/intellij.drupal.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/drupal/intellij.drupal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/tests/dynamicPluginsTests/intellij.dynamicPluginsTests.iml" filepath="$PROJECT_DIR$/intellij/tests/dynamicPluginsTests/intellij.dynamicPluginsTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/eclipse/intellij.eclipse.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/eclipse/intellij.eclipse.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/eclipse/common-eclipse-util/intellij.eclipse.common.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/eclipse/common-eclipse-util/intellij.eclipse.common.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/eclipse/jps-plugin/intellij.eclipse.jps.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/eclipse/jps-plugin/intellij.eclipse.jps.iml" />

@@ -212,6 +212,7 @@
     </inspection_tool>
     <inspection_tool class="ConditionalExpressionWithIdenticalBranches" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ConfusingOctalEscape" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="ConstPropertyName" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ConstantConditionalExpression" enabled="true" level="Strong Warning" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false" />
     </inspection_tool>
@@ -242,9 +243,11 @@
       <option name="reportNotAnnotatedInterfaces" value="false" />
     </inspection_tool>
     <inspection_tool class="Convert2MethodRef" enabled="true" level="INFORMATION" enabled_by_default="true" />
+    <inspection_tool class="ConvertNaNEquality" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="CovariantCompareTo" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CovariantEquals" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DeclareParentsInspection" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="DelegationToVarProperty" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="DeprecatedGemInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DjangoBrokenLineCommentInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DjangoCloseTagInspection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -265,6 +268,7 @@
     <inspection_tool class="DuplicateThrows" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="DuplicatedBlockNamesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="EmptyFinallyBlock" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="EmptyRange" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EmptyStatementBody" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_reportEmptyBlocks" value="true" />
       <option name="commentsAreContent" value="true" />
@@ -304,6 +308,7 @@
     </inspection_tool>
     <inspection_tool class="ForLoopThatDoesntUseLoopVariable" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ForwardCompatibility" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="FunctionWithLambdaExpressionBody" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="FunctionalExpressionCanBeFolded" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="FuseStreamOperations" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="GemInspection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -616,7 +621,11 @@
       </scope>
       <option name="REPORT_INACCESSIBLE" value="false" />
     </inspection_tool>
+    <inspection_tool class="KotlinDoubleNegation" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="KotlinEqualsBetweenInconvertibleTypes" enabled="true" level="Strong Warning" enabled_by_default="true" />
+    <inspection_tool class="KotlinThrowableNotThrown" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="LambdaUnfriendlyMethodOverload" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="LateinitVarOverridesLateinitVar" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="LiftReturnOrAssignment" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="ListIndexOfReplaceableByContains" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ListRemoveInLoop" enabled="true" level="Strong Warning" enabled_by_default="true" />
@@ -1362,9 +1371,9 @@
         <constraint name="str" nameOfExprType="java\.lang\.String" within="" contains="" />
         <constraint name="range" nameOfExprType="com\.intellij\.openapi\.util\.TextRange" within="" contains="" />
       </replaceConfiguration>
-      <searchConfiguration name="Change to lambda for lazier class loading" text="$CLASS$::new" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="CLASS" script="&quot;__context__.containingFile.name.matches(&quot;.*ElementType.*\\.java&quot;)&quot;" within="" contains="" />
+      <searchConfiguration name="Method reference can slow down startup" description="Method references in class initializers cause qualifier class to be loaded as well, even if that reference would never be invoked" text="$C$::new" recursive="false" caseInsensitive="false" type="JAVA" pattern_context="default">
+        <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;import com.intellij.psi.util.PsiTreeUtil &#10;&#10;def member = PsiTreeUtil.getParentOfType(__context__, PsiMember)&#10;if ((member instanceof PsiClassInitializer || member instanceof PsiField) &amp;&amp; member.hasModifierProperty(PsiModifier.STATIC)) {&#10;  def clazz = member.parent&#10;  def target = C.resolve()&#10;  def targetName = target?.qualifiedName&#10;  target != null &amp;&amp; clazz != target &amp;&amp; !target.qualifiedName.startsWith(&quot;java.&quot;)&#10;}&#10;else false&quot;" within="" contains="" />
+        <constraint name="C" within="" contains="" />
       </searchConfiguration>
     </inspection_tool>
     <inspection_tool class="SafeVarargsDetector" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1771,6 +1780,7 @@
     <inspection_tool class="XsltTemplateInvocation" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="XsltUnusedDeclaration" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="XsltVariableShadowing" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="dddc1e5a-555b-3057-994e-cb75680b23c9" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="osmorcClassInDefaultPackage" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="osmorcNonOsgiMavenDependency" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="osmorcUnknownManifestPackage" enabled="false" level="ERROR" enabled_by_default="false" />

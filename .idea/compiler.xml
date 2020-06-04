@@ -28,6 +28,12 @@
       <entry name="!*.gant" />
       <entry name="!*.bnf" />
     </wildcardResourcePatterns>
+    <annotationProcessing>
+      <profile name="JMH" enabled="true">
+        <processor name="org.openjdk.jmh.generators.BenchmarkProcessor" />
+        <module name="fleet.rhizomedb" />
+      </profile>
+    </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="intellij.java.jshell.frontend" target="1.8" />
     </bytecodeTargetLevel>
