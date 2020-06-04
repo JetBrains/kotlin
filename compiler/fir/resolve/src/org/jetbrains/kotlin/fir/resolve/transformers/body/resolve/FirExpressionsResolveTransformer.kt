@@ -548,7 +548,17 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {
                 val symbol = lhs.symbol
-                val typeRef = symbol?.constructType(lhs.typeArguments.map { it.toConeTypeProjection() }.toTypedArray(), isNullable = false)
+                val typeArguments: Array<ConeTypeProjection> =
+                    if (lhs.typeArguments.isNotEmpty()) {
+                        // If type arguments exist, use them to construct the type of the expression.
+                        lhs.typeArguments.map { it.toConeTypeProjection() }.toTypedArray()
+                    } else {
+                        // Otherwise, prepare the star projections as many as the size of type parameters.
+                        Array((symbol?.phasedFir as? FirTypeParameterRefsOwner)?.typeParameters?.size ?: 0) {
+                            ConeStarProjection
+                        }
+                    }
+                val typeRef = symbol?.constructType(typeArguments, isNullable = false)
                 if (typeRef != null) {
                     lhs.replaceTypeRef(buildResolvedTypeRef { type = typeRef })
                     typeRef
