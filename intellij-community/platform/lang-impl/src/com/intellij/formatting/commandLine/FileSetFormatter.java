@@ -58,10 +58,8 @@ public final class FileSetFormatter extends FileSetProcessor {
   }
 
   private void createProject() throws IOException {
-    ProjectManagerEx projectManager = ProjectManagerEx.getInstanceEx();
-    myProject = projectManager.newProject(createProjectDir(), myProjectUID, OpenProjectTask.newProject(true));
+    myProject = ProjectManagerEx.getInstanceEx().openProject(createProjectDir(), OpenProjectTask.newProject());
     if (myProject != null) {
-      projectManager.openProject(myProject);
       CodeStyle.setMainProjectSettings(myProject, mySettings);
     }
   }

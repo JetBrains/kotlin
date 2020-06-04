@@ -12,6 +12,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
@@ -26,7 +27,6 @@ import com.intellij.platform.*;
 import com.intellij.platform.templates.ArchivedTemplatesFactory;
 import com.intellij.platform.templates.LocalArchivedTemplate;
 import com.intellij.platform.templates.TemplateProjectDirectoryGenerator;
-import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PairConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -203,17 +203,15 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
 
     RecentProjectsManager.getInstance().setLastProjectCreationLocation(location.getParent());
 
-    ProjectOpenedCallback callback = null;
     if (generator instanceof TemplateProjectDirectoryGenerator) {
       ((TemplateProjectDirectoryGenerator<?>)generator).generateProject(baseDir.getName(), locationString);
     }
-    else if (generator != null) {
-      callback = (p, module) -> {
-        generator.generateProject(p, baseDir, settings, module);
-      };
-    }
 
-    OpenProjectTask options = OpenProjectTask.newProjectWithCallback(projectToClose, callback, /* isRefreshVfsNeeded = */ false);
-    return ProjectManagerEx.getInstanceEx().loadAndOpenProject(location, options);
+    OpenProjectTask options = OpenProjectTask.newProjectAndRunConfigurators(projectToClose, /* isRefreshVfsNeeded = */ false);
+    Project project = ProjectManagerEx.getInstanceEx().openProject(location, options);
+    if (project != null && generator != null) {
+      generator.generateProject(project, baseDir, settings, ModuleManager.getInstance(project).getModules()[0]);
+    }
+    return project;
   }
 }

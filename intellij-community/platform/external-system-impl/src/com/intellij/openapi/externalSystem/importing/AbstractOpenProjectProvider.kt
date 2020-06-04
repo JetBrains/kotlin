@@ -16,6 +16,7 @@ import com.intellij.util.io.exists
 import org.jetbrains.annotations.ApiStatus
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
+import java.util.function.Predicate
 
 @ApiStatus.Experimental
 abstract class AbstractOpenProjectProvider : OpenProjectProvider {
@@ -34,16 +35,21 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
     if (focusOnOpenedSameProject(projectDirectory.path)) {
       return null
     }
-    if (canOpenPlatformProject(projectDirectory)) {
+    else if (canOpenPlatformProject(projectDirectory)) {
       return openPlatformProject(projectDirectory, projectToClose, forceOpenInNewFrame)
     }
 
-    val project = createProject(projectDirectory) ?: return null
-    linkAndRefreshProject(projectDirectory.path, project)
-    val path = projectDirectory.toNioPath()
-    updateLastProjectLocation(path)
-    ProjectManagerEx.getInstanceEx().loadAndOpenProject(path, OpenProjectTask(forceOpenInNewFrame = forceOpenInNewFrame, projectToClose = projectToClose, project = project))
-    return project
+    val options = OpenProjectTask(isNewProject = true,
+                                  forceOpenInNewFrame = forceOpenInNewFrame,
+                                  projectToClose = projectToClose,
+                                  runConfigurators = false,
+                                  beforeProjectOpen = Predicate { project ->
+                                    project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
+                                    linkAndRefreshProject(projectDirectory.path, project)
+                                    updateLastProjectLocation(projectDirectory.toNioPath())
+                                    true
+                                  })
+    return ProjectManagerEx.getInstanceEx().openProject(projectDirectory.toNioPath(), options)
   }
 
   override fun linkToExistingProject(projectFile: VirtualFile, project: Project) {
@@ -94,13 +100,6 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
   private fun getProjectDirectory(file: VirtualFile): VirtualFile {
     if (!file.isDirectory) return file.parent
     return file
-  }
-
-  private fun createProject(projectDirectory: VirtualFile): Project? {
-    val projectManager = ProjectManagerEx.getInstanceEx()
-    val project = projectManager.createProject(projectDirectory.name, projectDirectory.path)
-    project?.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
-    return project
   }
 
   companion object {

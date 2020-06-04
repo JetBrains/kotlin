@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing;
 
 import com.intellij.ide.projectWizard.NewProjectWizardTestCase;
@@ -32,7 +32,6 @@ import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.RunAll;
 import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.Consumer;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -45,6 +44,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.intellij.openapi.externalSystem.test.ExternalSystemTestCase.collectRootsInside;
 
@@ -52,25 +52,26 @@ import static com.intellij.openapi.externalSystem.test.ExternalSystemTestCase.co
  * @author Dmitry Avdeev
  */
 public class GradleProjectWizardTest extends NewProjectWizardTestCase {
-
-  protected static final String GRADLE_JDK_NAME = "Gradle JDK";
+  private static final String GRADLE_JDK_NAME = "Gradle JDK";
   private final List<Sdk> removedSdks = new SmartList<>();
   private String myJdkHome;
 
   public void testGradleProject() throws Exception {
     final String projectName = "testProject";
-    Project project = GradleCreateProjectTestCase.waitForProjectReload(true, () -> createProject(step -> {
-      if (step instanceof ProjectTypeStep) {
-        assertTrue(((ProjectTypeStep)step).setSelectedTemplate("Gradle", null));
-        List<ModuleWizardStep> steps = myWizard.getSequence().getSelectedSteps();
-        assertEquals(3, steps.size());
-        final ProjectBuilder projectBuilder = myWizard.getProjectBuilder();
-        assertInstanceOf(projectBuilder, AbstractGradleModuleBuilder.class);
-        AbstractGradleModuleBuilder gradleProjectBuilder = (AbstractGradleModuleBuilder)projectBuilder;
-        gradleProjectBuilder.setName(projectName);
-        gradleProjectBuilder.setProjectId(new ProjectId("", null, null));
-      }
-    }));
+    Project project = GradleCreateProjectTestCase.waitForProjectReload(true, () -> {
+      return createProject(step -> {
+        if (step instanceof ProjectTypeStep) {
+          assertTrue(((ProjectTypeStep)step).setSelectedTemplate("Gradle", null));
+          List<ModuleWizardStep> steps = myWizard.getSequence().getSelectedSteps();
+          assertEquals(3, steps.size());
+          final ProjectBuilder projectBuilder = myWizard.getProjectBuilder();
+          assertInstanceOf(projectBuilder, AbstractGradleModuleBuilder.class);
+          AbstractGradleModuleBuilder gradleProjectBuilder = (AbstractGradleModuleBuilder)projectBuilder;
+          gradleProjectBuilder.setName(projectName);
+          gradleProjectBuilder.setProjectId(new ProjectId("", null, null));
+        }
+      });
+    });
 
     assertEquals(projectName, project.getName());
     assertModules(project, projectName, projectName + ".main", projectName + ".test");
@@ -131,15 +132,16 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
 
   @Override
   protected Project createProject(Consumer adjuster) throws IOException {
-    @SuppressWarnings("unchecked") Project project = super.createProject(adjuster);
+    @SuppressWarnings("unchecked")
+    Project project = super.createProject(adjuster);
     myFilesToDelete.add(ProjectUtil.getExternalConfigurationDir(project).toFile());
     return project;
   }
 
   @Override
   protected void createWizard(@Nullable Project project) throws IOException {
-    Collection linkedProjectsSettings = project == null
-                                        ? ContainerUtil.emptyList()
+    Collection<?> linkedProjectsSettings = project == null
+                                        ? Collections.emptyList()
                                         : ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).getLinkedProjectsSettings();
     assertTrue(linkedProjectsSettings.size() <= 1);
     File directory;
@@ -160,7 +162,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
   }
 
-  protected void collectAllowedRoots(final List<String> roots) {
+  private void collectAllowedRoots(final List<String> roots) {
     roots.add(myJdkHome);
     roots.addAll(collectRootsInside(myJdkHome));
     roots.add(PathManager.getConfigPath());

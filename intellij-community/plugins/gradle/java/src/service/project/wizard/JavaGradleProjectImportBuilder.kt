@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project.wizard
 
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
@@ -20,7 +20,6 @@ import org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradlePro
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import javax.swing.Icon
 
-
 /**
  * Do not use this project import builder directly.
  *
@@ -32,8 +31,7 @@ import javax.swing.Icon
  * Use [org.jetbrains.plugins.gradle.service.project.open.openGradleProject] to open (import) a new gradle project.
  * Use [org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject] to attach a gradle project to an opened idea project.
  */
-class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), DeprecatedProjectBuilderForImport {
-
+internal class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), DeprecatedProjectBuilderForImport {
   override fun getName(): String = GradleBundle.message("gradle.name")
 
   override fun getIcon(): Icon = GradleIcons.Gradle

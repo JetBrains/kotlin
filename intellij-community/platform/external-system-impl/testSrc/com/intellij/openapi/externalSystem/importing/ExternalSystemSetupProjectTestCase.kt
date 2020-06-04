@@ -1,8 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.importing
 
-import com.intellij.openapi.externalSystem.util.use as utilUse
 import com.intellij.ide.actions.ImportModuleAction
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -17,17 +17,17 @@ import com.intellij.openapi.fileChooser.impl.FileChooserFactoryImpl
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.use
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.testFramework.replaceService
 import org.junit.Assert.assertEquals
 import java.awt.Component
+import com.intellij.openapi.externalSystem.util.use as utilUse
 
 interface ExternalSystemSetupProjectTestCase {
-
   data class ProjectInfo(val projectFile: VirtualFile, val modules: List<String>) {
     constructor(projectFile: VirtualFile, vararg modules: String) : this(projectFile, modules.toList())
   }
@@ -53,10 +53,9 @@ interface ExternalSystemSetupProjectTestCase {
   fun waitForImportCompletion(project: Project)
 
   fun openPlatformProjectFrom(projectDirectory: VirtualFile): Project {
-    return invokeAndWaitIfNeeded {
-      val openProcessor = PlatformProjectOpenProcessor.getInstance()
-      openProcessor.doOpenProject(projectDirectory, null, true)!!
-    }
+    return ProjectManagerEx.getInstanceEx().openProject(projectDirectory.toNioPath(), OpenProjectTask(forceOpenInNewFrame = true,
+                                                                                                      useDefaultProjectAsTemplate = false,
+                                                                                                      isRefreshVfsNeeded = false))!!
   }
 
   fun openProjectFrom(projectFile: VirtualFile): Project {

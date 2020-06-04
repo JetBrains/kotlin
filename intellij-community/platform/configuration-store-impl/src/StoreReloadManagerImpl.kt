@@ -365,6 +365,6 @@ private fun doReloadProject(project: Project) {
       return@submit
     }
 
-    ProjectManagerEx.getInstanceEx().loadAndOpenProject(Paths.get(presentableUrl), OpenProjectTask())
+    ProjectManagerEx.getInstanceEx().openProject(Paths.get(presentableUrl), OpenProjectTask())
   }
 }

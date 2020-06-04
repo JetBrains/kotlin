@@ -2,6 +2,7 @@
 package com.intellij.configurationStore
 
 import com.intellij.ide.highlighter.ProjectFileType
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
@@ -17,7 +18,6 @@ import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.util.PathUtil
 import com.intellij.util.io.readChars
 import com.intellij.util.io.readText
-import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.io.write
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -246,7 +246,7 @@ internal class ProjectStoreTest {
     (projectManager.defaultProject as ComponentManager).stateStore.initComponent(testComponent, null, null)
 
     val newProjectPath = tempDirManager.newPath()
-    val newProject = projectManager.newProject("foo", newProjectPath.systemIndependentPath, true, false)!!
+    val newProject = projectManager.openProject(newProjectPath, OpenProjectTask(isNewProject = true, isRefreshVfsNeeded = false))!!
     try {
       val miscXml = newProjectPath.resolve(".idea/misc.xml").readChars()
       assertThat(miscXml).contains("AATestComponent")
