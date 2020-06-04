@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything
 
-import com.intellij.ide.actions.runAnything.activity.RunAnythingCommandExecutionProvider
+import com.intellij.ide.actions.runAnything.activity.RunAnythingCommandProvider
 import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider
 import com.intellij.ide.actions.runAnything.activity.RunAnythingRecentProjectProvider
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -38,6 +38,6 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler {
           }, null)
     }
 
-    private fun checkForCLI(it: RunAnythingProvider<*>?) = it !is RunAnythingCommandExecutionProvider && it !is RunAnythingRecentProjectProvider
+    private fun checkForCLI(it: RunAnythingProvider<*>?) = it !is RunAnythingCommandProvider && it !is RunAnythingRecentProjectProvider
   }
 }
