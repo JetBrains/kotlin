@@ -36,7 +36,7 @@ public class FilteringMessageCollector implements MessageCollector {
     }
 
     @Override
-    public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location) {
+    public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageSourceLocation location) {
         if (!decline.test(severity)) {
             messageCollector.report(severity, message, location);
         }

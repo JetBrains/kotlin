@@ -6,19 +6,21 @@
 package org.jetbrains.kotlin.daemon.client.experimental
 
 import io.ktor.network.sockets.Socket
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSessionAsync
-import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
+import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerSocketWrapper
-import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.Serializable
 import java.net.SocketException
@@ -30,7 +32,6 @@ import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 import kotlin.concurrent.thread
-import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 
 
 class KotlinCompilerClient : KotlinCompilerDaemonClient {

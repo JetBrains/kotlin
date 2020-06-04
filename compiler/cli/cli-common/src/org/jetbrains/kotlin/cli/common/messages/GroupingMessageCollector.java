@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class GroupingMessageCollector implements MessageCollector {
@@ -32,7 +31,7 @@ public class GroupingMessageCollector implements MessageCollector {
     private final boolean treatWarningsAsErrors;
 
     // Note that the key in this map can be null
-    private final Multimap<CompilerMessageLocation, Message> groupedMessages = LinkedHashMultimap.create();
+    private final Multimap<CompilerMessageSourceLocation, Message> groupedMessages = LinkedHashMultimap.create();
 
     public GroupingMessageCollector(@NotNull MessageCollector delegate, boolean treatWarningsAsErrors) {
         this.delegate = delegate;
@@ -48,7 +47,7 @@ public class GroupingMessageCollector implements MessageCollector {
     public void report(
             @NotNull CompilerMessageSeverity severity,
             @NotNull String message,
-            @Nullable CompilerMessageLocation location
+            @Nullable CompilerMessageSourceLocation location
     ) {
         if (CompilerMessageSeverity.VERBOSE.contains(severity)) {
             delegate.report(severity, message, location);
@@ -78,9 +77,9 @@ public class GroupingMessageCollector implements MessageCollector {
             report(CompilerMessageSeverity.ERROR, "warnings found and -Werror specified", null);
         }
 
-        List<CompilerMessageLocation> sortedKeys =
+        List<CompilerMessageSourceLocation> sortedKeys =
                 CollectionsKt.sortedWith(groupedMessages.keySet(), Comparator.nullsFirst(CompilerMessageLocationComparator.INSTANCE));
-        for (CompilerMessageLocation location : sortedKeys) {
+        for (CompilerMessageSourceLocation location : sortedKeys) {
             for (Message message : groupedMessages.get(location)) {
                 if (!hasExplicitErrors || message.severity.isError() || message.severity == CompilerMessageSeverity.STRONG_WARNING) {
                     delegate.report(message.severity, message.message, message.location);
@@ -91,7 +90,7 @@ public class GroupingMessageCollector implements MessageCollector {
         groupedMessages.clear();
     }
 
-    private static class CompilerMessageLocationComparator implements Comparator<CompilerMessageLocation> {
+    private static class CompilerMessageLocationComparator implements Comparator<CompilerMessageSourceLocation> {
         public static final CompilerMessageLocationComparator INSTANCE = new CompilerMessageLocationComparator();
 
         // First, output all messages without any location information. Then, only those with the file path.
@@ -104,7 +103,7 @@ public class GroupingMessageCollector implements MessageCollector {
         // foo.kt:42: error: bad line
         // foo.kt:42:43: error: bad character
         @Override
-        public int compare(CompilerMessageLocation o1, CompilerMessageLocation o2) {
+        public int compare(CompilerMessageSourceLocation o1, CompilerMessageSourceLocation o2) {
             if (o1.getColumn() == -1 && o2.getColumn() != -1) return -1;
             if (o1.getColumn() != -1 && o2.getColumn() == -1) return 1;
 
@@ -118,9 +117,9 @@ public class GroupingMessageCollector implements MessageCollector {
     private static class Message {
         private final CompilerMessageSeverity severity;
         private final String message;
-        private final CompilerMessageLocation location;
+        private final CompilerMessageSourceLocation location;
 
-        private Message(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location) {
+        private Message(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageSourceLocation location) {
             this.severity = severity;
             this.message = message;
             this.location = location;
