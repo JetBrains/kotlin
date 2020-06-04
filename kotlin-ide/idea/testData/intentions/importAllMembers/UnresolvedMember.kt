@@ -2,6 +2,6 @@
 // WITH_RUNTIME
 // ERROR: Unresolved reference: unresolved
 
-import javax.swing.SwingUtilities
+import java.util.Objects
 
-val v = <caret>SwingUtilities.unresolved()
+val v = <caret>Objects.unresolved()

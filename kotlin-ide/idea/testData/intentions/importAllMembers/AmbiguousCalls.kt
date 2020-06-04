@@ -1,17 +1,15 @@
-// INTENTION_TEXT: "Import members from 'javax.swing.SwingUtilities'"
+// INTENTION_TEXT: "Import members from 'JavaUtilClass'"
 // WITH_RUNTIME
-// ERROR: None of the following functions can be called with the arguments supplied: <br>public open fun convertPoint(source: Component!, aPoint: Point!, destination: Component!): Point! defined in javax.swing.SwingUtilities<br>public open fun convertPoint(source: Component!, x: Int, y: Int, destination: Component!): Point! defined in javax.swing.SwingUtilities
-// ERROR: None of the following functions can be called with the arguments supplied: <br>public open fun convertPoint(source: Component!, aPoint: Point!, destination: Component!): Point! defined in javax.swing.SwingUtilities<br>public open fun convertPoint(source: Component!, x: Int, y: Int, destination: Component!): Point! defined in javax.swing.SwingUtilities
+// ERROR: None of the following functions can be called with the arguments supplied: <br>public open fun overloadedMethod(i: Int): Unit defined in JavaUtilClass<br>public open fun overloadedMethod(i: String!): Unit defined in JavaUtilClass
+// ERROR: None of the following functions can be called with the arguments supplied: <br>public open fun overloadedMethod(i: Int): Unit defined in JavaUtilClass<br>public open fun overloadedMethod(i: String!): Unit defined in JavaUtilClass
 // ERROR: Unresolved reference: unresolved
 
-import javax.swing.SwingUtilities
-
 fun foo() {
-    <caret>SwingUtilities.convertPoint()
+    <caret>JavaUtilClass.overloadedMethod()
 
-    val bottom = SwingUtilities.BOTTOM
+    val bottom = JavaUtilClass.STATIC_FIELD
 
-    SwingUtilities.convertPoint()
+    JavaUtilClass.overloadedMethod()
 
-    SwingUtilities.unresolved
+    JavaUtilClass.unresolved
 }
