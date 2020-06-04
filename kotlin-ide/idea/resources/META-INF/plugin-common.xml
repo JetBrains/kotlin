@@ -198,6 +198,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.ResolutionAnchorProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinIdeResolutionAnchorService"/>
 
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.project.KotlinLibraryToSourceAnalysisStateComponent"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.fir.FirIdeResolveStateService"
                     serviceImplementation="org.jetbrains.kotlin.idea.fir.FirIdeResolveStateServiceImpl"/>
 

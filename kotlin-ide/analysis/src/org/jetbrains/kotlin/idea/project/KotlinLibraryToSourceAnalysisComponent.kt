@@ -5,20 +5,62 @@
 
 package org.jetbrains.kotlin.idea.project
 
-import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
+import com.intellij.util.xmlb.Converter
+import com.intellij.util.xmlb.XmlSerializerUtil
+import com.intellij.util.xmlb.annotations.OptionTag
+import java.util.concurrent.atomic.AtomicBoolean
 
 object KotlinLibraryToSourceAnalysisComponent {
-    private const val libraryToSourceAnalysisOption = "kotlin.library.to.source.analysis"
-
     @JvmStatic
     fun setState(project: Project, isEnabled: Boolean) {
-        PropertiesComponent.getInstance(project).setValue(libraryToSourceAnalysisOption, isEnabled, false)
+        KotlinLibraryToSourceAnalysisStateComponent.getInstance(project).setEnabled(isEnabled)
     }
 
     @JvmStatic
     fun isEnabled(project: Project): Boolean =
-        PropertiesComponent.getInstance(project).getBoolean(libraryToSourceAnalysisOption)
+        KotlinLibraryToSourceAnalysisStateComponent.getInstance(project).isEnabled.get()
+}
+
+@State(name = "LibraryToSourceAnalysisState", storages = [Storage("anchors.xml")])
+class KotlinLibraryToSourceAnalysisStateComponent : PersistentStateComponent<KotlinLibraryToSourceAnalysisStateComponent> {
+    @JvmField
+    @OptionTag(converter = AtomicBooleanXmlbConverter::class)
+    var isEnabled: AtomicBoolean = AtomicBoolean(false)
+
+    override fun getState(): KotlinLibraryToSourceAnalysisStateComponent? = this
+
+    override fun loadState(state: KotlinLibraryToSourceAnalysisStateComponent) {
+        XmlSerializerUtil.copyBean(state, this)
+    }
+
+    fun setEnabled(newState: Boolean) {
+        isEnabled.getAndSet(newState)
+    }
+
+    companion object {
+        fun getInstance(project: Project): KotlinLibraryToSourceAnalysisStateComponent =
+            ServiceManager.getService(project, KotlinLibraryToSourceAnalysisStateComponent::class.java)
+    }
+}
+
+class AtomicBooleanXmlbConverter : Converter<AtomicBoolean>() {
+    override fun toString(value: AtomicBoolean): String? = if (value.get()) TRUE else FALSE
+
+    override fun fromString(value: String): AtomicBoolean? = when (value) {
+        TRUE -> AtomicBoolean(true)
+        FALSE -> AtomicBoolean(false)
+        else -> null
+    }
+
+    companion object {
+        private const val TRUE = "true"
+        private const val FALSE = "false"
+    }
 }
 
 val Project.libraryToSourceAnalysisEnabled: Boolean
