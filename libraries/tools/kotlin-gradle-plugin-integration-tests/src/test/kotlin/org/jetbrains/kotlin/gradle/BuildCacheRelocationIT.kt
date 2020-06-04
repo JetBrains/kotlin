@@ -29,7 +29,7 @@ import kotlin.test.assertEquals
 class BuildCacheRelocationIT : BaseGradleIT() {
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("5.6.1")
+        get() = GradleVersionRequired.AtLeast("5.6.4")
 
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
