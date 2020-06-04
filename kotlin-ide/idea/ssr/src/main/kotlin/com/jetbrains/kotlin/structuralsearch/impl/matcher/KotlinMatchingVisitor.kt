@@ -583,7 +583,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitModifierList(list: KtModifierList) {
         val other = getTreeElementDepar<KtModifierList>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchSons(list, other)
+        myMatchingVisitor.result = myMatchingVisitor.matchSonsInAnyOrder(list, other)
     }
 
     override fun visitIfExpression(expression: KtIfExpression) {

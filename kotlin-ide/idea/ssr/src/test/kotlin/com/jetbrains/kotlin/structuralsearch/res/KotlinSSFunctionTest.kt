@@ -29,11 +29,11 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
         )
     }
 
-    fun testFunPublicModifier() { doTest("public fun '_() { }") }
+    fun testFunPublicModifier() { doTest("public fun '_('_*)") }
 
-    fun testFunInternalModifier() { doTest("internal fun '_() { }") }
+    fun testFunInternalModifier() { doTest("internal fun '_()") }
 
-    fun testFunPrivateModifier() { doTest("private fun '_() { }") }
+    fun testFunPrivateModifier() { doTest("private fun '_()") }
 
     fun testFunTypeVarRef() { doTest("fun '_(): '_") }
 
@@ -45,9 +45,11 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
         )
     }
 
-    fun testMethod() { doTest("fun a() { }") }
+    fun testMethod() { doTest("fun a()") }
 
-    fun testMethodProtectedModifier() { doTest("protected fun '_() { }") }
+    fun testMethodProtectedModifier() { doTest("protected fun '_()") }
 
     fun testFunExprBlock() { doTest("fun '_(): Int = 0") }
+
+    fun testFunAnnotation() { doTest("@Foo fun '_('_*)") }
 }
