@@ -23,9 +23,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * @author cdr
- */
 public class NamedLibraryUrl extends AbstractUrl {
 
   @NonNls private static final String ELEMENT_TYPE = "namedLibrary";

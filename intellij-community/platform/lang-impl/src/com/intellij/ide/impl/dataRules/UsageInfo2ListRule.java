@@ -24,9 +24,6 @@ import com.intellij.usageView.UsageInfo;
 
 import java.util.Collections;
 
-/**
- * @author cdr
- */
 public class UsageInfo2ListRule implements GetDataRule {
   @Override
   @Nullable

@@ -39,9 +39,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author cdr
- */
 public class SliceNode extends AbstractTreeNode<SliceUsage> implements DuplicateNodeRenderer.DuplicatableNode<SliceNode>, MyColoredTreeCellRenderer {
   protected List<SliceNode> myCachedChildren;
   boolean dupNodeCalculated;

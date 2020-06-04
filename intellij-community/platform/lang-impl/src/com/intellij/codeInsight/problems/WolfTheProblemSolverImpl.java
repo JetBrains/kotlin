@@ -48,9 +48,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * @author cdr
- */
 public final class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
   private final Map<VirtualFile, ProblemFileInfo> myProblems = new THashMap<>(); // guarded by myProblems
   private final Map<VirtualFile, Set<Object>> myProblemsFromExternalSources = new THashMap<>(); // guarded by myProblemsFromExternalSources

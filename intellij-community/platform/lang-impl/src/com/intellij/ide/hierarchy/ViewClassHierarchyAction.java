@@ -21,9 +21,6 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author cdr
- */
 public final class ViewClassHierarchyAction extends ChangeViewTypeActionBase {
   public ViewClassHierarchyAction() {
     super(IdeBundle.messagePointer("action.view.class.hierarchy"),

@@ -38,9 +38,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author cdr
- */
 public class SliceLeafAnalyzer {
   private static final Logger LOG = Logger.getInstance(SliceLeafAnalyzer.class);
 

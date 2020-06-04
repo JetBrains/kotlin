@@ -23,9 +23,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author cdr
- */
 public class SliceBackwardAction extends CodeInsightAction {
   @NotNull
   @Override

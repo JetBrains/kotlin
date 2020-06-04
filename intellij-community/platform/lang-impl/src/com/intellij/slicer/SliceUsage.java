@@ -31,9 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author cdr
- */
 public abstract class SliceUsage extends UsageInfo2UsageAdapter {
   private final SliceUsage myParent;
   public final SliceAnalysisParams params;

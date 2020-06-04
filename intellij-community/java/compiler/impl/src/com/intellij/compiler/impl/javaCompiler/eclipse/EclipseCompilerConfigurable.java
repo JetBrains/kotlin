@@ -17,9 +17,6 @@ import org.jetbrains.jps.model.java.compiler.EclipseCompilerOptions;
 
 import javax.swing.*;
 
-/**
- * @author cdr
- */
 public class EclipseCompilerConfigurable implements Configurable {
   private final Project myProject;
   private JPanel myPanel;

@@ -25,9 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-/**
- * @author cdr
- */
 public abstract class SliceUsageCellRendererBase extends ColoredTreeCellRenderer {
   private static final EditorColorsScheme ourColorsScheme = UsageTreeColorsScheme.getInstance().getScheme();
   static final SimpleTextAttributes ourInvalidAttributes = SimpleTextAttributes.fromTextAttributes(ourColorsScheme.getAttributes(UsageTreeColors.INVALID_PREFIX));

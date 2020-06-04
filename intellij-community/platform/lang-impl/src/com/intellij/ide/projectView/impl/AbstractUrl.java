@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author cdr
- */
 public abstract class AbstractUrl {
   protected final String url;
   protected final String moduleName;

@@ -17,9 +17,6 @@ import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import java.util.Comparator;
 
-/**
- * @author cdr
- */
 public class SliceTreeBuilder extends AbstractTreeBuilder {
   public final boolean splitByLeafExpressions;
   public final boolean dataFlowToThis;

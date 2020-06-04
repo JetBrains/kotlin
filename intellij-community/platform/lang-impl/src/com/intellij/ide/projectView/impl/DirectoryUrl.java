@@ -27,9 +27,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * @author cdr
- */
 public class DirectoryUrl extends AbstractUrl {
   @NonNls private static final String ELEMENT_TYPE = "directory";
 

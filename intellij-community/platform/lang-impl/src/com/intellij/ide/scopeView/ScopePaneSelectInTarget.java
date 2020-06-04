@@ -19,9 +19,6 @@ import com.intellij.ui.tree.project.ProjectFileNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author cdr
- */
 public class ScopePaneSelectInTarget extends ProjectViewSelectInTarget {
   public ScopePaneSelectInTarget(final Project project) {
     super(project);

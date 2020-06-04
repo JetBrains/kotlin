@@ -24,9 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author cdr
- */
 public class SliceRootNode extends SliceNode {
   private final SliceUsage myRootUsage;
 

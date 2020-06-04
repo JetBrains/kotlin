@@ -19,9 +19,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * @author cdr
- */
 public interface MyColoredTreeCellRenderer {
   void customizeCellRenderer(@NotNull SliceUsageCellRendererBase renderer,
                              @NotNull JTree tree,

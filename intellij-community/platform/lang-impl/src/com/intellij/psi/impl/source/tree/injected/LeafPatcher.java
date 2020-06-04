@@ -33,9 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author cdr
-*/
 class LeafPatcher extends RecursiveTreeElementWalkingVisitor {
   private static final Logger LOG = Logger.getInstance(LeafPatcher.class);
   private int shredNo;

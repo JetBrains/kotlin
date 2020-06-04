@@ -24,9 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-/**
-* @author cdr
-*/ // rehash map on each PSI modification since SmartPsiPointer's hashCode() and equals() are changed
+// rehash map on each PSI modification since SmartPsiPointer's hashCode() and equals() are changed
 public class DuplicateMap {
   private static final TObjectHashingStrategy<SliceUsage> USAGE_INFO_EQUALITY = new TObjectHashingStrategy<SliceUsage>() {
     @Override

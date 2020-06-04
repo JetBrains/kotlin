@@ -28,9 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author cdr
- */
 final class UpdateFoldRegionsOperation implements Runnable {
   enum ApplyDefaultStateMode { YES, EXCEPT_CARET_REGION, NO }
 

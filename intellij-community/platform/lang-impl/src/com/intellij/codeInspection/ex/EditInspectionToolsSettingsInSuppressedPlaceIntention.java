@@ -15,9 +15,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author cdr
- */
 public class EditInspectionToolsSettingsInSuppressedPlaceIntention implements IntentionAction {
   private String myId;
   private String myDisplayName;

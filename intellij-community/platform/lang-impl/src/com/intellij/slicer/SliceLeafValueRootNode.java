@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author cdr
- */
 public class SliceLeafValueRootNode extends SliceNode implements MyColoredTreeCellRenderer {
   public final List<SliceNode> myCachedChildren;
 

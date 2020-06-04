@@ -13,9 +13,6 @@ import java.util.Comparator;
 
 import static com.intellij.openapi.util.text.StringUtil.naturalCompare;
 
-/**
- * @author cdr
- */
 public class GroupByTypeComparator implements Comparator<NodeDescriptor<?>> {
   private ProjectView myProjectView;
   private String myPaneId;

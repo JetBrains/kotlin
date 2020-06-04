@@ -35,9 +35,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author cdr
- */
 public class ShowRecentFindUsagesAction extends AnAction {
   @Override
   public void update(@NotNull final AnActionEvent e) {

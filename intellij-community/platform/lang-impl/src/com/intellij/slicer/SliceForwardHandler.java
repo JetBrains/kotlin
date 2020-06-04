@@ -27,9 +27,6 @@ import com.intellij.psi.PsiElement;
 import javax.swing.*;
 import java.util.List;
 
-/**
- * @author cdr
- */
 class SliceForwardHandler extends SliceHandler {
   SliceForwardHandler() {
     super(false);

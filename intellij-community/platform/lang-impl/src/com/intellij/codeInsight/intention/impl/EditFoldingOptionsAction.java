@@ -27,9 +27,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author cdr
- */
 @SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class EditFoldingOptionsAction implements IntentionAction, LowPriorityAction {
   @Override

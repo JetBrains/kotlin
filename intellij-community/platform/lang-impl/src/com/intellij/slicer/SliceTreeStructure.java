@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author cdr
- */
 public class SliceTreeStructure extends AbstractTreeStructureBase {
   private final SliceNode myRoot;
 

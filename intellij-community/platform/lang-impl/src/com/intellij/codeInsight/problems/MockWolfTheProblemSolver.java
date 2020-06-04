@@ -13,9 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author cdr
- */
 public class MockWolfTheProblemSolver extends WolfTheProblemSolver {
   private WolfTheProblemSolver myDelegate;
 

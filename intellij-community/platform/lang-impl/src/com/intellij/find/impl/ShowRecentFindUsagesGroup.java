@@ -16,9 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author cdr
- */
 public class ShowRecentFindUsagesGroup extends ActionGroup {
   @Override
   public void update(@NotNull final AnActionEvent e) {

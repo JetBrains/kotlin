@@ -44,9 +44,6 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.*;
 
-/**
- * @author cdr
- */
 public abstract class SlicePanel extends JPanel implements TypeSafeDataProvider, Disposable {
   private final SliceTreeBuilder myBuilder;
   private final JTree myTree;

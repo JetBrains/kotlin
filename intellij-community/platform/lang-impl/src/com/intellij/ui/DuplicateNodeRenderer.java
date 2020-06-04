@@ -12,9 +12,6 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.Enumeration;
 
-/**
- * @author cdr
- */
 public class DuplicateNodeRenderer {
   public interface DuplicatableNode<T> {
     //returns first duplicate node, if any, or null if there are none

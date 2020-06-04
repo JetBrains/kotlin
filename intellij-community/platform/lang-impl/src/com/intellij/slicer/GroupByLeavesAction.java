@@ -21,9 +21,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author cdr
- */
 public class GroupByLeavesAction extends AnAction {
   private final SliceTreeBuilder myTreeBuilder;
 

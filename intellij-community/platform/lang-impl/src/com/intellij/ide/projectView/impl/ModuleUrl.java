@@ -21,9 +21,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 
-/**
- * @author cdr
- */
 public class ModuleUrl extends AbstractUrl {
   @NonNls private static final String ELEMENT_TYPE = "module";
 

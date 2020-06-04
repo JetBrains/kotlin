@@ -29,9 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
-* @author cdr
-*/
 public class IntentionListStep implements ListPopupStep<IntentionActionWithTextCaching>, SpeedSearchFilter<IntentionActionWithTextCaching> {
   private static final Logger LOG = Logger.getInstance(IntentionListStep.class);
 

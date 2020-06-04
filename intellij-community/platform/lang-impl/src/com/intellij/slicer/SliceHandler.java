@@ -15,9 +15,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author cdr
- */
 public abstract class SliceHandler implements CodeInsightActionHandler {
   private static final Logger LOG = Logger.getInstance(SliceHandler.class);
   final boolean myDataFlowToThis;
