@@ -185,7 +185,8 @@ class TowerResolver {
                 TowerData.TowerLevel(localLevel).process()?.let { return it }
             }
 
-            for (scope in implicitScopeTower.lexicalScope.parentsWithSelf) {
+            for (scopeInfo in implicitScopeTower.allScopesWithImplicitsResolutionInfo()) {
+                val scope = scopeInfo.scope
                 if (scope is LexicalScope) {
                     // statics
                     if (!scope.kind.withLocalDescriptors) {
@@ -194,7 +195,7 @@ class TowerResolver {
                     }
 
                     implicitScopeTower.getImplicitReceiver(scope)
-                        ?.let(this::processImplicitReceiver)
+                        ?.let { processImplicitReceiver(it, scopeInfo.resolveExtensionsForImplicitReceiver) }
                         ?.let { return it }
                 } else {
                     TowerData.TowerLevel(ImportingScopeBasedTowerLevel(implicitScopeTower, scope as ImportingScope))
@@ -207,7 +208,7 @@ class TowerResolver {
             return resultCollector.getFinalCandidates()
         }
 
-        private fun processImplicitReceiver(implicitReceiver: ReceiverValueWithSmartCastInfo): Collection<C>? {
+        private fun processImplicitReceiver(implicitReceiver: ReceiverValueWithSmartCastInfo, resolveExtensions: Boolean): Collection<C>? {
             if (isNameForHidesMember) {
                 // hides members extensions
                 TowerData.BothTowerLevelAndImplicitReceiver(hidesMembersLevel, implicitReceiver).process()?.let { return it }
@@ -220,17 +221,19 @@ class TowerResolver {
             // synthetic properties
             TowerData.BothTowerLevelAndImplicitReceiver(syntheticLevel, implicitReceiver).process()?.let { return it }
 
-            // invokeExtension on local variable
-            TowerData.OnlyImplicitReceiver(implicitReceiver).process()?.let { return it }
+            if (resolveExtensions) {
+                // invokeExtension on local variable
+                TowerData.OnlyImplicitReceiver(implicitReceiver).process()?.let { return it }
 
-            // local extensions for implicit receiver
-            for (localLevel in localLevels) {
-                TowerData.BothTowerLevelAndImplicitReceiver(localLevel, implicitReceiver).process()?.let { return it }
-            }
+                // local extensions for implicit receiver
+                for (localLevel in localLevels) {
+                    TowerData.BothTowerLevelAndImplicitReceiver(localLevel, implicitReceiver).process()?.let { return it }
+                }
 
-            // extension for implicit receiver
-            for (nonLocalLevel in nonLocalLevels) {
-                TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver).process()?.let { return it }
+                // extension for implicit receiver
+                for (nonLocalLevel in nonLocalLevels) {
+                    TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver).process()?.let { return it }
+                }
             }
 
             return null

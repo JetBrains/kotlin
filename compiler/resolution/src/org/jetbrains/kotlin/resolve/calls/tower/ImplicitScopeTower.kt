@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
+import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 
@@ -43,6 +44,11 @@ interface ImplicitScopeTower {
     val isNewInferenceEnabled: Boolean
 
     val typeApproximator: TypeApproximator
+
+    val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter
+
+    fun allScopesWithImplicitsResolutionInfo(): Sequence<ScopeWithImplicitsExtensionsResolutionInfo> =
+        implicitsResolutionFilter.getScopesWithInfo(lexicalScope.parentsWithSelf)
 
     fun interceptFunctionCandidates(
         resolutionScope: ResolutionScope,

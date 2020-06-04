@@ -61,6 +61,7 @@ class PSICallResolver(
     private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     private val kotlinCallResolver: KotlinCallResolver,
     private val typeApproximator: TypeApproximator,
+    private val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter,
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val effectSystem: EffectSystem,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
@@ -393,6 +394,7 @@ class PSICallResolver(
         override val isNewInferenceEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
         override val lexicalScope: LexicalScope get() = context.scope
         override val typeApproximator: TypeApproximator get() = this@PSICallResolver.typeApproximator
+        override val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter get() = this@PSICallResolver.implicitsResolutionFilter
         private val cache = HashMap<ReceiverParameterDescriptor, ReceiverValueWithSmartCastInfo>()
 
         override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? {
