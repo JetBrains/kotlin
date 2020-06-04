@@ -8,6 +8,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.vfs.VirtualFile
 
 class ReaderModeFileEditorListener : FileEditorManagerListener {
@@ -28,7 +29,9 @@ class ReaderModeFileEditorListener : FileEditorManagerListener {
 
     fun matchMode(project: Project, file: VirtualFile): Boolean {
       return when (instance(project).mode) {
-        ReaderMode.READ_ONLY_FILES -> !file.isWritable
+        ReaderMode.LIBRARIES ->
+          FileIndexFacade.getInstance(project).isInLibraryClasses(file) || FileIndexFacade.getInstance(project).isInLibrarySource(file)
+        ReaderMode.READ_ONLY -> !file.isWritable
         ReaderMode.UNMODIFIED_MODULE_FILES -> checkUnmodifiedModules(file)
       }
     }

@@ -3,8 +3,7 @@ package com.intellij.codeInsight.actions
 
 import com.intellij.application.options.editor.CheckboxDescriptor
 import com.intellij.application.options.editor.checkBox
-import com.intellij.codeInsight.actions.ReaderMode.READ_ONLY_FILES
-import com.intellij.codeInsight.actions.ReaderMode.UNMODIFIED_MODULE_FILES
+import com.intellij.codeInsight.actions.ReaderMode.*
 import com.intellij.lang.LangBundle
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
@@ -35,9 +34,15 @@ class ReaderModeConfigurable(val project: Project) : BoundSearchableConfigurable
       }
       titledRow(LangBundle.message("titled.border.mode")) {
         row {
+          radioButton(LangBundle.message("radio.reader.mode.libraries"),
+                      { return@radioButton settings.mode == LIBRARIES },
+                      { settings.mode = LIBRARIES })
+            .enableIf(enabled.selected)
+        }
+        row {
           radioButton(LangBundle.message("radio.reader.mode.readonly"),
-                      { return@radioButton settings.mode == READ_ONLY_FILES },
-                      { settings.mode = READ_ONLY_FILES })
+                      { return@radioButton settings.mode == READ_ONLY },
+                      { settings.mode = READ_ONLY })
             .enableIf(enabled.selected)
         }
         row {
@@ -77,7 +82,7 @@ class ReaderModeConfigurable(val project: Project) : BoundSearchableConfigurable
 }
 
 enum class ReaderMode {
-  READ_ONLY_FILES, UNMODIFIED_MODULE_FILES
+  LIBRARIES, READ_ONLY, UNMODIFIED_MODULE_FILES
 }
 
 @State(name = "ReaderModeSettings", storages = [Storage("editor.xml")])
@@ -99,7 +104,7 @@ class ReaderModeSettings : PersistentStateComponent<ReaderModeSettings.State> {
     var showInlayHints: Boolean = true,
     var hideWarnings: Boolean = true,
     var enabled: Boolean = false,
-    var mode: ReaderMode = READ_ONLY_FILES
+    var mode: ReaderMode = LIBRARIES
   )
 
   var showBreadcrumbs: Boolean
