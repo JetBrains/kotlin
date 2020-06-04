@@ -115,9 +115,11 @@ object ConfigLibraryUtil {
             val rootManager = ModuleRootManager.getInstance(module)
             val model = rootManager.modifiableModel
 
-            val library = addLibrary(editor, model, kind)
-
-            model.commit()
+            val library = try {
+                addLibrary(editor, model, kind)
+            } finally {
+                model.commit()
+            }
 
             library
         }
@@ -127,10 +129,12 @@ object ConfigLibraryUtil {
         val library = libraryTableModifiableModel.createLibrary(editor.name, kind)
 
         val libModel = library.modifiableModel
-        editor.applyTo(libModel as LibraryEx.ModifiableModelEx)
-
-        libModel.commit()
-        libraryTableModifiableModel.commit()
+        try {
+            editor.applyTo(libModel as LibraryEx.ModifiableModelEx)
+        } finally {
+            libModel.commit()
+            libraryTableModifiableModel.commit()
+        }
 
         return library
     }

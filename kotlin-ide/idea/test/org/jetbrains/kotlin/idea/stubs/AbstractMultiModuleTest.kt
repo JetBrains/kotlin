@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.stubs
 
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
@@ -17,6 +18,7 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
@@ -39,12 +41,16 @@ import java.io.File
 
 abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
+    private var vfsDisposable: Disposable? = null
+
     abstract override fun getTestDataPath(): String
 
     override fun setUp() {
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+
+        vfsDisposable = Disposer.newDisposable(testRootDisposable, javaClass.name)
+        VfsRootAccess.allowRootAccess(vfsDisposable!!, KotlinTestUtils.getHomeDirectory())
     }
 
     fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
@@ -64,7 +70,13 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     }
 
     override fun tearDown() = runAll(
-        ThrowableRunnable { VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory()) },
+        ThrowableRunnable {
+            vfsDisposable?.let {
+                if (!Disposer.isDisposed(it)) {
+                    Disposer.dispose(it); vfsDisposable = null
+                }
+            }
+        },
         ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
         ThrowableRunnable { super.tearDown() },
     )

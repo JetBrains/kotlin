@@ -191,15 +191,18 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         runWriteAction {
             val model = ModuleRootManager.getInstance(myModule).modifiableModel
 
-            attachLibrary(
-                model, KOTLIN_LIBRARY_NAME,
-                listOf(TestKotlinArtifacts.kotlinStdlib, TestKotlinArtifacts.jetbrainsAnnotations),
-                listOf(TestKotlinArtifacts.kotlinStdlibSources)
-            )
+            try {
+                attachLibrary(
+                    model, KOTLIN_LIBRARY_NAME,
+                    listOf(TestKotlinArtifacts.kotlinStdlib, TestKotlinArtifacts.jetbrainsAnnotations),
+                    listOf(TestKotlinArtifacts.kotlinStdlibSources)
+                )
 
-            attachLibrary(model, TEST_LIBRARY_NAME, listOf(libraryOutputDirectory), listOf(librarySrcDirectory))
-
-            model.commit()
+                attachLibrary(model, TEST_LIBRARY_NAME, listOf(libraryOutputDirectory), listOf(librarySrcDirectory))
+            }
+            finally {
+                model.commit()
+            }
         }
     }
 
