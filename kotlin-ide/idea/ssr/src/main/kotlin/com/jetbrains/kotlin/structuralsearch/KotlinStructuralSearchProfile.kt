@@ -84,7 +84,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         override fun visitErrorElement(element: PsiErrorElement) {
             super.visitErrorElement(element)
             if (shouldShowProblem(element)) {
-                throw MalformedPatternException(element.text)
+                throw MalformedPatternException(element.errorDescription)
             }
         }
     }
@@ -102,11 +102,11 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     override fun shouldShowProblem(error: PsiErrorElement): Boolean {
         val description = error.errorDescription
         val parent = error.parent
-        if (parent is KtTryExpression && KSSRBundle.message("message.expected.catch.or.finally") == description) {
-            // searching for naked try allowed
-            return false
+        return when {
+            parent is KtTryExpression && KSSRBundle.message("expected.catch.or.finally") == description -> false // naked try
+            parent is KtAnnotatedExpression && KSSRBundle.message("expected.an.expression") == description  -> false
+            else -> true
         }
-        return true
     }
 
     override fun checkReplacementPattern(project: Project, options: ReplaceOptions) {
@@ -123,7 +123,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         }
     }
 
-    override fun isIdentifier(element: PsiElement?) = element != null && element.node.elementType == KtTokens.IDENTIFIER
+    override fun isIdentifier(element: PsiElement?): Boolean = element != null && element.node.elementType == KtTokens.IDENTIFIER
 
     override fun isApplicableConstraint(
         constraintName: String?,
