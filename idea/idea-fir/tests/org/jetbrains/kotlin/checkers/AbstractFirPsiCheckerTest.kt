@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
 abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
+    override val captureExceptions: Boolean = false
+
     override fun isFirPlugin(): Boolean = true
 
     override fun setUp() {
