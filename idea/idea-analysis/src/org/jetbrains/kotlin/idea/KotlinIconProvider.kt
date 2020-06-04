@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.idea.KotlinIcons.ACTUAL
 import org.jetbrains.kotlin.idea.KotlinIcons.EXPECT
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
-import org.jetbrains.kotlin.idea.util.hasMatchingExpected
+import org.jetbrains.kotlin.idea.util.isEffectivelyActual
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -141,7 +141,7 @@ private fun Icon.addExpectActualMarker(element: PsiElement): Icon {
     val declaration = (element as? KtNamedDeclaration) ?: return this
     val additionalIcon = when {
         declaration.isExpectDeclaration() -> EXPECT
-        declaration.hasMatchingExpected() -> ACTUAL
+        declaration.isEffectivelyActual() -> ACTUAL
         else -> return this
     }
     return RowIcon(2).apply {
