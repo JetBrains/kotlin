@@ -14,12 +14,16 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 
-class IdeLikeReplCodeAnalyzer(private val environment: KotlinCoreEnvironment) : ReplCodeAnalyzerBase(environment, CliBindingTrace()) {
+class IdeLikeReplCodeAnalyzer(
+    private val environment: KotlinCoreEnvironment,
+    implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter
+) : ReplCodeAnalyzerBase(environment, CliBindingTrace(), implicitsResolutionFilter) {
     interface ReplLineAnalysisResultWithStateless : ReplLineAnalysisResult {
         // Result of stateless analyse, which may be used for reporting errors
         // without code generation
@@ -54,7 +58,7 @@ class IdeLikeReplCodeAnalyzer(private val environment: KotlinCoreEnvironment) : 
         )
         replState.submitLine(linePsi)
 
-        val context = topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi) + importedScripts)
+        val context = runAnalyzer(linePsi, importedScripts)
 
         val resultPropertyDescriptor = (context.scripts[linePsi.script] as? ScriptDescriptor)?.resultValue
 
