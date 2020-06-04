@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.BindingContext
 
 interface IrPluginContext : IrGeneratorContext {
@@ -34,6 +35,8 @@ interface IrPluginContext : IrGeneratorContext {
     val typeTranslator: TypeTranslator
 
     val symbols: BuiltinSymbolsBase
+
+    val platform: TargetPlatform?
 
     // The following API is experimental
     fun referenceClass(fqName: FqName): IrClassSymbol?
