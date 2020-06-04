@@ -45,8 +45,6 @@ fun KtDeclaration.expectedDeclaration(): KtDeclaration? = expectedDeclarations()
 
 fun DeclarationDescriptor.actualDescriptors(): Collection<DeclarationDescriptor> {
     if (this is MemberDescriptor) {
-        if (!this.isExpect) return emptyList()
-
         return module.implementingDescriptors.flatMap { it.actualsFor(this) }
     }
 
