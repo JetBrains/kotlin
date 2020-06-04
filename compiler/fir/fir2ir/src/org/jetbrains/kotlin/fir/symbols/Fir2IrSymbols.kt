@@ -19,22 +19,6 @@ class Fir2IrEnumEntrySymbol(signature: IdSignature) :
     Fir2IrBindableSymbol<ClassDescriptor, IrEnumEntry>(signature),
     IrEnumEntrySymbol
 
-class Fir2IrFieldSymbol(signature: IdSignature) :
-    Fir2IrBindableSymbol<PropertyDescriptor, IrField>(signature),
-    IrFieldSymbol
-
-class Fir2IrTypeParameterSymbol(signature: IdSignature) :
-    Fir2IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>(signature),
-    IrTypeParameterSymbol
-
-class Fir2IrValueParameterSymbol(signature: IdSignature) :
-    Fir2IrBindableSymbol<ParameterDescriptor, IrValueParameter>(signature),
-    IrValueParameterSymbol
-
-class Fir2IrVariableSymbol(signature: IdSignature) :
-    Fir2IrBindableSymbol<VariableDescriptor, IrVariable>(signature),
-    IrVariableSymbol
-
 class Fir2IrSimpleFunctionSymbol(
     signature: IdSignature,
     containerSource: DeserializedContainerSource? = null
