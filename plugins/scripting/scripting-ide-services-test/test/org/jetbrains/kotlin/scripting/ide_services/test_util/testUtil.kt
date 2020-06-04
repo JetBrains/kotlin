@@ -9,19 +9,16 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.ide_services.compiler.KJvmReplCompilerWithIdeServices
 import java.io.Closeable
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.script.experimental.api.CompiledSnippet
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.SourceCode
-import kotlin.script.experimental.api.valueOrNull
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.jvm.util.toSourceCodePosition
 
-internal class JvmTestRepl : Closeable {
+internal class JvmTestRepl (
+    private val compileConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
+    private val evalConfiguration: ScriptEvaluationConfiguration = simpleScriptEvaluationConfiguration,
+) : Closeable {
     private val currentLineCounter = AtomicInteger(0)
-
-    private val compileConfiguration = simpleScriptCompilationConfiguration
-    private val evalConfiguration = simpleScriptEvaluationConfiguration
 
     fun nextCodeLine(code: String): SourceCode =
         SourceCodeTestImpl(

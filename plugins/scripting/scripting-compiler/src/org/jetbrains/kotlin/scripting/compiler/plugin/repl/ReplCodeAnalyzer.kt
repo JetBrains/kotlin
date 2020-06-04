@@ -280,7 +280,7 @@ open class ReplCodeAnalyzerBase(
             // create scope that wraps previous line lexical scope and adds imports from this line
             val lexicalScopeAfterLastLine = lineInfo.parentLine?.lineDescriptor?.scopeForInitializerResolution ?: return null
             val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.first { it is ImportingScope } as ImportingScope
-            val scopesForThisLine = fileScopeFactory.createScopesForFile(linePsi, lastLineImports)
+            val scopesForThisLine = fileScopeFactory.createScopesForFile(linePsi, lastLineImports, false)
             val combinedLexicalScopes = if (hasImports)
                 lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
             else
