@@ -20,7 +20,7 @@ object KotlinPredefinedConfigurations {
             KSSRBundle.message("predefined.configuration.all.fields.of.the.class"),
             """
                 class '_Class {  
-                    var 'Field+:* = '_Init?
+                    var 'Field* = '_Init?
                 }
             """.trimIndent(),
             CLASS_TYPE
@@ -30,7 +30,7 @@ object KotlinPredefinedConfigurations {
             KSSRBundle.message("predefined.configuration.all.methods.of.the.class"),
             """
                 class '_Class {  
-                    fun 'Method+:* ('_Parameter* : '_ParameterType): '_ReturnType
+                    fun 'Method* ('_Parameter* : '_ParameterType): '_ReturnType
                 }
             """.trimIndent(),
             CLASS_TYPE
@@ -40,7 +40,7 @@ object KotlinPredefinedConfigurations {
             KSSRBundle.message("predefined.configuration.all.fields.of.the.object"),
             """
                 object '_Object {  
-                    var 'Field+:* = '_Init?
+                    var 'Field* = '_Init?
                 }
             """.trimIndent(),
             CLASS_TYPE
