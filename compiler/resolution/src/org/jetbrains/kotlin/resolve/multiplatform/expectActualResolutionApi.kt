@@ -27,13 +27,17 @@ fun MemberDescriptor.findCompatibleExpectedForActual(commonModule: ModuleDescrip
     ExpectedActualResolver.findExpectedForActual(this, commonModule)
         ?.get(ExpectedActualResolver.Compatibility.Compatible).orEmpty()
 
-fun MemberDescriptor.findAnyActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> {
-    val actualsGroupedByCompatibility =
-        ExpectedActualResolver.findActualForExpected(this, platformModule)
-    return actualsGroupedByCompatibility?.get(ExpectedActualResolver.Compatibility.Compatible)
-        ?: actualsGroupedByCompatibility?.values?.flatten()
-        ?: emptyList()
-}
+/**
+ * Returns compatible actuals, if there are at least one; returns all incompatible actuals otherwise
+ */
+fun MemberDescriptor.findAnyActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> =
+    ExpectedActualResolver.findActualForExpected(this, platformModule).flattenPreferringCompatible()
+
+/**
+ * Returns compatible expects, if there are at least one; returns all incompatible expects otherwise
+ */
+fun MemberDescriptor.findAnyExpectForActual(commonModule: ModuleDescriptor): List<MemberDescriptor> =
+    ExpectedActualResolver.findExpectedForActual(this, commonModule).flattenPreferringCompatible()
 
 fun DeclarationDescriptor.findExpects(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
     return ExpectedActualResolver.findExpectedForActual(
@@ -48,3 +52,8 @@ fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module):
         inModule
     )?.get(ExpectedActualResolver.Compatibility.Compatible).orEmpty()
 }
+
+private fun Map<ExpectedActualResolver.Compatibility, List<MemberDescriptor>>?.flattenPreferringCompatible(): List<MemberDescriptor> =
+    (this?.get(ExpectedActualResolver.Compatibility.Compatible)
+        ?: this?.values?.flatten()
+        ?: emptyList())
