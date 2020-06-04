@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir
+package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirDependenciesSymbolProviderImpl
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 
 
-class FirIdeModuleDependenciesSymbolProvider(
+internal class FirIdeModuleDependenciesSymbolProvider(
     session: FirIdeJavaModuleBasedSession
 ) : FirDependenciesSymbolProviderImpl(session) {
 

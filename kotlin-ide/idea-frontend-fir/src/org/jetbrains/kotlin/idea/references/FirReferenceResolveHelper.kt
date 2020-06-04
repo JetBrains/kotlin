@@ -74,13 +74,11 @@ object FirReferenceResolveHelper {
         }
     }
 
-    internal fun resolveSimpleNameReference(
-        ref: KtSimpleNameReferenceFirImpl,
-        session: FirSession,
-        state: FirModuleResolveState
-    ): Collection<PsiElement> {
+    internal fun resolveSimpleNameReference(ref: KtSimpleNameReferenceFirImpl): Collection<PsiElement> {
         val expression = ref.expression
-        when (val fir = expression.getOrBuildFir(state)) {
+        val fir = expression.getOrBuildFir()
+        val session = expression.session
+        when (fir) {
             is FirResolvable -> {
                 val calleeReference =
                     if (fir is FirFunctionCall
@@ -109,7 +107,7 @@ object FirReferenceResolveHelper {
                         parent = parent.parent as? KtDotQualifiedExpression
                         continue
                     }
-                    val parentFir = selectorExpression.getOrBuildFir(state)
+                    val parentFir = selectorExpression.getOrBuildFir()
                     if (parentFir is FirQualifiedAccess) {
                         return listOfNotNull(classId.toTargetPsi(session, parentFir.calleeReference))
                     }
@@ -177,7 +175,7 @@ object FirReferenceResolveHelper {
                         parent = parent.parent as? KtDotQualifiedExpression
                         continue
                     }
-                    val parentFir = selectorExpression.getOrBuildFir(state)
+                    val parentFir = selectorExpression.getOrBuildFir()
                     if (parentFir is FirResolvedQualifier) {
                         var classId = parentFir.classId
                         while (unresolvedCounter > 0) {

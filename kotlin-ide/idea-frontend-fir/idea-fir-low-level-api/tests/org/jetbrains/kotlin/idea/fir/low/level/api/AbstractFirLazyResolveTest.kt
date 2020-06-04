@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir
+package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -51,7 +51,7 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
         val mainFileText = FileUtil.loadFile(mainFile, true)
         TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFilePath\"", mainFileText.contains("<caret>"))
 
-        val projectDir = path.removePrefix(testDataPath).substringBeforeLast(File.separatorChar)
+        val projectDir = path.removePrefix(testDataPath).substringBeforeLast('/')
         myFixture.copyDirectoryToProject(projectDir, "")
         PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
 

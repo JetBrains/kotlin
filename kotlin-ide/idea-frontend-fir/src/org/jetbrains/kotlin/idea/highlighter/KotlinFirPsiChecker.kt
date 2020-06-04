@@ -21,7 +21,7 @@ class KotlinFirPsiChecker : AbstractKotlinPsiChecker() {
 
     override fun annotateElement(element: PsiElement, containingFile: KtFile, holder: AnnotationHolder) {
         if (element !is KtElement) return
-        val analysisSession = AnalysisSessionFirImpl.forElement(element)
+        val analysisSession = AnalysisSessionFirImpl()
 
         highlightDiagnostics(element, analysisSession, holder)
 

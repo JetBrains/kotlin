@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir
+package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.psi.KtElement
 
-class FirIdeDiagnosticsCollector(session: FirSession, private val resolveState: FirModuleResolveState) : AbstractDiagnosticCollector(session) {
+internal class FirIdeDiagnosticsCollector(session: FirSession, private val resolveState: FirModuleResolveState) : AbstractDiagnosticCollector(session) {
 
     init {
         registerAllComponents()
