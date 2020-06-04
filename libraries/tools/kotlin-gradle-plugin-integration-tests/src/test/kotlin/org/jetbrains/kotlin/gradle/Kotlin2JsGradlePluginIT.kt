@@ -58,7 +58,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             gradleBuildScript().appendText(
                 """${"\n"}
                 tasks.named("compileProductionExecutableKotlinJs").configure {
-                    type = org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType.DEVELOPMENT
+                    mode = org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
                 }
             """.trimIndent()
             )
