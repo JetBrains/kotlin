@@ -240,6 +240,7 @@ run {
     dependsOn(tasksOf(KonanTest))
     // Add framework tests
     dependsOn(tasksOf(FrameworkTest))
+    dependsOn(tasksOf(MetadataComparisonTest))
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
 }
