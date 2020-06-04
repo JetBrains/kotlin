@@ -1,1 +1,1 @@
-val x: Map.Entry<Array<String>, java.sql.Array>
+val x: Map.Entry<Array<String>, dependency.Array>
