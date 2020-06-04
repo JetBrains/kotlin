@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
@@ -39,17 +38,18 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.TestMetadataUtil.getTestData
 import org.junit.Assert
 import java.io.File
+import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 
 abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
     protected open fun fileName(): String = getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
     override fun getTestDataPath(): String {
-        val clazz = this::class.java
-        val root = getTestsRoot(clazz)
-        return toSlashEndingDirPath(root)
+        val testData = getTestData(this::class.java)
+        return testData?.path ?: KOTLIN_PLUGIN_ROOT_DIRECTORY.path
     }
 
     fun doRightPreviewPanelOutputTest(unused: String) {
@@ -337,8 +337,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         private val INSTANCE_WITH_KOTLIN_TEST = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
-                    ForTestCompileRuntime.runtimeJarForTests(),
-                    ForTestCompileRuntime.kotlinTestJarForTests()
+                ForTestCompileRuntime.runtimeJarForTests(),
+                ForTestCompileRuntime.kotlinTestJarForTests()
             )
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()

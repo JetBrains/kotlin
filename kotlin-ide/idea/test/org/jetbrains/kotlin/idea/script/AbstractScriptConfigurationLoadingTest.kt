@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.testingBackgroundExec
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.testScriptConfigurationNotification
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
+import java.io.File
 
 abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurationTest() {
     lateinit var scriptConfigurationManager: CompositeScriptConfigurationManager
@@ -61,7 +63,7 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
             testRootDisposable
         )
 
-        configureScriptFile("idea/testData/script/definition/loading/async/")
+        configureScriptFile(File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "idea/testData/script/definition/loading/async/"))
     }
 
     override fun loadScriptConfigurationSynchronously(script: VirtualFile) {

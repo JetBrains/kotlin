@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 abstract class AbstractScriptConfigurationCompletionTest : AbstractScriptConfigurationTest() {
-    fun doTest(path: String) {
-        configureScriptFile(path)
+    fun doTest(unused: String) {
+        configureScriptFile(testDataFile())
         testCompletion(
             file.text,
             JvmPlatforms.unspecifiedJvmPlatform,

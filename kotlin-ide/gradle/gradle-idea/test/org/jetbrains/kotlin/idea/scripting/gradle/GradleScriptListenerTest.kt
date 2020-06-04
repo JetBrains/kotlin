@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
@@ -38,10 +39,10 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
     )
 
     override fun setUpTestProject() {
-        val rootDir = "idea/testData/script/definition/loading/gradle/"
+        val rootDir = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "idea/testData/script/definition/loading/gradle/")
 
-        val settings: KtFile = addFileToProject(rootDir + GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
-        val prop: PsiFile = addFileToProject(rootDir + "gradle.properties")
+        val settings: KtFile = addFileToProject(File(rootDir, GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME))
+        val prop: PsiFile = addFileToProject(File(rootDir, "gradle.properties"))
 
         val gradleWrapperProperties = VfsUtil.virtualToIoFile(settings.virtualFile.parent)
             .resolve("gradle/wrapper/gradle-wrapper.properties")
@@ -56,7 +57,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         """.trimIndent()
         )
 
-        val buildGradleKts = File(rootDir).walkTopDown().find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME }
+        val buildGradleKts = rootDir.walkTopDown().find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME }
             ?: error("Couldn't find main script")
         configureScriptFile(rootDir, buildGradleKts)
         val build = (myFile as? KtFile) ?: error("")
@@ -74,9 +75,9 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         )
     }
 
-    private inline fun <reified T : Any> addFileToProject(file: String): T {
-        createFileAndSyncDependencies(File(file))
-        return (myFile as? T) ?: error("Couldn't configure project by $file")
+    private inline fun <reified T : Any> addFileToProject(file: File): T {
+        createFileAndSyncDependencies(file)
+        return (myFile as? T) ?: error("Couldn't configure project by ${file.path}")
     }
 
     fun testSectionChange() {

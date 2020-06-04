@@ -12,8 +12,8 @@ import org.junit.Assert
 
 abstract class AbstractScriptConfigurationNavigationTest : AbstractScriptConfigurationTest() {
 
-    fun doTest(path: String) {
-        configureScriptFile(path)
+    fun doTest(unused: String) {
+        configureScriptFile(testDataFile())
         val reference = file!!.findReferenceAt(myEditor.caretModel.offset)!!
 
         val resolved = reference.resolve()!!.navigationElement!!

@@ -14,8 +14,8 @@ import org.junit.ComparisonFailure
 
 @DaemonAnalyzerTestCase.CanChangeDocumentDuringHighlighting
 abstract class AbstractScriptDefinitionsOrderTest : AbstractScriptConfigurationTest() {
-    fun doTest(path: String) {
-        configureScriptFile(path)
+    fun doTest(unused: String) {
+        configureScriptFile(testDataFile())
 
         assertException(object : AbstractExceptionCase<ComparisonFailure>() {
             override fun getExpectedExceptionClass(): Class<ComparisonFailure> = ComparisonFailure::class.java

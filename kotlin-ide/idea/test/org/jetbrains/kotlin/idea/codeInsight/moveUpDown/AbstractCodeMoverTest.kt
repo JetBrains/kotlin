@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.moveUpDown
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementLeftAction
 import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementRightAction
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementDownAction
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementUpAction
 import com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover
-import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.extensions.Extensions
@@ -25,27 +22,26 @@ import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractMoveStatementTest : AbstractCodeMoverTest() {
-    protected fun doTestClassBodyDeclaration(path: String) {
-        doTest(path, KotlinDeclarationMover::class.java)
+    protected fun doTestClassBodyDeclaration(unused: String) {
+        doTest(KotlinDeclarationMover::class.java)
     }
 
-    protected fun doTestExpression(path: String) {
-        doTest(path, KotlinExpressionMover::class.java)
+    protected fun doTestExpression(unused: String) {
+        doTest(KotlinExpressionMover::class.java)
     }
 
-    protected fun doTestExpressionWithTrailingComma(path: String) {
-        doTest(path, KotlinExpressionMover::class.java, true)
+    protected fun doTestExpressionWithTrailingComma(unused: String) {
+        doTest(KotlinExpressionMover::class.java, true)
     }
 
-    private fun doTest(path: String, defaultMoverClass: Class<out StatementUpDownMover>, trailingComma: Boolean = false) {
-        doTest(path, trailingComma) { isApplicableExpected, direction ->
+    private fun doTest(defaultMoverClass: Class<out StatementUpDownMover>, trailingComma: Boolean = false) {
+        doTest(trailingComma) { isApplicableExpected, direction ->
             val movers = Extensions.getExtensions(StatementUpDownMover.STATEMENT_UP_DOWN_MOVER_EP)
             val info = StatementUpDownMover.MoveInfo()
             val actualMover = movers.firstOrNull {
@@ -59,19 +55,19 @@ abstract class AbstractMoveStatementTest : AbstractCodeMoverTest() {
 }
 
 abstract class AbstractMoveLeftRightTest : AbstractCodeMoverTest() {
-    protected fun doTest(path: String) {
-        doTest(path) { _, _ -> }
+    protected fun doTest(unused: String) {
+        doTest { _, _ -> }
     }
 }
 
 @Suppress("DEPRECATION")
 abstract class AbstractCodeMoverTest : KotlinLightCodeInsightFixtureTestCase() {
     protected fun doTest(
-        path: String,
         trailingComma: Boolean = false,
         isApplicableChecker: (isApplicableExpected: Boolean, direction: String) -> Unit
     ) {
-        myFixture.configureByFile(path)
+        val path = testPath()
+        myFixture.configureByFile(fileName())
 
         val fileText = FileUtil.loadFile(File(path), true)
         val direction = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MOVE: ") ?: error("No MOVE directive found")

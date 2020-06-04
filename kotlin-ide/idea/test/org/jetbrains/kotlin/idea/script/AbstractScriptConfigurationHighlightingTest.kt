@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.ComparisonFailure
 
 abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfigurationTest() {
-    fun doTest(path: String) {
-        configureScriptFile(path)
+    fun doTest(unused: String) {
+        configureScriptFile(testDataFile())
 
         // Highlight references at caret
         HighlightUsagesHandler.invoke(project, editor, myFile)
@@ -25,8 +25,8 @@ abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfi
         )
     }
 
-    fun doComplexTest(path: String) {
-        configureScriptFile(path)
+    fun doComplexTest(unused: String) {
+        configureScriptFile(testDataFile())
         assertException(object : AbstractExceptionCase<ComparisonFailure>() {
             override fun getExpectedExceptionClass(): Class<ComparisonFailure> = ComparisonFailure::class.java
 

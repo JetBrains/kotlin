@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -68,11 +67,11 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         // do not create default module
     }
 
-    private fun findMainScript(testDir: String): File {
-        val scriptFile = File(testDir).walkTopDown().find { it.name == SCRIPT_NAME }
+    private fun findMainScript(testDir: File): File {
+        val scriptFile = testDir.walkTopDown().find { it.name == SCRIPT_NAME }
         if (scriptFile != null) return scriptFile
 
-        return File(testDir).walkTopDown().singleOrNull { it.name.contains("script") }
+        return testDir.walkTopDown().singleOrNull { it.name.contains("script") }
             ?: error("Couldn't find $SCRIPT_NAME file in $testDir")
     }
 
@@ -84,12 +83,12 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
     }
 
-    protected fun configureScriptFile(path: String) {
+    protected fun configureScriptFile(path: File) {
         val mainScriptFile = findMainScript(path)
         configureScriptFile(path, mainScriptFile)
     }
 
-    protected fun configureScriptFile(path: String, mainScriptFile: File) {
+    protected fun configureScriptFile(path: File, mainScriptFile: File) {
         val environment = createScriptEnvironment(mainScriptFile)
         registerScriptTemplateProvider(environment)
 
@@ -97,7 +96,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             myModule = createTestModuleFromDir(it)
         }
 
-        File(path).listFiles { file -> file.name.startsWith("module") }.filter { it.exists() }.forEach {
+        path.listFiles { file -> file.name.startsWith("module") }.filter { it.exists() }.forEach {
             val newModule = createTestModuleFromDir(it)
             assert(myModule != null) { "Main module should exists" }
             ModuleRootModificationUtil.addDependency(myModule, newModule)
