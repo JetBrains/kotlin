@@ -1,16 +1,23 @@
 package com.jetbrains.kotlin.structuralsearch
 
 import com.intellij.structuralsearch.Matcher
-import com.intellij.structuralsearch.inspection.highlightTemplate.SSBasedInspection
+import com.intellij.structuralsearch.inspection.SSBasedInspection
+import com.intellij.structuralsearch.inspection.StructuralSearchProfileActionProvider
 import com.intellij.structuralsearch.plugin.ui.SearchConfiguration
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
-import java.util.*
 
-@Suppress("UnstableApiUsage")
 abstract class KotlinSSResourceInspectionTest : BasePlatformTestCase() {
+    private var myInspection: SSBasedInspection? = null
+
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor()
+
+    override fun setUp() {
+        super.setUp()
+        myInspection = SSBasedInspection()
+        myFixture.enableInspections(myInspection)
+    }
 
     protected fun doTest(pattern: String) {
         myFixture.configureByFile(getTestName(true) + ".kt")
@@ -21,11 +28,7 @@ abstract class KotlinSSResourceInspectionTest : BasePlatformTestCase() {
             fillSearchCriteria(pattern)
         }
         Matcher.validate(project, options)
-
-        val inspection = SSBasedInspection()
-        inspection.setConfigurations(Collections.singletonList(configuration))
-        myFixture.enableInspections(inspection)
-
+        StructuralSearchProfileActionProvider.createNewInspection(configuration, project)
         myFixture.testHighlighting(true, false, false)
     }
 
