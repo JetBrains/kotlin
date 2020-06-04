@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.resolve
 
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirResolution
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -19,7 +18,6 @@ abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() 
 
     override fun setUp() {
         super.setUp()
-        FirResolution.enabled = true
     }
 
     override fun doTest(path: String) {
@@ -37,7 +35,6 @@ abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() 
     }
 
     override fun tearDown() {
-        FirResolution.enabled = false
         super.tearDown()
     }
 }

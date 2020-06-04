@@ -113,10 +113,7 @@
                      description="Add all transitive dependencies on MPP modules when Android project is imported"
                      defaultValue="true"
                      restartRequired="false"/>
-        <registryKey key="kotlin.use.fir.resolution"
-                     description="Use Kotlin resolution via frontend IR for reference resolve and diagnostics in IDEA"
-                     defaultValue="false"
-                     restartRequired="true"/>
+
         <registryKey key="kotlin.gradle.scripts.useIdeaProjectImport"
                      description="Use IDEA project import mechanics to load Kotlin Gradle scripts configuration"
                      defaultValue="false"
