@@ -44,6 +44,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -139,7 +140,7 @@ public class ViewOfflineResultsAction extends AnAction {
       @Override
       public void onSuccess() {
         if (resMap.isEmpty()) return;
-        ApplicationManager.getApplication().invokeLater(() -> {
+        DumbService.getInstance(project).smartInvokeLater(() -> {
           final String name = profileName[0];
           LOG.assertTrue(name != null);
           showOfflineView(project, name, resMap, InspectionsBundle.message("offline.view.title") + " (" + name + ")");
