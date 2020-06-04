@@ -8,7 +8,9 @@ description = "Kotlin KLIB Library Commonizer"
 publish()
 
 configurations {
-    runtimeOnly.get().extendsFrom(compileOnly.get())
+    testRuntimeOnly {
+        extendsFrom(compileOnly.get())
+    }
 }
 
 dependencies {
