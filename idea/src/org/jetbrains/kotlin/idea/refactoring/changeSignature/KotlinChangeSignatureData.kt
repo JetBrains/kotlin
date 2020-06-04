@@ -103,7 +103,7 @@ class KotlinChangeSignatureData(
         results: MutableCollection<UsageInfo>
     ) {
         if (declaration.isEffectivelyActual()) {
-            declaration.liftToExpected()?.let { collectExpectActualMembers(it, primaryFunction, results) }
+            declaration.expectedDeclaration()?.let { collectExpectActualMembers(it, primaryFunction, results) }
         }
 
         if (declaration.isExpectDeclaration()) for (it in declaration.actualsForExpected()) collectExpectActualMembers(

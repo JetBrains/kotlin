@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
 import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
 import org.jetbrains.kotlin.idea.refactoring.getExpressionShortText
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.liftToExpected
+import org.jetbrains.kotlin.idea.util.expectedDeclaration
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -62,7 +62,7 @@ sealed class CreateExpectedFix<D : KtNamedDeclaration>(
         for (otherDeclaration in originalFile.declarations) {
             if (otherDeclaration === originalDeclaration) continue
             if (!otherDeclaration.hasActualModifier()) continue
-            val expectedDeclaration = otherDeclaration.liftToExpected() ?: continue
+            val expectedDeclaration = otherDeclaration.expectedDeclaration() ?: continue
             if (expectedDeclaration.module != module) continue
             return expectedDeclaration.containingKtFile
         }
@@ -102,7 +102,7 @@ sealed class CreateExpectedFix<D : KtNamedDeclaration>(
 
 private tailrec fun findFirstActualWithExpectedClass(declaration: KtNamedDeclaration): Pair<KtNamedDeclaration, KtClassOrObject?> {
     val containingClass = declaration.containingClassOrObject
-    val expectedContainingClass = containingClass?.liftToExpected() as? KtClassOrObject
+    val expectedContainingClass = containingClass?.expectedDeclaration() as? KtClassOrObject
     return if (containingClass != null && expectedContainingClass == null)
         findFirstActualWithExpectedClass(containingClass)
     else

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMetho
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMethodsNoWrapping
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.liftToExpected
+import org.jetbrains.kotlin.idea.util.expectedDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
@@ -102,7 +102,7 @@ abstract class RenameKotlinFunctionProcessorCompat : RenameKotlinPsiProcessor() 
     }
 
     private fun substituteForExpectOrActual(element: PsiElement?) =
-        (element?.namedUnwrappedElement as? KtNamedDeclaration)?.liftToExpected()
+        (element?.namedUnwrappedElement as? KtNamedDeclaration)?.expectedDeclaration()
 
     override fun substituteElementToRename(element: PsiElement, editor: Editor?): PsiElement? {
         substituteForExpectOrActual(element)?.let { return it }

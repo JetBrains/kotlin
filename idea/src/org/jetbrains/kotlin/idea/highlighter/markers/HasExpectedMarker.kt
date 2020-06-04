@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.util.expectedDeclarationIfAny
+import org.jetbrains.kotlin.idea.util.expectedDeclaration
 import org.jetbrains.kotlin.idea.util.hasDeclarationOf
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -37,7 +37,7 @@ fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
 }
 
 fun KtDeclaration.allNavigatableExpectedDeclarations(): List<KtDeclaration> =
-    listOfNotNull(expectedDeclarationIfAny()) + findMarkerBoundDeclarations().mapNotNull { it.expectedDeclarationIfAny() }
+    listOfNotNull(expectedDeclaration()) + findMarkerBoundDeclarations().mapNotNull { it.expectedDeclaration() }
 
 fun KtDeclaration.navigateToExpectedTitle() = KotlinBundle.message("highlighter.title.choose.expected.for", name.toString())
 

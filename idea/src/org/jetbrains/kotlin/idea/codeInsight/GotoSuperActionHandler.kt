@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
-import org.jetbrains.kotlin.idea.util.expectedDeclarationIfAny
+import org.jetbrains.kotlin.idea.util.expectedDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -43,7 +43,7 @@ class GotoSuperActionHandler : CodeInsightActionHandler {
                         KtObjectDeclaration::class.java
                     ) ?: return SuperDeclarationsAndDescriptor()
 
-                val expectDeclaration = if (declaration.hasActualModifier()) declaration.expectedDeclarationIfAny() else null
+                val expectDeclaration = if (declaration.hasActualModifier()) declaration.expectedDeclaration() else null
 
                 val descriptor = declaration.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL)
                 val superDeclarations = findSuperDeclarations(file.project, descriptor)

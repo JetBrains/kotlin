@@ -26,57 +26,37 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
-import org.jetbrains.kotlin.resolve.multiplatform.findAnyActualForExpected
-import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualForExpected
+import org.jetbrains.kotlin.resolve.multiplatform.*
 
-internal fun MemberDescriptor.expectedDescriptors() = module.implementedDescriptors.mapNotNull { it.declarationOf(this) }
+fun DeclarationDescriptor.expectedDescriptors(): List<DeclarationDescriptor> = when {
+    this is MemberDescriptor && isExpect -> listOf(this)
+
+    this is MemberDescriptor && isActual -> module.implementedDescriptors.flatMap { findAnyExpectForActual(it) }
+
+    this is ValueParameterDescriptor -> containingDeclaration.expectedDescriptors().mapNotNull {
+        (it as? CallableDescriptor)?.valueParameters?.getOrNull(index)
+    }
+
+    else -> emptyList()
+}
+
+
+fun KtDeclaration.expectedDeclarations(): List<KtDeclaration> =
+    (toDescriptor() as? MemberDescriptor)?.expectedDescriptors()?.mapNotNull {
+        DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
+    }.orEmpty()
 
 // TODO: Sort out the cases with multiple expected descriptors
-fun MemberDescriptor.expectedDescriptor() = expectedDescriptors().firstOrNull()
-
-fun KtDeclaration.expectedDeclarationIfAny(): KtDeclaration? {
-    val expectedDescriptor = (toDescriptor() as? MemberDescriptor)?.expectedDescriptor() ?: return null
-    return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtDeclaration
-}
-
-fun DeclarationDescriptor.liftToExpected(): DeclarationDescriptor? {
-    if (this is MemberDescriptor) {
-        return when {
-            isExpect -> this
-            isActual -> expectedDescriptor()
-            else -> null
-        }
-    }
-
-    if (this is ValueParameterDescriptor) {
-        val containingExpectedDescriptor = containingDeclaration.liftToExpected() as? CallableDescriptor ?: return null
-        return containingExpectedDescriptor.valueParameters.getOrNull(index)
-    }
-
-    return null
-}
-
-fun KtDeclaration.liftToExpected(): KtDeclaration? {
-    val descriptor = resolveToDescriptorIfAny()
-    val expectedDescriptor = descriptor?.liftToExpected() ?: return null
-    return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtDeclaration
-}
-
-fun KtParameter.liftToExpected(): KtParameter? {
-    val parameterDescriptor = resolveToParameterDescriptorIfAny()
-    val expectedDescriptor = parameterDescriptor?.liftToExpected() ?: return null
-    return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtParameter
-}
+fun DeclarationDescriptor.expectedDescriptor(): DeclarationDescriptor? = expectedDescriptors().firstOrNull()
+fun KtDeclaration.expectedDeclaration(): KtDeclaration? = expectedDeclarations().firstOrNull()
 
 fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null
 
-private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
-    with(ExpectedActualResolver) {
-        val expectedCompatibilityMap = findExpectedForActual(descriptor, this@declarationOf)
-        expectedCompatibilityMap?.get(ExpectedActualResolver.Compatibility.Compatible)?.firstOrNull()
-            ?: expectedCompatibilityMap?.values?.flatten()?.firstOrNull()
-    }
+private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? {
+    val expectedCompatibilityMap = ExpectedActualResolver.findExpectedForActual(descriptor, this@declarationOf)
+    return expectedCompatibilityMap?.get(ExpectedActualResolver.Compatibility.Compatible)?.firstOrNull()
+        ?: expectedCompatibilityMap?.values?.flatten()?.firstOrNull()
+}
 
 fun ModuleDescriptor.hasActualsFor(descriptor: MemberDescriptor) =
     actualsFor(descriptor).isNotEmpty()
@@ -135,7 +115,7 @@ fun KtDeclaration.isEffectivelyActual(checkConstructor: Boolean = true): Boolean
 
 fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, useOnSelf: Boolean = false, f: (KtDeclaration) -> Unit) {
     if (hasActualModifier()) {
-        val expectElement = liftToExpected()
+        val expectElement = expectedDeclaration()
         expectElement?.actualsForExpected()?.forEach {
             if (it !== this) {
                 f(it)
@@ -151,7 +131,7 @@ fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, useOnSel
 
 fun KtDeclaration.collectAllExpectAndActualDeclaration(withSelf: Boolean = true): Set<KtDeclaration> = when {
     isExpectDeclaration() -> actualsForExpected()
-    hasActualModifier() -> liftToExpected()?.let { it.actualsForExpected() + it - this }.orEmpty()
+    hasActualModifier() -> expectedDeclaration()?.let { it.actualsForExpected() + it - this }.orEmpty()
     else -> emptySet()
 }.let { if (withSelf) it + this else it }
 

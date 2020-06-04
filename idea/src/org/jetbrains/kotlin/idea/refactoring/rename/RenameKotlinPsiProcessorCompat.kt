@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinMethodReferencesSea
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.util.actualsForExpected
-import org.jetbrains.kotlin.idea.util.liftToExpected
+import org.jetbrains.kotlin.idea.util.expectedDeclaration
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -121,7 +121,7 @@ abstract class RenameKotlinPsiProcessorCompat : RenamePsiElementProcessor() {
 
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration
         if (declaration != null) {
-            declaration.liftToExpected()?.let { expectDeclaration ->
+            declaration.expectedDeclaration()?.let { expectDeclaration ->
                 allRenames[expectDeclaration] = safeNewName
                 expectDeclaration.actualsForExpected().forEach { allRenames[it] = safeNewName }
             }

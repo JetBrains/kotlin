@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
-import org.jetbrains.kotlin.idea.util.liftToExpected
+import org.jetbrains.kotlin.idea.util.expectedDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -47,7 +47,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(
     override fun applyTo(element: KtClass, editor: Editor?) {
         val project = element.project
 
-        val klass = element.liftToExpected() as? KtClass ?: element
+        val klass = element.expectedDeclaration() as? KtClass ?: element
 
         val subclasses = project.runSynchronouslyWithProgress(KotlinBundle.message("searching.inheritors"), true) {
             HierarchySearchRequest(klass, klass.useScope, false).searchInheritors().mapNotNull { it.unwrapped }
@@ -57,7 +57,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(
             if (it !is KtObjectDeclaration) return@groupBy null
             if (it.superTypeListEntries.size != 1) return@groupBy null
             val containingClass = it.containingClassOrObject as? KtClass ?: return@groupBy null
-            if (containingClass != klass && containingClass.liftToExpected() != klass) return@groupBy null
+            if (containingClass != klass && containingClass.expectedDeclaration() != klass) return@groupBy null
             containingClass
         }
 

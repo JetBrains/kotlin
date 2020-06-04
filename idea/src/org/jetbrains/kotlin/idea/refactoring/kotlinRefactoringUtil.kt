@@ -996,14 +996,14 @@ fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
 }
 
 internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
-    val expect = liftToExpected() ?: return listOf(this)
+    val expect = expectedDeclaration() ?: return listOf(this)
     val actuals = expect.actualsForExpected()
     return listOf(expect) + actuals
 }
 
 internal fun KtDeclaration.resolveToExpectedDescriptorIfPossible(): DeclarationDescriptor {
     val descriptor = unsafeResolveToDescriptor()
-    return descriptor.liftToExpected() ?: descriptor
+    return descriptor.expectedDescriptor() ?: descriptor
 }
 
 fun DialogWrapper.showWithTransaction() {

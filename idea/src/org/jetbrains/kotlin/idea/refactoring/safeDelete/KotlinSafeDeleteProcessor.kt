@@ -49,8 +49,8 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOpt
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
+import org.jetbrains.kotlin.idea.util.expectedDeclaration
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
-import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -458,7 +458,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     ): Collection<PsiElement>? {
         when (element) {
             is KtParameter -> {
-                val expectParameter = element.liftToExpected()
+                val expectParameter = element.expectedDeclaration()
                 if (expectParameter != null && expectParameter != element) {
                     return if (shouldAllowPropagationToExpected(element)) {
                         listOf(expectParameter)
