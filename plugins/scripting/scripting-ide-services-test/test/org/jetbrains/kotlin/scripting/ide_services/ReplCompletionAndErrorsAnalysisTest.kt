@@ -333,6 +333,27 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     }
 
     @Test
+    fun testLongCompilationsWithImport() = test {
+        // This test normally completes in about 5-10s
+        // Log should show slow _linear_ compilation time growth
+
+        val compileWriter = System.out.writer()
+
+        for (i in 1..120) {
+            run {
+                code = """
+                    import kotlin.math.*
+                    val dataFrame = mapOf("x" to sin(3.0))
+                    val e = "str"
+                """.trimIndent()
+                doCompile
+
+                loggingInfo = CSVLoggingInfo(compile = CSVLoggingInfoItem(compileWriter, i, "compile;"))
+            }
+        }
+    }
+
+    @Test
     fun testLongRunningCompilationWithReceiver() = test {
         // This test normally completes in about 8-13s
         // Removing skip* configuration parameters should slow down the test (2-3 times)

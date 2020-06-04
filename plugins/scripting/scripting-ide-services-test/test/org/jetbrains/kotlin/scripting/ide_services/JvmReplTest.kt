@@ -7,15 +7,19 @@ package org.jetbrains.kotlin.scripting.ide_services
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
+import org.jetbrains.kotlin.scripting.ide_services.test_util.*
 import org.jetbrains.kotlin.scripting.ide_services.test_util.JvmTestRepl
 import org.jetbrains.kotlin.scripting.ide_services.test_util.SourceCodeTestImpl
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.get
 import kotlin.script.experimental.jvm.util.isError
 import kotlin.script.experimental.jvm.util.isIncomplete
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 // Adapted form GenericReplTest
 
@@ -266,6 +270,50 @@ class JvmIdeServicesTest : TestCase() {
                     "res0 + 3",
                     23
                 )
+            }
+    }
+
+    fun testDependency() {
+        val resolver = ScriptDependenciesResolver()
+
+        val conf = ScriptCompilationConfiguration {
+            jvm {
+                updateClasspath(scriptCompilationClasspathFromContext("test", classLoader = DependsOn::class.java.classLoader))
+            }
+            defaultImports(DependsOn::class)
+            refineConfiguration {
+                onAnnotations(DependsOn::class, handler = { configureMavenDepsOnAnnotations(it, resolver) })
+            }
+        }
+
+        JvmTestRepl(conf)
+            .use { repl ->
+                /*
+                    The only source file in test.jar contains following code:
+
+                    package example.dependency
+                    infix fun String.to(that: String) = this + that
+                 */
+                assertEvalUnit(
+                    repl, """
+                        @file:DependsOn("plugins/scripting/scripting-ide-services-test/testData/KT-35651-test.jar")
+                        import example.dependency.*
+                        
+                        val x = listOf<String>()
+                    """.trimIndent()
+                )
+
+                // This snippet is needed to be evaluated to ensure that importing scopes were created
+                // (but default ones were not)
+                assertEvalUnit(
+                    repl, """
+                        import kotlin.math.*
+                        
+                        val y = listOf<String>()
+                    """.trimIndent()
+                )
+
+                assertEvalResult(repl, """ "a" to "a" """, "aa")
             }
     }
 }

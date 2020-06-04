@@ -20,6 +20,8 @@ dependencies {
     allTestsRuntime(commonDep("junit"))
     testCompile(project(":kotlin-scripting-ide-services-unshaded"))
     testCompile(project(":kotlin-scripting-compiler"))
+    testCompile(project(":kotlin-scripting-dependencies"))
+    testCompile(project(":kotlin-main-kts"))
     testCompile(project(":compiler:cli-common"))
 
     testRuntimeOnly(project(":kotlin-compiler"))
