@@ -35,4 +35,10 @@
     <serializerProvider implementation="org.jetbrains.konan.resolve.symbols.serialization.KtSerializer"/>
   </extensions>
 
+  <!--suppress PluginXmlValidity -->
+  <projectListeners>
+    <listener class="org.jetbrains.konan.resolve.KtDependencyGraph$Listener"
+              topic="com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesPackListener" />
+  </projectListeners>
+
 </idea-plugin>
