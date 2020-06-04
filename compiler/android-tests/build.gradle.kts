@@ -29,7 +29,13 @@ dependencies {
         testCompile(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
     }
 
-    testCompile(intellijDep()) { includeJars("util", "idea", "idea_rt", "groovy-all", rootProject = rootProject) }
+    testCompile(intellijDep()) { includeJars("util", "idea", "idea_rt", rootProject = rootProject) }
+    Platform[202].orHigher {
+        testCompile(intellijDep()) { includeJars("groovy", rootProject = rootProject) }
+    }
+    Platform[201].orLower {
+        testCompile(intellijDep()) { includeJars("groovy-all", rootProject = rootProject) }
+    }
     Platform[191].orLower {
         testCompile(intellijDep()) { includeJars("jps-builders") }
     }
