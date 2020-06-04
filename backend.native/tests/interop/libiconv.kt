@@ -9,7 +9,7 @@ import platform.posix.size_tVar
 
 fun main(args: Array<String>) {
 
-    val sourceByteArray = "Hello!".toUtf8()
+    val sourceByteArray = "Hello!".encodeToByteArray()
 
     val golden = listOf(0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x21)
 
