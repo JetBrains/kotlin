@@ -1051,8 +1051,7 @@ public final class TemplateState implements Disposable {
     myEditor.getSelectionModel().removeSelection();
     if (brokenOff && !((TemplateManagerImpl)TemplateManager.getInstance(myProject)).shouldSkipInTests()) return;
 
-    int selectionSegment = myTemplate.getVariableSegmentNumber(TemplateImpl.SELECTION);
-    int endSegmentNumber = selectionSegment >= 0 && getSelectionBeforeTemplate() == null ? selectionSegment : myTemplate.getEndSegmentNumber();
+    int endSegmentNumber = getFinalSegmentNumber();
     int offset = -1;
     if (endSegmentNumber >= 0) {
       offset = mySegments.getSegmentStart(endSegmentNumber);
@@ -1284,7 +1283,7 @@ public final class TemplateState implements Disposable {
       }
       if (myTemplate.isToReformat()) {
         try {
-          int endSegmentNumber = myTemplate.getEndSegmentNumber();
+          int endSegmentNumber = getFinalSegmentNumber();
           PsiDocumentManager.getInstance(myProject).commitDocument(myDocument);
           RangeMarker dummyAdjustLineMarkerRange = null;
           int endVarOffset = -1;
@@ -1333,6 +1332,17 @@ public final class TemplateState implements Disposable {
         }
       }
     }
+  }
+
+  /**
+   * @return the segment template end on. Caret going to be positioned at this segment in the end.
+   */
+  private int getFinalSegmentNumber() {
+    int endSegmentNumber = myTemplate.getEndSegmentNumber();
+    if (endSegmentNumber < 0 && getSelectionBeforeTemplate() == null) {
+      endSegmentNumber = myTemplate.getVariableSegmentNumber(TemplateImpl.SELECTION);
+    }
+    return endSegmentNumber;
   }
 
   private void smartIndent(int startOffset, int endOffset) {
