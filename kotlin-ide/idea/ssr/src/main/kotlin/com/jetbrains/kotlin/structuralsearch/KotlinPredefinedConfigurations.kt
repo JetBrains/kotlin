@@ -25,7 +25,6 @@ object KotlinPredefinedConfigurations {
             """.trimIndent(),
             CLASS_TYPE
         ),
-
         searchTemplate(
             KSSRBundle.message("predefined.configuration.all.methods.of.the.class"),
             """
@@ -35,7 +34,6 @@ object KotlinPredefinedConfigurations {
             """.trimIndent(),
             CLASS_TYPE
         ),
-
         searchTemplate(
             KSSRBundle.message("predefined.configuration.all.fields.of.the.object"),
             """
@@ -45,9 +43,15 @@ object KotlinPredefinedConfigurations {
             """.trimIndent(),
             CLASS_TYPE
         ),
-
         searchTemplate(
             KSSRBundle.message("predefined.configuration.anonymous.class"), "fun '_Function() = object { }", CLASS_TYPE
+        ),
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.class.annotation"),
+            """
+                @'_Annotation class 'Name
+            """.trimIndent(),
+            CLASS_TYPE
         ),
 
         // Expressions
@@ -92,6 +96,11 @@ object KotlinPredefinedConfigurations {
         searchTemplate(
             KSSRBundle.message("predefined.configuration.function.signature"),
             "fun '_Name('_Param*) : '_Type",
+            FUNCTION_TYPE
+        ),
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.function.annotation"),
+            "@'_Annotation fun 'Name('_Param*)",
             FUNCTION_TYPE
         ),
 
