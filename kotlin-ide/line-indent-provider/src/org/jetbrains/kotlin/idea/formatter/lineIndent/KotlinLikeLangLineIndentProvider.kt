@@ -80,43 +80,68 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
                 Indent.getNoneIndent(),
                 IndentCalculator.LINE_BEFORE,
             )
+        }
 
-            before.isInControlFlowStatement() -> return factory.createIndentCalculator(
+        before.controlFlowStatementBefore()?.let { controlFlowKeywordPosition ->
+            return factory.createIndentCalculator(
                 when {
                     after.isAt(LeftParenthesis) -> Indent.getContinuationIndent()
-                    after.isAtAnyOf(BlockOpeningBrace, Arrow) -> Indent.getNoneIndent()
+                    after.isAtAnyOf(BlockOpeningBrace, Arrow) || controlFlowKeywordPosition.isWhileInsideDoWhile() -> Indent.getNoneIndent()
                     else -> Indent.getNormalIndent()
                 },
                 IndentCalculator.LINE_BEFORE,
             )
         }
 
-        after
-            .takeIf { it.isAt(TemplateEntryClose) }
-            ?.let { templateEntryPosition ->
-                val indent = if (currentPosition.hasEmptyLineAfter(offset)) Indent.getNormalIndent() else Indent.getNoneIndent()
-                templateEntryPosition.moveBeforeParentheses(TemplateEntryOpen, TemplateEntryClose)
-                val baseLineOffset = templateEntryPosition.startOffset
-                return factory.createIndentCalculator(indent) { baseLineOffset }
-            }
+        after.takeIf { it.isAt(TemplateEntryClose) }?.let { templateEntryPosition ->
+            val indent = if (currentPosition.hasEmptyLineAfter(offset)) Indent.getNormalIndent() else Indent.getNoneIndent()
+            templateEntryPosition.moveBeforeParentheses(TemplateEntryOpen, TemplateEntryClose)
+            val baseLineOffset = templateEntryPosition.startOffset
+            return factory.createIndentCalculator(indent) { baseLineOffset }
+        }
 
         return null
     }
 
-    private fun SemanticEditorPosition.isInControlFlowStatement(): Boolean = with(copy()) {
+    private fun SemanticEditorPosition.moveBeforeIfThisIsWhiteSpaceOrComment() = moveBeforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
+
+    private fun SemanticEditorPosition.isWhileInsideDoWhile(): Boolean {
+        if (!isAt(WhileKeyword)) return false
+        with(copy()) {
+            moveBefore()
+            var whileKeywordLevel = 1
+            while (!isAtEnd) when {
+                isAt(BlockOpeningBrace) -> return false
+                isAt(DoKeyword) -> {
+                    if (--whileKeywordLevel == 0) return true
+                    moveBefore()
+                }
+                isAt(WhileKeyword) -> {
+                    ++whileKeywordLevel
+                    moveBefore()
+                }
+                isAt(BlockClosingBrace) -> moveBeforeParentheses(BlockOpeningBrace, BlockClosingBrace)
+                else -> moveBefore()
+            }
+        }
+
+        return false
+    }
+
+    private fun SemanticEditorPosition.controlFlowStatementBefore(): SemanticEditorPosition? = with(copy()) {
         if (isAt(BlockOpeningBrace)) {
             moveBefore()
             moveBeforeParentheses(LeftParenthesis, RightParenthesis)
-            moveBeforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
+            moveBeforeIfThisIsWhiteSpaceOrComment()
         }
 
-        if (currElement in CONTROL_FLOW_CONSTRUCTIONS) return true
-        if (!isAt(RightParenthesis)) return false
+        if (currElement in CONTROL_FLOW_CONSTRUCTIONS) return this
+        if (!isAt(RightParenthesis)) return null
 
         moveBeforeParentheses(LeftParenthesis, RightParenthesis)
-        moveBeforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
+        moveBeforeIfThisIsWhiteSpaceOrComment()
 
-        return currElement in CONTROL_FLOW_CONSTRUCTIONS
+        return takeIf { currElement in CONTROL_FLOW_CONSTRUCTIONS }
     }
 
     enum class KotlinElement : SemanticEditorPosition.SyntaxElement {
