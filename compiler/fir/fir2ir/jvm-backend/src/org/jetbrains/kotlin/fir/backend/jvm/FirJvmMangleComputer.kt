@@ -79,9 +79,13 @@ open class FirJvmMangleComputer(
             else -> return
         }
         if (parentClassId != null && !parentClassId.isLocal) {
-            val parentClass = session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)?.fir as? FirRegularClass
-                ?: throw AssertionError("Attempt to find parent for probably-local declaration!")
-            parentClass.accept(this@FirJvmMangleComputer, false)
+            val parentClassLike = session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)?.fir
+                ?: throw AssertionError("Attempt to find parent ($parentClassId) for probably-local declaration!")
+            if (parentClassLike is FirRegularClass || parentClassLike is FirTypeAlias) {
+                parentClassLike.accept(this@FirJvmMangleComputer, false)
+            } else {
+                throw AssertionError("Strange class-like declaration: ${parentClassLike.render()}")
+            }
         } else if (parentClassId == null && !parentPackageFqName.isRoot) {
             builder.appendName(parentPackageFqName.asString())
         }
