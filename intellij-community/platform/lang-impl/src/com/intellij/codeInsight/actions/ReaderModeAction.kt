@@ -2,7 +2,6 @@
 package com.intellij.codeInsight.actions
 
 import com.intellij.codeInsight.actions.ReaderModeFileEditorListener.Companion.matchMode
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.PlatformDataKeys
@@ -22,7 +21,6 @@ class ReaderModeAction : ToggleAction() {
     val file = PlatformDataKeys.VIRTUAL_FILE.getData(e.dataContext)?: return
 
     e.presentation.isEnabledAndVisible = matchMode(project, file)
-    e.presentation.icon = if (ReaderModeSettings.instance(project).enabled) AllIcons.Actions.Edit else AllIcons.Actions.Show
   }
 
   override fun setSelected(e: AnActionEvent, readerMode: Boolean) {
