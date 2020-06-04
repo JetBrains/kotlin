@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class ToDoRootNode extends BaseToDoNode{
+public class ToDoRootNode extends BaseToDoNode<Object> {
   private final SummaryNode mySummaryNode;
 
   public ToDoRootNode(Project project, Object value, TodoTreeBuilder builder, @NotNull ToDoSummary summary) {

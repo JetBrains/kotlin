@@ -82,7 +82,7 @@ public class TodoView implements PersistentStateComponent<TodoView.State>, Dispo
   }
 
   static class State {
-    @Attribute(value = "selected-index")
+    @Attribute("selected-index")
     public int selectedIndex;
 
     @OptionTag(value = "selected-file", nameAttribute = "id", tag = "todo-panel", valueAttribute = "")

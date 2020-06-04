@@ -16,9 +16,9 @@
 
 package com.intellij.ide.todo.configurable;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.psi.search.TodoPattern;
 import com.intellij.util.ui.ItemRemovable;
-import com.intellij.ide.IdeBundle;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -32,9 +32,9 @@ final class PatternsTableModel extends AbstractTableModel implements ItemRemovab
   };
   private final Class[] ourColumnClasses=new Class[]{Icon.class,Boolean.class,String.class};
 
-  private final List<? extends TodoPattern> myPatterns;
+  private final List<TodoPattern> myPatterns;
 
-  PatternsTableModel(List<? extends TodoPattern> patterns){
+  PatternsTableModel(List<TodoPattern> patterns){
     myPatterns=patterns;
   }
 

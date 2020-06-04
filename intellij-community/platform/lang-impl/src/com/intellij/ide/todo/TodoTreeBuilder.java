@@ -79,7 +79,7 @@ public abstract class TodoTreeBuilder implements Disposable {
   /** Updates tree if containing files change VCS status. */
   private final MyFileStatusListener myFileStatusListener;
   private TodoTreeStructure myTreeStructure;
-  private StructureTreeModel myModel;
+  private StructureTreeModel<TodoTreeStructure> myModel;
   private boolean myDisposed;
 
   TodoTreeBuilder(JTree tree, Project project) {
@@ -100,11 +100,7 @@ public abstract class TodoTreeBuilder implements Disposable {
     //setCanYieldUpdate(true);
   }
 
-  public StructureTreeModel getModel() {
-    return myModel;
-  }
-
-  public void setModel(StructureTreeModel model) {
+  public void setModel(StructureTreeModel<TodoTreeStructure> model) {
     myModel = model;
   }
 

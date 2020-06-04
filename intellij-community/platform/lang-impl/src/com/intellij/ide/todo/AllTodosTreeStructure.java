@@ -31,13 +31,11 @@ public class AllTodosTreeStructure extends TodoTreeStructure {
 
   @Override
   public boolean accept(final PsiFile psiFile) {
-    final boolean
-            accept = psiFile.isValid() &&
-            (
-            myTodoFilter != null && myTodoFilter.accept(mySearchHelper, psiFile) ||
-            (myTodoFilter == null && mySearchHelper.getTodoItemsCount(psiFile) > 0)
-            );
-    return accept;
+    return psiFile.isValid() &&
+           (
+             myTodoFilter != null && myTodoFilter.accept(mySearchHelper, psiFile) ||
+             (myTodoFilter == null && mySearchHelper.getTodoItemsCount(psiFile) > 0)
+           );
   }
 
   @Override

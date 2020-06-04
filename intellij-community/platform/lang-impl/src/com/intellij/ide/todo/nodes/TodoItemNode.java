@@ -184,10 +184,6 @@ public final class TodoItemNode extends BaseToDoNode<SmartTodoItemPointer> imple
     }
   }
 
-  public int getRowCount() {
-    return myAdditionalLines.size() + 1;
-  }
-
   @Override
   public String getTestPresentation() {
     return "Item: " + getValue().getTodoItem().getTextRange();

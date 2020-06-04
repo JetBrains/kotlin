@@ -21,7 +21,6 @@ import com.intellij.ide.todo.TodoTreeBuilder;
 import com.intellij.ide.todo.TodoTreeStructure;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseToDoNode<Value> extends AbstractTreeNode<Value> {
@@ -34,10 +33,6 @@ public abstract class BaseToDoNode<Value> extends AbstractTreeNode<Value> {
     myToDoSettings = myBuilder.getTodoTreeStructure();
   }
 
-  public boolean contains(VirtualFile file) {
-    return false;
-  }
-  
   public boolean contains(Object element) {
     return false;
   }

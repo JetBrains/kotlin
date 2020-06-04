@@ -6,7 +6,6 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.ide.todo.TodoConfiguration;
 import com.intellij.ide.todo.TodoFilter;
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.search.TodoAttributesUtil;
@@ -95,7 +94,7 @@ public class TodoConfigurable implements SearchableConfigurable, Configurable.No
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     stopEditing();
     TodoConfiguration.getInstance().setMultiLine(myMultiLineCheckBox.isSelected());
     if (arePatternsModified()) {

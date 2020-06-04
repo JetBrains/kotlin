@@ -110,7 +110,7 @@ public abstract class TodoPanel extends SimpleToolWindowPanel implements Occuren
     TodoTreeBuilder todoTreeBuilder = createTreeBuilder(myTree, myProject);
     Disposer.register(this, todoTreeBuilder);
     TodoTreeStructure structure = todoTreeBuilder.getTodoTreeStructure();
-    StructureTreeModel structureTreeModel = new StructureTreeModel<>(structure, TodoTreeBuilder.NODE_DESCRIPTOR_COMPARATOR, myProject);
+    StructureTreeModel<TodoTreeStructure> structureTreeModel = new StructureTreeModel<>(structure, TodoTreeBuilder.NODE_DESCRIPTOR_COMPARATOR, myProject);
     AsyncTreeModel asyncTreeModel = new AsyncTreeModel(structureTreeModel, myProject);
     myTree.setModel(asyncTreeModel);
     asyncTreeModel.addTreeModelListener(new MyExpandListener(todoTreeBuilder));
@@ -413,7 +413,6 @@ public abstract class TodoPanel extends SimpleToolWindowPanel implements Occuren
       }
     }
     else if (PlatformDataKeys.HELP_ID.is(dataId)) {
-      //noinspection HardCodedStringLiteral
       return "find.todoList";
     }
     else if (TODO_PANEL_DATA_KEY.is(dataId)) {

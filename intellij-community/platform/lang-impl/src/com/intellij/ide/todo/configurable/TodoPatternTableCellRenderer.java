@@ -12,9 +12,9 @@ import java.awt.*;
 import java.util.List;
 
 final class TodoPatternTableCellRenderer extends DefaultTableCellRenderer {
-  private final List<? extends TodoPattern> myPatterns;
+  private final List<TodoPattern> myPatterns;
 
-  TodoPatternTableCellRenderer(List<? extends TodoPattern> patterns) {
+  TodoPatternTableCellRenderer(List<TodoPattern> patterns) {
     myPatterns = patterns;
   }
 
