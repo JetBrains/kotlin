@@ -2,10 +2,8 @@
 package com.intellij.refactoring.rename.inplace
 
 import com.intellij.codeInsight.hints.InlayPresentationFactory
-import com.intellij.codeInsight.hints.presentation.IconPresentation
-import com.intellij.codeInsight.hints.presentation.InlayPresentation
-import com.intellij.codeInsight.hints.presentation.PresentationFactory
-import com.intellij.codeInsight.hints.presentation.PresentationRenderer
+import com.intellij.codeInsight.hints.fireContentChanged
+import com.intellij.codeInsight.hints.presentation.*
 import com.intellij.codeInsight.template.impl.TemplateState
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
@@ -35,7 +33,8 @@ import com.intellij.ui.layout.*
 import com.intellij.ui.popup.PopupFactoryImpl
 import org.jetbrains.annotations.ApiStatus
 import java.awt.Color
-import java.util.concurrent.atomic.AtomicReference
+import java.awt.Dimension
+import java.awt.Rectangle
 import javax.swing.JLabel
 
 @ApiStatus.Experimental
@@ -50,6 +49,15 @@ object TemplateInlayUtil {
     VirtualTemplateElement.installOnTemplate(templateState, object : VirtualTemplateElement {
       override fun onSelect(templateState: TemplateState) {
         presentation.isSelected = true
+      }
+    })
+    presentation.addListener(object : PresentationListener {
+      override fun contentChanged(area: Rectangle) {
+        inlay.repaint()
+      }
+
+      override fun sizeChanged(previous: Dimension, current: Dimension) {
+        inlay.repaint()
       }
     })
     Disposer.register(templateState, inlay)
@@ -91,7 +99,7 @@ object TemplateInlayUtil {
   }
 
   @JvmStatic
-  fun createSettingsPresentation(editor: EditorImpl, inlayToUpdate: AtomicReference<Inlay<PresentationRenderer>>): SelectableInlayPresentation {
+  fun createSettingsPresentation(editor: EditorImpl): SelectableInlayPresentation {
     val factory = PresentationFactory(editor)
     fun button(background: Color?): InlayPresentation {
       val button = factory.container(
@@ -108,8 +116,7 @@ object TemplateInlayUtil {
       editor,
       default = button(colorsScheme.getColor(INLINE_REFACTORING_SETTINGS_DEFAULT)),
       active = button(colorsScheme.getColor(INLINE_REFACTORING_SETTINGS_FOCUSED)),
-      hovered = button(colorsScheme.getColor(INLINE_REFACTORING_SETTINGS_HOVERED)),
-      inlayToUpdate = inlayToUpdate
+      hovered = button(colorsScheme.getColor(INLINE_REFACTORING_SETTINGS_HOVERED))
     )
   }
 
@@ -117,7 +124,6 @@ object TemplateInlayUtil {
   fun createRenameSettingsInlay(templateState: TemplateState,
                                 offset: Int,
                                 elementToRename: PsiNamedElement,
-                                inlayReference: AtomicReference<Inlay<PresentationRenderer>>,
                                 restart: Runnable): Inlay<PresentationRenderer>? {
     val editor = templateState.editor as EditorImpl
     val processor = RenamePsiElementProcessor.forElement(elementToRename)
@@ -130,7 +136,8 @@ object TemplateInlayUtil {
       background = colorsScheme.getColor(bgKey)
     ), padding = InlayPresentationFactory.Padding(if (second) 0 else 3, if (second) 6 else 0, 0, 0))
 
-    var tooltip = "Rename also in comments and string literals"
+    var tooltip = "Choose where to rename occurrences in addition to usages: \n" +
+                          "– In comments and string literals"
     val commentsStatusIcon = if (processor.isToSearchInComments(elementToRename)) AllIcons.Actions.InlayRenameInCommentsActive else AllIcons.Actions.InlayRenameInComments
 
     val inCommentsIconPresentation = factory.icon(commentsStatusIcon)
@@ -150,22 +157,18 @@ object TemplateInlayUtil {
       defaultPresentation = testOccurrencesButton(INLINE_REFACTORING_SETTINGS_DEFAULT, defaultPresentation)
       active = testOccurrencesButton(INLINE_REFACTORING_SETTINGS_FOCUSED, active)
       hovered = testOccurrencesButton(INLINE_REFACTORING_SETTINGS_HOVERED, hovered)
-      tooltip += " and in files that don’t contain explicit code references"
+      tooltip += "\n– In files that don’t contain source code"
     }
 
-    val presentation = SelectableInlayButton(editor, defaultPresentation, active, hovered, inlayReference)
-    val panel = renamePanel(elementToRename, editor, inCommentsIconPresentation, inTextOccurrencesIconPresentation, restart, inlayReference)
-    val inlay = createNavigatableButtonWithPopup(templateState, offset, presentation, panel) ?: return null
-    inlayReference.set(inlay)
-    return inlay
+    val presentation = SelectableInlayButton(editor, defaultPresentation, active, factory.withTooltip(tooltip, hovered))
+    val panel = renamePanel(elementToRename, editor, inTextOccurrencesIconPresentation, restart)
+    return createNavigatableButtonWithPopup(templateState, offset, presentation, panel) ?: return null
   }
 
   private fun renamePanel(elementToRename: PsiElement,
                           editor: Editor,
-                          searchInCommentsPresentation: IconPresentation,
                           searchForTextOccurrencesPresentation: IconPresentation?,
-                          restart: Runnable,
-                          inlayReference: AtomicReference<Inlay<PresentationRenderer>>): DialogPanel {
+                          restart: Runnable): DialogPanel {
     val processor = RenamePsiElementProcessor.forElement(elementToRename)
     return panel {
       row("Also rename in:") {
@@ -175,8 +178,7 @@ object TemplateInlayUtil {
                      processor.isToSearchInComments(elementToRename),
                      actionListener = { _, cb ->  processor.setToSearchInComments(elementToRename, cb.isSelected)
                                                   restart.run()
-                                                  searchInCommentsPresentation.icon = if (cb.isSelected) AllIcons.Actions.InlayRenameInCommentsActive else AllIcons.Actions.InlayRenameInComments
-                                                  inlayReference.get()?.repaint()}
+                     }
             ).focused()
             component(JLabel(AllIcons.Actions.InlayRenameInComments))
           }
@@ -188,7 +190,7 @@ object TemplateInlayUtil {
                        processor.isToSearchForTextOccurrences(elementToRename),
                        actionListener = { _, cb -> processor.setToSearchForTextOccurrences(elementToRename, cb.isSelected)
                                                    searchForTextOccurrencesPresentation?.icon = if (cb.isSelected) AllIcons.Actions.InlayRenameInNoCodeFilesActive else AllIcons.Actions.InlayRenameInNoCodeFiles
-                                                   inlayReference.get()?.repaint()})
+                                                   searchForTextOccurrencesPresentation?.fireContentChanged()})
               component(JLabel(AllIcons.Actions.InlayRenameInNoCodeFiles))
             }
           }

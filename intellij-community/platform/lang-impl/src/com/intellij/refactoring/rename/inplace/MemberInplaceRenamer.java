@@ -2,26 +2,22 @@
 package com.intellij.refactoring.rename.inplace;
 
 import com.intellij.codeInsight.TargetElementUtil;
-import com.intellij.codeInsight.hints.presentation.PresentationRenderer;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.lang.Language;
 import com.intellij.lang.findUsages.DescriptiveNameUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.impl.FinishMarkAction;
 import com.intellij.openapi.command.impl.StartMarkAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.Inlay;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
@@ -46,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class MemberInplaceRenamer extends VariableInplaceRenamer {
   private final PsiElement mySubstituted;
@@ -326,7 +321,6 @@ public class MemberInplaceRenamer extends VariableInplaceRenamer {
     return getVariable();
   }
 
-  private final AtomicReference<Inlay<PresentationRenderer>> inlayReference = new AtomicReference<>();
   @Override
   public void afterTemplateStart() {
     super.afterTemplateStart();
@@ -346,14 +340,7 @@ public class MemberInplaceRenamer extends VariableInplaceRenamer {
         state.gotoEnd(true);
         createInplaceRenamerToRestart(var, editor, insertedName).performInplaceRefactoring(new LinkedHashSet<>());
       };
-      Inlay<PresentationRenderer> inlay = TemplateInlayUtil.createRenameSettingsInlay(templateState, variableRange.getEndOffset(), variable, inlayReference, restartCallback);
-      if (inlay == null) return;
-      Disposer.register(inlay, new Disposable() {
-        @Override
-        public void dispose() {
-          inlayReference.set(null);
-        }
-      });
+      TemplateInlayUtil.createRenameSettingsInlay(templateState, variableRange.getEndOffset(), variable, restartCallback);
     }
   }
 
