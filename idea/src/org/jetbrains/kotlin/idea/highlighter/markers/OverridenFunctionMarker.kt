@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachDeclaredMember
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import java.awt.event.MouseEvent
@@ -114,7 +114,7 @@ fun getSubclassedClassTooltip(klass: PsiClass): String? {
     ) {
         val moduleNameRequired = if (it is KtLightClass) {
             val origin = it.kotlinOrigin
-            origin?.hasActualModifier() == true || origin?.isExpectDeclaration() == true
+            origin?.hasActualModifier() == true || origin?.isEffectivelyExpect() == true
         } else false
         val moduleName = it.module?.name
         val elementText = renderer.getElementText(it) + (moduleName?.takeIf { moduleNameRequired }?.let { " [$it]" } ?: "")

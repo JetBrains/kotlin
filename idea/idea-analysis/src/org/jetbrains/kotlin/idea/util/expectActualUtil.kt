@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.multiplatform.*
@@ -66,10 +65,10 @@ fun KtDeclaration.actualDeclarations(): Set<KtDeclaration> =
             DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
         } ?: emptySet()
 
-fun KtDeclaration.isExpectDeclaration(): Boolean = if (hasExpectModifier())
+fun KtDeclaration.isEffectivelyExpect(): Boolean = if (hasExpectModifier())
     true
 else
-    containingClassOrObject?.isExpectDeclaration() == true
+    containingClassOrObject?.isEffectivelyExpect() == true
 
 fun KtDeclaration.isEffectivelyActual(checkConstructor: Boolean = true): Boolean = when {
     hasActualModifier() -> true
@@ -86,7 +85,7 @@ fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, useOnSel
             }
         }
         expectElement?.let { f(it) }
-    } else if (!checkExpect || isExpectDeclaration()) {
+    } else if (!checkExpect || isEffectivelyExpect()) {
         actualDeclarations().forEach { f(it) }
     }
 
@@ -94,7 +93,7 @@ fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, useOnSel
 }
 
 fun KtDeclaration.collectAllExpectAndActualDeclaration(withSelf: Boolean = true): Set<KtDeclaration> = when {
-    isExpectDeclaration() -> actualDeclarations()
+    isEffectivelyExpect() -> actualDeclarations()
     hasActualModifier() -> expectedDeclaration()?.let { it.actualDeclarations() + it - this }.orEmpty()
     else -> emptySet()
 }.let { if (withSelf) it + this else it }

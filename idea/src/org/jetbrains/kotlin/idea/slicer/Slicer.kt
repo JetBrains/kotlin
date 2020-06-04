@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.util.actualDescriptors
 import org.jetbrains.kotlin.idea.util.expectedDescriptor
 import org.jetbrains.kotlin.idea.util.hasInlineModifier
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -119,7 +119,7 @@ abstract class Slicer(
             .searchOverriders()
             .forEach { it.namedUnwrappedElement?.passToProcessor(mode) }
 
-        if (this is KtCallableDeclaration && isExpectDeclaration()) {
+        if (this is KtCallableDeclaration && isEffectivelyExpect()) {
             resolveToDescriptorIfAny()
                 ?.actualDescriptors()
                 ?.forEach {

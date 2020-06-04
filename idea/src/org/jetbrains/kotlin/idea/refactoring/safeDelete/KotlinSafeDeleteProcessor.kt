@@ -47,10 +47,9 @@ import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
-import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.idea.util.expectedDeclaration
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -58,7 +57,6 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
@@ -474,7 +472,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             }
 
             is KtDeclaration -> {
-                if (element.hasActualModifier() || element.isExpectDeclaration()) {
+                if (element.hasActualModifier() || element.isEffectivelyExpect()) {
                     if (!shouldAllowPropagationToExpected()) {
                         return null
                     }

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.idea.util.actualDescriptors
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -64,7 +64,7 @@ class OutflowSlicer(
                 require(declaration is KtCallableDeclaration)
                 require(element == declaration.receiverTypeReference)
 
-                if (declaration.isExpectDeclaration()) {
+                if (declaration.isEffectivelyExpect()) {
                     declaration.resolveToDescriptorIfAny()
                         ?.actualDescriptors()
                         ?.forEach {
@@ -122,7 +122,7 @@ class OutflowSlicer(
             val callable = variable.ownerFunction as? KtCallableDeclaration
 
             if (callable != null) {
-                if (callable.isExpectDeclaration()) {
+                if (callable.isEffectivelyExpect()) {
                     variable.resolveToDescriptorIfAny()
                         ?.actualDescriptors()
                         ?.forEach {

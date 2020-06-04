@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.ValVarExpression
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.idea.util.mustHaveValOrVar
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 interface AddValVarToConstructorParameterAction {
     fun canInvoke(element: KtParameter): Boolean =
-        element.valOrVarKeyword == null && ((element.parent as? KtParameterList)?.parent as? KtPrimaryConstructor)?.takeIf { it.mustHaveValOrVar() || !it.isExpectDeclaration() } != null
+        element.valOrVarKeyword == null && ((element.parent as? KtParameterList)?.parent as? KtPrimaryConstructor)?.takeIf { it.mustHaveValOrVar() || !it.isEffectivelyExpect() } != null
 
     operator fun invoke(element: KtParameter, editor: Editor?) {
         val project = element.project

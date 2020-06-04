@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -328,7 +328,7 @@ fun KtModifierListOwner.canBePrivate(): Boolean {
     if (this is KtProperty && this.hasJvmFieldAnnotation()) return false
 
     if (this is KtDeclaration) {
-        if (hasActualModifier() || isExpectDeclaration()) return false
+        if (hasActualModifier() || isEffectivelyExpect()) return false
         val containingClassOrObject = containingClassOrObject ?: return true
         if (containingClassOrObject is KtClass &&
             (containingClassOrObject.isInterface() || containingClassOrObject.isAnnotation())

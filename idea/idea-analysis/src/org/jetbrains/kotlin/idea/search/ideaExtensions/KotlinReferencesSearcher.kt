@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.operators.OperatorReference
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.expectedDeclaration
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -185,7 +185,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
             val resultProcessor = KotlinRequestResultProcessor(elementToSearch, filter = refFilter, options = kotlinOptions)
 
             val name = elementToSearch.name
-            if (kotlinOptions.anyEnabled() || elementToSearch is KtNamedDeclaration && elementToSearch.isExpectDeclaration()) {
+            if (kotlinOptions.anyEnabled() || elementToSearch is KtNamedDeclaration && elementToSearch.isEffectivelyExpect()) {
                 if (name != null) {
                     // Check difference with default scope
                     queryParameters.optimizer.searchWord(

@@ -10,7 +10,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
@@ -33,7 +33,7 @@ class RemoveEmptyPrimaryConstructorIntention : SelfTargetingOffsetIndependentInt
         element.annotations.isNotEmpty() -> false
         element.modifierList?.text?.isBlank() == false -> false
         element.containingClass()?.secondaryConstructors?.isNotEmpty() == true -> false
-        element.isExpectDeclaration() -> false
+        element.isEffectivelyExpect() -> false
         else -> true
     }
 }

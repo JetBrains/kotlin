@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.LATEINIT_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.VARARG_KEYWORD
@@ -47,7 +47,7 @@ class MovePropertyToConstructorIntention :
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         fun KtProperty.isDeclaredInSupportedClass(): Boolean {
             val parent = getStrictParentOfType<KtClassOrObject>()
-            return parent is KtClass && !parent.isInterface() && !parent.isExpectDeclaration()
+            return parent is KtClass && !parent.isInterface() && !parent.isEffectivelyExpect()
         }
 
         return !element.isLocal

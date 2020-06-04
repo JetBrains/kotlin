@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MoveRefa
 import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MovedEntity
 import org.jetbrains.kotlin.idea.util.collectAllExpectAndActualDeclaration
 import org.jetbrains.kotlin.idea.util.isEffectivelyActual
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getFileOrScriptDeclarations
@@ -68,7 +68,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
     }
 
     private val elementsToMoveHasMPP by lazy {
-        applyMPPDeclarations && elementsToMove.any { it.isEffectivelyActual() || it.isExpectDeclaration() }
+        applyMPPDeclarations && elementsToMove.any { it.isEffectivelyActual() || it.isEffectivelyExpect() }
     }
 
     private val singleSourceFileMode = sourceFiles.size == 1

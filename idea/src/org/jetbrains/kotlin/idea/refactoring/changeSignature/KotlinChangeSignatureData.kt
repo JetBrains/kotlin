@@ -106,7 +106,7 @@ class KotlinChangeSignatureData(
             declaration.expectedDeclaration()?.let { collectExpectActualMembers(it, primaryFunction, results) }
         }
 
-        if (declaration.isExpectDeclaration()) for (it in declaration.actualDeclarations()) collectExpectActualMembers(
+        if (declaration.isEffectivelyExpect()) for (it in declaration.actualDeclarations()) collectExpectActualMembers(
             it,
             primaryFunction,
             results

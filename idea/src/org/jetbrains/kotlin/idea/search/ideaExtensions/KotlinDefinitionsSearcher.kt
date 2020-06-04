@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMeth
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.util.actualDeclarations
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import java.util.*
@@ -49,7 +49,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
 
         return when (element) {
             is KtClass -> {
-                val isExpectEnum = runReadAction { element.isEnum() && element.isExpectDeclaration() }
+                val isExpectEnum = runReadAction { element.isEnum() && element.isEffectivelyExpect() }
                 if (isExpectEnum) {
                     processActualDeclarations(element, processor)
                 } else {
@@ -157,7 +157,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
 
         private fun processActualDeclarations(declaration: KtDeclaration, consumer: Processor<PsiElement>): Boolean {
             return runReadAction {
-                if (!declaration.isExpectDeclaration()) true
+                if (!declaration.isEffectivelyExpect()) true
                 else declaration.actualDeclarations().all(consumer::process)
             }
         }

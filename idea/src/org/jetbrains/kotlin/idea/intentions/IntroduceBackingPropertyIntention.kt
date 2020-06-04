@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -40,7 +40,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(
             if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == false) return false
 
             val containingClass = property.getStrictParentOfType<KtClassOrObject>() ?: return false
-            if (containingClass.isExpectDeclaration()) return false
+            if (containingClass.isEffectivelyExpect()) return false
             return containingClass.declarations.none { it is KtProperty && it.name == "_$name" }
         }
 

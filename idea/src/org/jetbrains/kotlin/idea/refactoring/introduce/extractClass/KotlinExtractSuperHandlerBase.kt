@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui.KotlinExtractSuperDialogBase
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -112,7 +112,7 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
     }
 
     internal open fun getErrorMessage(klass: KtClassOrObject): String? = when {
-        klass.isExpectDeclaration() -> KotlinBundle.message("error.text.extraction.from.expect.class.is.not.yet.supported")
+        klass.isEffectivelyExpect() -> KotlinBundle.message("error.text.extraction.from.expect.class.is.not.yet.supported")
         klass.toLightClass() == null -> KotlinBundle.message("error.text.extraction.from.non.jvm.class.is.not.yet.supported")
         else -> null
     }

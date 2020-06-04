@@ -26,16 +26,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
-import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
-import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
-import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
-import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.editor.fixers.startLine
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.presentation.DeclarationByModuleRenderer
@@ -45,7 +40,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.ListCellRenderer
@@ -372,14 +366,14 @@ private fun collectMultiplatformMarkers(
     result: LineMarkerInfos
 ) {
     if (KotlinLineMarkerOptions.actualOption.isEnabled) {
-        if (declaration.isExpectDeclaration()) {
+        if (declaration.isEffectivelyExpect()) {
             collectActualMarkers(declaration, result)
             return
         }
     }
 
     if (KotlinLineMarkerOptions.expectOption.isEnabled) {
-        if (!declaration.isExpectDeclaration() && declaration.isEffectivelyActual()) {
+        if (!declaration.isEffectivelyExpect() && declaration.isEffectivelyActual()) {
             collectExpectedMarkers(declaration, result)
             return
         }

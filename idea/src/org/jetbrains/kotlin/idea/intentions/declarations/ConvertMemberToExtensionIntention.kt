@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.actualDeclarations
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.expectedDeclaration
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.isEffectivelyExpect
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -144,7 +144,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         val descriptor = element.unsafeResolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
-        val isEffectivelyExpected = allowExpected && element.isExpectDeclaration()
+        val isEffectivelyExpected = allowExpected && element.isEffectivelyExpect()
 
         val file = element.containingKtFile
         val project = file.project
