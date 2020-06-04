@@ -33,8 +33,12 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler {
         mutableMapOf<String, Any?>()
           .also {
             it[CommonDataKeys.PROJECT.name] = project
-            it[CommonDataKeys.VIRTUAL_FILE.name] =
+            val virtualFile =
               if (localSession && workingDirectory != null) LocalFileSystem.getInstance().findFileByPath(workingDirectory) else null
+            if (virtualFile != null) {
+              it[CommonDataKeys.VIRTUAL_FILE.name] = virtualFile
+              it[RunAnythingProvider.EXECUTING_CONTEXT.name] = RunAnythingContext.RecentDirectoryContext(virtualFile.path)
+            }
           }, null)
     }
 
