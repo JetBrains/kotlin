@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public final class PlatformProjectViewOpener implements DirectoryProjectConfigurator {
-  public PlatformProjectViewOpener() {
+final class PlatformProjectViewOpener implements DirectoryProjectConfigurator {
+  PlatformProjectViewOpener() {
     if (PlatformUtils.isPyCharmEducational() || PlatformUtils.isDataGrip()) {
       throw ExtensionNotApplicableException.INSTANCE;
     }
@@ -32,7 +32,7 @@ public final class PlatformProjectViewOpener implements DirectoryProjectConfigur
   public void configureProject(@NotNull Project project,
                                @NotNull VirtualFile baseDir,
                                @NotNull Ref<Module> moduleRef,
-                               boolean newProject) {
+                               boolean isNewProject) {
     ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.PROJECT_VIEW);
     if (toolWindow == null) {
       MyListener listener = new MyListener(project);

@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -178,7 +179,7 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
   }
 
   protected void registerValidators() {
-    final DocumentAdapter documentAdapter = new DocumentAdapter() {
+    DocumentListener documentAdapter = new DocumentAdapter() {
       @Override
       protected void textChanged(@NotNull DocumentEvent e) {
         checkValid();

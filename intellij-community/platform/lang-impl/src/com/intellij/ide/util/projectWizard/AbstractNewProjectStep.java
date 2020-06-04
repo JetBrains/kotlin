@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
@@ -27,7 +28,6 @@ import com.intellij.platform.templates.LocalArchivedTemplate;
 import com.intellij.platform.templates.TemplateProjectDirectoryGenerator;
 import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PairConsumer;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,12 +37,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.platform.ProjectTemplatesFactory.CUSTOM_GROUP;
 
-
 public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup implements DumbAware {
+  static final ExtensionPointName<DirectoryProjectGenerator<?>> EP_NAME = new ExtensionPointName<>("com.intellij.directoryProjectGenerator");
+
   private static final Logger LOG = Logger.getInstance(AbstractNewProjectStep.class);
   private final Customization<T> myCustomization;
 
@@ -50,7 +52,7 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
     super(Presentation.NULL_STRING, true);
     myCustomization = customization;
     updateActions();
-    DirectoryProjectGenerator.EP_NAME.addChangeListener(() -> updateActions(), null);
+    EP_NAME.addChangeListener(() -> updateActions(), null);
   }
 
   @Override
@@ -65,19 +67,25 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
     ProjectSpecificAction projectSpecificAction = myCustomization.createProjectSpecificAction(callback);
     addProjectSpecificAction(projectSpecificAction);
 
-    DirectoryProjectGenerator<T>[] generators = myCustomization.getProjectGenerators();
-
+    List<DirectoryProjectGenerator<?>> generators = myCustomization.getProjectGenerators();
     addAll(myCustomization.getActions(generators, callback));
-    if (myCustomization.showUserDefinedProjects()) {
-      ArchivedTemplatesFactory factory = new ArchivedTemplatesFactory();
-      ProjectTemplate[] templates = factory.createTemplates(CUSTOM_GROUP, null);
-      DirectoryProjectGenerator[] projectGenerators = ContainerUtil.map(templates,
-                                                                        (ProjectTemplate template) ->
-                                                                          new TemplateProjectDirectoryGenerator(
-                                                                            (LocalArchivedTemplate)template),
-                                                                        new DirectoryProjectGenerator[templates.length]);
-      addAll(myCustomization.getActions(projectGenerators, callback));
+    if (!myCustomization.showUserDefinedProjects()) {
+      return;
     }
+
+    ProjectTemplate[] templates = new ArchivedTemplatesFactory().createTemplates(CUSTOM_GROUP, null);
+    List<DirectoryProjectGenerator<?>> projectGenerators;
+    if (templates.length == 0) {
+      projectGenerators = Collections.emptyList();
+    }
+    else {
+      projectGenerators = new ArrayList<>(templates.length);
+      for (ProjectTemplate template : templates) {
+        projectGenerators.add(new TemplateProjectDirectoryGenerator<>((LocalArchivedTemplate)template));
+      }
+    }
+
+    addAll(myCustomization.getActions(projectGenerators, callback));
   }
 
   protected void addProjectSpecificAction(@NotNull final ProjectSpecificAction projectSpecificAction) {
@@ -101,17 +109,18 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
     protected abstract ProjectSettingsStepBase<T> createProjectSpecificSettingsStep(@NotNull DirectoryProjectGenerator<T> projectGenerator,
                                                                                     @NotNull AbstractCallback<T> callback);
 
-
-    protected DirectoryProjectGenerator<T> @NotNull [] getProjectGenerators() {
-      return DirectoryProjectGenerator.EP_NAME.getExtensions();
+    protected @NotNull List<DirectoryProjectGenerator<?>> getProjectGenerators() {
+      return EP_NAME.getExtensionList();
     }
 
-    public AnAction[] getActions(DirectoryProjectGenerator<T> @NotNull [] generators, @NotNull AbstractCallback<T> callback) {
-      final List<AnAction> actions = new ArrayList<>();
-      for (DirectoryProjectGenerator<T> projectGenerator : generators) {
+    public AnAction[] getActions(@NotNull List<DirectoryProjectGenerator<?>> generators, @NotNull AbstractCallback<T> callback) {
+      List<AnAction> actions = new ArrayList<>();
+      for (DirectoryProjectGenerator<?> projectGenerator : generators) {
         try {
-          actions.addAll(Arrays.asList(getActions(projectGenerator, callback)));
-        } catch (Throwable throwable) {
+          //noinspection unchecked
+          actions.addAll(Arrays.asList(getActions((DirectoryProjectGenerator<T>)projectGenerator, callback)));
+        }
+        catch (Throwable throwable) {
           LOG.error("Broken project generator " + projectGenerator, throwable);
         }
       }
@@ -125,11 +134,12 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
 
       ProjectSettingsStepBase<T> step;
       if (generator instanceof CustomStepProjectGenerator) {
-        //noinspection unchecked
-        step = (ProjectSettingsStepBase<T>)((CustomStepProjectGenerator<T>)generator).createStep(generator, callback);
+        //noinspection unchecked,CastConflictsWithInstanceof
+        step = (ProjectSettingsStepBase<T>)((CustomStepProjectGenerator<T>)generator).createStep((DirectoryProjectGenerator<T>)generator, callback);
       }
       else {
-        step = createProjectSpecificSettingsStep(generator, callback);
+        //noinspection unchecked
+        step = createProjectSpecificSettingsStep((DirectoryProjectGenerator<T>)generator, callback);
       }
 
       ProjectSpecificAction projectSpecificAction = new ProjectSpecificAction(generator, step);
@@ -147,22 +157,24 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
 
   public static class AbstractCallback<T> implements PairConsumer<ProjectSettingsStepBase<T>, ProjectGeneratorPeer<T>> {
     @Override
-    public void consume(@Nullable final ProjectSettingsStepBase<T> settings, @NotNull final ProjectGeneratorPeer<T> projectGeneratorPeer) {
-      if (settings == null) return;
+    public void consume(@Nullable ProjectSettingsStepBase<T> settings, @NotNull ProjectGeneratorPeer<T> projectGeneratorPeer) {
+      if (settings == null) {
+        return;
+      }
 
       // todo projectToClose should be passed from calling action, this is just a quick workaround
       IdeFrame frame = IdeFocusManager.getGlobalInstance().getLastFocusedFrame();
-      final Project projectToClose = frame != null ? frame.getProject() : null;
-      DirectoryProjectGenerator<?> generator = settings.getProjectGenerator();
-      Object actualSettings = projectGeneratorPeer.getSettings();
+      Project projectToClose = frame != null ? frame.getProject() : null;
+      DirectoryProjectGenerator<T> generator = settings.getProjectGenerator();
+      T actualSettings = projectGeneratorPeer.getSettings();
       doGenerateProject(projectToClose, settings.getProjectLocation(), generator, actualSettings);
     }
   }
 
-  public static Project doGenerateProject(@Nullable Project projectToClose,
-                                          @NotNull String locationString,
-                                          @Nullable DirectoryProjectGenerator generator,
-                                          @NotNull Object settings) {
+  public static <T> Project doGenerateProject(@Nullable Project projectToClose,
+                                              @NotNull String locationString,
+                                              @Nullable DirectoryProjectGenerator<T> generator,
+                                              @NotNull T settings) {
     Path location = Paths.get(locationString);
     try {
       Files.createDirectories(location);
@@ -197,7 +209,6 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
     }
     else if (generator != null) {
       callback = (p, module) -> {
-        //noinspection unchecked
         generator.generateProject(p, baseDir, settings, module);
       };
     }
