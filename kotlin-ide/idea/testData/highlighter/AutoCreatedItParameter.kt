@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">test</info>() {
     val <info textAttributesKey="KOTLIN_LOCAL_VARIABLE">vect</info> = <info textAttributesKey="KOTLIN_CONSTRUCTOR">MyIterable</info><<info textAttributesKey="KOTLIN_CLASS">Int</info>>()
     <info textAttributesKey="KOTLIN_LOCAL_VARIABLE">vect</info>.<info textAttributesKey="KOTLIN_FUNCTION_CALL">filter</info> { <info textAttributesKey="KOTLIN_CLOSURE_DEFAULT_PARAMETER">it</info> != 2 }.<info textAttributesKey="KOTLIN_FUNCTION_CALL">forEach</info> { <info textAttributesKey="KOTLIN_CLOSURE_DEFAULT_PARAMETER">it</info>.<info textAttributesKey="KOTLIN_FUNCTION_CALL">toString</info>() }

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractFirHighlightingTest : AbstractHighlightingTest() {
+    override val captureExceptions: Boolean = false
+
     override fun getDefaultProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 
     override fun isFirPlugin() = true
