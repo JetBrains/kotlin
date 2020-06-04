@@ -59,4 +59,7 @@ abstract class TypeRegistry<K : Any, V : Any> {
     fun <T : K> getId(kClass: KClass<T>): Int {
         return idPerType.getOrPut(kClass) { idPerType.size }
     }
+
+    protected val indices: Collection<Int>
+        get() = idPerType.values
 }

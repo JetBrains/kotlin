@@ -164,3 +164,12 @@ inline fun <T, R> Iterable<T>.same(extractor: (T) -> R): Boolean {
 }
 
 inline fun <R> runIf(condition: Boolean, block: () -> R): R? = if (condition) block() else null
+
+inline fun <T, R> Collection<T>.foldMap(transform: (T) -> R, operation: (R, R) -> R): R {
+    val iterator = iterator()
+    var result = transform(iterator.next())
+    while (iterator.hasNext()) {
+        result = operation(result, transform(iterator.next()))
+    }
+    return result
+}
