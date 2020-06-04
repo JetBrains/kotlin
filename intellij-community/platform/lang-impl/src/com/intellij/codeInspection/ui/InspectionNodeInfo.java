@@ -10,6 +10,7 @@ import com.intellij.diagnostic.PluginException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.profile.codeInspection.ui.SingleInspectionProfilePanel;
 import com.intellij.ui.ClickListener;
@@ -107,7 +108,7 @@ public class InspectionNodeInfo extends JPanel {
     new ClickListener() {
       @Override
       public boolean onClick(@NotNull MouseEvent event, int clickCount) {
-        RunInspectionAction.runInspection(project, toolWrapper.getShortName(), null, null, null);
+        RunInspectionAction.runInspection(project, toolWrapper.getShortName(), VirtualFile.EMPTY_ARRAY, null, null);
         return true;
       }
     }.installOn(runInspectionOnButton);
