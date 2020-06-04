@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.symbols
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
 interface IrSymbol {
     val owner: IrSymbolOwner
 
-    @Deprecated("Please use IR declaration properties and not its descriptor properties")
+    @DescriptorBasedIr
     val descriptor: DeclarationDescriptor
 
     val isBound: Boolean

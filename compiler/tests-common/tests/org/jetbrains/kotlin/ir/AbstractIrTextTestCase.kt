@@ -179,6 +179,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             element.acceptChildrenVoid(this)
         }
 
+        @OptIn(DescriptorBasedIr::class)
         override fun visitDeclaration(declaration: IrDeclaration) {
             if (declaration is IrSymbolOwner) {
                 declaration.symbol.checkBinding("decl", declaration)
