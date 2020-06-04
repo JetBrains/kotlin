@@ -51,12 +51,8 @@ fun KtDeclaration.expectedDeclaration(): KtDeclaration? = expectedDeclarations()
 fun ModuleDescriptor.hasActualsFor(descriptor: MemberDescriptor) =
     actualsFor(descriptor).isNotEmpty()
 
-fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor, checkCompatible: Boolean = false): List<DeclarationDescriptor> =
-    if (checkCompatible) {
-        descriptor.findCompatibleActualForExpected(this@actualsFor)
-    } else {
-        descriptor.findAnyActualForExpected(this@actualsFor)
-    }.filter { (it as? MemberDescriptor)?.isEffectivelyActual() == true }
+fun ModuleDescriptor.actualsFor(descriptor: MemberDescriptor): List<DeclarationDescriptor> =
+    descriptor.findAnyActualForExpected(this@actualsFor).filter { (it as? MemberDescriptor)?.isEffectivelyActual() == true }
 
 private fun MemberDescriptor.isEffectivelyActual(checkConstructor: Boolean = true): Boolean =
     isActual || isEnumEntryInActual() || isConstructorInActual(checkConstructor)
