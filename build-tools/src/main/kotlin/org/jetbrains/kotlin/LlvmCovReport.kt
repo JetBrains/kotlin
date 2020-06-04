@@ -5,17 +5,17 @@ import com.google.gson.annotations.*
 
 
 data class LlvmCovReportFunction(
-        val name: String,
-        val count: Int,
-        val regions: List<List<Int>>,
-        val filenames: List<String>
+        @Expose val name: String,
+        @Expose val count: Int,
+        @Expose val regions: List<List<Int>>,
+        @Expose val filenames: List<String>
 )
 
 data class LlvmCovReportSummary(
-        val lines: LlvmCovReportStatistics,
-        val functions: LlvmCovReportStatistics,
-        val instantiations: LlvmCovReportStatistics,
-        val regions: LlvmCovReportStatistics
+        @Expose val lines: LlvmCovReportStatistics,
+        @Expose val functions: LlvmCovReportStatistics,
+        @Expose val instantiations: LlvmCovReportStatistics,
+        @Expose val regions: LlvmCovReportStatistics
 
 )
 
