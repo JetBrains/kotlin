@@ -8,46 +8,9 @@ package org.jetbrains.kotlin.resolve.multiplatform
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibilityChecker.Substitutor
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
 
 /**
- * Convenience shortcuts
- *
- * Essentially they just delegate to [ExpectedActualResolver], and perform some trivial
- * utility-work (like resolving only compatible expects/actuals, etc.)
- */
-
-// FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects
-fun MemberDescriptor.findCompatibleActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> =
-    ExpectedActualResolver.findActualForExpected(this, platformModule)?.get(Compatible).orEmpty()
-
-fun MemberDescriptor.findCompatibleExpectedForActual(commonModule: ModuleDescriptor): List<MemberDescriptor> =
-    ExpectedActualResolver.findExpectedForActual(this, commonModule)?.get(Compatible).orEmpty()
-
-fun MemberDescriptor.findAnyActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> {
-    val actualsGroupedByCompatibility = ExpectedActualResolver.findActualForExpected(this, platformModule)
-    return actualsGroupedByCompatibility?.get(Compatible)
-        ?: actualsGroupedByCompatibility?.values?.flatten()
-        ?: emptyList()
-}
-
-fun DeclarationDescriptor.findExpects(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
-    return ExpectedActualResolver.findExpectedForActual(
-        this as MemberDescriptor,
-        inModule
-    )?.get(Compatible).orEmpty()
-}
-
-fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
-    return ExpectedActualResolver.findActualForExpected(
-        (this as MemberDescriptor),
-        inModule
-    )?.get(Compatible).orEmpty()
-}
-
-
-/**
- * Facade for getting information for expect-actual matching.
+ * Facade for getting information for expect-actual matching
  *
  * It's work mostly consists of two large parts:
  * - find potentially compatible declarations by querying scopes
