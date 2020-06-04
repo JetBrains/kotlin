@@ -2062,6 +2062,21 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/nestedSuspendCallInsideLambda.kt");
             }
 
+            @TestMetadata("plusAssignInCoroutineContext.kt")
+            public void testPlusAssignInCoroutineContext() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/plusAssignInCoroutineContext.kt");
+            }
+
+            @TestMetadata("plusAssignWithLambda.kt")
+            public void testPlusAssignWithLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/plusAssignWithLambda.kt");
+            }
+
+            @TestMetadata("plusAssignWithLambda2.kt")
+            public void testPlusAssignWithLambda2() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/plusAssignWithLambda2.kt");
+            }
+
             @TestMetadata("qualifiedResolvedExpressionInsideBuilderInference.kt")
             public void testQualifiedResolvedExpressionInsideBuilderInference() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/qualifiedResolvedExpressionInsideBuilderInference.kt");

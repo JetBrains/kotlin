@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -336,6 +339,19 @@ class CoroutineInferenceSession(
             expressionTypingServices, argumentTypeResolver, doubleColonExpressionResolver, builtIns,
             deprecationResolver, moduleDescriptor, context.dataFlowValueFactory, typeApproximator, missingSupertypesResolver
         )
+    }
+
+    /*
+     * It's used only for `+=` resolve to clear calls info before the second analysis of right side.
+     * TODO: remove it after moving `+=` resolve into OR mechanism
+     */
+    fun clearCallsInfoByContainingElement(containingElement: KtElement) {
+        commonCalls.removeIf remove@{ callInfo ->
+            val atom = callInfo.callResolutionResult.resultCallAtom.atom
+            if (atom !is PSIKotlinCallImpl) return@remove false
+
+            containingElement.anyDescendantOfType<KtElement> { it == atom.psiCall.callElement }
+        }
     }
 }
 
