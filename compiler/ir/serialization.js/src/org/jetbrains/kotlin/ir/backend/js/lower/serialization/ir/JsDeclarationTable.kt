@@ -24,7 +24,9 @@ class JsUniqIdClashTracker : IdSignatureClashTracker {
 
         if (signature in committedIdSignatures) {
             val clashedDeclaration = committedIdSignatures[signature]!!
-            if (declaration !is IrTypeParameter && declaration.descriptor.containingDeclaration !is PropertyDescriptor) {
+            if (declaration !is IrTypeParameter &&
+                (declaration.parent !is IrSimpleFunction || declaration.parent === clashedDeclaration.parent)
+            ) {
                 // TODO: handle clashes properly
                 error("IdSignature clash: $signature; Existed declaration ${clashedDeclaration.render()} clashed with new ${declaration.render()}")
             } else {
