@@ -270,9 +270,7 @@ class JvmIdeServicesTest : TestCase() {
     }
 }
 
-// Artificial split into several testsuites, to speed up parallel testing
-class LegacyReplTestLong1 : TestCase() {
-
+class LegacyReplTestLong : TestCase() {
     fun test256Evals() {
         JvmTestRepl()
             .use { repl ->
@@ -302,10 +300,6 @@ class LegacyReplTestLong1 : TestCase() {
                 assertEquals(evaluated.toString(), evals, (evaluated?.result as ResultValue.Value?)?.value)
             }
     }
-}
-
-// Artificial split into several testsuites, to speed up parallel testing
-class LegacyReplTestLong2 : TestCase() {
 
     fun testReplSlowdownKt22740() {
         JvmTestRepl()
