@@ -288,7 +288,7 @@ class ControlFlowGraphBuilder {
     fun exitLocalClass(klass: FirRegularClass): Pair<LocalClassExitNode, ControlFlowGraph> {
         val graph = exitClass(klass)
         val node = createLocalClassExitNode(klass).also {
-            addNewSimpleNode(it)
+            addNewSimpleNodeIfPossible(it)
         }
         return node to graph
     }

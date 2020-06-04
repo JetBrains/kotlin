@@ -89,6 +89,7 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
                 parent?.tokenType == KT_FILE -> return true
                 parent?.tokenType == CLASS_BODY && !(grandParent?.tokenType == OBJECT_DECLARATION && grandParent?.getParent()?.tokenType == OBJECT_LITERAL) -> return true
                 parent?.tokenType == BLOCK && grandParent?.tokenType == SCRIPT -> return true
+                parent?.tokenType == ENUM_ENTRY -> return true
             }
         }
         if (tokenType == BLOCK) {

@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/enumEntry.kt
           BLOCK_BODY
         CLASS CLASS name:A modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
           $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.ENTRY.A
-          CONSTRUCTOR visibility:public <> ($this:<root>.Z.ENTRY) returnType:IrErrorType [primary]
+          CONSTRUCTOR visibility:public <> ($this:<root>.Z.ENTRY) returnType:<root>.Z.ENTRY.A [primary]
             $outer: VALUE_PARAMETER name:<this> type:<root>.Z.ENTRY
             BLOCK_BODY
               DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'

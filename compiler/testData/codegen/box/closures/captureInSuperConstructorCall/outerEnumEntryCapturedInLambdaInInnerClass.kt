@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 abstract class Base(val fn: () -> Test)
 
 enum class Test(val ok: String) {
