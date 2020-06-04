@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getRet
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.actualDeclarations
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.expectedDeclaration
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
@@ -69,7 +69,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         var allowExpected = true
 
-        element.expectedDeclaration()?.actualsForExpected()?.let {
+        element.expectedDeclaration()?.actualDeclarations()?.let {
             if (it.isEmpty()) {
                 allowExpected = askIfExpectedIsAllowed(element.containingKtFile)
             }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.util.CachedValue
 import org.jetbrains.kotlin.idea.core.util.getValue
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
-import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.actualDescriptors
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_KEYWORD
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -62,7 +62,7 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
                 return QUICKFIX_UNAVAILABLE
             }
 
-            overriddenDescriptor.takeIf { overriddenMember.isExpectDeclaration() }?.actualsForExpected()?.forEach {
+            overriddenDescriptor.takeIf { overriddenMember.isExpectDeclaration() }?.actualDescriptors()?.forEach {
                 if (it is MemberDescriptor && it.modality < Modality.OPEN) {
                     val member = DescriptorToSourceUtils.descriptorToDeclaration(it)
                     if (member == null || !member.canRefactor() || member !is KtCallableDeclaration) {

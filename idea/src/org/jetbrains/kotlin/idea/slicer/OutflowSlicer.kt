@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
-import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.actualDescriptors
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
@@ -66,7 +66,7 @@ class OutflowSlicer(
 
                 if (declaration.isExpectDeclaration()) {
                     declaration.resolveToDescriptorIfAny()
-                        ?.actualsForExpected()
+                        ?.actualDescriptors()
                         ?.forEach {
                             val actualDeclaration = (it as? DeclarationDescriptorWithSource)?.toPsi()
                             (actualDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.passToProcessor()
@@ -124,7 +124,7 @@ class OutflowSlicer(
             if (callable != null) {
                 if (callable.isExpectDeclaration()) {
                     variable.resolveToDescriptorIfAny()
-                        ?.actualsForExpected()
+                        ?.actualDescriptors()
                         ?.forEach {
                             (it as? DeclarationDescriptorWithSource)?.toPsi()?.passToProcessor()
                         }

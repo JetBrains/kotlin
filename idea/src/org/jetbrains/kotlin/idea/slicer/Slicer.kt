@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
 import org.jetbrains.kotlin.idea.findUsages.processAllUsages
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
-import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.actualDescriptors
 import org.jetbrains.kotlin.idea.util.expectedDescriptor
 import org.jetbrains.kotlin.idea.util.hasInlineModifier
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
@@ -121,7 +121,7 @@ abstract class Slicer(
 
         if (this is KtCallableDeclaration && isExpectDeclaration()) {
             resolveToDescriptorIfAny()
-                ?.actualsForExpected()
+                ?.actualDescriptors()
                 ?.forEach {
                     (it as? DeclarationDescriptorWithSource)?.toPsi()?.passToProcessor(mode)
                 }

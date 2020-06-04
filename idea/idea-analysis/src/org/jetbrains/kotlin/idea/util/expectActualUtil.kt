@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import com.intellij.openapi.module.Module
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -63,7 +60,7 @@ private fun MemberDescriptor.isConstructorInActual(checkConstructor: Boolean) =
 private fun MemberDescriptor.isEnumEntryInActual() =
     (DescriptorUtils.isEnumEntry(this) && (containingDeclaration as? MemberDescriptor)?.isActual == true)
 
-fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDescriptor> {
+fun DeclarationDescriptor.actualDescriptors(): Collection<DeclarationDescriptor> {
     if (this is MemberDescriptor) {
         if (!this.isExpect) return emptyList()
 
@@ -71,15 +68,15 @@ fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDescriptor
     }
 
     if (this is ValueParameterDescriptor) {
-        return containingDeclaration.actualsForExpected().mapNotNull { (it as? CallableDescriptor)?.valueParameters?.getOrNull(index) }
+        return containingDeclaration.actualDescriptors().mapNotNull { (it as? CallableDescriptor)?.valueParameters?.getOrNull(index) }
     }
 
     return emptyList()
 }
 
-fun KtDeclaration.actualsForExpected(): Set<KtDeclaration> =
+fun KtDeclaration.actualDeclarations(): Set<KtDeclaration> =
     resolveToDescriptorIfAny(BodyResolveMode.FULL)
-        ?.actualsForExpected()
+        ?.actualDescriptors()
         ?.mapNotNullTo(LinkedHashSet()) {
             DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration
         } ?: emptySet()
@@ -100,22 +97,22 @@ fun KtDeclaration.isEffectivelyActual(checkConstructor: Boolean = true): Boolean
 fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, useOnSelf: Boolean = false, f: (KtDeclaration) -> Unit) {
     if (hasActualModifier()) {
         val expectElement = expectedDeclaration()
-        expectElement?.actualsForExpected()?.forEach {
+        expectElement?.actualDeclarations()?.forEach {
             if (it !== this) {
                 f(it)
             }
         }
         expectElement?.let { f(it) }
     } else if (!checkExpect || isExpectDeclaration()) {
-        actualsForExpected().forEach { f(it) }
+        actualDeclarations().forEach { f(it) }
     }
 
     if (useOnSelf) f(this)
 }
 
 fun KtDeclaration.collectAllExpectAndActualDeclaration(withSelf: Boolean = true): Set<KtDeclaration> = when {
-    isExpectDeclaration() -> actualsForExpected()
-    hasActualModifier() -> expectedDeclaration()?.let { it.actualsForExpected() + it - this }.orEmpty()
+    isExpectDeclaration() -> actualDeclarations()
+    hasActualModifier() -> expectedDeclaration()?.let { it.actualDeclarations() + it - this }.orEmpty()
     else -> emptySet()
 }.let { if (withSelf) it + this else it }
 

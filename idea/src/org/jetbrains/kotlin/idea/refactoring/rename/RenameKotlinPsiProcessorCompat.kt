@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.references.getImportAlias
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinMethodReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
-import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.actualDeclarations
 import org.jetbrains.kotlin.idea.util.expectedDeclaration
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -123,7 +123,7 @@ abstract class RenameKotlinPsiProcessorCompat : RenamePsiElementProcessor() {
         if (declaration != null) {
             declaration.expectedDeclaration()?.let { expectDeclaration ->
                 allRenames[expectDeclaration] = safeNewName
-                expectDeclaration.actualsForExpected().forEach { allRenames[it] = safeNewName }
+                expectDeclaration.actualDeclarations().forEach { allRenames[it] = safeNewName }
             }
         }
     }

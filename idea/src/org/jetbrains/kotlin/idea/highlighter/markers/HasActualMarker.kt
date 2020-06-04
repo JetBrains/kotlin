@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.actualDeclarations
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -45,7 +45,7 @@ private fun ModuleDescriptor?.getPlatformName(): String? {
 }
 
 fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
-    val actualDeclarations = declaration.actualsForExpected()
+    val actualDeclarations = declaration.actualDeclarations()
     if (actualDeclarations.isEmpty()) return null
 
     return actualDeclarations.asSequence()
@@ -63,7 +63,7 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
 }
 
 fun KtDeclaration.allNavigatableActualDeclarations(): Set<KtDeclaration> =
-    actualsForExpected() + findMarkerBoundDeclarations().flatMap { it.actualsForExpected().asSequence() }
+    actualDeclarations() + findMarkerBoundDeclarations().flatMap { it.actualsForExpected().asSequence() }
 
 class ActualExpectedPsiElementCellRenderer : DefaultPsiElementCellRenderer() {
     override fun getContainerText(element: PsiElement?, name: String?) = ""

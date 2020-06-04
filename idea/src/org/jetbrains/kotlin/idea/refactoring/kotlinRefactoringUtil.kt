@@ -28,7 +28,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -997,7 +996,7 @@ fun KtNamedDeclaration.isCompanionMemberOf(klass: KtClassOrObject): Boolean {
 
 internal fun KtDeclaration.withExpectedActuals(): List<KtDeclaration> {
     val expect = expectedDeclaration() ?: return listOf(this)
-    val actuals = expect.actualsForExpected()
+    val actuals = expect.actualDeclarations()
     return listOf(expect) + actuals
 }
 

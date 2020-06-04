@@ -30,12 +30,11 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
-import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.actualDeclarations
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 sealed class CreateActualFix<D : KtNamedDeclaration>(
     declaration: D,
@@ -63,7 +62,7 @@ sealed class CreateActualFix<D : KtNamedDeclaration>(
         for (otherDeclaration in originalFile.declarations) {
             if (otherDeclaration === originalDeclaration) continue
             if (!otherDeclaration.hasExpectModifier()) continue
-            val actualDeclaration = otherDeclaration.actualsForExpected().singleOrNull {
+            val actualDeclaration = otherDeclaration.actualDeclarations().singleOrNull {
                 it.module == null || it.module == module
             } ?: continue
             return actualDeclaration.containingKtFile
