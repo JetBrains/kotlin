@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.ListCellRenderer
@@ -497,9 +498,7 @@ private fun collectExpectedMarkers(
 
     if (declaration.requiresNoMarkers()) return
 
-    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
-    val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
-    if (!platformModuleDescriptor.implementedDescriptors.any { it.hasDeclarationOf(descriptor) }) return
+    if (declaration.expectedDeclarations().isEmpty()) return
 
     val anchor = declaration.expectOrActualAnchor
 

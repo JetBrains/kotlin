@@ -23,15 +23,14 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.expectedDeclaration
-import org.jetbrains.kotlin.idea.util.hasDeclarationOf
+import org.jetbrains.kotlin.idea.util.expectedDescriptors
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
 fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
-    val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    val commonModuleDescriptors = platformModuleDescriptor.implementedDescriptors
-    if (!commonModuleDescriptors.any { it.hasDeclarationOf(descriptor) }) return null
+    if (descriptor.expectedDescriptors().isEmpty()) return null
 
     return KotlinBundle.message("highlighter.tool.tip.has.declaration.in.common.module")
 }
