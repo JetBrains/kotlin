@@ -5,23 +5,18 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.util.ThrowableRunnable
 
-// FIX ME WHEN BUNCH 191 REMOVED
 abstract class KotlinLightPlatformCodeInsightTestCase : LightPlatformCodeInsightTestCase() {
-    protected inline val project_: Project get() = project
-    protected inline val editor_: Editor get() = editor
 
     override fun setUp() {
         super.setUp()
-        enableKotlinOfficialCodeStyle(project_)
+        enableKotlinOfficialCodeStyle(project)
     }
 
     override fun tearDown() = runAll(
-        ThrowableRunnable { disableKotlinOfficialCodeStyle(project_) },
+        ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
         ThrowableRunnable { super.tearDown() },
     )
 }

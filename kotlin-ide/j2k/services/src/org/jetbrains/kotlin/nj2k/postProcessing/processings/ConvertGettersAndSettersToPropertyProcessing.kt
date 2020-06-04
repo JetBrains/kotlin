@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.search.or
+import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -201,7 +203,8 @@ private class ConvertGettersAndSettersToPropertyStatefulProcessing(
 
     private fun KtParameter.rename(newName: String) {
         val renamer = RenamePsiElementProcessor.forElement(this)
-        val findReferences = findReferences(renamer)
+        val searchScope = project.projectScope() or useScope
+        val findReferences = renamer.findReferences(this, searchScope, false)
         val usageInfos =
             findReferences.mapNotNull { reference ->
                 val element = reference.element

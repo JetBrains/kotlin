@@ -47,6 +47,7 @@ import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunner;
 import org.jetbrains.plugins.gradle.service.project.GradleBuildSrcProjectsResolver;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
 import org.jetbrains.plugins.gradle.service.task.GradleTaskManager;
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
@@ -58,7 +59,6 @@ import java.util.stream.Collectors;
 import static com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration.PROGRESS_LISTENER_KEY;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.*;
 import static com.intellij.openapi.util.text.StringUtil.*;
-import static org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunnerUtilKt.isDelegatedBuild;
 import static org.jetbrains.plugins.gradle.execution.GradleRunnerUtil.resolveProjectPath;
 
 /**
@@ -180,7 +180,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             final ModuleBuildTask moduleBuildTask = (ModuleBuildTask) projectTask;
             final Module module = moduleBuildTask.getModule();
 
-            if (! isDelegatedBuild(module)) {
+            if (module.getProject().getPresentableUrl() != null && GradleProjectSettings.isDelegatedBuildEnabled(module)) {
                 return false;
             }
 

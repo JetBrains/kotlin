@@ -38,22 +38,6 @@ abstract class AbstractKotlinInspection : LocalInspectionTool() {
         val problemDescriptor = manager.createProblemDescriptor(element, range, description, highlightType, isOnTheFly, *fixes)
         registerProblem(problemDescriptor)
     }
-
-    // FIX ME WHEN BUNCH 191 REMOVED
-    // a workaround for IDEA-211491
-    override fun getProblemElement(psiElement: PsiElement): PsiNamedElement? {
-        val parent = psiElement.parents().firstOrNull { parent ->
-            when (parent) {
-                is KtPropertyAccessor -> true
-                is KtNamedDeclaration -> parent !is KtValVarKeywordOwner || parent.valOrVarKeyword != null
-                else -> false
-            }
-        }
-        if (parent is KtPropertyAccessor) {
-            return parent.property
-        }
-        return super.getProblemElement(psiElement)
-    }
 }
 
 @Suppress("unused")
