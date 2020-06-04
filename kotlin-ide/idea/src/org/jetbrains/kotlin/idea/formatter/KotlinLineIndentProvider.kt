@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.lang.Language
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -20,7 +21,13 @@ class KotlinLineIndentProvider : KotlinLikeLangLineIndentProvider() {
             super.getLineIndent(project, editor, language, offset)
 
     override fun indentionSettings(project: Project): KotlinIndentationAdjuster = object : KotlinIndentationAdjuster {
+        val settings = CodeStyle.getSettings(project)
 
+        override val alignWhenMultilineFunctionParentheses: Boolean
+            get() = settings.kotlinCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS
+
+        override val alignWhenMultilineBinaryExpression: Boolean
+            get() = settings.kotlinCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION
     }
 
     companion object {
