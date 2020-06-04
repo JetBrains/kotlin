@@ -37,6 +37,8 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
 
     fun testFunTypeVarRef() { doTest("fun '_(): '_") }
 
+    fun testFunSimpleTypeReceiver() { doTest("fun<'_type> '_('_ : '_.('_type) -> '_)") }
+
     fun testFunReceiverType() {
         doTest(
             "fun <'_T, '_E, '_R> '_name('_f : '_T.('_E) -> '_R) : ('_T, '_E) -> '_R = { '_t, '_e -> '_t.'_f('_e) }"

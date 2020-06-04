@@ -7,6 +7,7 @@ import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstitutionHandler
+import com.intellij.structuralsearch.impl.matcher.handlers.MatchingHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.fir.builder.toUnaryName
 import org.jetbrains.kotlin.idea.intentions.callExpression
@@ -57,9 +58,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     private fun matchTextOrVariable(el1: PsiElement?, el2: PsiElement?): Boolean {
         if (el1 == null || el2 == null) return el1 == el2
-        val context = myMatchingVisitor.matchContext
-        return when (val handler = context.pattern.getHandler(el1)) {
-            is SubstitutionHandler -> handler.handle(el2, context)
+        return when (val handler = getHandler(el1)) {
+            is SubstitutionHandler -> handler.handle(el2, myMatchingVisitor.matchContext)
             else -> myMatchingVisitor.matchText(el1, el2)
         }
     }
@@ -230,6 +230,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+        // Previous SubstitutionHandler match can be KtParameter
+        if (myMatchingVisitor.element.parent is KtParameter) {
+            myMatchingVisitor.result = matchTextOrVariable(expression, myMatchingVisitor.element)
+            return
+        }
+
         val other = getTreeElementDepar<KtElement>() ?: return
         val handler = getHandler(expression)
         myMatchingVisitor.result = when (handler) {
@@ -434,6 +440,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitParameter(parameter: KtParameter) {
+        // Previous SubstitutionHandler match can be KtTypeParameter
+        if (myMatchingVisitor.element.parent is KtTypeParameter) {
+            myMatchingVisitor.result = matchTextOrVariable(parameter, myMatchingVisitor.element)
+            return
+        }
+
         val other = getTreeElementDepar<KtParameter>() ?: return
 
         val typeMatched = when (other.parent.parent) {
@@ -441,8 +453,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             else -> matchTypeReferenceWithDeclaration(parameter.typeReference, other)
         }
 
-        val nameIdentifierMatched = when {
-            getHandler(parameter) is SubstitutionHandler -> matchTextOrVariable(parameter, other.nameIdentifier ?: other)
+        val nameIdentifierMatched = when (val handler = getHandler(parameter)) {
+            is SubstitutionHandler -> handler.handle(other.nameIdentifier ?: other, myMatchingVisitor.matchContext)
             else -> matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
         }
 
