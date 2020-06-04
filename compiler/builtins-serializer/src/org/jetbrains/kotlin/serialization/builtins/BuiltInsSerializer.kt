@@ -67,7 +67,7 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
             PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false),
             false
     ) {
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
             // Only report diagnostics without a particular location because there's plenty of errors in built-in sources
             // (functions without bodies, incorrect combination of modifiers, etc.)
             if (location == null) {

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
 import java.net.URLClassLoader
-import java.util.*
 
 object PluginCliParser {
     @JvmStatic
