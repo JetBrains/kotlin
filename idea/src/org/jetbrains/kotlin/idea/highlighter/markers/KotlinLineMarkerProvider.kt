@@ -26,18 +26,13 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
-import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
-import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
-import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
-import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.editor.fixers.startLine
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.presentation.DeclarationByModuleRenderer
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.util.*
@@ -464,11 +459,7 @@ private fun collectActualMarkers(
 ) {
     if (!KotlinLineMarkerOptions.actualOption.isEnabled) return
     if (declaration.requiresNoMarkers()) return
-
-    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
-    val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
-
-    if (commonModuleDescriptor.implementingDescriptors.none { it.hasActualsFor(descriptor) }) return
+    if (!declaration.hasAtLeastOneActual()) return
 
     val anchor = declaration.expectOrActualAnchor
 
@@ -496,10 +487,7 @@ private fun collectExpectedMarkers(
     if (!KotlinLineMarkerOptions.expectOption.isEnabled) return
 
     if (declaration.requiresNoMarkers()) return
-
-    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
-    val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
-    if (!platformModuleDescriptor.implementedDescriptors.any { it.hasDeclarationOf(descriptor) }) return
+    if (!declaration.hasMatchingExpected()) return
 
     val anchor = declaration.expectOrActualAnchor
 
