@@ -14,6 +14,8 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -31,6 +33,7 @@ import org.jetbrains.plugins.gradle.service.project.data.GradleExtensionsDataSer
 import org.jetbrains.plugins.gradle.service.resolve.GradleCommonClassNames;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -101,6 +104,10 @@ public class GradleExtensionsSettings {
         GradleExtensionsData extensionsData = new GradleExtensionsData();
         GradleExtensions gradleExtensions = entry.getValue();
         extensionsData.parent = gradleExtensions.getParentProjectPath();
+        File scriptFile = gradleExtensions.getBuildScriptFile();
+        if (scriptFile != null) {
+          extensionsData.buildScriptFile = VfsUtil.findFileByIoFile(scriptFile, true);
+        }
 
         for (org.jetbrains.plugins.gradle.model.GradleExtension extension : gradleExtensions.getExtensions()) {
           GradleExtension gradleExtension = new GradleExtension();
@@ -229,6 +236,8 @@ public class GradleExtensionsSettings {
     public final Map<String, GradleConfiguration> configurations = new HashMap<>();
     @NotNull
     public final Map<String, GradleConfiguration> buildScriptConfigurations = new HashMap<>();
+    @Nullable
+    public VirtualFile buildScriptFile;
 
     @Nullable
     public GradleExtensionsData getParent() {
@@ -331,8 +340,13 @@ public class GradleExtensionsSettings {
   public static GradleProject getRootProject(@NotNull PsiElement element) {
     final PsiFile containingFile = element.getContainingFile().getOriginalFile();
     final Project project = containingFile.getProject();
+    return getInstance(project).getRootGradleProject(getRootProjectPath(element));
+  }
+
+  @Nullable
+  public static String getRootProjectPath(@NotNull PsiElement element) {
+    final PsiFile containingFile = element.getContainingFile().getOriginalFile();
     final Module module = ModuleUtilCore.findModuleForFile(containingFile);
-    final String rootProjectPath = ExternalSystemApiUtil.getExternalRootProjectPath(module);
-    return getInstance(project).getRootGradleProject(rootProjectPath);
+    return ExternalSystemApiUtil.getExternalRootProjectPath(module);
   }
 }

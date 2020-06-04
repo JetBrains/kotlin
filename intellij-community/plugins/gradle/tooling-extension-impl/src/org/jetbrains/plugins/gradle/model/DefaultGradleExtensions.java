@@ -4,6 +4,7 @@ package org.jetbrains.plugins.gradle.model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,6 +22,7 @@ public class DefaultGradleExtensions implements GradleExtensions {
   private final ArrayList<DefaultExternalTask> tasks;
   private final List<DefaultGradleConfiguration> configurations;
   private String parentProjectPath;
+  private File buildScriptFile;
 
   public DefaultGradleExtensions() {
     extensions = new ArrayList<DefaultGradleExtension>(0);
@@ -32,6 +34,7 @@ public class DefaultGradleExtensions implements GradleExtensions {
 
   public DefaultGradleExtensions(@NotNull GradleExtensions extensions) {
     parentProjectPath = extensions.getParentProjectPath();
+    buildScriptFile = extensions.getBuildScriptFile();
 
     this.extensions = new ArrayList<DefaultGradleExtension>(extensions.getExtensions().size());
     for (GradleExtension extension : extensions.getExtensions()) {
@@ -111,6 +114,16 @@ public class DefaultGradleExtensions implements GradleExtensions {
     return configurations == null ? Collections.<DefaultGradleConfiguration>emptyList() : configurations;
   }
 
+  @Nullable
+  @Override
+  public File getBuildScriptFile() {
+    return buildScriptFile;
+  }
+
+  public void setBuildScriptFile(File buildScript) {
+    buildScriptFile = buildScript;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -125,6 +138,11 @@ public class DefaultGradleExtensions implements GradleExtensions {
     if (configurations != null ? !configurations.equals(that.configurations) : that.configurations != null) return false;
     if (parentProjectPath != null ? !parentProjectPath.equals(that.parentProjectPath) : that.parentProjectPath != null) return false;
 
+    final String buildScriptPath = buildScriptFile != null ? buildScriptFile.getAbsolutePath() : null;
+    final String otherScriptPath = that.buildScriptFile != null ? that.buildScriptFile.getAbsolutePath() : null;
+
+    if (buildScriptPath != null ? buildScriptPath.equals(otherScriptPath) : otherScriptPath != null) return false;
+
     return true;
   }
 
@@ -136,6 +154,7 @@ public class DefaultGradleExtensions implements GradleExtensions {
     result = 31 * result + (tasks != null ? tasks.hashCode() : 0);
     result = 31 * result + (configurations != null ? configurations.hashCode() : 0);
     result = 31 * result + (parentProjectPath != null ? parentProjectPath.hashCode() : 0);
+    result = 31 * result + (buildScriptFile != null ? buildScriptFile.hashCode() : 0);
     return result;
   }
 }

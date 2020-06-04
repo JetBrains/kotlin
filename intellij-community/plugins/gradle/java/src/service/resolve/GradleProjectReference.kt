@@ -30,8 +30,9 @@ class GradleProjectReference(
 
   override fun resolveSingleTarget(): Symbol? {
     val gradleProject = GradleExtensionsSettings.getRootProject(literal) ?: return null
+    val rootProjectPath = GradleExtensionsSettings.getRootProjectPath(literal) ?: return null
     if (projectPathString in gradleProject.extensions) {
-      return GradleProjectSymbol(projectPath)
+      return GradleProjectSymbol(projectPath, rootProjectPath)
     }
     return null
   }
