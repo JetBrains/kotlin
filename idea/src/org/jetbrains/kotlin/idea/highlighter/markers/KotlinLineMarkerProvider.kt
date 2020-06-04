@@ -466,10 +466,7 @@ private fun collectActualMarkers(
     if (!KotlinLineMarkerOptions.actualOption.isEnabled) return
     if (declaration.requiresNoMarkers()) return
 
-    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
-    val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
-
-    if (commonModuleDescriptor.implementingDescriptors.none { it.hasActualsFor(descriptor) }) return
+    if (declaration.actualDeclarations().isEmpty()) return
 
     val anchor = declaration.expectOrActualAnchor
 
