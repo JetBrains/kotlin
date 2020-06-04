@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 import kotlin.script.experimental.api.*
@@ -60,5 +61,6 @@ class JvmReplCompilerState<CompilationT : JvmReplCompilerState.Compilation>(
         val baseScriptCompilationConfiguration: ScriptCompilationConfiguration
         val environment: KotlinCoreEnvironment
         val analyzerEngine: ReplCodeAnalyzerBase
+        val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter
     }
 }
