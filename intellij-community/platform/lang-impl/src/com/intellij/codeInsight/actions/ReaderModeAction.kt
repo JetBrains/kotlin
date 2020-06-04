@@ -18,8 +18,8 @@ class ReaderModeAction : ToggleAction() {
       return
     }
     super.update(e)
-    val project = e.project ?: return
-    val file = PlatformDataKeys.VIRTUAL_FILE.getData(e.dataContext)?: return
+    val project = e.project
+    val file = PlatformDataKeys.VIRTUAL_FILE.getData(e.dataContext)
 
     e.presentation.isEnabledAndVisible = matchMode(project, file)
     e.presentation.text = LangBundle.message("action.ReaderMode.float.text")

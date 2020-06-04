@@ -27,8 +27,9 @@ class ReaderModeFileEditorListener : FileEditorManagerListener {
       EP_READER_MODE_PROVIDER.extensions().forEach { it.applyModeChanged(project, selectedEditor.editor, instance(project).enabled) }
     }
 
-    fun matchMode(project: Project, file: VirtualFile): Boolean {
-      return when (instance(project).mode) {
+    fun matchMode(project: Project?, file: VirtualFile?): Boolean {
+      return if (project == null || file == null) { false }
+      else when (instance(project).mode) {
         ReaderMode.LIBRARIES ->
           FileIndexFacade.getInstance(project).isInLibraryClasses(file) || FileIndexFacade.getInstance(project).isInLibrarySource(file)
         ReaderMode.READ_ONLY -> !file.isWritable
