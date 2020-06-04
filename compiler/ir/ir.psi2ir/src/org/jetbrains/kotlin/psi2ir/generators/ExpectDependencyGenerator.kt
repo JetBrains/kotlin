@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.resolve.multiplatform.findExpects
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleExpectedForActual
 
 // Need to create unbound symbols for expects corresponding to actuals of the currently compiled module.
 // This is neccessary because there is no explicit links between expects and actuals
@@ -21,7 +21,7 @@ fun referenceExpectsForUsedActuals(
     irModule.acceptVoid(object : IrElementVisitorVoid {
 
         private fun <T> T.forEachExpect(body: (DeclarationDescriptor) -> Unit) where T : IrDeclaration {
-            this.descriptor.findExpects().forEach {
+            (this.descriptor as MemberDescriptor).findCompatibleExpectedForActual().forEach {
                 body(it)
             }
         }

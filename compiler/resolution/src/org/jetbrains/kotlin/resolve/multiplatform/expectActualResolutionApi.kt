@@ -6,7 +6,6 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -19,11 +18,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
  */
 
 // FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects
-fun MemberDescriptor.findCompatibleActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> =
+fun MemberDescriptor.findCompatibleActualForExpected(platformModule: ModuleDescriptor = this.module): List<MemberDescriptor> =
     ExpectedActualResolver.findActualForExpected(this, platformModule)
         ?.get(ExpectedActualResolver.Compatibility.Compatible).orEmpty()
 
-fun MemberDescriptor.findCompatibleExpectedForActual(commonModule: ModuleDescriptor): List<MemberDescriptor> =
+fun MemberDescriptor.findCompatibleExpectedForActual(commonModule: ModuleDescriptor = this.module): List<MemberDescriptor> =
     ExpectedActualResolver.findExpectedForActual(this, commonModule)
         ?.get(ExpectedActualResolver.Compatibility.Compatible).orEmpty()
 
@@ -38,20 +37,6 @@ fun MemberDescriptor.findAnyActualForExpected(platformModule: ModuleDescriptor):
  */
 fun MemberDescriptor.findAnyExpectForActual(commonModule: ModuleDescriptor): List<MemberDescriptor> =
     ExpectedActualResolver.findExpectedForActual(this, commonModule).flattenPreferringCompatible()
-
-fun DeclarationDescriptor.findExpects(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
-    return ExpectedActualResolver.findExpectedForActual(
-        this as MemberDescriptor,
-        inModule
-    )?.get(ExpectedActualResolver.Compatibility.Compatible).orEmpty()
-}
-
-fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
-    return ExpectedActualResolver.findActualForExpected(
-        (this as MemberDescriptor),
-        inModule
-    )?.get(ExpectedActualResolver.Compatibility.Compatible).orEmpty()
-}
 
 private fun Map<ExpectedActualResolver.Compatibility, List<MemberDescriptor>>?.flattenPreferringCompatible(): List<MemberDescriptor> =
     (this?.get(ExpectedActualResolver.Compatibility.Compatible)

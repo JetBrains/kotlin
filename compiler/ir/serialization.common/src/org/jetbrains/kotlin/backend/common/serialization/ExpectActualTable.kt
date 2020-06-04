@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.multiplatform.findActuals
-import org.jetbrains.kotlin.resolve.multiplatform.findExpects
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualForExpected
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleExpectedForActual
 
 class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>) {
     val table = mutableMapOf<DeclarationDescriptor, IrSymbol>()
@@ -22,7 +22,7 @@ class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDesc
 
                 expectDescriptorToSymbol.put(declaration.descriptor, (declaration as IrSymbolOwner).symbol)
 
-                declaration.descriptor.findActuals(inModule).forEach {
+                (declaration.descriptor as MemberDescriptor).findCompatibleActualForExpected(inModule).forEach {
                     val realActual = if (it is TypeAliasDescriptor)
                         it.expandedType.constructor.declarationDescriptor as? ClassDescriptor
                             ?: error("Unexpected actual typealias right hand side: $it")
@@ -99,18 +99,18 @@ class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDesc
                 ?: error("Unexpected right hand side of actual typealias: ${declaration.descriptor}")
 
 
-            declaration.descriptor.findExpects().forEach {
+            (declaration.descriptor as MemberDescriptor).findCompatibleExpectedForActual().forEach {
                 expectDescriptorToSymbol[it]?.owner?.recordActuals(rightHandSide, declaration.descriptor.module)
             }
             return
         }
 
         val expects: List<MemberDescriptor> = if (descriptor is ClassConstructorDescriptor && descriptor.isPrimary) {
-            (descriptor.containingDeclaration.findExpects() as List<ClassDescriptor>).map {
+            ((descriptor.containingDeclaration as MemberDescriptor).findCompatibleExpectedForActual() as List<ClassDescriptor>).map {
                 it.unsubstitutedPrimaryConstructor
             }.filterNotNull()
         } else {
-            descriptor.findExpects()
+            (descriptor as MemberDescriptor).findCompatibleExpectedForActual()
         }
 
         expects.forEach { expect ->
