@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualForExpected
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleExpectedForActual
 
 // `doRemove` means should expect-declaration be removed from IR
 class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : IrElementVisitorVoid {
@@ -108,21 +110,21 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
     private fun IrClass.findActualForExpected(): IrClass? =
         descriptor.findActualForExpect()?.let { symbolTable.referenceClass(it).owner }
 
-    private inline fun <reified T : MemberDescriptor> T.findActualForExpect() = with(ExpectedActualResolver) {
+    private inline fun <reified T : MemberDescriptor> T.findActualForExpect(): T? {
         val descriptor = this@findActualForExpect
 
         if (!descriptor.isExpect) error(this)
 
-        findCompatibleActualForExpected(descriptor.module).singleOrNull()
-    } as T?
+        return findCompatibleActualForExpected(descriptor.module).singleOrNull() as T?
+    }
 
-    private inline fun <reified T : MemberDescriptor> T.findExpectForActual() = with(ExpectedActualResolver) {
+    private inline fun <reified T : MemberDescriptor> T.findExpectForActual(): T? {
         val descriptor = this@findExpectForActual
 
         if (!descriptor.isActual) error(this) else {
-            findCompatibleExpectedForActual(descriptor.module).singleOrNull()
+            return findCompatibleExpectedForActual(descriptor.module).singleOrNull() as T?
         }
-    } as T?
+    }
 
     private fun IrExpression.remapExpectValueSymbols(): IrExpression {
         return this.transform(object : IrElementTransformerVoid() {
