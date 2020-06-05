@@ -249,7 +249,7 @@ class DefaultKotlinDependencyHandler(
             scope = NpmDependency.Scope.PEER
         )
 
-    private fun defaultGenerateExternals() =
+    private fun defaultGenerateExternals(): Boolean =
         PropertiesProvider(project).jsGenerateExternals
 
     private fun directoryNpmDependency(

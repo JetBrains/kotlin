@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-const val DEFAULT_GENERATE_KOTLIN_EXTERNALS = true
+const val DEFAULT_GENERATE_KOTLIN_EXTERNALS = false
