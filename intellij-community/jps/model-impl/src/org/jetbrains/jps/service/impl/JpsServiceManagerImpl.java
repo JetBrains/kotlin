@@ -85,10 +85,6 @@ public class JpsServiceManagerImpl extends JpsServiceManager {
   private boolean cleanupExtensionCache() {
     JpsPluginManager manager = myPluginManager;
     if (manager != null) {
-      if (!manager.isFullyLoaded()) {
-        myExtensions.clear();
-        return true;
-      }
       int stamp = manager.getModificationStamp();
       if (myModificationStamp.getAndSet(stamp) != stamp) {
         myExtensions.clear();
