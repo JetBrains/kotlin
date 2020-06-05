@@ -27,6 +27,7 @@ fun JUnit.configureForKotlin(xmx: String = "1600m") {
         "-Djna.nosys=true",
         if (Platform[201].orHigher()) "-Didea.platform.prefix=Idea" else null,
         "-Didea.is.unit.test=true",
+        if (Platform[202].orHigher()) "-Didea.ignore.disabled.plugins=true" else null,
         "-Didea.home.path=$ideaSdkPath",
         "-Djps.kotlin.home=${ideaPluginDir.absolutePath}",
         "-Dkotlin.ni=" + if (rootProject.hasProperty("newInferenceTests")) "true" else "false",
