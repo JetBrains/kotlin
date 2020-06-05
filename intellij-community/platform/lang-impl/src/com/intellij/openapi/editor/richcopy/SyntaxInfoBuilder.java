@@ -362,9 +362,7 @@ public final class SyntaxInfoBuilder {
             HighlightInfoType type = info.type;
             key = type.getAttributesKey();
           }
-          if (key != null) {
-            attributes = myColorsScheme.getAttributes(key);
-          }
+          attributes = myColorsScheme.getAttributes(key);
         }
         if (attributes == null) {
           continue;
