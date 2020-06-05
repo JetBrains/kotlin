@@ -44,9 +44,6 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val compilationName: String
 ) : KotlinCompilation<T>, HasKotlinDependencies {
 
-    override val kotlinOptions: T
-        get() = compileKotlinTask.kotlinOptions
-
     override fun kotlinOptions(configure: T.() -> Unit) =
         configure(kotlinOptions)
 

@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 
 class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions>(
     val project: Project,
-    val target: KotlinWithJavaTarget<KotlinOptionsType>
+    val target: KotlinWithJavaTarget<KotlinOptionsType>,
+    val kotlinOptionsFactory: () -> KotlinOptionsType
 ) : KotlinCompilationFactory<KotlinWithJavaCompilation<KotlinOptionsType>> {
 
     override val itemClass: Class<KotlinWithJavaCompilation<KotlinOptionsType>>
@@ -19,7 +20,7 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions>(
         get() = KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>
 
     override fun create(name: String): KotlinWithJavaCompilation<KotlinOptionsType> {
-        val result = KotlinWithJavaCompilation(target, name)
+        val result = KotlinWithJavaCompilation(target, name, kotlinOptionsFactory())
         return result
     }
 }

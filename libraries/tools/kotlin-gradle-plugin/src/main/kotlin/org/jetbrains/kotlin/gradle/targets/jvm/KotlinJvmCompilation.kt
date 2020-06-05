@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
@@ -17,6 +18,9 @@ open class KotlinJvmCompilation(
     override val target: KotlinJvmTarget,
     name: String
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(target, name), KotlinCompilationWithResources<KotlinJvmOptions> {
+
+    override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
+
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
 

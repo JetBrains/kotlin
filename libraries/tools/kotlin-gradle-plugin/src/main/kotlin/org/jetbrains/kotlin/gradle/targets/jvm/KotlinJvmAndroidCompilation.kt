@@ -12,6 +12,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
 import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
@@ -21,8 +22,10 @@ import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
      name: String
  ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(target, name) {
 
-     lateinit var androidVariant: BaseVariant
-         internal set
+    override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
+
+    lateinit var androidVariant: BaseVariant
+        internal set
 
      override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
          get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
