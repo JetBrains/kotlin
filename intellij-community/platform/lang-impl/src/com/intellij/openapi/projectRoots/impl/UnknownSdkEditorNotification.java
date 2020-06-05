@@ -30,6 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class UnknownSdkEditorNotification {
@@ -210,8 +211,11 @@ public class UnknownSdkEditorNotification {
       notification.setText(notificationText);
 
       if (hasDownload) {
+        AtomicBoolean isRunning = new AtomicBoolean(false);
         notification.createActionLabel(downloadText, () -> {
-          UnknownSdkTracker.getInstance(myProject).applyDownloadableFix(mySdk, myFix);
+          if (isRunning.compareAndSet(false, true)) {
+            UnknownSdkTracker.getInstance(myProject).applyDownloadableFix(mySdk, myFix);
+          }
         }, true);
       }
 
