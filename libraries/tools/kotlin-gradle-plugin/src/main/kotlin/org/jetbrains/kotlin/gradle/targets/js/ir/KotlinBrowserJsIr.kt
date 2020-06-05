@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import javax.inject.Inject
 
 open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
@@ -122,8 +123,8 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             it.into(distribution.directory)
         }
 
-        val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTask.dependsOn(distributeResourcesTask)
+        val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+        assembleTaskProvider.dependsOn(distributeResourcesTask)
 
         compilation.binaries
             .matching { it is Executable }
@@ -153,7 +154,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 }
 
                 if (type == KotlinJsBinaryMode.PRODUCTION) {
-                    assembleTask.dependsOn(webpackTask)
+                    assembleTaskProvider.dependsOn(webpackTask)
                     val webpackCommonTask = registerSubTargetTask<Task>(
                         disambiguateCamelCased(WEBPACK_TASK_NAME)
                     ) {
@@ -178,12 +179,12 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         dependsOn(
             nodeJs.npmInstallTask,
-            target.project.tasks.getByName(compilation.processResourcesTaskName)
+            target.project.tasks.named(compilation.processResourcesTaskName)
         )
 
         configureOptimization(type)
 
-        entryProperty.set(binary.linkTask.map { RegularFile { it.outputFile } })
+        entryProperty.set(project.layout.file(binary.linkTask.map { it.outputFile }))
 
         commonRunConfigurations.forEach { configure ->
             configure()

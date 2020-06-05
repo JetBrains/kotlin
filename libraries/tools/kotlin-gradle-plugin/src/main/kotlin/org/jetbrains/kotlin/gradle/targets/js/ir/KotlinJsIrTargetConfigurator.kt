@@ -65,7 +65,7 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
         super.configureCompilations(target)
 
         target.compilations.all { compilation ->
-            compilation.compileKotlinTask.kotlinOptions {
+            compilation.kotlinOptions {
                 configureOptions()
 
                 freeCompilerArgs += listOf(

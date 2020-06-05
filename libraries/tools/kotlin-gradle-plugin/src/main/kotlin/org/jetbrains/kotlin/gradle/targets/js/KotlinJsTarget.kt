@@ -196,7 +196,7 @@ constructor(
 
     override fun useCommonJs() {
         compilations.all {
-            it.compileKotlinTask.kotlinOptions {
+            it.kotlinOptions {
                 moduleKind = "commonjs"
                 sourceMap = true
                 sourceMapEmbedSources = null

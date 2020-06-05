@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.attributes.Usage
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import java.util.concurrent.Callable
@@ -78,11 +80,11 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
             compileAllTask.dependsOn(compilation.compileKotlinTaskName)
             compileAllTask.dependsOn(compilation.processResourcesTaskName)
         } else {
-            project.tasks.create(compilation.compileAllTaskName).apply {
-                group = LifecycleBasePlugin.BUILD_GROUP
-                description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
-                dependsOn(compilation.compileKotlinTaskName)
-                dependsOn(compilation.processResourcesTaskName)
+            project.registerTask<DefaultTask>(compilation.compileAllTaskName) {
+                it.group = LifecycleBasePlugin.BUILD_GROUP
+                it.description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
+                it.dependsOn(compilation.compileKotlinTaskName)
+                it.dependsOn(compilation.processResourcesTaskName)
             }
         }
     }

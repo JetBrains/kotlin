@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Compani
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 open class NodeJsRootPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
@@ -26,7 +27,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         val settings = this.extensions.create(EXTENSION_NAME, NodeJsRootExtension::class.java, this)
 
-        val setupTask = tasks.create(NodeJsSetupTask.NAME, NodeJsSetupTask::class.java) {
+        val setupTask = registerTask<NodeJsSetupTask>(NodeJsSetupTask.NAME) {
             it.group = TASKS_GROUP_NAME
             it.description = "Download and install a local node/npm version"
         }
