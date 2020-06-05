@@ -30,6 +30,6 @@ public class CopyAsPlainTextAction extends EditorAction {
   @Override
   public void update(Editor editor, Presentation presentation, DataContext dataContext) {
     super.update(editor, presentation, dataContext);
-    presentation.setVisible(editor.getSelectionModel().hasSelection(true));
+    presentation.setVisible(editor.getSelectionModel().hasSelection(true) && CopyAsRichTextAction.isRichCopyPossible(editor));
   }
 }

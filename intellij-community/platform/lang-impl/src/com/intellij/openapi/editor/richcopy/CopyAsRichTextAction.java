@@ -50,7 +50,7 @@ public class CopyAsRichTextAction extends DumbAwareAction {
     }
   }
 
-  private static boolean isRichCopyPossible(@NotNull Editor editor) {
+  static boolean isRichCopyPossible(@NotNull Editor editor) {
     // ideally, we'd also want to check for the presence of PsiFile (CopyHandler won't work without it), but it might be more expensive
     return FileDocumentManager.getInstance().getFile(editor.getDocument()) != null;
   }
