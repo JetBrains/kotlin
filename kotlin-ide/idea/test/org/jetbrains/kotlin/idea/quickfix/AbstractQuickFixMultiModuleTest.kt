@@ -11,6 +11,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
+import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
@@ -22,16 +23,27 @@ import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestMetadataUtil
 import org.junit.Assert
 import java.io.File
+import java.nio.file.Paths
 
 abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), QuickFixTest {
 
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleQuickFix/"
+    protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
 
-    fun doTest(dirPath: String) {
-        setupMppProjectFromDirStructure(File(dirPath))
-        doQuickFixTest(dirPath)
+    protected fun testDataFile(): File = testDataFile(fileName())
+
+    protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
+
+    override fun getTestDataPath(): String {
+        val testData = TestMetadataUtil.getTestData(this::class.java)
+        return KotlinTestUtils.toSlashEndingDirPath(testData?.path ?: KOTLIN_PLUGIN_ROOT_DIRECTORY.path)
+    }
+
+    fun doTest(unused: String) {
+        setupMppProjectFromDirStructure(testDataFile())
+        doQuickFixTest(fileName())
     }
 
     private fun doQuickFixTest(dirPath: String) {
@@ -83,7 +95,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
                 }
 
                 UsefulTestCase.assertEmpty(expectedErrorMessage)
-                val logFile = File("${dirPath}log.log")
+                val logFile = Paths.get(testDataPath, dirPath, "log.log").toFile()
                 if (log.isNotEmpty()) {
                     KotlinTestUtils.assertEqualsToFile(logFile, log)
                 } else {
@@ -107,7 +119,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
     }
 
     private fun compareToExpected(directory: String) {
-        val projectDirectory = File("${KotlinTestUtils.getHomeDirectory()}/$directory")
+        val projectDirectory = File(testDataPath, directory)
         val afterFiles = projectDirectory.walkTopDown().filter { it.path.endsWith(".after") }.toList()
 
         for (editedFile in project.allKotlinFiles()) {
