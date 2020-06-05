@@ -2,16 +2,16 @@
 package com.intellij.keymap;
 
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
   // @formatter:off
-  @NonNls @SuppressWarnings({"HardCodedStringLiteral"})
-  protected static final Map<String, String[][]> DEFAULT_DUPLICATES = new THashMap<String, String[][]>(){{
+  @NonNls @SuppressWarnings("HardCodedStringLiteral")
+  protected static final Map<String, String[][]> DEFAULT_DUPLICATES = new HashMap<String, String[][]>(){{
     put("$default", new String[][] {
     { "ADD",                      "ExpandTreeNode", "Graph.ZoomIn"},
     { "BACK_SPACE",               "EditorBackSpace", "Images.Thumbnails.UpFolder"},
