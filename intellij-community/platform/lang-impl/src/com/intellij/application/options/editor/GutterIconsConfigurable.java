@@ -23,7 +23,6 @@ import com.intellij.ui.ListSpeedSearch;
 import com.intellij.ui.SeparatorWithText;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.speedSearch.SpeedSearchSupply;
-import com.intellij.util.Function;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
@@ -215,7 +214,7 @@ public class GutterIconsConfigurable implements SearchableConfigurable, Configur
     };
     myList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     myList.setBorder(BorderFactory.createEmptyBorder());
-    new ListSpeedSearch<>(myList, (Function<JCheckBox, String>)JCheckBox::getText);
+    new ListSpeedSearch<>(myList, JCheckBox::getText);
   }
 
   @NotNull

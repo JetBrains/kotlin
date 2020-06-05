@@ -36,7 +36,6 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.treeStructure.*;
 import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -514,7 +513,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
     @Override
     public MyNode[] buildChildren() {
       return ContainerUtil.map2Array(myTaskActivationState.getTasks(myPhase), MyNode.class,
-                                     (Function<String, MyNode>)taskName -> new TaskNode(taskName, this));
+                                     taskName -> new TaskNode(taskName, this));
     }
 
     @Override

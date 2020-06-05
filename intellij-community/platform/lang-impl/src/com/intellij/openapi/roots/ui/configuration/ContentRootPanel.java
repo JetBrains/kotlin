@@ -331,7 +331,7 @@ public abstract class ContentRootPanel extends JPanel {
       if (StartupUiUtil.isUnderDarcula()) {
         UIUtil.drawDottedLine(g, x1, y1, x2, y2, null, g.getColor());
       } else {
-        LinePainter2D.paint((Graphics2D)g, x1, y1, x2, y2);
+        LinePainter2D.paint(g, x1, y1, x2, y2);
       }
 
       g.setStroke(saved);

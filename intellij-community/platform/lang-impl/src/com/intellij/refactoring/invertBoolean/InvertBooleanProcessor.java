@@ -17,14 +17,10 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.MultiMap;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 /**
  * @author ven
@@ -50,7 +46,7 @@ public class InvertBooleanProcessor extends BaseRefactoringProcessor {
       @NotNull
       @Override
       protected ConflictsDialog createConflictsDialog(@NotNull MultiMap<PsiElement, String> conflicts, final UsageInfo @Nullable [] usages) {
-        return new ConflictsDialog(myProject, conflicts, usages == null ? null : (Runnable)() -> InvertBooleanProcessor.this.execute(usages), false, true);
+        return new ConflictsDialog(myProject, conflicts, usages == null ? null : () -> InvertBooleanProcessor.this.execute(usages), false, true);
       }
 
       @Override

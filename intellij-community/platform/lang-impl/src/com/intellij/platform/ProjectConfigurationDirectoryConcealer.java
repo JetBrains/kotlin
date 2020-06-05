@@ -37,7 +37,7 @@ public final class ProjectConfigurationDirectoryConcealer implements TreeStructu
         ProjectViewDirectoryHelper.getInstance(myProject).shouldHideProjectConfigurationFilesDirectory()) {
       final VirtualFile vFile = ((PsiDirectoryNode)parent).getVirtualFile();
       if (vFile != null && Comparing.equal(ProjectFileIndex.SERVICE.getInstance(myProject).getContentRootForFile(vFile), vFile)) {
-        final Collection<? extends AbstractTreeNode<?>> moduleChildren = ((PsiDirectoryNode) parent).getChildren();
+        final Collection<? extends AbstractTreeNode<?>> moduleChildren = parent.getChildren();
         Collection<AbstractTreeNode<?>> result = new ArrayList<>();
         for (AbstractTreeNode<?> moduleChild : moduleChildren) {
           if (moduleChild instanceof PsiDirectoryNode) {

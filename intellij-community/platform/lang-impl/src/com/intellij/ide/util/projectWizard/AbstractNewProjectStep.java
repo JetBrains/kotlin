@@ -135,11 +135,11 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
       ProjectSettingsStepBase<T> step;
       if (generator instanceof CustomStepProjectGenerator) {
         //noinspection unchecked,CastConflictsWithInstanceof
-        step = (ProjectSettingsStepBase<T>)((CustomStepProjectGenerator<T>)generator).createStep((DirectoryProjectGenerator<T>)generator, callback);
+        step = (ProjectSettingsStepBase<T>)((CustomStepProjectGenerator<T>)generator).createStep(generator, callback);
       }
       else {
         //noinspection unchecked
-        step = createProjectSpecificSettingsStep((DirectoryProjectGenerator<T>)generator, callback);
+        step = createProjectSpecificSettingsStep(generator, callback);
       }
 
       ProjectSpecificAction projectSpecificAction = new ProjectSpecificAction(generator, step);

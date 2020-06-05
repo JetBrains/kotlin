@@ -94,7 +94,7 @@ class ManageProjectTemplatesDialog extends DialogWrapper {
 
   @Nullable
   private ProjectTemplate getSelectedTemplate() {
-    return (ProjectTemplate)myTemplatesList.getSelectedValue();
+    return myTemplatesList.getSelectedValue();
   }
 
   @Override

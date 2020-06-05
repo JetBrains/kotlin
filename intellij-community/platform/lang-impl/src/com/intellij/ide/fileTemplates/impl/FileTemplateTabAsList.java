@@ -21,7 +21,6 @@ import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ui.ListSpeedSearch;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBList;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -46,7 +45,7 @@ abstract class FileTemplateTabAsList extends FileTemplateTab {
       }
     }));
     myList.addListSelectionListener(__ -> onTemplateSelected());
-    new ListSpeedSearch<>(myList, (Function<FileTemplate, String>)FileTemplate::getName);
+    new ListSpeedSearch<>(myList, FileTemplate::getName);
   }
 
   @Override
