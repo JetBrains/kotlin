@@ -33,9 +33,7 @@ internal class KotlinRootNpmResolver internal constructor(
         get() = nodeJs.rootProject
 
     val plugins = mutableListOf<RootResolverPlugin>().also {
-        if (nodeJs.experimental.generateKotlinExternals) {
-            it.add(DukatRootResolverPlugin(this))
-        }
+        it.add(DukatRootResolverPlugin(this))
     }
 
     enum class State {

@@ -44,9 +44,6 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
     private val projectProperties = PropertiesProvider(rootProject)
 
     inner class Experimental {
-        val generateKotlinExternals: Boolean
-            get() = projectProperties.jsGenerateExternals == true
-
         val discoverTypes: Boolean
             get() = projectProperties.jsDiscoverTypes == true
     }
