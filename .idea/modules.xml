@@ -1031,7 +1031,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-core/intellij.cidr.core.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-core/intellij.cidr.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-coverage/intellij.cidr.coverage.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-coverage/intellij.cidr.coverage.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/intellij.cidr.debugger.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/intellij.cidr.debugger.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.api.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/commandInterpreterLang/intellij.cidr.debugger.commandInterpreterLang.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/commandInterpreterLang/intellij.cidr.debugger.commandInterpreterLang.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-execution/intellij.cidr.execution.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-execution/intellij.cidr.execution.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-external-system/intellij.cidr.externalSystem.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-external-system/intellij.cidr.externalSystem.iml" />
@@ -1927,6 +1927,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/sh/intellij.sh.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/sh/intellij.sh.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/slim-lang/intellij.slim.iml" filepath="$PROJECT_DIR$/intellij/plugins/slim-lang/intellij.slim.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/slim-lang/tests/intellij.slim.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/slim-lang/tests/intellij.slim.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/space/intellij.space.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/space/intellij.space.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/spellchecker/intellij.spellchecker.iml" filepath="$PROJECT_DIR$/intellij/community/spellchecker/intellij.spellchecker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/spring/spring-api/intellij.spring.iml" filepath="$PROJECT_DIR$/intellij/plugins/spring/spring-api/intellij.spring.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/spring/spring-framework/spring-aop/intellij.spring.aop.iml" filepath="$PROJECT_DIR$/intellij/plugins/spring/spring-framework/spring-aop/intellij.spring.aop.iml" />

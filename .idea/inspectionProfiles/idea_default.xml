@@ -1220,6 +1220,11 @@
         <constraint name="l" within="" contains="" />
         <constraint name="f" within="" contains="" />
       </replaceConfiguration>
+      <replaceConfiguration name="simplify to ContainerUtil.find()" text="$l$.stream().filter($f$).findFirst().orElse(null)" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.containers.ContainerUtil.find($l$, $f$)">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="l" within="" contains="" />
+        <constraint name="f" within="" contains="" />
+      </replaceConfiguration>
       <replaceConfiguration name="notNullize(s,&quot;&quot;) can be simplified" text="com.intellij.openapi.util.text.StringUtil.notNullize($s$, &quot;&quot;)" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.openapi.util.text.StringUtil.notNullize($s$)">
         <constraint name="__context__" within="" contains="" />
         <constraint name="s" within="" contains="" />
