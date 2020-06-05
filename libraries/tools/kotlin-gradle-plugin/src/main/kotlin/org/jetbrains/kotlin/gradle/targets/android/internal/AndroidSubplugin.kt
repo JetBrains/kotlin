@@ -13,15 +13,14 @@ import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.variant.TestVariantData
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
@@ -36,6 +35,7 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
         project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
         addAndroidExtensionsRuntime(project)
         registry.register(KotlinAndroidExtensionModelBuilder())
+        project.plugins.apply(AndroidSubplugin::class.java)
     }
 
     private fun addAndroidExtensionsRuntime(project: Project) {
@@ -65,41 +65,35 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
     }
 }
 
-class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
-        if (task !is KotlinCompile) return false
-        try {
-            project.extensions.getByName("android") as? BaseExtension ?: return false
-        } catch (e: UnknownDomainObjectException) {
+class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
+        if (kotlinCompilation !is KotlinJvmAndroidCompilation)
             return false
-        }
-        if (project.plugins.findPlugin(AndroidExtensionsSubpluginIndicator::class.java) == null) {
+
+        val project = kotlinCompilation.target.project
+
+        if (project.extensions.findByName("android") !is BaseExtension)
             return false
-        }
-        project.multiplatformExtensionOrNull?.let { kotlin ->
-            return kotlin.targets.any { target ->
-                target is KotlinAndroidTarget && target.compilations.any { it.compileKotlinTaskName == task.name }
-            }
-        }
+
+        if (project.plugins.findPlugin(AndroidExtensionsSubpluginIndicator::class.java) == null)
+            return false
 
         return true
     }
 
-    override fun apply(
-        project: Project,
-        kotlinCompile: KotlinCompile,
-        javaCompile: AbstractCompile?,
-        variantData: Any?,
-        androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<*>?
-    ): List<SubpluginOption> {
-        val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return emptyList()
+    override fun applyToCompilation(
+        kotlinCompilation: KotlinCompilation<*>
+    ): Provider<List<SubpluginOption>> {
+        kotlinCompilation as KotlinJvmAndroidCompilation
+        val project = kotlinCompilation.target.project
+
+        val androidExtension = project.extensions.getByName("android") as BaseExtension
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)
 
         if (androidExtensionsExtension.isExperimental) {
             return applyExperimental(
-                kotlinCompile, androidExtension, androidExtensionsExtension,
-                project, variantData, androidProjectHandler
+                kotlinCompilation.compileKotlinTaskProvider, androidExtension, androidExtensionsExtension,
+                project, kotlinCompilation.androidVariant
             )
         }
 
@@ -130,7 +124,9 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                     FilesSubpluginOption("resDirs", project.files(Callable { sourceSet.res.srcDirs }))
                 )
             )
-            kotlinCompile.inputs.files(getLayoutDirectories(project, sourceSet.res.srcDirs)).withPathSensitivity(PathSensitivity.RELATIVE)
+            kotlinCompilation.compileKotlinTaskProvider.configure {
+                it.inputs.files(getLayoutDirectories(project, sourceSet.res.srcDirs)).withPathSensitivity(PathSensitivity.RELATIVE)
+            }
         }
 
         addVariant(mainSourceSet)
@@ -142,7 +138,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             addVariant(sourceSet)
         }
 
-        return wrapPluginOptions(pluginOptions, "configuration")
+        return project.provider { wrapPluginOptions(pluginOptions, "configuration") }
     }
 
     private fun getLayoutDirectories(project: Project, resDirectories: Iterable<File>): FileCollection {
@@ -156,19 +152,17 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     private fun applyExperimental(
-        kotlinCompile: KotlinCompile,
+        kotlinCompile: TaskProvider<out KotlinCompile>,
         androidExtension: BaseExtension,
         androidExtensionsExtension: AndroidExtensionsExtension,
         project: Project,
-        variantData: Any?,
-        androidProjectHandler: Any?
-    ): List<SubpluginOption> {
-        @Suppress("UNCHECKED_CAST")
-        androidProjectHandler as? AbstractAndroidProjectHandler ?: return emptyList()
-
+        variantData: Any?
+    ): Provider<List<SubpluginOption>> {
         val pluginOptions = arrayListOf<SubpluginOption>()
-        pluginOptions += SubpluginOption("features",
-                                         AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName })
+        pluginOptions += SubpluginOption(
+            "features",
+            AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName }
+        )
 
         pluginOptions += SubpluginOption("experimental", "true")
         pluginOptions += SubpluginOption(
@@ -195,7 +189,9 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 )
             )
 
-            kotlinCompile.inputs.files(getLayoutDirectories(project, resDirectories)).withPathSensitivity(PathSensitivity.RELATIVE)
+            kotlinCompile.configure {
+                it.inputs.files(getLayoutDirectories(project, resDirectories)).withPathSensitivity(PathSensitivity.RELATIVE)
+            }
         }
 
         fun addSourceSetAsVariant(name: String) {
@@ -208,9 +204,9 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val resDirectoriesForAllVariants = mutableListOf<FileCollection>()
 
-        project.forEachVariant { variant ->
+        forEachVariant(project) { variant ->
             if (getTestedVariantData(variant) != null) return@forEachVariant
-            resDirectoriesForAllVariants += androidProjectHandler.getResDirectories(variant)
+            resDirectoriesForAllVariants += variant.getResDirectories()
         }
 
         val commonResDirectories = getCommonResDirectories(project, resDirectoriesForAllVariants)
@@ -229,11 +225,10 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             }
         }
 
-        return wrapPluginOptions(pluginOptions, "configuration")
+        return project.provider { wrapPluginOptions(pluginOptions, "configuration") }
     }
 
     private fun getVariantComponentNames(flavorData: Any?): VariantComponentNames? = when (flavorData) {
-        is KaptVariantData<*> -> getVariantComponentNames(flavorData.variantData)
         is TestVariantData -> getVariantComponentNames(flavorData.testedVariantData)
         is TestVariant -> getVariantComponentNames(flavorData.testedVariant)
         is BaseVariant -> VariantComponentNames(flavorData.name, flavorData.flavorName, flavorData.buildType.name)
