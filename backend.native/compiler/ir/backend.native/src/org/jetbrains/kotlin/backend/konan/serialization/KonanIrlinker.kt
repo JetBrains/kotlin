@@ -33,10 +33,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -135,6 +137,19 @@ internal class KonanIrLinker(
             if (descriptor.isCEnumsOrCStruct()) return resolveCEnumsOrStruct(descriptor, idSig, symbolKind)
 
             val symbolOwner = stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner
+
+            // Make sure all class hierarchy is available, otherwise we won't be able
+            // to build fake overrides.
+            // TODO: we actually only need it to tell if class .isObjCClass
+            // So if we could come up with a way to tell without looking at class hierarchy
+            // this hack could be erased.
+            if (symbolOwner is IrLazyClass) {
+                symbolOwner.superTypes.forEach {
+                    it.classOrNull?.let {
+                        symbolTable.referenceClassFromLinker(it.descriptor, it.signature)
+                    }
+                }
+            }
 
             return symbolOwner.symbol
         }
