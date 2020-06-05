@@ -14,176 +14,225 @@ digraph delegateWithAnonymousObject_kt {
 
     subgraph cluster_1 {
         color=red
-        3 [label="Enter class DelegateProvider" style="filled" fillcolor=red];
-        4 [label="Exit class DelegateProvider" style="filled" fillcolor=red];
+        4 [label="Enter class DelegateProvider" style="filled" fillcolor=red];
+        3 [label="Exit class DelegateProvider" style="filled" fillcolor=red];
     }
-    3 -> {4} [color=green];
+    4 -> {3} [color=green];
 
     subgraph cluster_2 {
         color=red
         5 [label="Enter function delegate" style="filled" fillcolor=red];
-        7 [label="Const: Null(null)"];
-        8 [label="Check not null: Null(null)!!"];
-        9 [label="Jump: ^delegate Null(null)!!"];
-        10 [label="Stub" style="filled" fillcolor=gray];
+        subgraph cluster_3 {
+            color=blue
+            7 [label="Enter block"];
+            8 [label="Const: Null(null)"];
+            9 [label="Check not null: Null(null)!!"];
+            10 [label="Jump: ^delegate Null(null)!!"];
+            11 [label="Stub" style="filled" fillcolor=gray];
+            12 [label="Exit block" style="filled" fillcolor=gray];
+        }
         6 [label="Exit function delegate" style="filled" fillcolor=red];
     }
     5 -> {7};
     7 -> {8};
     8 -> {9};
-    9 -> {6};
-    9 -> {10} [style=dotted];
-    10 -> {6} [style=dotted];
-
-    subgraph cluster_3 {
-        color=red
-        11 [label="Enter function <init>" style="filled" fillcolor=red];
-        13 [label="Delegated constructor call: super<R|DelegateProvider<IssueListView>|>()"];
-        12 [label="Exit function <init>" style="filled" fillcolor=red];
-    }
-    11 -> {13};
-    13 -> {12};
+    9 -> {10};
+    10 -> {6};
+    10 -> {11} [style=dotted];
+    11 -> {12} [style=dotted];
+    12 -> {6} [style=dotted];
 
     subgraph cluster_4 {
         color=red
-        14 [label="Enter function updateFrom" style="filled" fillcolor=red];
-        15 [label="Exit function updateFrom" style="filled" fillcolor=red];
+        13 [label="Enter function <init>" style="filled" fillcolor=red];
+        15 [label="Delegated constructor call: super<R|DelegateProvider<IssueListView>|>()"];
+        14 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    14 -> {15};
+    13 -> {15};
+    15 -> {14};
 
     subgraph cluster_5 {
         color=red
-        16 [label="Enter class IssueListView" style="filled" fillcolor=red];
-        17 [label="Exit class IssueListView" style="filled" fillcolor=red];
+        16 [label="Enter function updateFrom" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            18 [label="Enter block"];
+            19 [label="Exit block"];
+        }
+        17 [label="Exit function updateFrom" style="filled" fillcolor=red];
     }
-    16 -> {17} [color=green];
-
-    subgraph cluster_6 {
-        color=red
-        18 [label="Enter function <init>" style="filled" fillcolor=red];
-        20 [label="Delegated constructor call: super<R|DelegateProvider<IssuesListUserProfile>|>()"];
-        19 [label="Exit function <init>" style="filled" fillcolor=red];
-    }
-    18 -> {20};
-    20 -> {19};
+    16 -> {18};
+    18 -> {19};
+    19 -> {17};
 
     subgraph cluster_7 {
         color=red
-        24 [label="Enter function <init>" style="filled" fillcolor=red];
-        26 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        25 [label="Exit function <init>" style="filled" fillcolor=red];
+        21 [label="Enter class IssueListView" style="filled" fillcolor=red];
+        20 [label="Exit class IssueListView" style="filled" fillcolor=red];
     }
-    24 -> {26};
-    26 -> {25};
+    21 -> {20} [color=green];
 
     subgraph cluster_8 {
         color=red
-        27 [label="Enter function getValue" style="filled" fillcolor=red];
-        29 [label="Function call: R|/IssueListView.IssueListView|()"];
-        30 [label="Jump: ^getValue R|/IssueListView.IssueListView|()"];
-        31 [label="Stub" style="filled" fillcolor=gray];
-        28 [label="Exit function getValue" style="filled" fillcolor=red];
+        22 [label="Enter function <init>" style="filled" fillcolor=red];
+        24 [label="Delegated constructor call: super<R|DelegateProvider<IssuesListUserProfile>|>()"];
+        23 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    27 -> {29};
-    29 -> {30};
-    30 -> {28};
-    30 -> {31} [style=dotted];
-    31 -> {28} [style=dotted];
+    22 -> {24};
+    24 -> {23};
 
     subgraph cluster_9 {
         color=red
-        32 [label="Enter function setValue" style="filled" fillcolor=red];
-        34 [label="Function call: R|/IssueListView.IssueListView|()"];
-        35 [label="Access variable R|<local>/value|"];
-        36 [label="Function call: R|/IssueListView.IssueListView|().R|/IssueListView.updateFrom|(...)"];
-        37 [label="Jump: ^setValue R|/IssueListView.IssueListView|().R|/IssueListView.updateFrom|(R|<local>/value|)"];
-        38 [label="Stub" style="filled" fillcolor=gray];
-        33 [label="Exit function setValue" style="filled" fillcolor=red];
+        32 [label="Enter function <init>" style="filled" fillcolor=red];
+        34 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        33 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     32 -> {34};
-    34 -> {35};
-    35 -> {36};
-    36 -> {37};
-    37 -> {33};
-    37 -> {38} [style=dotted];
-    38 -> {33} [style=dotted];
+    34 -> {33};
 
     subgraph cluster_10 {
         color=red
-        39 [label="Enter class <anonymous>" style="filled" fillcolor=red];
-        40 [label="Exit class <anonymous>" style="filled" fillcolor=red];
-    }
-    39 -> {40} [color=green];
-
-    subgraph cluster_11 {
-        color=red
-        64 [label="Enter class IssuesListUserProfile" style="filled" fillcolor=red];
-        subgraph cluster_12 {
+        35 [label="Enter function getValue" style="filled" fillcolor=red];
+        subgraph cluster_11 {
             color=blue
-            48 [label="Enter function setter" style="filled" fillcolor=red];
-            50 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
-            51 [label="Access variable this@R|/IssuesListUserProfile|"];
-            52 [label="Access variable R|<local>/issueListView|"];
-            53 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)"];
-            49 [label="Exit function setter" style="filled" fillcolor=red];
+            37 [label="Enter block"];
+            38 [label="Function call: R|/IssueListView.IssueListView|()"];
+            39 [label="Jump: ^getValue R|/IssueListView.IssueListView|()"];
+            40 [label="Stub" style="filled" fillcolor=gray];
+            41 [label="Exit block" style="filled" fillcolor=gray];
         }
+        36 [label="Exit function getValue" style="filled" fillcolor=red];
+    }
+    35 -> {37};
+    37 -> {38};
+    38 -> {39};
+    39 -> {36};
+    39 -> {40} [style=dotted];
+    40 -> {41} [style=dotted];
+    41 -> {36} [style=dotted];
+
+    subgraph cluster_12 {
+        color=red
+        42 [label="Enter function setValue" style="filled" fillcolor=red];
         subgraph cluster_13 {
             color=blue
-            41 [label="Enter function getter" style="filled" fillcolor=red];
-            43 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
-            44 [label="Access variable this@R|/IssuesListUserProfile|"];
-            45 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(...)"];
-            46 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
-            47 [label="Stub" style="filled" fillcolor=gray];
-            42 [label="Exit function getter" style="filled" fillcolor=red];
+            44 [label="Enter block"];
+            45 [label="Function call: R|/IssueListView.IssueListView|()"];
+            46 [label="Access variable R|<local>/value|"];
+            47 [label="Function call: R|/IssueListView.IssueListView|().R|/IssueListView.updateFrom|(...)"];
+            48 [label="Jump: ^setValue R|/IssueListView.IssueListView|().R|/IssueListView.updateFrom|(R|<local>/value|)"];
+            49 [label="Stub" style="filled" fillcolor=gray];
+            50 [label="Exit block" style="filled" fillcolor=gray];
         }
-        subgraph cluster_14 {
-            color=blue
-            54 [label="Enter property" style="filled" fillcolor=red];
-            56 [label="Postponed enter to lambda"];
-            57 [label="Postponed exit from lambda"];
-            58 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
-            59 [label="Access variable this@R|/IssuesListUserProfile|"];
-            60 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).<Unresolved name: provideDelegate>#(...)"];
-            61 [label="Postponed enter to lambda"];
-            subgraph cluster_15 {
-                color=blue
-                21 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                23 [label="Exit anonymous object"];
-                22 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
-            }
-            62 [label="Postponed exit from lambda"];
-            63 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
-            55 [label="Exit property" style="filled" fillcolor=red];
-        }
-        65 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
+        43 [label="Exit function setValue" style="filled" fillcolor=red];
     }
-    64 -> {54} [color=green];
-    54 -> {56};
-    55 -> {65} [color=green];
-    56 -> {57};
-    57 -> {58};
-    58 -> {59};
-    59 -> {60};
-    60 -> {61};
-    61 -> {62};
-    61 -> {21} [color=red];
-    62 -> {63};
-    63 -> {55};
-    21 -> {23};
-    21 -> {24 27 32} [color=red];
-    23 -> {22};
-    41 -> {43};
-    43 -> {44};
+    42 -> {44};
     44 -> {45};
     45 -> {46};
-    46 -> {42};
-    46 -> {47} [style=dotted];
-    47 -> {42} [style=dotted];
-    48 -> {50};
-    50 -> {51};
-    51 -> {52};
-    52 -> {53};
-    53 -> {49};
+    46 -> {47};
+    47 -> {48};
+    48 -> {43};
+    48 -> {49} [style=dotted];
+    49 -> {50} [style=dotted];
+    50 -> {43} [style=dotted];
+
+    subgraph cluster_14 {
+        color=red
+        51 [label="Enter function getter" style="filled" fillcolor=red];
+        subgraph cluster_15 {
+            color=blue
+            53 [label="Enter block"];
+            54 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
+            55 [label="Access variable this@R|/IssuesListUserProfile|"];
+            56 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(...)"];
+            57 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
+            58 [label="Stub" style="filled" fillcolor=gray];
+            59 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        52 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+    51 -> {53};
+    53 -> {54};
+    54 -> {55};
+    55 -> {56};
+    56 -> {57};
+    57 -> {52};
+    57 -> {58} [style=dotted];
+    58 -> {59} [style=dotted];
+    59 -> {52} [style=dotted];
+
+    subgraph cluster_16 {
+        color=red
+        60 [label="Enter function setter" style="filled" fillcolor=red];
+        subgraph cluster_17 {
+            color=blue
+            62 [label="Enter block"];
+            63 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
+            64 [label="Access variable this@R|/IssuesListUserProfile|"];
+            65 [label="Access variable R|<local>/issueListView|"];
+            66 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)"];
+            67 [label="Exit block"];
+        }
+        61 [label="Exit function setter" style="filled" fillcolor=red];
+    }
+    60 -> {62};
+    62 -> {63};
+    63 -> {64};
+    64 -> {65};
+    65 -> {66};
+    66 -> {67};
+    67 -> {61};
+
+    subgraph cluster_18 {
+        color=red
+        79 [label="Enter class IssuesListUserProfile" style="filled" fillcolor=red];
+        subgraph cluster_19 {
+            color=blue
+            31 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+            30 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+        }
+        subgraph cluster_20 {
+            color=blue
+            68 [label="Enter property" style="filled" fillcolor=red];
+            70 [label="Postponed enter to lambda"];
+            71 [label="Postponed exit from lambda"];
+            72 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
+            73 [label="Access variable this@R|/IssuesListUserProfile|"];
+            74 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).<Unresolved name: provideDelegate>#(...)"];
+            75 [label="Postponed enter to lambda"];
+            subgraph cluster_21 {
+                color=blue
+                25 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_22 {
+                    color=blue
+                    27 [label="Enter block"];
+                    28 [label="Exit anonymous object"];
+                    29 [label="Exit block"];
+                }
+                26 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            76 [label="Postponed exit from lambda"];
+            77 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
+            69 [label="Exit property" style="filled" fillcolor=red];
+        }
+        78 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
+    }
+    79 -> {68} [color=green];
+    68 -> {70};
+    69 -> {78} [color=green];
+    70 -> {71};
+    71 -> {72};
+    72 -> {73};
+    73 -> {74};
+    74 -> {75};
+    75 -> {76 25};
+    76 -> {77};
+    77 -> {69};
+    25 -> {27};
+    27 -> {28};
+    27 -> {32 35 42} [color=red];
+    28 -> {29};
+    29 -> {26};
+    31 -> {30} [color=green];
 
 }

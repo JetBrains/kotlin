@@ -9,207 +9,208 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 
-fun ControlFlowGraphBuilder.createStubNode(): StubNode = StubNode(graph, levelCounter, createId())
+fun ControlFlowGraphBuilder.createStubNode(): StubNode = StubNode(currentGraph, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createContractDescriptionEnterNode(): ContractDescriptionEnterNode =
-    ContractDescriptionEnterNode(graph, levelCounter, createId())
+    ContractDescriptionEnterNode(currentGraph, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createLoopExitNode(fir: FirLoop): LoopExitNode = LoopExitNode(graph, fir, levelCounter, createId())
+fun ControlFlowGraphBuilder.createLoopExitNode(fir: FirLoop): LoopExitNode = LoopExitNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createLoopEnterNode(fir: FirLoop): LoopEnterNode = LoopEnterNode(graph, fir, levelCounter, createId())
+fun ControlFlowGraphBuilder.createLoopEnterNode(fir: FirLoop): LoopEnterNode = LoopEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createInitBlockEnterNode(fir: FirAnonymousInitializer): InitBlockEnterNode =
-    InitBlockEnterNode(graph, fir, levelCounter, createId()).also {
-        graph.enterNode = it
-    }
+    InitBlockEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createInitBlockExitNode(fir: FirAnonymousInitializer): InitBlockExitNode =
-    InitBlockExitNode(graph, fir, levelCounter, createId()).also {
-        graph.exitNode = it
-    }
+    InitBlockExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createTypeOperatorCallNode(fir: FirTypeOperatorCall): TypeOperatorCallNode =
-    TypeOperatorCallNode(graph, fir, levelCounter, createId())
+    TypeOperatorCallNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createOperatorCallNode(fir: FirOperatorCall): OperatorCallNode =
-    OperatorCallNode(graph, fir, levelCounter, createId())
+    OperatorCallNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createWhenBranchConditionExitNode(fir: FirWhenBranch): WhenBranchConditionExitNode =
-    WhenBranchConditionExitNode(graph, fir, levelCounter, createId())
+    WhenBranchConditionExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createJumpNode(fir: FirJump<*>): JumpNode =
-    JumpNode(graph, fir, levelCounter, createId())
+    JumpNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createCheckNotNullCallNode(fir: FirCheckNotNullCall): CheckNotNullCallNode =
-    CheckNotNullCallNode(graph, fir, levelCounter, createId())
+    CheckNotNullCallNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createQualifiedAccessNode(fir: FirQualifiedAccessExpression): QualifiedAccessNode =
-    QualifiedAccessNode(graph, fir, levelCounter, createId())
+    QualifiedAccessNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createResolvedQualifierNode(fir: FirResolvedQualifier): ResolvedQualifierNode =
-    ResolvedQualifierNode(graph, fir, levelCounter, createId())
+    ResolvedQualifierNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createBlockEnterNode(fir: FirBlock): BlockEnterNode = BlockEnterNode(graph, fir, levelCounter, createId())
+fun ControlFlowGraphBuilder.createBlockEnterNode(fir: FirBlock): BlockEnterNode = BlockEnterNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createBlockExitNode(fir: FirBlock): BlockExitNode = BlockExitNode(graph, fir, levelCounter, createId())
+fun ControlFlowGraphBuilder.createBlockExitNode(fir: FirBlock): BlockExitNode = BlockExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createPropertyInitializerExitNode(fir: FirProperty): PropertyInitializerExitNode =
-    PropertyInitializerExitNode(graph, fir, levelCounter, createId())
+    PropertyInitializerExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createPropertyInitializerEnterNode(fir: FirProperty): PropertyInitializerEnterNode =
-    PropertyInitializerEnterNode(graph, fir, levelCounter, createId())
+    PropertyInitializerEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createFunctionEnterNode(fir: FirFunction<*>): FunctionEnterNode =
-    FunctionEnterNode(graph, fir, levelCounter, createId()).also {
-        graph.enterNode = it
+    FunctionEnterNode(currentGraph, fir, levelCounter, createId()).also {
+        currentGraph.enterNode = it
     }
 
 fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction<*>): FunctionExitNode =
-    FunctionExitNode(graph, fir, levelCounter, createId()).also {
-        graph.exitNode = it
+    FunctionExitNode(currentGraph, fir, levelCounter, createId()).also {
+        currentGraph.exitNode = it
     }
 
 fun ControlFlowGraphBuilder.createBinaryOrEnterNode(fir: FirBinaryLogicExpression): BinaryOrEnterNode =
-    BinaryOrEnterNode(graph, fir, levelCounter, createId())
+    BinaryOrEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBinaryOrExitLeftOperandNode(fir: FirBinaryLogicExpression): BinaryOrExitLeftOperandNode =
-    BinaryOrExitLeftOperandNode(graph, fir, levelCounter, createId())
+    BinaryOrExitLeftOperandNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBinaryOrExitNode(fir: FirBinaryLogicExpression): BinaryOrExitNode =
-    BinaryOrExitNode(graph, fir, levelCounter, createId())
+    BinaryOrExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBinaryAndExitNode(fir: FirBinaryLogicExpression): BinaryAndExitNode =
-    BinaryAndExitNode(graph, fir, levelCounter, createId())
+    BinaryAndExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBinaryAndEnterNode(fir: FirBinaryLogicExpression): BinaryAndEnterNode =
-    BinaryAndEnterNode(graph, fir, levelCounter, createId())
+    BinaryAndEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createWhenBranchConditionEnterNode(fir: FirWhenBranch): WhenBranchConditionEnterNode =
-    WhenBranchConditionEnterNode(graph, fir, levelCounter, createId())
+    WhenBranchConditionEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createWhenEnterNode(fir: FirWhenExpression): WhenEnterNode =
-    WhenEnterNode(graph, fir, levelCounter, createId())
+    WhenEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createWhenExitNode(fir: FirWhenExpression): WhenExitNode =
-    WhenExitNode(graph, fir, levelCounter, createId())
+    WhenExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createWhenBranchResultExitNode(fir: FirWhenBranch): WhenBranchResultExitNode =
-    WhenBranchResultExitNode(graph, fir, levelCounter, createId())
+    WhenBranchResultExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createWhenSyntheticElseBranchNode(fir: FirWhenExpression): WhenSyntheticElseBranchNode =
-    WhenSyntheticElseBranchNode(graph, fir, levelCounter, createId())
+    WhenSyntheticElseBranchNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createWhenBranchResultEnterNode(fir: FirWhenBranch): WhenBranchResultEnterNode =
-    WhenBranchResultEnterNode(graph, fir, levelCounter, createId())
+    WhenBranchResultEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createLoopConditionExitNode(fir: FirExpression): LoopConditionExitNode =
-    LoopConditionExitNode(graph, fir, levelCounter, createId())
+    LoopConditionExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createLoopConditionEnterNode(fir: FirExpression): LoopConditionEnterNode =
-    LoopConditionEnterNode(graph, fir, levelCounter, createId())
+    LoopConditionEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createLoopBlockEnterNode(fir: FirLoop): LoopBlockEnterNode =
-    LoopBlockEnterNode(graph, fir, levelCounter, createId())
+    LoopBlockEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createLoopBlockExitNode(fir: FirLoop): LoopBlockExitNode =
-    LoopBlockExitNode(graph, fir, levelCounter, createId())
+    LoopBlockExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createFunctionCallNode(fir: FirFunctionCall): FunctionCallNode =
-    FunctionCallNode(graph, fir, levelCounter, createId())
+    FunctionCallNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createDelegatedConstructorCallNode(fir: FirDelegatedConstructorCall): DelegatedConstructorCallNode =
-    DelegatedConstructorCallNode(graph, fir, levelCounter, createId())
+    DelegatedConstructorCallNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createVariableAssignmentNode(fir: FirVariableAssignment): VariableAssignmentNode =
-    VariableAssignmentNode(graph, fir, levelCounter, createId())
+    VariableAssignmentNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createAnnotationExitNode(fir: FirAnnotationCall): AnnotationExitNode =
-    AnnotationExitNode(graph, fir, levelCounter, createId())
+    AnnotationExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createAnnotationEnterNode(fir: FirAnnotationCall): AnnotationEnterNode =
-    AnnotationEnterNode(graph, fir, levelCounter, createId())
+    AnnotationEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createVariableDeclarationNode(fir: FirProperty): VariableDeclarationNode =
-    VariableDeclarationNode(graph, fir, levelCounter, createId())
+    VariableDeclarationNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createExitContractNode(fir: FirQualifiedAccess): ExitContractNode =
-    ExitContractNode(graph, fir, levelCounter, createId())
+    ExitContractNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createEnterContractNode(fir: FirQualifiedAccess): EnterContractNode =
-    EnterContractNode(graph, fir, levelCounter, createId())
+    EnterContractNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createConstExpressionNode(fir: FirConstExpression<*>): ConstExpressionNode =
-    ConstExpressionNode(graph, fir, levelCounter, createId())
+    ConstExpressionNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createThrowExceptionNode(fir: FirThrowExpression): ThrowExceptionNode =
-    ThrowExceptionNode(graph, fir, levelCounter, createId())
+    ThrowExceptionNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createFinallyProxyExitNode(fir: FirTryExpression): FinallyProxyExitNode =
-    FinallyProxyExitNode(graph, fir, levelCounter, createId())
+    FinallyProxyExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createFinallyProxyEnterNode(fir: FirTryExpression): FinallyProxyEnterNode =
-    FinallyProxyEnterNode(graph, fir, levelCounter, createId())
+    FinallyProxyEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createFinallyBlockExitNode(fir: FirTryExpression): FinallyBlockExitNode =
-    FinallyBlockExitNode(graph, fir, levelCounter, createId())
+    FinallyBlockExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createFinallyBlockEnterNode(fir: FirTryExpression): FinallyBlockEnterNode =
-    FinallyBlockEnterNode(graph, fir, levelCounter, createId())
+    FinallyBlockEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createCatchClauseExitNode(fir: FirCatch): CatchClauseExitNode =
-    CatchClauseExitNode(graph, fir, levelCounter, createId())
+    CatchClauseExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createTryMainBlockExitNode(fir: FirTryExpression): TryMainBlockExitNode =
-    TryMainBlockExitNode(graph, fir, levelCounter, createId())
+    TryMainBlockExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createTryMainBlockEnterNode(fir: FirTryExpression): TryMainBlockEnterNode =
-    TryMainBlockEnterNode(graph, fir, levelCounter, createId())
+    TryMainBlockEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createCatchClauseEnterNode(fir: FirCatch): CatchClauseEnterNode =
-    CatchClauseEnterNode(graph, fir, levelCounter, createId())
+    CatchClauseEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createTryExpressionEnterNode(fir: FirTryExpression): TryExpressionEnterNode =
-    TryExpressionEnterNode(graph, fir, levelCounter, createId())
+    TryExpressionEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createTryExpressionExitNode(fir: FirTryExpression): TryExpressionExitNode =
-    TryExpressionExitNode(graph, fir, levelCounter, createId())
+    TryExpressionExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBinaryAndExitLeftOperandNode(fir: FirBinaryLogicExpression): BinaryAndExitLeftOperandNode =
-    BinaryAndExitLeftOperandNode(graph, fir, levelCounter, createId())
+    BinaryAndExitLeftOperandNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBinaryAndEnterRightOperandNode(fir: FirBinaryLogicExpression): BinaryAndEnterRightOperandNode =
-    BinaryAndEnterRightOperandNode(graph, fir, levelCounter, createId())
+    BinaryAndEnterRightOperandNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBinaryOrEnterRightOperandNode(fir: FirBinaryLogicExpression): BinaryOrEnterRightOperandNode =
-    BinaryOrEnterRightOperandNode(graph, fir, levelCounter, createId())
+    BinaryOrEnterRightOperandNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createExitSafeCallNode(fir: FirSafeCallExpression): ExitSafeCallNode =
-    ExitSafeCallNode(graph, fir, levelCounter, createId())
+    ExitSafeCallNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createEnterSafeCallNode(fir: FirSafeCallExpression): EnterSafeCallNode =
-    EnterSafeCallNode(graph, fir, levelCounter, createId())
+    EnterSafeCallNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createPostponedLambdaExitNode(fir: FirAnonymousFunction): PostponedLambdaExitNode =
-    PostponedLambdaExitNode(graph, fir, levelCounter, createId())
+    PostponedLambdaExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createPostponedLambdaEnterNode(fir: FirAnonymousFunction): PostponedLambdaEnterNode =
-    PostponedLambdaEnterNode(graph, fir, levelCounter, createId())
+    PostponedLambdaEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createAnonymousObjectExitNode(fir: FirAnonymousObject): AnonymousObjectExitNode =
-    AnonymousObjectExitNode(graph, fir, levelCounter, createId())
+    AnonymousObjectExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createUnionFunctionCallArgumentsNode(fir: FirElement): UnionFunctionCallArgumentsNode =
-    UnionFunctionCallArgumentsNode(graph, fir, levelCounter, createId())
+    UnionFunctionCallArgumentsNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createClassEnterNode(fir: FirClass<*>): ClassEnterNode =
-    ClassEnterNode(graph, fir, levelCounter, createId()).also {
-        graph.enterNode = it
-    }
+    ClassEnterNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createClassExitNode(fir: FirClass<*>): ClassExitNode =
-    ClassExitNode(graph, fir, levelCounter, createId()).also {
-        graph.exitNode = it
-    }
+    ClassExitNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createLocalClassExitNode(fir: FirRegularClass): LocalClassExitNode =
-    LocalClassExitNode(graph, fir, levelCounter, createId())
+    LocalClassExitNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createEnterDefaultArgumentsNode(fir: FirValueParameter): EnterDefaultArgumentsNode =
+    EnterDefaultArgumentsNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createExitDefaultArgumentsNode(fir: FirValueParameter): ExitDefaultArgumentsNode =
+    ExitDefaultArgumentsNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createComparisonExpressionNode(fir: FirComparisonExpression): ComparisonExpressionNode =
+    ComparisonExpressionNode(currentGraph, fir, levelCounter, createId())

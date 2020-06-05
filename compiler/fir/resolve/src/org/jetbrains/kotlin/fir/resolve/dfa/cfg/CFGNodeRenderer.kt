@@ -107,6 +107,9 @@ fun CFGNode<*>.render(): String =
                 is ContractDescriptionEnterNode -> "Enter contract description"
 
                 is AbstractBinaryExitNode -> throw IllegalStateException()
+
+                is EnterDefaultArgumentsNode -> "Enter default value of ${fir.name}"
+                is ExitDefaultArgumentsNode -> "Exit default value of ${fir.name}"
             },
         )
     }

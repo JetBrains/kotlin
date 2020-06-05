@@ -30,7 +30,8 @@ FILE: safeCalls.kt
         R|<local>/x|?.{ $subj$.R|/A.id|() }?.{ $subj$.R|/A.bool|() }
         R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()
     }
-    public final fun R|kotlin/Any?|.boo(b: R|kotlin/Boolean|): R|kotlin/Unit|
+    public final fun R|kotlin/Any?|.boo(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+    }
     public final fun test_5(x: R|A?|): R|kotlin/Unit| {
         R|<local>/x|?.{ $subj$.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Nothing| <kind=EXACTLY_ONCE>  {
             ^test_5 Unit

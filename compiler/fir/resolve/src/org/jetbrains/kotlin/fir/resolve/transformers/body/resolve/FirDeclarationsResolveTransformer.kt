@@ -144,8 +144,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                         }
                     }
                     property.replaceResolvePhase(transformerPhase)
-                    val controlFlowGraph = dataFlowAnalyzer.exitProperty(property)
-                    property.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
+                    dataFlowAnalyzer.exitProperty(property)?.let {
+                        property.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, it)
+                    }
                     property.compose()
                 }
             }
@@ -546,13 +547,23 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         context.storeVariable(valueParameter)
         if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
             valueParameter.replaceResolvePhase(transformerPhase)
-            return valueParameter.compose() // TODO
+            return valueParameter.compose()
         }
+
+        dataFlowAnalyzer.enterValueParameter(valueParameter)
         val transformedValueParameter =
             valueParameter.transformInitializer(integerLiteralTypeApproximator, valueParameter.returnTypeRef.coneTypeSafe())
-        return (transformDeclarationContent(
-            transformedValueParameter, withExpectedType(transformedValueParameter.returnTypeRef)
-        ).single as FirStatement).compose()
+
+        val result = transformDeclarationContent(
+            transformedValueParameter,
+            withExpectedType(transformedValueParameter.returnTypeRef)
+        ).single as FirValueParameter
+
+        dataFlowAnalyzer.exitValueParameter(result)?.let { graph ->
+            result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, graph)
+        }
+
+        return result.compose()
     }
 
     override fun transformAnonymousFunction(

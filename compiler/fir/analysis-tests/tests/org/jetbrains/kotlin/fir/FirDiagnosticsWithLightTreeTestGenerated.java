@@ -682,6 +682,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/complex.kt");
         }
 
+        @TestMetadata("defaultArguments.kt")
+        public void testDefaultArguments() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/defaultArguments.kt");
+        }
+
         @TestMetadata("emptyWhen.kt")
         public void testEmptyWhen() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/emptyWhen.kt");

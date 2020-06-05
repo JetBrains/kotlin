@@ -18,6 +18,16 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    // ----------------------------------- Default arguments -----------------------------------
+
+    open fun visitExitDefaultArgumentsNode(node: ExitDefaultArgumentsNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitEnterDefaultArgumentsNode(node: EnterDefaultArgumentsNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     // ----------------------------------- Anonymous function -----------------------------------
 
     open fun visitPostponedLambdaEnterNode(node: PostponedLambdaEnterNode, data: D): R {

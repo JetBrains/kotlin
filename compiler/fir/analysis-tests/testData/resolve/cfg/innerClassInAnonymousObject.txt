@@ -1,6 +1,6 @@
 FILE: innerClassInAnonymousObject.kt
-    public final val x: R|anonymous| = object : R|kotlin/Any| {
-        private[local] constructor(): R|anonymous| {
+    public final val x: R|<anonymous>| = object : R|kotlin/Any| {
+        private[local] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 
@@ -16,4 +16,4 @@ FILE: innerClassInAnonymousObject.kt
 
     }
 
-        public get(): R|anonymous|
+        public get(): R|<anonymous>|

@@ -137,11 +137,18 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     // ----------------------------------- Named function -----------------------------------
 
     fun enterFunction(function: FirFunction<*>) {
+        if (function is FirAnonymousFunction) {
+            enterAnonymousFunction(function)
+            return
+        }
         val (functionEnterNode, previousNode) = graphBuilder.enterFunction(function)
         functionEnterNode.mergeIncomingFlow(shouldForkFlow = previousNode != null)
     }
 
     fun exitFunction(function: FirFunction<*>): ControlFlowGraph {
+        if (function is FirAnonymousFunction) {
+            return exitAnonymousFunction(function)
+        }
         val (node, graph) = graphBuilder.exitFunction(function)
         node.mergeIncomingFlow()
         if (!graphBuilder.isTopLevel()) {
@@ -158,6 +165,21 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     // ----------------------------------- Anonymous function -----------------------------------
+
+    private fun enterAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        val (postponedLambdaEnterNode, functionEnterNode) = graphBuilder.enterAnonymousFunction(anonymousFunction)
+        // TODO: questionable
+        postponedLambdaEnterNode?.mergeIncomingFlow()
+        functionEnterNode.mergeIncomingFlow()
+    }
+
+    private fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): ControlFlowGraph {
+        val (functionExitNode, postponedLambdaExitNode, graph) = graphBuilder.exitAnonymousFunction(anonymousFunction)
+        // TODO: questionable
+        postponedLambdaExitNode?.mergeIncomingFlow()
+        functionExitNode.mergeIncomingFlow()
+        return graph
+    }
 
     fun visitPostponedAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
         val (enterNode, exitNode) = graphBuilder.visitPostponedAnonymousFunction(anonymousFunction)
@@ -193,14 +215,26 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return controlFlowGraph
     }
 
+    // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
+
+    fun enterValueParameter(valueParameter: FirValueParameter) {
+        graphBuilder.enterValueParameter(valueParameter)?.mergeIncomingFlow(shouldForkFlow = true)
+    }
+
+    fun exitValueParameter(valueParameter: FirValueParameter): ControlFlowGraph? {
+        val (node, graph) = graphBuilder.exitValueParameter(valueParameter) ?: return null
+        node.mergeIncomingFlow()
+        return graph
+    }
+
     // ----------------------------------- Property -----------------------------------
 
     fun enterProperty(property: FirProperty) {
-        graphBuilder.enterProperty(property).mergeIncomingFlow()
+        graphBuilder.enterProperty(property)?.mergeIncomingFlow()
     }
 
-    fun exitProperty(property: FirProperty): ControlFlowGraph {
-        val (node, graph) = graphBuilder.exitProperty(property)
+    fun exitProperty(property: FirProperty): ControlFlowGraph? {
+        val (node, graph) = graphBuilder.exitProperty(property) ?: return null
         node.mergeIncomingFlow()
         return graph
     }
@@ -218,7 +252,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     // ----------------------------------- Block -----------------------------------
 
     fun enterBlock(block: FirBlock) {
-        graphBuilder.enterBlock(block)?.mergeIncomingFlow()
+        graphBuilder.enterBlock(block).mergeIncomingFlow()
     }
 
     fun exitBlock(block: FirBlock) {
@@ -997,7 +1031,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         shouldForkFlow: Boolean = false
     ): T = this.also { node ->
         val previousFlows = if (node.isDead)
-            node.previousNodes.map { it.flow }
+            node.previousNodes.mapNotNull { runIf(!node.incomingEdges.getValue(it).isBack) { it.flow } }
         else
             node.previousNodes.mapNotNull { prev -> prev.takeIf { node.incomingEdges.getValue(it).usedInDfa }?.flow }
         var flow = logicSystem.joinFlow(previousFlows)

@@ -140,3 +140,5 @@ internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
 //    is ConeFlexibleType -> lowerBound.isNothingOrNullableNothing
 //    else -> false
 //}
+
+inline fun <R> runIf(condition: Boolean, block: () -> R): R? = if (condition) block() else null

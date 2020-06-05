@@ -83,10 +83,9 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         val allFirFiles = firFilesPerSession.values.flatten()
         checkDiagnostics(testDataFile, testFiles, allFirFiles)
         checkFir(testDataFile, allFirFiles)
-
+        checkCfgEdgeConsistency(allFirFiles)
         if (testFiles.any { it.withDumpCfgDirective }) {
             checkCfg(testDataFile, allFirFiles)
-            checkCfgEdgeConsistency(allFirFiles)
         } else {
             checkCfgDumpNotExists(testDataFile)
         }
@@ -307,7 +306,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             val fromKind = from.outgoingEdges.getValue(to)
             val toKind = to.incomingEdges.getValue(from)
             TestCase.assertEquals(fromKind, toKind)
-            if (from.isDead || to.isDead) {
+            if (from.isDead && to.isDead) {
                 KtUsefulTestCase.assertContainsElements(listOf(EdgeKind.Dead, EdgeKind.Cfg, EdgeKind.DeadBack, EdgeKind.Back), toKind)
             }
         }

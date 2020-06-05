@@ -134,11 +134,19 @@ class FirControlFlowGraphRenderVisitor(
 
     override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
         val controlFlowGraph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
-        controlFlowGraph.collectNodes()
-        if (controlFlowGraph.owner == null) {
-            topLevelGraphs += controlFlowGraph
+        initializeNodes(controlFlowGraph)
+    }
+
+    private fun initializeNodes(graph: ControlFlowGraph) {
+        if (graph in allGraphs) return
+        graph.collectNodes()
+        if (graph.owner == null) {
+            topLevelGraphs += graph
         }
-        allGraphs += controlFlowGraph
+        allGraphs += graph
+        for (subGraph in graph.subGraphs) {
+            initializeNodes(subGraph)
+        }
     }
 
     private fun Printer.enterCluster(color: String) {
