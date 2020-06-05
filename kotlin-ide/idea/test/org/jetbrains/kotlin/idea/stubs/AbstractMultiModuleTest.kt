@@ -18,11 +18,10 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
-import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ThrowableRunnable
@@ -34,14 +33,14 @@ import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
 
 abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
-    private var vfsDisposable: Disposable? = null
+    private var vfsDisposable: Ref<Disposable>? = null
 
     abstract override fun getTestDataPath(): String
 
@@ -49,8 +48,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
 
-        vfsDisposable = Disposer.newDisposable(testRootDisposable, javaClass.name)
-        VfsRootAccess.allowRootAccess(vfsDisposable!!, KotlinTestUtils.getHomeDirectory())
+        vfsDisposable = allowProjectRootAccess(this)
     }
 
     fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
@@ -70,13 +68,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     }
 
     override fun tearDown() = runAll(
-        ThrowableRunnable {
-            vfsDisposable?.let {
-                if (!Disposer.isDisposed(it)) {
-                    Disposer.dispose(it); vfsDisposable = null
-                }
-            }
-        },
+        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
         ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
         ThrowableRunnable { super.tearDown() },
     )

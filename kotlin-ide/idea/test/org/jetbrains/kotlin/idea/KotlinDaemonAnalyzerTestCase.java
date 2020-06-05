@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.openapi.util.Ref;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import static com.intellij.testFramework.RunAll.runAll;
 
 abstract public class KotlinDaemonAnalyzerTestCase extends DaemonAnalyzerTestCase {
-    private Disposable vfsDisposable;
+    private Ref<Disposable> vfsDisposable;
     @Override
     protected void setUp() throws Exception {
-        vfsDisposable = Disposer.newDisposable(getTestRootDisposable(), getClass().getName());
-        VfsRootAccess.allowRootAccess(vfsDisposable, KotlinTestUtils.getHomeDirectory());
+        vfsDisposable = KotlinTestUtils.allowProjectRootAccess(this);
         super.setUp();
     }
 
@@ -26,12 +24,7 @@ abstract public class KotlinDaemonAnalyzerTestCase extends DaemonAnalyzerTestCas
     protected void tearDown() throws Exception {
         runAll(
                 () -> super.tearDown(),
-                () -> {
-                    if (!Disposer.isDisposed(vfsDisposable)) {
-                        Disposer.dispose(vfsDisposable);
-                        vfsDisposable = null;
-                    }
-                }
+                () -> KotlinTestUtils.disposeVfsRootAccess(vfsDisposable)
         );
     }
 }

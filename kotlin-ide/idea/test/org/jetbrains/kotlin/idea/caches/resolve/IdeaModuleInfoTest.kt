@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.DependencyScope
@@ -12,13 +13,14 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.ModuleTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
@@ -26,13 +28,13 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.platform
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
@@ -42,6 +44,8 @@ import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class IdeaModuleInfoTest : ModuleTestCase() {
+    private var vfsDisposable: Ref<Disposable>? = null
+
     fun testSimpleModuleDependency() {
         val (a, b) = modules()
         b.addDependency(a)
@@ -484,12 +488,11 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        vfsDisposable = allowProjectRootAccess(this)
     }
 
-    override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
-
-        super.tearDown()
-    }
+    override fun tearDown() = runAll(
+        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+        ThrowableRunnable { super.tearDown() },
+    )
 }

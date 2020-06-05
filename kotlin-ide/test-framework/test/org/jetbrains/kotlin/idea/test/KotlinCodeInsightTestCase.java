@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import kotlin.Unit;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Ref;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.MuteWithDatabaseKt;
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 
+import static com.intellij.testFramework.RunAll.runAll;
 import static org.jetbrains.kotlin.test.MuteWithDatabaseKt.isIgnoredInDatabaseWithLog;
 
 /**
@@ -31,16 +31,20 @@ import static org.jetbrains.kotlin.test.MuteWithDatabaseKt.isIgnoredInDatabaseWi
 @WithMutedInDatabaseRunTest
 @Deprecated
 public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
+    private Ref<Disposable> vfsDisposable;
+
     @Override
     protected void setUp() throws Exception {
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
+        vfsDisposable = KotlinTestUtils.allowProjectRootAccess(this);
         super.setUp();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        super.tearDown();
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
+        runAll(
+                () -> super.tearDown(),
+                () -> KotlinTestUtils.disposeVfsRootAccess(vfsDisposable)
+        );
     }
 
     @Override

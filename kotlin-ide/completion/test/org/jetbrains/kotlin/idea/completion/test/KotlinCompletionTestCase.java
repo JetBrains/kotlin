@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.idea.completion.test;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CompletionTestCase;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.openapi.util.Ref;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -23,13 +22,12 @@ import static org.jetbrains.kotlin.test.KotlinTestUtils.getTestsRoot;
 
 @WithMutedInDatabaseRunTest
 abstract public class KotlinCompletionTestCase extends CompletionTestCase {
-    private Disposable vfsDisposable;
+    private Ref<Disposable> vfsDisposable;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        vfsDisposable = Disposer.newDisposable(getTestRootDisposable(), getClass().getName());
-        VfsRootAccess.allowRootAccess(vfsDisposable, KotlinTestUtils.getHomeDirectory());
+        vfsDisposable = KotlinTestUtils.allowProjectRootAccess(this);
         CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = new String[]{"excludedPackage", "somePackage.ExcludedClass"};
     }
 
@@ -37,12 +35,7 @@ abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     protected void tearDown() throws Exception {
         runAll(
                 () -> CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = ArrayUtil.EMPTY_STRING_ARRAY,
-                () -> {
-                    if (!Disposer.isDisposed(vfsDisposable)) {
-                        Disposer.dispose(vfsDisposable);
-                        vfsDisposable = null;
-                    }
-                },
+                () -> KotlinTestUtils.disposeVfsRootAccess(vfsDisposable),
                 () -> super.tearDown()
         );
     }

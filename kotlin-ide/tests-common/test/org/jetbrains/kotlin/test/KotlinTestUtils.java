@@ -11,19 +11,19 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.ShutDownTracker;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
+import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
@@ -147,6 +147,26 @@ public class KotlinTestUtils {
     @NotNull
     public static String getHomeDirectory() {
         return homeDir;
+    }
+
+    @NotNull
+    public static Ref<Disposable> allowProjectRootAccess(@NotNull UsefulTestCase testCase) {
+        return allowRootAccess(testCase, new File(getHomeDirectory(), "..").getAbsolutePath());
+    }
+
+    @NotNull
+    public static Ref<Disposable> allowRootAccess(@NotNull UsefulTestCase testCase, String ... roots) {
+        Disposable disposable = Disposer.newDisposable(testCase.getTestRootDisposable(), testCase.getClass().getName());
+        VfsRootAccess.allowRootAccess(disposable, roots);
+        return new Ref<>(disposable);
+    }
+
+    public static void disposeVfsRootAccess(@Nullable Ref<Disposable> vfsDisposableRef) {
+        Disposable vfsDisposable = vfsDisposableRef != null ? vfsDisposableRef.get() : null;
+        if (vfsDisposable != null && !Disposer.isDisposed(vfsDisposable)) {
+            Disposer.dispose(vfsDisposable);
+            vfsDisposableRef.set(null);
+        }
     }
 
     @NotNull

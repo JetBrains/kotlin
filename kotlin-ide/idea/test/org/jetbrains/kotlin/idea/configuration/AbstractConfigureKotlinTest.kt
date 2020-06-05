@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.module.Module
@@ -12,20 +13,19 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
-import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.idea.test.runAll
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
-import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
 import org.jetbrains.kotlin.test.runTest
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -33,19 +33,19 @@ import java.nio.file.Path
 
 @WithMutedInDatabaseRunTest
 abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
+    private var vfsDisposable: Ref<Disposable>? = null
+
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        vfsDisposable = allowProjectRootAccess(this)
     }
 
-    @Throws(Exception::class)
-    override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
-        PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY)
-
-        super.tearDown()
-    }
+    override fun tearDown() = runAll(
+        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+        ThrowableRunnable { PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY) },
+        ThrowableRunnable { super.tearDown() },
+    )
 
     @Throws(Exception::class)
     override fun initApplication() {
@@ -140,7 +140,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     }
 
     companion object {
-        private val BASE_PATH = "${KotlinTestUtils.getHomeDirectory()}/idea/testData/configuration/"
+        private val BASE_PATH = "${getHomeDirectory()}/idea/testData/configuration/"
         private val TEMP_DIR_MACRO_KEY = "TEMP_TEST_DIR"
         protected val JAVA_CONFIGURATOR: KotlinJavaModuleConfigurator by lazy {
             object : KotlinJavaModuleConfigurator() {

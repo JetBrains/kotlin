@@ -6,36 +6,42 @@
 package org.jetbrains.kotlin.idea.repl
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.idea.completion.test.KotlinFixtureCompletionBaseTestCase
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import java.io.File
 
 abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCase() {
+    private var vfsDisposable: Ref<Disposable>? = null
     private var consoleRunner: KotlinConsoleRunner? = null
 
     override fun setUp() {
         super.setUp()
+        vfsDisposable = allowProjectRootAccess(this)
         consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module)!!
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 
-    override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
-        consoleRunner?.dispose()
-        consoleRunner = null
-        super.tearDown()
-    }
+    override fun tearDown() = runAll(
+        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+        ThrowableRunnable {
+            consoleRunner?.dispose()
+            consoleRunner = null
+        },
+        ThrowableRunnable { super.tearDown() },
+    )
 
     override fun getPlatform() = JvmPlatforms.unspecifiedJvmPlatform
     override fun defaultCompletionType() = CompletionType.BASIC

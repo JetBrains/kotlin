@@ -16,20 +16,25 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.roots.LanguageLevelProjectExtension
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.DEBUG_LOG_ENABLE_PerModulePackageCache
+import org.jetbrains.kotlin.idea.test.runAll
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import java.io.File
 
 abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixtureTestCase() {
+    private var vfsDisposable: Ref<Disposable>? = null
+
     override fun setUp() {
         super.setUp()
 
@@ -40,7 +45,7 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
             LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.JDK_1_8
         }
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        vfsDisposable = allowProjectRootAccess(this)
 
         invalidateLibraryCache(project)
 
@@ -48,15 +53,14 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
         addFile("JavaApi.java", "javaApi")
     }
 
-    override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+    override fun tearDown() = runAll(
+        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+        ThrowableRunnable { project.DEBUG_LOG_ENABLE_PerModulePackageCache = false },
+        ThrowableRunnable { super.tearDown() },
+    )
 
-        project.DEBUG_LOG_ENABLE_PerModulePackageCache = false
-        super.tearDown()
-    }
-    
     protected fun addFile(fileName: String, dirName: String? = null) {
-        addFile(File(KotlinTestUtils.getHomeDirectory(), "j2k/old/testData/$fileName"), dirName)
+        addFile(File(getHomeDirectory(), "j2k/old/testData/$fileName"), dirName)
     }
 
     protected fun addFile(file: File, dirName: String?): VirtualFile {

@@ -6,25 +6,28 @@
 package org.jetbrains.kotlin.idea.test
 
 import com.intellij.ide.highlighter.ModuleFileType
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.MultiFileTestCase
 import com.intellij.testFramework.PsiTestUtil
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
 
 abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     protected var isMultiModule = false
+    private var vfsDisposable: Ref<Disposable>? = null
 
     override fun setUp() {
         super.setUp()
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        vfsDisposable = allowProjectRootAccess(this)
 
         runWriteAction {
             PluginTestCaseBase.addJdk(testRootDisposable, PluginTestCaseBase::mockJdk6)
@@ -74,8 +77,8 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
         }
     }
 
-    override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
-        super.tearDown()
-    }
+    override fun tearDown() = runAll(
+        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+        ThrowableRunnable { super.tearDown() },
+    )
 }

@@ -7,18 +7,20 @@ package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.FileEditorManagerTestCase
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.TestActionEvent
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -42,8 +44,11 @@ import org.jetbrains.kotlin.test.TestMetadataUtil.getTestData
 import org.junit.Assert
 import java.io.File
 import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
+import org.jetbrains.kotlin.idea.test.runAll
 
 abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
+
+    private var vfsDisposable: Ref<Disposable>? = null
 
     protected open fun fileName(): String = getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
@@ -317,20 +322,20 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(getHomeDirectory())
+        vfsDisposable = allowProjectRootAccess(this)
 
         PluginTestCaseBase.addJdk(myFixture.projectDisposable) { PluginTestCaseBase.fullJdk() }
     }
 
-    override fun tearDown() {
-        super.tearDown()
-
-        VfsRootAccess.disallowRootAccess(getHomeDirectory())
-
-        ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
-            runWriteAction { file.delete(this) }
-        }
-    }
+    override fun tearDown() = runAll(
+        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+        ThrowableRunnable {
+            ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
+                runWriteAction { file.delete(this) }
+            }
+        },
+        ThrowableRunnable { super.tearDown() },
+    )
 
     companion object {
         private const val TIME_OUT = 60000 // 1 min

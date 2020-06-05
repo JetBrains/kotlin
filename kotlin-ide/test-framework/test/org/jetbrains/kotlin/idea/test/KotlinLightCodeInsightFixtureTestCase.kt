@@ -88,7 +88,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         // when done lazily
         UnusedSymbolInspection()
 
-        VfsRootAccess.allowRootAccess(project, KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, KotlinTestUtils.getHomeDirectory())
 
         editorTrackerProjectOpened(project)
 
