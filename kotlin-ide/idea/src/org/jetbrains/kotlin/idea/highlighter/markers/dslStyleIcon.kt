@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
 import javax.swing.Icon
 
-// FIX ME WHEN BUNCH as35 REMOVED
+// FIX ME WHEN BUNCH as36 REMOVED
 internal fun createDslStyleIcon(styleId: Int): Icon {
     val globalScheme = EditorColorsManager.getInstance().globalScheme
     val markersColor = globalScheme.getAttributes(DslHighlighterExtension.styleById(styleId)).foregroundColor
