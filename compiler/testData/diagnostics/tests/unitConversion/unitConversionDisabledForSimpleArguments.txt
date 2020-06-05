@@ -2,7 +2,8 @@ package
 
 public fun bar(): kotlin.Int
 public fun foo(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-public fun test(/*0*/ f: () -> kotlin.String, /*1*/ s: SubInt): kotlin.Unit
+public fun test(/*0*/ f: () -> kotlin.String, /*1*/ g: () -> kotlin.Nothing, /*2*/ h: () -> kotlin.Nothing?, /*3*/ s: SubInt): kotlin.Unit
+public fun </*0*/ T> T.freeze(): T
 
 public abstract class SubInt : () -> kotlin.Int {
     public constructor SubInt()
