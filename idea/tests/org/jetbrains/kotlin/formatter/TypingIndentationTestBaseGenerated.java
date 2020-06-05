@@ -95,6 +95,11 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/Catch3.after.kt");
         }
 
+        @TestMetadata("Catch4.after.kt")
+        public void testCatch4() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Catch4.after.kt");
+        }
+
         @TestMetadata("ConsecutiveCallsAfterDot.after.kt")
         public void testConsecutiveCallsAfterDot() throws Exception {
             runTest("idea/testData/indentationOnNewline/ConsecutiveCallsAfterDot.after.kt");
@@ -223,6 +228,11 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("Finally3.after.kt")
         public void testFinally3() throws Exception {
             runTest("idea/testData/indentationOnNewline/Finally3.after.kt");
+        }
+
+        @TestMetadata("Finally4.after.kt")
+        public void testFinally4() throws Exception {
+            runTest("idea/testData/indentationOnNewline/Finally4.after.kt");
         }
 
         @TestMetadata("For.after.kt")

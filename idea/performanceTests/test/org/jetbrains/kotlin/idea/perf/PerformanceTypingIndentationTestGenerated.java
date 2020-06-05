@@ -93,6 +93,11 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/Catch3.kt");
     }
 
+    @TestMetadata("Catch4.kt")
+    public void testCatch4() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Catch4.kt");
+    }
+
     @TestMetadata("ConsecutiveCallsAfterDot.kt")
     public void testConsecutiveCallsAfterDot() throws Exception {
         runTest("idea/testData/indentationOnNewline/ConsecutiveCallsAfterDot.kt");
@@ -221,6 +226,11 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
     @TestMetadata("Finally3.kt")
     public void testFinally3() throws Exception {
         runTest("idea/testData/indentationOnNewline/Finally3.kt");
+    }
+
+    @TestMetadata("Finally4.kt")
+    public void testFinally4() throws Exception {
+        runTest("idea/testData/indentationOnNewline/Finally4.kt");
     }
 
     @TestMetadata("For.kt")
