@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
-import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 
@@ -40,24 +39,25 @@ internal class FirIdeResolveStateServiceImpl(val project: Project) : FirIdeResol
         return FirModuleResolveStateImpl(provider)
     }
 
-    private fun createModuleData(moduleInfo: IdeaModuleInfo): FirModuleData {
+    private fun createModuleData(): FirModuleData {
         val state = createResolveState()
-        val modificationTracker = (moduleInfo as? TrackableModuleInfo)?.createModificationTracker() ?: fallbackModificationTracker
-        return FirModuleData(state, modificationTracker)
+        // We want to invalidate cache on every PSI change for now
+        // This is needed for working with high level API until the proper caching is implemented
+        return FirModuleData(state, fallbackModificationTracker)
     }
 
     // TODO: multi thread protection
     override fun getResolveState(moduleInfo: IdeaModuleInfo): FirModuleResolveState {
         var moduleData = stateCache.getOrPut(moduleInfo) {
-            createModuleData(moduleInfo)
+            createModuleData()
         }
         if (moduleData.isOutOfDate()) {
-            moduleData = createModuleData(moduleInfo)
+            moduleData = createModuleData()
             stateCache[moduleInfo] = moduleData
         }
         return moduleData.state
     }
 
     override val fallbackModificationTracker: ModificationTracker? =
-        org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker
+        org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService.getInstance(project).modificationTracker
 }
