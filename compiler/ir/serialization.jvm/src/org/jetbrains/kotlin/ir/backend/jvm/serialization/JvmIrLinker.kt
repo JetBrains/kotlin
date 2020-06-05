@@ -35,7 +35,7 @@ class JvmIrLinker(
     logger: LoggingContext,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable,
-    override val functionalInteraceFactory: IrAbstractFunctionFactory,
+    override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmManglerDesc
 ) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList()) {

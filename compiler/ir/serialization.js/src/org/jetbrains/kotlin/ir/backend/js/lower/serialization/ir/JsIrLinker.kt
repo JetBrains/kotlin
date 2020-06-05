@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.library.SerializedIrFile
 
 class JsIrLinker(
     private val currentModule: ModuleDescriptor?, logger: LoggingContext, builtIns: IrBuiltIns, symbolTable: SymbolTable,
-    override val functionalInteraceFactory: IrAbstractFunctionFactory,
+    override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     private val icData: List<SerializedIrFile>? = null
 ) :
     KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList()) {
