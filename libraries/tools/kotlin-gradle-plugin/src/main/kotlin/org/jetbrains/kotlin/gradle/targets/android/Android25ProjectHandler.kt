@@ -89,9 +89,6 @@ class Android25ProjectHandler(
     override fun getSourceProviders(variantData: BaseVariant): Iterable<SourceProvider> =
         variantData.sourceSets
 
-    override fun getAllJavaSources(variantData: BaseVariant): Iterable<File> =
-        variantData.getSourceFolders(SourceKind.JAVA).map { it.dir }
-
     override fun getFlavorNames(variant: BaseVariant): List<String> = variant.productFlavors.map { it.name }
 
     override fun getBuildTypeName(variant: BaseVariant): String = variant.buildType.name
