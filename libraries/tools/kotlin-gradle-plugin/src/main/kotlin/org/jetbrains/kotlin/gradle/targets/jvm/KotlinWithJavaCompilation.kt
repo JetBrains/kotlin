@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
@@ -71,4 +73,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
             }
         }
     }
+
+    val compileJavaTaskProvider: TaskProvider<out JavaCompile>
+        get() = target.project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
 }
