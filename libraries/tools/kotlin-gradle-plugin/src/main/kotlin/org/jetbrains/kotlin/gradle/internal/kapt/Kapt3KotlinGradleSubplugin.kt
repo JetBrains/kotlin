@@ -672,3 +672,22 @@ internal fun checkAndroidAnnotationProcessorDependencyUsage(project: Project) {
         )
     }
 }
+
+private val BaseVariant.annotationProcessorOptions: Map<String, String>?
+    get() = javaCompileOptions.annotationProcessorOptions.arguments
+
+private val BaseVariant.annotationProcessorOptionProviders: List<*>
+    get() = try {
+        // Public API added in Android Gradle Plugin 3.2.0-alpha15:
+        val apOptions = javaCompileOptions.annotationProcessorOptions
+        apOptions.javaClass.getMethod("getCompilerArgumentProviders").invoke(apOptions) as List<*>
+    } catch (e: NoSuchMethodException) {
+        emptyList<Any>()
+    }
+
+//TODO once the Android plugin reaches its 3.0.0 release, consider compiling against it (remove the reflective call)
+private val BaseVariant.dataBindingDependencyArtifactsIfSupported: FileCollection?
+    get() = this::class.java.methods
+        .find { it.name == "getDataBindingDependencyArtifacts" }
+        ?.also { it.isAccessible = true }
+        ?.invoke(this) as? FileCollection

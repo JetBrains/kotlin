@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
      name: String
  ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(target, name) {
 
-     lateinit internal var androidVariant: BaseVariant
+     lateinit var androidVariant: BaseVariant
+         internal set
 
      override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
          get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
