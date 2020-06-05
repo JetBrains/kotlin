@@ -72,8 +72,11 @@ final class PassExecutorService implements Disposable {
   }
 
   void cancelAll(boolean waitForTermination) {
-    for (Job<Void> submittedPass : mySubmittedPasses.values()) {
-      submittedPass.cancel();
+    for (Map.Entry<ScheduledPass, Job<Void>> entry : mySubmittedPasses.entrySet()) {
+      Job<Void> job = entry.getValue();
+      ScheduledPass pass = entry.getKey();
+      pass.myUpdateProgress.cancel();
+      job.cancel();
     }
     try {
       if (waitForTermination) {
