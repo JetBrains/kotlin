@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
  class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions>(
     target: KotlinWithJavaTarget<KotlinOptionsType>,
-    name: String
+    name: String,
+    override val kotlinOptions: KotlinOptionsType
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinOptionsType>(target, name), KotlinCompilationWithResources<KotlinOptionsType> {
     lateinit var javaSourceSet: SourceSet
 

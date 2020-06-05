@@ -16,10 +16,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
@@ -34,8 +31,26 @@ abstract class AbstractKotlinNativeCompilation(
     compilationName: String
 ) : AbstractKotlinCompilation<KotlinCommonOptions>(target, compilationName) {
 
-    override val kotlinOptions: KotlinCommonOptions
-        get() = compileKotlinTask.kotlinOptions
+    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions()
+
+    private inner class NativeCompileOptions : KotlinCommonOptions {
+        private val languageSettings: LanguageSettingsBuilder
+            get() = defaultSourceSet.languageSettings
+
+        override var apiVersion: String?
+            get() = languageSettings.apiVersion
+            set(value) { languageSettings.apiVersion = value }
+
+        override var languageVersion: String?
+            get() = languageSettings.languageVersion
+            set(value) { languageSettings.languageVersion = value }
+
+        override var allWarningsAsErrors: Boolean = false
+        override var suppressWarnings: Boolean = false
+        override var verbose: Boolean = false
+
+        override var freeCompilerArgs: List<String> = listOf()
+    }
 
     override val compileKotlinTask: KotlinNativeCompile
         get() = super.compileKotlinTask as KotlinNativeCompile
@@ -96,9 +111,6 @@ class KotlinNativeCompilation(
 
     val binariesTaskName: String
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "binaries")
-
-    override val kotlinOptions: KotlinCommonOptions
-        get() = compileKotlinTask.kotlinOptions
 }
 
 class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, val konanTargets: List<KonanTarget>, name: String) :

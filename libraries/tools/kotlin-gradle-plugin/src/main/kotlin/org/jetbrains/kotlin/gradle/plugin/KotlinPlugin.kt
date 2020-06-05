@@ -614,9 +614,16 @@ internal open class KotlinPlugin(
         Kotlin2JvmSourceSetProcessor(tasksProvider, compilation, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget<KotlinJvmOptions>(project, KotlinPlatformType.jvm, targetName).apply {
-            disambiguationClassifier = null // don't add anything to the task names
-        }
+        val target =
+            KotlinWithJavaTarget<KotlinJvmOptions>(
+                project,
+                KotlinPlatformType.jvm,
+                targetName,
+                { KotlinJvmOptionsImpl() }
+            ).apply {
+                disambiguationClassifier = null // don't add anything to the task names
+            }
+
         (project.kotlinExtension as KotlinJvmProjectExtension).target = target
 
         super.apply(project)
@@ -642,7 +649,12 @@ internal open class KotlinCommonPlugin(
         KotlinCommonSourceSetProcessor(compilation, tasksProvider, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>(project, KotlinPlatformType.common, targetName)
+        val target = KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>(
+            project,
+            KotlinPlatformType.common,
+            targetName,
+            { KotlinMultiplatformCommonOptionsImpl() }
+        )
         (project.kotlinExtension as KotlinCommonProjectExtension).target = target
 
         super.apply(project)
@@ -675,7 +687,7 @@ internal open class Kotlin2JsPlugin(
                 For usage details, see https://kotlinlang.org/docs/reference/js-project-setup.html
         """.trimIndent()
         )
-        val target = KotlinWithJavaTarget<KotlinJsOptions>(project, KotlinPlatformType.js, targetName)
+        val target = KotlinWithJavaTarget<KotlinJsOptions>(project, KotlinPlatformType.js, targetName, { KotlinJsOptionsImpl() })
 
         (project.kotlinExtension as Kotlin2JsProjectExtension).target = target
         super.apply(project)
