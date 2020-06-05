@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing.diagnostic.dump
 
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.impl.FilePropertyPusher
@@ -80,8 +81,9 @@ object IndexContentDiagnosticDumper {
       null
     }
     else {
-      SubstitutedFileType.substituteFileType(fileOrDir, fileOrDir.fileType, project).name
-        .takeIf { it != fileType }
+      runReadAction {
+        SubstitutedFileType.substituteFileType(fileOrDir, fileOrDir.fileType, project).name.takeIf { it != fileType }
+      }
     }
     val fileSize = if (fileOrDir.isDirectory) null else fileOrDir.length
     val portableFilePath = PortableFilePaths.getPortableFilePath(fileOrDir, project)
