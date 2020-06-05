@@ -702,6 +702,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/initBlockAndInPlaceLambda.kt");
         }
 
+        @TestMetadata("innerClassInAnonymousObject.kt")
+        public void testInnerClassInAnonymousObject() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/innerClassInAnonymousObject.kt");
+        }
+
         @TestMetadata("inplaceLambdaInControlFlowExpressions.kt")
         public void testInplaceLambdaInControlFlowExpressions() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/inplaceLambdaInControlFlowExpressions.kt");

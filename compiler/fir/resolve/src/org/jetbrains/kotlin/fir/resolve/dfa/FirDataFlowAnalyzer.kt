@@ -177,7 +177,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun exitRegularClass(klass: FirRegularClass): ControlFlowGraph {
-        if (klass.isLocal) return exitLocalClass(klass)
+        if (klass.isLocal && components.container !is FirClass<*>) return exitLocalClass(klass)
         return graphBuilder.exitClass(klass)
     }
 
