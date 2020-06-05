@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
 open class KotlinJvmCompilation(
-    target: KotlinTarget,
+    override val target: KotlinJvmTarget,
     name: String
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(target, name), KotlinCompilationWithResources<KotlinJvmOptions> {
     override val processResourcesTaskName: String

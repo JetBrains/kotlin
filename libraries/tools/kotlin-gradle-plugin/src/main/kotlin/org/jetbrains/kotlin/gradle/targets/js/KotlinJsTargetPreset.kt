@@ -83,7 +83,7 @@ open class KotlinJsTargetPreset(
         )
     }
 
-    override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>): KotlinJsCompilationFactory {
+    override fun createCompilationFactory(forTarget: KotlinJsTarget): KotlinJsCompilationFactory {
         return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { (forTarget as KotlinJsTarget).irTarget })
     }
 
