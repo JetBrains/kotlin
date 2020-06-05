@@ -63,8 +63,10 @@ interface ReferenceSymbolTable {
     fun referenceTypeAliasFromLinker(descriptor: TypeAliasDescriptor, sig: IdSignature): IrTypeAliasSymbol
 
     fun enterScope(owner: DeclarationDescriptor)
+    fun enterScope(owner: IrDeclaration)
 
     fun leaveScope(owner: DeclarationDescriptor)
+    fun leaveScope(owner: IrDeclaration)
 }
 
 open class SymbolTable(
@@ -955,7 +957,7 @@ open class SymbolTable(
         scopedSymbolTables.forEach { it.enterScope(owner) }
     }
 
-    fun enterScope(owner: IrDeclaration) {
+    override fun enterScope(owner: IrDeclaration) {
         enterScope(owner.descriptor)
     }
 
@@ -963,7 +965,7 @@ open class SymbolTable(
         scopedSymbolTables.forEach { it.leaveScope(owner) }
     }
 
-    fun leaveScope(owner: IrDeclaration) {
+    override fun leaveScope(owner: IrDeclaration) {
         leaveScope(owner.descriptor)
     }
 
@@ -1020,6 +1022,13 @@ inline fun <T, D : DeclarationDescriptor> SymbolTable.withScope(owner: D, block:
 }
 
 inline fun <T, D : DeclarationDescriptor> ReferenceSymbolTable.withReferenceScope(owner: D, block: ReferenceSymbolTable.(D) -> T): T {
+    enterScope(owner)
+    val result = block(owner)
+    leaveScope(owner)
+    return result
+}
+
+inline fun <T, D : IrDeclaration> ReferenceSymbolTable.withReferenceScope(owner: D, block: ReferenceSymbolTable.(D) -> T): T {
     enterScope(owner)
     val result = block(owner)
     leaveScope(owner)
