@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
@@ -228,40 +227,20 @@ internal class Kotlin2JvmSourceSetProcessor(
                 configureJavaTask(kotlinTask, javaTask)
             }
 
-            if (project.pluginManager.hasPlugin("java-library") && sourceSetName == SourceSet.MAIN_SOURCE_SET_NAME) {
-                registerKotlinOutputForJavaLibrary(kotlinTaskInstance.destinationDir, kotlinTaskInstance)
+            if (sourceSetName == SourceSet.MAIN_SOURCE_SET_NAME) {
+                project.pluginManager.withPlugin("java-library") {
+                    registerKotlinOutputForJavaLibrary(kotlinTask.map { it.destinationDir }, kotlinTask)
+                }
             }
         }
     }
 
-    private fun registerKotlinOutputForJavaLibrary(outputDir: File, taskDependency: Task): Boolean {
+    private fun registerKotlinOutputForJavaLibrary(outputDir: Provider<File>, taskDependency: TaskProvider<*>) {
         val configuration = project.configurations.getByName("apiElements")
-
-        checkedReflection({
-                              val getOutgoing = configuration.javaClass.getMethod("getOutgoing")
-                              val outgoing = getOutgoing(configuration)
-
-                              val getVariants = outgoing.javaClass.getMethod("getVariants")
-                              val variants = getVariants(outgoing) as NamedDomainObjectCollection<*>
-
-                              val variant = variants.getByName("classes")
-
-                              val artifactMethod = variant.javaClass.getMethod("artifact", Any::class.java)
-
-                              val artifactMap = mapOf(
-                                  "file" to outputDir,
-                                  "type" to "java-classes-directory",
-                                  "builtBy" to taskDependency
-                              )
-
-                              artifactMethod(variant, artifactMap)
-
-                              return true
-
-                          }, { reflectException ->
-                              logger.kotlinWarn("Could not register Kotlin output of source set $sourceSetName for java-library: $reflectException")
-                              return false
-                          })
+        configuration.outgoing.variants.getByName("classes").artifact(outputDir) {
+            it.builtBy(taskDependency)
+            it.type = "java-classes-directory"
+        }
     }
 }
 
