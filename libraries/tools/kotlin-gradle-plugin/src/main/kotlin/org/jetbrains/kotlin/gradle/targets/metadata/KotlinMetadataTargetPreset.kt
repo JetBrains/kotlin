@@ -22,7 +22,7 @@ class KotlinMetadataTargetPreset(
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(
-        forTarget: KotlinOnlyTarget<AbstractKotlinCompilation<*>>
+        forTarget: KotlinMetadataTarget
     ): KotlinCompilationFactory<AbstractKotlinCompilation<*>> =
         object : KotlinCompilationFactory<AbstractKotlinCompilation<*>> {
             override val itemClass: Class<AbstractKotlinCompilation<*>>
