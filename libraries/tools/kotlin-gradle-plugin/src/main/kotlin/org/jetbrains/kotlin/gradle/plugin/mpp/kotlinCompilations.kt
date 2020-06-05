@@ -60,6 +60,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     // Don't declare this property in the constructor to avoid NPE
     // when an overriding property of a subclass is accessed instead.
+    @Suppress("CanBePrimaryConstructorProperty")
     override val target: KotlinTarget = target
 
     private val attributeContainer = HierarchyAttributeContainer(target.attributes)
