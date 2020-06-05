@@ -199,6 +199,10 @@ dependencies {
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeJars("jna-platform") }
 
+    if (Platform.P202.orHigher()) {
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
+    }
+
     if (Platform.P192.orHigher()) {
         fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
     } else {
