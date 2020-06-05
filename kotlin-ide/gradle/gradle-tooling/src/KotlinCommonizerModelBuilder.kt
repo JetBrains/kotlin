@@ -30,7 +30,12 @@ class KotlinCommonizerModelBuilder : AbstractModelBuilderService() {
 
         try {
             val classLoader = kotlinExt.javaClass.classLoader
-            val clazz = Class.forName(COMMONIZER_SETUP_CLASS, false, classLoader)
+            val clazz = try {
+                Class.forName(COMMONIZER_SETUP_CLASS, false, classLoader)
+            } catch (e: ClassNotFoundException) {
+                //It can be old version mpp gradle plugin. Supported only 1.4+
+                return null
+            }
             val isAllowCommonizerFun = clazz.getMethodOrNull("isAllowCommonizer", Project::class.java) ?: return null
 
             val isAllowCommonizer = isAllowCommonizerFun.invoke(Boolean::class.java, project) as Boolean
