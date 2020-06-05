@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 internal class DukatCompilationResolverPlugin(
@@ -34,7 +35,7 @@ internal class DukatCompilationResolverPlugin(
             it.dependsOn(nodeJs.npmInstallTask, npmProject.packageJsonTask)
         }
 
-        compilation.compileKotlinTask.dependsOn(integratedTask)
+        compilation.compileKotlinTaskProvider.dependsOn(integratedTask)
 
         project.registerTask<SeparateDukatTask>(
             separateTaskName,
