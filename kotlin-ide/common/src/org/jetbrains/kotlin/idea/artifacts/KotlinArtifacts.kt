@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.idea.artifacts
 
 import com.intellij.openapi.application.ApplicationManager
 import java.io.File
+import java.io.FileNotFoundException
 
 abstract class KotlinArtifacts {
     companion object {
@@ -29,7 +30,7 @@ abstract class KotlinArtifacts {
     protected fun findFile(parent: File, path: String): File {
         val result = File(parent, path)
         if (!result.exists()) {
-            throw IllegalStateException("File $result doesn't exist")
+            throw FileNotFoundException("File $result doesn't exist")
         }
         return result
     }
