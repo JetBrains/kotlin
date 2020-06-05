@@ -16,20 +16,28 @@
 
 package example
 
-import org.gradle.api.provider.Provider
+import org.gradle.api.Project
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 
-class ExampleSubplugin : KotlinCompilerPluginSupportPlugin {
+class ExampleLegacySubplugin : KotlinGradleSubplugin<AbstractCompile> {
 
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
+        return true
+    }
 
-    override fun applyToCompilation(
-        kotlinCompilation: KotlinCompilation<*>
-    ): Provider<List<SubpluginOption>> {
-        println("ExampleSubplugin loaded")
-        return kotlinCompilation.target.project.provider {
-            listOf(SubpluginOption("exampleKey", "exampleValue"))
-        }
+    override fun apply(
+        project: Project,
+        kotlinCompile: AbstractCompile,
+        javaCompile: AbstractCompile?,
+        variantData: Any?,
+        androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation<*>?
+    ): List<SubpluginOption> {
+        println("ExampleLegacySubplugin loaded")
+        return listOf(
+            SubpluginOption("exampleLegacyKey", "exampleLegacyValue")
+        )
     }
 
     override fun getCompilerPluginId(): String {
