@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import org.jetbrains.kotlin.idea.frontend.api.fir.AnalysisSessionFirImpl
+import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
 
 object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
@@ -17,7 +17,7 @@ object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
     override fun resolve(ref: KtReference, incompleteCode: Boolean): Array<ResolveResult> {
         check(ref is FirKtReference) { "reference should be FirKtReference, but was ${ref::class}" }
         check(ref is AbstractKtReference<*>) { "reference should be AbstractKtReference, but was ${ref::class}" }
-        val analysisSession = AnalysisSessionFirImpl()
+        val analysisSession = FirAnalysisSession()
         val resolveToPsiElements = ref.getResolvedToPsi(analysisSession)
         return resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
     }
