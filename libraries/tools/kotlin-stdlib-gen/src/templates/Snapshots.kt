@@ -450,7 +450,6 @@ object Snapshots : TemplateGroupBase() {
         since("1.3")
         specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             since("1.4")
-            annotation("@ExperimentalStdlibApi")
         }
         typeParam("K", primary = true)
         typeParam("V")
@@ -495,7 +494,6 @@ object Snapshots : TemplateGroupBase() {
         since("1.3")
         specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             since("1.4")
-            annotation("@ExperimentalStdlibApi")
         }
         typeParam("K", primary = true)
         typeParam("V")
