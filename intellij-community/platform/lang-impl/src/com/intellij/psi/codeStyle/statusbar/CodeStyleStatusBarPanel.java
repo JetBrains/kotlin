@@ -2,6 +2,7 @@
 package com.intellij.psi.codeStyle.statusbar;
 
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.wm.impl.status.TextPanel;
 import com.intellij.util.ui.JBFont;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -13,18 +14,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class CodeStyleStatusBarPanel extends JPanel {
-  private final JLabel myLabel;
+  private final TextPanel myLabel;
   private final JLabel myIconLabel;
 
   public CodeStyleStatusBarPanel() {
     super();
     setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
     setAlignmentY(Component.CENTER_ALIGNMENT);
-    myLabel = new JLabel();
+    myLabel = new TextPanel() {};
     myLabel.setFont(SystemInfo.isMac ? JBUI.Fonts.label(11) : JBFont.label());
     add(myLabel);
     myIconLabel = new JLabel("");
-    myIconLabel.setBorder(JBUI.Borders.empty(4));
+    myIconLabel.setBorder(JBUI.Borders.empty(2,2,2,0));
     add(myIconLabel);
     setBorder(JBUI.Borders.empty(0));
     addMouseListener(new MouseAdapter() {
