@@ -60,7 +60,7 @@ interface KotlinDependencyHandler {
     fun npm(
         name: String,
         version: String,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): Dependency
 
     fun npm(
@@ -69,13 +69,13 @@ interface KotlinDependencyHandler {
     ): Dependency = npm(
         name = name,
         version = version,
-        generateKotlinExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
+        generateExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
     )
 
     fun npm(
         name: String,
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): Dependency
 
     fun npm(
@@ -84,19 +84,19 @@ interface KotlinDependencyHandler {
     ): Dependency = npm(
         name = name,
         directory = directory,
-        generateKotlinExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
+        generateExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
     )
 
     fun npm(
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): Dependency
 
     fun npm(
         directory: File
     ): Dependency = npm(
         directory = directory,
-        generateKotlinExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
+        generateExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
     )
 
     fun devNpm(
@@ -116,7 +116,7 @@ interface KotlinDependencyHandler {
     fun optionalNpm(
         name: String,
         version: String,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): Dependency
 
     fun optionalNpm(
@@ -125,13 +125,13 @@ interface KotlinDependencyHandler {
     ): Dependency = optionalNpm(
         name = name,
         version = version,
-        generateKotlinExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
+        generateExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
     )
 
     fun optionalNpm(
         name: String,
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): Dependency
 
     fun optionalNpm(
@@ -140,19 +140,19 @@ interface KotlinDependencyHandler {
     ): Dependency = optionalNpm(
         name = name,
         directory = directory,
-        generateKotlinExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
+        generateExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
     )
 
     fun optionalNpm(
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): Dependency
 
     fun optionalNpm(
         directory: File
     ): Dependency = optionalNpm(
         directory = directory,
-        generateKotlinExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
+        generateExternals = DEFAULT_GENERATE_KOTLIN_EXTERNALS
     )
 
     fun peerNpm(

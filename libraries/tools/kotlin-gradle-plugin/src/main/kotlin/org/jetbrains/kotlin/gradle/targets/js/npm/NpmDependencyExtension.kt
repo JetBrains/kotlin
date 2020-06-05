@@ -31,7 +31,7 @@ interface NpmDependencyWithExternalsExtension : BaseNpmDependencyExtension {
     operator fun invoke(
         name: String,
         version: String,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency
 }
 
@@ -39,12 +39,12 @@ interface NpmDirectoryDependencyWithExternalsExtension : NpmDirectoryDependencyE
     operator fun invoke(
         name: String,
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency
 
     operator fun invoke(
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency
 }
 
@@ -106,13 +106,13 @@ private fun scopePrefix(scope: NpmDependency.Scope): String {
 private abstract class NpmDependencyExtensionDelegate(
     protected val project: Project,
     protected val scope: NpmDependency.Scope,
-    protected val _defaultGenerateKotlinExternals: Boolean?
+    protected val _defaultGenerateExternals: Boolean?
 ) : NpmDependencyExtension,
     DevNpmDependencyExtension,
     PeerNpmDependencyExtension,
     Closure<NpmDependency>(project.dependencies) {
-    protected val defaultGenerateKotlinExternals: Boolean
-        get() = _defaultGenerateKotlinExternals ?: false
+    protected val defaultGenerateExternals: Boolean
+        get() = _defaultGenerateExternals ?: false
 
     override fun invoke(name: String): NpmDependency =
         onlyNameNpmDependency(name)
@@ -120,44 +120,44 @@ private abstract class NpmDependencyExtensionDelegate(
     override operator fun invoke(
         name: String,
         version: String,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency =
         NpmDependency(
             project = project,
             name = name,
             version = version,
             scope = scope,
-            generateKotlinExternals = generateKotlinExternals
+            generateExternals = generateExternals
         )
 
     override fun invoke(name: String, version: String): NpmDependency =
         invoke(
             name = name,
             version = version,
-            generateKotlinExternals = defaultGenerateKotlinExternals
+            generateExternals = defaultGenerateExternals
         )
 
     override fun invoke(name: String, directory: File): NpmDependency =
         invoke(
             name = name,
             directory = directory,
-            generateKotlinExternals = defaultGenerateKotlinExternals
+            generateExternals = defaultGenerateExternals
         )
 
     override fun invoke(directory: File): NpmDependency =
         invoke(
             directory = directory,
-            generateKotlinExternals = defaultGenerateKotlinExternals
+            generateExternals = defaultGenerateExternals
         )
 
     override operator fun invoke(
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency =
         invoke(
             name = moduleName(directory),
             directory = directory,
-            generateKotlinExternals = generateKotlinExternals
+            generateExternals = generateExternals
         )
 
     override fun call(vararg args: Any?): NpmDependency {
@@ -177,7 +177,7 @@ private abstract class NpmDependencyExtensionDelegate(
 
     private fun withName(name: String, vararg args: Any?): NpmDependency {
         val arg1 = if (args.size > 1) args[1] else null
-        val generateKotlinExternals = generateKotlinExternalsIfPossible(*args)
+        val generateExternals = generateExternalsIfPossible(*args)
 
         return when (arg1) {
             null -> invoke(
@@ -186,12 +186,12 @@ private abstract class NpmDependencyExtensionDelegate(
             is String -> invoke(
                 name = name,
                 version = arg1,
-                generateKotlinExternals = generateKotlinExternals
+                generateExternals = generateExternals
             )
             else -> processNamedNonStringSecondArgument(
                 name,
                 arg1,
-                generateKotlinExternals,
+                generateExternals,
                 *args
             )
         }
@@ -200,7 +200,7 @@ private abstract class NpmDependencyExtensionDelegate(
     protected abstract fun processNamedNonStringSecondArgument(
         name: String,
         arg: Any?,
-        generateKotlinExternals: Boolean,
+        generateExternals: Boolean,
         vararg args: Any?
     ): NpmDependency
 
@@ -218,27 +218,27 @@ private abstract class NpmDependencyExtensionDelegate(
         return listOf("${scopePrefix(scope)}('name', 'version')" to "name:version")
     }
 
-    protected fun generateKotlinExternalsIfPossible(vararg args: Any?): Boolean {
+    protected fun generateExternalsIfPossible(vararg args: Any?): Boolean {
         val arg2 = (if (args.size > 2) args[2] else null) as? Boolean
 
-        if (arg2 != null && _defaultGenerateKotlinExternals == null) {
+        if (arg2 != null && _defaultGenerateExternals == null) {
             npmDeclarationException(args)
         }
 
-        return arg2 ?: defaultGenerateKotlinExternals
+        return arg2 ?: defaultGenerateExternals
     }
 }
 
 private class DefaultNpmDependencyExtension(
     project: Project,
     scope: NpmDependency.Scope,
-    defaultGenerateKotlinExternals: Boolean?
+    defaultGenerateExternals: Boolean?
 ) : Closure<NpmDependency>(project.dependencies),
     NpmDependencyExtension {
     private val delegate = defaultNpmDependencyDelegate(
         project,
         scope,
-        defaultGenerateKotlinExternals
+        defaultGenerateExternals
     )
 
     override fun invoke(name: String): NpmDependency =
@@ -253,14 +253,14 @@ private class DefaultNpmDependencyExtension(
     override fun invoke(directory: File): NpmDependency =
         delegate.invoke(directory)
 
-    override fun invoke(name: String, version: String, generateKotlinExternals: Boolean): NpmDependency =
-        delegate.invoke(name, version, generateKotlinExternals)
+    override fun invoke(name: String, version: String, generateExternals: Boolean): NpmDependency =
+        delegate.invoke(name, version, generateExternals)
 
-    override fun invoke(name: String, directory: File, generateKotlinExternals: Boolean): NpmDependency =
-        delegate.invoke(name, directory, generateKotlinExternals)
+    override fun invoke(name: String, directory: File, generateExternals: Boolean): NpmDependency =
+        delegate.invoke(name, directory, generateExternals)
 
-    override fun invoke(directory: File, generateKotlinExternals: Boolean): NpmDependency =
-        delegate.invoke(directory, generateKotlinExternals)
+    override fun invoke(directory: File, generateExternals: Boolean): NpmDependency =
+        delegate.invoke(directory, generateExternals)
 
     override fun call(vararg args: Any?): NpmDependency =
         delegate.call(*args)
@@ -295,33 +295,33 @@ private class DefaultDevNpmDependencyExtension(
 private fun defaultNpmDependencyDelegate(
     project: Project,
     scope: NpmDependency.Scope,
-    defaultGenerateKotlinExternals: Boolean?
+    defaultGenerateExternals: Boolean?
 ): NpmDependencyExtensionDelegate {
     return object : NpmDependencyExtensionDelegate(
         project,
         scope,
-        defaultGenerateKotlinExternals
+        defaultGenerateExternals
     ) {
         override operator fun invoke(
             name: String,
             directory: File,
-            generateKotlinExternals: Boolean
+            generateExternals: Boolean
         ): NpmDependency =
             directoryNpmDependency(
                 project = project,
                 name = name,
                 directory = directory,
                 scope = scope,
-                generateKotlinExternals = generateKotlinExternals
+                generateExternals = generateExternals
             )
 
         override fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency {
-            val generateKotlinExternals = generateKotlinExternalsIfPossible(args)
+            val generateExternals = generateExternalsIfPossible(args)
 
             return when (arg) {
                 is File -> invoke(
                     directory = arg,
-                    generateKotlinExternals = generateKotlinExternals
+                    generateExternals = generateExternals
                 )
                 else -> npmDeclarationException(args)
             }
@@ -330,14 +330,14 @@ private fun defaultNpmDependencyDelegate(
         override fun processNamedNonStringSecondArgument(
             name: String,
             arg: Any?,
-            generateKotlinExternals: Boolean,
+            generateExternals: Boolean,
             vararg args: Any?
         ): NpmDependency {
             return when (arg) {
                 is File -> invoke(
                     name = name,
                     directory = arg,
-                    generateKotlinExternals = generateKotlinExternals
+                    generateExternals = generateExternals
                 )
                 else -> npmDeclarationException(args)
             }
@@ -349,13 +349,13 @@ private fun defaultNpmDependencyDelegate(
                 "${scopePrefix(scope)}('name', File)" to "name:File"
             )
 
-            if (_defaultGenerateKotlinExternals == null) {
+            if (_defaultGenerateExternals == null) {
                 return result
             }
 
             return result
                 .map { (first, second) ->
-                    val value = first.replace(")", ", generateKotlinExternals = $defaultGenerateKotlinExternals)")
+                    val value = first.replace(")", ", generateExternals = $defaultGenerateExternals)")
                     value to second
                 }
         }
@@ -374,7 +374,7 @@ private class DefaultPeerNpmDependencyExtension(
         override fun invoke(
             name: String,
             directory: File,
-            generateKotlinExternals: Boolean
+            generateExternals: Boolean
         ): NpmDependency =
             npmDeclarationException(arrayOf(name, directory))
 
@@ -384,7 +384,7 @@ private class DefaultPeerNpmDependencyExtension(
         override fun processNamedNonStringSecondArgument(
             name: String,
             arg: Any?,
-            generateKotlinExternals: Boolean,
+            generateExternals: Boolean,
             vararg args: Any?
         ): NpmDependency =
             npmDeclarationException(args)

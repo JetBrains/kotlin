@@ -94,35 +94,35 @@ class DefaultKotlinDependencyHandler(
     override fun npm(
         name: String,
         version: String,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency =
         NpmDependency(
             project = project,
             name = name,
             version = version,
-            generateKotlinExternals = generateKotlinExternals
+            generateExternals = generateExternals
         )
 
     override fun npm(
         name: String,
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency =
         directoryNpmDependency(
             name = name,
             directory = directory,
             scope = NpmDependency.Scope.NORMAL,
-            generateKotlinExternals = generateKotlinExternals
+            generateExternals = generateExternals
         )
 
     override fun npm(
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency =
         npm(
             name = moduleName(directory),
             directory = directory,
-            generateKotlinExternals = generateKotlinExternals
+            generateExternals = generateExternals
         )
 
     override fun devNpm(
@@ -141,7 +141,7 @@ class DefaultKotlinDependencyHandler(
             name = name,
             directory = directory,
             scope = NpmDependency.Scope.DEV,
-            generateKotlinExternals = false
+            generateExternals = false
         )
 
     override fun devNpm(directory: File): NpmDependency =
@@ -153,36 +153,36 @@ class DefaultKotlinDependencyHandler(
     override fun optionalNpm(
         name: String,
         version: String,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency =
         NpmDependency(
             project = project,
             name = name,
             version = version,
             scope = NpmDependency.Scope.OPTIONAL,
-            generateKotlinExternals = generateKotlinExternals
+            generateExternals = generateExternals
         )
 
     override fun optionalNpm(
         name: String,
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency =
         directoryNpmDependency(
             name,
             directory,
             NpmDependency.Scope.OPTIONAL,
-            generateKotlinExternals = generateKotlinExternals
+            generateExternals = generateExternals
         )
 
     override fun optionalNpm(
         directory: File,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency =
         optionalNpm(
             name = moduleName(directory),
             directory = directory,
-            generateKotlinExternals = generateKotlinExternals
+            generateExternals = generateExternals
         )
 
     override fun peerNpm(
@@ -200,13 +200,13 @@ class DefaultKotlinDependencyHandler(
         name: String,
         directory: File,
         scope: NpmDependency.Scope,
-        generateKotlinExternals: Boolean
+        generateExternals: Boolean
     ): NpmDependency =
         directoryNpmDependency(
             project = project,
             name = name,
             directory = directory,
             scope = scope,
-            generateKotlinExternals = generateKotlinExternals
+            generateExternals = generateExternals
         )
 }
