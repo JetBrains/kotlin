@@ -117,13 +117,12 @@ class CodeConformanceTest : TestCase() {
     fun testForgottenBunchDirectivesAndFiles() {
         val root = File("").absoluteFile
         val extensions = File(root, ".bunch").readLines().map { it.split("_") }.flatten().toSet()
-        val fixMeExtensions = setOf("191", "as35")
         val failBuilder = mutableListOf<String>()
         for (sourceFile in FileUtil.findFilesByMask(SOURCES_BUNCH_FILE_PATTERN, root)) {
             if (EXCLUDED_FILES_AND_DIRS.any { FileUtil.isAncestor(it, sourceFile, false) }) continue
 
             val matches = Regex("BUNCH (\\w+)").findAll(sourceFile.readText())
-                .map { it.groupValues[1] }.toSet().filterNot { it in extensions || it in fixMeExtensions }
+                .map { it.groupValues[1] }.toSet().filterNot { it in extensions }
             for (bunch in matches) {
                 val filename = FileUtil.toSystemIndependentName(sourceFile.absoluteFile.toRelativeString(root))
                 failBuilder.add("$filename has unregistered $bunch bunch directive")
