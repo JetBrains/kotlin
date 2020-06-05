@@ -197,8 +197,8 @@ public fun CharSequence.random(random: Random): Char {
 /**
  * Returns a random character from this char sequence, or `null` if this char sequence is empty.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.randomOrNull(): Char? {
     return randomOrNull(Random)
@@ -207,8 +207,8 @@ public inline fun CharSequence.randomOrNull(): Char? {
 /**
  * Returns a random character from this char sequence using the specified source of randomness, or `null` if this char sequence is empty.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun CharSequence.randomOrNull(random: Random): Char? {
     if (isEmpty())
         return null
@@ -1635,8 +1635,8 @@ public inline fun CharSequence.reduceIndexedOrNull(operation: (index: Int, acc: 
  * 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun CharSequence.reduceOrNull(operation: (acc: Char, Char) -> Char): Char? {
     if (isEmpty())
         return null
@@ -1726,8 +1726,8 @@ public inline fun CharSequence.reduceRightIndexedOrNull(operation: (index: Int, 
  * 
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun CharSequence.reduceRightOrNull(operation: (Char, acc: Char) -> Char): Char? {
     var index = lastIndex
     if (index < 0) return null
@@ -1843,8 +1843,8 @@ public inline fun CharSequence.runningReduceIndexed(operation: (index: Int, acc:
  * 
  * @sample samples.collections.Collections.Aggregates.scan
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <R> CharSequence.scan(initial: R, operation: (acc: R, Char) -> R): List<R> {
     return runningFold(initial, operation)
 }
@@ -1861,8 +1861,8 @@ public inline fun <R> CharSequence.scan(initial: R, operation: (acc: R, Char) ->
  * 
  * @sample samples.collections.Collections.Aggregates.scan
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <R> CharSequence.scanIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
 }
