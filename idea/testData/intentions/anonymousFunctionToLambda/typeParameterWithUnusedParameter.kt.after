@@ -1,0 +1,5 @@
+fun <T> foo(fn: (T) -> Unit) {}
+
+fun test() {
+    foo { x: String -> }
+}

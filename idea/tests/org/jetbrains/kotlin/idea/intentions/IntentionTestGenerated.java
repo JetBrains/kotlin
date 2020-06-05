@@ -2115,6 +2115,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testTypeParameter3() throws Exception {
             runTest("idea/testData/intentions/anonymousFunctionToLambda/typeParameter3.kt");
         }
+
+        @TestMetadata("typeParameterWithUnusedParameter.kt")
+        public void testTypeParameterWithUnusedParameter() throws Exception {
+            runTest("idea/testData/intentions/anonymousFunctionToLambda/typeParameterWithUnusedParameter.kt");
+        }
+
+        @TestMetadata("typeParameterWithUnusedParameter2.kt")
+        public void testTypeParameterWithUnusedParameter2() throws Exception {
+            runTest("idea/testData/intentions/anonymousFunctionToLambda/typeParameterWithUnusedParameter2.kt");
+        }
+
+        @TestMetadata("typeParameterWithVararg.kt")
+        public void testTypeParameterWithVararg() throws Exception {
+            runTest("idea/testData/intentions/anonymousFunctionToLambda/typeParameterWithVararg.kt");
+        }
     }
 
     @TestMetadata("idea/testData/intentions/branched")
