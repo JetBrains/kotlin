@@ -11,7 +11,8 @@ enum class ClassModifier {
     DATA,
     INLINE,
     INNER,
-    COMPANION
+    COMPANION,
+    FUN
 }
 
 enum class MemberModifier {

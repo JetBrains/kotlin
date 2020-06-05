@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/partialSam.kt
-  CLASS INTERFACE name:Fn modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+  CLASS INTERFACE name:Fn modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Fn<T of <root>.Fn, R of <root>.Fn>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?]

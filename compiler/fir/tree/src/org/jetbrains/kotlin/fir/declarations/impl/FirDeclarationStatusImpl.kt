@@ -136,6 +136,12 @@ open class FirDeclarationStatusImpl(
             this[FROM_ENUM] = value
         }
 
+    override var isFun: Boolean
+        get() = this[FUN]
+        set(value) {
+            this[FUN] = value
+        }
+
     private enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
@@ -153,7 +159,8 @@ open class FirDeclarationStatusImpl(
         SUSPEND(0x2000),
         STATIC(0x4000),
         FROM_SEALED(0x8000),
-        FROM_ENUM(0x10000)
+        FROM_ENUM(0x10000),
+        FUN(0x20000)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

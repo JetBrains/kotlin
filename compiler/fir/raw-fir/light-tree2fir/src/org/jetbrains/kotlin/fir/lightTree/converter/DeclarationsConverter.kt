@@ -382,6 +382,7 @@ class DeclarationsConverter(
                     isCompanion = modifiers.isCompanion() && classKind == ClassKind.OBJECT
                     isData = modifiers.isDataClass()
                     isInline = modifiers.isInlineClass()
+                    isFun = modifiers.isFunctionalInterface()
                 }
 
                 buildRegularClass {

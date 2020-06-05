@@ -37,6 +37,7 @@ inline val FirRegularClass.isInner get() = status.isInner
 inline val FirRegularClass.isCompanion get() = status.isCompanion
 inline val FirRegularClass.isData get() = status.isData
 inline val FirRegularClass.isInline get() = status.isInline
+inline val FirRegularClass.isFun get() = status.isFun
 inline val FirMemberDeclaration.modality get() = status.modality
 inline val FirMemberDeclaration.visibility get() = status.visibility
 inline val FirMemberDeclaration.allowsToHaveFakeOverride: Boolean

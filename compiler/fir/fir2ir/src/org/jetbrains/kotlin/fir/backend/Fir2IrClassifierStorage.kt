@@ -183,7 +183,7 @@ class Fir2IrClassifierStorage(
                     isExternal = regularClass.isExternal,
                     isInline = regularClass.isInline,
                     isExpect = regularClass.isExpect,
-                    isFun = false // TODO FirRegularClass.isFun
+                    isFun = regularClass.isFun
                 ).apply {
                     metadata = FirMetadataSource.Class(regularClass, descriptor)
                     descriptor.bind(this)

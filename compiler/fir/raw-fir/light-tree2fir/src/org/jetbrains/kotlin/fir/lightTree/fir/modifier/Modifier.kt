@@ -78,6 +78,10 @@ class Modifier(
         return classModifiers.contains(ClassModifier.COMPANION)
     }
 
+    fun isFunctionalInterface(): Boolean {
+        return classModifiers.contains(ClassModifier.FUN)
+    }
+
     fun hasOverride(): Boolean {
         return memberModifiers.contains(MemberModifier.OVERRIDE)
     }

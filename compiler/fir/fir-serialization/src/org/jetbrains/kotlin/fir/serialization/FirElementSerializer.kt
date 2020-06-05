@@ -98,7 +98,7 @@ class FirElementSerializer private constructor(
             regularClass?.isExternal == true,
             regularClass?.isExpect == true,
             regularClass?.isInline == true,
-            false // TODO: klass.isFun not supported yet
+            regularClass?.isFun == true
         )
         if (flags != builder.flags) {
             builder.flags = flags
