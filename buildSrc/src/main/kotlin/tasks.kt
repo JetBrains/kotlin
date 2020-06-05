@@ -108,6 +108,10 @@ fun Project.projectTest(
     systemProperty("kotlin.ni", if (rootProject.hasProperty("newInferenceTests")) "true" else "false")
     systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (rootProject.hasProperty("skipMutedTests")) "true" else "false")
 
+    if (Platform[202].orHigher()) {
+        systemProperty("idea.ignore.disabled.plugins", "true")
+    }
+
     var subProjectTempRoot: Path? = null
     doFirst {
         val teamcity = rootProject.findProperty("teamcity") as? Map<Any?, *>
