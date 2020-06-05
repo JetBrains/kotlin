@@ -50,7 +50,7 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
         val mainFileText = FileUtil.loadFile(mainFile, true)
         TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFilePath\"", mainFileText.contains("<caret>"))
 
-        val projectDir = path.removePrefix(testDataPath).substringBeforeLast('/')
+        val projectDir = path.removePrefix(testDataPath).substringBeforeLast(File.separatorChar)
         myFixture.copyDirectoryToProject(projectDir, "")
         PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
 
