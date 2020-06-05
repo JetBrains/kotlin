@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
@@ -105,6 +106,16 @@ class DefaultKotlinDependencyHandler(
 
     override fun npm(
         name: String,
+        version: String
+    ): NpmDependency =
+        npm(
+            name = name,
+            version = version,
+            generateExternals = defaultGenerateExternals()
+        )
+
+    override fun npm(
+        name: String,
         directory: File,
         generateExternals: Boolean
     ): NpmDependency =
@@ -116,6 +127,16 @@ class DefaultKotlinDependencyHandler(
         )
 
     override fun npm(
+        name: String,
+        directory: File
+    ): NpmDependency =
+        npm(
+            name = name,
+            directory = directory,
+            generateExternals = defaultGenerateExternals()
+        )
+
+    override fun npm(
         directory: File,
         generateExternals: Boolean
     ): NpmDependency =
@@ -123,6 +144,12 @@ class DefaultKotlinDependencyHandler(
             name = moduleName(directory),
             directory = directory,
             generateExternals = generateExternals
+        )
+
+    override fun npm(directory: File): NpmDependency =
+        npm(
+            directory = directory,
+            generateExternals = defaultGenerateExternals()
         )
 
     override fun devNpm(
@@ -136,7 +163,10 @@ class DefaultKotlinDependencyHandler(
             scope = NpmDependency.Scope.DEV
         )
 
-    override fun devNpm(name: String, directory: File): NpmDependency =
+    override fun devNpm(
+        name: String,
+        directory: File
+    ): NpmDependency =
         directoryNpmDependency(
             name = name,
             directory = directory,
@@ -165,14 +195,31 @@ class DefaultKotlinDependencyHandler(
 
     override fun optionalNpm(
         name: String,
+        version: String
+    ): NpmDependency =
+        optionalNpm(
+            name,
+            version,
+            defaultGenerateExternals()
+        )
+
+    override fun optionalNpm(
+        name: String,
         directory: File,
         generateExternals: Boolean
     ): NpmDependency =
         directoryNpmDependency(
-            name,
-            directory,
-            NpmDependency.Scope.OPTIONAL,
+            name = name,
+            directory = directory,
+            scope = NpmDependency.Scope.OPTIONAL,
             generateExternals = generateExternals
+        )
+
+    override fun optionalNpm(name: String, directory: File): NpmDependency =
+        optionalNpm(
+            name = name,
+            directory = directory,
+            generateExternals = defaultGenerateExternals()
         )
 
     override fun optionalNpm(
@@ -185,6 +232,12 @@ class DefaultKotlinDependencyHandler(
             generateExternals = generateExternals
         )
 
+    override fun optionalNpm(directory: File): NpmDependency =
+        optionalNpm(
+            directory = directory,
+            generateExternals = defaultGenerateExternals()
+        )
+
     override fun peerNpm(
         name: String,
         version: String
@@ -195,6 +248,9 @@ class DefaultKotlinDependencyHandler(
             version = version,
             scope = NpmDependency.Scope.PEER
         )
+
+    private fun defaultGenerateExternals() =
+        PropertiesProvider(project).jsGenerateExternals
 
     private fun directoryNpmDependency(
         name: String,
