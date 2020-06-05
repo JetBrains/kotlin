@@ -4,10 +4,13 @@ package com.intellij.psi.impl.source.tree.injected;
 
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.Language;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 class VirtualFileWindowImpl extends com.intellij.injected.editor.VirtualFileWindowImpl implements VirtualFileWindow {
+  private static final @NotNull Logger LOG = Logger.getInstance(VirtualFileWindowImpl.class);
+
   private final VirtualFile myDelegate;
   private final DocumentWindowImpl myDocumentWindow;
 
@@ -44,5 +47,15 @@ class VirtualFileWindowImpl extends com.intellij.injected.editor.VirtualFileWind
   @Override
   public String toString() {
     return "VirtualFileWindow in " + myDelegate.getPresentableUrl();
+  }
+
+  @Override
+  public boolean isWritable() {
+    return myDelegate.isWritable();
+  }
+
+  @Override
+  public void setWritable(boolean writable) {
+    LOG.error("Operation is not supported");
   }
 }

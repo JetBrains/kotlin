@@ -673,9 +673,6 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     Set<Language> languages = viewProvider.getLanguages();
     ASTNode[] parsedNodes = new ASTNode[languages.size()];
 
-    virtualFile.setContent(null, decodedChars, false);
-    virtualFile.setWritable(virtualFile.getDelegate().isWritable());
-
     int i = 0;
     for (Language lang : languages) {
       ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
