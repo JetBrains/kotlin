@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/castFromAny.kt
-  CLASS INTERFACE name:KRunnable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+  CLASS INTERFACE name:KRunnable modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KRunnable
     FUN name:invoke visibility:public modality:ABSTRACT <> ($this:<root>.KRunnable) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.KRunnable

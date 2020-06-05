@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
-  CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+  CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFoo, i:kotlin.Int) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.IFoo
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS INTERFACE name:IFoo2 modality:ABSTRACT visibility:public superTypes:[<root>.IFoo]
+  CLASS INTERFACE name:IFoo2 modality:ABSTRACT visibility:public [fun] superTypes:[<root>.IFoo]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo2
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFoo, i:kotlin.Int) returnType:kotlin.Unit [fake_override]
       overridden:

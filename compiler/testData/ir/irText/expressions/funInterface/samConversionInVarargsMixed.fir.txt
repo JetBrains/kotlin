@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/samConversionInVarargsMixed.kt
-  CLASS INTERFACE name:MyRunnable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+  CLASS INTERFACE name:MyRunnable modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyRunnable
     FUN name:run visibility:public modality:ABSTRACT <> ($this:<root>.MyRunnable) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.MyRunnable
