@@ -9,7 +9,7 @@ import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.reflect.TypeOf
-import org.jetbrains.kotlin.gradle.plugin.DEFAULT_GENERATE_KOTLIN_EXTERNALS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
@@ -76,7 +76,7 @@ internal fun Project.addNpmDependencyExtension() {
                 NORMAL, OPTIONAL -> DefaultNpmDependencyExtension(
                     this,
                     scope,
-                    DEFAULT_GENERATE_KOTLIN_EXTERNALS
+                    PropertiesProvider(this).jsGenerateExternals
                 )
                 DEV -> DefaultDevNpmDependencyExtension(
                     this
