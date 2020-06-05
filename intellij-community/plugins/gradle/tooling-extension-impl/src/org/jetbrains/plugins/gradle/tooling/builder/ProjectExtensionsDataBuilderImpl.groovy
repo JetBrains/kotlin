@@ -29,10 +29,6 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
   Object buildAll(String modelName, Project project) {
     DefaultGradleExtensions result = new DefaultGradleExtensions()
     result.parentProjectPath = project.parent?.path
-    def file = project.getBuildFile()
-    if (file.exists()) {
-      result.buildScriptFile = file
-    }
 
     for (it in project.configurations) {
       result.configurations.add(new DefaultGradleConfiguration(it.name, it.description, it.visible))

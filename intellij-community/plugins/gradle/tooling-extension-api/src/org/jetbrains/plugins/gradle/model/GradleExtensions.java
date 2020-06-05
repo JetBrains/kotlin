@@ -4,7 +4,6 @@ package org.jetbrains.plugins.gradle.model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
@@ -29,6 +28,4 @@ public interface GradleExtensions extends Serializable {
 
   @NotNull
   List<? extends GradleConfiguration> getConfigurations();
-
-  @Nullable File getBuildScriptFile();
 }

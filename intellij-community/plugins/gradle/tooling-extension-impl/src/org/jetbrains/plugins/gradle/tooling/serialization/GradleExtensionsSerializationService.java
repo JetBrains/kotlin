@@ -64,7 +64,6 @@ public class GradleExtensionsSerializationService implements SerializationServic
         writer.writeInt(objectId);
         if (isAdded) {
           writeString(writer, "parentProjectPath", model.getParentProjectPath());
-          writeFile(writer, "buildScriptFile" , model.getBuildScriptFile());
           writeConfigurations(writer, context, model.getConfigurations());
           writeConventions(writer, context, model.getConventions());
           writeExtensions(writer, context, model.getExtensions());
@@ -170,7 +169,6 @@ public class GradleExtensionsSerializationService implements SerializationServic
         public DefaultGradleExtensions create() {
           DefaultGradleExtensions gradleExtensions = new DefaultGradleExtensions();
           gradleExtensions.setParentProjectPath(readString(reader, "parentProjectPath"));
-          gradleExtensions.setBuildScriptFile(readFile(reader, "buildScriptFile"));
           gradleExtensions.getConfigurations().addAll(readConfigurations(reader, context));
           gradleExtensions.getConventions().addAll(readConventions(reader, context));
           gradleExtensions.getExtensions().addAll(readExtensions(reader, context));

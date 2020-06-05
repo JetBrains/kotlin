@@ -8,11 +8,13 @@ import com.intellij.model.presentation.SymbolPresentation
 import com.intellij.navigation.NavigatableSymbol
 import com.intellij.navigation.NavigationTarget
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.PsiManager
 import icons.GradleIcons
 import org.jetbrains.annotations.ApiStatus.Internal
-import org.jetbrains.plugins.gradle.settings.GradleExtensionsSettings
+import org.jetbrains.plugins.gradle.model.ExternalProject
+import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCache
 import org.jetbrains.plugins.gradle.util.GradleBundle
 
 @Internal
@@ -46,10 +48,20 @@ class GradleProjectSymbol(private val myQualifiedName: List<String>, private val
   }
 
   private fun findBuildFile(project: Project): PsiElement? {
-    val extensionsData = GradleExtensionsSettings.getInstance(project).getExtensionsFor(myRootProjectPath, qualifiedName)
-                         ?: return null
-    val buildScript = extensionsData.buildScriptFile ?: return null
-    return PsiUtil.findFileSystemItem(project, buildScript)
+    val rootProject = ExternalProjectDataCache.getInstance(project)
+                            .getRootExternalProject(myRootProjectPath)
+                          ?: return null
+
+    val externalProject = myQualifiedName
+                            .drop(1)
+                            .fold(rootProject as ExternalProject?) {
+                              extProject, name ->  extProject?.childProjects?.get(name)
+                            } ?: return null
+
+    val buildFile = externalProject.buildFile ?: return null
+    val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(buildFile) ?: return null
+
+    return PsiManager.getInstance(project).findFile(virtualFile)
   }
 
   override fun equals(other: Any?): Boolean {
