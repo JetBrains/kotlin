@@ -99,6 +99,8 @@ object IndexContentDiagnosticDumper {
     check(fileUrl == resolvedFile?.url) {
       buildString {
         appendln("File cannot be resolved")
+        appendln("Original URL: $fileUrl")
+        appendln("Resolved URL: ${resolvedFile?.url}")
         appendln(indexedFilePath.toString())
       }
     }
