@@ -93,7 +93,7 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         super.configureCompilations(target)
 
         target.compilations.all {
-            it.compileKotlinTask.kotlinOptions {
+            it.kotlinOptions {
                 moduleKind = "umd"
                 sourceMap = true
                 sourceMapEmbedSources = null
