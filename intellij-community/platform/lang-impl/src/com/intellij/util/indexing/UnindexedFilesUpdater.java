@@ -311,7 +311,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
    * It may change during execution of the IDE depending on other activities' load.
    */
   public static int getNumberOfIndexingThreads() {
-    int threadsCount = Registry.intValue("caches.indexerThreadsCount.restartRequired");
+    int threadsCount = Registry.intValue("caches.indexerThreadsCount");
     if (threadsCount <= 0) {
       int coresToLeaveForOtherActivity = ApplicationManager.getApplication().isCommandLine() ? 0 : 1;
       threadsCount = Math.max(1, Math.min(Runtime.getRuntime().availableProcessors() - coresToLeaveForOtherActivity, DEFAULT_MAX_INDEXER_THREADS));
@@ -324,7 +324,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
    */
   public static int getMaxNumberOfIndexingThreads() {
     // Change of the registry option requires IDE restart.
-    int threadsCount = Registry.intValue("caches.indexerThreadsCount.restartRequired");
+    int threadsCount = Registry.intValue("caches.indexerThreadsCount");
     if (threadsCount <= 0) {
       return DEFAULT_MAX_INDEXER_THREADS;
     }
