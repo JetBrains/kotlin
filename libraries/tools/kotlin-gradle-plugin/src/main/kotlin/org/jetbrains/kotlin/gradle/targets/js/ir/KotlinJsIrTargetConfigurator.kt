@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.attributes.Usage
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -54,9 +55,9 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
         return KotlinJsIrSourceSetProcessor(tasksProvider, compilation, kotlinPluginVersion)
     }
 
-    override fun createArchiveTasks(target: KotlinJsIrTarget): Zip {
+    override fun createArchiveTasks(target: KotlinJsIrTarget): TaskProvider<out Zip> {
         return super.createArchiveTasks(target).apply {
-            archiveExtension.set(KLIB_TYPE)
+            configure { it.archiveExtension.set(KLIB_TYPE) }
         }
     }
 

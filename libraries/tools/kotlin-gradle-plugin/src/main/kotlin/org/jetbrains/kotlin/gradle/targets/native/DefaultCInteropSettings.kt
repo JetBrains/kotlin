@@ -10,6 +10,7 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Property
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
@@ -56,7 +57,9 @@ open class DefaultCInteropSettings @Inject constructor(
             target.disambiguationClassifier
         )
 
-    var defFile: File = project.projectDir.resolve("src/nativeInterop/cinterop/$name.def")
+    val defFile: Property<File> = project.objects.property(File::class.java)
+        .apply { set(project.projectDir.resolve("src/nativeInterop/cinterop/$name.def")) }
+
     var packageName: String? = null
 
     val compilerOpts = mutableListOf<String>()
@@ -69,7 +72,7 @@ open class DefaultCInteropSettings @Inject constructor(
     // DSL methods.
 
     override fun defFile(file: Any) {
-        defFile = project.file(file)
+        defFile.set(project.file(file))
     }
 
     override fun packageName(value: String) {

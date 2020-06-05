@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssoci
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.concurrent.Callable
 

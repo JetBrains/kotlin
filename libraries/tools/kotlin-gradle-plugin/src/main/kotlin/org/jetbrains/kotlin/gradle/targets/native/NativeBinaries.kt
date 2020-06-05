@@ -13,6 +13,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -79,7 +80,10 @@ sealed class NativeBinary(
         get() = lowerCamelCaseName("link", name, target.targetName)
 
     val linkTask: KotlinNativeLink
-        get() = project.tasks.getByName(linkTaskName) as KotlinNativeLink
+        get() = linkTaskProvider.get()
+
+    val linkTaskProvider: TaskProvider<out KotlinNativeLink>
+        get() = project.tasks.withType(KotlinNativeLink::class.java).named(linkTaskName)
 
     // Output access.
     // TODO: Provide output configurations and integrate them with Gradle Native.
