@@ -730,14 +730,10 @@ class FirElementSerializer private constructor(
         writeVersionRequirement(LanguageFeature.ReleaseCoroutines)
 
     private operator fun FirArgumentList.get(name: Name): ConstantValue<*>? {
-        // TODO: constant evaluation
         val expression = arguments.filterIsInstance<FirNamedArgumentExpression>().find {
             it.name == name
         }?.expression
-        if (expression !is FirConstExpression<*>) {
-            return null
-        }
-        return expression.value as? ConstantValue<*>
+        return expression?.let { constantEvaluator.evaluate(it) }
     }
 
     private fun serializeVersionRequirementFromRequireKotlin(annotation: FirAnnotationCall): ProtoBuf.VersionRequirement.Builder? {
