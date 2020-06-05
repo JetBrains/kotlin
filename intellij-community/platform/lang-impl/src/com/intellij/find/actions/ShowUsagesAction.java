@@ -719,9 +719,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       action.registerCustomShortcutSet(action.getShortcutSet(), content);
     }
     /** save toolbar actions for using later, in automatic filter toggling in {@link #restartShowUsagesWithFiltersToggled(List} */
-    AbstractPopup createdPopup = (AbstractPopup)popup[0];
-    createdPopup.setUserData(Collections.singletonList(toolbar));
-    return createdPopup;
+    popup[0].setUserData(Collections.singletonList(toolbar));
+    return popup[0];
   }
 
   @NotNull
@@ -910,6 +909,9 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                            @NotNull RelativePoint popupPosition,
                                            @NotNull IntRef minWidth,
                                            @NotNull List<? extends UsageNode> data) {
+    if (!(popup instanceof AbstractPopup)) {
+      return;
+    }
     JComponent content = popup.getContent();
     Window window = SwingUtilities.windowForComponent(content);
     Dimension d = window.getSize();
