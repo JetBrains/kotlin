@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformPluginBase
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
@@ -251,6 +252,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:Internal // takes part in the compiler arguments
     val friendPaths: Array<String> by project.provider {
         taskData.compilation.run {
+            if (this !is AbstractKotlinCompilation<*>) return@run emptyArray<String>()
             associateWithTransitiveClosure
                 .flatMap { it.output.classesDirs }
                 .plus(friendArtifacts)
