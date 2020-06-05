@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-class AnalysisSessionFirImpl : FrontendAnalysisSession() {
+class FirAnalysisSession : FrontendAnalysisSession() {
 
     override fun getSmartCastedToTypes(expression: KtExpression): Collection<KotlinTypeMarker>? {
         // TODO filter out not used smartcasts
-        return (expression.toFir() as? FirExpressionWithSmartcast)?.typesFromSmartCast
+        return expression.getOrBuildFirSafe<FirExpressionWithSmartcast>()?.typesFromSmartCast
     }
 
     @OptIn(ExperimentalStdlibApi::class)

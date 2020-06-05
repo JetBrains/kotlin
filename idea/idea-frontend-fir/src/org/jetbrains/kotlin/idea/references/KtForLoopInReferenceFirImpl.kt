@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -14,12 +13,12 @@ import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.getResolvedSymbolOfNameReference
-import org.jetbrains.kotlin.idea.frontend.api.fir.AnalysisSessionFirImpl
+import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
 import org.jetbrains.kotlin.psi.KtForExpression
 
 open class KtForLoopInReferenceFirImpl(expression: KtForExpression) : KtForLoopInReference(expression), FirKtReference {
     override fun getResolvedToPsi(
-        analysisSession: AnalysisSessionFirImpl
+        analysisSession: FirAnalysisSession
     ): Collection<PsiElement> {
         val firLoop = expression.getOrBuildFirSafe<FirWhileLoop>() ?: return emptyList()
         val condition = firLoop.condition as? FirFunctionCall

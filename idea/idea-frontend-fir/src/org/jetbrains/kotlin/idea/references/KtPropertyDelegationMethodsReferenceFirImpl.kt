@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.idea.fir.*
-import org.jetbrains.kotlin.idea.frontend.api.fir.AnalysisSessionFirImpl
+import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 
@@ -20,7 +20,7 @@ class KtPropertyDelegationMethodsReferenceFirImpl(
     element: KtPropertyDelegate
 ) : KtPropertyDelegationMethodsReference(element), FirKtReference {
     override fun getResolvedToPsi(
-        analysisSession: AnalysisSessionFirImpl
+        analysisSession: FirAnalysisSession
     ): Collection<PsiElement> {
         val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>() ?: return emptyList()
         if (property.delegate == null) return emptyList()

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.fir.highlighter.visitors.FirAfterResolveHighlightingVisitor
 import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.fir.AnalysisSessionFirImpl
+import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
 import org.jetbrains.kotlin.idea.highlighter.AbstractKotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.Diagnostic2Annotation
 import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages
@@ -24,7 +24,7 @@ class KotlinFirPsiChecker : AbstractKotlinPsiChecker() {
 
     override fun annotateElement(element: PsiElement, containingFile: KtFile, holder: AnnotationHolder) {
         if (element !is KtElement) return
-        val analysisSession = AnalysisSessionFirImpl()
+        val analysisSession = FirAnalysisSession()
 
         highlightDiagnostics(element, analysisSession, holder)
 

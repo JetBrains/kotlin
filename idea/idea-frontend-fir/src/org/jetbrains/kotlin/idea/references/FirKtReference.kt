@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.frontend.api.fir.AnalysisSessionFirImpl
+import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
 
 interface FirKtReference : KtReference {
-    fun getResolvedToPsi(analysisSession: AnalysisSessionFirImpl): Collection<PsiElement>
+    fun getResolvedToPsi(analysisSession: FirAnalysisSession): Collection<PsiElement>
 
     override val resolver get() = KtFirReferenceResolver
 }
