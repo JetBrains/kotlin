@@ -45,6 +45,8 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
         )
     }
 
+    fun testFunTypeParamArgs() { doTest("fun <'_E, '_T> '_name(p1: '_E, p2: '_T)") }
+
     fun testMethod() { doTest("fun a()") }
 
     fun testMethodProtectedModifier() { doTest("protected fun '_()") }
