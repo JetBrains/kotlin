@@ -11,6 +11,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
@@ -26,6 +27,8 @@ open class KotlinJsIrLink : Kotlin2JsCompile() {
     // Not check sources, only klib module
     @Internal
     override fun getSource(): FileTree = super.getSource()
+
+    override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsImpl()
 
     @get:SkipWhenEmpty
     @get:InputDirectory

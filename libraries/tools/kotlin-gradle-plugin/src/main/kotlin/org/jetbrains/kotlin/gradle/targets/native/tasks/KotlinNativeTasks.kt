@@ -366,27 +366,12 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
     // endregion.
 
     // region Kotlin options.
-    private inner class NativeCompileOptions : KotlinCommonOptions {
-        override var apiVersion: String?
-            get() = languageSettings.apiVersion
-            set(value) { languageSettings.apiVersion = value }
-
-        override var languageVersion: String?
-            get() = this@KotlinNativeCompile.languageVersion
-            set(value) { languageSettings.languageVersion = value }
-
-        override var allWarningsAsErrors: Boolean = false
-        override var suppressWarnings: Boolean = false
-        override var verbose: Boolean = false
-
-        override var freeCompilerArgs: List<String> = listOf()
-    }
+    override val kotlinOptions: KotlinCommonOptions
+        get() = compilation.kotlinOptions
 
     @get:Input
     override val additionalCompilerOptions: Collection<String>
         get() = kotlinOptions.freeCompilerArgs
-
-    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions()
 
     override fun kotlinOptions(fn: KotlinCommonOptions.() -> Unit) {
         kotlinOptions.fn()
