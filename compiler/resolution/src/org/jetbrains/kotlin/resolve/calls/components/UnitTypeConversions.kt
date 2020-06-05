@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 object UnitTypeConversions : ParameterTypeConversion {
@@ -26,8 +27,8 @@ object UnitTypeConversions : ParameterTypeConversion {
         if (argument !is SimpleKotlinCallArgument) return true
 
         val receiver = argument.receiver
-        if (receiver.receiverValue.type.hasUnitOrDynamicReturnType()) return true
-        if (receiver.typesFromSmartCasts.any { it.hasUnitOrDynamicReturnType() }) return true
+        if (receiver.receiverValue.type.hasUnitOrSubtypeReturnType()) return true
+        if (receiver.typesFromSmartCasts.any { it.hasUnitOrSubtypeReturnType() }) return true
 
         if (
             !expectedParameterType.isBuiltinFunctionalType ||
@@ -37,10 +38,10 @@ object UnitTypeConversions : ParameterTypeConversion {
         return false
     }
 
-    private fun KotlinType.hasUnitOrDynamicReturnType(): Boolean =
-        isFunctionOrKFunctionTypeWithAnySuspendability && arguments.last().type.isUnitOrDynamic()
+    private fun KotlinType.hasUnitOrSubtypeReturnType(): Boolean =
+        isFunctionOrKFunctionTypeWithAnySuspendability && arguments.last().type.isUnitOrSubtype()
 
-    private fun KotlinType.isUnitOrDynamic(): Boolean = isUnit() || isDynamic()
+    private fun KotlinType.isUnitOrSubtype(): Boolean = isUnit() || isDynamic() || isNothing()
 
     override fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean =
         argument is SimpleKotlinCallArgument && argument.receiver.stableType.isFunctionType
@@ -51,7 +52,7 @@ object UnitTypeConversions : ParameterTypeConversion {
         var isFunctionTypeOrSubtype = false
         val hasReturnTypeInSubtypes = argument.receiver.stableType.isFunctionTypeOrSubtype {
             isFunctionTypeOrSubtype = true
-            it.getReturnTypeFromFunctionType().isUnitOrDynamic()
+            it.getReturnTypeFromFunctionType().isUnitOrSubtype()
         }
 
         if (!isFunctionTypeOrSubtype) return false
