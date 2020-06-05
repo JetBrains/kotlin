@@ -21,14 +21,18 @@ class SubpluginsIT : BaseGradleIT() {
         project.build("compileKotlin", "build") {
             assertSuccessful()
             assertContains("ExampleSubplugin loaded")
+            assertContains("ExampleLegacySubplugin loaded")
             assertContains("Project component registration: exampleValue")
+            assertContains("Project component registration: exampleLegacyValue")
             assertTasksExecuted(":compileKotlin")
         }
 
         project.build("compileKotlin", "build") {
             assertSuccessful()
             assertContains("ExampleSubplugin loaded")
+            assertContains("ExampleLegacySubplugin loaded")
             assertNotContains("Project component registration: exampleValue")
+            assertNotContains("Project component registration: exampleLegacyValue")
             assertTasksUpToDate(":compileKotlin")
         }
     }
