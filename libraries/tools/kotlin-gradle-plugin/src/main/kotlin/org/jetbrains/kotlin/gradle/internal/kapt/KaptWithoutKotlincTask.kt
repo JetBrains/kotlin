@@ -9,7 +9,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.plugin.CompositeSubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
@@ -49,7 +49,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     lateinit var javacOptions: Map<String, String>
 
     private fun getAnnotationProcessorOptions(): Map<String, String> {
-        val options = processorOptions.subpluginOptionsByPluginId[Kapt3KotlinGradleSubplugin.KAPT_SUBPLUGIN_ID] ?: return emptyMap()
+        val options = processorOptions.subpluginOptionsByPluginId[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID] ?: return emptyMap()
 
         val result = mutableMapOf<String, String>()
         for (option in options) {
