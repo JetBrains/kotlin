@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
@@ -157,8 +158,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             it.into(distribution.directory)
         }
 
-        val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTask.dependsOn(distributeResourcesTask)
+        val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+        assembleTaskProvider.dependsOn(distributeResourcesTask)
 
         compilation.binaries
             .all { binary ->
@@ -191,7 +192,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 }
 
                 if (type == KotlinJsBinaryMode.PRODUCTION) {
-                    assembleTask.dependsOn(webpackTask)
+                    assembleTaskProvider.dependsOn(webpackTask)
                     val webpackCommonTask = registerSubTargetTask<Task>(
                         disambiguateCamelCased(WEBPACK_TASK_NAME)
                     ) {
@@ -227,12 +228,9 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
 
         entryProperty.set(
-            actualDceTaskProvider.map {
-                RegularFile {
-                    it.destinationDir
-                        .resolve(compilation.compileKotlinTask.outputFile.name)
-                }
-            }
+            project.layout.file(actualDceTaskProvider.map {
+                it.destinationDir.resolve(compilation.compileKotlinTask.outputFile.name)
+            })
         )
 
         resolveFromModulesFirst = true
@@ -256,7 +254,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             DCE_TASK_SUFFIX
         )
 
-        val kotlinTask = compilation.compileKotlinTask
+        val kotlinTask = compilation.compileKotlinTaskProvider
 
         return project.registerTask(dceTaskName) {
             if (dev) {
@@ -267,15 +265,13 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 }
             }
 
-            it.dependsOn(kotlinTask)
-
             it.kotlinFilesOnly = true
 
             it.classpath = project.configurations.getByName(compilation.runtimeDependencyConfigurationName)
             it.destinationDir = it.dceOptions.outputDirectory?.let { File(it) }
                 ?: compilation.npmProject.dir.resolve(if (dev) DCE_DEV_DIR else DCE_DIR)
 
-            it.source(kotlinTask.outputFile)
+            it.source(kotlinTask.map { it.outputFile })
         }
     }
 
