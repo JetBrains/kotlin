@@ -13,6 +13,8 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
 
     fun testFunParam() { doTest("fun '_(b: Int, c: String) { '_* }") }
 
+    fun testFunSameTypeParam() { doTest("fun '_('_ : '_A, '_ : '_A) { '_* }") }
+
     fun testFunSingleParam() { doTest("fun '_('_ : '_) { '_* }") }
 
     fun testFunTypeParam() { doTest("fun<T, R> '_(a: T, b: R, c: T) { '_* }") }

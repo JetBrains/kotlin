@@ -309,7 +309,18 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitTypeReference(typeReference: KtTypeReference) {
+        // Previous SubstitutionHandler match can be KtTypeParameter
+        if (myMatchingVisitor.element is LeafPsiElement && myMatchingVisitor.element.parent is KtTypeParameter) {
+            myMatchingVisitor.result = matchTextOrVariable(typeReference, myMatchingVisitor.element)
+            return
+        }
+
         val other = getTreeElementDepar<KtTypeReference>() ?: return
+        val handler = getHandler(typeReference)
+        if (handler is SubstitutionHandler) {
+            myMatchingVisitor.result = handler.handle(other, myMatchingVisitor.matchContext)
+            return
+        }
         myMatchingVisitor.result = myMatchingVisitor.matchSons(typeReference, other)
     }
 
