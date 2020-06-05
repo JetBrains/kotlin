@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.idea.perf.profilers.*
 import org.jetbrains.kotlin.idea.perf.util.TeamCity
 import org.jetbrains.kotlin.idea.perf.util.logMessage
 import org.jetbrains.kotlin.idea.testFramework.suggestOsNeutralFileName
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.*
 import kotlin.system.measureNanoTime
 import java.lang.ref.WeakReference
+import java.nio.file.Paths
 import kotlin.math.*
 import kotlin.system.measureTimeMillis
 import kotlin.test.assertEquals
@@ -29,7 +31,7 @@ class Stats(
 
     private val perfTestRawDataMs = mutableListOf<Long>()
 
-    private val statsFile: File = File(pathToResource("stats${statFilePrefix()}.csv")).absoluteFile
+    private val statsFile: File = pathToResource("stats${statFilePrefix()}.csv")
 
     private val statsOutput: BufferedWriter
 
@@ -45,7 +47,7 @@ class Stats(
 
     private fun plainname() = suggestOsNeutralFileName(name)
 
-    private fun pathToResource(resource: String) = "build/$resource"
+    private fun pathToResource(resource: String) = Paths.get(KotlinTestUtils.getHomeDirectory(), "../out/$resource").normalize().toAbsolutePath().toFile()
 
     private fun append(id: String, statInfosArray: Array<StatInfos>) {
         val timingsMs = toTimingsMs(statInfosArray)
@@ -324,10 +326,10 @@ class Stats(
 
         return if (profilerHandler != DummyProfilerHandler) {
             val profilerPath = pathToResource("profile/${plainname()}")
-            check(with(File(profilerPath)) { exists() || mkdirs() }) { "unable to mkdirs $profilerPath for ${phaseData.testName}" }
+            check(with(profilerPath) { exists() || mkdirs() }) { "unable to mkdirs $profilerPath for ${phaseData.testName}" }
             val activityName = "${phaseData.testName}-${if (phaseName.isEmpty()) "" else "$phaseName-"}$attempt"
 
-            ActualPhaseProfiler(activityName, profilerPath, profilerHandler, profilerConfig)
+            ActualPhaseProfiler(activityName, profilerPath.path, profilerHandler, profilerConfig)
         } else {
             DummyPhaseProfiler
         }
