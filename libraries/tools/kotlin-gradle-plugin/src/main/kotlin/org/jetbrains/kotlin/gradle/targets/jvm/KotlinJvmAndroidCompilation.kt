@@ -9,8 +9,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
 import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
 
  class KotlinJvmAndroidCompilation(
@@ -46,4 +49,7 @@ import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
              androidVariant.compileConfiguration.name,
              androidVariant.runtimeConfiguration.name
          )
+
+     val compileJavaTaskProvider: TaskProvider<out JavaCompile>?
+         get() = androidVariant.getJavaTaskProvider()
  }
