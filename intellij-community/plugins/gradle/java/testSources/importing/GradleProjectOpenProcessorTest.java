@@ -136,7 +136,7 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
     VirtualFile foo = createProjectSubDir("foo");
     createProjectSubFile("foo/build.gradle", "apply plugin: 'java'");
     createProjectSubFile("foo/settings.gradle", "");
-    Project fooProject = executeOnEdt(() -> ProjectUtil.openOrImport(foo.getPath(), null, true));
+    Project fooProject = executeOnEdt(() -> ProjectUtil.openOrImport(foo.toNioPath()));
 
     try {
       assertTrue(fooProject.isOpen());
@@ -183,7 +183,7 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
     Project fooProject = null;
     try {
       fooProject = EdtTestUtilKt.runInEdtAndGet(() -> {
-        final Project project = ProjectUtil.openOrImport(foo.getPath(), null, true);
+        final Project project = ProjectUtil.openOrImport(foo.toNioPath());
         ProjectInspectionProfileManager.getInstance(project).forceLoadSchemes();
         UIUtil.dispatchAllInvocationEvents();
         return project;

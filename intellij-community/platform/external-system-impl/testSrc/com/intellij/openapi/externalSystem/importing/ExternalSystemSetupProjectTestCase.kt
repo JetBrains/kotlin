@@ -61,7 +61,7 @@ interface ExternalSystemSetupProjectTestCase {
   fun openProjectFrom(projectFile: VirtualFile): Project {
     return detectOpenedProject {
       invokeAndWaitIfNeeded {
-        ProjectUtil.openOrImport(projectFile.path, null, true)
+        ProjectUtil.openOrImport(projectFile.toNioPath())
       }
     }
   }
