@@ -10,6 +10,7 @@ buildscript {
 }
 
 apply plugin: "kotlin"
+apply plugin: "kotlin-example-subplugin"
 
 repositories {
     mavenLocal()
