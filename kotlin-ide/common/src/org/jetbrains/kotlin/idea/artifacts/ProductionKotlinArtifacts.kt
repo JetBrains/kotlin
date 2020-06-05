@@ -26,6 +26,7 @@ object ProductionKotlinArtifacts : KotlinArtifacts() {
     override val kotlinStdlibSources = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_SOURCES)
     override val kotlinReflect = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_REFLECT)
     override val kotlinStdlibJs = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS)
+    override val kotlinStdlibJsSources = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS_SOURCES)
     override val kotlinTest = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_TEST)
     override val kotlinMainKts = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_MAIN_KTS)
     override val kotlinScriptRuntime = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPT_RUNTIME)

@@ -21,6 +21,7 @@ abstract class KotlinArtifacts {
     abstract val kotlinStdlibSources: File
     abstract val kotlinReflect: File
     abstract val kotlinStdlibJs: File
+    abstract val kotlinStdlibJsSources: File
     abstract val kotlinTest: File
     abstract val kotlinMainKts: File
     abstract val kotlinScriptRuntime: File
