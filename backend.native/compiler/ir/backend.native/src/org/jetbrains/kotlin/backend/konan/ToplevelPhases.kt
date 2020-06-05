@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -256,7 +257,10 @@ internal val psiToIrPhase = konanUnitPhase(
             linker.modules.values.forEach{ fakeOverrideChecker.check(it) }
 
             irModule = module
+
+            // Note: coupled with [shouldLower] below.
             irModules = linker.modules.filterValues { llvmModuleSpecification.containsModule(it) }
+
             ir.symbols = symbols
 
             functionIrClassFactory.module =
@@ -267,6 +271,11 @@ internal val psiToIrPhase = konanUnitPhase(
         description = "Psi to IR conversion",
         prerequisite = setOf(createSymbolTablePhase)
 )
+
+// Coupled with [psiToIrPhase] logic above.
+internal fun shouldLower(context: Context, declaration: IrDeclaration): Boolean {
+    return context.llvmModuleSpecification.containsDeclaration(declaration)
+}
 
 internal val destroySymbolTablePhase = konanUnitPhase(
         op = {

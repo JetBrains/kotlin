@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.backend.konan.lower.InnerClassLowering
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -260,7 +261,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
     }
 }
 
-internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
+internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, val isLowered: Boolean) {
     private val DEBUG = 0
 
     private inline fun DEBUG_OUTPUT(severity: Int, block: () -> Unit) {
@@ -432,7 +433,15 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
      * Fields declared in the class.
      */
     private fun getDeclaredFields(): List<IrField> {
-        val fields = irClass.declarations.mapNotNull {
+        val declarations: List<IrDeclaration> = if (irClass.isInner && !isLowered) {
+            // Note: copying to avoid mutation of the original class.
+            irClass.declarations.toMutableList()
+                    .also { InnerClassLowering.addOuterThisField(it, irClass, context) }
+        } else {
+            irClass.declarations
+        }
+
+        val fields = declarations.mapNotNull {
             when (it) {
                 is IrField -> it.takeIf { it.isReal }
                 is IrProperty -> it.takeIf { it.isReal }?.backingField

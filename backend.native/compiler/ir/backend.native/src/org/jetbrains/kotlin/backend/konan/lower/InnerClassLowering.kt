@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.callsSuper
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -30,6 +27,14 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         InnerClassTransformer(irClass).lowerInnerClass()
+    }
+
+    companion object {
+        fun addOuterThisField(declarations: MutableList<IrDeclaration>, irClass: IrClass, context: Context): IrField {
+            val outerThisField = context.specialDeclarationsFactory.getOuterThisField(irClass)
+            declarations += outerThisField
+            return outerThisField
+        }
     }
 
     private inner class InnerClassTransformer(val irClass: IrClass) {
@@ -44,8 +49,8 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun createOuterThisField() {
-            irClass.declarations += context.specialDeclarationsFactory.getOuterThisField(irClass)
-            outerThisFieldSymbol = context.specialDeclarationsFactory.getOuterThisField(irClass).symbol
+            val outerThisField = addOuterThisField(irClass.declarations, irClass, context)
+            outerThisFieldSymbol = outerThisField.symbol
         }
 
         private fun lowerConstructors() {

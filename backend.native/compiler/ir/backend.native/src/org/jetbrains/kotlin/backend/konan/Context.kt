@@ -254,7 +254,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val layoutBuilders = mutableMapOf<IrClass, ClassLayoutBuilder>()
 
     fun getLayoutBuilder(irClass: IrClass) = layoutBuilders.getOrPut(irClass) {
-        ClassLayoutBuilder(irClass, this)
+        ClassLayoutBuilder(irClass, this, isLowered = shouldLower(this, irClass))
     }
 
     lateinit var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
