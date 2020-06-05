@@ -101,8 +101,8 @@ public final class IndexUpdateRunner {
         };
         while (!project.isDisposed() && !indexingJob.areAllFilesProcessed() && indexingJob.myError.get() == null) {
           if (numberOfRunningWorkers.get() < myNumberOfIndexingThreads) {
-            numberOfRunningWorkers.incrementAndGet();
             myIndexingExecutor.execute(worker);
+            numberOfRunningWorkers.incrementAndGet();
           }
           indicator.checkCanceled();
           try {
