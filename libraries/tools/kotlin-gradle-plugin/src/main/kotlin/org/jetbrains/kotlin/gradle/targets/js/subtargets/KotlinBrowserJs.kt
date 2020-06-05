@@ -216,7 +216,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         nodeJs: NodeJsRootExtension
     ) {
         dependsOn(
-            nodeJs.npmInstallTask,
+            nodeJs.npmInstallTaskProvider,
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
 

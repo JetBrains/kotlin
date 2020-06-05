@@ -178,7 +178,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val type = binary.mode
 
         dependsOn(
-            nodeJs.npmInstallTask,
+            nodeJs.npmInstallTaskProvider,
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
 
