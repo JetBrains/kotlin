@@ -289,8 +289,7 @@ public class KotlinTestUtils {
     }
 
     public static String doLoadFile(String myFullDataPath, String name) throws IOException {
-        String fullName = myFullDataPath + File.separatorChar + name;
-        return doLoadFile(new File(fullName));
+        return doLoadFile(new File(myFullDataPath, name));
     }
 
     public static String doLoadFile(@NotNull File file) throws IOException {

@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.findTestLibraryRoot
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@Ignore("has to be deleted as it seems a compiler test")
 class ClsStubBuilderForWrongAbiVersionTest : AbstractClsStubBuilderTest() {
 
     fun testPackage() = testStubsForFileWithWrongAbiVersion("Wrong_packageKt")

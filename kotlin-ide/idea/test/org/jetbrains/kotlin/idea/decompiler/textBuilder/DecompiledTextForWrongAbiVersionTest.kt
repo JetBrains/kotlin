@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@Ignore("has to be deleted as it seems a compiler test")
 class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClassesTest() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor {

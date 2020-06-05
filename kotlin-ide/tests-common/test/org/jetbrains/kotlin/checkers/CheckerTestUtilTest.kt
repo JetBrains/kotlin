@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.tests.di.createContainerForTests
+import org.junit.Ignore
 import java.io.File
 import kotlin.test.assertEquals
 
@@ -94,6 +95,7 @@ private abstract class Test(private vararg val expectedMessages: String) {
     abstract fun makeTestData(diagnostics: MutableList<ActualDiagnostic>, diagnosedRanges: MutableList<DiagnosedRange>)
 }
 
+@Ignore("has to be deleted as it seems a compiler test")
 class CheckerTestUtilTest : KotlinTestWithEnvironment() {
     private val diagnostics = listOf(
         DiagnosticData(0, 0, "UNUSED_PARAMETER", 8, 9),
