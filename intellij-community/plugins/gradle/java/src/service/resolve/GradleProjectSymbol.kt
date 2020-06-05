@@ -37,13 +37,12 @@ class GradleProjectSymbol(private val myQualifiedName: List<String>, private val
 
   override fun getSymbolPresentation(): SymbolPresentation = myPresentation
 
-  override fun getNavigationTargets(project: Project): MutableCollection<out NavigationTarget> {
-    val result = mutableListOf<NavigationTarget>()
+  override fun getNavigationTargets(project: Project): Collection<NavigationTarget> {
     val psiFile = findBuildFile(project)
     if (psiFile != null) {
-      result.add(PsiElementNavigationTarget(psiFile))
+      return listOf(PsiElementNavigationTarget(psiFile))
     }
-    return result
+    return emptyList()
   }
 
   private fun findBuildFile(project: Project): PsiElement? {
