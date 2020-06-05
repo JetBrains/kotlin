@@ -43,7 +43,7 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
                                   forceOpenInNewFrame = forceOpenInNewFrame,
                                   projectToClose = projectToClose,
                                   runConfigurators = false,
-                                  beforeProjectOpen = Predicate { project ->
+                                  beforeOpen = Predicate { project ->
                                     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
                                     linkAndRefreshProject(projectDirectory.path, project)
                                     updateLastProjectLocation(projectDirectory.toNioPath())
