@@ -68,7 +68,8 @@ abstract class GradleJdkResolutionTestCase : ExternalSystemJdkUtilTestCase() {
 
   private fun suggestGradleJvm(project: Project, externalProjectPath: String, gradleVersion: GradleVersion): String? {
     val projectSettings = GradleProjectSettings()
-    setupGradleJvm(project, projectSettings, externalProjectPath, gradleVersion)
+    projectSettings.externalProjectPath = externalProjectPath
+    setupGradleJvm(project, projectSettings, gradleVersion)
     val provider = getGradleJvmLookupProvider(project, projectSettings)
     provider.waitForLookup()
     return projectSettings.gradleJvm

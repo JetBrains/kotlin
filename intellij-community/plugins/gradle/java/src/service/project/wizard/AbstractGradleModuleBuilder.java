@@ -22,7 +22,6 @@ import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.project.ProjectId;
 import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback;
 import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExternalModuleBuilder;
-import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -55,8 +54,10 @@ import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder;
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinBuildScriptDataBuilder;
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionUtil;
+import org.jetbrains.plugins.gradle.service.project.open.GradleProjectImportUtil;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
+import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.jetbrains.plugins.gradle.util.GradleJvmResolutionUtil;
 import org.jetbrains.plugins.gradle.util.GradleJvmValidationUtil;
@@ -69,7 +70,6 @@ import java.util.Map;
 
 import static com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.MODAL_SYNC;
 import static com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.setupCreatedProject;
-import static org.jetbrains.plugins.gradle.service.project.open.GradleProjectImportUtil.setupGradleSettings;
 
 /**
  * @author Denis Zhdanov
@@ -105,6 +105,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   private String rootProjectPath;
   private boolean myUseKotlinDSL;
   private boolean isCreatingNewProject;
+  private boolean isCreatingNewLinkedProject;
 
   public AbstractGradleModuleBuilder() {
     super(GradleConstants.SYSTEM_ID, new GradleProjectSettings());
@@ -155,6 +156,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     setupGradleSettingsFile(
       rootProjectPath, modelContentRootDir, project.getName(),
       myProjectId == null ? module.getName() : myProjectId.getArtifactId(),
+      // TODO: replace with isCreatingNewLinkedProject when GradleModuleBuilder will be removed
       isCreatingNewProject || myParentProject == null,
       myUseKotlinDSL
     );
@@ -189,9 +191,21 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
 
     Project project = module.getProject();
 
-    GradleVersion gradleVersion = suggestGradleVersion(project);
+    GradleSettings settings = GradleSettings.getInstance(project);
+    GradleProjectSettings projectSettings = getExternalProjectSettings();
+    // TODO: replace with isCreatingNewLinkedProject when GradleModuleBuilder will be removed
     if (myParentProject == null) {
-      setupAndLinkGradleProject(project, gradleVersion);
+      GradleProjectImportUtil.setupGradleSettings(settings);
+      GradleProjectImportUtil.setupGradleProjectSettings(projectSettings, rootProjectPath);
+    }
+    GradleVersion gradleVersion = suggestGradleVersion(project);
+    if (isCreatingNewLinkedProject) {
+      GradleJvmResolutionUtil.setupGradleJvm(project, projectSettings, gradleVersion);
+      GradleJvmValidationUtil.validateJavaHome(project, rootProjectPath, gradleVersion);
+    }
+    // TODO: replace with isCreatingNewLinkedProject when GradleModuleBuilder will be removed
+    if (myParentProject == null) {
+      settings.linkProject(projectSettings);
     }
     if (isCreatingNewProject) {
       project.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, Boolean.TRUE);
@@ -206,7 +220,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
         loadPreviewProject(project);
       }
       openBuildScriptFile(project, buildScriptFile);
-      if (myParentProject == null) {
+      if (isCreatingNewLinkedProject) {
         createWrapper(project, gradleVersion, () -> {
           reloadProject(project);
         });
@@ -218,10 +232,6 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   }
 
   private void setupAndLinkGradleProject(@NotNull Project project, @NotNull GradleVersion gradleVersion) {
-    GradleProjectSettings projectSettings = getExternalProjectSettings();
-    setupGradleSettings(project, projectSettings, rootProjectPath, gradleVersion);
-    getSystemSettings(project).linkProject(projectSettings);
-    GradleJvmValidationUtil.validateJavaHome(project, rootProjectPath, gradleVersion);
   }
 
   private void loadPreviewProject(@NotNull Project project) {
@@ -246,11 +256,6 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   private static @NotNull GradleVersion suggestGradleVersion(@NotNull Project project) {
     GradleVersion gradleVersion = GradleJvmResolutionUtil.suggestGradleVersion(project);
     return gradleVersion == null ? GradleVersion.current() : gradleVersion;
-  }
-
-  private static AbstractExternalSystemSettings<?, GradleProjectSettings, ?> getSystemSettings(@NotNull Project project) {
-    //noinspection unchecked
-    return ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID);
   }
 
   @Nullable
@@ -448,6 +453,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
 
   public void setParentProject(@Nullable ProjectData parentProject) {
     myParentProject = parentProject;
+    isCreatingNewLinkedProject = myParentProject == null;
   }
 
   public boolean isInheritGroupId() {

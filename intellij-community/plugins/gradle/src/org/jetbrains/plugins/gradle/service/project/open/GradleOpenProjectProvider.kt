@@ -2,7 +2,6 @@
 package org.jetbrains.plugins.gradle.service.project.open
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.externalSystem.importing.AbstractOpenProjectProvider
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.model.DataNode
@@ -18,18 +17,15 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.text.nullize
-import org.gradle.util.GradleVersion
-import org.jetbrains.plugins.gradle.service.GradleInstallationManager
-import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.startup.GradleUnlinkedProjectProcessor
-import org.jetbrains.plugins.gradle.util.*
 import org.jetbrains.plugins.gradle.util.GradleConstants.BUILD_FILE_EXTENSIONS
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
+import org.jetbrains.plugins.gradle.util.setupGradleJvm
+import org.jetbrains.plugins.gradle.util.updateGradleJvm
+import org.jetbrains.plugins.gradle.util.validateJavaHome
 
 internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
   override fun isProjectFile(file: VirtualFile): Boolean {
@@ -37,10 +33,16 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
   }
 
   override fun linkAndRefreshProject(projectDirectory: String, project: Project) {
+    val gradleSettings = GradleSettings.getInstance(project)
+    gradleSettings.setupGradleSettings()
     val gradleProjectSettings = GradleProjectSettings()
+    gradleProjectSettings.setupGradleProjectSettings(projectDirectory)
+
     val gradleVersion = gradleProjectSettings.resolveGradleVersion()
-    setupGradleSettings(project, gradleProjectSettings, projectDirectory, gradleVersion)
+    setupGradleJvm(project, gradleProjectSettings, gradleVersion)
+
     attachGradleProjectAndRefresh(gradleProjectSettings, project)
+
     validateJavaHome(project, projectDirectory, gradleVersion)
   }
 
@@ -65,35 +67,6 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
     ExternalSystemUtil.refreshProject(externalProjectPath,
                                       ImportSpecBuilder(project, SYSTEM_ID)
                                         .callback(createFinalImportCallback(project, externalProjectPath)))
-  }
-
-  fun setupGradleSettings(project: Project, settings: GradleProjectSettings, projectDirectory: String, gradleVersion: GradleVersion) {
-    GradleSettings.getInstance(project).setupGradleSettings()
-    settings.setupGradleProjectSettings(projectDirectory)
-    setupGradleJvm(project, settings, projectDirectory, gradleVersion)
-  }
-
-  private fun GradleSettings.setupGradleSettings() {
-    gradleVmOptions = GradleEnvironment.Headless.GRADLE_VM_OPTIONS ?: gradleVmOptions
-    isOfflineWork = GradleEnvironment.Headless.GRADLE_OFFLINE?.toBoolean() ?: isOfflineWork
-    serviceDirectoryPath = GradleEnvironment.Headless.GRADLE_SERVICE_DIRECTORY ?: serviceDirectoryPath
-    storeProjectFilesExternally = true
-  }
-
-  private fun GradleProjectSettings.setupGradleProjectSettings(projectDirectory: String) {
-    externalProjectPath = projectDirectory
-    isUseQualifiedModuleNames = true
-    distributionType = GradleEnvironment.Headless.GRADLE_DISTRIBUTION_TYPE?.let(DistributionType::valueOf)
-                       ?: DistributionType.DEFAULT_WRAPPED
-    gradleHome = GradleEnvironment.Headless.GRADLE_HOME ?: suggestGradleHome()
-  }
-
-  private fun suggestGradleHome(): String? {
-    val installationManager = ServiceManager.getService(GradleInstallationManager::class.java)
-    val lastUsedGradleHome = GradleUtil.getLastUsedGradleHome().nullize()
-    if (lastUsedGradleHome != null) return lastUsedGradleHome
-    val gradleHome = installationManager.autodetectedGradleHome ?: return null
-    return FileUtil.toCanonicalPath(gradleHome.path)
   }
 
   private fun createFinalImportCallback(project: Project, externalProjectPath: String): ExternalProjectRefreshCallback {

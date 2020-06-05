@@ -26,8 +26,8 @@ private data class GradleJvmProviderId(val projectSettings: GradleProjectSetting
 fun getGradleJvmLookupProvider(project: Project, projectSettings: GradleProjectSettings) =
   SdkLookupProvider.getInstance(project, GradleJvmProviderId(projectSettings))
 
-fun setupGradleJvm(project: Project, projectSettings: GradleProjectSettings, externalProjectPath: String, gradleVersion: GradleVersion) {
-  with(GradleJvmResolutionContext(project, externalProjectPath, gradleVersion)) {
+fun setupGradleJvm(project: Project, projectSettings: GradleProjectSettings, gradleVersion: GradleVersion) {
+  with(GradleJvmResolutionContext(project, projectSettings.externalProjectPath, gradleVersion)) {
     projectSettings.gradleJvm = findGradleJvm()
     if (projectSettings.gradleJvm != null) return
     when {
