@@ -128,18 +128,10 @@ object LightClassUtil {
         return getPsiMethodWrappers(declaration).firstOrNull()
     }
 
-    private fun getPsiMethodWrappers(declaration: KtDeclaration): Sequence<KtLightMethod> {
-        val classes = getWrappingClasses(declaration)
-        for (clazz in classes) {
-            // the first class with methods found should contain all methods with kotlinOrigin, so no need to look after
-            val methods = clazz.methods
-                .filterIsInstance<KtLightMethod>()
-                .filter { it.kotlinOrigin === declaration }
-            if (methods.isNotEmpty())
-                return methods.asSequence()
-        }
-        return emptySequence()
-    }
+    private fun getPsiMethodWrappers(declaration: KtDeclaration): Sequence<KtLightMethod> =
+        getWrappingClasses(declaration).flatMap { it.methods.asSequence() }
+            .filterIsInstance<KtLightMethod>()
+            .filter { it.kotlinOrigin === declaration }
 
     private fun getWrappingClass(declaration: KtDeclaration): PsiClass? {
         if (declaration is KtParameter) {
