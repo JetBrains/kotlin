@@ -6,9 +6,12 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 open class KotlinJvmCompilation(
     override val target: KotlinJvmTarget,
@@ -23,4 +26,12 @@ open class KotlinJvmCompilation(
 
     override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
         get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+    val compileJavaTaskProvider: TaskProvider<out JavaCompile>?
+        get() = if (target.withJavaEnabled) {
+            val project = target.project
+            val javaSourceSets = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
+            val javaSourceSet = javaSourceSets.getByName(compilationName)
+            project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
+        } else null
 }
