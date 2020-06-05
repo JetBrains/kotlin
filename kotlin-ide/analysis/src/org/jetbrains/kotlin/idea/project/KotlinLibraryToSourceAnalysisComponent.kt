@@ -32,14 +32,29 @@ class KotlinLibraryToSourceAnalysisStateComponent : PersistentStateComponent<Kot
     @OptionTag(converter = AtomicBooleanXmlbConverter::class)
     var isEnabled: AtomicBoolean = AtomicBoolean(false)
 
-    override fun getState(): KotlinLibraryToSourceAnalysisStateComponent? = this
+    private var shouldPersist: Boolean = true
+
+    override fun getState(): KotlinLibraryToSourceAnalysisStateComponent? =
+        if (shouldPersist) this else null
 
     override fun loadState(state: KotlinLibraryToSourceAnalysisStateComponent) {
         XmlSerializerUtil.copyBean(state, this)
     }
 
+    override fun noStateLoaded() {
+        shouldPersist = false
+    }
+
     fun setEnabled(newState: Boolean) {
         isEnabled.getAndSet(newState)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is KotlinLibraryToSourceAnalysisStateComponent && other.isEnabled.get() == isEnabled.get()
+    }
+
+    override fun hashCode(): Int {
+        return isEnabled.get().hashCode()
     }
 
     companion object {
