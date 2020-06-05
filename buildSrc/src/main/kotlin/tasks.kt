@@ -107,6 +107,7 @@ fun Project.projectTest(
     systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"]!!)
     systemProperty("kotlin.ni", if (rootProject.hasProperty("newInferenceTests")) "true" else "false")
     systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (rootProject.hasProperty("skipMutedTests")) "true" else "false")
+    systemProperty("idea.ignore.disabled.plugins", "true")
 
     var subProjectTempRoot: Path? = null
     doFirst {
