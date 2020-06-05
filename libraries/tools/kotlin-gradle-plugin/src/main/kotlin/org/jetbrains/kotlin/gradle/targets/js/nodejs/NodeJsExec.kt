@@ -86,10 +86,9 @@ constructor(
             ) {
                 it.nodeJs = nodeJs
                 it.executable = nodeJs.requireConfigured().nodeExecutable
-                it.dependsOn(nodeJs.npmInstallTask)
+                it.dependsOn(nodeJs.npmInstallTaskProvider)
 
-                val compileKotlinTask = compilation.compileKotlinTask
-                it.dependsOn(nodeJs.npmInstallTask, compileKotlinTask)
+                it.dependsOn(nodeJs.npmInstallTaskProvider, compilation.compileKotlinTaskProvider)
 
                 it.configuration()
             }

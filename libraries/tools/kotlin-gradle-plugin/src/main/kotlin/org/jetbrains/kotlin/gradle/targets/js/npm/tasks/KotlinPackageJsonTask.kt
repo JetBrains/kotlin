@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
 
@@ -61,7 +62,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
             val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
             val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
-            val npmInstallTask = nodeJs.npmInstallTask
+            val npmInstallTask = nodeJs.npmInstallTaskProvider
             val packageJsonTaskName = npmProject.packageJsonTaskName
             val packageJsonUmbrella = nodeJs.packageJsonUmbrellaTaskProvider
             val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
@@ -77,12 +78,10 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.inputs.file(packageJsonTask.map { it.packageJson })
             }
 
-            nodeJs.rootPackageJsonTask.mustRunAfter(packageJsonTask)
+            nodeJs.rootPackageJsonTaskProvider.configure { it.mustRunAfter(packageJsonTask) }
 
-            compilation.compileKotlinTask.dependsOn(
-                npmInstallTask,
-                packageJsonTask
-            )
+            compilation.compileKotlinTaskProvider.dependsOn(npmInstallTask)
+            compilation.compileKotlinTaskProvider.dependsOn(packageJsonTask)
 
             return packageJsonTask
         }

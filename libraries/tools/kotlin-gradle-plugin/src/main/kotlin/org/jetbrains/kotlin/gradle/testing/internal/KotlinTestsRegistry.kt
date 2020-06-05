@@ -24,9 +24,8 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
         get() = doGetOrCreateAggregatedTestTask(
             name = allTestsTaskName,
             description = "Runs the tests for all targets and create aggregated report"
-        ) {
-            project.tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME)
-                .dependsOn(it)
+        ).also {
+            project.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(it)
         }
 
     fun registerTestTask(

@@ -32,7 +32,7 @@ internal class DukatCompilationResolverPlugin(
         ) {
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Generate Kotlin/JS external declarations for .d.ts files in ${compilation}"
-            it.dependsOn(nodeJs.npmInstallTask, npmProject.packageJsonTask)
+            it.dependsOn(nodeJs.npmInstallTaskProvider, npmProject.packageJsonTask)
         }
 
         compilation.compileKotlinTaskProvider.dependsOn(task)
