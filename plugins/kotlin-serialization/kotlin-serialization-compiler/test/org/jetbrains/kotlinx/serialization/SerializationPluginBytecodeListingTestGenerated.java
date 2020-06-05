@@ -25,8 +25,7 @@ public class SerializationPluginBytecodeListingTestGenerated extends AbstractSer
     }
 
     public void testAllFilesPresentInCodegen() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(
-                "plugins/kotlin-serialization/kotlin-serialization-compiler/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("Basic.kt")
