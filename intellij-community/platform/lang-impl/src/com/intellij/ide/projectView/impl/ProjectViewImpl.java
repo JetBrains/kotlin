@@ -533,17 +533,10 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     };
 
     project.getMessageBus().connect().subscribe(ToolWindowManagerListener.TOPIC, new ToolWindowManagerListener() {
-      private boolean toolWindowVisible;
-
       @Override
-      public void stateChanged(@NotNull ToolWindowManager toolWindowManager) {
-        ToolWindow window = toolWindowManager.getToolWindow(ToolWindowId.PROJECT_VIEW);
-        if (window == null || toolWindowVisible == window.isVisible()) {
-          return;
-        }
-
-        myCurrentSelectionObsolete = ThreeState.NO;
-        if (window.isVisible() && !toolWindowVisible) {
+      public void toolWindowShown(@NotNull String id, @NotNull ToolWindow toolWindow) {
+        if (ToolWindowId.PROJECT_VIEW.equals(id)) {
+          myCurrentSelectionObsolete = ThreeState.NO;
           AbstractProjectViewPane currentProjectViewPane = getCurrentProjectViewPane();
           if (currentProjectViewPane != null && isAutoscrollFromSource(currentProjectViewPane.getId())) {
             SimpleSelectInContext context = myAutoScrollFromSourceHandler.findSelectInContext();
@@ -553,7 +546,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
             }
           }
         }
-        toolWindowVisible = window.isVisible();
       }
     });
 
