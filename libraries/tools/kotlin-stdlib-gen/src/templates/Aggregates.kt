@@ -1184,8 +1184,8 @@ object Aggregates : TemplateGroupBase() {
     val f_reduceOrNull = fn("reduceOrNull(operation: (acc: T, T) -> T)") {
         include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1209,8 +1209,8 @@ object Aggregates : TemplateGroupBase() {
     val f_reduceOrNullSuper = fn("reduceOrNull(operation: (acc: S, T) -> S)") {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         inline()
 
         doc { reduceDoc("reduceOrNull") }
@@ -1309,8 +1309,8 @@ object Aggregates : TemplateGroupBase() {
     val f_reduceRightOrNull = fn("reduceRightOrNull(operation: (T, acc: T) -> T)") {
         include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1335,8 +1335,8 @@ object Aggregates : TemplateGroupBase() {
     val f_reduceRightOrNullSuper = fn("reduceRightOrNull(operation: (T, acc: S) -> S)") {
         include(Lists, ArraysOfObjects)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         inline()
         doc { reduceDoc("reduceRightOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
@@ -1456,8 +1456,8 @@ object Aggregates : TemplateGroupBase() {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1554,8 +1554,8 @@ object Aggregates : TemplateGroupBase() {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1654,8 +1654,8 @@ object Aggregates : TemplateGroupBase() {
     val f_runningReduceSuper = fn("runningReduce(operation: (acc: S, T) -> S)") {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
 
         specialFor(ArraysOfObjects, Iterables) { inline() }
 

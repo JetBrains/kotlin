@@ -93,8 +93,8 @@ public fun CharRange.random(random: Random): Char {
 /**
  * Returns a random element from this range, or `null` if this range is empty.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun IntRange.randomOrNull(): Int? {
     return randomOrNull(Random)
@@ -103,8 +103,8 @@ public inline fun IntRange.randomOrNull(): Int? {
 /**
  * Returns a random element from this range, or `null` if this range is empty.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun LongRange.randomOrNull(): Long? {
     return randomOrNull(Random)
@@ -113,8 +113,8 @@ public inline fun LongRange.randomOrNull(): Long? {
 /**
  * Returns a random element from this range, or `null` if this range is empty.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun CharRange.randomOrNull(): Char? {
     return randomOrNull(Random)
@@ -123,8 +123,8 @@ public inline fun CharRange.randomOrNull(): Char? {
 /**
  * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun IntRange.randomOrNull(random: Random): Int? {
     if (isEmpty())
         return null
@@ -134,8 +134,8 @@ public fun IntRange.randomOrNull(random: Random): Int? {
 /**
  * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun LongRange.randomOrNull(random: Random): Long? {
     if (isEmpty())
         return null
@@ -145,8 +145,8 @@ public fun LongRange.randomOrNull(random: Random): Long? {
 /**
  * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun CharRange.randomOrNull(random: Random): Char? {
     if (isEmpty())
         return null
