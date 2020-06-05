@@ -46,6 +46,6 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
         return result
     }
 
-    protected abstract fun createCompilationFactory(forTarget: KotlinOnlyTarget<T>): KotlinCompilationFactory<T>
+    protected abstract fun createCompilationFactory(forTarget: R): KotlinCompilationFactory<T>
     protected abstract val platformType: KotlinPlatformType
 }

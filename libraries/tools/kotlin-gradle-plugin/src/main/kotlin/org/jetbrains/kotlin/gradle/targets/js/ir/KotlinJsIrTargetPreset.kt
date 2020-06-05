@@ -59,7 +59,7 @@ open class KotlinJsIrTargetPreset(
 
     //TODO[Ilya Goncharov] remove public morozov
     public override fun createCompilationFactory(
-        forTarget: KotlinOnlyTarget<KotlinJsIrCompilation>
+        forTarget: KotlinJsIrTarget
     ): KotlinCompilationFactory<KotlinJsIrCompilation> =
         KotlinJsIrCompilationFactory(project, forTarget)
 
