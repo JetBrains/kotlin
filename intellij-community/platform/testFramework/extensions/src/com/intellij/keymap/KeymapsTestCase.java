@@ -86,6 +86,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift alt RIGHT",          "Diff.ApplyLeftSide", "NextEditorTab"},
     { "shift alt A",              "JupyterInsertCellAboveAction", "VcsHistory.ShowAllAffected"},
     { "shift alt B",              "JupyterInsertCellBelowAction", "tasks.open.in.browser"},
+    { "shift alt G",              "EditorAddCaretPerSelectedLine", "hg4idea.QGotoFromPatches"},
     { "shift alt L",              "org.jetbrains.plugins.ruby.console.LoadInIrbConsoleAction", "context.load"},
     { "shift alt M",              "ChangesView.Move", "Vcs.MoveChangedLinesToChangelist"},
     { "shift ctrl C",             "CopyPaths", "DatabaseView.CopyDdlAction"},
