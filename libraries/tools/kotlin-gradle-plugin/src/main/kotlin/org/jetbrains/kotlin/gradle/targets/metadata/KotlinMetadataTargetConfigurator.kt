@@ -11,14 +11,12 @@ import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.AbstractCopyTask
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
@@ -81,10 +79,10 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
             createMergedAllSourceSetsConfigurations(target)
 
-            val allMetadataJar = target.project.tasks.getByName(ALL_METADATA_JAR_NAME) as Jar
+            val allMetadataJar = target.project.tasks.withType<Jar>().named(ALL_METADATA_JAR_NAME)
             createMetadataCompilationsForCommonSourceSets(target, allMetadataJar)
 
-            configureProjectStructureMetadataGeneration(allMetadataJar)
+            configureProjectStructureMetadataGeneration(target.project, allMetadataJar)
 
             setupDependencyTransformationForCommonSourceSets(target)
 
@@ -125,12 +123,12 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
             with(nativeTargetConfigurator) {
                 project.createKlibCompilationTask(kotlinCompilation)
-            }.thisTaskProvider
+            }
 
         override fun run() = Unit
     }
 
-    override fun createArchiveTasks(target: KotlinMetadataTarget): Zip {
+    override fun createArchiveTasks(target: KotlinMetadataTarget): TaskProvider<out Zip> {
         val result = super.createArchiveTasks(target)
 
         if (target.project.isKotlinGranularMetadataEnabled) {
@@ -172,7 +170,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
     private fun createMetadataCompilationsForCommonSourceSets(
         target: KotlinMetadataTarget,
-        allMetadataJar: Jar
+        allMetadataJar: TaskProvider<out Jar>
     ) = target.project.whenEvaluated {
         // Do this after all targets are configured by the user build script
 
@@ -194,14 +192,15 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         }
     }
 
-    private fun configureProjectStructureMetadataGeneration(allMetadataJar: Jar): AbstractCopyTask {
-        val project = allMetadataJar.project
+    private fun configureProjectStructureMetadataGeneration(project: Project, allMetadataJar: TaskProvider<out Jar>) {
         val generateMetadata = project.createGenerateProjectStructureMetadataTask()
 
-        return allMetadataJar.from(
-            project.files(Callable { generateMetadata.get().resultXmlFile }).builtBy(generateMetadata)
-        ) { spec ->
-            spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_FILE_NAME }
+        allMetadataJar.configure {
+            it.from(
+                project.files(Callable { generateMetadata.get().resultXmlFile }).builtBy(generateMetadata)
+            ) { spec ->
+                spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_FILE_NAME }
+            }
         }
     }
 
@@ -249,7 +248,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     private fun createMetadataCompilation(
         target: KotlinMetadataTarget,
         sourceSet: KotlinSourceSet,
-        allMetadataJar: Jar,
+        allMetadataJar: TaskProvider<out Jar>,
         isHostSpecific: Boolean
     ): AbstractKotlinCompilation<*> {
         val project = target.project
@@ -276,7 +275,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
             if (!isHostSpecific) {
                 val metadataContent = project.filesWithUnpackedArchives(this@apply.output.allOutputs, setOf("klib"))
-                allMetadataJar.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) }
+                allMetadataJar.configure { it.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) } }
             } else {
                 if (platformCompilations.filterIsInstance<KotlinNativeCompilation>().none { it.konanTarget.enabledOnCurrentHost }) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
