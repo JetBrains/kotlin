@@ -114,6 +114,11 @@ object KotlinPredefinedConfigurations {
             """.trimIndent(),
             COMMENT_TYPE
         ),
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.annotations"),
+            "@'Annotation",
+            COMMENT_TYPE
+        ),
 
         // Operators
         searchTemplate(

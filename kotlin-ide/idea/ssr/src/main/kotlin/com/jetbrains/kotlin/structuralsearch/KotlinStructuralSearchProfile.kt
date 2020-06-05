@@ -68,10 +68,15 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         physical: Boolean
     ): Array<PsiElement> {
         val fragment = KtPsiFactory(project, false).createBlockCodeFragment("Unit\n$text", null)
-        val elements = when (fragment.lastChild) {
+        var elements = when (fragment.lastChild) {
             is PsiComment -> getNonWhitespaceChildren(fragment).drop(1)
             else -> getNonWhitespaceChildren(fragment.firstChild).drop(1)
         }
+
+        // Standalone KtAnnotationEntry support
+        if (elements.first() is KtAnnotatedExpression && elements.first().lastChild is PsiErrorElement)
+            elements = getNonWhitespaceChildren(elements.first()).dropLast(1)
+
         for (element in elements) print(DebugUtil.psiToString(element, false))
 
         return when {
@@ -103,8 +108,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val description = error.errorDescription
         val parent = error.parent
         return when {
-            parent is KtTryExpression && KSSRBundle.message("expected.catch.or.finally") == description -> false // naked try
-            parent is KtAnnotatedExpression && KSSRBundle.message("expected.an.expression") == description  -> false
+            parent is KtTryExpression && KSSRBundle.message("error.expected.catch.or.finally") == description -> false // naked try
+            parent is KtAnnotatedExpression && KSSRBundle.message("error.expected.an.expression") == description  -> false
             else -> true
         }
     }

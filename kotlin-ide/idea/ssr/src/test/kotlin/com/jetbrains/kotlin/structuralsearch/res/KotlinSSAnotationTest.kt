@@ -5,6 +5,8 @@ import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
 class KotlinSSAnotationTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "annotation"
 
+    fun testAnnotation() { doTest("@Foo") }
+
     fun testClassAnnotation() { doTest("@A class '_") }
 
     fun testFunAnnotation() { doTest("@A fun '_() { println(0) }") }
