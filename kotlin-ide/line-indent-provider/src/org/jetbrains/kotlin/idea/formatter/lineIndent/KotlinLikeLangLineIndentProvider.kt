@@ -67,43 +67,37 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         val after = currentPosition.afterOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
         when {
             before.isAt(TemplateEntryOpen) -> {
-                val baseLineOffset = before.startOffset
-                val indent = if (!currentPosition.hasEmptyLineAfter(offset) && after.isAt(TemplateEntryClose))
+                val indent = if (!currentPosition.hasLineBreaksAfter(offset) && after.isAt(TemplateEntryClose))
                     Indent.getNoneIndent()
                 else
                     Indent.getNormalIndent()
 
-                return factory.createIndentCalculator(indent) { baseLineOffset }
+                return factory.createIndentCalculator(indent, before.startOffset)
             }
 
-            before.isAtAnyOf(TryKeyword, FinallyKeyword) -> return factory.createIndentCalculator(
+            before.isAtAnyOf(TryKeyword) || before.isFinallyKeyword() -> return factory.createIndentCalculator(
                 Indent.getNoneIndent(),
                 IndentCalculator.LINE_BEFORE,
             )
+
+            after.isAt(TemplateEntryClose) -> {
+                val indent = if (currentPosition.hasEmptyLineAfter(offset)) Indent.getNormalIndent() else Indent.getNoneIndent()
+                after.moveBeforeParentheses(TemplateEntryOpen, TemplateEntryClose)
+                return factory.createIndentCalculator(indent, after.startOffset)
+            }
         }
 
-        before.controlFlowStatementBefore()?.let { controlFlowKeywordPosition ->
-            return factory.createIndentCalculator(
-                when {
-                    after.isAt(LeftParenthesis) -> Indent.getContinuationIndent()
-                    after.isAtAnyOf(BlockOpeningBrace, Arrow) || controlFlowKeywordPosition.isWhileInsideDoWhile() -> Indent.getNoneIndent()
-                    else -> Indent.getNormalIndent()
-                },
-                IndentCalculator.LINE_BEFORE,
-            )
-        }
+        return before.controlFlowStatementBefore()?.let { controlFlowKeywordPosition ->
+            val indent = when {
+                controlFlowKeywordPosition.similarToCatchKeyword() -> if (before.isAt(RightParenthesis)) Indent.getNoneIndent() else Indent.getNormalIndent()
+                after.isAt(LeftParenthesis) -> Indent.getContinuationIndent()
+                after.isAtAnyOf(BlockOpeningBrace, Arrow) || controlFlowKeywordPosition.isWhileInsideDoWhile() -> Indent.getNoneIndent()
+                else -> Indent.getNormalIndent()
+            }
 
-        after.takeIf { it.isAt(TemplateEntryClose) }?.let { templateEntryPosition ->
-            val indent = if (currentPosition.hasEmptyLineAfter(offset)) Indent.getNormalIndent() else Indent.getNoneIndent()
-            templateEntryPosition.moveBeforeParentheses(TemplateEntryOpen, TemplateEntryClose)
-            val baseLineOffset = templateEntryPosition.startOffset
-            return factory.createIndentCalculator(indent) { baseLineOffset }
+            factory.createIndentCalculator(indent, IndentCalculator.LINE_BEFORE)
         }
-
-        return null
     }
-
-    private fun SemanticEditorPosition.moveBeforeIfThisIsWhiteSpaceOrComment() = moveBeforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
 
     private fun SemanticEditorPosition.isWhileInsideDoWhile(): Boolean {
         if (!isAt(WhileKeyword)) return false
@@ -129,28 +123,86 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
     }
 
     private fun SemanticEditorPosition.controlFlowStatementBefore(): SemanticEditorPosition? = with(copy()) {
-        if (isAt(BlockOpeningBrace)) {
-            moveBefore()
-            moveBeforeParentheses(LeftParenthesis, RightParenthesis)
-            moveBeforeIfThisIsWhiteSpaceOrComment()
-        }
+        if (isAt(BlockOpeningBrace)) moveBeforeIgnoringWhiteSpaceOrComment()
 
-        if (currElement in CONTROL_FLOW_CONSTRUCTIONS) return this
-        if (!isAt(RightParenthesis)) return null
+        if (isControlFlowKeyword()) return this
+        if (!moveBeforeParenthesesIfPossible()) return null
 
-        moveBeforeParentheses(LeftParenthesis, RightParenthesis)
-        moveBeforeIfThisIsWhiteSpaceOrComment()
-
-        return takeIf { currElement in CONTROL_FLOW_CONSTRUCTIONS }
+        return takeIf { isControlFlowKeyword() }
     }
 
-    enum class KotlinElement : SemanticEditorPosition.SyntaxElement {
+    private fun SemanticEditorPosition.isControlFlowKeyword(): Boolean =
+        currElement in CONTROL_FLOW_KEYWORDS || isCatchKeyword() || isFinallyKeyword()
+
+    private fun SemanticEditorPosition.similarToCatchKeyword(): Boolean = textOfCurrentPosition() == KtTokens.CATCH_KEYWORD.value
+
+    private fun SemanticEditorPosition.isCatchKeyword(): Boolean = with(copy()) {
+        // try-catch-*-catch
+        do {
+            if (!isAt(KtTokens.IDENTIFIER)) return false
+            if (!similarToCatchKeyword()) return false
+
+            moveBeforeIgnoringWhiteSpaceOrComment()
+            if (!moveBeforeBlockIfPossible()) return false
+
+            if (isAt(TryKeyword)) return true
+
+            if (!moveBeforeParenthesesIfPossible()) return false
+        } while (!isAtEnd)
+
+        return false
+    }
+
+    private fun SemanticEditorPosition.isFinallyKeyword(): Boolean {
+        if (!isAt(KtTokens.IDENTIFIER)) return false
+        if (textOfCurrentPosition() != KtTokens.FINALLY_KEYWORD.value) return false
+        with(copy()) {
+            moveBeforeIgnoringWhiteSpaceOrComment()
+            if (!moveBeforeBlockIfPossible()) return false
+
+            // try-finally
+            if (isAt(TryKeyword)) return true
+
+            if (!moveBeforeParenthesesIfPossible()) return false
+
+            // try-catch-finally
+            return isCatchKeyword()
+        }
+    }
+
+    private fun SemanticEditorPosition.moveBeforeBlockIfPossible(): Boolean = moveBeforeParenthesesIfPossible(
+        leftParenthesis = BlockOpeningBrace,
+        rightParenthesis = BlockClosingBrace
+    )
+
+    private fun SemanticEditorPosition.moveBeforeParenthesesIfPossible(): Boolean = moveBeforeParenthesesIfPossible(
+        leftParenthesis = LeftParenthesis,
+        rightParenthesis = RightParenthesis
+    )
+
+    private fun SemanticEditorPosition.moveBeforeParenthesesIfPossible(
+        leftParenthesis: SemanticEditorPosition.SyntaxElement,
+        rightParenthesis: SemanticEditorPosition.SyntaxElement,
+    ): Boolean {
+        if (!isAt(rightParenthesis)) return false
+
+        moveBeforeParentheses(leftParenthesis, rightParenthesis)
+        moveBeforeIfThisIsWhiteSpaceOrComment()
+        return true
+    }
+
+    private fun SemanticEditorPosition.moveBeforeIfThisIsWhiteSpaceOrComment() = moveBeforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
+
+    private fun SemanticEditorPosition.moveBeforeIgnoringWhiteSpaceOrComment() {
+        moveBefore()
+        moveBeforeIfThisIsWhiteSpaceOrComment()
+    }
+
+    private enum class KotlinElement : SemanticEditorPosition.SyntaxElement {
         TemplateEntryOpen,
         TemplateEntryClose,
         Arrow,
         WhenKeyword,
-        CatchKeyword,
-        FinallyKeyword,
         WhileKeyword,
         RegularStringPart,
         KDoc,
@@ -173,8 +225,6 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             KtTokens.ELSE_KEYWORD to ElseKeyword,
             KtTokens.WHEN_KEYWORD to WhenKeyword,
             KtTokens.TRY_KEYWORD to TryKeyword,
-            KtTokens.CATCH_KEYWORD to CatchKeyword,
-            KtTokens.FINALLY_KEYWORD to FinallyKeyword,
             KtTokens.WHILE_KEYWORD to WhileKeyword,
             KtTokens.DO_KEYWORD to DoKeyword,
             KtTokens.FOR_KEYWORD to ForKeyword,
@@ -183,7 +233,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             KtTokens.RBRACKET to ArrayClosingBracket,
         )
 
-        private val CONTROL_FLOW_CONSTRUCTIONS: HashSet<SemanticEditorPosition.SyntaxElement> = hashSetOf(
+        private val CONTROL_FLOW_KEYWORDS: HashSet<SemanticEditorPosition.SyntaxElement> = hashSetOf(
             WhenKeyword,
             IfKeyword,
             ElseKeyword,
@@ -191,8 +241,6 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             WhileKeyword,
             ForKeyword,
             TryKeyword,
-            CatchKeyword,
-            FinallyKeyword,
         )
 
         private val WHITE_SPACE_OR_COMMENT_BIT_SET: Array<SemanticEditorPosition.SyntaxElement> = arrayOf(
@@ -202,3 +250,11 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         )
     }
 }
+
+private fun JavaLikeLangLineIndentProvider.IndentCalculatorFactory.createIndentCalculator(
+    indent: Indent?,
+    baseLineOffset: Int
+): IndentCalculator? = createIndentCalculator(indent) { baseLineOffset }
+
+private fun SemanticEditorPosition.textOfCurrentPosition(): String =
+    if (isAtEnd) "" else chars.subSequence(startOffset, after().startOffset).toString()

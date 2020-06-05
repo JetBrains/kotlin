@@ -3,5 +3,3 @@ fun a() = try {
 } catch <caret>(e: Exception) {
 
 }
-
-// WITHOUT_CUSTOM_LINE_INDENT_PROVIDER
