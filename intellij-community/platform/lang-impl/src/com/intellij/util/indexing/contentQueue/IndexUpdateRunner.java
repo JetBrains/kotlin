@@ -111,8 +111,9 @@ public final class IndexUpdateRunner {
           }
           indicator.checkCanceled();
           try {
-            //noinspection BusyWait
-            Thread.sleep(10);
+            if (indexingJob.myAllFilesAreProcessedLatch.await(100, TimeUnit.MILLISECONDS)) {
+              break;
+            }
           }
           catch (InterruptedException e) {
             throw new ProcessCanceledException(e);
@@ -139,7 +140,7 @@ public final class IndexUpdateRunner {
     while (!ourIndexingJobs.isEmpty()) {
       for (IndexingJob job : ourIndexingJobs) {
         if (job.myProject.isDisposed()
-            || job.myNoMoreFilesToProcess.get()
+            || job.myNoMoreFilesInQueue.get()
             || job.myIndicator.isCanceled()
             || job.myError.get() != null) {
           ourIndexingJobs.remove(job);
@@ -179,7 +180,7 @@ public final class IndexUpdateRunner {
     }
 
     if (loadingResult == null) {
-      indexingJob.myNoMoreFilesToProcess.set(true);
+      indexingJob.myNoMoreFilesInQueue.set(true);
       return;
     }
 
@@ -325,9 +326,9 @@ public final class IndexUpdateRunner {
     final CachedFileContentLoader myContentLoader;
     final BlockingQueue<VirtualFile> myQueueOfFiles;
     final ProgressIndicator myIndicator;
-    final AtomicInteger myNumberOfProcessedFiles = new AtomicInteger();
     final int myTotalFiles;
-    final AtomicBoolean myNoMoreFilesToProcess = new AtomicBoolean();
+    final AtomicBoolean myNoMoreFilesInQueue = new AtomicBoolean();
+    final CountDownLatch myAllFilesAreProcessedLatch;
     final IndexingJobStatistics myStatistics = new IndexingJobStatistics();
     final AtomicReference<Throwable> myError = new AtomicReference<>();
 
@@ -340,10 +341,12 @@ public final class IndexUpdateRunner {
       myTotalFiles = files.size();
       myContentLoader = contentLoader;
       myQueueOfFiles = new ArrayBlockingQueue<>(files.size(), false, files);
+      myAllFilesAreProcessedLatch = new CountDownLatch(files.size());
     }
 
     public void oneMoreFileProcessed() {
-      double newFraction = myNumberOfProcessedFiles.incrementAndGet() / (double)myTotalFiles;
+      myAllFilesAreProcessedLatch.countDown();
+      double newFraction = 1.0 - myAllFilesAreProcessedLatch.getCount() / (double) myTotalFiles;
       try {
         myIndicator.setFraction(newFraction);
       }
@@ -353,7 +356,7 @@ public final class IndexUpdateRunner {
     }
 
     boolean areAllFilesProcessed() {
-      return myNumberOfProcessedFiles.get() == myTotalFiles;
+      return myAllFilesAreProcessedLatch.getCount() == 0;
     }
 
     public void setLocationBeingIndexed(@NotNull VirtualFile virtualFile) {
