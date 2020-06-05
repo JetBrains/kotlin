@@ -1038,6 +1038,7 @@
       </scope>
       <option name="IGNORE_ALL" value="true" />
     </inspection_tool>
+    <inspection_tool class="RedundantTypeArguments" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ReflectionForUnavailableAnnotation" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="RemoveCurlyBracesFromTemplate" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="ReplaceAllDot" enabled="true" level="Strong Warning" enabled_by_default="true" />

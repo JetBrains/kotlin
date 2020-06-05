@@ -1068,6 +1068,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/cpp-diagnostics/intellij.clion.diagnostics.iml" filepath="$PROJECT_DIR$/intellij/contrib/cpp-diagnostics/intellij.clion.diagnostics.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-embedded/intellij.clion.embedded.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-embedded/intellij.clion.embedded.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/platformio/intellij.clion.embedded.platformio.iml" filepath="$PROJECT_DIR$/intellij/contrib/platformio/intellij.clion.embedded.platformio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-execution/intellij.clion.execution.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-execution/intellij.clion.execution.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-gradle/intellij.clion.gradle.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-gradle/intellij.clion.gradle.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-guitests/intellij.clion.guiTests.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-guitests/intellij.clion.guiTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-makefile/intellij.clion.makefile.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-makefile/intellij.clion.makefile.iml" />
