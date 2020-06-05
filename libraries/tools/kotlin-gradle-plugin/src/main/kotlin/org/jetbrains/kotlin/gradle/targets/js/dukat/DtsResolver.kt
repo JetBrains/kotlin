@@ -21,7 +21,7 @@ class DtsResolver(val npmProject: NpmProject) {
     fun getAllDts(externalNpmDependencies: Collection<NpmDependency>): List<Dts> {
         return externalNpmDependencies
             .asSequence()
-            .filter { it.generateKotlinExternals }
+            .filter { it.generateExternals }
             .filter { it.scope == NORMAL || it.scope == OPTIONAL }
             .mapNotNullTo(mutableSetOf()) { typeModules.resolve(it.key)?.let { file -> Dts(file.canonicalFile, it) } }
             .sortedBy { it.inputKey }

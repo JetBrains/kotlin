@@ -98,7 +98,10 @@ abstract class KotlinJsIrSubTarget(
             )
         )
 
-        val testJs = project.registerTask<KotlinJsTest>(testRun.subtargetTestTaskName()) { testJs ->
+        val testJs = project.registerTask<KotlinJsTest>(
+            testRun.subtargetTestTaskName(),
+            listOf(compilation)
+        ) { testJs ->
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
@@ -119,7 +122,6 @@ abstract class KotlinJsIrSubTarget(
                     .get()
             }
 
-            testJs.compilation = compilation
             testJs.targetName = listOfNotNull(target.disambiguationClassifier, disambiguationClassifier)
                 .takeIf { it.isNotEmpty() }
                 ?.joinToString()
@@ -140,6 +142,10 @@ abstract class KotlinJsIrSubTarget(
             testJs.configure {
                 if (it.testFramework == null) {
                     configureDefaultTestFramework(it)
+                }
+
+                if (it.enabled) {
+                    nodeJs.taskRequirements.addTaskRequirements(it)
                 }
             }
         }
@@ -166,9 +172,10 @@ abstract class KotlinJsIrSubTarget(
 
     internal inline fun <reified T : Task> registerSubTargetTask(
         name: String,
+        args: List<Any> = emptyList(),
         noinline body: (T) -> (Unit)
     ): TaskProvider<T> =
-        project.registerTask(name) {
+        project.registerTask(name, args) {
             it.group = taskGroupName
             body(it)
         }

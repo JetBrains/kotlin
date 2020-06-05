@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.mocha
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.KotlinGradleNpmPackage
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
@@ -31,9 +30,9 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
     override val settingsState: String
         get() = "mocha"
 
-    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
-        get() = listOf(
-            KotlinGradleNpmPackage("test-js-runner"),
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
+        get() = setOf(
+            versions.kotlinJsTestRunner,
             versions.mocha,
             versions.sourceMapSupport
         )

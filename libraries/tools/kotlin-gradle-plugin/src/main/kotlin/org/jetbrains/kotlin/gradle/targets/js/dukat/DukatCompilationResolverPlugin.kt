@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,8 +25,10 @@ internal class DukatCompilationResolverPlugin(
     init {
         compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
 
-        val task = project.registerTask<PackageJsonDukatTask>(taskName) {
-            it.compilation = compilation
+        val task = project.registerTask<DukatTask>(
+            taskName,
+            listOf(compilation)
+        ) {
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Generate Kotlin/JS external declarations for .d.ts files in ${compilation}"
             it.dependsOn(nodeJs.npmInstallTask, npmProject.packageJsonTask)
@@ -52,12 +54,12 @@ internal class DukatCompilationResolverPlugin(
     ) {
         val externalNpmDependencies = resolution[project][compilation].externalNpmDependencies
 
-        PackageJsonDukatExecutor(
+        DukatExecutor(
             nodeJs,
             DtsResolver(npmProject).getAllDts(externalNpmDependencies),
             npmProject,
             packageJsonIsUpdated,
-            operation = compilation.name + " > " + PackageJsonDukatExecutor.OPERATION,
+            operation = compilation.name + " > " + DukatExecutor.OPERATION,
             compareInputs = true
         ).execute()
     }
