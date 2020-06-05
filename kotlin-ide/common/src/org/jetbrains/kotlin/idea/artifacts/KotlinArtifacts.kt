@@ -14,6 +14,7 @@ abstract class KotlinArtifacts {
     }
 
     abstract val kotlincDirectory: File
+    abstract val kotlincLibDirectory: File
 
     abstract val jetbrainsAnnotations: File
     abstract val kotlinStdlib: File

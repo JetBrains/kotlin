@@ -19,13 +19,14 @@ private val kotlinPluginDirectory: File = run {
 
 object ProductionKotlinArtifacts : KotlinArtifacts() {
     override val kotlincDirectory = findFile(kotlinPluginDirectory, "kotlinc")
+    override val kotlincLibDirectory = findFile(kotlincDirectory, "lib")
 
-    override val jetbrainsAnnotations = findFile(kotlincDirectory, KotlinArtifactNames.JETBRAINS_ANNOTATIONS)
-    override val kotlinStdlib = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_STDLIB)
-    override val kotlinStdlibSources = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_STDLIB_SOURCES)
-    override val kotlinReflect = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_REFLECT)
-    override val kotlinStdlibJs = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS)
-    override val kotlinTest = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_TEST)
-    override val kotlinMainKts = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_MAIN_KTS)
-    override val kotlinScriptRuntime = findFile(kotlincDirectory, KotlinArtifactNames.KOTLIN_SCRIPT_RUNTIME)
+    override val jetbrainsAnnotations = findFile(kotlincLibDirectory, KotlinArtifactNames.JETBRAINS_ANNOTATIONS)
+    override val kotlinStdlib = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB)
+    override val kotlinStdlibSources = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_SOURCES)
+    override val kotlinReflect = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_REFLECT)
+    override val kotlinStdlibJs = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS)
+    override val kotlinTest = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_TEST)
+    override val kotlinMainKts = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_MAIN_KTS)
+    override val kotlinScriptRuntime = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPT_RUNTIME)
 }
