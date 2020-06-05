@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.TestRoot;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 /*
@@ -21,6 +22,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("../idea/testData/copyPaste/conversion")
+@Ignore("[VD] temporary disable for kotlin-ide")
 public class PerformanceNewJavaToKotlinCopyPasteConversionTestGenerated extends AbstractPerformanceNewJavaToKotlinCopyPasteConversionTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);

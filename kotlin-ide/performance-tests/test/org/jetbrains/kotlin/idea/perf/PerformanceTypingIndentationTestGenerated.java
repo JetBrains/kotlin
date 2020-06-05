@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.TestRoot;
+import org.junit.Ignore;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @TestRoot("idea")
 @TestMetadata("testData/indentationOnNewline")
 @TestDataPath("$PROJECT_ROOT")
+@Ignore("[VD] temporary disable for kotlin-ide")
 public class PerformanceTypingIndentationTestGenerated extends AbstractPerformanceTypingIndentationTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
