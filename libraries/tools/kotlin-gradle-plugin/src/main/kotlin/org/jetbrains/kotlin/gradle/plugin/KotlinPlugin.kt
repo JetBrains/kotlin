@@ -33,8 +33,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
-import org.jetbrains.kotlin.gradle.internal.KaptVariantData
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
@@ -202,7 +201,7 @@ internal class Kotlin2JvmSourceSetProcessor(
 
     override fun doTargetSpecificProcessing() {
         ifKaptEnabled(project) {
-            Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, kotlinCompilation.compilationName)
+            Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, kotlinCompilation.compilationName)
         }
 
         ScriptingGradleSubplugin.configureForSourceSet(project, kotlinCompilation.compilationName)
@@ -785,7 +784,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
             sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
 
             ifKaptEnabled(project) {
-                Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
+                Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
             }
         }
 
