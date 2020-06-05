@@ -113,7 +113,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             // To configure a task that may have not yet been created at this point, use 'withType-matching-all`:
             .withType(AbstractKotlinCompile::class.java)
             .matching { it.name == compileKotlinTaskName }
-            .all { compileKotlinTask ->
+            .configureEach { compileKotlinTask ->
                 compileKotlinTask.configureAction()
             }
     }

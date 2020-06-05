@@ -30,7 +30,7 @@ open class KotlinMetadataTarget @Inject constructor(project: Project) :
             val javaApiUsage = project.usageByName("java-api-jars")
 
             usageContexts += run {
-                val allMetadataJar = project.tasks.getByName(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
+                val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
                 val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) {
                     it.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
                 }
