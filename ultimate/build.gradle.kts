@@ -46,10 +46,6 @@ dependencies {
             includeJars("trove4j", "platform-api", "platform-impl", "idea", "util", "jdom", "extensions")
         }
 
-        Platform[191].orLower {
-            compileOnly(intellijUltimateDep()) { includeJars("java-api", "java-impl") }
-        }
-
         Platform[192].orHigher {
             compileOnly(intellijUltimateDep()) { includeJars("platform-util-ui", "platform-core-ui") }
             compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-api", "java-impl") }
