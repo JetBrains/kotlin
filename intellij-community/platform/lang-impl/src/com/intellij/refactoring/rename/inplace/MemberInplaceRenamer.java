@@ -158,6 +158,7 @@ public class MemberInplaceRenamer extends VariableInplaceRenamer {
 
   @Override
   protected boolean appendAdditionalElement(Collection<PsiReference> refs, Collection<Pair<PsiElement, TextRange>> stringUsages) {
+    boolean showChooser = Registry.is("enable.rename.options.inplace", false) || super.appendAdditionalElement(refs, stringUsages);
     PsiNamedElement variable = getVariable();
     if (variable != null) {
       final PsiElement substituted = getSubstituted();
@@ -174,7 +175,7 @@ public class MemberInplaceRenamer extends VariableInplaceRenamer {
         }
       }
     }
-    return true;
+    return showChooser;
   }
 
   @Override
@@ -270,6 +271,7 @@ public class MemberInplaceRenamer extends VariableInplaceRenamer {
 
   @Override
   protected void collectAdditionalElementsToRename(@NotNull List<Pair<PsiElement, TextRange>> stringUsages) {
+    if (!Registry.is("enable.rename.options.inplace", false)) return;
     if (!RenamePsiElementProcessor.forElement(myElementToRename).isToSearchInComments(myElementToRename)) {
       return;
     }
