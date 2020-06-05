@@ -23304,6 +23304,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/chainedFunSuspendConversionForSimpleExpression.kt");
             }
 
+            @TestMetadata("overloadResolutionBySuspendModifier.kt")
+            public void testOverloadResolutionBySuspendModifier() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/overloadResolutionBySuspendModifier.kt");
+            }
+
             @TestMetadata("severalConversionsInOneCall.kt")
             public void testSeveralConversionsInOneCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/severalConversionsInOneCall.kt");
