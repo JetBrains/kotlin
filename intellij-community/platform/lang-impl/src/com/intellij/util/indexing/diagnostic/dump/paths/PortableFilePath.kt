@@ -20,12 +20,21 @@ sealed class PortableFilePath {
 
   @JsonTypeName("library")
   data class LibraryRoot(
+    val libraryType: LibraryType,
     val libraryName: String,
+    val moduleName: String?,
     val libraryRootIndex: Int,
     val inClassFiles: Boolean
   ) : PortableFilePath() {
+
+    enum class LibraryType {
+      APPLICATION, PROJECT, MODULE;
+
+      override fun toString() = name.toLowerCase()
+    }
+
     override val presentablePath
-      get() = "<library $libraryName>/" +
+      get() = "<$libraryType ${if (libraryType == LibraryType.MODULE) "'$moduleName' " else ""}library '$libraryName'>/" +
               "<library " + (if (inClassFiles) "class" else "source") + " root #$libraryRootIndex>"
   }
 
