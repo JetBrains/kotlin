@@ -7961,6 +7961,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/funInterface/basicFunInterfaceDisabled.kt");
             }
 
+            @TestMetadata("funInterfaceConversionOnReceiver.kt")
+            public void testFunInterfaceConversionOnReceiver() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/funInterface/funInterfaceConversionOnReceiver.kt");
+            }
+
             @TestMetadata("funInterfaceDeclarationCheck.kt")
             public void testFunInterfaceDeclarationCheck() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/funInterface/funInterfaceDeclarationCheck.kt");
