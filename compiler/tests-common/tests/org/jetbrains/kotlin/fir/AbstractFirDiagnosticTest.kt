@@ -285,6 +285,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             val graph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
             assertEquals(ControlFlowGraph.State.Completed, graph.state)
             checkConsistency(graph)
+            checkOrder(graph)
         }
 
         private fun checkConsistency(graph: ControlFlowGraph) {
@@ -301,6 +302,8 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             }
         }
 
+        private val cfgKinds = listOf(EdgeKind.Dead, EdgeKind.Cfg, EdgeKind.DeadBack, EdgeKind.Back)
+
         private fun checkEdge(from: CFGNode<*>, to: CFGNode<*>) {
             KtUsefulTestCase.assertContainsElements(from.followingNodes, to)
             KtUsefulTestCase.assertContainsElements(to.previousNodes, from)
@@ -308,7 +311,23 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             val toKind = to.incomingEdges.getValue(from)
             TestCase.assertEquals(fromKind, toKind)
             if (from.isDead && to.isDead) {
-                KtUsefulTestCase.assertContainsElements(listOf(EdgeKind.Dead, EdgeKind.Cfg, EdgeKind.DeadBack, EdgeKind.Back), toKind)
+                KtUsefulTestCase.assertContainsElements(cfgKinds, toKind)
+            }
+        }
+
+        private fun checkOrder(graph: ControlFlowGraph) {
+            val visited = mutableSetOf<CFGNode<*>>()
+            for (node in graph.nodes) {
+                for (previousNode in node.previousNodes) {
+                    if (previousNode.owner != graph) continue
+                    if (!node.incomingEdges.getValue(previousNode).isBack) {
+                        if (previousNode !in visited) {
+                            val x = 1
+                        }
+                        assertTrue(previousNode in visited)
+                    }
+                }
+                visited += node
             }
         }
     }
