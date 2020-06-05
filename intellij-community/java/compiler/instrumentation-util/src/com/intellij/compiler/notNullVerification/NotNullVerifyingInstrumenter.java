@@ -36,7 +36,15 @@ public class NotNullVerifyingInstrumenter extends ClassVisitor implements Opcode
     myAuxGenerator = new AuxiliaryMethodGenerator(reader);
   }
 
+  /**
+   * @deprecated use {@link NotNullVerifyingInstrumenter#processClassFile(ClassReader, ClassVisitor, String[])} instead
+   */
+  @Deprecated
   public static boolean processClassFile(FailSafeClassReader reader, ClassVisitor writer, String[] notNullAnnotations) {
+    return processClassFile((ClassReader)reader, writer, notNullAnnotations);
+  }
+
+  public static boolean processClassFile(ClassReader reader, ClassVisitor writer, String[] notNullAnnotations) {
     NotNullVerifyingInstrumenter instrumenter = new NotNullVerifyingInstrumenter(writer, reader, notNullAnnotations);
     reader.accept(instrumenter, 0);
     return instrumenter.myIsModification;
