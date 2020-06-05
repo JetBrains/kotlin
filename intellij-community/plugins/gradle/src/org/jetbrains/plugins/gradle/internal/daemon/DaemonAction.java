@@ -1,12 +1,6 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.internal.daemon;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import org.gradle.api.internal.file.DefaultFileCollectionFactory;
 import org.gradle.api.internal.file.FileCollectionFactory;
 import org.gradle.api.internal.file.IdentityFileResolver;
@@ -28,6 +22,11 @@ import org.gradle.launcher.daemon.client.DaemonClientFactory;
 import org.gradle.launcher.daemon.configuration.DaemonParameters;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Vladislav.Soroka
@@ -85,7 +84,6 @@ public abstract class DaemonAction {
   private static DaemonParameters daemonParameters6Dot4(BuildLayoutParameters layout) {
     try {
       Factory<PatternSet> patternSetFactory = PatternSets.getPatternSetFactory(PatternSpecFactory.INSTANCE);
-      //noinspection JavaReflectionMemberAccess
       IdentityFileResolver identityFileResolver = IdentityFileResolver.class.getConstructor().newInstance();
       DefaultFileCollectionFactory collectionFactory = createCollectionFactory6Dot3(identityFileResolver, patternSetFactory);
       return new DaemonParameters(layout, collectionFactory);
@@ -99,7 +97,8 @@ public abstract class DaemonAction {
   private static DaemonParameters daemonParameters6Dot3(BuildLayoutParameters layout) {
     try {
       Factory<PatternSet> patternSetFactory = PatternSets.getPatternSetFactory(PatternSpecFactory.INSTANCE);
-      IdentityFileResolver identityFileResolver = new IdentityFileResolver(patternSetFactory);
+      //noinspection JavaReflectionMemberAccess
+      IdentityFileResolver identityFileResolver = IdentityFileResolver.class.getConstructor(Factory.class).newInstance(patternSetFactory);
       DefaultFileCollectionFactory collectionFactory = createCollectionFactory6Dot3(identityFileResolver, patternSetFactory);
       return new DaemonParameters(layout, collectionFactory);
     }
@@ -117,7 +116,6 @@ public abstract class DaemonAction {
     //noinspection rawtypes
     Class propertyHostClass = classLoader.loadClass("org.gradle.api.internal.provider.PropertyHost");
     Object propertyHostNoOp = propertyHostClass.getField("NO_OP").get(null);
-    //noinspection JavaReflectionMemberAccess
     Constructor<DefaultFileCollectionFactory> collectionFactoryConstructor = DefaultFileCollectionFactory.class.getConstructor(
       PathToFileResolver.class, TaskDependencyFactory.class, DirectoryFileTreeFactory.class, Factory.class, propertyHostClass,
       FileSystem.class);
@@ -126,10 +124,21 @@ public abstract class DaemonAction {
   }
 
   private static DaemonParameters daemonParameters6Dot0(BuildLayoutParameters layout) {
-    Factory<PatternSet> patternSetFactory = PatternSets.getPatternSetFactory(PatternSpecFactory.INSTANCE);
-    return new DaemonParameters(layout, new DefaultFileCollectionFactory(
-      new IdentityFileResolver(patternSetFactory), DefaultTaskDependencyFactory.withNoAssociatedProject(),
-      new DefaultDirectoryFileTreeFactory(), patternSetFactory));
+    try {
+      Factory<PatternSet> patternSetFactory = PatternSets.getPatternSetFactory(PatternSpecFactory.INSTANCE);
+      //noinspection JavaReflectionMemberAccess
+      IdentityFileResolver identityFileResolver = IdentityFileResolver.class.getConstructor(Factory.class).newInstance(patternSetFactory);
+      //noinspection JavaReflectionMemberAccess
+      Constructor<DefaultFileCollectionFactory> collectionFactoryConstructor = DefaultFileCollectionFactory.class.getConstructor(
+        PathToFileResolver.class, TaskDependencyFactory.class, DirectoryFileTreeFactory.class, Factory.class);
+      DefaultFileCollectionFactory factory = collectionFactoryConstructor.newInstance(
+        identityFileResolver, DefaultTaskDependencyFactory.withNoAssociatedProject(),
+        new DefaultDirectoryFileTreeFactory(), patternSetFactory);
+      return new DaemonParameters(layout, factory);
+    }
+    catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new RuntimeException("Cannot create DaemonParameters by reflection, gradle version " + GradleVersion.current(), e);
+    }
   }
 
   private static DaemonParameters daemonParameters5Dot3(BuildLayoutParameters layout) {
