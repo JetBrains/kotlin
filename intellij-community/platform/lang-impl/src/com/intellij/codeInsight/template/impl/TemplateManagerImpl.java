@@ -447,7 +447,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
   @NotNull
   private TemplateImpl substituteTemplate(@NotNull TemplateImpl template, @NotNull Editor editor) {
     PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(editor.getDocument());
-    if (psiFile == null || !psiFile.isValid()) {
+    if (psiFile == null) {
       return template;
     }
     for (TemplateSubstitutor substitutor : TemplateSubstitutor.EP_NAME.getExtensionList()) {
