@@ -5,39 +5,68 @@
 
 package com.jetbrains.mpp
 
-import com.intellij.execution.*
-import com.intellij.openapi.components.*
+import com.intellij.execution.ExecutionTargetManager
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
-import com.jetbrains.mpp.execution.Device
+import com.intellij.openapi.util.io.FileUtil
+import com.jetbrains.kmm.KMMTargetListener
+import com.jetbrains.kmm.XcProjectFile
+import com.jetbrains.konan.WorkspaceXML
 import org.jdom.Element
+import java.io.File
 
-internal object XCProject {
-    const val nodeName = "xcodeproj"
-    const val pathAttributeKey = "PATH"
+sealed class XcProjectStatus {
+    object Found : XcProjectStatus()
+    data class Misconfiguration(val reason: String) : XcProjectStatus()
+    data class NotFound(val reason: String) : XcProjectStatus()
+    object NotLocated : XcProjectStatus()
 }
 
-private class TargetListener(private val workspace: ProjectWorkspace) : ExecutionTargetListener {
-    override fun activeTargetChanged(target: ExecutionTarget) {
-        val configuration = RunManager.getInstance(workspace.project).selectedConfiguration?.configuration ?: return
-        if (configuration !is AppleRunConfiguration) return
-        configuration.selectedDevice = target as? Device
+@State(name = WorkspaceXML.projectComponentName, storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
+class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
+
+    var xcProjectStatus: XcProjectStatus = XcProjectStatus.NotLocated
+    var xcProjectFile: XcProjectFile? = null
+
+    fun locateXCProject(path: String) {
+        if (project.basePath == null) {
+            xcProjectStatus = XcProjectStatus.Misconfiguration("project base path is absent")
+            return
+        }
+
+        val xcProjectDir = if (FileUtil.isAbsolute(path))
+            File(path)
+        else
+            File(project.basePath).resolve(path)
+
+        if (!xcProjectDir.exists()) {
+            xcProjectStatus = XcProjectStatus.NotFound("directory $xcProjectDir doesn't exist")
+            return
+        }
+
+        xcProjectFile = XcProjectFile.findXcProjectFile(xcProjectDir)
+
+        xcProjectStatus = if (xcProjectFile != null) {
+            XcProjectStatus.Found
+        } else {
+            XcProjectStatus.NotFound("can't find Xcode projects located at $xcProjectDir")
+        }
     }
-}
-
-@State(name = "MPPWorkspace", storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
-class ProjectWorkspace(val project: Project) : PersistentStateComponent<Element>, ProjectComponent {
-    var xcproject: String? = null
 
     init {
         val connection = project.messageBus.connect()
-        connection.subscribe(ExecutionTargetManager.TOPIC, TargetListener(this))
+        connection.subscribe(ExecutionTargetManager.TOPIC, KMMTargetListener(this))
     }
 
-    override fun getState(): Element? {
-        val stateElement = Element("state")
-        val xcElement = Element(XCProject.nodeName)
-        xcproject?.let {
-            xcElement.setAttribute(XCProject.pathAttributeKey, xcproject)
+    override fun getState(): Element {
+        val stateElement = super.getState()
+
+        if (xcProjectFile != null) {
+            val xcElement = Element(WorkspaceXML.XCProject.nodeName)
+            val relativePath = File(xcProjectFile!!.absolutePath).relativeTo(File(project.basePath))
+            xcElement.setAttribute(WorkspaceXML.XCProject.attributePath, relativePath.path)
             stateElement.addContent(xcElement)
         }
 
@@ -45,16 +74,18 @@ class ProjectWorkspace(val project: Project) : PersistentStateComponent<Element>
     }
 
     override fun loadState(stateElement: Element) {
-        val xcElement = stateElement.getChildren(XCProject.nodeName).firstOrNull()
+        super.loadState(stateElement)
+
+        val xcElement = stateElement.getChildren(WorkspaceXML.XCProject.nodeName).firstOrNull()
         xcElement?.run {
-            xcproject = getAttributeValue(XCProject.pathAttributeKey)
+            val relativePath = getAttributeValue(WorkspaceXML.XCProject.attributePath) ?: return@run
+            locateXCProject(relativePath)
         }
     }
 
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): ProjectWorkspace = project.getComponent(
-            ProjectWorkspace::class.java)
+        fun getInstance(project: Project): ProjectWorkspace = project.getComponent(ProjectWorkspace::class.java)
     }
 }
 

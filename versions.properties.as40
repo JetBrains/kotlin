@@ -1,5 +1,5 @@
 # Dev Kotlin version:
-versions.ideaPluginForCidr=1.4.0-dev-3515
+versions.ideaPluginForCidr=1.4.0-dev-8382
 versions.ideaPluginForCidr.ide=IJ2019.2-1
 versions.ideaPluginForCidr.repo=Kotlin_KotlinDev_Aggregate
 
@@ -11,9 +11,6 @@ versions.xcode-compat=0.2.5
 versions.clion=193.6526
 versions.clion.strict=true
 versions.clion.repo=ijplatform_IjPlatform193_CIDR_CLion_Installers
-
-versions.nativeDebug=192.5728.12
-versions.nativeDebug.repo=ijplatform_IjPlatform192_Idea_InstallersForEapRelease
 
 versions.LLDB.framework=70
 versions.LLDB.framework.repo=ijplatform_master_CIDR_ExternalTools_LldbOsX

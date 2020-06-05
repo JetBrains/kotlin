@@ -2,40 +2,34 @@
   <application-components>
     <component>
       <interface-class>com.jetbrains.konan.KonanIconProvider</interface-class>
-      <implementation-class>com.jetbrains.konan.IdeaKonanIconProvider</implementation-class>
+      <implementation-class>com.jetbrains.mpp.MPPIconProvider</implementation-class>
     </component>
   </application-components>
 
   <project-components>
     <component>
-      <implementation-class>com.jetbrains.konan.IdeaKonanWorkspace</implementation-class>
+      <implementation-class>com.jetbrains.mpp.MPPWorkspace</implementation-class>
     </component>
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
-    <configurationType implementation="com.jetbrains.konan.IdeaKonanRunConfigurationType"/>
-    <executionTargetProvider implementation="com.jetbrains.konan.IdeaKonanExecutionTargetProvider"/>
-    <stepsBeforeRunProvider implementation="com.jetbrains.konan.IdeaKonanBuildBeforeRunTaskProvider"/>
-    <programRunner implementation="com.jetbrains.konan.IdeaKonanRunner"/>
-    <projectTaskRunner implementation="com.jetbrains.konan.IdeaKonanProjectTaskRunner"/>
+    <configurationType implementation="com.jetbrains.mpp.MPPBinaryRunConfigurationType"/>
+    <executionTargetProvider implementation="com.jetbrains.mpp.BinaryExecutionTargetProvider"/>
+    <stepsBeforeRunProvider implementation="com.jetbrains.mpp.MPPBuildBeforeRunTaskProvider"/>
+    <programRunner implementation="com.jetbrains.mpp.MPPBinaryRunner"/>
+    <projectTaskRunner implementation="com.jetbrains.mpp.MPPProjectTaskRunner"/>
 
-    <externalProjectDataService implementation="com.jetbrains.konan.gradle.IdeaKonanProjectDataService"/>
-    <externalSystem.debuggerBackend implementation="com.jetbrains.konan.debugger.GradleLLDBDebuggerBackend" />
+    <externalProjectDataService implementation="com.jetbrains.mpp.gradle.MPPProjectDataService"/>
+    <externalSystem.debuggerBackend implementation="com.jetbrains.mpp.debugger.GradleLLDBBackend" />
   </extensions>
 
   <extensions defaultExtensionNs="cidr.debugger">
-    <!--TODO: kotlin -> Kotlin/Native -->
-    <languageSupport language="kotlin" implementationClass="com.jetbrains.konan.debugger.KonanDebuggerLanguageSupport"/>
-    <!-- The default implementation ("Any" language) -->
-<!--    <languageSupport language="" implementationClass="com.jetbrains.cidr.execution.debugger.OCDebuggerLanguageSupport"/>-->
-    <lineBreakpointFileTypesProvider implementation="com.jetbrains.konan.debugger.KonanLineBreakpointFileTypesProvider"/>
-    <editorsExtension default="true" implementation="com.jetbrains.konan.debugger.KonanDebuggerEditorsExtension" />
-    <valueRendererFactory implementation="com.jetbrains.konan.debugger.KonanValueRendererFactory"/>
-<!--    <backendConsoleInjectionHelper implementation="com.jetbrains.cidr.execution.debugger.CidrBackendConsoleInjectionHelper"/>-->
-<!--    <lineBreakpointFileTypesProvider implementation="com.jetbrains.cidr.execution.debugger.breakpoints.OCLineBreakpointFileTypesProvider"/>-->
+    <languageSupport language="kotlin" implementationClass="com.jetbrains.mpp.debugger.MPPDebuggerLanguageSupport"/>
+    <editorsExtension default="true" implementation="com.jetbrains.mpp.debugger.MPPDebuggerEditorsExtension" />
+    <valueRendererFactory implementation="com.jetbrains.mpp.debugger.MPPValueRendererFactory"/>
   </extensions>
 
-  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
-    <taskManager implementation="com.jetbrains.konan.debugger.KonanGradleTaskManagerExtension"/>
+  <extensions defaultExtensionNs="org.jetrains.plugins.gradle">
+    <taskManager implementation="com.jetbrains.mpp.debugger.MPPGradleTaskManagerExtension"/>
   </extensions>
 </idea-plugin>

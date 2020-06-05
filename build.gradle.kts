@@ -14,7 +14,8 @@ buildscript {
         }
 
         dependencies {
-            classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-dev-5258")
+            val bootstrapKotlinVersion: String by project
+            classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$bootstrapKotlinVersion")
         }
     }
 }

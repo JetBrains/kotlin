@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -56,6 +56,7 @@ class ApplePhysicalDeviceLauncher(
     device: ApplePhysicalDevice,
     private val raw: AMDevice
 ) : AppleLauncher(configuration, environment, device) {
+    var withoutBreakpoints: Boolean = false
 
     override fun createInstaller(bundle: File): AppleInstaller =
         ApplePhysicalDeviceInstaller(configuration, environment, bundle, raw)
@@ -65,7 +66,9 @@ class ApplePhysicalDeviceLauncher(
 
     override fun createDebugProcess(parameters: RunParameters, session: XDebugSession, state: CommandLineState): CidrDebugProcess =
         object : IPhoneDebugProcess(parameters, raw, session, state.consoleBuilder, true) {
-            override fun getBreakpointHandlers(): Array<XBreakpointHandler<*>> =
+            override fun getBreakpointHandlers(): Array<XBreakpointHandler<*>> = if (withoutBreakpoints)
+                emptyArray()
+            else
                 wrapInKotlinHandlers(super.getBreakpointHandlers(), session.project)
         }
 }

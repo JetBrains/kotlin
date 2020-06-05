@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,20 +11,48 @@ import com.intellij.execution.Executor
 import com.intellij.execution.configurations.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction
+import com.intellij.ide.actions.OpenFileAction
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.DialogWrapperDialog
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.ui.ComponentUtil
+import com.jetbrains.kmm.AppleConfigurationFactory
+import com.jetbrains.kmm.AppleRunConfigurationEditor
+import com.jetbrains.konan.KonanBundle
+import com.jetbrains.konan.WorkspaceXML
 import com.jetbrains.mpp.execution.ApplePhysicalDevice
 import com.jetbrains.mpp.execution.Device
 import org.jdom.Element
 import java.io.File
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
-class AppleRunConfiguration(project: Project, configurationFactory: MobileConfigurationFactory, name: String) :
+class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigurationFactory, name: String) :
     LocatableConfigurationBase<Element>(project, configurationFactory, name), RunConfigurationWithSuppressedDefaultRunAction {
 
-    val xcodeproj: String?
-        get() = ProjectWorkspace.getInstance(project).xcproject
+    val workspace = ProjectWorkspace.getInstance(project)
 
-    val xcodeScheme: String = "iosApp" // TODO: Use provided.
+    private val xcodeSchemeLock = ReentrantLock()
+    var xcodeScheme: String? = null
+        get() = xcodeSchemeLock.withLock {
+            if (field == null) {
+                // initially we pick scheme with the name of the project or first one
+                val schemes = workspace.xcProjectFile?.schemes ?: emptyList()
+                field = if (workspace.xcProjectFile?.projectName in schemes) {
+                    workspace.xcProjectFile?.projectName
+                } else {
+                    schemes.firstOrNull()
+                }
+            }
+            return field
+        }
+        set(value) = xcodeSchemeLock.withLock {
+            if (value != null) {
+                field = value
+            }
+        }
 
     fun xcodeSdk(target: ExecutionTarget): String {
         return if (target is ApplePhysicalDevice) "iphoneos" else "iphonesimulator"
@@ -32,29 +60,83 @@ class AppleRunConfiguration(project: Project, configurationFactory: MobileConfig
 
     val iosBuildDirectory = "ios_build" // TODO: Allow configuration.
 
-    val workingDirectory = project.basePath?.let { File(it) }
-
-    override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = MobileRunConfigurationEditor(project)
+    override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
+        AppleRunConfigurationEditor(project)
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState? =
         (environment.executionTarget as? Device)?.createState(this, environment)
 
     override fun getBeforeRunTasks(): MutableList<BeforeRunTask<*>> {
         val result = mutableListOf<BeforeRunTask<*>>()
-        xcodeproj?.let { result.add(BuildIOSAppTask()) }
+        result.add(BuildIOSAppTask())
         return result
     }
 
+    private val openGradleProperties = Runnable {
+        val propertiesFile = LocalFileSystem.getInstance().findFileByIoFile(File(project.basePath, "gradle.properties"))
+        OpenFileAction.openFile(propertiesFile, project)
+        val dialogWindow = (ComponentUtil.getActiveWindow() as? DialogWrapperDialog) ?: return@Runnable
+        dialogWindow.dialogWrapper.close(DialogWrapper.CANCEL_EXIT_CODE)
+    }
+
+    private fun reportXcFileError(message: String, quickFix: Runnable? = null) {
+        throw if (quickFix == null)
+            RuntimeConfigurationError(message)
+        else
+            RuntimeConfigurationError(message, quickFix)
+    }
+
     override fun checkConfiguration() {
-        if (xcodeproj == null) throw RuntimeConfigurationError("Can't find xcproj. Please, specify path relative to root to xcproj in your gradle.properties-file")
+        val propertyKey = KonanBundle.message("property.xcodeproj")
+
+        when (val status = workspace.xcProjectStatus) {
+            is XcProjectStatus.Misconfiguration ->
+                reportXcFileError("Project is misconfigured: " + status.reason)
+            XcProjectStatus.NotLocated ->
+                reportXcFileError(
+                    "Please specify Xcode project location in" +
+                            " $propertyKey property of gradle.properties",
+                    openGradleProperties
+                )
+            is XcProjectStatus.NotFound ->
+                reportXcFileError(
+                    "Please check $propertyKey property of gradle.properties: " + status.reason,
+                    openGradleProperties
+                )
+        }
+
+        if (workspace.xcProjectFile!!.schemes.isEmpty()) {
+            throw RuntimeConfigurationError("Please check specified Xcode project file: " + workspace.xcProjectFile!!.schemesStatus)
+        }
+
+        if (xcodeScheme == null) {
+            throw RuntimeConfigurationError("Please select Xcode scheme")
+        }
+
+        if (xcodeScheme !in workspace.xcProjectFile!!.schemes) {
+            throw RuntimeConfigurationError("Selected scheme '$xcodeScheme' is not found in ${workspace.xcProjectFile!!.absolutePath}")
+        }
     }
 
     override fun canRunOn(target: ExecutionTarget): Boolean = target is Device
 
     fun getProductBundle(environment: ExecutionEnvironment): File {
         val buildType = if (environment.executionTarget is ApplePhysicalDevice) "Debug-iphoneos" else "Debug-iphonesimulator"
-        return workingDirectory!!.resolve(iosBuildDirectory).resolve("$buildType/$xcodeScheme.app")
+        if (project.basePath == null) throw RuntimeConfigurationError("Can't run ${this::class.simpleName} on project without base path.")
+        return File(project.basePath).resolve(iosBuildDirectory).resolve("$buildType/$xcodeScheme.app")
     }
 
     var selectedDevice: Device? = null
+
+    override fun readExternal(element: Element) {
+        super.readExternal(element)
+        xcodeScheme = element.getAttributeValue(WorkspaceXML.RunConfiguration.attributeXcodeScheme)
+    }
+
+    override fun writeExternal(element: Element) {
+        super.writeExternal(element)
+        if (xcodeScheme != null) {
+            element.setAttribute(WorkspaceXML.RunConfiguration.attributeXcodeScheme, xcodeScheme)
+        }
+    }
 }

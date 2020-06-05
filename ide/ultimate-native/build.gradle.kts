@@ -3,44 +3,46 @@ plugins {
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
-val addCidrDeps: (Project) -> Unit by ultimateTools
-val cidrUnscrambledJarDir: File? by rootProject.extra
 val intellijBranch: Int by rootProject.extra
+val nativeDebugPluginDir: File? by rootProject.extra
 
 dependencies {
-    compile(kotlinStdlib("jdk8"))
-    compile(project(":compiler:cli-common")) { isTransitive = false }
-    compile(project(":compiler:psi")) { isTransitive = false }
-    compile(project(":core:descriptors")) { isTransitive = false }
-    compile(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
-    compile(project(":idea:idea-core")) { isTransitive = false }
-    compile(project(":idea:idea-jps-common")) { isTransitive = false }
-    compile(project(":idea:idea-jvm")) { isTransitive = false }
-    compile(project(":idea:idea-gradle")) { isTransitive = false }
-    compile(project(":kotlin-util-io")) { isTransitive = false }
-    compile(project(":native:kotlin-native-utils")) { isTransitive = false }
-    compile(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
+    compileOnly(kotlinStdlib("jdk8"))
+    compileOnly(project(":compiler:cli-common")) { isTransitive = false }
+    compileOnly(project(":compiler:psi")) { isTransitive = false }
+    compileOnly(project(":core:descriptors")) { isTransitive = false }
+    compileOnly(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
+    compileOnly(project(":idea:idea-core")) { isTransitive = false }
+    compileOnly(project(":idea:idea-jps-common")) { isTransitive = false }
+    compileOnly(project(":idea:idea-jvm")) { isTransitive = false }
+    compileOnly(project(":idea:idea-gradle")) { isTransitive = false }
+    compileOnly(project(":kotlin-util-io")) { isTransitive = false }
+    compileOnly(project(":native:kotlin-native-utils")) { isTransitive = false }
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijUltimateDep()) { includeJars("platform-api", "platform-impl", "util", "jdom") }
     compileOnly(intellijUltimatePluginDep("gradle"))
     compileOnly(intellijUltimatePluginDep("Groovy"))
     compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-api", "java-impl") }
-    addCidrDeps(project)
+    if (nativeDebugPluginDir != null) {
+        compileOnly(fileTree(nativeDebugPluginDir!!) { include("**/*.jar") })
+    }
+
 
     if (intellijBranch >= 192) {
         compileOnly(intellijUltimateDep()) { includeJars("platform-util-ui") }
         if (intellijBranch >= 193) {
             compileOnly(intellijUltimateDep()) { includeJars(
+                "extensions",
                 "external-system-rt",
                 "platform-ide-util-io"
             ) }
         }
     }
+    api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
+    api(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
 }
 
-// TODO: don't use check for existence of `cidrUnscrambledJarDir` directory,
-// it will give the wrong results after switching flags in local.properties
-if (intellijBranch >= 192 || cidrUnscrambledJarDir?.exists() == true) {
+if (intellijBranch >= 192) {
     sourceSets["main"].java.setSrcDirs(listOf("src"))
 } else {
     sourceSets["main"].java.setSrcDirs(emptyList<String>())

@@ -4,14 +4,11 @@ plugins {
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
-val cidrUnscrambledJarDir: File? by rootProject.extra
 val intellijBranch: Int by rootProject.extra
 
 addIdeaNativeModuleDeps(project)
 
-// TODO: don't use check for existence of `cidrUnscrambledJarDir` directory,
-// it will give the wrong results after switching flags in local.properties
-if (intellijBranch >= 192 || cidrUnscrambledJarDir?.exists() == true) {
+if (intellijBranch >= 192) {
     sourceSets["main"].java.setSrcDirs(listOf("src"))
     sourceSets["main"].resources.setSrcDirs(listOf("resources"))
 } else {

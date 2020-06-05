@@ -31,10 +31,12 @@ import java.io.File
 
 // Based on com.intellij.javascript.protractor.ProtractorRunConfiguration
 class KotlinProtractorRunConfiguration(
-        project: Project,
-        factory: ConfigurationFactory,
-        name: String
+    project: Project,
+    factory: ConfigurationFactory,
+    name: String
 ) : LocatableConfigurationBase<Any>(project, factory, name) {
+    override fun onNewConfigurationCreated() = initialize()
+
     var runSettings = KotlinProtractorRunSettings()
 
     val protractorPackage: NodePackage
@@ -45,7 +47,7 @@ class KotlinProtractorRunConfiguration(
         }
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment) =
-            KotlinProtractorRunState(this, environment, protractorPackage)
+        KotlinProtractorRunState(this, environment, protractorPackage)
 
     override fun getConfigurationEditor() = KotlinProtractorRunConfigurationEditor(project)
 
@@ -86,10 +88,11 @@ class KotlinProtractorRunConfiguration(
         return if (name.isNotBlank()) name else null
     }
 
-    private fun validatePath(name: String,
-                             path: String?,
-                             shouldBeAbsolute: Boolean,
-                             shouldBeDirectory: Boolean
+    private fun validatePath(
+        name: String,
+        path: String?,
+        shouldBeAbsolute: Boolean,
+        shouldBeDirectory: Boolean
     ) {
         if (path.isNullOrBlank()) throw RuntimeConfigurationError("Unspecified " + name)
 

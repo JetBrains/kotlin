@@ -2,30 +2,29 @@
   <application-components>
     <component>
       <interface-class>com.jetbrains.konan.KonanIconProvider</interface-class>
-      <implementation-class>com.jetbrains.konan.IdeaKonanIconProvider</implementation-class>
+      <implementation-class>com.jetbrains.mpp.MPPIconProvider</implementation-class>
     </component>
   </application-components>
 
   <project-components>
     <component>
-      <implementation-class>com.jetbrains.konan.IdeaKonanWorkspace</implementation-class>
+      <implementation-class>com.jetbrains.mpp.MPPWorkspace</implementation-class>
     </component>
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
-    <configurationType implementation="com.jetbrains.konan.IdeaKonanRunConfigurationType"/>
-    <executionTargetProvider implementation="com.jetbrains.konan.IdeaKonanExecutionTargetProvider"/>
-    <stepsBeforeRunProvider implementation="com.jetbrains.konan.IdeaKonanBuildBeforeRunTaskProvider"/>
-    <programRunner implementation="com.jetbrains.konan.IdeaKonanRunner"/>
-    <projectTaskRunner implementation="com.jetbrains.konan.IdeaKonanProjectTaskRunner"/>
+    <configurationType implementation="com.jetbrains.mpp.MPPBinaryRunConfigurationType"/>
+    <executionTargetProvider implementation="com.jetbrains.mpp.BinaryExecutionTargetProvider"/>
+    <stepsBeforeRunProvider implementation="com.jetbrains.mpp.MPPBuildBeforeRunTaskProvider"/>
+    <programRunner implementation="com.jetbrains.mpp.MPPBinaryRunner"/>
+    <projectTaskRunner implementation="com.jetbrains.mpp.MPPProjectTaskRunner"/>
 
-    <externalProjectDataService implementation="com.jetbrains.konan.gradle.IdeaKonanProjectDataService"/>
+    <externalProjectDataService implementation="com.jetbrains.mpp.gradle.MPPProjectDataService"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.debugger">
-    <languageSupport language="kotlin" implementationClass="com.jetbrains.konan.debugger.KonanDebuggerLanguageSupport"/>
-    <lineBreakpointFileTypesProvider implementation="com.jetbrains.konan.debugger.KonanLineBreakpointFileTypesProvider"/>
-    <editorsExtension default="true" implementation="com.jetbrains.konan.debugger.KonanDebuggerEditorsExtension" />
-    <valueRendererFactory implementation="com.jetbrains.konan.debugger.KonanValueRendererFactory"/>
+    <languageSupport language="kotlin" implementationClass="com.jetbrains.mpp.debugger.MPPDebuggerLanguageSupport"/>
+    <editorsExtension default="true" implementation="com.jetbrains.mpp.debugger.MPPDebuggerEditorsExtension" />
+    <valueRendererFactory implementation="com.jetbrains.mpp.debugger.MPPValueRendererFactory"/>
   </extensions>
 </idea-plugin>

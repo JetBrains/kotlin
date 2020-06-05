@@ -9,51 +9,84 @@ import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.executors.DefaultDebugExecutor
-import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.execution.runners.DefaultProgramRunner
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.RunContentDescriptor
-import com.intellij.xdebugger.XDebugProcess
-import com.intellij.xdebugger.XDebugSession
-import com.intellij.xdebugger.XDebuggerManager
-import com.intellij.xdebugger.impl.XDebugProcessConfiguratorStarter
-import com.intellij.xdebugger.impl.ui.XDebugSessionData
+import com.intellij.notification.NotificationGroup
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.project.Project
+import com.intellij.xml.util.XmlStringUtil
 import com.jetbrains.cidr.execution.CidrCommandLineState
-import com.jetbrains.mpp.AppleRunConfiguration
+import com.jetbrains.konan.KonanBundle
+import com.jetbrains.mpp.*
+import com.jetbrains.mpp.XcFileExtensions
+import com.jetbrains.mpp.debugger.KonanExternalSystemState
+import java.io.File
 
-class AppleRunner : DefaultProgramRunner() {
+internal const val ACTUAL_XC_PROJECT_FILE = "project.pbxproj"
+internal const val DEBUG_INFORMATION_FORMAT_KEY = "DEBUG_INFORMATION_FORMAT"
+internal const val DEBUG_INFORMATION_FORMAT_VALUE = "dwarf-with-dsym"
+
+
+class AppleRunner : RunnerBase() {
+
+    private val balloonNotification = NotificationGroup.balloonGroup("Xcode");
 
     override fun getRunnerId(): String = "AppleRunner"
 
-    override fun canRun(executorId: String, profile: RunProfile): Boolean {
-        if (profile !is AppleRunConfiguration) return false
+    override fun getWorkspace(project: Project) = ProjectWorkspace.getInstance(project)
 
-        return when (executorId) {
-            DefaultRunExecutor.EXECUTOR_ID -> profile.selectedDevice is AppleSimulator
-            DefaultDebugExecutor.EXECUTOR_ID -> true
-            else -> false
+    override fun canRun(executorId: String, profile: RunProfile) = when (profile) {
+        is BinaryRunConfiguration -> canRunBinary(executorId, profile)
+        is AppleRunConfiguration -> true
+        else -> false
+    }
+
+    private fun checkDSYMIsGenerated(configuration: AppleRunConfiguration?) {
+        if (configuration == null) return
+        val xcDir = (configuration.workspace.xcProjectFile ?: return).absolutePath
+
+        // dSYMs are needed in the setting with CocoaPods, which implies that project is being governed by workspace
+        if (xcDir.endsWith(XcFileExtensions.project)) return
+
+        val xcProjectDir = (xcDir.removeSuffix(XcFileExtensions.workspace) + XcFileExtensions.project)
+        val xcActualProjectFile = File(xcProjectDir).resolve(ACTUAL_XC_PROJECT_FILE)
+
+        // do not trigger warning for nontrivial configuration
+        if (!xcActualProjectFile.exists()) return
+
+        val debugFormatSettings = xcActualProjectFile.readLines().filter { it.contains(DEBUG_INFORMATION_FORMAT_KEY) }
+
+        if (!debugFormatSettings.all { it.contains(DEBUG_INFORMATION_FORMAT_VALUE) }) {
+            balloonNotification.createNotification(
+                XmlStringUtil.wrapInHtml(KonanBundle.message("label.informationAboutDSYM.title")),
+                XmlStringUtil.wrapInHtml(KonanBundle.message("label.informationAboutDSYM.text")),
+                NotificationType.INFORMATION, null
+            ).notify(configuration.project)
         }
     }
 
+    @Throws(ExecutionException::class)
     override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
-        if (environment.executor.id == DefaultRunExecutor.EXECUTOR_ID) {
+        if (environment.executor.id != DefaultDebugExecutor.EXECUTOR_ID) {
+            if (state is CidrCommandLineState && state.launcher is ApplePhysicalDeviceLauncher) {
+                return contentDescriptor(environment) { session ->
+                    (state.launcher as ApplePhysicalDeviceLauncher).withoutBreakpoints = true
+                    state.startDebugProcess(session)
+                }
+            }
+
             return super.doExecute(state, environment)
         }
 
-        if (state !is CidrCommandLineState) {
-            throw ExecutionException("Unsupported RunProfileState: " + state.javaClass)
+        if (state is CidrCommandLineState && environment.runProfile is AppleRunConfiguration) {
+            checkDSYMIsGenerated(environment.runProfile as? AppleRunConfiguration)
         }
 
-        val session =
-            XDebuggerManager.getInstance(environment.project).startSession(environment, object : XDebugProcessConfiguratorStarter() {
-                override fun configure(session: XDebugSessionData?) {}
-
-                @Throws(ExecutionException::class)
-                override fun start(session: XDebugSession): XDebugProcess {
-                    return state.startDebugProcess(session)
-                }
-            })
-
-        return session.runContentDescriptor
+        return when (state) {
+            is CidrCommandLineState -> contentDescriptor(environment) { session -> state.startDebugProcess(session) }
+            is KonanCommandLineState -> contentDescriptor(environment) { session -> state.startDebugProcess(session) }
+            is KonanExternalSystemState -> contentDescriptor(environment) { session -> state.startDebugProcess(session, environment) }
+            else -> throw ExecutionException("RunProfileState  ${state.javaClass} is not supported by ${this.javaClass}")
+        }
     }
 }

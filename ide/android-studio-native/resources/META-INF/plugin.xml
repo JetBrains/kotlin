@@ -24,13 +24,21 @@
     <applicationService serviceImplementation="com.jetbrains.mpp.execution.DeviceService"/>
 
     <executionTargetProvider implementation="com.jetbrains.mpp.execution.DeviceExecutionTargetProvider"/>
+    <executionTargetProvider implementation="com.jetbrains.mpp.BinaryExecutionTargetProvider"/>
     <externalProjectDataService implementation="com.jetbrains.mpp.ProjectDataService"/>
-    <configurationType implementation="com.jetbrains.mpp.MobileRunConfigurationType"/>
+    <configurationType implementation="com.jetbrains.kmm.AppleRunConfigurationType"/>
     <programRunner implementation="com.jetbrains.mpp.execution.AppleRunner"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.mpp.BuildIOSAppTaskProvider"/>
+    <externalSystem.debuggerBackend implementation="com.jetbrains.mpp.LLDBBackend" />
+    <configurationType implementation="com.jetbrains.mpp.execution.BinaryRunConfigurationType"/>
+    <postStartupActivity implementation="com.jetbrains.mpp.versions.KmmPluginStartupActivity"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.debugger">
     <languageSupport language="Koltin" implementationClass="com.jetbrains.mpp.execution.KonanDebuggerLanguageSupport"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+    <taskManager implementation="com.jetbrains.mpp.execution.BinaryGradleTaskManager"/>
   </extensions>
 </idea-plugin>

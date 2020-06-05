@@ -1,10 +1,8 @@
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.util.*
+import java.util.Locale
 
 plugins {
     kotlin("jvm")
-    id("com.github.jk1.tcdeps") version "1.2"
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
@@ -18,8 +16,8 @@ val appcodeUnscrambledJarDir: File by rootProject.extra
 proprietaryRepositories()
 
 dependencies {
-    compile(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
     compileOnly(fileTree(appcodeUnscrambledJarDir) { include("**/*.jar") })
+    api(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {

@@ -46,15 +46,12 @@ dependencies {
             includeJars("trove4j", "platform-api", "platform-impl", "idea", "util", "jdom", "extensions")
         }
 
-        Platform[191].orLower {
-            compileOnly(intellijUltimateDep()) { includeJars("java-api", "java-impl") }
-        }
-
         Platform[192].orHigher {
             compileOnly(intellijUltimateDep()) { includeJars("platform-util-ui", "platform-core-ui") }
             compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-api", "java-impl") }
-            compile(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
-            compile(project(":kotlin-ultimate:ide:ultimate-native")) { isTransitive = false }
+            compileOnly(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
+            compileOnly(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
+            compileOnly(project(":kotlin-ultimate:ide:ultimate-native")) { isTransitive = false }
         }
 
         Platform[193].orLower {
@@ -124,10 +121,10 @@ dependencies {
     }
     testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
-    testRuntime(project(":native:frontend.native")) { isTransitive = false }
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
+    testRuntime(project(":native:frontend.native"))
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-script-runtime"))
+    testRuntime(project(":kotlin-scripting-intellij"))
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testRuntime(project(":plugins:android-extensions-compiler")) { isTransitive = false }
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
@@ -183,11 +180,7 @@ dependencies {
         }
         testRuntime(intellijUltimatePluginDep("android"))
         testRuntime(intellijUltimatePluginDep("testng"))
-        if (Platform[201].orHigher()) {
-            testRuntime(intellijUltimatePluginDep("platform-langInjection"))
-        } else {
-            testRuntime(intellijUltimatePluginDep("IntelliLang"))
-        }
+        testRuntime(intellijUltimatePluginDep("IntelliLang"))
         testRuntime(intellijUltimatePluginDep("copyright"))
         testRuntime(intellijUltimatePluginDep("java-decompiler"))
     }
@@ -252,6 +245,7 @@ val jar = runtimeJar {
 
     Platform[192].orHigher {
         from(provider { project(":kotlin-ultimate:ide:common-native").mainSourceSet.output })
+        from(provider { project(":kotlin-ultimate:ide:common-noncidr-native").mainSourceSet.output })
         from(provider { project(":kotlin-ultimate:ide:ultimate-native").mainSourceSet.output })
     }
 

@@ -79,7 +79,9 @@ if (rootProject.extra.has("versions.nativeDebug")) {
     rootProject.extra["nativeDebugVersion"] = nativeDebugVersion
     rootProject.extra["nativeDebugRepo"] = rootProject.extra["versions.nativeDebug.repo"] as String
     rootProject.extra["nativeDebugPluginDir"] = externalDepsDir("native-debug-plugin", "native-debug-$nativeDebugVersion")
+}
 
+if (rootProject.extra.has("versions.lldbFrontend.hash")) {
     val lldbFrontendHash = rootProject.extra["versions.lldbFrontend.hash"] as String
     rootProject.extra["lldbFrontendHash"] = lldbFrontendHash
 
@@ -177,7 +179,7 @@ val mobileCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl(
 val excludesListFromIdeaPlugin: List<String> by rootProject.extra(listOf(
         "lib/android-*.jar", // no need Android stuff
         "lib/kapt3-*.jar", // no annotation processing
-        "lib/jps/**", // JSP plugin
+        "lib/jps/**", // JPS plugin
         "kotlinc/**"
 ))
 

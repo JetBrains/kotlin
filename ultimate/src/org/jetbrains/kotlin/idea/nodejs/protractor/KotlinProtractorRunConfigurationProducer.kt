@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.nodejs.protractor
 
 import com.intellij.execution.actions.CompatibleRunConfigurationProducer
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
@@ -38,8 +39,10 @@ class ProtractorConfigData(
 ) : KotlinJSRunConfigurationData
 
 class KotlinProtractorRunConfigurationProducer :
-        CompatibleRunConfigurationProducer<KotlinProtractorRunConfiguration>(KotlinProtractorConfigurationType.getInstance()),
-        KotlinJSRunConfigurationDataProvider<ProtractorConfigData> {
+    CompatibleRunConfigurationProducer<KotlinProtractorRunConfiguration>(),
+    KotlinJSRunConfigurationDataProvider<ProtractorConfigData> {
+    override fun getConfigurationFactory(): ConfigurationFactory = KotlinProtractorConfigurationType.getInstance()
+
     override val isForTests: Boolean
         get() = true
 
@@ -75,8 +78,8 @@ class KotlinProtractorRunConfigurationProducer :
         val configData = getConfigurationData(context) ?: return false
         sourceElement.set(element)
         configuration.runSettings = configuration.runSettings.copy(
-                testFilePath = configData.jsOutputFilePath,
-                envData = configData.module.getNodeJsEnvironmentVars(true)
+            testFilePath = configData.jsOutputFilePath,
+            envData = configData.module.getNodeJsEnvironmentVars(true)
         )
         configuration.name = configuration.suggestedName() ?: "Unknown"
         configuration.addBuildTask()

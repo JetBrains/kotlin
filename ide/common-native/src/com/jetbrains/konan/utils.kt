@@ -74,7 +74,7 @@ fun runBuildTasks(
 @Suppress("unused") // actually used in org.jetbrains.konan.debugger.KonanValueRendererFactoryKt.getPrettyPrintersLocation
 fun getKotlinNativeVersion(kotlinNativeHome: String): CompilerVersion? {
     return try {
-        Distribution(konanHomeOverride = kotlinNativeHome).compilerVersion?.parseCompilerVersion()
+        Distribution(kotlinNativeHome).compilerVersion?.parseCompilerVersion()
     } catch (_: IllegalArgumentException) {
         null
     }
