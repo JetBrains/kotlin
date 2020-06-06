@@ -6,7 +6,7 @@ import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.ide.util.PsiNavigationSupport
 import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
@@ -15,7 +15,7 @@ import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileBasedIndexImpl
 
-class DumpProjectPortableRootsAction : DumbAwareAction() {
+internal class DumpProjectPortableRootsAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     object: Task.Modal(project, "Collecting project roots...", true) {
@@ -33,17 +33,17 @@ class DumpProjectPortableRootsAction : DumbAwareAction() {
         }
 
         val text = result.serializeToText()
-        invokeLater {
+        ApplicationManager.getApplication().invokeLater(Runnable {
           val file = ScratchRootType.getInstance().createScratchFile(
             project,
             "project-files-dump.txt",
             Language.findInstancesByMimeType("text/plain").firstOrNull() ?: Language.ANY,
             text,
             ScratchFileService.Option.create_new_always
-          ) ?: return@invokeLater
+          ) ?: return@Runnable
 
           PsiNavigationSupport.getInstance().createNavigatable(project, file, 0).navigate(true)
-        }
+        }, project.disposed)
       }
     }.queue()
   }
