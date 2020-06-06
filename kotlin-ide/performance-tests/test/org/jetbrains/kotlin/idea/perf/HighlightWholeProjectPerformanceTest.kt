@@ -11,12 +11,10 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.perf.util.*
 import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.junit.Ignore
 import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(JUnit3RunnerWithInners::class)
-@Ignore("[VD] temporary disable for kotlin-ide")
 class HighlightWholeProjectPerformanceTest : UsefulTestCase() {
 
     override fun setUp() {

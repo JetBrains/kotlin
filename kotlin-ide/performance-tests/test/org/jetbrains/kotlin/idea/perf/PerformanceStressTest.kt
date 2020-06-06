@@ -13,11 +13,9 @@ import org.jetbrains.kotlin.idea.perf.util.PerformanceSuite.TypingConfig
 import org.jetbrains.kotlin.idea.perf.util.suite
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.junit.Ignore
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3RunnerWithInners::class)
-@Ignore("[VD] temporary disable for kotlin-ide")
 class PerformanceStressTest : UsefulTestCase() {
 
     fun testLotsOfOverloadedMethods() {

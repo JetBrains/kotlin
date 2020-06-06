@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.idea.perf.util.ExternalProject
 import org.jetbrains.kotlin.idea.perf.util.lastPathSegment
 import org.jetbrains.kotlin.idea.perf.util.suite
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.junit.Ignore
 import org.junit.runner.RunWith
 
 /**
@@ -20,7 +19,6 @@ import org.junit.runner.RunWith
  * @TODO Should be run before typing tests as the testing project becomes unusable afterwards.
  */
 @RunWith(JUnit3RunnerWithInners::class)
-@Ignore("[VD] temporary disable for kotlin-ide")
 class AHeavyInspectionsPerformanceTest : UsefulTestCase() {
     val listOfFiles = arrayOf(
         "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/NewMultiplatformIT.kt",

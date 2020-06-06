@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.TestRoot;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 /*
@@ -22,7 +21,6 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("../completion/testData/handlers/charFilter")
-@Ignore("[VD] temporary disable for kotlin-ide")
 public class PerformanceCompletionCharFilterTestGenerated extends AbstractPerformanceCompletionCharFilterTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);

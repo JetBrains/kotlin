@@ -19,11 +19,9 @@ import org.jetbrains.kotlin.idea.testFramework.Fixture
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScriptFile
 import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction.GRADLE_PROJECT
-import org.junit.Ignore
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.test.assertNotEquals
 
-@Ignore("[VD] temporary disable for kotlin-ide")
 class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
     companion object {
