@@ -11,13 +11,13 @@ plugins {
 
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
-  compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.4-M1")
+  compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable")
 
   kapt("com.google.auto.service:auto-service:1.0-rc6")
   compileOnly("com.google.auto.service:auto-service-annotations:1.0-rc6")
 
   testImplementation(kotlin("test-junit"))
-  testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.4-M1")
+  testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
   testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.2.6")
 }
 
