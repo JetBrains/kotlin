@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,7 @@ private val DYNAMIC_EXTENSION_FQ_NAME = FqName("kotlin.internal.DynamicExtension
 private val BUILDER_INFERENCE_ANNOTATION_FQ_NAME = FqName("kotlin.BuilderInference")
 
 // @HidesMembers annotation only has effect for members with these names
-val HIDES_MEMBERS_NAME_LIST = setOf(Name.identifier("forEach"))
+val HIDES_MEMBERS_NAME_LIST = setOf(Name.identifier("forEach"), Name.identifier("addSuppressed"))
 
 fun KotlinType.hasNoInferAnnotation(): Boolean = annotations.hasAnnotation(NO_INFER_ANNOTATION_FQ_NAME)
 
