@@ -61,7 +61,7 @@ class Stats(
         )) {
             val n = "$id : ${v.first}"
 
-            TeamCity.test(n, durationMs = v.third) {
+            TeamCity.test(n, durationMs = v.third, includeStats = false) {
                 TeamCity.statValue("$id${v.second}", v.third)
             }
         }
@@ -80,7 +80,7 @@ class Stats(
                 val shortName = if (perfCounterName.endsWith(": time")) n.removeSuffix(": time") else null
 
                 shortName?.let {
-                    TeamCity.test(it, durationMs = mean) {
+                    TeamCity.test(it, durationMs = mean, includeStats = false) {
                         TeamCity.statValue(it, mean)
                     }
                 }
