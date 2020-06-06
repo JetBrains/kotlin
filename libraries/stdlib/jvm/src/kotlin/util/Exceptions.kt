@@ -65,6 +65,7 @@ public actual fun Throwable.stackTraceToString(): String {
  * suppressed in order to deliver this exception.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.HidesMembers
 public actual fun Throwable.addSuppressed(exception: Throwable) {
     if (this !== exception)
         IMPLEMENTATIONS.addSuppressed(this, exception)
