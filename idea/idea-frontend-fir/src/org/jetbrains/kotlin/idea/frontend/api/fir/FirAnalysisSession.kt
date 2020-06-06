@@ -12,10 +12,8 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.isSuspend
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -25,10 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
@@ -40,19 +35,24 @@ import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper.toTargetPs
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-internal class FirAnalysisSession(
+class FirAnalysisSession(
     project: Project
-) : FrontendAnalysisSession(), Invalidatable by ReadActionConfinementValidityToken(project) {
+) : FrontendAnalysisSession() {
+    private val validityToken = ReadActionConfinementValidityToken(project)
+    override fun isValid(): Boolean = validityToken.isValid()
+    override fun invalidationReason(): String = validityToken.invalidationReason()
+
+    constructor(element: KtElement) : this(element.project)
+
     init {
         assertIsValid()
     }
 
-    override fun getSmartCastedToTypes(expression: KtExpression): Collection<KotlinTypeMarker>? {
+    override fun getSmartCastedToTypes(expression: KtExpression): Collection<TypeInfo>? {
         assertIsValid()
         // TODO filter out not used smartcasts
-        return expression.getOrBuildFirSafe<FirExpressionWithSmartcast>()?.typesFromSmartCast
+        return expression.getOrBuildFirSafe<FirExpressionWithSmartcast>()?.typesFromSmartCast?.map { it.asTypeInfo(expression.session) }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -63,35 +63,39 @@ internal class FirAnalysisSession(
         if (qualifiedExpression.dispatchReceiver !is FirExpressionWithSmartcast
             && qualifiedExpression.extensionReceiver !is FirExpressionWithSmartcast
         ) return emptyList()
+        val session = expression.session
         return buildList {
             (qualifiedExpression.dispatchReceiver as? FirExpressionWithSmartcast)?.let { smartCasted ->
-                ImplicitReceiverSmartCast(smartCasted.typesFromSmartCast, ImplicitReceiverSmartcastKind.DISPATCH)
+                ImplicitReceiverSmartCast(
+                    smartCasted.typesFromSmartCast.map { it.asTypeInfo(session) },
+                    ImplicitReceiverSmartcastKind.DISPATCH
+                )
             }?.let(::add)
             (qualifiedExpression.extensionReceiver as? FirExpressionWithSmartcast)?.let { smartCasted ->
-                ImplicitReceiverSmartCast(smartCasted.typesFromSmartCast, ImplicitReceiverSmartcastKind.EXTENSION)
+                ImplicitReceiverSmartCast(
+                    smartCasted.typesFromSmartCast.map { it.asTypeInfo(session) },
+                    ImplicitReceiverSmartcastKind.EXTENSION
+                )
             }?.let(::add)
         }
     }
 
-    override fun renderType(type: KotlinTypeMarker): String {
+
+    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): TypeInfo? {
         assertIsValid()
-        return type.asConeType().render()
+        val firDeclaration = declaration.toFir<FirCallableDeclaration<*>>() ?: return null
+        return firDeclaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.asTypeInfo(declaration.session)
     }
 
-    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KotlinTypeMarker? {
+    override fun getKtExpressionType(expression: KtExpression): TypeInfo? {
         assertIsValid()
-        return declaration.toFir<FirCallableDeclaration<*>>()?.returnTypeRef?.coneTypeSafe()
-    }
-
-    override fun getKtExpressionType(expression: KtExpression): ConeKotlinType? {
-        assertIsValid()
-        return expression.toFir<FirExpression>()?.typeRef?.coneTypeSafe()
+        return expression.toFir<FirExpression>()?.typeRef?.coneTypeSafe<ConeKotlinType>()?.asTypeInfo(expression.session)
     }
 
     override fun isSubclassOf(klass: KtClassOrObject, superClassId: ClassId): Boolean {
         assertIsValid()
         var result = false
-        forEachSubClass(klass.toFir() ?: return false) { type ->
+        forEachSuperClass(klass.toFir() ?: return false) { type ->
             result = result || type.firClassLike(klass.session)?.symbol?.classId == superClassId
         }
         return result
@@ -155,16 +159,23 @@ internal class FirAnalysisSession(
     private inline fun <reified F : FirElement> KtElement.toFir(phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE): F? =
         getOrBuildFir(phase) as? F
 
-    private fun forEachSubClass(firClass: FirClass<*>, action: (FirResolvedTypeRef) -> Unit) {
+    private fun forEachSuperClass(firClass: FirClass<*>, action: (FirResolvedTypeRef) -> Unit) {
         firClass.superTypeRefs.forEach { superType ->
             (superType as? FirResolvedTypeRef)?.let(action)
-            (superType.firClassLike(firClass.session) as? FirClass<*>?)?.let { forEachSubClass(it, action) }
+            (superType.firClassLike(firClass.session) as? FirClass<*>?)?.let { forEachSuperClass(it, action) }
         }
     }
 
+    private fun ConeKotlinType.asTypeInfo(session: FirSession) =
+        ConeTypeInfo(this, createTypeCheckingContext(session), validityToken)
+
+    private fun createTypeCheckingContext(session: FirSession) = ConeTypeCheckerContext(
+        isErrorTypeEqualsToAnything = true, // TODO?
+        isStubTypeEqualsToAnything = true,  // TODO?
+        session = session
+    )
+
     companion object {
-        private fun KotlinTypeMarker.asConeType(): ConeKotlinType =
-            this as? ConeKotlinType ?: error("$this should be ConeKotlinType")
 
         private val kotlinFunctionInvokeCallableIds = (0..23).flatMapTo(hashSetOf()) { arity ->
             listOf(
