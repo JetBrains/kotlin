@@ -1747,6 +1747,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util/intellij.platform.util.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util/intellij.platform.util.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util-class-loader/intellij.platform.util.classLoader.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util-class-loader/intellij.platform.util.classLoader.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util/collections/intellij.platform.util.collections.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util/collections/intellij.platform.util.collections.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util/diagnostic/intellij.platform.util.diagnostic.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util/diagnostic/intellij.platform.util.diagnostic.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util-ex/intellij.platform.util.ex.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util-ex/intellij.platform.util.ex.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util-rt/intellij.platform.util.rt.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util-rt/intellij.platform.util.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/util/strings/intellij.platform.util.strings.iml" filepath="$PROJECT_DIR$/intellij/community/platform/util/strings/intellij.platform.util.strings.iml" />

@@ -29,6 +29,7 @@
       <entry name="!*.bnf" />
     </wildcardResourcePatterns>
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="false" />
       <profile name="JMH" enabled="true">
         <processor name="org.openjdk.jmh.generators.BenchmarkProcessor" />
         <module name="fleet.rhizomedb" />
