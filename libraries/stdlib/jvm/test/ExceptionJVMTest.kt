@@ -81,6 +81,11 @@ class ExceptionJVMTest {
         e1.addSuppressed(e2)
     }
 
+    @Test fun addSuppressedSelfDoesNotThrow() {
+        val e1 = Throwable()
+        e1.addSuppressed(e1) // should not throw
+    }
+
     @Test fun circularCauseStackTrace() {
         val e1 = Exception("cause")
         val e2 = Error("induced", e1)
