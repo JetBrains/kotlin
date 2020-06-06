@@ -105,13 +105,14 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
     return CreateFileFromTemplateDialog.createDialog(project);
   }
 
-  protected void postProcess(T createdElement, String templateName, Map<String,String> customProperties) {
+  protected void postProcess(@NotNull T createdElement, String templateName, Map<String, String> customProperties) {
   }
 
   @Nullable
   protected abstract T createFile(String name, String templateName, PsiDirectory dir);
 
-  protected abstract void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder);
+  protected abstract void buildDialog(@NotNull Project project, @NotNull PsiDirectory directory,
+                                      @NotNull CreateFileFromTemplateDialog.Builder builder);
 
   @NonNls
   @Nullable
