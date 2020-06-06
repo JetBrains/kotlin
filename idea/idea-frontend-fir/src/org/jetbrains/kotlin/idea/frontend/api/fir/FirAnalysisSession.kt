@@ -5,22 +5,35 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.isSuspend
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.idea.fir.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.idea.fir.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
+import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.session
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper.toTargetPsi
@@ -29,15 +42,22 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-class FirAnalysisSession : FrontendAnalysisSession() {
+internal class FirAnalysisSession(
+    project: Project
+) : FrontendAnalysisSession(), Invalidatable by ReadActionConfinementValidityToken(project) {
+    init {
+        assertIsValid()
+    }
 
     override fun getSmartCastedToTypes(expression: KtExpression): Collection<KotlinTypeMarker>? {
+        assertIsValid()
         // TODO filter out not used smartcasts
         return expression.getOrBuildFirSafe<FirExpressionWithSmartcast>()?.typesFromSmartCast
     }
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast> {
+        assertIsValid()
         // TODO filter out not used smartcasts
         val qualifiedExpression = expression.getOrBuildFirSafe<FirQualifiedAccessExpression>() ?: return emptyList()
         if (qualifiedExpression.dispatchReceiver !is FirExpressionWithSmartcast
@@ -53,16 +73,23 @@ class FirAnalysisSession : FrontendAnalysisSession() {
         }
     }
 
-    override fun renderType(type: KotlinTypeMarker): String =
-        type.asConeType().render()
+    override fun renderType(type: KotlinTypeMarker): String {
+        assertIsValid()
+        return type.asConeType().render()
+    }
 
-    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KotlinTypeMarker? =
-        declaration.toFir<FirCallableDeclaration<*>>()?.returnTypeRef?.coneTypeSafe()
+    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KotlinTypeMarker? {
+        assertIsValid()
+        return declaration.toFir<FirCallableDeclaration<*>>()?.returnTypeRef?.coneTypeSafe()
+    }
 
-    override fun getKtExpressionType(expression: KtExpression): ConeKotlinType? =
-        expression.toFir<FirExpression>()?.typeRef?.coneTypeSafe()
+    override fun getKtExpressionType(expression: KtExpression): ConeKotlinType? {
+        assertIsValid()
+        return expression.toFir<FirExpression>()?.typeRef?.coneTypeSafe()
+    }
 
     override fun isSubclassOf(klass: KtClassOrObject, superClassId: ClassId): Boolean {
+        assertIsValid()
         var result = false
         forEachSubClass(klass.toFir() ?: return false) { type ->
             result = result || type.firClassLike(klass.session)?.symbol?.classId == superClassId
@@ -70,20 +97,25 @@ class FirAnalysisSession : FrontendAnalysisSession() {
         return result
     }
 
-    override fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic> =
-        LowLevelFirApiFacade.getDiagnosticsFor(element)
+    override fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic> {
+        assertIsValid()
+        return LowLevelFirApiFacade.getDiagnosticsFor(element)
+    }
 
     override fun resolveCall(call: KtBinaryExpression): CallInfo? {
+        assertIsValid()
         val firCall = call.toFir<FirFunctionCall>() ?: return null
         return resolveCall(firCall, call)
     }
 
     override fun resolveCall(call: KtCallExpression): CallInfo? {
+        assertIsValid()
         val firCall = call.toFir<FirFunctionCall>() ?: return null
         return resolveCall(firCall, call)
     }
 
     private fun resolveCall(firCall: FirFunctionCall, callExpression: KtExpression): CallInfo? {
+        assertIsValid()
         val session = callExpression.session
         val resolvedFunctionPsi = firCall.calleeReference.toTargetPsi(session)
         val resolvedCalleeSymbol = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
