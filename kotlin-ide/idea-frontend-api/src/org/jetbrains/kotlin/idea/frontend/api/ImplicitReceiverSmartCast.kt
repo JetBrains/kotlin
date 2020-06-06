@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-
-data class ImplicitReceiverSmartCast(val types: Collection<KotlinTypeMarker>, val kind: ImplicitReceiverSmartcastKind)
+data class ImplicitReceiverSmartCast(val types: Collection<TypeInfo>, val kind: ImplicitReceiverSmartcastKind)
 
 enum class ImplicitReceiverSmartcastKind {
     DISPATCH, EXTENSION

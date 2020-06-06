@@ -5,20 +5,19 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 abstract class FrontendAnalysisSession : Invalidatable {
+    abstract fun getSmartCastedToTypes(expression: KtExpression): Collection<TypeInfo>?
 
     abstract fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast>
 
-    abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KotlinTypeMarker?
+    abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): TypeInfo?
 
-    abstract fun renderType(type: KotlinTypeMarker): String
-
-    abstract fun getKtExpressionType(expression: KtExpression): KotlinTypeMarker?
+    abstract fun getKtExpressionType(expression: KtExpression): TypeInfo?
 
     abstract fun isSubclassOf(klass: KtClassOrObject, superClassId: ClassId): Boolean
 
