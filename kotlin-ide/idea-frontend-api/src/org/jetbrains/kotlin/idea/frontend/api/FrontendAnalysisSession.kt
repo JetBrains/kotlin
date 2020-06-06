@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-abstract class FrontendAnalysisSession {
-    abstract fun getSmartCastedToTypes(expression: KtExpression): Collection<KotlinTypeMarker>?
+abstract class FrontendAnalysisSession : Invalidatable {
 
     abstract fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast>
 
