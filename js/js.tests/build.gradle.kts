@@ -128,6 +128,8 @@ fun Test.setUpBoxTests() {
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
 
+    systemProperty("overwrite.output", findProperty("overwrite.output") ?: "false")
+
     val prefixForPpropertiesToForward = "fd."
     for ((key, value) in properties) {
         if (key.startsWith(prefixForPpropertiesToForward)) {
