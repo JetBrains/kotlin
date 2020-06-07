@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -72,6 +72,25 @@ class StringJVMTest {
         assertEquals("UTF-32", Charsets.UTF_32.name())
         assertEquals("UTF-32LE", Charsets.UTF_32LE.name())
         assertEquals("UTF-32BE", Charsets.UTF_32BE.name())
+    }
+
+    @Test fun capitalize() {
+        // Case mapping that results in multiple characters (validating Character.toUpperCase was not used).
+        assertEquals("SSßß", "ßßß".capitalize())
+
+        // Case mapping where title case is different than uppercase and so Character.toTitleCase is preferred.
+        assertEquals("ǲǳǳ", "ǳǳǳ".capitalize())
+        assertEquals("ǱǱǱ", "ǱǱǱ".capitalize())
+    }
+
+    @Test fun decapitalize() {
+        assertEquals("aBC", "ABC".decapitalize())
+        assertEquals("abc", "Abc".decapitalize())
+        assertEquals("abc", "abc".decapitalize())
+
+        // Case mapping where title case is different than uppercase.
+        assertEquals("ǳǳǳ", "Ǳǳǳ".decapitalize())
+        assertEquals("ǳǳǳ", "ǲǳǳ".decapitalize())
     }
 
     @Test fun capitalizeLocale() {

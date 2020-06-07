@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -208,8 +208,26 @@ public expect fun String.toUpperCase(): String
  * @sample samples.text.Strings.toLowerCase
  */
 public expect fun String.toLowerCase(): String
+
+/**
+ * Returns a copy of this string having its first letter titlecased using the rules of the default locale,
+ * or the original string if it's empty or already starts with a title case letter.
+ *
+ * The title case of a character is usually the same as its upper case with several exceptions.
+ * The particular list of characters with the special title case form depends on the underlying platform.
+ *
+ * @sample samples.text.Strings.capitalize
+ */
 public expect fun String.capitalize(): String
+
+/**
+ * Returns a copy of this string having its first letter lowercased using the rules of the default locale,
+ * or the original string if it's empty or already starts with a lower case letter.
+ *
+ * @sample samples.text.Strings.decapitalize
+ */
 public expect fun String.decapitalize(): String
+
 public expect fun CharSequence.repeat(n: Int): String
 
 
