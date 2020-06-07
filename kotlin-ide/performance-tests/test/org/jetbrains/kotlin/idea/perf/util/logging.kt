@@ -42,16 +42,18 @@ object TeamCity {
         test(name, durationMs, errorDetails = if (errors.isNotEmpty()) toDetails(errors) else null, block = block)
     }
 
-    fun test(name: String, durationMs: Long? = null, includeStats: Boolean = true, errorDetails: String? = null, block: () -> Unit) {
-        testStarted(name)
+    fun test(name: String?, durationMs: Long? = null, includeStats: Boolean = true, errorDetails: String? = null, block: () -> Unit) {
+        name?.let { testStarted(it) }
         try {
             block()
         } finally {
-            if (includeStats) statValue(name, durationMs ?: -1)
-            if (errorDetails != null) {
-                testFailed(name, errorDetails)
-            } else {
-                testFinished(name, durationMs)
+            name?.let {
+                if (includeStats) statValue(it, durationMs ?: -1)
+                if (errorDetails != null) {
+                    testFailed(it, errorDetails)
+                } else {
+                    testFinished(it, durationMs)
+                }
             }
         }
     }
