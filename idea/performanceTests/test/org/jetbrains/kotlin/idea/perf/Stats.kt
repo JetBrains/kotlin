@@ -77,10 +77,8 @@ class Stats(
 
                 val shortName = if (perfCounterName.endsWith(": time")) n.removeSuffix(": time") else null
 
-                shortName?.let {
-                    TeamCity.test(it, durationMs = mean, includeStats = false) {
-                        TeamCity.statValue(it, mean)
-                    }
+                TeamCity.test(shortName, durationMs = mean) {
+                    TeamCity.statValue(n, mean)
                 }
             }
 
@@ -172,7 +170,7 @@ class Stats(
                         "$testName stability is $stabilityPercentage %, above accepted level of $acceptanceStabilityLevel %"
                     }
 
-                    TeamCity.test(stabilityName, errorDetails = error) {
+                    TeamCity.test(stabilityName, errorDetails = error, includeStats = false) {
                         TeamCity.statValue(stabilityName, stabilityPercentage)
                     }
                 }
