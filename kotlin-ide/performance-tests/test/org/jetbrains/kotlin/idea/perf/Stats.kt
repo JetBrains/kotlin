@@ -170,7 +170,7 @@ class Stats(
                         "$testName stability is $stabilityPercentage %, above accepted level of $acceptanceStabilityLevel %"
                     }
 
-                    TeamCity.test(stabilityName, errorDetails = error) {
+                    TeamCity.test(stabilityName, errorDetails = error, includeStats = false) {
                         TeamCity.statValue(stabilityName, stabilityPercentage)
                     }
                 }
