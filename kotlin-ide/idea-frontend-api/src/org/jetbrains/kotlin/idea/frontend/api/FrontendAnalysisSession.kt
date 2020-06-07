@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
@@ -15,15 +14,14 @@ abstract class FrontendAnalysisSession : Invalidatable {
 
     abstract fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast>
 
-    abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): TypeInfo?
+    abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): TypeInfo
 
-    abstract fun getKtExpressionType(expression: KtExpression): TypeInfo?
+    abstract fun getKtExpressionType(expression: KtExpression): TypeInfo
 
     abstract fun isSubclassOf(klass: KtClassOrObject, superClassId: ClassId): Boolean
 
     abstract fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic>
 
     abstract fun resolveCall(call: KtCallExpression): CallInfo?
-
     abstract fun resolveCall(call: KtBinaryExpression): CallInfo?
 }
