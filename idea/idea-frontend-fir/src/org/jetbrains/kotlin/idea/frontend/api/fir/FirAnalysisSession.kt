@@ -24,11 +24,8 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.idea.fir.getOrBuildFir
-import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
-import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
+import org.jetbrains.kotlin.idea.fir.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
-import org.jetbrains.kotlin.idea.fir.session
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper.toTargetPsi
@@ -81,21 +78,21 @@ class FirAnalysisSession(
     }
 
 
-    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): TypeInfo? {
+    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): TypeInfo {
         assertIsValid()
-        val firDeclaration = declaration.toFir<FirCallableDeclaration<*>>() ?: return null
-        return firDeclaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.asTypeInfo(declaration.session)
+        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration<*>>()
+        return firDeclaration.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().asTypeInfo(declaration.session)
     }
 
-    override fun getKtExpressionType(expression: KtExpression): TypeInfo? {
+    override fun getKtExpressionType(expression: KtExpression): TypeInfo {
         assertIsValid()
-        return expression.toFir<FirExpression>()?.typeRef?.coneTypeSafe<ConeKotlinType>()?.asTypeInfo(expression.session)
+        return expression.getOrBuildFirOfType<FirExpression>().typeRef.coneTypeUnsafe<ConeKotlinType>().asTypeInfo(expression.session)
     }
 
     override fun isSubclassOf(klass: KtClassOrObject, superClassId: ClassId): Boolean {
         assertIsValid()
         var result = false
-        forEachSuperClass(klass.toFir() ?: return false) { type ->
+        forEachSuperClass(klass.getOrBuildFirSafe() ?: return false) { type ->
             result = result || type.firClassLike(klass.session)?.symbol?.classId == superClassId
         }
         return result
@@ -108,13 +105,13 @@ class FirAnalysisSession(
 
     override fun resolveCall(call: KtBinaryExpression): CallInfo? {
         assertIsValid()
-        val firCall = call.toFir<FirFunctionCall>() ?: return null
+        val firCall = call.getOrBuildFirSafe<FirFunctionCall>() ?: return null
         return resolveCall(firCall, call)
     }
 
     override fun resolveCall(call: KtCallExpression): CallInfo? {
         assertIsValid()
-        val firCall = call.toFir<FirFunctionCall>() ?: return null
+        val firCall = call.getOrBuildFirSafe<FirFunctionCall>() ?: return null
         return resolveCall(firCall, call)
     }
 
@@ -155,9 +152,6 @@ class FirAnalysisSession(
         is PsiMethod -> SimpleJavaFunctionCallInfo(this)
         else -> null
     }
-
-    private inline fun <reified F : FirElement> KtElement.toFir(phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE): F? =
-        getOrBuildFir(phase) as? F
 
     private fun forEachSuperClass(firClass: FirClass<*>, action: (FirResolvedTypeRef) -> Unit) {
         firClass.superTypeRefs.forEach { superType ->

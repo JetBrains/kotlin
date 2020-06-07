@@ -20,15 +20,29 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.reflect.KClass
 
 fun KtElement.getOrBuildFir(
     phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
 ) = LowLevelFirApiFacade.getOrBuildFirFor(this, phase)
 
-
 inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
     phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
 ) = LowLevelFirApiFacade.getOrBuildFirFor(this, phase) as? E
+
+inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
+    phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
+): E {
+    val fir = LowLevelFirApiFacade.getOrBuildFirFor(this, phase)
+    if (fir is E) return fir
+    throw InvalidFirElementTypeException(this, E::class, fir::class)
+}
+
+class InvalidFirElementTypeException(
+    ktElement: KtElement,
+    expectedFirClass: KClass<out FirElement>,
+    actualFirClass: KClass<out FirElement>
+) : IllegalStateException("For $ktElement with text `${ktElement.text}` the $expectedFirClass expected, but $actualFirClass found")
 
 
 val KtElement.session
