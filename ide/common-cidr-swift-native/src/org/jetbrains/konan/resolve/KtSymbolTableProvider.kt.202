@@ -20,7 +20,7 @@ import org.jetbrains.konan.resolve.konan.KonanTarget.Companion.PRODUCT_MODULE_NA
 import org.jetbrains.konan.resolve.translation.KtFileTranslator.Companion.isKtTranslationSupported
 import org.jetbrains.konan.resolve.translation.KtFileTranslator.Companion.ktTranslator
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener.Companion.getInsideCodeBlockModificationScope
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListenerCompat.Companion.getInsideCodeBlockModificationScope
 import org.jetbrains.kotlin.psi.KtFile
 
 class KtSymbolTableProvider : SymbolTableProvider() {

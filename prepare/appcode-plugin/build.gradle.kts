@@ -44,7 +44,7 @@ dependencies {
     cidrPlugin(project(":kotlin-ultimate:prepare:cidr-plugin"))
     cidrGradleTooling(project(":kotlin-ultimate:ide:cidr-gradle-tooling"))
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
-    runtime(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
+    runtime(project(":kotlin-ultimate:ide:common-cidr-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:appcode-native")) { isTransitive = false }
     runtime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:backend.native.jar"))
 }

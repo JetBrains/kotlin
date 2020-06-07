@@ -6,6 +6,7 @@ plugins {
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
+val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
 val ijProductBranch: (String) -> Int by ultimateTools
 val disableBuildTasks: Project.(String) -> Unit by ultimateTools
 val proprietaryRepositories: Project.() -> Unit by ultimateTools
@@ -13,11 +14,13 @@ val proprietaryRepositories: Project.() -> Unit by ultimateTools
 val appcodeVersion: String by rootProject.extra
 val appcodeUnscrambledJarDir: File by rootProject.extra
 
-proprietaryRepositories()
+proprietaryRepositories(project)
+
+addIdeaNativeModuleDeps(project)
 
 dependencies {
     compileOnly(fileTree(appcodeUnscrambledJarDir) { include("**/*.jar") })
-    api(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
+    api(project(":kotlin-ultimate:ide:common-cidr-native"))
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {
