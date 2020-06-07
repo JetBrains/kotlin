@@ -13,7 +13,12 @@ class ControlFlow {
     fun repeat() {
         // greets three times
         repeat(3) {
-            println("Hello with count $it")
+            println("Hello")
+        }
+        
+        // greets with a count
+        repeat(3) { count ->
+            println("Hello with count $count")
         }
 
         repeat(0) {
