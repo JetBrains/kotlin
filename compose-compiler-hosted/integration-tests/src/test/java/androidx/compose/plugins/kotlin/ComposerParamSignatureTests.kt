@@ -152,7 +152,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         @Composable fun Foo(a: Bar?) {}
         """
     ) {
-        val testClass = it.split("public final class ").single { it.startsWith("TestKt") }
+        val testClass = it.split("public final class ").single { it.startsWith("test/TestKt") }
         assert(!testClass.contains(
             "INVOKEVIRTUAL Bar.unbox-impl ()I"
         ))
@@ -174,7 +174,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         }
         """
     ) {
-        assert(it.contains("public final static Foo-T150t4E(ILandroidx/compose/Composer;III)V"))
+        assert(it.contains("public final static Foo-RDdOdTo(ILandroidx/compose/Composer;III)V"))
     }
 
     @Test

@@ -25,6 +25,16 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         dumpTree: Boolean = false
     ) = verifyComposeIrTransform(
         """
+            @file:OptIn(
+              ExperimentalComposeApi::class, 
+              InternalComposeApi::class,
+              ComposeCompilerApi::class
+            )
+            package test
+
+            import androidx.compose.ExperimentalComposeApi
+            import androidx.compose.InternalComposeApi
+            import androidx.compose.ComposeCompilerApi
             import androidx.compose.Composable
             import androidx.compose.ComposableContract
 
@@ -286,7 +296,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
                 { it: TextView ->
                 }
               }, %composer, <>, 0)
-              %composer.emit(-1248659174, { context: @[ParameterName(name = 'context')] Context ->
+              %composer.emit(-1248659431, { context: @[ParameterName(name = 'context')] Context ->
                 TextView(context)
               }
               ) {

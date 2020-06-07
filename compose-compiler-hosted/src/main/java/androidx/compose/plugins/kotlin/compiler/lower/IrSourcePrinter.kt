@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBreak
 import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCatch
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -1057,6 +1058,11 @@ private class IrSourcePrinterVisitor(
     override fun visitThrow(expression: IrThrow) {
         print("throw ")
         expression.value.print()
+    }
+
+    override fun visitClassReference(expression: IrClassReference) {
+        print(expression.classType.renderSrc())
+        print("::class")
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
