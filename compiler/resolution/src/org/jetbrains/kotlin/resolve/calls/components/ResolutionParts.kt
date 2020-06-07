@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckVisibility : ResolutionPart() {
@@ -314,27 +315,28 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
         dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> = listOf()
     ): List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> {
         val context = asConstraintSystemCompleterContext()
-        val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.mapNotNull { (typeConstructor, constraints) ->
-            val upperBounds = constraints.constraints.filter {
-                it.position.from is DeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER
-            }
+        val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.asSequence()
+            .flatMap { (typeConstructor, constraints) ->
+                val upperBounds = constraints.constraints.filter {
+                    it.position.from is DeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER
+                }
 
-            upperBounds.mapNotNull { constraint ->
-                if (constraint.type.typeConstructor(context) != variable) {
-                    val suitableUpperBound = upperBounds.find { upperBound ->
-                        with(context) { upperBound.type.contains { it.typeConstructor() == variable } }
-                    }?.type
+                upperBounds.mapNotNull { constraint ->
+                    if (constraint.type.typeConstructor(context) != variable) {
+                        val suitableUpperBound = upperBounds.find { upperBound ->
+                            with(context) { upperBound.type.contains { it.typeConstructor() == variable } }
+                        }?.type
 
-                    if (suitableUpperBound != null) typeConstructor to suitableUpperBound else null
-                } else typeConstructor to null
-            }
-        }.flatten().filter { it !in dependentTypeParametersSeen && it.first != variable }
+                        if (suitableUpperBound != null) typeConstructor to suitableUpperBound else null
+                    } else typeConstructor to null
+                }
+            }.filter { it !in dependentTypeParametersSeen && it.first != variable }.toList()
 
-        return dependentTypeParameters + dependentTypeParameters.mapNotNull { (typeConstructor, _) ->
+        return dependentTypeParameters + dependentTypeParameters.flatMapTo(SmartList()) { (typeConstructor, _) ->
             if (typeConstructor != variable) {
                 getDependentTypeParameters(typeConstructor, dependentTypeParameters + dependentTypeParametersSeen)
-            } else null
-        }.flatten()
+            } else emptyList()
+        }
     }
 
     private fun NewConstraintSystem.isContainedInInvariantOrContravariantPositionsAmongUpperBound(
