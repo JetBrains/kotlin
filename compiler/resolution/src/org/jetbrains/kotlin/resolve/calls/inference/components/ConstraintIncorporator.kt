@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstit
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -98,7 +99,7 @@ class ConstraintIncorporator(
 
         for (otherTypeVariable in otherInMyConstraint) {
             // to avoid ConcurrentModificationException
-            val otherConstraints = ArrayList(this.getConstraintsForVariable(otherTypeVariable))
+            val otherConstraints = SmartList(this.getConstraintsForVariable(otherTypeVariable))
             for (otherConstraint in otherConstraints) {
                 generateNewConstraint(typeVariable, constraint, otherTypeVariable, otherConstraint)
             }
@@ -231,7 +232,7 @@ class ConstraintIncorporator(
             )
         ) return
 
-        val derivedFrom = (baseConstraint.derivedFrom + otherConstraint.derivedFrom).toMutableSet()
+        val derivedFrom = SmartSet.create(baseConstraint.derivedFrom).also { it.addAll(otherConstraint.derivedFrom) }
         if (otherVariable in derivedFrom) return
 
         derivedFrom.add(otherVariable)
@@ -274,7 +275,7 @@ class ConstraintIncorporator(
     }
 
     fun Context.getNestedTypeVariables(type: KotlinTypeMarker): List<TypeVariableMarker> =
-        getNestedArguments(type).mapNotNull { getTypeVariable(it.getType().typeConstructor()) }
+        getNestedArguments(type).mapNotNullTo(SmartList()) { getTypeVariable(it.getType().typeConstructor()) }
 
 
     private fun KotlinTypeMarker.substitute(c: Context, typeVariable: TypeVariableMarker, value: KotlinTypeMarker): KotlinTypeMarker {
@@ -289,7 +290,7 @@ class ConstraintIncorporator(
 }
 
 private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinTypeMarker): List<TypeArgumentMarker> {
-    val result = ArrayList<TypeArgumentMarker>()
+    val result = SmartList<TypeArgumentMarker>()
     val stack = ArrayDeque<TypeArgumentMarker>()
 
     when (type) {
