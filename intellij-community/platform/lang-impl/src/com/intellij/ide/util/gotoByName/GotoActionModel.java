@@ -970,9 +970,11 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
       SimpleTextAttributes plain = new SimpleTextAttributes(STYLE_PLAIN, fg);
       SimpleTextAttributes highlighted = new SimpleTextAttributes(null, fg, null, STYLE_SEARCH_MATCH);
       List<TextRange> fragments = new ArrayList<>();
+      nameComponent.setDynamicSearchMatchHighlighting(false);
       if (selected) {
         int matchStart = StringUtil.indexOfIgnoreCase(name, pattern, 0);
         if (matchStart >= 0) {
+          nameComponent.setDynamicSearchMatchHighlighting(true);
           fragments.add(TextRange.from(matchStart, pattern.length()));
         }
       }
