@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.structuralsearch.impl.matcher
+package com.jetbrains.kotlin.structuralsearch
 
 import com.google.common.collect.ImmutableBiMap
 import com.intellij.psi.PsiComment

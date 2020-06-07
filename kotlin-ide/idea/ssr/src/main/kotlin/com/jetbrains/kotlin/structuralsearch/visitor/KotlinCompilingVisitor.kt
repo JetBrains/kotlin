@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler
+package com.jetbrains.kotlin.structuralsearch.visitor
 
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
@@ -10,9 +10,7 @@ import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
 import com.intellij.structuralsearch.impl.matcher.handlers.MatchingHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementVisitor
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.getCommentText
+import com.jetbrains.kotlin.structuralsearch.getCommentText
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -20,8 +18,7 @@ import org.jetbrains.kotlin.psi.*
 import java.util.regex.Pattern
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
-
-    private val ourSubstitutionPattern = Pattern.compile("\\b(_____\\w+)\\b")
+    private val mySubstitutionPattern = Pattern.compile("\\b(_____\\w+)\\b")
 
     fun compile(topLevelElements: Array<out PsiElement>?) {
         val optimizer = KotlinWordOptimizer()
@@ -37,15 +34,14 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     inner class KotlinWordOptimizer : KotlinRecursiveElementWalkingVisitor(), WordOptimizer
 
-    private fun getHandler(element: PsiElement) =
-        myCompilingVisitor.context.pattern.getHandler(element)
+    private fun getHandler(element: PsiElement) = myCompilingVisitor.context.pattern.getHandler(element)
 
     private fun setHandler(element: PsiElement, handler: MatchingHandler) =
         myCompilingVisitor.context.pattern.setHandler(element, handler)
 
     private fun processPatternStringWithFragments(element: PsiElement, text: String = element.text) {
-        if (ourSubstitutionPattern.matcher(text).find()) {
-            myCompilingVisitor.processPatternStringWithFragments(element.text, COMMENT, ourSubstitutionPattern)?.let {
+        if (mySubstitutionPattern.matcher(text).find()) {
+            myCompilingVisitor.processPatternStringWithFragments(element.text, COMMENT, mySubstitutionPattern)?.let {
                 element.putUserData(CompiledPattern.HANDLER_KEY, it)
             }
         }
@@ -170,7 +166,10 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitComment(comment: PsiComment) {
         super.visitComment(comment)
-        processPatternStringWithFragments(comment, getCommentText(comment).trim())
+        processPatternStringWithFragments(
+            comment, getCommentText(comment)
+                .trim()
+        )
     }
 
     private fun visitKDoc(kDoc: KDoc) {

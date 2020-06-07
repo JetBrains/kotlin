@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.structuralsearch.impl.matcher
+package com.jetbrains.kotlin.structuralsearch.visitor
 
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
@@ -7,8 +7,9 @@ import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstitutionHandler
-import com.intellij.structuralsearch.impl.matcher.handlers.MatchingHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
+import com.jetbrains.kotlin.structuralsearch.binaryExprOpName
+import com.jetbrains.kotlin.structuralsearch.getCommentText
 import org.jetbrains.kotlin.fir.builder.toUnaryName
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
@@ -92,7 +93,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
         val other = getTreeElementDepar<KtExpression>() ?: return
-        myMatchingVisitor.result = when(other) {
+        myMatchingVisitor.result = when (other) {
             is KtArrayAccessExpression -> myMatchingVisitor.match(expression.arrayExpression, other.arrayExpression)
                     && myMatchingVisitor.matchSons(expression.indicesNode, other.indicesNode)
             is KtDotQualifiedExpression -> myMatchingVisitor.match(expression.arrayExpression, other.receiverExpression)
@@ -152,7 +153,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 val token = expression.operationToken
                 val left = expression.left
                 val right = expression.right
-                when  {
+                when {
                     token == KtTokens.IN_KEYWORD -> { // b.contains(a)
                         val parent = other.parent
                         val isNotNegated = if (parent is KtPrefixExpression) parent.operationToken != KtTokens.EXCL else true
@@ -426,7 +427,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitCallExpression(expression: KtCallExpression) {
         val other = getTreeElementDepar<KtExpression>() ?: return
-        myMatchingVisitor.result = when(other) {
+        myMatchingVisitor.result = when (other) {
             is KtCallExpression -> myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
                     && myMatchingVisitor.match(expression.typeArgumentList, other.typeArgumentList)
                     && matchValueArgumentList(expression.valueArguments, other.valueArguments)
@@ -568,7 +569,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         expression is KtBlockExpression && expression.statements.size == 1
     ) {
         val firstExpr = expression.firstStatement
-        if(firstExpr is KtReturnExpression) firstExpr.returnedExpression else firstExpr
+        if (firstExpr is KtReturnExpression) firstExpr.returnedExpression else firstExpr
     } else expression
 
     private fun normalizeExpression(expression: KtExpression?) = if (

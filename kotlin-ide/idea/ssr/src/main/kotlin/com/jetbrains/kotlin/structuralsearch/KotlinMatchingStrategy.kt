@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.structuralsearch.impl.matcher.strategies
+package com.jetbrains.kotlin.structuralsearch
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement

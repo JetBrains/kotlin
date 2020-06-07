@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.structuralsearch.impl.matcher
+package com.jetbrains.kotlin.structuralsearch
 
 import com.intellij.psi.PsiElement
 import com.intellij.structuralsearch.StructuralSearchUtil
@@ -14,7 +14,7 @@ class KotlinExprTypePredicate(
     private val ignoreCase: Boolean
 ) : MatchPredicate() {
     override fun match(matchedNode: PsiElement, start: Int, end: Int, context: MatchContext): Boolean {
-        return when(val node = StructuralSearchUtil.getParentIfIdentifier(matchedNode)) {
+        return when (val node = StructuralSearchUtil.getParentIfIdentifier(matchedNode)) {
             is KtExpression -> {
                 val resolvedType = node.resolveType()
                 searchedTypeName.equals(resolvedType.fqName.toString(), ignoreCase)

@@ -21,11 +21,9 @@ import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.ui.Configuration
 import com.intellij.structuralsearch.plugin.ui.UIUtil
 import com.intellij.util.SmartList
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinCompiledPattern
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinExprTypePredicate
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinMatchingVisitor
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.KotlinRecursiveElementWalkingVisitor
-import com.jetbrains.kotlin.structuralsearch.impl.matcher.compiler.KotlinCompilingVisitor
+import com.jetbrains.kotlin.structuralsearch.visitor.KotlinCompilingVisitor
+import com.jetbrains.kotlin.structuralsearch.visitor.KotlinMatchingVisitor
+import com.jetbrains.kotlin.structuralsearch.visitor.KotlinRecursiveElementWalkingVisitor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
@@ -38,7 +36,19 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     override fun createMatchingVisitor(globalVisitor: GlobalMatchingVisitor): KotlinMatchingVisitor =
         KotlinMatchingVisitor(globalVisitor)
 
-    override fun createCompiledPattern(): KotlinCompiledPattern = KotlinCompiledPattern()
+    override fun createCompiledPattern(): CompiledPattern = object : CompiledPattern() {
+        init {
+            strategy = KotlinMatchingStrategy
+        }
+
+        override fun getTypedVarPrefixes(): Array<String> = arrayOf(TYPED_VAR_PREFIX)
+
+        override fun isTypedVar(str: String): Boolean = when {
+            str.isEmpty() -> false
+            str[0] == '@' -> str.regionMatches(1, TYPED_VAR_PREFIX, 0, TYPED_VAR_PREFIX.length)
+            else -> str.startsWith(TYPED_VAR_PREFIX)
+        }
+    }
 
     override fun isMyLanguage(language: Language): Boolean = language == KotlinLanguage.INSTANCE
 
@@ -55,7 +65,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     override fun getPresentableElement(element: PsiElement?): PsiElement {
         val pElement = super.getPresentableElement(element)
         val parent = pElement.parent
-        return if(parent is KtProperty || parent is KtNamedFunction || parent is KtClass) parent else pElement
+        return if (parent is KtProperty || parent is KtNamedFunction || parent is KtClass) parent else pElement
     }
 
     override fun createPatternTree(
@@ -108,8 +118,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val description = error.errorDescription
         val parent = error.parent
         return when {
-            parent is KtTryExpression && KSSRBundle.message("error.expected.catch.or.finally") == description -> false // naked try
-            parent is KtAnnotatedExpression && KSSRBundle.message("error.expected.an.expression") == description  -> false
+            parent is KtTryExpression && KSSRBundle.message("error.expected.catch.or.finally") == description -> false //naked try
+            parent is KtAnnotatedExpression && KSSRBundle.message("error.expected.an.expression") == description -> false
             else -> true
         }
     }
@@ -120,7 +130,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val dialect = matchOptions.dialect
         val searchIsDeclaration = isProbableExpression(matchOptions.searchPattern, fileType, dialect, project)
         val replacementIsDeclaration = isProbableExpression(options.replacement, fileType, dialect, project)
-        if(searchIsDeclaration != replacementIsDeclaration) {
+        if (searchIsDeclaration != replacementIsDeclaration) {
             throw UnsupportedPatternException(
                 if (searchIsDeclaration) SSRBundle.message("replacement.template.is.not.expression.error.message")
                 else SSRBundle.message("search.template.is.not.expression.error.message")
@@ -136,10 +146,10 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         completePattern: Boolean,
         target: Boolean
     ): Boolean {
-        when(constraintName) {
+        when (constraintName) {
             UIUtil.TYPE -> variableNode?.let { varNode ->
                 val parent = varNode.parent
-                if(parent is KtExpression) return@isApplicableConstraint true
+                if (parent is KtExpression) return@isApplicableConstraint true
             } ?: return false
         }
         return super.isApplicableConstraint(constraintName, variableNode, completePattern, target)
@@ -171,6 +181,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         DocumentBasedReplaceHandler(project)
 
     companion object {
+        const val TYPED_VAR_PREFIX: String = "_____"
+
         fun getNonWhitespaceChildren(fragment: PsiElement): List<PsiElement> {
             var element = fragment.firstChild
             val result: MutableList<PsiElement> = SmartList()

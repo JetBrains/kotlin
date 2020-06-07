@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.structuralsearch.impl.matcher.handlers
+package com.jetbrains.kotlin.structuralsearch.handlers
 
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement

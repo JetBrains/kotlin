@@ -6,6 +6,7 @@ import java.util.function.Supplier
 
 object KSSRBundle {
     private const val BUNDLE = "KSSRBundle"
+
     private val dynamicBundle = object : DynamicBundle(BUNDLE) {}
 
     fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String =
