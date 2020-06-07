@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.fir.highlighter
 
 import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.fir.highlighter.visitors.FirAfterResolveHighlightingVisitor
@@ -24,7 +26,10 @@ class KotlinFirPsiChecker : AbstractKotlinPsiChecker() {
 
     override fun annotateElement(element: PsiElement, containingFile: KtFile, holder: AnnotationHolder) {
         if (element !is KtElement) return
-        val analysisSession = FirAnalysisSession()
+        if (ApplicationManager.getApplication().isDispatchThread) {
+            throw ProcessCanceledException()
+        }
+        val analysisSession = FirAnalysisSession(element)
 
         highlightDiagnostics(element, analysisSession, holder)
 
