@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
@@ -118,24 +120,34 @@ fun KtCallExpression.getLastLambdaExpression(): KtLambdaExpression? {
 @OptIn(FrontendInternals::class)
 fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
     if (getStrictParentOfType<KtDelegatedSuperTypeEntry>() != null) return false
-    if (getLastLambdaExpression() == null) return false
+    val lastLambdaExpression = getLastLambdaExpression() ?: return false
 
     val callee = calleeExpression
     if (callee is KtNameReferenceExpression) {
-        val lambdaArgumentCount = valueArguments.count { it.getArgumentExpression()?.unpackFunctionLiteral() != null }
-        val referenceArgumentCount = valueArguments.count { it.getArgumentExpression() is KtCallableReferenceExpression }
-
         val resolutionFacade = getResolutionFacade()
         val samConversionTransformer = resolutionFacade.frontendService<SamConversionResolver>()
         val samConversionOracle = resolutionFacade.frontendService<SamConversionOracle>()
         val languageVersionSettings = resolutionFacade.getLanguageVersionSettings()
+        val newInferenceEnabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 
-        val bindingContext = analyze(resolutionFacade, BodyResolveMode.PARTIAL)
+        val bindingContext = analyze(resolutionFacade)
+        if (bindingContext.diagnostics.forElement(lastLambdaExpression).none { it.severity == Severity.ERROR }) {
+            val resolvedCall = getResolvedCall(bindingContext)
+            if (resolvedCall != null) {
+                val parameter = resolvedCall.getParameterForArgument(valueArguments.last()) ?: return false
+                val functionDescriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return false
+                if (parameter != functionDescriptor.valueParameters.lastOrNull()) return false
+                return parameter.type.allowsMoveOutsideParentheses(samConversionTransformer, samConversionOracle, newInferenceEnabled)
+            }
+        }
+
         val targets = bindingContext[BindingContext.REFERENCE_TARGET, callee]?.let { listOf(it) }
             ?: bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, callee]
             ?: listOf()
-
         val candidates = targets.filterIsInstance<FunctionDescriptor>()
+
+        val lambdaArgumentCount = valueArguments.count { it.getArgumentExpression()?.unpackFunctionLiteral() != null }
+        val referenceArgumentCount = valueArguments.count { it.getArgumentExpression() is KtCallableReferenceExpression }
 
         // if there are functions among candidates but none of them have last function parameter then not show the intention
         val areAllCandidatesWithoutLastFunctionParameter = candidates.none {
@@ -143,7 +155,7 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
                 lambdaArgumentCount + referenceArgumentCount,
                 samConversionTransformer,
                 samConversionOracle,
-                languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+                newInferenceEnabled
             )
         }
 
@@ -153,30 +165,36 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
     return true
 }
 
+private fun KotlinType.allowsMoveOutsideParentheses(
+    samConversionTransformer: SamConversionResolver,
+    samConversionOracle: SamConversionOracle,
+    newInferenceEnabled: Boolean
+): Boolean {
+    // Fast-path
+    if (isFunctionOrSuspendFunctionType || isTypeParameter()) return true
+
+    // Also check if it can be SAM-converted
+    // Note that it is not necessary in OI, where we provide synthetic candidate descriptors with already
+    // converted types, but in NI it is performed by conversions, so we check it explicitly
+    // Also note that 'newInferenceEnabled' is essentially a micro-optimization, as there are no
+    // harm in just calling 'samConversionTransformer' on all candidates.
+    return newInferenceEnabled && samConversionTransformer.getFunctionTypeForPossibleSamType(this.unwrap(), samConversionOracle) != null
+}
+
 private fun FunctionDescriptor.allowsMoveOfLastParameterOutsideParentheses(
     lambdaAndCallableReferencesInOriginalCallCount: Int,
     samConversionTransformer: SamConversionResolver,
     samConversionOracle: SamConversionOracle,
     newInferenceEnabled: Boolean
 ): Boolean {
-    fun KotlinType.allowsMoveOutsideParentheses(): Boolean {
-        // Fast-path
-        if (isFunctionOrSuspendFunctionType || isTypeParameter()) return true
-
-        // Also check if it can be SAM-converted
-        // Note that it is not necessary in OI, where we provide synthetic candidate descriptors with already
-        // converted types, but in NI it is performed by conversions, so we check it explicitly
-        // Also note that 'newInferenceEnabled' is essentially a micro-optimization, as there are no
-        // harm in just calling 'samConversionTransformer' on all candidates.
-        return newInferenceEnabled && samConversionTransformer.getFunctionTypeForPossibleSamType(this.unwrap(), samConversionOracle) != null
-    }
-
     val params = valueParameters
     val lastParamType = params.lastOrNull()?.type ?: return false
 
-    if (!lastParamType.allowsMoveOutsideParentheses()) return false
+    if (!lastParamType.allowsMoveOutsideParentheses(samConversionTransformer, samConversionOracle, newInferenceEnabled)) return false
 
-    val movableParametersOfCandidateCount = params.count { it.type.allowsMoveOutsideParentheses() }
+    val movableParametersOfCandidateCount = params.count {
+        it.type.allowsMoveOutsideParentheses(samConversionTransformer, samConversionOracle, newInferenceEnabled)
+    }
     return movableParametersOfCandidateCount == lambdaAndCallableReferencesInOriginalCallCount
 }
 
