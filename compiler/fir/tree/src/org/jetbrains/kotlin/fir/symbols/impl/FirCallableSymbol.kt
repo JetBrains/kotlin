@@ -21,3 +21,12 @@ inline fun <reified E : FirCallableSymbol<*>> E.unwrapOverriddenOnce(): E {
 
     return this
 }
+
+inline fun <reified E : FirCallableSymbol<*>> E.unwrapOverridden(): E {
+    var current = this
+    while (current.overriddenSymbol != null) {
+        current = current.overriddenSymbol as E
+    }
+
+    return current
+}

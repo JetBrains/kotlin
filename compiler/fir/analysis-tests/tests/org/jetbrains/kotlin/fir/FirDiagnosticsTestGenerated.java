@@ -1689,11 +1689,6 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/innerClassHierarchy.kt");
         }
 
-        @TestMetadata("javaAccessorConversion.kt")
-        public void testJavaAccessorConversion() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaAccessorConversion.kt");
-        }
-
         @TestMetadata("javaQualifier.kt")
         public void testJavaQualifier() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/javaQualifier.kt");
@@ -1730,6 +1725,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
 
         public void testAllFilesPresentInProperties() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("javaAccessorConversion.kt")
+        public void testJavaAccessorConversion() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/properties/javaAccessorConversion.kt");
         }
 
         @TestMetadata("noBackingFieldForExtension.kt")

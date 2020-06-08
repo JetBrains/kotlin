@@ -22,7 +22,7 @@ FILE: main.kt
 
     }
     public final fun test_4(foo: R|Foo|): R|kotlin/Unit| {
-        R|<local>/foo|.R|/Foo.x|
+        R|<local>/foo|.<Unresolved name: x>#
     }
     public final fun test_5(x: R|D|): R|kotlin/Unit| {
         R|<local>/x|.R|/D.isGood|
