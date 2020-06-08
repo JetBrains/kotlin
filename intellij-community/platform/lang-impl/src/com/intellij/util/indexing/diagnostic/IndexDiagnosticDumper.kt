@@ -24,7 +24,7 @@ object IndexDiagnosticDumper {
   fun dumpProjectIndexingHistoryToLogSubdirectory(projectIndexingHistory: ProjectIndexingHistory) {
     val logPath = PathManager.getLogPath()
     try {
-      val indexDiagnosticDirectory = Paths.get(logPath).resolve("index-diagnostic")
+      val indexDiagnosticDirectory = Paths.get(logPath).resolve("indexing-time-diagnostic")
       indexDiagnosticDirectory.createDirectories()
 
       val fileNamePrefix = "diagnostic-"
