@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import java.io.File
 
@@ -33,13 +34,14 @@ import java.io.File
  * - VAL
  *
  * Possible values for "common" column:
+ * - L = declaration lifted up to common fragment
  * - E = successfully commonized, expect declaration generated
  * - "-" = no common declaration
  *
  * Possible values for each target platform column:
  * - A = successfully commonized, actual declaration generated
  * - O = not commonized, the declaration is as in the original library
- * - "-" = no such declaration in the original library
+ * - "-" = no such declaration in the original library (or declaration has been lifted up)
  *
  * Example of output:
 
@@ -133,13 +135,16 @@ class NativeStatsCollector(
     companion object {
         private const val SEPARATOR = '|'
 
+        private inline val DeclarationDescriptor.topLevelnessPrefix: String
+            get() = if (DescriptorUtils.isTopLevelDeclaration(this)) "TOP-LEVEL " else "NESTED "
+
         private inline val DeclarationDescriptor.declarationType: String
             get() = when (this) {
-                is ClassDescriptor -> if (isCompanionObject) "COMPANION_OBJECT" else kind.toString()
+                is ClassDescriptor -> if (isCompanionObject) "COMPANION_OBJECT" else topLevelnessPrefix + kind.toString()
                 is TypeAliasDescriptor -> "TYPE_ALIAS"
                 is ClassConstructorDescriptor -> "CLASS_CONSTRUCTOR"
-                is FunctionDescriptor -> "FUN"
-                is PropertyDescriptor -> "VAL"
+                is FunctionDescriptor -> topLevelnessPrefix + "FUN"
+                is PropertyDescriptor -> topLevelnessPrefix + if (isConst) "CONST-VAL" else "VAL"
                 is ModuleDescriptor -> "MODULE"
                 else -> "UNKNOWN: ${this::class.java}"
             }
