@@ -259,8 +259,8 @@ internal class ClassMemberGenerator(
         val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
+            val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.typeArguments
             if (constructorSymbol.fir.isFromEnumClass || constructorSymbol.fir.returnTypeRef.isEnum) {
-                val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.typeArguments
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset,
                     constructedIrType,
@@ -268,20 +268,22 @@ internal class ClassMemberGenerator(
                     typeArgumentsCount = typeArguments?.size ?: 0,
                     valueArgumentsCount = constructorSymbol.fir.valueParameters.size
                 ).apply {
-                    if (typeArguments?.isNotEmpty() == true) {
-                        val irType = (typeArguments.first() as ConeKotlinTypeProjection).type.toIrType()
-                        putTypeArgument(0, irType)
-                    }
                 }
             } else {
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset,
                     constructedIrType,
                     irConstructorSymbol,
-                    valueArgumentsCount = irConstructorSymbol.owner.valueParameters.size,
-                    typeArgumentsCount = irConstructorSymbol.owner.typeParameters.size
+                    typeArgumentsCount = typeArguments?.size ?: 0,
+                    valueArgumentsCount = irConstructorSymbol.owner.valueParameters.size
                 )
             }.let {
+                if (typeArguments != null) {
+                    for ((index, typeArgument) in typeArguments.withIndex()) {
+                        val irType = (typeArgument as ConeKotlinTypeProjection).type.toIrType()
+                        it.putTypeArgument(index, irType)
+                    }
+                }
                 if (firDispatchReceiver !is FirNoReceiverExpression) {
                     it.dispatchReceiver = visitor.convertToIrExpression(firDispatchReceiver)
                 }

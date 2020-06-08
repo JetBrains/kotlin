@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/constructor.kt
         VALUE_PARAMETER name:i index:1 type:kotlin.Int
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (z: Z of <root>.Test2.TestInner) [primary] declared in <root>.Test2.TestInner'
-            <Z>: <none>
+            <Z>: Z of <root>.Test2.TestInner
             $this: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=null
             z: GET_VAR 'z: Z of <root>.Test2.TestInner declared in <root>.Test2.TestInner.<init>' type=Z of <root>.Test2.TestInner origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -189,7 +189,7 @@ FILE fqName:<root> fileName:/constructor.kt
           CONST Int type=kotlin.Int value=42
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test4'
-          <T>: <none>
+          <T>: T of <root>.Test4
           x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: GET_VAR 'x: kotlin.Int declared in <root>.Test4.<init>' type=kotlin.Int origin=null
             other: GET_VAR 'y: kotlin.Int declared in <root>.Test4.<init>' type=kotlin.Int origin=null
