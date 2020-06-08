@@ -89,7 +89,8 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
       }
       workaroundJavaVersionIssueIfNeeded(newConnection, taskId, listener, cancellationToken)
 
-      if (conn != null && connectorParams != conn.params) {
+      if (conn != null && connectorParams != conn.params &&
+          connectorParams.distributionType != DistributionType.WRAPPED) {
         // release obsolete connection
         conn.disconnect()
       }
