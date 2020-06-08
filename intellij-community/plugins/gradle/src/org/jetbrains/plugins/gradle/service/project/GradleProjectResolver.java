@@ -13,14 +13,13 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 import com.intellij.openapi.externalSystem.service.project.ExternalSystemProjectResolver;
 import com.intellij.openapi.externalSystem.service.project.PerformanceTrace;
 import com.intellij.openapi.externalSystem.util.ExternalSystemDebugEnvironment;
-import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.util.Factory;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -36,8 +35,6 @@ import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.concurrency.AsyncPromise;
-import org.jetbrains.concurrency.Promise;
 import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.model.data.BuildParticipant;
 import org.jetbrains.plugins.gradle.model.data.CompositeBuildData;
@@ -52,9 +49,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -251,7 +246,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
     final long startTime = System.currentTimeMillis();
     ProjectImportAction.AllModels allModels;
-    AsyncPromise<Void> buildFinishedPromise = new AsyncPromise<>();
+    CountDownLatch buildFinishWaiter = new CountDownLatch(1);
     try {
       allModels = buildActionRunner.fetchModels(
         models -> {
@@ -260,19 +255,23 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
           }
         },
         (exception) -> {
-          for (GradleProjectResolverExtension resolver = tracedResolverChain; resolver != null; resolver = resolver.getNext()) {
-            resolver.buildFinished(exception);
+          try {
+            for (GradleProjectResolverExtension resolver = tracedResolverChain; resolver != null; resolver = resolver.getNext()) {
+              resolver.buildFinished(exception);
+            }
           }
-          buildFinishedPromise.setResult(null);
+          finally {
+            buildFinishWaiter.countDown();
+          }
         });
       performanceTrace.addTrace(allModels.getPerformanceTrace());
     }
     catch (Exception e) {
-      buildFinishedPromise.setResult(null);
+      buildFinishWaiter.countDown();
       throw e;
     }
     finally {
-      waitForPromise(buildFinishedPromise);
+      ProgressIndicatorUtils.awaitWithCheckCanceled(buildFinishWaiter);
       final long timeInMs = (System.currentTimeMillis() - startTime);
       performanceTrace.logPerformance("Gradle data obtained", timeInMs);
       LOG.debug(String.format("Gradle data obtained in %d ms", timeInMs));
@@ -793,20 +792,5 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     };
     chainWrapper.setNext(firstResolver);
     return chainWrapper;
-  }
-
-  private static void waitForPromise(@NotNull Promise<?> promise) {
-    while (true) {
-      try {
-        promise.blockingGet(10, TimeUnit.MILLISECONDS);
-        return;
-      }
-      catch (TimeoutException ignore) {
-      }
-      catch (ExecutionException e) {
-        ExceptionUtil.rethrow(e);
-      }
-      ProgressManager.checkCanceled();
-    }
   }
 }
