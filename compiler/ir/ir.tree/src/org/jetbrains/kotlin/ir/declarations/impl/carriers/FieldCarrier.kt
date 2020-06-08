@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 interface FieldCarrier : DeclarationCarrier<FieldCarrier> {
     var initializerField: IrExpressionBody?
     var correspondingPropertySymbolField: IrPropertySymbol?
-    var metadataField: MetadataSource.Property?
+    var metadataField: MetadataSource?
     var overridenSymbolsField: List<IrFieldSymbol>
 
     override fun clone(): FieldCarrier {
@@ -40,6 +40,6 @@ class FieldCarrierImpl(
     override var annotationsField: List<IrConstructorCall>,
     override var initializerField: IrExpressionBody?,
     override var correspondingPropertySymbolField: IrPropertySymbol?,
-    override var metadataField: MetadataSource.Property?,
+    override var metadataField: MetadataSource?,
     override var overridenSymbolsField: List<IrFieldSymbol>
 ): FieldCarrier

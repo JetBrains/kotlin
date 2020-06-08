@@ -27,5 +27,5 @@ interface IrField :
 
     var correspondingPropertySymbol: IrPropertySymbol?
 
-    override val metadata: MetadataSource.Property?
+    override val metadata: MetadataSource?
 }

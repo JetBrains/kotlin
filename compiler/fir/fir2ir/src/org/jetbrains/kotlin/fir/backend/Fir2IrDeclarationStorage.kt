@@ -660,7 +660,7 @@ class Fir2IrDeclarationStorage(
                     it.populateOverriddenSymbols(thisReceiverOwner)
                 }
             }.apply {
-                metadata = FirMetadataSource.Property(property, descriptor)
+                metadata = FirMetadataSource.Property(property)
             }
         }
     }
@@ -708,7 +708,7 @@ class Fir2IrDeclarationStorage(
                     isExpect = property.isExpect,
                     isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
                 ).apply {
-                    metadata = FirMetadataSource.Variable(property, descriptor)
+                    metadata = FirMetadataSource.Variable(property)
                     enterScope(this)
                     if (irParent != null) {
                         parent = irParent
@@ -794,7 +794,7 @@ class Fir2IrDeclarationStorage(
                     isStatic = field.isStatic,
                     isFakeOverride = false
                 ).apply {
-                    metadata = FirMetadataSource.Variable(field, descriptor)
+                    metadata = FirMetadataSource.Variable(field)
                     descriptor.bind(this)
                     fieldCache[field] = this
                 }

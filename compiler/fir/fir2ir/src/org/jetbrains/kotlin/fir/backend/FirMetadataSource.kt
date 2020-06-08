@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -44,17 +43,22 @@ interface FirMetadataSource : MetadataSource {
     }
 
     class Property(
-        val property: FirProperty, descriptor: PropertyDescriptor
-    ) : MetadataSource.Property(descriptor), FirMetadataSource {
+        val property: FirProperty
+    ) : FirMetadataSource {
         override val session: FirSession
             get() = property.session
+
+        override val name: Name
+            get() = property.name
     }
 
     class Variable(
-        val variable: FirVariable<*>,
-        descriptor: PropertyDescriptor
-    ) : MetadataSource.Property(descriptor), FirMetadataSource {
+        val variable: FirVariable<*>
+    ) : FirMetadataSource {
         override val session: FirSession
             get() = variable.session
+
+        override val name: Name
+            get() = variable.name
     }
 }

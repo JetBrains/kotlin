@@ -134,7 +134,7 @@ class DescriptorBasedClassCodegen internal constructor(
     }
 
     override fun bindFieldMetadata(field: IrField, fieldType: Type, fieldName: String) {
-        val descriptor = field.metadata?.descriptor
+        val descriptor = (field.metadata as? MetadataSource.Property)?.descriptor
         if (descriptor != null) {
             state.globalSerializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, fieldType to fieldName)
         }

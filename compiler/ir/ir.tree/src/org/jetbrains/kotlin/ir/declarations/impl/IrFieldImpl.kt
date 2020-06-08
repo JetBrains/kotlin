@@ -104,9 +104,9 @@ class IrFieldImpl(
             }
         }
 
-    override var metadataField: MetadataSource.Property? = null
+    override var metadataField: MetadataSource? = null
 
-    override var metadata: MetadataSource.Property?
+    override var metadata: MetadataSource?
         get() = getCarrier().metadataField
         set(v) {
             if (metadata !== v) {
