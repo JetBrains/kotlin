@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -325,7 +325,7 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
 
     @get:Internal
     override val baseName: String
-        get() = if (compilation.isMainCompilation) project.name else "${project.name}_${compilation.name}"
+        get() = if (compilation.isMain()) project.name else "${project.name}_${compilation.name}"
 
     @get:Input
     val moduleName: String by project.provider {
@@ -940,7 +940,7 @@ open class CInteropProcess : DefaultTask() {
     val baseKlibName: String
         @Internal get() {
             val compilationPrefix = settings.compilation.let {
-                if (it.isMainCompilation) project.name else it.name
+                if (it.isMain()) project.name else it.name
             }
             return "$compilationPrefix-cinterop-$interopName"
         }
