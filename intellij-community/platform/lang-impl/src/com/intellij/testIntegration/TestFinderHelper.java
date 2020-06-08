@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class TestFinderHelper {
+public final class TestFinderHelper {
   public static PsiElement findSourceElement(@NotNull final PsiElement from) {
     for (TestFinder each : getFinders()) {
       PsiElement result = each.findSourceElement(from);

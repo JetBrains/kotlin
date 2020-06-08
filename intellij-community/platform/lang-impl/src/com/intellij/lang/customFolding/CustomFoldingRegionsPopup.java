@@ -21,7 +21,7 @@ import java.util.Stack;
 /**
  * @author Rustam Vishnyakov
  */
-public class CustomFoldingRegionsPopup {
+public final class CustomFoldingRegionsPopup {
   public static void show(@NotNull final Collection<? extends FoldingDescriptor> descriptors,
                           @NotNull final Editor editor,
                           @NotNull final Project project) {

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SelectWordUtil {
+public final class SelectWordUtil {
   private SelectWordUtil() {
   }
 

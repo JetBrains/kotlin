@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor;
 
 import com.intellij.ui.JBColor;
@@ -7,7 +7,7 @@ import com.intellij.util.ui.JBDimension;
 
 import javax.swing.*;
 
-public class GuiUtils {
+public final class GuiUtils {
 
   private static final int NOT_LIMITED_SIZE = Integer.MAX_VALUE;
   private static final int PANEL_STANDARD_SIZE_HEIGHT = 28;

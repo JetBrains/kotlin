@@ -15,7 +15,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class LookupUsageTracker {
+final class LookupUsageTracker {
   private static final String GROUP_ID = "completion";
   private static final String EVENT_ID = "finished";
 

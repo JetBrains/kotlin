@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FavoritesTreeUtil {
+public final class FavoritesTreeUtil {
   public static FavoriteTreeNodeDescriptor @NotNull [] getSelectedNodeDescriptors(final DnDAwareTree tree) {
     TreePath[] path = tree.getSelectionPaths();
     if (path == null) {

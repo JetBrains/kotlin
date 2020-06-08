@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.documentation;
 
 import com.intellij.openapi.application.ApplicationBundle;
@@ -17,7 +17,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.lang.ref.WeakReference;
 
-public class DocFontSizePopup {
+public final class DocFontSizePopup {
   private static WeakReference<JSlider> ourCurrentSlider;
 
   public static void show(@NotNull Runnable changeCallback, @NotNull Component parentComponent) {

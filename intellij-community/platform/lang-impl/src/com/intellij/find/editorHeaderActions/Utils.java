@@ -21,7 +21,7 @@ import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.util.List;
 
-public class Utils {
+public final class Utils {
   private Utils() {
   }
 

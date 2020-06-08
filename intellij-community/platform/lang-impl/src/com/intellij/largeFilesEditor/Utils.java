@@ -1,9 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor;
 
 import com.intellij.openapi.util.text.StringUtil;
 
-public class Utils {
+public final class Utils {
 
   public static int calculatePagePositionPercent(long currentPageNumber, long pageAmount) {
     int progressValue;

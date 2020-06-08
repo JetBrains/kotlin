@@ -13,7 +13,7 @@ import java.util.LinkedHashSet;
 /**
  * @author Maxim.Mossienko
  */
-public class TemplateImplUtil {
+public final class TemplateImplUtil {
 
   public static LinkedHashSet<String> parseVariableNames(CharSequence text) {
     LinkedHashSet<String> variableNames = new LinkedHashSet<>();

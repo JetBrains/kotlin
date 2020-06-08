@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build;
 
 import com.intellij.build.events.Failure;
@@ -34,7 +34,7 @@ import static com.intellij.openapi.util.text.StringUtil.stripHtml;
 /**
  * @author Vladislav.Soroka
  */
-public class BuildConsoleUtils {
+public final class BuildConsoleUtils {
   private static final Logger LOG = Logger.getInstance(BuildConsoleUtils.class);
   private static final Pattern TAG_PATTERN = Pattern.compile("<[^>]*>");
   private static final Pattern A_PATTERN = Pattern.compile("<a ([^>]* )?href=[\"']([^>]*)[\"'][^>]*>");

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.*;
 
-public class MoveFilesOrDirectoriesUtil {
+public final class MoveFilesOrDirectoriesUtil {
   private MoveFilesOrDirectoriesUtil() { }
 
   /**

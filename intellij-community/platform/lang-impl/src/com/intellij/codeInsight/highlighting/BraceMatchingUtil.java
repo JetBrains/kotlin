@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-public class BraceMatchingUtil {
+public final class BraceMatchingUtil {
   public static final int UNDEFINED_TOKEN_GROUP = -1;
 
   private BraceMatchingUtil() {

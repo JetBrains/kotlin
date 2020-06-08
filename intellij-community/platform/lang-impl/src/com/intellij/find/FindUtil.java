@@ -61,7 +61,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class FindUtil {
+public final class FindUtil {
   private static final Key<Direction> KEY = Key.create("FindUtil.KEY");
 
   private FindUtil() {

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeEditor.printing;
 
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NonNls;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class PageSizes {
+final class PageSizes {
   private static final Logger LOG = Logger.getInstance(PageSizes.class);
   private static ArrayList<PageSize> myPageSizes = null;
   private static HashMap<String, PageSize> myNamesToPageSizes = null;

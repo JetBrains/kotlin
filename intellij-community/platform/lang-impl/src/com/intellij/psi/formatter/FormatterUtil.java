@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.formatter;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -23,7 +23,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
 
-public class FormatterUtil {
+public final class FormatterUtil {
 
   /**
    * @deprecated Use {@link #getReformatBeforeCommitCommandName()} instead
@@ -269,7 +269,7 @@ public class FormatterUtil {
       if (each instanceof LeafElement && !spacesOnly(each)) {
         return false;
       }
-      
+
       Collections.addAll(queue, each.getChildren(null));
     }
     return true;

@@ -34,7 +34,7 @@ import java.util.List;
 
 import static com.intellij.execution.services.ServiceViewDnDDescriptor.Position.*;
 
-class ServiceViewDragHelper {
+final class ServiceViewDragHelper {
   static DnDSource createSource(@NotNull ServiceView serviceView) {
     return new ServiceViewDnDSource(serviceView);
   }

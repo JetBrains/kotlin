@@ -45,7 +45,7 @@ import static com.intellij.openapi.util.Conditions.notNull;
 /**
  * @author ignatov
  */
-public class ScratchFileActions {
+public final class ScratchFileActions {
 
   private static int ourCurrentBuffer = 0;
 

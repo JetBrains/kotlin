@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * @author yole
  */
-public class SdkConfigurationUtil {
+public final class SdkConfigurationUtil {
   private static final Logger LOG = Logger.getInstance(SdkConfigurationUtil.class);
   private SdkConfigurationUtil() { }
 

@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * @author Konstantin Bulenkov
  */
-public class IntentionsCollector {
+public final class IntentionsCollector {
   public static void record(@NotNull Project project, @NotNull IntentionAction action, @NotNull Language language) {
     recordIntentionEvent(project, action, language, "called");
   }

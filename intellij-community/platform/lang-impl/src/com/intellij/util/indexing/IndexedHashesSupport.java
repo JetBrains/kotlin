@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.charset.StandardCharsets;
 
 @ApiStatus.Internal
-public class IndexedHashesSupport {
+public final class IndexedHashesSupport {
   // TODO replace with sha-256
   private static final HashFunction INDEXED_FILE_CONTENT_HASHER = Hashing.sha1();
 

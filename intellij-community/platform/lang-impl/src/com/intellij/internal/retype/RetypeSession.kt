@@ -579,7 +579,7 @@ class RetypeSession(
 
   @Language("JAVA")
   val code = """
-    class MyClass {
+    final class MyClass {
         public static void main1(String[] args) {
           int x = 5;
         }

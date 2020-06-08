@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.templates;
 
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
@@ -16,7 +16,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PostfixTemplateLogger {
+public final class PostfixTemplateLogger {
   private static final String USAGE_GROUP = "completion.postfix";
   private static final String CUSTOM = "custom";
   private static final String NO_PROVIDER = "no.provider";

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.folding.impl;
 
@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FoldingPolicy {
+public final class FoldingPolicy {
   private static final Logger LOG = Logger.getInstance(FoldingPolicy.class);
 
   private static final GenericElementSignatureProvider GENERIC_PROVIDER = new GenericElementSignatureProvider();

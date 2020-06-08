@@ -16,7 +16,7 @@ import org.xmlpull.mxp1.MXParser;
 import java.io.*;
 import java.util.*;
 
-public class OfflineViewParseUtil {
+public final class OfflineViewParseUtil {
   @NonNls private static final String PACKAGE = "package";
   @NonNls private static final String DESCRIPTION = "description";
   @NonNls private static final String HINTS = "hints";

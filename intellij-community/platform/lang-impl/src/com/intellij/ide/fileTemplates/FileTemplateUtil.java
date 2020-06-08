@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.fileTemplates;
 
 import com.intellij.application.options.CodeStyle;
@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 /**
  * @author MYakovlev
  */
-public class FileTemplateUtil {
+public final class FileTemplateUtil {
   private static final Logger LOG = Logger.getInstance(FileTemplateUtil.class);
   private static final CreateFromTemplateHandler DEFAULT_HANDLER = new DefaultCreateFromTemplateHandler();
 

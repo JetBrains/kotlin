@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
 import com.intellij.codeInsight.TargetElementUtil;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CopyReferenceUtil {
+public final class CopyReferenceUtil {
   static void highlight(Editor editor, Project project, List<? extends PsiElement> elements) {
     HighlightManager highlightManager = HighlightManager.getInstance(project);
     if (elements.size() == 1 && editor != null && project != null) {

@@ -8,7 +8,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorMouseHoverPopupManager;
 import org.jetbrains.annotations.NotNull;
 
-public class DaemonTooltipUtil {
+public final class DaemonTooltipUtil {
   private static final TooltipGroup DAEMON_INFO_GROUP = new TooltipGroup("DAEMON_INFO_GROUP", 0);
 
   public static void showInfoTooltip(HighlightInfo info, Editor editor, int defaultOffset) {

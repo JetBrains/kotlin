@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.folding.impl;
 
@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class FoldingUpdate {
+public final class FoldingUpdate {
   private static final Logger LOG = Logger.getInstance(FoldingUpdate.class);
 
   private static final Key<CachedValue<Runnable>> CODE_FOLDING_KEY = Key.create("code folding");
@@ -54,7 +54,7 @@ public class FoldingUpdate {
     final Project project = file.getProject();
     final Document document = editor.getDocument();
     LOG.assertTrue(!PsiDocumentManager.getInstance(project).isUncommited(document));
-    
+
     CachedValue<Runnable> value = editor.getUserData(CODE_FOLDING_KEY);
 
     if (value != null && !applyDefaultState) {
@@ -64,7 +64,7 @@ public class FoldingUpdate {
       }
     }
     if (quick || applyDefaultState) return getUpdateResult(file, document, quick, project, editor, applyDefaultState).getValue();
-    
+
     return CachedValuesManager.getManager(project).getCachedValue(
       editor, CODE_FOLDING_KEY, () -> {
         PsiFile file1 = PsiDocumentManager.getInstance(project).getPsiFile(document);

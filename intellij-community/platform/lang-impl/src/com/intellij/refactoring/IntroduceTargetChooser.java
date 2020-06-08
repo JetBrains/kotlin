@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class IntroduceTargetChooser {
+public final class IntroduceTargetChooser {
   private IntroduceTargetChooser() {
   }
 

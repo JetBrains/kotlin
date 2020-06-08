@@ -33,7 +33,7 @@ import java.util.*;
  * @author ven
  */
 @SuppressWarnings("UtilityClassWithoutPrivateConstructor")
-public class GenericInlineHandler {
+public final class GenericInlineHandler {
 
   private static final Logger LOG = Logger.getInstance(GenericInlineHandler.class);
 
@@ -159,10 +159,10 @@ public class GenericInlineHandler {
     for (PsiReference ref : refs) {
       collectConflicts(ref, elementToInline, inliners, conflicts);
     }
-    
+
     return inliners;
   }
-  
+
   public static void collectConflicts(final PsiReference reference,
                                       final PsiElement element,
                                       final Map<Language, InlineHandler.Inliner> inliners,

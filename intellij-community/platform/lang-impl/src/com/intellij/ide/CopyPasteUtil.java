@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 import static com.intellij.openapi.application.ApplicationManager.getApplication;
 
-public class CopyPasteUtil {
+public final class CopyPasteUtil {
   private CopyPasteUtil() { }
 
   public static PsiElement[] getElementsInTransferable(Transferable t) {

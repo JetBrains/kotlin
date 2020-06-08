@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class SelectInEditorHandler {
+public final class SelectInEditorHandler {
   public static void installKeyListener(final JComponent component) {
     component.addKeyListener(new KeyAdapter() {
       @Override

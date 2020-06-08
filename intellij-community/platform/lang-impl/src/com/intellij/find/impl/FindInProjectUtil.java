@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
-public class FindInProjectUtil {
+public final class FindInProjectUtil {
   private static final int USAGES_PER_READ_ACTION = 100;
 
   private FindInProjectUtil() {}

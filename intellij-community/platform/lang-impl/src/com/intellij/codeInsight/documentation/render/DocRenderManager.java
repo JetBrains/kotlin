@@ -12,7 +12,7 @@ import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DocRenderManager {
+public final class DocRenderManager {
   private static final Key<Boolean> DOC_RENDER_ENABLED = Key.create("doc.render.enabled");
 
   /**

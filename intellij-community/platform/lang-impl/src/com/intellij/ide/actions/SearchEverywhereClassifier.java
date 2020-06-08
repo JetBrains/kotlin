@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -16,7 +16,7 @@ import java.util.Objects;
  * @author Philipp Smorygo
  */
 public interface SearchEverywhereClassifier {
-  class EP_Manager {
+  final class EP_Manager {
     private EP_Manager() {}
 
     public static boolean isClass(@Nullable Object o) {

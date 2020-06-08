@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection.ex;
 
 import com.intellij.codeInspection.*;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class BatchModeDescriptorsUtil {
+public final class BatchModeDescriptorsUtil {
   private static final TripleFunction<LocalInspectionTool, PsiElement, GlobalInspectionContext,RefElement> CONVERT =
     (tool, element, context) -> {
       PsiLanguageInjectionHost injectionHost = InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(element);

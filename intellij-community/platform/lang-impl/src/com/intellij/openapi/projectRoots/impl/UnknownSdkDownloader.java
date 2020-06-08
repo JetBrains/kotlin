@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
 @ApiStatus.Internal
-public class UnknownSdkDownloader {
+public final class UnknownSdkDownloader {
   private static final Logger LOG = Logger.getInstance(UnknownSdkDownloader.class);
 
   @ApiStatus.Internal

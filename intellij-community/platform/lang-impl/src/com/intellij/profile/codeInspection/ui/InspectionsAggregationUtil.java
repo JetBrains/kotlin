@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.profile.codeInspection.ui;
 
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author Dmitry Batkovich
  */
-public class InspectionsAggregationUtil {
+public final class InspectionsAggregationUtil {
   public static List<HighlightDisplayKey> getInspectionsKeys(final InspectionConfigTreeNode node) {
     return ContainerUtil.map(getInspectionsNodes(node), node1 -> node1.getKey());
   }

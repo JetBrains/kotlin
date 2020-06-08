@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public class RunAnythingUtil {
+public final class RunAnythingUtil {
   public static final Logger LOG = Logger.getInstance(RunAnythingUtil.class);
   public static final String SHIFT_SHORTCUT_TEXT = KeymapUtil.getShortcutText(KeyboardShortcut.fromString(("SHIFT")));
   private static final Key<Collection<Pair<String, String>>> RUN_ANYTHING_WRAPPED_COMMANDS = Key.create("RUN_ANYTHING_WRAPPED_COMMANDS");

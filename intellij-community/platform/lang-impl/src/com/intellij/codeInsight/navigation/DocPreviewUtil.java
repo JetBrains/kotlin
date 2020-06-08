@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  *
  * @author Denis Zhdanov
  */
-public class DocPreviewUtil {
+public final class DocPreviewUtil {
 
   private static final TIntHashSet ALLOWED_LINK_SEPARATORS = new TIntHashSet();
   static {

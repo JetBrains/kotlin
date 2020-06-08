@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection.ui;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 /**
  * @author Dmitry Batkovich
  */
-public class QuickFixPreviewPanelFactory {
+public final class QuickFixPreviewPanelFactory {
   private static final Logger LOG = Logger.getInstance(QuickFixPreviewPanelFactory.class);
   private static final int MAX_FIX_COUNT = 3;
 
