@@ -9,7 +9,7 @@ import kotlin.native.internal.Frozen
 
 internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private val value_ = FreezableAtomicReference<Any?>(UNINITIALIZED)
-    private val initializer_ = FreezableAtomicReference<(() -> T)?>(initializer)
+    private var initializer_: (() -> T)? = initializer
     private val lock_ = Lock()
 
     private fun getOrInit(doFreeze: Boolean): T {
@@ -25,20 +25,22 @@ internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
         // Set value_ to INITIALIZING.
         value_.value = INITIALIZING
         try {
-            result = initializer_.value!!()
+            result = initializer_!!()
             if (doFreeze) result.freeze()
         } catch (throwable: Throwable) {
             value_.value = UNINITIALIZED
             throw throwable
         }
-        if (!doFreeze && this.isFrozen) {
-            value_.value = UNINITIALIZED
-            throw InvalidMutabilityException("Frozen during lazy computation")
+        if (!doFreeze) {
+            if (this.isFrozen) {
+                value_.value = UNINITIALIZED
+                throw InvalidMutabilityException("Frozen during lazy computation")
+            }
+            // Clear initializer.
+            initializer_ = null
         }
         // Set value_ to actual one.
         value_.value = result
-        // Clear initializer.
-        initializer_.value = null
         @Suppress("UNCHECKED_CAST")
         return result as T
     }
