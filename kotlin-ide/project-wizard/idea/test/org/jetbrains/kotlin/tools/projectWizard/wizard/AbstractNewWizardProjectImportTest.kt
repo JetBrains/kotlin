@@ -86,7 +86,7 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
         wizard.apply(projectDependentServices, GenerationPhase.ALL).assertSuccess()
     }
 
-    private fun prepareGradleBuildSystem(directory: Path) {
+    protected fun prepareGradleBuildSystem(directory: Path) {
         com.intellij.openapi.components.ServiceManager.getService(project, GradleSettings::class.java)?.apply {
             isOfflineWork = GradleEnvironment.Headless.GRADLE_OFFLINE?.toBoolean() ?: isOfflineWork
             serviceDirectoryPath = GradleEnvironment.Headless.GRADLE_SERVICE_DIRECTORY ?: serviceDirectoryPath
