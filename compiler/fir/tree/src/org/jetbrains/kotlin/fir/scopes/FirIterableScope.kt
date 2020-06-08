@@ -45,4 +45,12 @@ abstract class FirIterableScope : FirScope() {
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return processComposite(FirScope::processPropertiesByName, name, processor)
     }
+
+    override fun processOverriddenFunctions(functionSymbol: FirFunctionSymbol<*>, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
+        for (scope in scopes) {
+            if (!scope.processOverriddenFunctions(functionSymbol, processor)) return ProcessorAction.STOP
+        }
+
+        return ProcessorAction.NEXT
+    }
 }

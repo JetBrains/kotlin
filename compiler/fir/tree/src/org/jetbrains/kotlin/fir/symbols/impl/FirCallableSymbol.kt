@@ -15,3 +15,9 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration<D>> : AbstractFirBas
     open val overriddenSymbol: FirCallableSymbol<D>?
         get() = null
 }
+
+inline fun <reified E : FirCallableSymbol<*>> E.unwrapOverriddenOnce(): E {
+    overriddenSymbol?.let { return it as E }
+
+    return this
+}

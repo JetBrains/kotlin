@@ -56,6 +56,7 @@ class JavaClassEnhancementScope(
         FirJavaEnhancementContext(session) { null }.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, owner.annotations)
 
     private val enhancements = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>>()
+    private val overriddenFunctions = mutableMapOf<FirFunctionSymbol<*>, Collection<FirFunctionSymbol<*>>>()
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         useSiteMemberScope.processPropertiesByName(name) process@{ original ->
@@ -253,7 +254,9 @@ class JavaClassEnhancementScope(
             else -> throw AssertionError("Unknown Java method to enhance: ${firMethod.render()}")
         }.apply {
             annotations += firMethod.annotations
-        }.build()
+        }.build().also {
+            overriddenFunctions[it.symbol] = overriddenMembers.mapNotNull { it.symbol as? FirFunctionSymbol<*> }
+        }
         return function.symbol
     }
 
@@ -412,4 +415,8 @@ class JavaClassEnhancementScope(
         }
     }
 
+    override fun processOverriddenFunctions(
+        functionSymbol: FirFunctionSymbol<*>,
+        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+    ): ProcessorAction = doProcessOverriddenFunctions(functionSymbol, processor, overriddenFunctions, useSiteMemberScope)
 }

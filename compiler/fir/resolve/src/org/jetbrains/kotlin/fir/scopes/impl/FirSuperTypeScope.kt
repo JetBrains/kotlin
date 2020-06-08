@@ -239,6 +239,17 @@ class FirSuperTypeScope private constructor(
         super.processClassifiersByNameWithSubstitution(name, processor)
     }
 
+    override fun processOverriddenFunctions(
+        functionSymbol: FirFunctionSymbol<*>,
+        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+    ): ProcessorAction {
+        for (scope in scopes) {
+            if (!scope.processOverriddenFunctions(functionSymbol, processor)) return ProcessorAction.STOP
+        }
+
+        return ProcessorAction.NEXT
+    }
+
     companion object {
         fun prepareSupertypeScope(
             session: FirSession,

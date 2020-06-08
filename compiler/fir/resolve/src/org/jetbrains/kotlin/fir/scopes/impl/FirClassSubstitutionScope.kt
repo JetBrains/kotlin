@@ -64,6 +64,14 @@ class FirClassSubstitutionScope(
         return super.processFunctionsByName(name, processor)
     }
 
+    override fun processOverriddenFunctions(
+        functionSymbol: FirFunctionSymbol<*>,
+        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+    ): ProcessorAction {
+        val unwrapped = functionSymbol.unwrapOverriddenOnce()
+        return useSiteMemberScope.processOverriddenFunctions(unwrapped, processor)
+    }
+
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return useSiteMemberScope.processPropertiesByName(name) process@{ original ->
             when (original) {
