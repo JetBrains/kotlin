@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.name.Name
 
 interface FirMetadataSource : MetadataSource {
 
@@ -23,6 +24,9 @@ interface FirMetadataSource : MetadataSource {
     ) : FirMetadataSource {
         override val session: FirSession
             get() = klass.session
+
+        override val name: Name?
+            get() = (klass as? FirRegularClass)?.name
     }
 
     class Function(
@@ -30,6 +34,13 @@ interface FirMetadataSource : MetadataSource {
     ) : FirMetadataSource {
         override val session: FirSession
             get() = function.session
+
+        override val name: Name?
+            get() = when (function) {
+                is FirSimpleFunction -> function.name
+                is FirConstructor -> Name.special("<init>")
+                else -> null
+            }
     }
 
     class Property(

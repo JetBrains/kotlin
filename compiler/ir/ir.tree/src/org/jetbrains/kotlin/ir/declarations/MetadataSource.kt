@@ -9,13 +9,24 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.name.Name
 
 interface MetadataSource {
-    open class Class(val descriptor: ClassDescriptor) : MetadataSource
+    val name: Name?
 
-    open class File(val descriptors: List<DeclarationDescriptor>) : MetadataSource
+    abstract class DescriptorBased<D : DeclarationDescriptor> internal constructor(val descriptor: D) : MetadataSource {
+        override val name: Name
+            get() = descriptor.name
+    }
 
-    open class Function(val descriptor: FunctionDescriptor) : MetadataSource
+    open class Class(descriptor: ClassDescriptor) : DescriptorBased<ClassDescriptor>(descriptor)
 
-    open class Property(val descriptor: PropertyDescriptor) : MetadataSource
+    open class File(val descriptors: List<DeclarationDescriptor>) : MetadataSource {
+        override val name: Name?
+            get() = null
+    }
+
+    open class Function(descriptor: FunctionDescriptor) : DescriptorBased<FunctionDescriptor>(descriptor)
+
+    open class Property(descriptor: PropertyDescriptor) : DescriptorBased<PropertyDescriptor>(descriptor)
 }

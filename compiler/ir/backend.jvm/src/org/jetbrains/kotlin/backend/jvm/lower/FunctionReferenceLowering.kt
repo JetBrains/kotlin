@@ -469,7 +469,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
 
         private val IrFunction.originalName: Name
-            get() = (metadata as? MetadataSource.Function)?.descriptor?.name ?: name
+            get() = metadata?.name ?: name
 
         private fun JvmIrBuilder.generateSignature(target: IrFunctionSymbol): IrExpression =
             irCall(backendContext.ir.symbols.signatureStringIntrinsic).apply {
