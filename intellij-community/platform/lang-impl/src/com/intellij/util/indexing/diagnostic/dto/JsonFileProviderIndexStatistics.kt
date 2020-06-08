@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 data class JsonFileProviderIndexStatistics(
   val providerName: String,
   val totalNumberOfFiles: Int,
-  val totalIndexingTime: JsonTime,
+  val totalIndexingTime: JsonDuration,
   val numberOfTooLargeForIndexingFiles: PositiveInt,
   val tooLargeForIndexingFiles: List<JsonTooLargeForIndexingFile>?,
   val statsPerFileType: List<JsonStatsPerFileType>,

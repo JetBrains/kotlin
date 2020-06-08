@@ -24,7 +24,7 @@ fun FileProviderIndexStatistics.toJson(): JsonFileProviderIndexStatistics {
   return JsonFileProviderIndexStatistics(
     providerDebugName,
     numberOfFiles,
-    JsonTime(totalTime),
+    JsonDuration(totalTime),
     indexingStatistics.numberOfTooLargeForIndexingFiles.get().toPositiveInt(),
     indexingStatistics.tooLargeForIndexingFiles.biggestElements.map { it.toJson() }.takeIf { it.isNotEmpty() },
     statsPerFileType.sortedByDescending { it.partOfTotalIndexingTime.percentages },
@@ -76,10 +76,10 @@ private fun Instant.toPresentableTime(): PresentableTime =
 
 fun ProjectIndexingHistory.IndexingTimes.toJson() =
   JsonProjectIndexingHistoryTimes(
-    JsonTime(Duration.between(indexingStart, indexingEnd).toNanos()),
-    JsonTime(Duration.between(scanFilesStart, scanFilesEnd).toNanos()),
-    JsonTime(Duration.between(pushPropertiesStart, pushPropertiesEnd).toNanos()),
-    JsonTime(Duration.between(indexExtensionsStart, indexExtensionsEnd).toNanos()),
+    JsonDuration(Duration.between(indexingStart, indexingEnd).toNanos()),
+    JsonDuration(Duration.between(scanFilesStart, scanFilesEnd).toNanos()),
+    JsonDuration(Duration.between(pushPropertiesStart, pushPropertiesEnd).toNanos()),
+    JsonDuration(Duration.between(indexExtensionsStart, indexExtensionsEnd).toNanos()),
     indexingStart!!.toPresentableTime(),
     indexingEnd!!.toPresentableTime(),
     pushPropertiesStart!!.toPresentableTime(),

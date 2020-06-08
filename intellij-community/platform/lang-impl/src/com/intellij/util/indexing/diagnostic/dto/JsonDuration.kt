@@ -8,10 +8,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.intellij.openapi.util.text.StringUtil
 import java.util.concurrent.TimeUnit
 
-@JsonSerialize(using = JsonTime.Companion::class)
-data class JsonTime(val nano: Long) {
-  companion object : JsonSerializer<JsonTime>() {
-    override fun serialize(value: JsonTime, gen: JsonGenerator, serializers: SerializerProvider?) {
+@JsonSerialize(using = JsonDuration.Companion::class)
+data class JsonDuration(val nano: Long) {
+  companion object : JsonSerializer<JsonDuration>() {
+    override fun serialize(value: JsonDuration, gen: JsonGenerator, serializers: SerializerProvider?) {
       gen.writeString(value.presentableDuration())
     }
   }
