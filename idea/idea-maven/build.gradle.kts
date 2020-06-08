@@ -81,6 +81,10 @@ dependencies {
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
     }
+
+    if (Ide.AS41.orHigher()) {
+        testRuntime(intellijPluginDep("platform-images"))
+    }
 }
 
 if (Ide.IJ()) {
