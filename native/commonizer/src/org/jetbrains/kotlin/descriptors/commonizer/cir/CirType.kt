@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind.CLASS
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind.TYPE_ALIAS
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.Variance
 
@@ -28,9 +26,8 @@ sealed class CirType {
  *
  * Note: Annotations at simple types are not preserved. After commonization all annotations assigned to types will be lost.
  */
-abstract class CirSimpleType : CirType(), CirHasVisibility {
+abstract class CirSimpleType : CirType(), CirHasVisibility, CirHasFqName {
     abstract val kind: CirSimpleTypeKind
-    abstract val fqName: FqName
     abstract val arguments: List<CirTypeProjection>
     abstract val isMarkedNullable: Boolean
     abstract val isDefinitelyNotNullType: Boolean

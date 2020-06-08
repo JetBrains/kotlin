@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-interface CirTypeParameter {
-    val annotations: List<CirAnnotation>
-    val name: Name
+interface CirTypeParameter : CirHasAnnotations, CirHasName {
     val isReified: Boolean
     val variance: Variance
     val upperBounds: List<CirType>

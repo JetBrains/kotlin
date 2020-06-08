@@ -5,8 +5,4 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.name.FqName
-
-interface CirPackage : CirDeclaration {
-    val fqName: FqName
-}
+interface CirPackage : CirDeclaration, CirHasFqName

@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
 interface CirClassifier :
-    CirAnnotatedDeclaration,
-    CirNamedDeclaration,
-    CirDeclarationWithTypeParameters,
-    CirDeclarationWithVisibility
+    CirDeclaration,
+    CirHasAnnotations,
+    CirHasName,
+    CirHasTypeParameters,
+    CirHasVisibility

@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 // TODO: inline?
 data class CirContainingClassDetails(
     val kind: ClassKind,
-    val modality: Modality,
+    override val modality: Modality,
     val isData: Boolean
-) {
+) : CirHasModality {
     companion object {
         val DOES_NOT_MATTER = CirContainingClassDetails(
             kind = ClassKind.CLASS,

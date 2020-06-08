@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-interface CirExtensionReceiver {
-    val annotations: List<CirAnnotation>
+interface CirExtensionReceiver : CirHasAnnotations {
     val type: CirType
 }

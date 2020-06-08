@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 
 interface CirFunctionOrProperty :
-    CirAnnotatedDeclaration,
-    CirNamedDeclaration,
-    CirDeclarationWithTypeParameters,
-    CirDeclarationWithVisibility,
-    CirDeclarationWithModality,
+    CirDeclaration,
+    CirHasAnnotations,
+    CirHasName,
+    CirHasTypeParameters,
+    CirHasVisibility,
+    CirHasModality,
     CirMaybeCallableMemberOfClass {
 
     val isExternal: Boolean

@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 
 interface CirClassConstructor :
-    CirAnnotatedDeclaration,
-    CirDeclarationWithTypeParameters,
-    CirDeclarationWithVisibility,
+    CirDeclaration,
+    CirHasAnnotations,
+    CirHasTypeParameters,
+    CirHasVisibility,
     CirMaybeCallableMemberOfClass,
     CirCallableMemberWithParameters {
 

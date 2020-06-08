@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.name.Name
-
-interface CirValueParameter {
-    val annotations: List<CirAnnotation>
-    val name: Name
+interface CirValueParameter : CirHasAnnotations, CirHasName {
     val returnType: CirType
     val varargElementType: CirType?
     val declaresDefaultValue: Boolean

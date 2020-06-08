@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-interface CirPropertySetter : CirPropertyAccessor, CirDeclarationWithVisibility {
+interface CirPropertySetter : CirDeclaration, CirPropertyAccessor, CirHasVisibility {
     val parameterAnnotations: List<CirAnnotation>
 }

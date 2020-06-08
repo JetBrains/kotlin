@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-interface CirPropertyAccessor {
-    val annotations: List<CirAnnotation>
+interface CirPropertyAccessor : CirHasAnnotations {
     val isDefault: Boolean
     val isExternal: Boolean
     val isInline: Boolean
