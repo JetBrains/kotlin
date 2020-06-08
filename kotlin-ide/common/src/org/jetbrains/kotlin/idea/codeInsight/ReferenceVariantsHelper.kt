@@ -469,9 +469,11 @@ fun ResolutionScope.collectSyntheticStaticMembersAndConstructors(
     nameFilter: (Name) -> Boolean
 ): List<FunctionDescriptor> {
     val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java)
-    return (syntheticScopes.forceEnableSamAdapters().collectSyntheticStaticFunctions(this) + syntheticScopes.collectSyntheticConstructors(
-        this
-    )).filter { kindFilter.accepts(it) && nameFilter(it.name) }
+    val functionDescriptors = getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
+    val classifierDescriptors = getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
+    return (syntheticScopes.forceEnableSamAdapters().collectSyntheticStaticFunctions(functionDescriptors) +
+            syntheticScopes.collectSyntheticConstructors(classifierDescriptors))
+        .filter { kindFilter.accepts(it) && nameFilter(it.name) }
 }
 
 // New Inference disables scope with synthetic SAM-adapters because it uses conversions for resolution
