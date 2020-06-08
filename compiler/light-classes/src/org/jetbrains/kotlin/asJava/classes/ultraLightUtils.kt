@@ -311,11 +311,38 @@ private fun packMethodFlags(access: Int, isInterface: Boolean): Int {
 }
 
 internal fun KtModifierListOwner.isHiddenByDeprecation(support: KtUltraLightSupport): Boolean {
-    val jetModifierList = this.modifierList ?: return false
-    if (jetModifierList.annotationEntries.isEmpty()) return false
+    if (annotationEntries.isEmpty()) return false
+    val annotations = annotationEntries.filter { annotation ->
+        annotation.looksLikeDeprecated()
+    }
+    if (annotations.isNotEmpty()) { // some candidates found
+        val deprecated = support.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated)?.second
+        return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
+    } else {
+        return false
+    }
+}
 
-    val deprecated = support.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated)?.second
-    return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
+fun KtAnnotationEntry.looksLikeDeprecated(): Boolean {
+    val arguments = valueArguments.filterIsInstance<KtValueArgument>().filterIndexed { index, valueArgument ->
+        index == 2 || valueArgument.looksLikeLevelArgument() // for named/not named arguments
+    }
+    for (argument in arguments) {
+        val hiddenByDotQualifiedCandidates = argument.children.filterIsInstance<KtDotQualifiedExpression>().filter {
+            val lastChild = it.children.last()
+            lastChild.text == "HIDDEN"
+        }
+        val hiddenByNameReferenceExpressionCandidates = argument.children.filterIsInstance<KtNameReferenceExpression>().filter {
+            it.text == "HIDDEN"
+        }
+        if (hiddenByDotQualifiedCandidates.isNotEmpty() || hiddenByNameReferenceExpressionCandidates.isNotEmpty())
+            return true
+    }
+    return false
+}
+
+fun KtValueArgument.looksLikeLevelArgument(): Boolean {
+    return children.filterIsInstance<KtValueArgumentName>().any { it.asName.asString() == "level" }
 }
 
 internal fun KtAnnotated.isJvmStatic(support: KtUltraLightSupport): Boolean =
