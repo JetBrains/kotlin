@@ -70,9 +70,14 @@ internal class KotlinCompilationNpmResolver(
             }
         }
 
-    val plugins: List<CompilationResolverPlugin> = projectResolver.resolver.plugins.flatMap {
-        it.createCompilationResolverPlugins(this)
-    }
+    val plugins: List<CompilationResolverPlugin> = projectResolver.resolver.plugins
+        .flatMap {
+            if (compilation.isMain()) {
+                it.createCompilationResolverPlugins(this)
+            } else {
+                emptyList()
+            }
+        }
 
     override fun toString(): String = "KotlinCompilationNpmResolver(${npmProject.name})"
 
