@@ -10,6 +10,8 @@ import com.intellij.util.io.createDirectories
 import com.intellij.util.io.delete
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.streams.asSequence
 
 object IndexDiagnosticDumper {
@@ -20,6 +22,8 @@ object IndexDiagnosticDumper {
     jacksonObjectMapper().registerKotlinModule().writerWithDefaultPrettyPrinter()
   }
 
+  private val diagnosticDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")
+
   @Synchronized
   fun dumpProjectIndexingHistoryToLogSubdirectory(projectIndexingHistory: ProjectIndexingHistory) {
     val logPath = PathManager.getLogPath()
@@ -29,7 +33,8 @@ object IndexDiagnosticDumper {
 
       val fileNamePrefix = "diagnostic-"
 
-      val diagnosticJson = indexDiagnosticDirectory.resolve("$fileNamePrefix${System.currentTimeMillis()}.json")
+      val timestamp = ZonedDateTime.now().format(diagnosticDateTimeFormatter)
+      val diagnosticJson = indexDiagnosticDirectory.resolve("$fileNamePrefix-$timestamp.json")
 
       val jsonIndexDiagnostic = JsonIndexDiagnostic.generateForHistory(projectIndexingHistory)
       jacksonMapper.writeValue(diagnosticJson.toFile(), jsonIndexDiagnostic)
