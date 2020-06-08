@@ -11,7 +11,8 @@ import com.intellij.testFramework.utils.inlays.InlayHintsProviderTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
-open class AbstractKotlinCodeVisionProviderTest : InlayHintsProviderTestCase() { // Abstract- prefix is just a convention for GenerateTests
+abstract class AbstractKotlinCodeVisionProviderTest :
+    InlayHintsProviderTestCase() { // Abstract- prefix is just a convention for GenerateTests
 
     companion object {
         const val INHERITORS_KEY = "kotlin.code-vision.inheritors"
