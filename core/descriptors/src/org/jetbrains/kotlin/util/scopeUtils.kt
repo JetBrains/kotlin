@@ -64,12 +64,22 @@ inline fun <Scope, T> getFromAllScopes(firstScope: Scope, restScopes: Array<Scop
     return result ?: emptySet()
 }
 
-inline fun <Scope, R> Array<out Scope>.flatMapScopes(transform: (Scope) -> Collection<R>): Collection<R> =
-    when (size) {
-        0 -> emptyList()
-        1 -> transform(get(0))
-        else -> flatMapTo(ArrayList<R>(), transform)
+inline fun <Scope, R> flatMapScopes(scope1: Scope?, scope2: Scope?, transform: (Scope) -> Collection<R>): Collection<R> {
+    val results1 = if (scope1 != null) transform(scope1) else emptyList()
+    if (scope2 == null) return results1
+    else {
+        val results2 = transform(scope2)
+        if (results1.isEmpty()) return results2
+        else return results1.toMutableList().also {
+            it.addAll(results2)
+        }
     }
+}
+
+inline fun <Scope> forEachScope(scope1: Scope?, scope2: Scope?, action: (Scope) -> Unit) {
+    if (scope1 != null) action(scope1)
+    if (scope2 != null) action(scope2)
+}
 
 fun listOfNonEmptyScopes(vararg scopes: MemberScope?): SmartList<MemberScope> =
     scopes.filterTo(SmartList<MemberScope>()) { it != null && it !== MemberScope.Empty }
