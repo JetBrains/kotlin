@@ -1,10 +1,10 @@
 <warning descr="SSR">//</warning>
 val foo1 = 1
 val foo2 = 1 <warning descr="SSR">//</warning>
-/**/
+<warning descr="SSR">/**/</warning>
 val foo3 = 1
-val foo4 = 1 /**/
-val foo5 /**/ = 1
+val foo4 = 1 <warning descr="SSR">/**/</warning>
+val foo5 <warning descr="SSR">/**/</warning> = 1
 /**
  *
  */
@@ -15,10 +15,10 @@ fun main() {
     <warning descr="SSR">//</warning>
     val bar1 = 1
     val bar2 = 1 <warning descr="SSR">//</warning>
-    /**/
+    <warning descr="SSR">/**/</warning>
     val bar3 = 1
-    val bar4 = 1 /**/
-    val bar5 /**/ = 1
+    val bar4 = 1 <warning descr="SSR">/**/</warning>
+    val bar5 <warning descr="SSR">/**/</warning> = 1
     /**
      *
      */

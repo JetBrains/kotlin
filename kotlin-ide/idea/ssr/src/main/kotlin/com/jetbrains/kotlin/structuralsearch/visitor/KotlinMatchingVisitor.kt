@@ -776,7 +776,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitComment(comment: PsiComment) {
         val other = getTreeElementDepar<PsiComment>() ?: return
-        if (!myMatchingVisitor.setResult(comment.tokenType == other.tokenType)) return
         when (val handler = comment.getUserData(CompiledPattern.HANDLER_KEY)) {
             is LiteralWithSubstitutionHandler -> {
                 myMatchingVisitor.result = handler.match(comment, other, myMatchingVisitor.matchContext)
