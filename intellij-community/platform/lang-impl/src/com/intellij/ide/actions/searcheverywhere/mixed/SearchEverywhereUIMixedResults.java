@@ -948,6 +948,7 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
       .filter(entry -> myListModel.hasMoreElements(entry.getKey()))
       .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue().size() + limitAdditional));
 
+    myListModel.setMaxFrozenIndex(myListModel.getSize() - 1);
     mySearchProgressIndicator = mySearcher.findMoreItems(found, contributorsAndLimits, getSearchPattern());
   }
 
@@ -1062,8 +1063,15 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
     private boolean resultsExpired = false;
     private Comparator<SearchEverywhereFoundElementInfo> myElementsComparator = SearchEverywhereFoundElementInfo.COMPARATOR.reversed();
 
+    // new elements cannot be added before this index when "more..." elements are loaded
+    private int myMaxFrozenIndex;
+
     public void setElementsComparator(Comparator<SearchEverywhereFoundElementInfo> elementsComparator) {
       myElementsComparator = elementsComparator;
+    }
+
+    public void setMaxFrozenIndex(int maxFrozenIndex) {
+      myMaxFrozenIndex = maxFrozenIndex;
     }
 
     public boolean isResultsExpired() {
@@ -1133,7 +1141,10 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
 
         // there were items for this contributor before update
         if (startIndex > 0) {
-          listElements.sort(myElementsComparator);
+          List<SearchEverywhereFoundElementInfo> lst = myMaxFrozenIndex >= 0
+               ? listElements.subList(myMaxFrozenIndex + 1, listElements.size())
+               : listElements;
+          lst.sort(myElementsComparator);
           fireContentsChanged(this, 0, endIndex);
         }
       }
@@ -1497,6 +1508,7 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
       myResultsList.setEmptyText(getSearchPattern().isEmpty() ? "" : getNotFoundText());
       hasMoreContributors.forEach(myListModel::setHasMore);
 
+      myListModel.setMaxFrozenIndex(-1);
       mySelectionTracker.resetSelectionIfNeeded();
 
       if (testCallback != null) testCallback.consume(myListModel.getItems());

@@ -124,9 +124,8 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
       .filterMap(myActionManager::getAction)
       .transform(action -> {
         ActionWrapper wrapper = wrapAnAction(action, context);
-        String name = action.getTemplatePresentation().getText();
-        int degree = name != null ? matcher.matchingDegree(name) : 0;
-        return new MatchedValue(wrapper, pattern, degree) {
+        Integer degree = calcElementWeight(action, matcher);
+        return new MatchedValue(wrapper, pattern, degree == null ? 0 : degree.intValue()) {
           @NotNull
           @Override
           public String getValueText() {
@@ -267,8 +266,8 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
     List<MatchedValue> matched = ContainerUtil.newArrayList(items.map(o -> {
       if (o instanceof MatchedValue) return (MatchedValue)o;
 
-      String name = getActionText(o);
-      return name != null ? new MatchedValue(o, pattern, matcher.matchingDegree(name)) : new MatchedValue(o, pattern);
+      Integer weight = calcElementWeight(o, matcher);
+      return weight != null ? new MatchedValue(o, pattern, weight) : new MatchedValue(o, pattern);
     }));
     try {
       matched.sort((o1, o2) -> o1.compareWeights(o2));
@@ -277,6 +276,14 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
       LOG.error("Comparison method violates its general contract with pattern '" + pattern + "'", e);
     }
     return ContainerUtil.process(matched, consumer);
+  }
+
+  @Nullable
+  private static Integer calcElementWeight(Object element, MinusculeMatcher matcher) {
+    String name = getActionText(element);
+    if (name == null) return null;
+
+    return Math.max(matcher.matchingDegree(name), 0);
   }
 
   private static MinusculeMatcher buildWeightMatcher(String pattern) {
@@ -292,6 +299,7 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
   @Nullable
   public static String getActionText(Object value) {
     if (value instanceof OptionDescription) return ((OptionDescription)value).getHit();
+    if (value instanceof AnAction) return ((AnAction)value).getTemplatePresentation().getText();
     if (value instanceof ActionWrapper) return ((ActionWrapper)value).getAction().getTemplatePresentation().getText();
     return null;
   }
