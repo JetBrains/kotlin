@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.structuralsearch.handlers
+package com.jetbrains.kotlin.structuralsearch.handler
 
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
 class DeclarationHandler : MatchingHandler() {
-
     private fun KtDeclaration.getNonKDocCommentChild(): PsiComment? =
         this.getChildrenOfType<PsiComment>().firstOrNull { it !is KDoc }
 
