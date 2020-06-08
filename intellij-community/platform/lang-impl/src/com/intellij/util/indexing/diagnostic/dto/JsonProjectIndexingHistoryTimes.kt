@@ -8,12 +8,12 @@ data class JsonProjectIndexingHistoryTimes(
   val pushPropertiesTime: JsonDuration,
   val indexExtensionsTime: JsonDuration,
 
-  val indexingStart: PresentableTime,
-  val indexingEnd: PresentableTime,
-  val pushPropertiesStart: PresentableTime,
-  val pushPropertiesEnd: PresentableTime,
-  val indexExtensionsStart: PresentableTime,
-  val indexExtensionsEnd: PresentableTime,
-  val scanFilesStart: PresentableTime,
-  val scanFilesEnd: PresentableTime
+  val pushPropertiesStart: JsonDateTime,
+  val pushPropertiesEnd: JsonDateTime,
+  val scanFilesStart: JsonDateTime,
+  val scanFilesEnd: JsonDateTime,
+  val indexExtensionsStart: JsonDateTime,
+  val indexExtensionsEnd: JsonDateTime,
+  val indexingStart: JsonDateTime,
+  val indexingEnd: JsonDateTime
 )

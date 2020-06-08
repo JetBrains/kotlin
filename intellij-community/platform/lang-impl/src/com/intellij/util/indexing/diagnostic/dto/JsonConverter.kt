@@ -2,17 +2,13 @@
 package com.intellij.util.indexing.diagnostic.dto
 
 import com.intellij.util.indexing.diagnostic.*
-import com.intellij.util.text.DateFormatUtil
 import java.time.Duration
-import java.time.Instant
 
 fun TimeNano.toMillis(): TimeMillis = this / 1_000_000
 
 // Int value that is greater than zero.
 // Can be used to skip int value from JSON if it is equal to 0 (to not pollute the JSON report).
 typealias PositiveInt = Int?
-
-typealias PresentableTime = String
 
 fun Int.toPositiveInt() = takeIf { it > 0 }
 
@@ -71,23 +67,20 @@ private fun FileProviderIndexStatistics.aggregateStatsPerIndexer(): List<JsonFil
     }
 }
 
-private fun Instant.toPresentableTime(): PresentableTime =
-  DateFormatUtil.getIso8601Format().format(this.toEpochMilli())
-
 fun ProjectIndexingHistory.IndexingTimes.toJson() =
   JsonProjectIndexingHistoryTimes(
     JsonDuration(Duration.between(indexingStart, indexingEnd).toNanos()),
     JsonDuration(Duration.between(scanFilesStart, scanFilesEnd).toNanos()),
     JsonDuration(Duration.between(pushPropertiesStart, pushPropertiesEnd).toNanos()),
     JsonDuration(Duration.between(indexExtensionsStart, indexExtensionsEnd).toNanos()),
-    indexingStart!!.toPresentableTime(),
-    indexingEnd!!.toPresentableTime(),
-    pushPropertiesStart!!.toPresentableTime(),
-    pushPropertiesEnd!!.toPresentableTime(),
-    indexExtensionsStart!!.toPresentableTime(),
-    indexExtensionsEnd!!.toPresentableTime(),
-    scanFilesStart!!.toPresentableTime(),
-    scanFilesEnd!!.toPresentableTime()
+    JsonDateTime(pushPropertiesStart!!),
+    JsonDateTime(pushPropertiesEnd!!),
+    JsonDateTime(scanFilesStart!!),
+    JsonDateTime(scanFilesEnd!!),
+    JsonDateTime(indexExtensionsStart!!),
+    JsonDateTime(indexExtensionsEnd!!),
+    JsonDateTime(indexingStart!!),
+    JsonDateTime(indexingEnd!!)
   )
 
 private fun calculatePercentages(part: Long, total: Long): JsonPercentages =
