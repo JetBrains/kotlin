@@ -59,7 +59,7 @@ internal class KotlinCompilationNpmResolver(
             it.dependsOn(nodeJs.npmInstallTask)
             it.dependsOn(packageJsonTaskHolder)
         }.also { packageJsonTask ->
-            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+            if (compilation.isMain()) {
                 project.tasks
                     .withType(Zip::class.java)
                     .named(npmProject.target.artifactsTaskName)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -150,7 +150,7 @@ internal val KonanTarget.enabledOnCurrentHost
     get() = HostManager().isEnabled(this)
 
 internal val AbstractKotlinNativeCompilation.isMainCompilation: Boolean
-    get() = name == KotlinCompilation.MAIN_COMPILATION_NAME
+    get() = isMain()
 
 // KonanVersion doesn't provide an API to compare versions,
 // so we have to transform it to KotlinVersion first.
