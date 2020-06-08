@@ -93,17 +93,16 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
             fun Example(foo: Foo, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
               %composer.startRestartGroup(%key)
               val %dirty = %changed
-              val foo = if (%default and 0b0001 !== 0) {
-                Foo(0)
-              } else {
-                foo
-              }
+              val foo = foo
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(foo.value)) 0b0100 else 0b0010
               }
               if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                if (%default and 0b0001 !== 0) {
+                  foo = Foo(0)
+                }
                 print(foo)
               } else {
                 %composer.skipToGroupEnd()
@@ -173,8 +172,8 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
               %composer.startRestartGroup(%key)
               val %dirty = %changed
               val x = x
-              if (%changed and 0b0110 === 0) {
-                %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(x)) 0b0100 else 0b0010
+              if (%default and 0b0001 === 0 && %changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
               if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
@@ -212,19 +211,22 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
             fun A(a: Int, b: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
               %composer.startRestartGroup(%key)
               val %dirty = %changed
-              val a = if (%default and 0b0001 !== 0) 0 else a
+              val a = a
               val b = b
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(b)) 0b00010000 else 0b1000
+              if (%default and 0b0010 === 0 && %changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%composer.changed(b)) 0b00010000 else 0b1000
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   %composer.startDefaults()
+                  if (%default and 0b0001 !== 0) {
+                    a = 0
+                  }
                   if (%default and 0b0010 !== 0) {
                     b = a + 1
                   }
@@ -293,37 +295,37 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
-              val a00 = if (%default and 0b0001 !== 0) 0 else a00
-              val a01 = if (%default and 0b0010 !== 0) 0 else a01
-              val a02 = if (%default and 0b0100 !== 0) 0 else a02
-              val a03 = if (%default and 0b1000 !== 0) 0 else a03
-              val a04 = if (%default and 0b00010000 !== 0) 0 else a04
-              val a05 = if (%default and 0b00100000 !== 0) 0 else a05
-              val a06 = if (%default and 0b01000000 !== 0) 0 else a06
-              val a07 = if (%default and 0b10000000 !== 0) 0 else a07
-              val a08 = if (%default and 0b000100000000 !== 0) 0 else a08
-              val a09 = if (%default and 0b001000000000 !== 0) 0 else a09
-              val a10 = if (%default and 0b010000000000 !== 0) 0 else a10
-              val a11 = if (%default and 0b100000000000 !== 0) 0 else a11
-              val a12 = if (%default and 0b0001000000000000 !== 0) 0 else a12
-              val a13 = if (%default and 0b0010000000000000 !== 0) 0 else a13
-              val a14 = if (%default and 0b0100000000000000 !== 0) 0 else a14
-              val a15 = if (%default and 0b1000000000000000 !== 0) 0 else a15
-              val a16 = if (%default and 0b00010000000000000000 !== 0) 0 else a16
-              val a17 = if (%default and 0b00100000000000000000 !== 0) 0 else a17
-              val a18 = if (%default and 0b01000000000000000000 !== 0) 0 else a18
-              val a19 = if (%default and 0b10000000000000000000 !== 0) 0 else a19
-              val a20 = if (%default and 0b000100000000000000000000 !== 0) 0 else a20
-              val a21 = if (%default and 0b001000000000000000000000 !== 0) 0 else a21
-              val a22 = if (%default and 0b010000000000000000000000 !== 0) 0 else a22
-              val a23 = if (%default and 0b100000000000000000000000 !== 0) 0 else a23
-              val a24 = if (%default and 0b0001000000000000000000000000 !== 0) 0 else a24
-              val a25 = if (%default and 0b0010000000000000000000000000 !== 0) 0 else a25
-              val a26 = if (%default and 0b0100000000000000000000000000 !== 0) 0 else a26
-              val a27 = if (%default and 0b1000000000000000000000000000 !== 0) 0 else a27
-              val a28 = if (%default and 0b00010000000000000000000000000000 !== 0) 0 else a28
-              val a29 = if (%default and 0b00100000000000000000000000000000 !== 0) 0 else a29
-              val a30 = if (%default and 0b01000000000000000000000000000000 !== 0) 0 else a30
+              val a00 = a00
+              val a01 = a01
+              val a02 = a02
+              val a03 = a03
+              val a04 = a04
+              val a05 = a05
+              val a06 = a06
+              val a07 = a07
+              val a08 = a08
+              val a09 = a09
+              val a10 = a10
+              val a11 = a11
+              val a12 = a12
+              val a13 = a13
+              val a14 = a14
+              val a15 = a15
+              val a16 = a16
+              val a17 = a17
+              val a18 = a18
+              val a19 = a19
+              val a20 = a20
+              val a21 = a21
+              val a22 = a22
+              val a23 = a23
+              val a24 = a24
+              val a25 = a25
+              val a26 = a26
+              val a27 = a27
+              val a28 = a28
+              val a29 = a29
+              val a30 = a30
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b0110 === 0) {
@@ -480,6 +482,99 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
                 %dirty2 = %dirty2 or if (%composer.changed(a30)) 0b0100 else 0b0010
               }
               if (%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty2 and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                if (%default and 0b0001 !== 0) {
+                  a00 = 0
+                }
+                if (%default and 0b0010 !== 0) {
+                  a01 = 0
+                }
+                if (%default and 0b0100 !== 0) {
+                  a02 = 0
+                }
+                if (%default and 0b1000 !== 0) {
+                  a03 = 0
+                }
+                if (%default and 0b00010000 !== 0) {
+                  a04 = 0
+                }
+                if (%default and 0b00100000 !== 0) {
+                  a05 = 0
+                }
+                if (%default and 0b01000000 !== 0) {
+                  a06 = 0
+                }
+                if (%default and 0b10000000 !== 0) {
+                  a07 = 0
+                }
+                if (%default and 0b000100000000 !== 0) {
+                  a08 = 0
+                }
+                if (%default and 0b001000000000 !== 0) {
+                  a09 = 0
+                }
+                if (%default and 0b010000000000 !== 0) {
+                  a10 = 0
+                }
+                if (%default and 0b100000000000 !== 0) {
+                  a11 = 0
+                }
+                if (%default and 0b0001000000000000 !== 0) {
+                  a12 = 0
+                }
+                if (%default and 0b0010000000000000 !== 0) {
+                  a13 = 0
+                }
+                if (%default and 0b0100000000000000 !== 0) {
+                  a14 = 0
+                }
+                if (%default and 0b1000000000000000 !== 0) {
+                  a15 = 0
+                }
+                if (%default and 0b00010000000000000000 !== 0) {
+                  a16 = 0
+                }
+                if (%default and 0b00100000000000000000 !== 0) {
+                  a17 = 0
+                }
+                if (%default and 0b01000000000000000000 !== 0) {
+                  a18 = 0
+                }
+                if (%default and 0b10000000000000000000 !== 0) {
+                  a19 = 0
+                }
+                if (%default and 0b000100000000000000000000 !== 0) {
+                  a20 = 0
+                }
+                if (%default and 0b001000000000000000000000 !== 0) {
+                  a21 = 0
+                }
+                if (%default and 0b010000000000000000000000 !== 0) {
+                  a22 = 0
+                }
+                if (%default and 0b100000000000000000000000 !== 0) {
+                  a23 = 0
+                }
+                if (%default and 0b0001000000000000000000000000 !== 0) {
+                  a24 = 0
+                }
+                if (%default and 0b0010000000000000000000000000 !== 0) {
+                  a25 = 0
+                }
+                if (%default and 0b0100000000000000000000000000 !== 0) {
+                  a26 = 0
+                }
+                if (%default and 0b1000000000000000000000000000 !== 0) {
+                  a27 = 0
+                }
+                if (%default and 0b00010000000000000000000000000000 !== 0) {
+                  a28 = 0
+                }
+                if (%default and 0b00100000000000000000000000000000 !== 0) {
+                  a29 = 0
+                }
+                if (%default and 0b01000000000000000000000000000000 !== 0) {
+                  a30 = 0
+                }
                 print("Hello world!")
               } else {
                 %composer.skipToGroupEnd()
@@ -541,38 +636,38 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
-              val a00 = if (%default and 0b0001 !== 0) 0 else a00
-              val a01 = if (%default and 0b0010 !== 0) 0 else a01
-              val a02 = if (%default and 0b0100 !== 0) 0 else a02
-              val a03 = if (%default and 0b1000 !== 0) 0 else a03
-              val a04 = if (%default and 0b00010000 !== 0) 0 else a04
-              val a05 = if (%default and 0b00100000 !== 0) 0 else a05
-              val a06 = if (%default and 0b01000000 !== 0) 0 else a06
-              val a07 = if (%default and 0b10000000 !== 0) 0 else a07
-              val a08 = if (%default and 0b000100000000 !== 0) 0 else a08
-              val a09 = if (%default and 0b001000000000 !== 0) 0 else a09
-              val a10 = if (%default and 0b010000000000 !== 0) 0 else a10
-              val a11 = if (%default and 0b100000000000 !== 0) 0 else a11
-              val a12 = if (%default and 0b0001000000000000 !== 0) 0 else a12
-              val a13 = if (%default and 0b0010000000000000 !== 0) 0 else a13
-              val a14 = if (%default and 0b0100000000000000 !== 0) 0 else a14
-              val a15 = if (%default and 0b1000000000000000 !== 0) 0 else a15
-              val a16 = if (%default and 0b00010000000000000000 !== 0) 0 else a16
-              val a17 = if (%default and 0b00100000000000000000 !== 0) 0 else a17
-              val a18 = if (%default and 0b01000000000000000000 !== 0) 0 else a18
-              val a19 = if (%default and 0b10000000000000000000 !== 0) 0 else a19
-              val a20 = if (%default and 0b000100000000000000000000 !== 0) 0 else a20
-              val a21 = if (%default and 0b001000000000000000000000 !== 0) 0 else a21
-              val a22 = if (%default and 0b010000000000000000000000 !== 0) 0 else a22
-              val a23 = if (%default and 0b100000000000000000000000 !== 0) 0 else a23
-              val a24 = if (%default and 0b0001000000000000000000000000 !== 0) 0 else a24
-              val a25 = if (%default and 0b0010000000000000000000000000 !== 0) 0 else a25
-              val a26 = if (%default and 0b0100000000000000000000000000 !== 0) 0 else a26
-              val a27 = if (%default and 0b1000000000000000000000000000 !== 0) 0 else a27
-              val a28 = if (%default and 0b00010000000000000000000000000000 !== 0) 0 else a28
-              val a29 = if (%default and 0b00100000000000000000000000000000 !== 0) 0 else a29
-              val a30 = if (%default and 0b01000000000000000000000000000000 !== 0) 0 else a30
-              val a31 = if (%default1 and 0b0001 !== 0) 0 else a31
+              val a00 = a00
+              val a01 = a01
+              val a02 = a02
+              val a03 = a03
+              val a04 = a04
+              val a05 = a05
+              val a06 = a06
+              val a07 = a07
+              val a08 = a08
+              val a09 = a09
+              val a10 = a10
+              val a11 = a11
+              val a12 = a12
+              val a13 = a13
+              val a14 = a14
+              val a15 = a15
+              val a16 = a16
+              val a17 = a17
+              val a18 = a18
+              val a19 = a19
+              val a20 = a20
+              val a21 = a21
+              val a22 = a22
+              val a23 = a23
+              val a24 = a24
+              val a25 = a25
+              val a26 = a26
+              val a27 = a27
+              val a28 = a28
+              val a29 = a29
+              val a30 = a30
+              val a31 = a31
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b0110 === 0) {
@@ -734,6 +829,102 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
                 %dirty2 = %dirty2 or if (%composer.changed(a31)) 0b00010000 else 0b1000
               }
               if (%dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty2 and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                if (%default and 0b0001 !== 0) {
+                  a00 = 0
+                }
+                if (%default and 0b0010 !== 0) {
+                  a01 = 0
+                }
+                if (%default and 0b0100 !== 0) {
+                  a02 = 0
+                }
+                if (%default and 0b1000 !== 0) {
+                  a03 = 0
+                }
+                if (%default and 0b00010000 !== 0) {
+                  a04 = 0
+                }
+                if (%default and 0b00100000 !== 0) {
+                  a05 = 0
+                }
+                if (%default and 0b01000000 !== 0) {
+                  a06 = 0
+                }
+                if (%default and 0b10000000 !== 0) {
+                  a07 = 0
+                }
+                if (%default and 0b000100000000 !== 0) {
+                  a08 = 0
+                }
+                if (%default and 0b001000000000 !== 0) {
+                  a09 = 0
+                }
+                if (%default and 0b010000000000 !== 0) {
+                  a10 = 0
+                }
+                if (%default and 0b100000000000 !== 0) {
+                  a11 = 0
+                }
+                if (%default and 0b0001000000000000 !== 0) {
+                  a12 = 0
+                }
+                if (%default and 0b0010000000000000 !== 0) {
+                  a13 = 0
+                }
+                if (%default and 0b0100000000000000 !== 0) {
+                  a14 = 0
+                }
+                if (%default and 0b1000000000000000 !== 0) {
+                  a15 = 0
+                }
+                if (%default and 0b00010000000000000000 !== 0) {
+                  a16 = 0
+                }
+                if (%default and 0b00100000000000000000 !== 0) {
+                  a17 = 0
+                }
+                if (%default and 0b01000000000000000000 !== 0) {
+                  a18 = 0
+                }
+                if (%default and 0b10000000000000000000 !== 0) {
+                  a19 = 0
+                }
+                if (%default and 0b000100000000000000000000 !== 0) {
+                  a20 = 0
+                }
+                if (%default and 0b001000000000000000000000 !== 0) {
+                  a21 = 0
+                }
+                if (%default and 0b010000000000000000000000 !== 0) {
+                  a22 = 0
+                }
+                if (%default and 0b100000000000000000000000 !== 0) {
+                  a23 = 0
+                }
+                if (%default and 0b0001000000000000000000000000 !== 0) {
+                  a24 = 0
+                }
+                if (%default and 0b0010000000000000000000000000 !== 0) {
+                  a25 = 0
+                }
+                if (%default and 0b0100000000000000000000000000 !== 0) {
+                  a26 = 0
+                }
+                if (%default and 0b1000000000000000000000000000 !== 0) {
+                  a27 = 0
+                }
+                if (%default and 0b00010000000000000000000000000000 !== 0) {
+                  a28 = 0
+                }
+                if (%default and 0b00100000000000000000000000000000 !== 0) {
+                  a29 = 0
+                }
+                if (%default and 0b01000000000000000000000000000000 !== 0) {
+                  a30 = 0
+                }
+                if (%default1 and 0b0001 !== 0) {
+                  a31 = 0
+                }
                 print("Hello world!")
               } else {
                 %composer.skipToGroupEnd()
@@ -796,37 +987,37 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
-              val a00 = if (%default and 0b0001 !== 0) 0 else a00
-              val a01 = if (%default and 0b0010 !== 0) 0 else a01
-              val a02 = if (%default and 0b0100 !== 0) 0 else a02
-              val a03 = if (%default and 0b1000 !== 0) 0 else a03
-              val a04 = if (%default and 0b00010000 !== 0) 0 else a04
-              val a05 = if (%default and 0b00100000 !== 0) 0 else a05
-              val a06 = if (%default and 0b01000000 !== 0) 0 else a06
-              val a07 = if (%default and 0b10000000 !== 0) 0 else a07
-              val a08 = if (%default and 0b000100000000 !== 0) 0 else a08
+              val a00 = a00
+              val a01 = a01
+              val a02 = a02
+              val a03 = a03
+              val a04 = a04
+              val a05 = a05
+              val a06 = a06
+              val a07 = a07
+              val a08 = a08
               val a09 = a09
-              val a10 = if (%default and 0b010000000000 !== 0) 0 else a10
-              val a11 = if (%default and 0b100000000000 !== 0) 0 else a11
-              val a12 = if (%default and 0b0001000000000000 !== 0) 0 else a12
-              val a13 = if (%default and 0b0010000000000000 !== 0) 0 else a13
-              val a14 = if (%default and 0b0100000000000000 !== 0) 0 else a14
-              val a15 = if (%default and 0b1000000000000000 !== 0) 0 else a15
-              val a16 = if (%default and 0b00010000000000000000 !== 0) 0 else a16
-              val a17 = if (%default and 0b00100000000000000000 !== 0) 0 else a17
-              val a18 = if (%default and 0b01000000000000000000 !== 0) 0 else a18
-              val a19 = if (%default and 0b10000000000000000000 !== 0) 0 else a19
-              val a20 = if (%default and 0b000100000000000000000000 !== 0) 0 else a20
-              val a21 = if (%default and 0b001000000000000000000000 !== 0) 0 else a21
-              val a22 = if (%default and 0b010000000000000000000000 !== 0) 0 else a22
-              val a23 = if (%default and 0b100000000000000000000000 !== 0) 0 else a23
-              val a24 = if (%default and 0b0001000000000000000000000000 !== 0) 0 else a24
-              val a25 = if (%default and 0b0010000000000000000000000000 !== 0) 0 else a25
-              val a26 = if (%default and 0b0100000000000000000000000000 !== 0) 0 else a26
-              val a27 = if (%default and 0b1000000000000000000000000000 !== 0) 0 else a27
-              val a28 = if (%default and 0b00010000000000000000000000000000 !== 0) 0 else a28
-              val a29 = if (%default and 0b00100000000000000000000000000000 !== 0) 0 else a29
-              val a30 = if (%default and 0b01000000000000000000000000000000 !== 0) 0 else a30
+              val a10 = a10
+              val a11 = a11
+              val a12 = a12
+              val a13 = a13
+              val a14 = a14
+              val a15 = a15
+              val a16 = a16
+              val a17 = a17
+              val a18 = a18
+              val a19 = a19
+              val a20 = a20
+              val a21 = a21
+              val a22 = a22
+              val a23 = a23
+              val a24 = a24
+              val a25 = a25
+              val a26 = a26
+              val a27 = a27
+              val a28 = a28
+              val a29 = a29
+              val a30 = a30
               val a31 = a31
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
@@ -987,8 +1178,98 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
               if (%default.inv() and 0b001000000000 !== 0 || %default1.inv() and 0b0001 !== 0 || %dirty and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty1 and 0b00101010101010101010101010101011 xor 0b00101010101010101010101010101010 !== 0 || %dirty2 and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   %composer.startDefaults()
+                  if (%default and 0b0001 !== 0) {
+                    a00 = 0
+                  }
+                  if (%default and 0b0010 !== 0) {
+                    a01 = 0
+                  }
+                  if (%default and 0b0100 !== 0) {
+                    a02 = 0
+                  }
+                  if (%default and 0b1000 !== 0) {
+                    a03 = 0
+                  }
+                  if (%default and 0b00010000 !== 0) {
+                    a04 = 0
+                  }
+                  if (%default and 0b00100000 !== 0) {
+                    a05 = 0
+                  }
+                  if (%default and 0b01000000 !== 0) {
+                    a06 = 0
+                  }
+                  if (%default and 0b10000000 !== 0) {
+                    a07 = 0
+                  }
+                  if (%default and 0b000100000000 !== 0) {
+                    a08 = 0
+                  }
                   if (%default and 0b001000000000 !== 0) {
                     a09 = Foo()
+                  }
+                  if (%default and 0b010000000000 !== 0) {
+                    a10 = 0
+                  }
+                  if (%default and 0b100000000000 !== 0) {
+                    a11 = 0
+                  }
+                  if (%default and 0b0001000000000000 !== 0) {
+                    a12 = 0
+                  }
+                  if (%default and 0b0010000000000000 !== 0) {
+                    a13 = 0
+                  }
+                  if (%default and 0b0100000000000000 !== 0) {
+                    a14 = 0
+                  }
+                  if (%default and 0b1000000000000000 !== 0) {
+                    a15 = 0
+                  }
+                  if (%default and 0b00010000000000000000 !== 0) {
+                    a16 = 0
+                  }
+                  if (%default and 0b00100000000000000000 !== 0) {
+                    a17 = 0
+                  }
+                  if (%default and 0b01000000000000000000 !== 0) {
+                    a18 = 0
+                  }
+                  if (%default and 0b10000000000000000000 !== 0) {
+                    a19 = 0
+                  }
+                  if (%default and 0b000100000000000000000000 !== 0) {
+                    a20 = 0
+                  }
+                  if (%default and 0b001000000000000000000000 !== 0) {
+                    a21 = 0
+                  }
+                  if (%default and 0b010000000000000000000000 !== 0) {
+                    a22 = 0
+                  }
+                  if (%default and 0b100000000000000000000000 !== 0) {
+                    a23 = 0
+                  }
+                  if (%default and 0b0001000000000000000000000000 !== 0) {
+                    a24 = 0
+                  }
+                  if (%default and 0b0010000000000000000000000000 !== 0) {
+                    a25 = 0
+                  }
+                  if (%default and 0b0100000000000000000000000000 !== 0) {
+                    a26 = 0
+                  }
+                  if (%default and 0b1000000000000000000000000000 !== 0) {
+                    a27 = 0
+                  }
+                  if (%default and 0b00010000000000000000000000000000 !== 0) {
+                    a28 = 0
+                  }
+                  if (%default and 0b00100000000000000000000000000000 !== 0) {
+                    a29 = 0
+                  }
+                  if (%default and 0b01000000000000000000000000000000 !== 0) {
+                    a30 = 0
                   }
                   if (%default1 and 0b0001 !== 0) {
                     a31 = Foo()

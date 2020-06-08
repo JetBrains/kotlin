@@ -1158,7 +1158,7 @@ class ComposableFunctionBodyTransformer(
 
                 // create a new temporary variable with the same name as the parameter itself
                 // initialized to the parameter value.
-                val varSymbol = if (!canSkipExecution || defaultExprIsStatic[index]) {
+                val varSymbol = if (!canSkipExecution) {
                     // If we can't skip execution, or if the expression is static, there's no need
                     // to separate the assignment of the temporary and the declaration.
                     irTemporary(
@@ -1178,7 +1178,7 @@ class ComposableFunctionBodyTransformer(
                 } else {
                     // If we can skip execution, we want to only execute the default expression
                     // in certain cases. as a result, we first create the temp variable, and then
-                    // add the logic to set it to the "setDefaults" container.
+                    // add the logic to set it in the "setDefaults" container.
                     irTemporary(
                         irGet(param),
                         param.name.identifier,
@@ -1240,16 +1240,11 @@ class ComposableFunctionBodyTransformer(
                 }
 
                 val defaultValueIsStatic = defaultExprIsStatic[index]
-                val callChanged = irChanged(irGet(scope.remappedParams[param]!!))
-                val isChanged = if (defaultParam != null && !defaultValueIsStatic)
-                    irAndAnd(irIsProvided(defaultParam, index), callChanged)
-                else
-                    callChanged
                 val modifyDirtyFromChangedResult = dirty.irOrSetBitsAtSlot(
                     index,
                     irIfThenElse(
                         context.irBuiltIns.intType,
-                        isChanged,
+                        irChanged(irGet(scope.remappedParams[param]!!)),
                         // if the value has changed, update the bits in the slot to be
                         // "Different"
                         thenPart = irConst(ParamState.Different.bitsForSlot(index)),
@@ -1259,9 +1254,9 @@ class ComposableFunctionBodyTransformer(
                     )
                 )
 
-                val stmt = if (defaultParam != null && defaultValueIsStatic)
-                // if the default expression is "static", then we know that if we are using the
-                // default expression, the parameter can be considered "static".
+                val stmt = if (defaultParam != null && defaultValueIsStatic) {
+                    // if the default expression is "static", then we know that if we are using the
+                    // default expression, the parameter can be considered "static".
                     irWhen(
                         origin = IrStatementOrigin.IF,
                         branches = listOf(
@@ -1278,15 +1273,20 @@ class ComposableFunctionBodyTransformer(
                             )
                         )
                     )
-                else
+                } else {
+                    // we only call `$composer.changed(...)` on a parameter if the value came in
+                    // with an "Uncertain" state AND the value was provided. This is safe to do
+                    // because this will remain true or false for *every* execution of the
+                    // function, so we will never get a slot table misalignment as a result.
+                    val condition = if (defaultParam != null) irAndAnd(
+                        irIsProvided(defaultParam, index),
+                        irIsUncertain(changedParam, index)
+                    ) else irIsUncertain(changedParam, index)
                     irIf(
-                        // we only call `$composer.changed(...)` on a parameter if the value came in
-                        // with an "Uncertain" state AND the value was provided. This is safe to do
-                        // because this will remain true or false for *every* execution of the
-                        // function, so we will never get a slot table misalignment as a result.
-                        condition = irIsUncertain(changedParam, index),
+                        condition = condition,
                         body = modifyDirtyFromChangedResult
                     )
+                }
                 skipPreamble.statements.add(stmt)
             }
         }
