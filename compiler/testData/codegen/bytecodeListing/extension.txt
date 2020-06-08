@@ -1,0 +1,9 @@
+@kotlin.Metadata
+public final class ExtensionKt {
+    public final static @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    private final static method getPropPrivate(p0: java.lang.String): java.lang.String
+    public final static method setProp(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    private final static method setPropPrivate(p0: java.lang.String, p1: java.lang.String): void
+    public final static method test(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private final static method testPrivate(p0: java.lang.String): void
+}

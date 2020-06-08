@@ -1,9 +1,14 @@
 @kotlin.Metadata
 public interface A
 
+@kotlin.annotation.Retention
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Anno
+
 @kotlin.Metadata
 public interface B {
-    public abstract method foo(): void
+    public abstract method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
 @kotlin.Metadata
@@ -14,13 +19,15 @@ public interface C {
 @kotlin.Metadata
 public final class D$DefaultImpls {
     inner class D$DefaultImpls
-    public static method baz(p0: D): int
+    public static method baz(@org.jetbrains.annotations.NotNull p0: D, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    private static method test(p0: D, p1: java.lang.String): java.lang.String
 }
 
 @kotlin.Metadata
+@Anno
 public interface D {
     inner class D$DefaultImpls
-    public abstract method baz(): int
+    public abstract method baz(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
 }
 
 @kotlin.Metadata
@@ -32,4 +39,21 @@ public final class E$InsideE {
 @kotlin.Metadata
 public interface E {
     inner class E$InsideE
+}
+
+@kotlin.Metadata
+public final class F$DefaultImpls {
+    inner class F$DefaultImpls
+    public static @org.jetbrains.annotations.NotNull method getBar(@org.jetbrains.annotations.NotNull p0: F): java.lang.String
+    private static method getBaz(p0: F): java.lang.String
+    public static method setBar(@org.jetbrains.annotations.NotNull p0: F, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    private static method setBaz(p0: F, p1: java.lang.String): void
+}
+
+@kotlin.Metadata
+@Anno
+public interface F {
+    inner class F$DefaultImpls
+    public abstract @org.jetbrains.annotations.NotNull method getBar(): java.lang.String
+    public abstract method setBar(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }

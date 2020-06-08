@@ -1,7 +1,7 @@
 @kotlin.Metadata
 public final class A$DefaultImpls {
     inner class A$DefaultImpls
-    public static method a(p0: A): void
+    public static method a(@org.jetbrains.annotations.NotNull p0: A): void
 }
 
 @kotlin.Metadata

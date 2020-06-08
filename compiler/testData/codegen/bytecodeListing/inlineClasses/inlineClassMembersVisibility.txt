@@ -14,8 +14,8 @@ public final class Z {
     public final static method getInternalExtensionVar-impl$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
     public final static method getInternalVal-impl$test_module(p0: int): int
     public final static method getInternalVar-impl$test_module(p0: int): int
-    private final static method getPrivateExtensionVal-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
-    private final static method getPrivateExtensionVar-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    private final static method getPrivateExtensionVal-impl(p0: int, p1: java.lang.String): int
+    private final static method getPrivateExtensionVar-impl(p0: int, p1: java.lang.String): int
     private final static method getPrivateVal-impl(p0: int): int
     private final static method getPrivateVar-impl(p0: int): int
     public final static method getPublicExtensionVal-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
@@ -27,13 +27,13 @@ public final class Z {
     public static method hashCode-impl(p0: int): int
     public final static method internalExtensionFun-impl$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public final static method internalFun-impl$test_module(p0: int): void
-    private final static method privateExtensionFun-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    private final static method privateExtensionFun-impl(p0: int, p1: java.lang.String): void
     private final static method privateFun-impl(p0: int): void
     public final static method publicExtensionFun-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public final static method publicFun-impl(p0: int): void
     public final static method setInternalExtensionVar-impl$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: int): void
     public final static method setInternalVar-impl$test_module(p0: int, p1: int): void
-    private final static method setPrivateExtensionVar-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: int): void
+    private final static method setPrivateExtensionVar-impl(p0: int, p1: java.lang.String, p2: int): void
     private final static method setPrivateVar-impl(p0: int, p1: int): void
     public final static method setPublicExtensionVar-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: int): void
     public final static method setPublicVar-impl(p0: int, p1: int): void
