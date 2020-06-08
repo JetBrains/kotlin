@@ -99,11 +99,9 @@ def kotlin_object_type_summary(lldb_val, internal_dict = {}):
     log(lambda: "kotlin_object_type_summary({:#x})".format(lldb_val.unsigned))
     fallback = lldb_val.GetValue()
     if str(lldb_val.type) != "struct ObjHeader *":
-        return fallback
-
-    ptr = lldb_val_to_ptr(lldb_val)
-    if ptr is None:
-        return fallback
+        if lldb_val.GetValue() is None:
+            return NULL
+        return lldb_val.GetValueAsSigned()
 
     tip = internal_dict["type_info"] if "type_info" in internal_dict.keys() else type_info(lldb_val)
     if not tip:
