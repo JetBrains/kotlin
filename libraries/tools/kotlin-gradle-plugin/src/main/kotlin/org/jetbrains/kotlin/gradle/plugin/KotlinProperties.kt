@@ -192,7 +192,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Generate kotlin/js external declarations from all .d.ts files found in npm modules
      */
     val jsGenerateExternals: Boolean
-        get() = booleanProperty("kotlin.js.generate.externals") ?: DEFAULT_GENERATE_KOTLIN_EXTERNALS
+        get() = booleanProperty("kotlin.js.generate.externals") ?: DEFAULT_GENERATE_EXTERNALS
 
     /**
      * Automaticaly discover external .d.ts declarations
