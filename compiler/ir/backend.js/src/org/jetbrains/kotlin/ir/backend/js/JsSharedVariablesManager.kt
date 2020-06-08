@@ -45,10 +45,15 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
         val constructorSymbol = closureBoxConstructorDeclaration.symbol
 
         val irCall =
-            IrConstructorCallImpl.fromSymbolDescriptor(initializer.startOffset, initializer.endOffset, closureBoxType, constructorSymbol)
-                .apply {
-                    putValueArgument(0, initializer)
-                }
+            IrConstructorCallImpl(
+                initializer.startOffset, initializer.endOffset,
+                closureBoxType, constructorSymbol,
+                valueArgumentsCount = 1,
+                typeArgumentsCount = 0,
+                constructorTypeArgumentsCount = 0
+            ).apply {
+                putValueArgument(0, initializer)
+            }
 
         val descriptor = WrappedVariableDescriptor()
         return IrVariableImpl(

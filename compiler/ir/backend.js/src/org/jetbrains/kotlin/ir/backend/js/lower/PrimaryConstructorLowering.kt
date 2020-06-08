@@ -71,7 +71,12 @@ class DelegateToSyntheticPrimaryConstructor(context: JsCommonBackendContext) : B
                     override fun visitDeclaration(declaration: IrDeclaration) = declaration // optimize visiting
 
                     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression.run {
-                        IrDelegatingConstructorCallImpl(startOffset, endOffset, type, primary.symbol)
+                        IrDelegatingConstructorCallImpl(
+                            startOffset, endOffset, type,
+                            primary.symbol,
+                            valueArgumentsCount = primary.valueParameters.size,
+                            typeArgumentsCount = primary.typeParameters.size
+                        )
                     }
                 }
 

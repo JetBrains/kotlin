@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -43,6 +44,7 @@ class IrFunctionReferenceImpl(
     ),
     IrFunctionReference {
 
+    @DescriptorBasedIr
     constructor(
         startOffset: Int,
         endOffset: Int,

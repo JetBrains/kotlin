@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrCallImpl(
@@ -45,10 +47,11 @@ class IrCallImpl(
 
     init {
         if (symbol is IrConstructorSymbol) {
-            throw AssertionError("Should be IrConstructorCall: ${symbol.descriptor}")
+            throw AssertionError("Should be IrConstructorCall: ${this.render()}")
         }
     }
 
+    @DescriptorBasedIr
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -61,6 +64,7 @@ class IrCallImpl(
         origin, superQualifierSymbol
     )
 
+    @DescriptorBasedIr
     constructor(
         startOffset: Int,
         endOffset: Int,

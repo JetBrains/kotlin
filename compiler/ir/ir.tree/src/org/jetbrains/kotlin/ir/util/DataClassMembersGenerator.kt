@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
  *
  * Generating synthetic members of inline class can use this as well, in particular, members from Any: equals, hashCode, and toString.
  */
+@OptIn(DescriptorBasedIr::class)
 abstract class DataClassMembersGenerator(
     val context: IrGeneratorContext,
     val symbolTable: SymbolTable,
@@ -42,7 +44,7 @@ abstract class DataClassMembersGenerator(
 
     inline fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
         also { irDeclaration ->
-            symbolTable.withScope(irDeclaration.descriptor) {
+            symbolTable.withScope(irDeclaration) {
                 builder(irDeclaration)
             }
         }
@@ -95,7 +97,8 @@ abstract class DataClassMembersGenerator(
             +irReturn(
                 irCall(
                     constructorSymbol,
-                    irClass.defaultType
+                    irClass.defaultType,
+                    constructedClass = irClass
                 ).apply {
                     mapTypeParameters(::transform)
                     mapValueParameters {
@@ -126,13 +129,13 @@ abstract class DataClassMembersGenerator(
         private val intClass = context.builtIns.int
         private val intType = context.builtIns.intType
 
-        private val intTimesSymbol: IrFunctionSymbol =
+        private val intTimesSymbol: IrSimpleFunctionSymbol =
             intClass.findFirstFunction("times") { KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType) }
-                .let { symbolTable.referenceFunction(it) }
+                .let { symbolTable.referenceSimpleFunction(it) }
 
-        private val intPlusSymbol: IrFunctionSymbol =
+        private val intPlusSymbol: IrSimpleFunctionSymbol =
             intClass.findFirstFunction("plus") { KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType) }
-                .let { symbolTable.referenceFunction(it) }
+                .let { symbolTable.referenceSimpleFunction(it) }
 
         fun generateHashCodeMethodBody(properties: List<PropertyDescriptor>) {
             val irIntType = context.irBuiltIns.intType
@@ -171,8 +174,14 @@ abstract class DataClassMembersGenerator(
                 symbolTable.referenceSimpleFunction(it.original)
             }
 
-            return irCall(hashCodeFunctionSymbol, context.irBuiltIns.intType).apply {
-                if (hashCodeFunctionSymbol.descriptor.dispatchReceiverParameter != null) {
+            val hasDispatchReceiver = hashCodeFunctionSymbol.descriptor.dispatchReceiverParameter != null
+            return irCall(
+                hashCodeFunctionSymbol,
+                context.irBuiltIns.intType,
+                valueArgumentsCount = if (hasDispatchReceiver) 0 else 1,
+                typeArgumentsCount = 0
+            ).apply {
+                if (hasDispatchReceiver) {
                     dispatchReceiver = irValue
                 } else {
                     putValueArgument(0, irValue)

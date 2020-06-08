@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
@@ -62,10 +63,14 @@ interface ReferenceSymbolTable {
     fun referenceTypeParameterFromLinker(classifier: TypeParameterDescriptor, sig: IdSignature): IrTypeParameterSymbol
     fun referenceTypeAliasFromLinker(descriptor: TypeAliasDescriptor, sig: IdSignature): IrTypeAliasSymbol
 
+    @DescriptorBasedIr
     fun enterScope(owner: DeclarationDescriptor)
+
     fun enterScope(owner: IrDeclaration)
 
+    @DescriptorBasedIr
     fun leaveScope(owner: DeclarationDescriptor)
+
     fun leaveScope(owner: IrDeclaration)
 }
 
@@ -102,6 +107,7 @@ open class SymbolTable(
             return createOwner(symbol)
         }
 
+        @OptIn(DescriptorBasedIr::class)
         inline fun declare(sig: IdSignature, createSymbol: () -> S, createOwner: (S) -> B): B {
             val existing = get(sig)
             val symbol = if (existing == null) {
@@ -169,6 +175,7 @@ open class SymbolTable(
             return s
         }
 
+        @OptIn(DescriptorBasedIr::class)
         inline fun referenced(sig: IdSignature, orElse: () -> S): S {
             return get(sig) ?: run {
                 val new = orElse()
@@ -304,10 +311,12 @@ open class SymbolTable(
             scope[descriptor] = symbol
         }
 
+        @DescriptorBasedIr
         fun enterScope(owner: DeclarationDescriptor) {
             currentScope = Scope(owner, currentScope)
         }
 
+        @DescriptorBasedIr
         fun leaveScope(owner: DeclarationDescriptor) {
             currentScope?.owner.let {
                 assert(it == owner) { "Unexpected leaveScope: owner=$owner, currentScope.owner=$it" }
@@ -556,6 +565,7 @@ open class SymbolTable(
         return IrFieldSymbolImpl(descriptor)
     }
 
+    @OptIn(DescriptorBasedIr::class)
     fun declareField(
         startOffset: Int,
         endOffset: Int,
@@ -625,6 +635,7 @@ open class SymbolTable(
 
     }
 
+    @OptIn(DescriptorBasedIr::class)
     fun declareProperty(
         startOffset: Int,
         endOffset: Int,
@@ -858,6 +869,7 @@ open class SymbolTable(
 
     val unboundTypeParameters: Set<IrTypeParameterSymbol> get() = globalTypeParameterSymbolTable.unboundSymbols
 
+    @OptIn(DescriptorBasedIr::class)
     fun declareValueParameter(
         startOffset: Int,
         endOffset: Int,
@@ -880,6 +892,7 @@ open class SymbolTable(
             valueParameterFactory
         )
 
+    @OptIn(DescriptorBasedIr::class)
     fun introduceValueParameter(irValueParameter: IrValueParameter) {
         valueParameterSymbolTable.introduceLocal(irValueParameter.descriptor, irValueParameter.symbol)
     }
@@ -953,18 +966,22 @@ open class SymbolTable(
             throw AssertionError("Undefined local delegated property referenced: $descriptor")
         }
 
+    @DescriptorBasedIr
     override fun enterScope(owner: DeclarationDescriptor) {
         scopedSymbolTables.forEach { it.enterScope(owner) }
     }
 
+    @OptIn(DescriptorBasedIr::class)
     override fun enterScope(owner: IrDeclaration) {
         enterScope(owner.descriptor)
     }
 
+    @DescriptorBasedIr
     override fun leaveScope(owner: DeclarationDescriptor) {
         scopedSymbolTables.forEach { it.leaveScope(owner) }
     }
 
+    @OptIn(DescriptorBasedIr::class)
     override fun leaveScope(owner: IrDeclaration) {
         leaveScope(owner.descriptor)
     }
@@ -1014,6 +1031,7 @@ open class SymbolTable(
     }
 }
 
+@DescriptorBasedIr
 inline fun <T, D : DeclarationDescriptor> SymbolTable.withScope(owner: D, block: SymbolTable.(D) -> T): T {
     enterScope(owner)
     val result = block(owner)
@@ -1021,6 +1039,14 @@ inline fun <T, D : DeclarationDescriptor> SymbolTable.withScope(owner: D, block:
     return result
 }
 
+inline fun <T, D : IrDeclaration> SymbolTable.withScope(owner: D, block: SymbolTable.(D) -> T): T {
+    enterScope(owner)
+    val result = block(owner)
+    leaveScope(owner)
+    return result
+}
+
+@DescriptorBasedIr
 inline fun <T, D : DeclarationDescriptor> ReferenceSymbolTable.withReferenceScope(owner: D, block: ReferenceSymbolTable.(D) -> T): T {
     enterScope(owner)
     val result = block(owner)

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.TypeParameterCarrier
@@ -60,6 +61,7 @@ class IrTypeParameterImpl(
         symbol.bind(this)
     }
 
+    @DescriptorBasedIr
     override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
 
     override val superTypes: MutableList<IrType> = SmartList()

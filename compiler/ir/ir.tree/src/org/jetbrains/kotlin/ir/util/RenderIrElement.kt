@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.util
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -700,6 +701,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?): String =
         "DYN_MEMBER memberName='${expression.memberName}' type=${expression.type.render()}"
 
+    @OptIn(DescriptorBasedIr::class)
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
         "ERROR_DECL ${declaration.descriptor::class.java.simpleName} " +
                 descriptorRendererForErrorDeclarations.renderDescriptor(declaration.descriptor.original)
@@ -713,6 +715,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 }
 
+@DescriptorBasedIr
 internal fun IrDeclaration.name(): String =
     descriptor.name.toString()
 

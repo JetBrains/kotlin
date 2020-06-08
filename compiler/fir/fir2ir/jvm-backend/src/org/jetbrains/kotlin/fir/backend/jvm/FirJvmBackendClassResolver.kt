@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmBackendClassResolver(val components: Fir2IrComponents) : JvmBackendClassResolver {
+    @DescriptorBasedIr
     override fun resolveToClassDescriptors(type: Type): List<ClassDescriptor> {
         if (type.sort != Type.OBJECT) return emptyList()
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.matchers.Quantifier
 import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.createIrCallMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.singleArgumentExtension
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -555,6 +556,7 @@ internal class CharSequenceIndicesHandler(context: CommonBackendContext) : Indic
 }
 
 /** Builds a [HeaderInfo] for calls to reverse an iterable. */
+@OptIn(DescriptorBasedIr::class)
 internal class ReversedHandler(context: CommonBackendContext, private val visitor: HeaderInfoBuilder) :
     HeaderInfoFromCallHandler<Nothing?> {
 

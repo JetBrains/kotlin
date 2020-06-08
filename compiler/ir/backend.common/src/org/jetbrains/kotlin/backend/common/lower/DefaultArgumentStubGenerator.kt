@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -282,7 +283,11 @@ open class DefaultParameterInjector(
         expression.transformChildrenVoid()
         return visitFunctionAccessExpression(expression) {
             with(expression) {
-                IrDelegatingConstructorCallImpl(startOffset, endOffset, type, it as IrConstructorSymbol, typeArgumentsCount)
+                IrDelegatingConstructorCallImpl(
+                    startOffset, endOffset, type, it as IrConstructorSymbol,
+                    typeArgumentsCount = typeArgumentsCount,
+                    valueArgumentsCount = it.owner.valueParameters.size
+                )
             }
         }
     }
@@ -300,7 +305,11 @@ open class DefaultParameterInjector(
         expression.transformChildrenVoid()
         return visitFunctionAccessExpression(expression) {
             with(expression) {
-                IrEnumConstructorCallImpl(startOffset, endOffset, type, it as IrConstructorSymbol)
+                IrEnumConstructorCallImpl(
+                    startOffset, endOffset, type, it as IrConstructorSymbol,
+                    typeArgumentsCount = typeArgumentsCount,
+                    valueArgumentsCount = it.owner.valueParameters.size
+                )
             }
         }
     }
@@ -309,7 +318,13 @@ open class DefaultParameterInjector(
         expression.transformChildrenVoid()
         return visitFunctionAccessExpression(expression) {
             with(expression) {
-                IrCallImpl(startOffset, endOffset, type, it, typeArgumentsCount, DEFAULT_DISPATCH_CALL, superQualifierSymbol)
+                IrCallImpl(
+                    startOffset, endOffset, type, it,
+                    typeArgumentsCount = typeArgumentsCount,
+                    valueArgumentsCount = it.owner.valueParameters.size,
+                    origin = DEFAULT_DISPATCH_CALL,
+                    superQualifierSymbol = superQualifierSymbol
+                )
             }
         }
     }
@@ -480,6 +495,7 @@ private fun IrFunction.generateDefaultsFunction(
     return null
 }
 
+@OptIn(DescriptorBasedIr::class)
 private fun IrFunction.generateDefaultsFunctionImpl(
     context: CommonBackendContext,
     newOrigin: IrDeclarationOrigin,

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.js.JsDeclarationFactory
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
@@ -80,6 +81,7 @@ class WasmBackendContext(
 }
 
 class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSymbol {
+    @DescriptorBasedIr
     override val descriptor: PackageFragmentDescriptor
         get() = error("Operation is unsupported")
 

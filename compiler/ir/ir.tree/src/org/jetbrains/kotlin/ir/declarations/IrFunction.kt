@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 interface IrFunction :
     IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent, IrReturnTarget {
 
+    @DescriptorBasedIr
     override val descriptor: FunctionDescriptor
     override val symbol: IrFunctionSymbol
 
@@ -44,7 +46,7 @@ interface IrFunction :
     override val metadata: MetadataSource?
 }
 
-
+@DescriptorBasedIr
 fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =
     valueParameters.getOrElse(parameter.index) {
         throw AssertionError("No IrValueParameter for $parameter")
@@ -54,9 +56,7 @@ fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValue
         }
     }
 
-fun IrFunction.getDefault(parameter: ValueParameterDescriptor): IrExpressionBody? =
-    getIrValueParameter(parameter).defaultValue
-
+@DescriptorBasedIr
 fun IrFunction.putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody) {
     getIrValueParameter(parameter).defaultValue = expressionBody
 }

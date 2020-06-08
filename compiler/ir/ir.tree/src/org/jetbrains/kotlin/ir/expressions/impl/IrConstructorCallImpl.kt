@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -32,6 +32,7 @@ class IrConstructorCallImpl(
 
     companion object {
 
+        @DescriptorBasedIr
         fun fromSymbolDescriptor(
             startOffset: Int,
             endOffset: Int,
@@ -47,10 +48,10 @@ class IrConstructorCallImpl(
                 startOffset, endOffset,
                 type,
                 constructorSymbol,
-                totalTypeParametersCount,
-                totalTypeParametersCount - classTypeParametersCount,
-                valueParametersCount,
-                origin
+                typeArgumentsCount = totalTypeParametersCount,
+                constructorTypeArgumentsCount = totalTypeParametersCount - classTypeParametersCount,
+                valueArgumentsCount = valueParametersCount,
+                origin = origin
             )
         }
 

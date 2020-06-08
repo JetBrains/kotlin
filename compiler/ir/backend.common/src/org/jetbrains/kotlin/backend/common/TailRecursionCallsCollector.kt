@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * It is also not guaranteed that each returned call is detected as tail recursion by the frontend.
  * However any returned call can be correctly optimized as tail recursion.
  */
+@OptIn(DescriptorBasedIr::class)
 fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
     if ((irFunction as? IrSimpleFunction)?.isTailrec != true) {
         return emptySet()

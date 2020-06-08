@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -101,6 +102,7 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     protected val allScopes get() = scopeStack
     protected val currentDeclarationParent get() = scopeStack.lastOrNull { it.irElement is IrDeclarationParent }?.irElement as? IrDeclarationParent
 
+    @DescriptorBasedIr
     fun printScopeStack() {
         scopeStack.forEach { println(it.scope.scopeOwner) }
     }
@@ -138,6 +140,7 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     }
 }
 
+@OptIn(DescriptorBasedIr::class)
 abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
 
     private val scopeStack = mutableListOf<ScopeWithIr>()
@@ -198,6 +201,7 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
     protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
     protected val allScopes get() = scopeStack
 
+    @DescriptorBasedIr
     fun printScopeStack() {
         scopeStack.forEach { println(it.scope.scopeOwner) }
     }

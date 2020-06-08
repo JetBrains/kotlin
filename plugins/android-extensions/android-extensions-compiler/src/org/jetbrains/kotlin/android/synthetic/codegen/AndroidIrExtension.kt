@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -50,6 +51,7 @@ abstract class AndroidIrExtension : IrGenerationExtension {
     }
 }
 
+@OptIn(DescriptorBasedIr::class)
 private class AndroidIrTransformer(val extension: AndroidIrExtension, val pluginContext: IrPluginContext) :
     IrElementTransformerVoidWithContext() {
 
@@ -201,6 +203,7 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
 
 private fun FqName.child(name: String) = child(Name.identifier(name))
 
+@DescriptorBasedIr
 private fun IrSimpleFunction.callWithRanges(source: IrExpression) =
     IrCallImpl(source.startOffset, source.endOffset, returnType, symbol)
 

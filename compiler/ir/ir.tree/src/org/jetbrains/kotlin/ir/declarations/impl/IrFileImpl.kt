@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
@@ -44,6 +45,7 @@ class IrFileImpl(
         symbol.bind(this)
     }
 
+    @DescriptorBasedIr
     override val packageFragmentDescriptor: PackageFragmentDescriptor get() = symbol.descriptor
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()

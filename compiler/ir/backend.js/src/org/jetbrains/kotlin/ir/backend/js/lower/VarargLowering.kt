@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -30,6 +31,7 @@ private class VarargTransformer(
     val context: JsIrBackendContext
 ) : IrElementTransformerVoid() {
 
+    @OptIn(DescriptorBasedIr::class)
     private fun List<IrExpression>.toArrayLiteral(type: IrType, varargElementType: IrType): IrExpression {
 
         // TODO: Use symbols when builtins symbol table is fixes
@@ -47,8 +49,15 @@ private class VarargTransformer(
 
         val irVararg = IrVarargImpl(startOffset, endOffset, type, varargElementType, this)
 
-        return IrCallImpl(startOffset, endOffset, type, intrinsic).apply {
-            if (intrinsic.owner.typeParameters.isNotEmpty()) putTypeArgument(0, varargElementType)
+        return IrCallImpl(
+            startOffset, endOffset,
+            type, intrinsic,
+            typeArgumentsCount = if (intrinsic.owner.typeParameters.isNotEmpty()) 1 else 0,
+            valueArgumentsCount = 1
+        ).apply {
+            if (typeArgumentsCount == 1) {
+                putTypeArgument(0, varargElementType)
+            }
             putValueArgument(0, irVararg)
         }
     }
@@ -149,7 +158,9 @@ private class VarargTransformer(
                     expression.startOffset,
                     expression.endOffset,
                     arrayInfo.primitiveArrayType,
-                    copyFunction
+                    copyFunction,
+                    typeArgumentsCount = 1,
+                    valueArgumentsCount = 1
                 ).apply {
                     putTypeArgument(0, arrayInfo.primitiveArrayType)
                     putValueArgument(0, segment)
@@ -175,7 +186,9 @@ private class VarargTransformer(
             expression.startOffset,
             expression.endOffset,
             arrayInfo.primitiveArrayType,
-            concatFun
+            concatFun,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 1
         ).apply {
             putValueArgument(0, arrayLiteral)
         }

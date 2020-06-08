@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.PropertyCarrier
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
@@ -49,6 +50,7 @@ abstract class IrPropertyCommonImpl(
     IrProperty,
     PropertyCarrier {
 
+    @DescriptorBasedIr
     abstract override val descriptor: PropertyDescriptor
 
     override var backingFieldField: IrField? = null
@@ -214,6 +216,8 @@ class IrPropertyImpl(
     init {
         symbol.bind(this)
     }
+
+    @DescriptorBasedIr
     override val descriptor: PropertyDescriptor = symbol.descriptor
 }
 
@@ -238,9 +242,11 @@ class IrFakeOverridePropertyImpl(
     override val symbol: IrPropertySymbol
         get() = _symbol ?: error("$this has not acquired a symbol yet")
 
-    override val descriptor get() =
-        _symbol?.descriptor ?: WrappedPropertyDescriptor()
+    @DescriptorBasedIr
+    override val descriptor
+        get() = _symbol?.descriptor ?: WrappedPropertyDescriptor()
 
+    @OptIn(DescriptorBasedIr::class)
     fun acquireSymbol(symbol: IrPropertySymbol) {
         assert(_symbol == null) { "$this already has symbol _symbol" }
         _symbol = symbol

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
@@ -75,6 +76,7 @@ class IrReturnableBlockImpl(
     IrContainerExpressionBase(startOffset, endOffset, type, origin),
     IrReturnableBlock {
 
+    @DescriptorBasedIr
     override val descriptor = symbol.descriptor
 
     constructor(

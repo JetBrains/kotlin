@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
@@ -28,6 +29,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSeria
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
+@OptIn(DescriptorBasedIr::class)
 class SerializableCompanionIrGenerator(
     val irClass: IrClass,
     override val compilerContext: SerializationPluginContext,

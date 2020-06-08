@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -34,7 +35,9 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
+@OptIn(DescriptorBasedIr::class)
 class Scope(val scopeOwnerSymbol: IrSymbol) {
+    @DescriptorBasedIr
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
 
     fun getLocalDeclarationParent(): IrDeclarationParent {

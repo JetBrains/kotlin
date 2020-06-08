@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
@@ -45,12 +46,6 @@ fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(
     return temporary
 }
 
-fun <T : IrElement> IrStatementsBuilder<T>.defineTemporary(value: IrExpression, nameHint: String? = null): VariableDescriptor {
-    val temporary = scope.createTemporaryVariable(value, nameHint)
-    +temporary
-    return temporary.descriptor
-}
-
 fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVarDeclaration(
     type: IrType,
     nameHint: String? = null,
@@ -72,12 +67,6 @@ fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVar(
 }
 
 
-fun <T : IrElement> IrStatementsBuilder<T>.defineTemporaryVar(value: IrExpression, nameHint: String? = null): VariableDescriptor {
-    val temporary = scope.createTemporaryVariable(value, nameHint, isMutable = true)
-    +temporary
-    return temporary.descriptor
-}
-
 fun IrBuilderWithScope.irExprBody(value: IrExpression) =
     IrExpressionBodyImpl(startOffset, endOffset, value)
 
@@ -89,7 +78,7 @@ fun IrBuilderWithScope.irReturn(value: IrExpression) =
         startOffset, endOffset,
         context.irBuiltIns.nothingType,
         scope.scopeOwnerSymbol.assertedCast<IrReturnTargetSymbol> {
-            "Function scope expected: ${scope.scopeOwner}"
+            "Function scope expected: ${scope.scopeOwnerSymbol.owner.render()}"
         },
         value
     )
@@ -240,11 +229,29 @@ fun IrBuilderWithScope.irCallConstructor(callee: IrConstructorSymbol, typeArgume
         }
     }
 
-fun IrBuilderWithScope.irCall(callee: IrSimpleFunctionSymbol, type: IrType): IrCall =
-    IrCallImpl(startOffset, endOffset, type, callee)
+fun IrBuilderWithScope.irCall(
+    callee: IrSimpleFunctionSymbol,
+    type: IrType,
+    valueArgumentsCount: Int = callee.owner.valueParameters.size,
+    typeArgumentsCount: Int = callee.owner.typeParameters.size
+): IrCall =
+    IrCallImpl(
+        startOffset, endOffset, type, callee,
+        typeArgumentsCount = typeArgumentsCount,
+        valueArgumentsCount = valueArgumentsCount
+    )
 
-fun IrBuilderWithScope.irCall(callee: IrConstructorSymbol, type: IrType): IrConstructorCall =
-    IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, type, callee)
+fun IrBuilderWithScope.irCall(
+    callee: IrConstructorSymbol,
+    type: IrType,
+    constructedClass: IrClass = callee.owner.parentAsClass
+): IrConstructorCall =
+    IrConstructorCallImpl(
+        startOffset, endOffset, type, callee,
+        valueArgumentsCount = callee.owner.valueParameters.size,
+        typeArgumentsCount = callee.owner.typeParameters.size + constructedClass.typeParameters.size,
+        constructorTypeArgumentsCount = callee.owner.typeParameters.size
+    )
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrFunctionAccessExpression =
     when (callee) {
@@ -263,7 +270,12 @@ fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrFunctionAccessExpress
     irCall(callee, callee.owner.returnType)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDescriptor, type: IrType): IrCall =
-    IrCallImpl(startOffset, endOffset, type, callee as IrSimpleFunctionSymbol)
+    IrCallImpl(
+        startOffset, endOffset, type,
+        callee as IrSimpleFunctionSymbol,
+        valueArgumentsCount = callee.owner.valueParameters.size,
+        typeArgumentsCount = callee.owner.typeParameters.size
+    )
 
 fun IrBuilderWithScope.irCall(callee: IrFunction): IrFunctionAccessExpression =
     irCall(callee.symbol)
@@ -283,12 +295,12 @@ fun IrBuilderWithScope.irDelegatingConstructorCall(callee: IrConstructor): IrDel
     )
 
 fun IrBuilderWithScope.irCallOp(
-    callee: IrFunctionSymbol,
+    callee: IrSimpleFunctionSymbol,
     type: IrType,
     dispatchReceiver: IrExpression,
     argument: IrExpression? = null
 ): IrMemberAccessExpression =
-    irCall(callee, type).apply {
+    irCall(callee, type, valueArgumentsCount = if (argument != null) 1 else 0, typeArgumentsCount = 0).apply {
         this.dispatchReceiver = dispatchReceiver
         if (argument != null)
             putValueArgument(0, argument)

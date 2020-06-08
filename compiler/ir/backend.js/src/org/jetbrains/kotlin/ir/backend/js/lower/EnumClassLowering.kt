@@ -528,7 +528,12 @@ class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext): Declarati
     private fun List<IrExpression>.toArrayLiteral(arrayType: IrType, elementType: IrType): IrExpression {
         val irVararg = IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, elementType, this)
 
-        return IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, context.intrinsics.arrayLiteral).apply {
+        return IrCallImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType,
+            context.intrinsics.arrayLiteral,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 1
+        ).apply {
             putValueArgument(0, irVararg)
         }
     }

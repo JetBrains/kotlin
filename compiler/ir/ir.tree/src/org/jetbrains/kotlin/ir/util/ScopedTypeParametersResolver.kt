@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import java.util.*
@@ -14,9 +15,11 @@ interface TypeParametersResolver {
     fun enterTypeParameterScope(typeParametersContainer: IrTypeParametersContainer)
     fun leaveTypeParameterScope()
 
+    @DescriptorBasedIr
     fun resolveScopedTypeParameter(typeParameterDescriptor: TypeParameterDescriptor): IrTypeParameterSymbol?
 }
 
+@OptIn(DescriptorBasedIr::class)
 class ScopedTypeParametersResolver : TypeParametersResolver {
 
     private val typeParameterScopes = ArrayDeque<Map<TypeParameterDescriptor, IrTypeParameterSymbol>>()
@@ -33,6 +36,7 @@ class ScopedTypeParametersResolver : TypeParametersResolver {
         typeParameterScopes.removeFirst()
     }
 
+    @DescriptorBasedIr
     override fun resolveScopedTypeParameter(typeParameterDescriptor: TypeParameterDescriptor): IrTypeParameterSymbol? {
         for (scope in typeParameterScopes) {
             val local = scope[typeParameterDescriptor]

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.symbols.impl
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
+@OptIn(DescriptorBasedIr::class)
 abstract class IrSymbolBase<out D : DeclarationDescriptor>(override val descriptor: D) : IrSymbol {
     override fun toString(): String {
         if (isBound) return owner.render()
@@ -81,6 +83,7 @@ class IrExternalPackageFragmentSymbolImpl(descriptor: PackageFragmentDescriptor)
     IrBindableSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(descriptor),
     IrExternalPackageFragmentSymbol
 
+@OptIn(DescriptorBasedIr::class)
 class IrAnonymousInitializerSymbolImpl(descriptor: ClassDescriptor) :
     IrBindableSymbolBase<ClassDescriptor, IrAnonymousInitializer>(descriptor),
     IrAnonymousInitializerSymbol {

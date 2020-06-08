@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -36,7 +34,12 @@ internal fun IrExpression.negate(): IrExpression {
                 it.name == OperatorNameConventions.UNARY_MINUS &&
                         it.valueParameters.isEmpty()
             }
-            IrCallImpl(startOffset, endOffset, type, unaryMinusFun.symbol).apply {
+            IrCallImpl(
+                startOffset, endOffset, type,
+                unaryMinusFun.symbol,
+                valueArgumentsCount = 0,
+                typeArgumentsCount = 0
+            ).apply {
                 dispatchReceiver = this@negate
             }
         }
@@ -54,7 +57,12 @@ internal fun IrExpression.decrement(): IrExpression {
                 it.name == OperatorNameConventions.DEC &&
                         it.valueParameters.isEmpty()
             }
-            IrCallImpl(startOffset, endOffset, type, decFun.symbol).apply {
+            IrCallImpl(
+                startOffset, endOffset, type,
+                decFun.symbol,
+                valueArgumentsCount = 0,
+                typeArgumentsCount = 0
+            ).apply {
                 dispatchReceiver = this@decrement
             }
         }

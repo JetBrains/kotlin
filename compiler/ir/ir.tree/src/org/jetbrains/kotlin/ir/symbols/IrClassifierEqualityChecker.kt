@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.symbols
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
@@ -22,6 +23,7 @@ interface IrClassifierEqualityChecker {
     fun getHashCode(symbol: IrClassifierSymbol): Int
 }
 
+@OptIn(DescriptorBasedIr::class)
 object FqNameEqualityChecker : IrClassifierEqualityChecker {
     override fun areEqual(left: IrClassifierSymbol, right: IrClassifierSymbol): Boolean {
         if (left === right) return true

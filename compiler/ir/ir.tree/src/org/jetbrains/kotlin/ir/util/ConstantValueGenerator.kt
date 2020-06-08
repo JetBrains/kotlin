@@ -148,10 +148,13 @@ class ConstantValueGenerator(
         val startOffset = psi?.takeUnless { it.containingFile.fileType.isBinary }?.startOffset ?: UNDEFINED_OFFSET
         val endOffset = psi?.takeUnless { it.containingFile.fileType.isBinary }?.endOffset ?: UNDEFINED_OFFSET
 
-        val irCall = IrConstructorCallImpl.fromSymbolDescriptor(
+        val irCall = IrConstructorCallImpl(
             startOffset, endOffset,
             annotationType.toIrType(),
-            primaryConstructorSymbol
+            primaryConstructorSymbol,
+            valueArgumentsCount = primaryConstructorDescriptor.valueParameters.size,
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0
         )
 
         for (valueParameter in primaryConstructorDescriptor.valueParameters) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
@@ -50,6 +51,7 @@ object DescriptorsToIrRemapper : DescriptorsRemapper {
             WrappedValueParameterDescriptor(descriptor.annotations, descriptor.source)
 }
 
+@OptIn(DescriptorBasedIr::class)
 object WrappedDescriptorPatcher : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)

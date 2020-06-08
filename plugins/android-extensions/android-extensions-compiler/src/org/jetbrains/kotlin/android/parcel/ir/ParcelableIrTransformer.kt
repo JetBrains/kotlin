@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+@OptIn(DescriptorBasedIr::class)
 class ParcelableIrTransformer(private val context: IrPluginContext, private val androidSymbols: AndroidSymbols) :
     ParcelableExtensionBase, IrElementVisitorVoid {
     private val serializerFactory = IrParcelSerializerFactory(androidSymbols)

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -84,6 +85,7 @@ class IrVariableImpl(
         symbol.bind(this)
     }
 
+    @DescriptorBasedIr
     override val descriptor: VariableDescriptor get() = symbol.descriptor
 
     override var initializer: IrExpression? = null

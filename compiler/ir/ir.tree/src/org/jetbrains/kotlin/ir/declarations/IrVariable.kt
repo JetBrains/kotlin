@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
 interface IrVariable : IrValueDeclaration, IrSymbolDeclaration<IrVariableSymbol> {
+    @DescriptorBasedIr
     override val descriptor: VariableDescriptor
 
     val isVar: Boolean

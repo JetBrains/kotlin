@@ -499,7 +499,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             ?: throw AssertionError("No type for !! argument")
         val expressionType = argumentType.makeNotNullable()
 
-        val checkNotNull = context.irBuiltIns.checkNotNull
+        val checkNotNull = context.irBuiltIns.checkNotNullSymbol.descriptor
         val checkNotNullSubstituted =
             checkNotNull.substitute(
                 TypeSubstitutor.create(

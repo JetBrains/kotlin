@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -40,10 +41,12 @@ class IrExternalPackageFragmentImpl(
         symbol.bind(this)
     }
 
+    @DescriptorBasedIr
     override val packageFragmentDescriptor: PackageFragmentDescriptor get() = symbol.descriptor
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
+    @OptIn(DescriptorBasedIr::class)
     override val containerSource get() = (symbol.descriptor as? DeserializedMemberDescriptor)?.containerSource
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

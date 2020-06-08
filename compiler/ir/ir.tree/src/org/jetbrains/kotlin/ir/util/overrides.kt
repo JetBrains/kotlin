@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 
+@DescriptorBasedIr
 fun SymbolTable.declareSimpleFunctionWithOverrides(
     startOffset: Int,
     endOffset: Int,
@@ -34,7 +36,7 @@ fun SymbolTable.declareSimpleFunctionWithOverrides(
         generateOverriddenFunctionSymbols(declaration, this)
     }
 
-
+@DescriptorBasedIr
 fun generateOverriddenFunctionSymbols(
     declaration: IrSimpleFunction,
     symbolTable: ReferenceSymbolTable
@@ -44,6 +46,7 @@ fun generateOverriddenFunctionSymbols(
     }
 }
 
+@DescriptorBasedIr
 fun SymbolTable.declareFieldWithOverrides(
     startOffset: Int,
     endOffset: Int,
@@ -56,6 +59,7 @@ fun SymbolTable.declareFieldWithOverrides(
         generateOverriddenFieldSymbols(declaration, this, hasBackingField)
     }
 
+@DescriptorBasedIr
 fun generateOverriddenFieldSymbols(
     declaration: IrField,
     symbolTable: SymbolTable,

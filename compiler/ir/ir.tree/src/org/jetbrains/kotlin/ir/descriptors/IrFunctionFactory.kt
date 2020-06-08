@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
+@OptIn(DescriptorBasedIr::class)
 abstract class IrAbstractFunctionFactory {
 
     abstract fun functionClassDescriptor(arity: Int): FunctionClassDescriptor
@@ -75,6 +77,7 @@ abstract class IrAbstractFunctionFactory {
     }
 }
 
+@OptIn(DescriptorBasedIr::class)
 class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTable: SymbolTable) : IrAbstractFunctionFactory() {
 
     // TODO: Lazieness

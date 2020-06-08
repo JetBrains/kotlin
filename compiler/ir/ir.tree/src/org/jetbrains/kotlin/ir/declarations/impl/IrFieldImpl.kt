@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.FieldCarrier
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -69,6 +70,7 @@ class IrFieldImpl(
         symbol.bind(this)
     }
 
+    @DescriptorBasedIr
     override val descriptor: PropertyDescriptor = symbol.descriptor
 
     override var initializerField: IrExpressionBody? = null

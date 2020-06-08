@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -42,6 +43,7 @@ class IrEnumEntryImpl(
         symbol.bind(this)
     }
 
+    @DescriptorBasedIr
     override val descriptor: ClassDescriptor get() = symbol.descriptor
 
     override var correspondingClassField: IrClass? = null

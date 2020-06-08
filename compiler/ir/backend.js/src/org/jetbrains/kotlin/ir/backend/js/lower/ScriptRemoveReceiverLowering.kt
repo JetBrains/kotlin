@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -36,6 +37,7 @@ class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLowe
 
     private fun IrExpression.nullConst() = IrConstImpl.constNull(startOffset, endOffset, type.makeNullable())
 
+    @OptIn(DescriptorBasedIr::class)
     fun lower(script: IrScript): List<IrScript> {
         val transformer: IrElementTransformerVoid = object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {

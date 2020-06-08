@@ -26,20 +26,23 @@ object JsIrBuilder {
     object SYNTHESIZED_STATEMENT : IrStatementOriginImpl("SYNTHESIZED_STATEMENT")
     object SYNTHESIZED_DECLARATION : IrDeclarationOriginImpl("SYNTHESIZED_DECLARATION")
 
-    fun buildCall(target: IrFunctionSymbol, type: IrType? = null, typeArguments: List<IrType>? = null): IrCall =
-        IrCallImpl(
+    fun buildCall(target: IrFunctionSymbol, type: IrType? = null, typeArguments: List<IrType>? = null): IrCall {
+        val owner = target.owner
+        return IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            type ?: target.owner.returnType,
+            type ?: owner.returnType,
             target,
-            target.owner.typeParameters.size,
-            SYNTHESIZED_STATEMENT
+            typeArgumentsCount = owner.typeParameters.size,
+            valueArgumentsCount = owner.valueParameters.size,
+            origin = SYNTHESIZED_STATEMENT
         ).apply {
             typeArguments?.let {
                 assert(typeArguments.size == typeArgumentsCount)
                 it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
             }
         }
+    }
 
     fun buildReturn(targetSymbol: IrFunctionSymbol, value: IrExpression, type: IrType) =
         IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol, value)
@@ -190,9 +193,6 @@ object JsIrBuilder {
 
     fun buildComposite(type: IrType, statements: List<IrStatement> = emptyList()) =
         IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, SYNTHESIZED_STATEMENT, statements)
-
-    fun buildFunctionReference(type: IrType, symbol: IrFunctionSymbol, reflectionTarget: IrFunctionSymbol? = symbol) =
-        IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, 0, reflectionTarget, null)
 
     fun buildFunctionExpression(type: IrType, function: IrSimpleFunction) =
         IrFunctionExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, function, SYNTHESIZED_STATEMENT)

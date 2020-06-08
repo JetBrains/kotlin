@@ -72,7 +72,11 @@ class ThrowableLowering(
             val (messageArg, causeArg) = expression.extractThrowableArguments()
 
             return expression.run {
-                IrCallImpl(startOffset, endOffset, type, newThrowableFunction).also {
+                IrCallImpl(
+                    startOffset, endOffset, type, newThrowableFunction,
+                    valueArgumentsCount = 2,
+                    typeArgumentsCount = 0
+                ).also {
                     it.putValueArgument(0, messageArg)
                     it.putValueArgument(1, causeArg)
                 }
@@ -89,7 +93,11 @@ class ThrowableLowering(
             val thisReceiver = IrGetValueImpl(expression.startOffset, expression.endOffset, klass.thisReceiver!!.symbol)
 
             return expression.run {
-                IrCallImpl(startOffset, endOffset, type, extendThrowableFunction).also {
+                IrCallImpl(
+                    startOffset, endOffset, type, extendThrowableFunction,
+                    valueArgumentsCount = 3,
+                    typeArgumentsCount = 0
+                ).also {
                     it.putValueArgument(0, thisReceiver)
                     it.putValueArgument(1, messageArg)
                     it.putValueArgument(2, causeArg)

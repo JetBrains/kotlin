@@ -131,6 +131,11 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
     }
 
     private fun createCall(function: IrFunction): IrCall {
-        return IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.returnType, function.symbol)
+        return IrCallImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.returnType,
+            function.symbol,
+            valueArgumentsCount = function.valueParameters.size,
+            typeArgumentsCount = function.typeParameters.size
+        )
     }
 }

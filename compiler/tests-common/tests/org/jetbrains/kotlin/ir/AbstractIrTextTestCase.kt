@@ -206,7 +206,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             visitDeclaration(declaration)
 
             require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.descriptor}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
+                "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
             }
         }
 
@@ -214,10 +214,11 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             visitDeclaration(declaration)
 
             require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.descriptor}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
+                "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
             }
         }
 
+        @OptIn(DescriptorBasedIr::class)
         override fun visitFunction(declaration: IrFunction) {
             visitDeclaration(declaration)
 
@@ -258,7 +259,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             visitFunction(declaration)
 
             require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.descriptor}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
+                "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
             }
         }
 
@@ -302,12 +303,14 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             }
         }
 
+        @OptIn(DescriptorBasedIr::class)
         override fun visitClass(declaration: IrClass) {
             visitDeclaration(declaration)
 
             checkTypeParameters(declaration.descriptor, declaration, declaration.descriptor.declaredTypeParameters)
         }
 
+        @DescriptorBasedIr
         private fun checkTypeParameters(
             descriptor: DeclarationDescriptor,
             declaration: IrTypeParametersContainer,

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
@@ -26,6 +27,7 @@ class LazyScopedTypeParametersResolver(private val symbolTable: ReferenceSymbolT
         typeParameterScopes.removeFirst()
     }
 
+    @DescriptorBasedIr
     override fun resolveScopedTypeParameter(typeParameterDescriptor: TypeParameterDescriptor): IrTypeParameterSymbol? {
         //Just support accessor scoped symbols resolve in external declaration
         //there should be enough to process only parent typeparameters

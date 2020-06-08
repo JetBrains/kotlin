@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.builders.irChar
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irLong
@@ -48,8 +49,12 @@ internal sealed class ProgressionType(
                 it.name == numberCastFunctionName &&
                         it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
             }
-            IrCallImpl(startOffset, endOffset, castFun.returnType, castFun.symbol)
-                .apply { dispatchReceiver = this@castIfNecessary }
+            IrCallImpl(
+                startOffset, endOffset,
+                castFun.returnType, castFun.symbol,
+                typeArgumentsCount = 0,
+                valueArgumentsCount = 0
+            ).apply { dispatchReceiver = this@castIfNecessary }
         }
 
     companion object {
@@ -139,14 +144,25 @@ internal abstract class UnsignedProgressionType(
         if (type == unsignedType) return this
 
         return if (unsafeCoerceIntrinsic != null) {
-            IrCallImpl(startOffset, endOffset, unsignedType, unsafeCoerceIntrinsic).apply {
+            IrCallImpl(
+                startOffset, endOffset,
+                unsignedType,
+                unsafeCoerceIntrinsic,
+                typeArgumentsCount = 2,
+                valueArgumentsCount = 1
+            ).apply {
                 putTypeArgument(0, fromType)
                 putTypeArgument(1, unsignedType)
                 putValueArgument(0, this@asUnsigned)
             }
         } else {
             // Fallback to calling `toUInt/ULong()` extension function.
-            IrCallImpl(startOffset, endOffset, unsignedConversionFunction.owner.returnType, unsignedConversionFunction).apply {
+            IrCallImpl(
+                startOffset, endOffset, unsignedConversionFunction.owner.returnType,
+                unsignedConversionFunction,
+                typeArgumentsCount = 0,
+                valueArgumentsCount = 0
+            ).apply {
                 extensionReceiver = this@asUnsigned
             }
         }
@@ -157,7 +173,12 @@ internal abstract class UnsignedProgressionType(
         if (type == toType) return this
 
         return if (unsafeCoerceIntrinsic != null) {
-            IrCallImpl(startOffset, endOffset, toType, unsafeCoerceIntrinsic).apply {
+            IrCallImpl(
+                startOffset, endOffset, toType,
+                unsafeCoerceIntrinsic,
+                typeArgumentsCount = 2,
+                valueArgumentsCount = 1
+            ).apply {
                 putTypeArgument(0, unsignedType)
                 putTypeArgument(1, toType)
                 putValueArgument(0, this@asSigned)
@@ -169,6 +190,7 @@ internal abstract class UnsignedProgressionType(
     }
 }
 
+@OptIn(DescriptorBasedIr::class)
 internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
     UnsignedProgressionType(
         symbols,
@@ -186,6 +208,7 @@ internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
 
+@OptIn(DescriptorBasedIr::class)
 internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>) :
     UnsignedProgressionType(
         symbols,

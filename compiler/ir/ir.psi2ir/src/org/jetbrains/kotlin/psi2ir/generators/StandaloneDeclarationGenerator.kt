@@ -78,7 +78,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
 
         val irClass = IrClassImpl(startOffset, endOffset, origin, symbol, descriptor)
 
-        symbolTable.withScope(descriptor) {
+        symbolTable.withScope(irClass) {
             irClass.metadata = MetadataSource.Class(descriptor)
 
             generateGlobalTypeParametersDeclarations(irClass, descriptor.declaredTypeParameters)
@@ -162,7 +162,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         val irConstructor = IrConstructorImpl(startOffset, endOffset, origin, symbol, IrUninitializedType, descriptor)
         irConstructor.metadata = MetadataSource.Function(descriptor)
 
-        symbolTable.withScope(descriptor) {
+        symbolTable.withScope(irConstructor) {
             val ctorTypeParameters = descriptor.typeParameters.filter { it.containingDeclaration === descriptor }
             generateScopedTypeParameterDeclarations(irConstructor, ctorTypeParameters)
             generateValueParameterDeclarations(irConstructor, descriptor, defaultArgumentFactory)

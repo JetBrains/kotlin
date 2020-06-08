@@ -43,12 +43,15 @@ interface IrSymbol {
 
 interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : IrSymbol {
     override val owner: B
+
+    @DescriptorBasedIr
     override val descriptor: D
 
     fun bind(owner: B)
 }
 
 interface IrPackageFragmentSymbol : IrSymbol {
+    @DescriptorBasedIr
     override val descriptor: PackageFragmentDescriptor
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
@@ -93,6 +96,7 @@ interface IrFieldSymbol :
 interface IrClassifierSymbol :
     IrSymbol, TypeConstructorMarker {
 
+    @DescriptorBasedIr
     override val descriptor: ClassifierDescriptor
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
@@ -123,7 +127,9 @@ interface IrTypeParameterSymbol :
 interface IrValueSymbol :
     IrSymbol {
 
+    @DescriptorBasedIr
     override val descriptor: ValueDescriptor
+
     override val owner: IrValueDeclaration
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
@@ -147,7 +153,9 @@ interface IrVariableSymbol :
 interface IrReturnTargetSymbol :
     IrSymbol {
 
+    @DescriptorBasedIr
     override val descriptor: FunctionDescriptor
+
     override val owner: IrReturnTarget
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -81,6 +82,7 @@ class IrBuiltInOperator(
     override val isOperator: Boolean get() = false
     override var correspondingPropertySymbol: IrPropertySymbol? by NullValueDelegate()
 
+    @DescriptorBasedIr
     override val descriptor: FunctionDescriptor get() = symbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
@@ -106,7 +108,9 @@ class IrBuiltInOperator(
 class IrBuiltInOperatorValueParameter(override val symbol: IrValueParameterSymbol, override val index: Int, override val type: IrType) :
     IrValueParameter, IrBuiltInOperatorBase() {
 
+    @DescriptorBasedIr
     override val descriptor: ParameterDescriptor get() = symbol.descriptor
+
     override val varargElementType: IrType? get() = null
     override val isCrossinline: Boolean get() = false
     override val isNoinline: Boolean get() = false
@@ -133,6 +137,7 @@ class IrBuiltInOperatorTypeParameter(
     override val isReified: Boolean
 ) : IrTypeParameter, IrBuiltInOperatorBase() {
 
+    @DescriptorBasedIr
     override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
     override val superTypes: MutableList<IrType> = SmartList()
     override val name: Name = Name.identifier("T$index")

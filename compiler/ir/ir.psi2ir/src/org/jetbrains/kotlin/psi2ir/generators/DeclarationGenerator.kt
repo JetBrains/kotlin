@@ -174,7 +174,7 @@ abstract class DeclarationGeneratorExtension(val declarationGenerator: Declarati
 
     inline fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
         also { irDeclaration ->
-            context.symbolTable.withScope(irDeclaration.descriptor) {
+            context.symbolTable.withScope(irDeclaration) {
                 builder(irDeclaration)
             }
         }

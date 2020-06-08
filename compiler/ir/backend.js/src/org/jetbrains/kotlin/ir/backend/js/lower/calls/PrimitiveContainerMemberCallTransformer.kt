@@ -38,7 +38,9 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
                         call.startOffset,
                         call.endOffset,
                         call.type,
-                        context.intrinsics.primitiveToSizeConstructor[elementType]!!
+                        context.intrinsics.primitiveToSizeConstructor[elementType]!!,
+                        typeArgumentsCount = 0,
+                        valueArgumentsCount = 1
                     ).apply {
                         putValueArgument(0, call.getValueArgument(0))
                     }

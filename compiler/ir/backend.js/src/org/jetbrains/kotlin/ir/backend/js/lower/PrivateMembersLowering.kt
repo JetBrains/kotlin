@@ -199,9 +199,11 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                 val newExpression = IrCallImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type,
-                    staticTarget.symbol, expression.typeArgumentsCount,
-                    expression.origin,
-                    expression.superQualifierSymbol
+                    staticTarget.symbol,
+                    typeArgumentsCount = expression.typeArgumentsCount,
+                    valueArgumentsCount = expression.valueArgumentsCount + 1,
+                    origin = expression.origin,
+                    superQualifierSymbol = expression.superQualifierSymbol
                 )
 
                 newExpression.extensionReceiver = expression.extensionReceiver

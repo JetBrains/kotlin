@@ -276,7 +276,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     // TODO: fix the generic signature -- type parameters of FunctionN should be substituted
     private fun IrClass.addInvokeCallingCreate(
         create: IrFunction,
-        invokeSuspend: IrFunction,
+        invokeSuspend: IrSimpleFunction,
         invokeToOverride: IrSimpleFunctionSymbol
     ) = addFunctionOverride(invokeToOverride.owner) { function ->
         val newlyCreatedObject = irCall(create).also { createCall ->
@@ -292,7 +292,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     // versions; for other lambdas, there's no point in generating a non-overriding `create` separately.
     private fun IrClass.addInvokeCallingConstructor(
         constructor: IrFunction,
-        invokeSuspend: IrFunction,
+        invokeSuspend: IrSimpleFunction,
         invokeToOverride: IrSimpleFunctionSymbol,
         fieldsForBound: List<IrField>,
         fieldsForUnbound: List<IrField>
@@ -334,7 +334,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         return irGet(result)
     }
 
-    private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrFunction, lambda: IrExpression): IrExpression {
+    private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrSimpleFunction, lambda: IrExpression): IrExpression {
         // SingletonReferencesLowering has finished a while ago, so `irUnit()` won't work anymore.
         val unitClass = context.irBuiltIns.unitClass
         val unitField = this@AddContinuationLowering.context.declarationFactory.getFieldForObjectInstance(unitClass.owner)

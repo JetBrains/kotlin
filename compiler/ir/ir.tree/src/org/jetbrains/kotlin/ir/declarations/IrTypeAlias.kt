@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -15,7 +16,9 @@ interface IrTypeAlias :
     IrDeclarationWithVisibility,
     IrTypeParametersContainer {
 
+    @DescriptorBasedIr
     override val descriptor: TypeAliasDescriptor
+
     val isActual: Boolean
     val expandedType: IrType
 }

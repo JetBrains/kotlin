@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCatch
@@ -100,6 +101,7 @@ class IrCatchImpl(
     override lateinit var catchParameter: IrVariable
     override lateinit var result: IrExpression
 
+    @DescriptorBasedIr
     override val parameter: VariableDescriptor get() = catchParameter.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {

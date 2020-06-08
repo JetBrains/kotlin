@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -63,6 +64,7 @@ open class VariableRemapper(val mapping: Map<IrValueParameter, IrValueDeclaratio
         mapping[value]
 }
 
+@DescriptorBasedIr
 class VariableRemapperDesc(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
     override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
         mapping[value.descriptor]
@@ -158,6 +160,7 @@ open class IrBuildingTransformer(private val context: BackendContext) : IrElemen
     }
 }
 
+@OptIn(DescriptorBasedIr::class)
 fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
     val constructedClass = parent as IrClass
     val superClass = constructedClass.superTypes

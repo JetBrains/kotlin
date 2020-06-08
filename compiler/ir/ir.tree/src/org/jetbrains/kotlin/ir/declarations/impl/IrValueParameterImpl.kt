@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.ValueParameterCarrier
@@ -46,6 +47,7 @@ class IrValueParameterImpl(
     IrValueParameter,
     ValueParameterCarrier {
 
+    @DescriptorBasedIr
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -64,6 +66,7 @@ class IrValueParameterImpl(
         isNoinline = descriptor.safeAs<ValueParameterDescriptor>()?.isNoinline ?: false
     )
 
+    @DescriptorBasedIr
     override val descriptor: ParameterDescriptor = symbol.descriptor
 
     init {

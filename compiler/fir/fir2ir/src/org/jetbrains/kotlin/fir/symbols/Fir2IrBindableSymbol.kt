@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.symbols
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
@@ -36,6 +37,7 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
     override val isBound: Boolean
         get() = _owner != null
 
+    @DescriptorBasedIr
     override val descriptor: D by lazy {
         when (val owner = owner) {
             is IrEnumEntry -> WrappedEnumEntryDescriptor().apply { bind(owner) }
