@@ -83,16 +83,15 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             else -> getNonWhitespaceChildren(fragment.firstChild).drop(1)
         }
 
+        if (elements.isEmpty()) return PsiElement.EMPTY_ARRAY
+
         // Standalone KtAnnotationEntry support
         if (elements.first() is KtAnnotatedExpression && elements.first().lastChild is PsiErrorElement)
             elements = getNonWhitespaceChildren(elements.first()).dropLast(1)
 
         for (element in elements) print(DebugUtil.psiToString(element, false))
 
-        return when {
-            elements.isEmpty() -> PsiElement.EMPTY_ARRAY
-            else -> elements.toTypedArray()
-        }
+        return elements.toTypedArray()
     }
 
     inner class KotlinValidator : KotlinRecursiveElementWalkingVisitor() {
