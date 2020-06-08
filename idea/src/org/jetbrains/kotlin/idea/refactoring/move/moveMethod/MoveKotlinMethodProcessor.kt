@@ -283,12 +283,16 @@ class MoveKotlinMethodProcessor(
 
 internal fun getThisClassesToMembers(method: KtNamedFunction) = traverseOuterInstanceReferences(method)
 
+internal fun KtNamedDeclaration.type() = (resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType
+
+internal fun KtClass.defaultType() = resolveToDescriptorIfAny()?.defaultType
+
 private fun traverseOuterInstanceReferences(
     method: KtNamedFunction,
     body: (SourceInstanceReferenceUsageInfo) -> Unit = {}
-): LinkedHashMap<KtClass, MutableSet<KtNamedDeclaration>> {
+): Map<KtClass, MutableSet<KtNamedDeclaration>> {
     val context = method.analyzeWithContent()
-    val containingClassOrObject = method.containingClassOrObject ?: return LinkedHashMap()
+    val containingClassOrObject = method.containingClassOrObject ?: return emptyMap()
     val descriptor = containingClassOrObject.unsafeResolveToDescriptor()
 
     fun getClassOrObjectAndMemberReferencedBy(reference: KtExpression): Pair<DeclarationDescriptor?, CallableDescriptor?> {
@@ -311,7 +315,7 @@ private fun traverseOuterInstanceReferences(
         return classOrObjectDescriptor to memberDescriptor
     }
 
-    val thisClassesToMembers = LinkedHashMap<KtClass, MutableSet<KtNamedDeclaration>>()
+    val thisClassesToMembers = mutableMapOf<KtClass, MutableSet<KtNamedDeclaration>>()
     method.bodyExpression?.forEachDescendantOfType<KtExpression> { reference ->
         val (classOrObjectDescriptor, memberDescriptor) = getClassOrObjectAndMemberReferencedBy(reference)
         (classOrObjectDescriptor?.findPsi() as? KtClassOrObject)?.let { resolvedClassOrObject ->

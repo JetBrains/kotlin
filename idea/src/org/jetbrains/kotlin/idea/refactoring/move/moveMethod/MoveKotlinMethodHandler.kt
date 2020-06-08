@@ -9,9 +9,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -22,27 +20,38 @@ import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 
 class MoveKotlinMethodHandler : MoveHandlerDelegate() {
     private fun showErrorHint(project: Project, dataContext: DataContext?, message: String) {
-        val editor = if (dataContext == null) null else CommonDataKeys.EDITOR.getData(dataContext)
+        val editor = dataContext?.let { CommonDataKeys.EDITOR.getData(it) }
         CommonRefactoringUtil.showErrorHint(project, editor, message, KotlinBundle.message("text.move.method"), null)
     }
 
     private fun invokeMoveMethodRefactoring(
-        project: Project, method: KtNamedFunction, targetContainer: KtClassOrObject?, dataContext: DataContext?
+        project: Project,
+        method: KtNamedFunction,
+        targetContainer: KtClassOrObject?,
+        dataContext: DataContext?
     ) {
-        var message: String? = null
         if (method.containingClassOrObject == null) return
-        if (!method.manager.isInProject(method)) {
-            message = KotlinBundle.message("text.move.method.is.not.supported.for.non.project.methods")
-        } else if (method.mentionsTypeParameters()) {
-            message = KotlinBundle.message("text.move.method.is.not.supported.for.generic.classes")
-        } else if (method.hasModifier(KtTokens.OVERRIDE_KEYWORD) || method.hasModifier(KtTokens.OPEN_KEYWORD)) {
-            message = KotlinBundle.message("text.move.method.is.not.supported.when.method.is.a.part.of.inheritance.hierarchy")
+
+        val errorMessageKey = when {
+            !method.manager.isInProject(method) ->
+                "text.move.method.is.not.supported.for.non.project.methods"
+            method.mentionsTypeParameters() ->
+                "text.move.method.is.not.supported.for.generic.classes"
+            method.hasModifier(KtTokens.OVERRIDE_KEYWORD) || method.hasModifier(KtTokens.OPEN_KEYWORD) ->
+                "text.move.method.is.not.supported.when.method.is.a.part.of.inheritance.hierarchy"
+            else -> null
         }
-        message?.let {
-            showErrorHint(project, dataContext, message)
+
+        if (errorMessageKey != null) {
+            showErrorHint(project, dataContext, KotlinBundle.message(errorMessageKey))
             return
         }
-        MoveKotlinMethodDialog(method, collectSuitableVariables(method), targetContainer).show()
+
+        MoveKotlinMethodDialog(
+            method,
+            collectSuitableVariables(method),
+            targetContainer
+        ).show()
     }
 
     private fun collectSuitableVariables(method: KtNamedFunction): Map<KtNamedDeclaration, KtClass> {
@@ -55,7 +64,7 @@ class MoveKotlinMethodHandler : MoveHandlerDelegate() {
 
         val variableToClassMap = LinkedHashMap<KtNamedDeclaration, KtClass>()
         for (variable in allVariables) {
-            (variable.resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType?.let { type ->
+            variable.type()?.let { type ->
                 if (type.arguments.isEmpty()) {
                     val ktClass = type.constructor.declarationDescriptor?.findPsi() as? KtClass
                     if (ktClass != null && method.manager.isInProject(ktClass)) {
@@ -108,10 +117,7 @@ class MoveKotlinMethodHandler : MoveHandlerDelegate() {
             typeParameters.addAll(ktClassOrObject.typeParameters)
             ktClassOrObject = if (ktClassOrObject.hasModifier(KtTokens.INNER_KEYWORD)) ktClassOrObject.containingClassOrObject else null
         }
-        collectDescendantsOfType<KtUserType>().forEach { userType ->
-            if (userType.referenceExpression?.mainReference?.resolve() in typeParameters) return true
-        }
-        return false
+        return collectDescendantsOfType<KtUserType>().any { userType -> userType.referenceExpression?.mainReference?.resolve() in typeParameters }
     }
 
     override fun getActionName(elements: Array<out PsiElement>): String = "${KotlinBundle.message("text.move.method")}.."
