@@ -59,8 +59,6 @@ private val highlightBraces                                            get() = C
 private val highlightScope                                             get() = CheckboxDescriptor(message("checkbox.highlight.current.scope"), codeInsightSettings::HIGHLIGHT_SCOPE, groupName = message("group.brace.highlighting"))
 private val highlightIdentifierUnderCaret                              get() = CheckboxDescriptor(message("checkbox.highlight.usages.of.element.at.caret"), codeInsightSettings::HIGHLIGHT_IDENTIFIER_UNDER_CARET, groupName = message("group.brace.highlighting"))
 
-private val showNotificationAfterReformatCodeCheckBox                  get() = CheckboxDescriptor(message("checkbox.show.notification.after.reformat.code.action"), PropertyBinding(editorSettings::isShowNotificationAfterReformat, editorSettings::setShowNotificationAfterReformat), groupName = message("label.show.notification.after").capitalizeWords())
-private val myShowNotificationAfterOptimizeImportsCheckBox             get() = CheckboxDescriptor(message("checkbox.show.notification.after.optimize.imports.action"), PropertyBinding(editorSettings::isShowNotificationAfterOptimizeImports, editorSettings::setShowNotificationAfterOptimizeImports), groupName = message("label.show.notification.after").capitalizeWords())
 private val renameLocalVariablesInplace                                get() = CheckboxDescriptor(message("radiobutton.rename.local.variables.inplace"), PropertyBinding(editorSettings::isVariableInplaceRenameEnabled, editorSettings::setVariableInplaceRenameEnabled), groupName = message("radiogroup.rename.local.variables").capitalizeWords())
 private val preselectCheckBox                                          get() = CheckboxDescriptor(message("checkbox.rename.local.variables.preselect"), PropertyBinding(editorSettings::isPreselectRename, editorSettings::setPreselectRename), groupName = message("group.refactorings"))
 private val showInlineDialogForCheckBox                                get() = CheckboxDescriptor(message("checkbox.show.inline.dialog.on.local.variable.references"), PropertyBinding(editorSettings::isShowInlineLocalDialog, editorSettings::setShowInlineLocalDialog))
@@ -86,8 +84,6 @@ internal val optionDescriptors: List<OptionDescription>
     highlightBraces,
     highlightScope,
     highlightIdentifierUnderCaret,
-    showNotificationAfterReformatCodeCheckBox,
-    myShowNotificationAfterOptimizeImportsCheckBox,
     renameLocalVariablesInplace,
     preselectCheckBox,
     showInlineDialogForCheckBox
@@ -294,14 +290,6 @@ class EditorCodeEditingConfigurable : BoundCompositeConfigurable<ErrorOptionsPro
         row { checkBox(highlightBraces) }
         row { checkBox(highlightScope) }
         row { checkBox(highlightIdentifierUnderCaret) }
-      }
-      titledRow(message("group.formatting")) {
-        row {
-          checkBoxGroup(message("label.show.notification.after")) {
-            row { checkBox(showNotificationAfterReformatCodeCheckBox) }
-            row { checkBox(myShowNotificationAfterOptimizeImportsCheckBox) }
-          }
-        }
       }
       titledRow(message("group.refactorings")) {
         row {
