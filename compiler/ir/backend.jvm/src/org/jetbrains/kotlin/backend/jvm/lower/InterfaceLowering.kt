@@ -62,6 +62,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
 
     private fun handleInterface(irClass: IrClass) {
         val jvmDefaultMode = context.state.jvmDefaultMode
+        val isCompatibilityMode = jvmDefaultMode.isCompatibility && !irClass.hasJvmDefaultNoCompatibilityAnnotation()
         // There are 6 cases for functions on interfaces:
         loop@ for (function in irClass.functions) {
             when {
@@ -112,7 +113,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                                 defaultImpl.bridgeToStatic(it)
                             }
                         }
-                        jvmDefaultMode.isCompatibility && implementation.isCompiledToJvmDefault(jvmDefaultMode) -> {
+                        isCompatibilityMode && implementation.isCompiledToJvmDefault(jvmDefaultMode) -> {
                             val defaultImpl = createDefaultImpl(function)
                             defaultImpl.bridgeViaAccessorTo(function)
                         }
@@ -145,7 +146,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                 /**
                  * 5) JVM default declaration is bridged in DefaultImpls via accessor if in compatibility mode, ...
                  */
-                jvmDefaultMode.isCompatibility -> {
+                isCompatibilityMode -> {
                     val defaultImpl = createDefaultImpl(function)
                     defaultImpl.bridgeViaAccessorTo(function)
                 }

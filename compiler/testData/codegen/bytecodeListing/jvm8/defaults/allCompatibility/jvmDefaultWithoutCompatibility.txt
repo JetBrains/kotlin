@@ -1,0 +1,42 @@
+@kotlin.jvm.JvmDefaultWithoutCompatibility
+@kotlin.Metadata
+public final class KotlinClass {
+    public method <init>(): void
+}
+
+@kotlin.jvm.JvmDefaultWithoutCompatibility
+@kotlin.Metadata
+public interface NoDefaultImpl {
+    public method test(): void
+}
+
+@kotlin.jvm.JvmDefaultWithoutCompatibility
+@kotlin.Metadata
+public interface NoDefaultImpl2FromDefaultImpls {
+    public method test2(): void
+}
+
+@kotlin.Metadata
+public final class WithDefaultImpl$DefaultImpls {
+    inner class WithDefaultImpl$DefaultImpls
+    public static method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImpl): void
+}
+
+@kotlin.Metadata
+public interface WithDefaultImpl {
+    inner class WithDefaultImpl$DefaultImpls
+    public synthetic static method access$test$jd(p0: WithDefaultImpl): void
+}
+
+@kotlin.Metadata
+public final class WithDefaultImplPure$DefaultImpls {
+    inner class WithDefaultImplPure$DefaultImpls
+    public static method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImplPure): void
+}
+
+@kotlin.Metadata
+public interface WithDefaultImplPure {
+    inner class WithDefaultImplPure$DefaultImpls
+    public synthetic static method access$test$jd(p0: WithDefaultImplPure): void
+    public method test(): void
+}
