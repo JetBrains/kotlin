@@ -149,9 +149,6 @@ internal val KonanTarget.isCurrentHost: Boolean
 internal val KonanTarget.enabledOnCurrentHost
     get() = HostManager().isEnabled(this)
 
-internal val AbstractKotlinNativeCompilation.isMainCompilation: Boolean
-    get() = isMain()
-
 // KonanVersion doesn't provide an API to compare versions,
 // so we have to transform it to KotlinVersion first.
 // Note: this check doesn't take into account the meta version (release, eap, dev).

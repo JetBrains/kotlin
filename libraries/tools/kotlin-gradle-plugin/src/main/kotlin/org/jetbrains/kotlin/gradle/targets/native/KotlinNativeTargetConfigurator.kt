@@ -199,7 +199,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
                 with(compilation) {
                     // Register the interop library as a dependency of the compilation to make IDE happy.
                     project.dependencies.add(compileDependencyConfigurationName, interopOutput)
-                    if (isMainCompilation) {
+                    if (isMain()) {
                         // Register the interop library as an outgoing klib to allow depending on projects with cinterops.
                         project.dependencies.add(target.apiElementsConfigurationName, interopOutput)
                         // Add the interop library in publication.
