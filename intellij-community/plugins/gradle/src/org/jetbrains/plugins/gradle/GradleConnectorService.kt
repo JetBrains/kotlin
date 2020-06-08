@@ -4,19 +4,36 @@ package org.jetbrains.plugins.gradle
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.PathUtil
+import com.intellij.util.ReflectionUtil.getDeclaredField
+import com.intellij.util.ReflectionUtil.getField
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.lang.JavaVersion
+import org.gradle.initialization.BuildCancellationToken
+import org.gradle.internal.classpath.ClassPath
+import org.gradle.internal.classpath.DefaultClassPath
+import org.gradle.internal.logging.progress.ProgressLoggerFactory
 import org.gradle.tooling.*
 import org.gradle.tooling.internal.consumer.DefaultGradleConnector
+import org.gradle.tooling.internal.consumer.Distribution
+import org.gradle.tooling.internal.protocol.InternalBuildProgressListener
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.internal.daemon.GradleDaemonServices
+import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.service.project.DistributionFactoryExt
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
+import org.jetbrains.plugins.gradle.tooling.loader.rt.MarkerRt
 import java.io.File
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
@@ -54,7 +71,12 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
     }
   }
 
-  private fun getConnection(connectorParams: ConnectorParams): ProjectConnection {
+  private fun getConnection(
+    connectorParams: ConnectorParams,
+    taskId: ExternalSystemTaskId?,
+    listener: ExternalSystemTaskNotificationListener?,
+    cancellationToken: CancellationToken?
+  ): ProjectConnection {
     return connectorsMap.compute(connectorParams.projectPath) { _, conn ->
       if (connectorParams == conn?.params) {
         return@compute conn
@@ -64,6 +86,7 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
       check(newConnection != null) {
         "Can't create connection to the target project via gradle tooling api. Project path: '${connectorParams.projectPath}'"
       }
+      workaroundJavaVersionIssueIfNeeded(newConnection, taskId, listener, cancellationToken)
 
       if (conn != null && connectorParams != conn.params) {
         // release obsolete connection
@@ -114,6 +137,8 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
     /** disable stop IDLE Gradle daemons on IDE project close. Applicable for Gradle versions w/o disconnect support (older than 6.5). */
     private val DISABLE_STOP_OLD_IDLE_DAEMONS = java.lang.Boolean.getBoolean("idea.gradle.disableStopIdleDaemonsOnProjectClose")
 
+    private val REPORTED_JAVA11_ISSUE = ContainerUtil.newConcurrentSet<String>()
+
     @JvmStatic
     private fun getInstance(projectPath: String, taskId: ExternalSystemTaskId?): GradleConnectorService? {
       var project = taskId?.findProject()
@@ -134,6 +159,8 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
       projectPath: String,
       taskId: ExternalSystemTaskId?,
       executionSettings: GradleExecutionSettings? = null,
+      listener: ExternalSystemTaskNotificationListener? = null,
+      cancellationToken: CancellationToken? = null,
       function: Function<ProjectConnection, R>
     ): R {
       val connectionParams = ConnectorParams(
@@ -147,12 +174,14 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
       )
       val connectionService = getInstance(projectPath, taskId)
       if (connectionService != null) {
-        val connection = connectionService.getConnection(connectionParams)
+        val connection = connectionService.getConnection(connectionParams, taskId, listener, cancellationToken)
         return function.apply(connection)
       }
       else {
         val newConnector = createConnector(connectionParams)
-        return newConnector.connect().use(function::apply)
+        val connection = newConnector.connect()
+        workaroundJavaVersionIssueIfNeeded(connection, taskId, listener, cancellationToken)
+        return connection.use(function::apply)
       }
     }
 
@@ -191,5 +220,71 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
       connector.forProjectDirectory(projectDir)
       return connector
     }
+
+    // workaround for https://github.com/gradle/gradle/issues/8431
+    // TODO should be removed when the issue will be fixed at the Gradle tooling api side
+    private fun workaroundJavaVersionIssueIfNeeded(
+      connection: ProjectConnection,
+      taskId: ExternalSystemTaskId?,
+      listener: ExternalSystemTaskNotificationListener?,
+      cancellationToken: CancellationToken?
+    ) {
+      val unwrappedConnection = if (connection is WrappedConnection) connection.delegate else connection
+      var buildRoot: String? = null
+      if (Registry.`is`("gradle.java11.issue.workaround", true)
+          && taskId != null && listener != null && JavaVersion.current().feature > 8) {
+        try {
+          val environment = GradleExecutionHelper.getBuildEnvironment(unwrappedConnection, taskId, listener, cancellationToken)
+          if (environment != null) {
+            try {
+              buildRoot = environment.buildIdentifier.rootDir.path
+            }
+            catch (ignore: java.lang.Exception) {
+            }
+          }
+          val gradleVersion = environment?.gradle?.gradleVersion
+          if (gradleVersion == null || GradleVersion.version(gradleVersion).baseVersion < GradleVersion.version("4.7")) {
+            val conn = getField<Any>(unwrappedConnection.javaClass, unwrappedConnection, null, "connection")
+            val actionExecutor = getField<Any>(conn.javaClass, conn, null, "actionExecutor")
+            val actionExecutorDelegate = getField<Any>(actionExecutor.javaClass, actionExecutor, null, "delegate")
+            val delegateActionExecutor = getField<Any>(actionExecutorDelegate.javaClass, actionExecutorDelegate, null, "actionExecutor")
+            val delegateActionExecutorDelegate = getField<Any>(delegateActionExecutor.javaClass, delegateActionExecutor, null, "delegate")
+            val distributionField = getDeclaredField(delegateActionExecutorDelegate.javaClass, "distribution")
+            distributionField!!.set(delegateActionExecutorDelegate,
+                                    DistributionWrapper(distributionField.get(delegateActionExecutorDelegate) as Distribution))
+          }
+        }
+        catch (t: Throwable) {
+          val buildId = taskId.ideProjectId + StringUtil.notNullize(buildRoot)
+          if (REPORTED_JAVA11_ISSUE.add(buildId)) {
+            LOG.error(t)
+          }
+          else {
+            LOG.debug(t)
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * workaround for https://github.com/gradle/gradle/issues/8431
+   * TODO should be removed when the issue will be fixed at the Gradle tooling api side
+   */
+  private class DistributionWrapper(private val myDistribution: Distribution) : Distribution {
+    private val myRtJarFile: File = File(PathUtil.getCanonicalPath(PathManager.getJarPathForClass(MarkerRt::class.java)))
+
+    override fun getDisplayName(): String = myDistribution.displayName
+
+    override fun getToolingImplementationClasspath(
+      factory: ProgressLoggerFactory?,
+      listener: InternalBuildProgressListener?,
+      file: File?,
+      token: BuildCancellationToken?
+    ): ClassPath {
+      val classpath = myDistribution.getToolingImplementationClasspath(factory, listener, file, token)
+      return DefaultClassPath.of(myRtJarFile).plus(classpath)
+    }
+
   }
 }
