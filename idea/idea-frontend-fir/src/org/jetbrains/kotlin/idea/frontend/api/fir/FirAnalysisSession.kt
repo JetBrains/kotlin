@@ -6,19 +6,17 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -111,18 +109,36 @@ class FirAnalysisSession(
 
     override fun resolveCall(call: KtCallExpression): CallInfo? {
         assertIsValid()
-        val firCall = call.getOrBuildFirSafe<FirFunctionCall>() ?: return null
+        val firCall = when (val fir = call.getOrBuildFir()) {
+            is FirFunctionCall -> fir
+            is FirSafeCallExpression -> fir.regularQualifiedAccess as? FirFunctionCall
+            else -> null
+        } ?: return null
         return resolveCall(firCall, call)
     }
 
     private fun resolveCall(firCall: FirFunctionCall, callExpression: KtExpression): CallInfo? {
-        assertIsValid()
         val session = callExpression.session
         val resolvedFunctionPsi = firCall.calleeReference.toTargetPsi(session)
         val resolvedCalleeSymbol = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
         return when {
             resolvedCalleeSymbol is FirConstructorSymbol -> {
-                ConstructorCallInfo//todo use proper constructor info
+                val fir = resolvedCalleeSymbol.fir
+                when (resolvedFunctionPsi) {
+                    is KtClass -> KtImplicitPrimaryConstructorCallInfo(resolvedFunctionPsi)
+                    is PsiClass -> JavaImplicitPrimaryConstructorCallInfo(resolvedFunctionPsi)
+                    is KtConstructor<*> -> KtExplicitConstructorCallInfo(resolvedFunctionPsi, fir.isPrimary)
+                    is PsiMethod -> JavaExplicitConstructorCallInfo(resolvedFunctionPsi, fir.isPrimary)
+                    else -> {
+                        val classId = resolvedCalleeSymbol.callableId.classId
+                        val firClass = classId?.let(session.firSymbolProvider::getClassLikeSymbolByFqName)
+                        when (val psiClass = firClass?.fir?.findPsi(callExpression.project)) {
+                            is PsiClass -> JavaImplicitPrimaryConstructorCallInfo(psiClass)
+                            is KtClass -> KtImplicitPrimaryConstructorCallInfo(psiClass)
+                            else -> null
+                        }
+                    }
+                }
             }
             firCall.dispatchReceiver is FirQualifiedAccessExpression && firCall.isImplicitFunctionCall() -> {
                 val target = with(FirReferenceResolveHelper) {
