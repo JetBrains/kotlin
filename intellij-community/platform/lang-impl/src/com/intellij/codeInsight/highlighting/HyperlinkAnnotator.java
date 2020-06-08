@@ -20,6 +20,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public class HyperlinkAnnotator implements Annotator {
@@ -70,7 +71,8 @@ public class HyperlinkAnnotator implements Annotator {
   }
 
   @NotNull
-  private static String getMessage() {
+  @ApiStatus.Internal
+  public static String getMessage() {
     String message = IdeBundle.message("open.url.in.browser.tooltip");
     Shortcut[] shortcuts = KeymapManager.getInstance().getActiveKeymap().getShortcuts(IdeActions.ACTION_GOTO_DECLARATION);
     String shortcutText = "";
