@@ -42,17 +42,25 @@ dependencies {
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
 
-    api(project(":libraries:tools:new-project-wizard")) { isTransitive = false }
+    implementation(project(":libraries:tools:new-project-wizard"))
     api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     api(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
 
     testImplementation(kotlin("stdlib"))
-    testImplementation(project(":idea")) { isTransitive = false }
     testImplementation(commonDep("junit:junit"))
-    testImplementation(intellijDep()) { includeJars(
-        "platform-api",
-        "util"
+    testImplementation(intellijDep())
+    testImplementation(intellijPluginDep("android"))
+    testImplementation(intellijPluginDep("java")) { includeJars(
+        "java-api",
+        "java-impl",
+        "java_resources_en"
     ) }
+    testImplementation(intellijPluginDep("gradle"))
+
+    testImplementation(project(":idea:idea-new-project-wizard"))
+    testImplementation(projectTests(":idea:idea-test-framework"))
+    testImplementation(projectTests(":idea:idea-new-project-wizard"))
+    testImplementation(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
 }
 
 
@@ -85,3 +93,9 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+
+projectTest {
+    workingDir = rootDir.resolve("kotlin-ultimate/ide/android-studio-native/")
+    useAndroidSdk()
+}
+

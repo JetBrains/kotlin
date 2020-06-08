@@ -5,94 +5,78 @@
 
 package com.jetbrains.kmm.wizard
 
-import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
+import org.jetbrains.kotlin.tools.projectWizard.core.computeM
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
-import org.jetbrains.kotlin.tools.projectWizard.core.service.*
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.RunConfigurationsPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.KotlinDslPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.applyProjectTemplate
-import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.MultiplatformMobileApplicationProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.wizard.Wizard
 import java.nio.file.Path
 
-val KMM_SERVICES: List<WizardService> = listOf(
-    KmmBuildSystemAvailabilityWizardService(),
-    KmmFileSystemWizardService(),
-    KmmKotlinVersionProviderService(),
-    SettingSavingWizardServiceImpl(),
-    VelocityTemplateEngineServiceImpl(),
-    DummyFileFormattingService(),
-    RunConfigurationsServiceImpl(),
-    ProjectImportingWizardServiceImpl()
-)
+class ProjectDescription(
+    suggestedProjectName: String?,
+    val projectDir: Path,
+    val androidModuleName: String,
+    private val packageName: String,
+    val androidSdkPath: Path?
+) {
+    val projectName = suggestedProjectName ?: "Application"
 
-val KMM_PLUGINS_CREATOR = { context: Context ->
-    listOf(
-        StructurePlugin(context),
+    val artifactId: String
+        get() {
+            return projectName
+        }
 
-        KotlinDslPlugin(context),
-
-        KotlinPlugin(context),
-        TemplatesPlugin(context),
-        ProjectTemplatesPlugin(context),
-        RunConfigurationsPlugin(context),
-        AndroidPlugin(context),
-    )
+    val groupId: String
+        get() {
+            val id = packageName.removeSuffix("." + projectName.toLowerCase())
+            return if (id.isEmpty()) "me.user" else id
+        }
 }
 
-class KmmWizard : Wizard(
-    KMM_PLUGINS_CREATOR,
-    ServicesManager(KMM_SERVICES) { services -> services.firstOrNull() },
-    false
+class KmmWizard(
+    private val description: ProjectDescription,
+    isUnitTestMode: Boolean = false
+) : Wizard(
+    WizardConfiguration.pluginsCreator,
+    WizardConfiguration.servicesManager,
+    isUnitTestMode
 ) {
-    private val DEFAULT_GROUP_ID = "me.user"
-    private val DEFAULT_APPLICATION_NAME = "Application"
-    private val DEFAULT_ANDROID_SDK_PATH = "Please specify your Android SDK path"
-
-    private fun suggestGroupId(projectName: String?, packageName: String): String {
-        val id = packageName.removeSuffix("." + projectName?.toLowerCase())
-        return if (id.isEmpty()) DEFAULT_GROUP_ID else id
-    }
-
-    fun generate(
-        projectName: String?,
-        projectDir: Path,
-        androidModuleName: String,
-        packageName: String,
-        androidSdkPath: Path?
-    ): TaskResult<Unit> {
+    override fun apply(
+        services: List<WizardService>,
+        phases: Set<GenerationPhase>,
+        onTaskExecuting: (PipelineTask) -> Unit
+    ): TaskResult<Unit> = computeM {
         context.writeSettings {
-            StructurePlugin::groupId.reference.setValue(suggestGroupId(projectName, packageName))
-            StructurePlugin::artifactId.reference.setValue(projectName ?: DEFAULT_APPLICATION_NAME)
-            StructurePlugin::name.reference.setValue(projectName ?: DEFAULT_APPLICATION_NAME)
-            StructurePlugin::projectPath.reference.setValue(projectDir)
-            AndroidPlugin::androidSdkPath.reference.setValue(androidSdkPath ?: DEFAULT_ANDROID_SDK_PATH)
+            StructurePlugin::groupId.reference.setValue(description.groupId)
+            StructurePlugin::artifactId.reference.setValue(description.artifactId)
+            StructurePlugin::name.reference.setValue(description.projectName)
+            StructurePlugin::projectPath.reference.setValue(description.projectDir)
+
+            if (description.androidSdkPath != null) {
+                AndroidPlugin::androidSdkPath.reference.setValue(description.androidSdkPath)
+            }
+
             BuildSystemPlugin::type.reference.setValue(BuildSystemType.GradleKotlinDsl)
 
             applyProjectTemplate(MultiplatformMobileApplicationProjectTemplate)
 
             KotlinPlugin::modules.reference.settingValue.forEach { module ->
                 if (module.configurator == AndroidSinglePlatformModuleConfigurator) {
-                    module.name = androidModuleName
+                    module.name = description.androidModuleName
                 }
             }
         }
 
-        return apply(
-            services = org.jetbrains.kotlin.tools.projectWizard.core.buildList {
-                +KMM_SERVICES
-            },
-            phases = GenerationPhase.ALL
-        )
+        super.apply(services, phases,onTaskExecuting)
     }
 }

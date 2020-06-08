@@ -9,10 +9,9 @@ import com.android.tools.idea.wizard.template.*
 import com.jetbrains.konan.KonanLog
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
+import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 
 object KmmTemplate : Template {
-    private val wizard = KmmWizard()
-
     private fun recipeImpl(moduleData: TemplateData) {
         if (moduleData !is ModuleTemplateData) return
 
@@ -34,12 +33,18 @@ object KmmTemplate : Template {
         safelyRemove(androidDir)
         cleanUpRootDir(projectDir)
 
-        wizard.generate(
+        val description = ProjectDescription(
             providedProjectName,
             projectDir.toPath(),
             moduleData.name,
             moduleData.packageName,
             projectData.sdkDir?.toPath()
+        )
+
+        KmmWizard(description).apply(
+            WizardConfiguration.commonServices + WizardConfiguration.productionServices,
+            GenerationPhase.ALL
+
         ).onFailure { errors ->
             val errorMessages = errors.joinToString(separator = "\n") { it.message }
             KonanLog.LOG.error("Failed to generate KMM template: $errorMessages")
