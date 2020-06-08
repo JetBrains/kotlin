@@ -53,7 +53,7 @@ abstract class AbstractDukatTask : AbstractTask(), RequiresNpmDependencies {
     open fun run() {
         nodeJs.npmResolutionManager.checkRequiredDependencies(this)
 
-        DukatExecutor(
+        DukatRunner(
             compilation,
             dTsFiles,
             destDir,

@@ -46,7 +46,7 @@ class PackageJsonDukatExecutor(
             inputsFile.delete()
 
             npmProject.externalsDir.deleteRecursively()
-            DukatExecutor(
+            DukatRunner(
                 npmProject.compilation,
                 typeDefinitions.map { it.file },
                 npmProject.externalsDir,

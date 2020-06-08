@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import java.io.File
 
-class DukatExecutor(
+class DukatRunner(
     val compilation: KotlinJsCompilation,
     val dTsFiles: Collection<File>,
     val destDir: File,
