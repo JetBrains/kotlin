@@ -31,18 +31,6 @@ class KotlinSSCommentTest : KotlinSSResourceInspectionTest() {
 
     fun testBlock() { doTest("/**/") }
 
-    fun testBlockInProperty() { doTest("val '_ /**/ = '_") }
-
-    fun testBlockBeforeClass() { doTest("""
-        /**/
-        class '_
-    """.trimIndent()) }
-
-    fun testBlockBeforeProperty() { doTest("""
-        /**/
-        val '_ = '_
-    """.trimIndent()) }
-
     /**
      * KDoc
      */

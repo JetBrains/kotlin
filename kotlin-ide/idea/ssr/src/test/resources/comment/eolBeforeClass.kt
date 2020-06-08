@@ -8,8 +8,8 @@ class Bar1
 <warning descr="SSR">//
 class Bar2</warning>
 
-/**/
-class Bar3
+<warning descr="SSR">/**/
+class Bar3</warning>
 
 class Bar4 {
 
