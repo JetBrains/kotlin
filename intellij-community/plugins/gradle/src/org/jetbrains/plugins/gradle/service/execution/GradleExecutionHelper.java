@@ -164,7 +164,7 @@ public class GradleExecutionHelper {
     }
 
     withGradleConnection(
-      projectPath, id, settings, listener, null,
+      projectPath, id, settings, listener, cancellationToken,
       connection -> {
         long ttlInMs = settings.getRemoteProcessIdleTtlInMs();
         try {
