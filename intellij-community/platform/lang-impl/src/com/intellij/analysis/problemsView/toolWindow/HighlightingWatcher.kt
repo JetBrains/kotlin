@@ -17,6 +17,7 @@ internal class HighlightingWatcher(
   private val level: Int = ERROR.myVal)
   : MarkupModelListener, Disposable {
 
+  private val problems = mutableMapOf<RangeHighlighterEx, Problem>()
   private var reference: WeakReference<MarkupModelEx>? = null
 
   init {
@@ -33,6 +34,10 @@ internal class HighlightingWatcher(
     getProblem(highlighter)?.let { root.removeProblem(file, it) }
   }
 
+  override fun attributesChanged(highlighter: RangeHighlighterEx, renderersChanged: Boolean, fontStyleOrColorChanged: Boolean) {
+    findProblem(highlighter)?.let { root.updateProblem(file, it) }
+  }
+
   fun update() {
     val model = reference?.get() ?: getMarkupModel() ?: return
     val problems = mutableSetOf<Problem>()
@@ -43,13 +48,18 @@ internal class HighlightingWatcher(
     root.updateProblems(file, problems)
   }
 
-  fun getProblem(info: HighlightInfo?): Problem? {
-    return if (null == info?.description || info.severity.myVal < level) null else HighlightingProblem(info)
+  fun findProblem(highlighter: RangeHighlighterEx) = synchronized(problems) { problems[highlighter] }
+
+  private fun getProblem(highlighter: RangeHighlighterEx) = when {
+    !isValid(highlighter) -> null
+    else -> synchronized(problems) {
+      problems.computeIfAbsent(highlighter) { HighlightingProblem(highlighter) }
+    }
   }
 
-  private fun getProblem(highlighter: RangeHighlighterEx): Problem? {
-    val info = highlighter.errorStripeTooltip as? HighlightInfo ?: return null
-    return getProblem(info)
+  private fun isValid(highlighter: RangeHighlighterEx): Boolean {
+    val info = highlighter.errorStripeTooltip as? HighlightInfo ?: return false
+    return info.description != null && info.severity.myVal >= level
   }
 
   private fun getMarkupModel(): MarkupModelEx? {

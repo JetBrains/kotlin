@@ -1,10 +1,10 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow;
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -42,9 +42,9 @@ public final class ProblemsView implements DumbAware, ToolWindowFactory {
     window.activate(null, true);
   }
 
-  public static void selectHighlightInfoIfVisible(@NotNull Project project, @NotNull HighlightInfo info) {
+  public static void selectHighlighterIfVisible(@NotNull Project project, @NotNull RangeHighlighterEx highlighter) {
     HighlightingPanel panel = get(HighlightingPanel.class, getSelectedContent(project));
-    if (panel != null && panel.isShowing()) panel.selectHighlightInfo(info);
+    if (panel != null && panel.isShowing()) panel.selectHighlighter(highlighter);
   }
 
   static @Nullable Document getDocument(@Nullable Project project, @NotNull VirtualFile file) {

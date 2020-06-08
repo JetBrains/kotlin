@@ -1,8 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.annotation.HighlightSeverity.INFORMATION
+import com.intellij.openapi.editor.ex.RangeHighlighterEx
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 
@@ -23,8 +23,8 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualF
     return synchronized(problems) { problems.getProblemNodes() }
   }
 
-  fun findProblemNode(info: HighlightInfo?): ProblemNode? {
-    val problem = watcher.getProblem(info) ?: return null
+  fun findProblemNode(highlighter: RangeHighlighterEx): ProblemNode? {
+    val problem = watcher.findProblem(highlighter) ?: return null
     return synchronized(problems) { problems.findProblemNode(problem) }
   }
 
@@ -40,6 +40,10 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualF
   override fun removeProblem(file: VirtualFile, problem: Problem) {
     synchronized(problems) { problems.remove(problem) }
     structureChanged()
+  }
+
+  override fun updateProblem(file: VirtualFile, problem: Problem) {
+    synchronized(problems) { problems.findProblemNode(problem) }?.let { structureChanged() }
   }
 
   override fun updateProblems(file: VirtualFile, collection: Collection<Problem>) {

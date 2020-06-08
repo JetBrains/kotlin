@@ -44,6 +44,12 @@ internal open class Root(val panel: ProblemsViewPanel) : Node(panel.project), Di
     synchronized(allProblems) { remove(file, problem) }?.let { structureChanged(it) }
   }
 
+  open fun updateProblem(file: VirtualFile, problem: Problem) {
+    val node = synchronized(allProblems) { allProblems[file]?.findProblemNode(problem) } ?: return
+    node.update()
+    structureChanged(node)
+  }
+
   open fun removeProblems(file: VirtualFile) {
     synchronized(allProblems) { removeAll(file) }?.let { structureChanged(it) }
   }

@@ -9,6 +9,7 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
@@ -16,7 +17,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.analysis.problemsView.toolWindow.ProblemsView.selectHighlightInfoIfVisible;
+import static com.intellij.analysis.problemsView.toolWindow.ProblemsView.selectHighlighterIfVisible;
 
 public class GotoNextErrorHandler implements CodeInsightActionHandler {
   private final boolean myGoForward;
@@ -140,7 +141,8 @@ public class GotoNextErrorHandler implements CodeInsightActionHandler {
     );
 
     IdeDocumentHistory.getInstance(project).includeCurrentCommandAsNavigation();
-    selectHighlightInfoIfVisible(project, info);
+    RangeHighlighterEx highlighter = info.getHighlighter();
+    if (highlighter != null) selectHighlighterIfVisible(project, highlighter);
   }
 
   private static int getNavigationPositionFor(HighlightInfo info, Document document) {

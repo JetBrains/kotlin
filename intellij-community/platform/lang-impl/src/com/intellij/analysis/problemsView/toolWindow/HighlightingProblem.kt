@@ -12,40 +12,44 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.editor.ex.RangeHighlighterEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import javax.swing.Icon
 
-internal class HighlightingProblem(val info: HighlightInfo) : Problem {
+internal class HighlightingProblem(private val highlighter: RangeHighlighterEx) : Problem {
 
   private fun getIcon(level: HighlightDisplayLevel) = if (severity >= level.severity.myVal) level.icon else null
 
+  private val info: HighlightInfo?
+    get() = HighlightInfo.fromRangeHighlighter(highlighter)
+
   override val icon: Icon
-    get() = HighlightDisplayLevel.find(info.severity)?.icon
+    get() = HighlightDisplayLevel.find(info?.severity)?.icon
             ?: getIcon(HighlightDisplayLevel.ERROR)
             ?: getIcon(HighlightDisplayLevel.WARNING)
             ?: HighlightDisplayLevel.WEAK_WARNING.icon
 
   override val description: String
-    get() = info.description
+    get() = info?.description ?: "Invalid"
 
   override val severity: Int
-    get() = info.severity.myVal
+    get() = info?.severity?.myVal ?: -1
 
   override val offset: Int
-    get() = info.actualStartOffset
+    get() = info?.actualStartOffset ?: -1
 
-  override fun hashCode() = info.hashCode()
+  override fun hashCode() = highlighter.hashCode()
 
-  override fun equals(other: Any?) = other is HighlightingProblem && other.info == info
+  override fun equals(other: Any?) = other is HighlightingProblem && other.highlighter == highlighter
 
   override fun hasQuickFixActions(): Boolean {
-    val markers = info.quickFixActionMarkers ?: return false
+    val markers = info?.quickFixActionMarkers ?: return false
     return markers.any { it.second.isValid }
   }
 
   override fun getQuickFixActions(): Collection<AnAction> {
-    val markers = info.quickFixActionMarkers ?: return emptyList()
+    val markers = info?.quickFixActionMarkers ?: return emptyList()
     return markers.filter { it.second.isValid }.map { QuickFixAction(it.first.action, it.second) }
   }
 }

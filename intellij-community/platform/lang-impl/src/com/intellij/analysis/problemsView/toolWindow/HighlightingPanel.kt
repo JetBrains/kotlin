@@ -1,11 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.SeverityRegistrar.getSeverityRegistrar
 import com.intellij.ide.TreeExpander
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option
+import com.intellij.openapi.editor.ex.RangeHighlighterEx
 import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -30,9 +30,9 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
     if (selected) updateCurrentFile()
   }
 
-  fun selectHighlightInfo(info: HighlightInfo) {
+  fun selectHighlighter(highlighter: RangeHighlighterEx) {
     val root = treeModel.root as? HighlightingFileRoot
-    root?.findProblemNode(info)?.let { select(it) }
+    root?.findProblemNode(highlighter)?.let { select(it) }
   }
 
   override fun fileOpened(manager: FileEditorManager, file: VirtualFile) = updateCurrentFile()
