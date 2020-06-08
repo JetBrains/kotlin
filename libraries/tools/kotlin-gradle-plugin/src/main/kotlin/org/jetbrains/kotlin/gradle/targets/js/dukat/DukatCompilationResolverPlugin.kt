@@ -52,12 +52,12 @@ internal class DukatCompilationResolverPlugin(
     ) {
         val externalNpmDependencies = resolution[project][compilation].externalNpmDependencies
 
-        PackageJsonDukatExecutor(
+        DukatExecutor(
             nodeJs,
             DtsResolver(npmProject).getAllDts(externalNpmDependencies),
             npmProject,
             packageJsonIsUpdated,
-            operation = compilation.name + " > " + PackageJsonDukatExecutor.OPERATION,
+            operation = compilation.name + " > " + DukatExecutor.OPERATION,
             compareInputs = true
         ).execute()
     }

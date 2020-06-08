@@ -35,7 +35,7 @@ open class DukatTask : AbstractDukatTask() {
         get() = compilation.npmProject.externalsDir
 
     private val executor by lazy {
-        PackageJsonDukatExecutor(nodeJs, dts, compilation.npmProject, true, compareInputs = false)
+        DukatExecutor(nodeJs, dts, compilation.npmProject, true, compareInputs = false)
     }
 
     override fun run() {
