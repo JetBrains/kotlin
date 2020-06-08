@@ -471,7 +471,9 @@ class KotlinIndicesHelper(
 
                     // SAM-adapter
                     val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java).forceEnableSamAdapters()
-                    syntheticScopes.collectSyntheticStaticFunctions(container.staticScope, descriptor.name, NoLookupLocation.FROM_IDE)
+                    val contributedFunctions = container.staticScope.getContributedFunctions(descriptor.name, NoLookupLocation.FROM_IDE)
+
+                    syntheticScopes.collectSyntheticStaticFunctions(contributedFunctions, NoLookupLocation.FROM_IDE)
                         .filterIsInstance<SamAdapterDescriptor<*>>()
                         .firstOrNull { it.baseDescriptorForSynthetic.original == descriptor.original }
                         ?.let { processor(it) }

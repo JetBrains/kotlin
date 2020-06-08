@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCa
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
 import org.jetbrains.kotlin.resolve.calls.util.isLowPriorityFromStdlibJre7Or8
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasHidesMembersAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
@@ -36,7 +39,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
-import kotlin.collections.ArrayList
 
 internal abstract class AbstractScopeTowerLevel(
     protected val scopeTower: ImplicitScopeTower
@@ -382,14 +384,18 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(
     extensionReceiver: ReceiverValueWithSmartCastInfo?,
     scopeTower: ImplicitScopeTower
 ): Collection<FunctionDescriptor> {
-    val result = ArrayList<FunctionDescriptor>(getContributedFunctions(name, location))
+    val contributedFunctions = getContributedFunctions(name, location)
+
+    val result = ArrayList<FunctionDescriptor>(contributedFunctions)
 
     getContributedClassifier(name, location)?.let {
         result.addAll(getConstructorsOfClassifier(it))
+        result.addAll(scopeTower.syntheticScopes.collectSyntheticConstructors(it, location))
     }
 
-    result.addAll(scopeTower.syntheticScopes.collectSyntheticStaticFunctions(this, name, location))
-    result.addAll(scopeTower.syntheticScopes.collectSyntheticConstructors(this, name, location))
+    if (contributedFunctions.isNotEmpty()) {
+        result.addAll(scopeTower.syntheticScopes.collectSyntheticStaticFunctions(contributedFunctions, location))
+    }
 
     return scopeTower.interceptFunctionCandidates(this, name, result, location, dispatchReceiver, extensionReceiver)
 }
