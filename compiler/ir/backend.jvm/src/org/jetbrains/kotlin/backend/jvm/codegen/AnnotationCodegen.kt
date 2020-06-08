@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.TypeAnnotationCollector
 import org.jetbrains.kotlin.codegen.TypePathInfo
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget.JVM_1_6
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -187,7 +188,7 @@ abstract class AnnotationCodegen(
         // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
         // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
         // (Otherwise we would've resolved the entry to the actual annotation class.)
-        if (ExpectedActualDeclarationChecker.isOptionalAnnotationClass(annotationClass.descriptor)) {
+        if (annotationClass.isOptionalAnnotationClass) {
             return null
         }
 
@@ -391,3 +392,9 @@ private fun loadAnnotationTargets(targetEntry: IrConstructorCall): Set<KotlinTar
         KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
     }.toSet()
 }
+
+// From ExpectedActualDeclarationChecker
+private val IrClass.isOptionalAnnotationClass: Boolean
+    get() = kind == ClassKind.ANNOTATION_CLASS &&
+            isExpect &&
+            hasAnnotation(ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME)
