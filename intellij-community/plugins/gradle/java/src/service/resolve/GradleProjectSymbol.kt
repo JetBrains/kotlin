@@ -52,11 +52,15 @@ class GradleProjectSymbol(private val myQualifiedName: List<String>, private val
                             .getRootExternalProject(myRootProjectPath)
                           ?: return null
 
-    val externalProject = myQualifiedName
-                            .drop(1)
-                            .fold(rootProject as ExternalProject?) {
-                              extProject, name ->  extProject?.childProjects?.get(name)
-                            } ?: return null
+    val externalProject = if (":" == qualifiedName) {
+      rootProject
+    } else {
+      myQualifiedName
+        .drop(1)
+        .fold(rootProject as ExternalProject?) { extProject, name ->
+          extProject?.childProjects?.get(name)
+        } ?: return null
+    }
 
     val buildFile = externalProject.buildFile ?: return null
     val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(buildFile) ?: return null
