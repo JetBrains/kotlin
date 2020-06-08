@@ -183,6 +183,10 @@ dependencies {
         testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
         testRuntime(intellijPluginDep("google-login-as"))
     }
+
+    if (Ide.AS41.orHigher()) {
+        testRuntime(intellijPluginDep("platform-images"))
+    }
 }
 
 tasks.named<Copy>("processResources") {
