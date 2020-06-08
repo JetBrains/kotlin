@@ -476,7 +476,7 @@ class Fir2IrDeclarationStorage(
                     isFakeOverride = updatedOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
                     isOperator = simpleFunction?.isOperator == true
                 ).apply {
-                    metadata = FirMetadataSource.Function(function, descriptor)
+                    metadata = FirMetadataSource.Function(function)
                     enterScope(this)
                     bindAndDeclareParameters(
                         function, irParent,
@@ -545,7 +545,7 @@ class Fir2IrDeclarationStorage(
                     constructor.returnTypeRef.toIrType(),
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
                 ).apply {
-                    metadata = FirMetadataSource.Function(constructor, descriptor)
+                    metadata = FirMetadataSource.Function(constructor)
                     enterScope(this)
                     bindAndDeclareParameters(constructor, irParent, isStatic = false)
                     leaveScope(this)
@@ -601,7 +601,7 @@ class Fir2IrDeclarationStorage(
                 isOperator = false
             ).apply {
                 if (propertyAccessor != null) {
-                    metadata = FirMetadataSource.Function(propertyAccessor, descriptor)
+                    metadata = FirMetadataSource.Function(propertyAccessor)
                 }
                 with(classifierStorage) {
                     setTypeParameters(

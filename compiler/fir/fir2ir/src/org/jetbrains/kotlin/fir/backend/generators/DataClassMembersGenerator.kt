@@ -264,8 +264,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                                     }
                                 )
                             }
-                        },
-                        descriptor
+                        }
                     )
 
                 }

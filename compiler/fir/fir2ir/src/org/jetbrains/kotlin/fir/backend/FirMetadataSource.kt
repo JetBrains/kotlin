@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 
 interface FirMetadataSource : MetadataSource {
 
@@ -22,15 +19,15 @@ interface FirMetadataSource : MetadataSource {
     ) : MetadataSource.File(emptyList()), FirMetadataSource
 
     class Class(
-        val klass: FirClass<*>, descriptor: WrappedClassDescriptor
-    ) : MetadataSource.Class(descriptor), FirMetadataSource {
+        val klass: FirClass<*>
+    ) : FirMetadataSource {
         override val session: FirSession
             get() = klass.session
     }
 
     class Function(
-        val function: FirFunction<*>, descriptor: FunctionDescriptor
-    ) : MetadataSource.Function(descriptor), FirMetadataSource {
+        val function: FirFunction<*>
+    ) : FirMetadataSource {
         override val session: FirSession
             get() = function.session
     }

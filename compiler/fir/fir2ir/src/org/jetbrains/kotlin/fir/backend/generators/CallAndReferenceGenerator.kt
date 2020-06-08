@@ -81,13 +81,16 @@ internal class CallAndReferenceGenerator(
                     IrFunctionReferenceImpl(
                         startOffset, endOffset, type, symbol,
                         typeArgumentsCount = constructor.typeParameters.size + (klass?.typeParameters?.size ?: 0),
+                        valueArgumentsCount = constructor.valueParameters.size,
                         reflectionTarget = symbol
                     )
                 }
                 is IrFunctionSymbol -> {
+                    val function = symbol.owner
                     IrFunctionReferenceImpl(
                         startOffset, endOffset, type, symbol,
-                        typeArgumentsCount = symbol.owner.typeParameters.size,
+                        typeArgumentsCount = function.typeParameters.size,
+                        valueArgumentsCount = function.valueParameters.size,
                         reflectionTarget = symbol
                     )
                 }
@@ -159,6 +162,8 @@ internal class CallAndReferenceGenerator(
                 is IrSimpleFunctionSymbol -> {
                     IrCallImpl(
                         startOffset, endOffset, type, symbol,
+                        typeArgumentsCount = symbol.owner.typeParameters.size,
+                        valueArgumentsCount = symbol.owner.valueParameters.size,
                         origin = qualifiedAccess.calleeReference.statementOrigin(),
                         superQualifierSymbol = superQualifierSymbol
                     )
@@ -168,7 +173,10 @@ internal class CallAndReferenceGenerator(
                     val backingField = symbol.owner.backingField
                     when {
                         getter != null -> IrCallImpl(
-                            startOffset, endOffset, type, getter.symbol, origin = IrStatementOrigin.GET_PROPERTY,
+                            startOffset, endOffset, type, getter.symbol,
+                            typeArgumentsCount = getter.typeParameters.size,
+                            valueArgumentsCount = 0,
+                            origin = IrStatementOrigin.GET_PROPERTY,
                             superQualifierSymbol = superQualifierSymbol
                         )
                         backingField != null -> IrGetFieldImpl(
@@ -213,7 +221,12 @@ internal class CallAndReferenceGenerator(
                     val setter = irProperty.setter
                     val backingField = irProperty.backingField
                     when {
-                        setter != null -> IrCallImpl(startOffset, endOffset, type, setter.symbol, origin).apply {
+                        setter != null -> IrCallImpl(
+                            startOffset, endOffset, type, setter.symbol,
+                            typeArgumentsCount = setter.typeParameters.size,
+                            valueArgumentsCount = 1,
+                            origin = origin
+                        ).apply {
                             putValueArgument(0, assignedValue)
                         }
                         backingField != null -> IrSetFieldImpl(startOffset, endOffset, backingField.symbol, type).apply {
@@ -224,7 +237,12 @@ internal class CallAndReferenceGenerator(
                     }
                 }
                 is IrSimpleFunctionSymbol -> {
-                    IrCallImpl(startOffset, endOffset, type, symbol, origin).apply {
+                    IrCallImpl(
+                        startOffset, endOffset, type, symbol,
+                        typeArgumentsCount = symbol.owner.typeParameters.size,
+                        valueArgumentsCount = 1,
+                        origin = origin
+                    ).apply {
                         putValueArgument(0, assignedValue)
                     }
                 }
@@ -250,7 +268,12 @@ internal class CallAndReferenceGenerator(
                     if (irConstructor == null) {
                         IrErrorCallExpressionImpl(startOffset, endOffset, type, "No annotation constructor found: ${irClass.name}")
                     } else {
-                        IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, type, irConstructor)
+                        IrConstructorCallImpl(
+                            startOffset, endOffset, type, irConstructor,
+                            valueArgumentsCount = irConstructor.owner.valueParameters.size,
+                            typeArgumentsCount = 0,
+                            constructorTypeArgumentsCount = 0
+                        )
                     }
 
                 }

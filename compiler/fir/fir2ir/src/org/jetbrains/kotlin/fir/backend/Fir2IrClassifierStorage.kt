@@ -230,8 +230,7 @@ class Fir2IrClassifierStorage(
                     isExpect = regularClass.isExpect,
                     isFun = regularClass.isFun
                 ).apply {
-                    val descriptor = symbol.descriptor
-                    metadata = FirMetadataSource.Class(regularClass, descriptor as WrappedClassDescriptor)
+                    metadata = FirMetadataSource.Class(regularClass)
                 }
             }
         }
@@ -263,8 +262,7 @@ class Fir2IrClassifierStorage(
                     anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
                     visibility, modality
                 ).apply {
-                    val descriptor = symbol.descriptor
-                    metadata = FirMetadataSource.Class(anonymousObject, descriptor as WrappedClassDescriptor)
+                    metadata = FirMetadataSource.Class(anonymousObject)
                     setThisReceiver(anonymousObject.typeParameters)
                     if (irParent != null) {
                         this.parent = irParent
@@ -388,8 +386,13 @@ class Fir2IrClassifierStorage(
 
                         this.correspondingClass = klass
                     } else if (irParent != null && origin == IrDeclarationOrigin.DEFINED) {
+                        val constructor = irParent.constructors.first()
                         this.initializerExpression = IrExpressionBodyImpl(
-                            IrEnumConstructorCallImpl(startOffset, endOffset, irType, irParent.constructors.first().symbol)
+                            IrEnumConstructorCallImpl(
+                                startOffset, endOffset, irType, constructor.symbol,
+                                valueArgumentsCount = constructor.valueParameters.size,
+                                typeArgumentsCount = constructor.typeParameters.size
+                            )
                         )
                     }
                     declarationStorage.leaveScope(this)

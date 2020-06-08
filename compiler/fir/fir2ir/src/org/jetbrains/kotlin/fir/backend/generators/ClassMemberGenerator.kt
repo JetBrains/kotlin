@@ -211,9 +211,9 @@ internal class ClassMemberGenerator(
                 conversionScope.withParent(this) {
                     declarationStorage.enterScope(this)
                     val backingField = correspondingProperty.backingField
-                    val fieldSymbol = symbolTable.referenceField(correspondingProperty.descriptor)
+                    val fieldSymbol = backingField?.symbol
                     val declaration = this
-                    if (backingField != null) {
+                    if (fieldSymbol != null) {
                         body = IrBlockBodyImpl(
                             startOffset, endOffset,
                             listOf(
@@ -260,12 +260,14 @@ internal class ClassMemberGenerator(
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
             if (constructorSymbol.fir.isFromEnumClass || constructorSymbol.fir.returnTypeRef.isEnum) {
+                val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.typeArguments
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset,
                     constructedIrType,
-                    irConstructorSymbol
+                    irConstructorSymbol,
+                    typeArgumentsCount = typeArguments?.size ?: 0,
+                    valueArgumentsCount = constructorSymbol.fir.valueParameters.size
                 ).apply {
-                    val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.typeArguments
                     if (typeArguments?.isNotEmpty() == true) {
                         val irType = (typeArguments.first() as ConeKotlinTypeProjection).type.toIrType()
                         putTypeArgument(0, irType)
@@ -275,7 +277,9 @@ internal class ClassMemberGenerator(
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset,
                     constructedIrType,
-                    irConstructorSymbol
+                    irConstructorSymbol,
+                    valueArgumentsCount = irConstructorSymbol.owner.valueParameters.size,
+                    typeArgumentsCount = irConstructorSymbol.owner.typeParameters.size
                 )
             }.let {
                 if (firDispatchReceiver !is FirNoReceiverExpression) {

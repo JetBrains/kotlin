@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -503,7 +502,11 @@ fun Fir2IrComponents.createSafeCallConstruction(
         statements += receiverVariable
         statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
             val condition = IrCallImpl(
-                startOffset, endOffset, irBuiltIns.booleanType, irBuiltIns.eqeqSymbol, origin = IrStatementOrigin.EQEQ
+                startOffset, endOffset, irBuiltIns.booleanType,
+                irBuiltIns.eqeqSymbol,
+                valueArgumentsCount = 2,
+                typeArgumentsCount = 0,
+                origin = IrStatementOrigin.EQEQ
             ).apply {
                 putValueArgument(0, IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol))
                 putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType))
@@ -526,7 +529,7 @@ fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
     val receiverVariable = declarationStorage.declareTemporaryVariable(receiverExpression, "safe_receiver").apply {
         parent = conversionScope.parentFromStack()
     }
-    val variableSymbol = symbolTable.referenceValue(receiverVariable.descriptor)
+    val variableSymbol = receiverVariable.symbol
 
     return Pair(receiverVariable, variableSymbol)
 }

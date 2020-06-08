@@ -65,7 +65,7 @@ class Fir2IrVisitor(
 
     private val memberGenerator = ClassMemberGenerator(components, this, conversionScope, callGenerator, fakeOverrideMode)
 
-    private val operatorGenerator = OperatorExpressionGenerator(components, this, callGenerator, conversionScope)
+    private val operatorGenerator = OperatorExpressionGenerator(components, this, conversionScope)
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
@@ -106,10 +106,13 @@ class Fir2IrVisitor(
         converter.processAnonymousObjectMembers(enumEntry.initializer as FirAnonymousObject, correspondingClass)
         conversionScope.withParent(correspondingClass) {
             memberGenerator.convertClassContent(correspondingClass, enumEntry.initializer as FirAnonymousObject)
+            val constructor = correspondingClass.constructors.first()
             irEnumEntry.initializerExpression = IrExpressionBodyImpl(
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset, enumEntry.returnTypeRef.toIrType(),
-                    correspondingClass.constructors.first().symbol
+                    constructor.symbol,
+                    typeArgumentsCount = constructor.typeParameters.size,
+                    valueArgumentsCount = constructor.valueParameters.size
                 )
             )
         }
@@ -598,7 +601,10 @@ class Fir2IrVisitor(
                     }
                     if (whenExpression.isExhaustive && !unconditionalBranchFound) {
                         val irResult = IrCallImpl(
-                            startOffset, endOffset, irBuiltIns.nothingType, irBuiltIns.noWhenBranchMatchedExceptionSymbol
+                            startOffset, endOffset, irBuiltIns.nothingType,
+                            irBuiltIns.noWhenBranchMatchedExceptionSymbol,
+                            typeArgumentsCount = 0,
+                            valueArgumentsCount = 0
                         )
                         branches += IrElseBranchImpl(
                             IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true), irResult
@@ -757,7 +763,9 @@ class Fir2IrVisitor(
                 startOffset, endOffset,
                 checkNotNullCall.typeRef.toIrType(),
                 irBuiltIns.checkNotNullSymbol,
-                IrStatementOrigin.EXCLEXCL
+                typeArgumentsCount = 1,
+                valueArgumentsCount = 1,
+                origin = IrStatementOrigin.EXCLEXCL
             ).apply {
                 putTypeArgument(0, checkNotNullCall.argument.typeRef.toIrType().makeNotNull())
                 putValueArgument(0, convertToIrExpression(checkNotNullCall.argument))
