@@ -3,23 +3,24 @@ package com.intellij.configurationStore.statistic.eventLog
 
 import com.intellij.configurationStore.jdomSerializer
 import com.intellij.internal.statistic.eventLog.EventLogGroup
+import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.internal.statistic.utils.PluginInfo
-import com.intellij.internal.statistic.utils.StatisticsUtil
-import com.intellij.internal.statistic.utils.addPluginInfoTo
 import com.intellij.internal.statistic.utils.getPluginInfo
 import com.intellij.openapi.components.ReportValue
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.serialization.MutableAccessor
 import com.intellij.util.concurrency.NonUrgentExecutor
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.xmlb.Accessor
 import com.intellij.util.xmlb.BeanBinding
 import org.jdom.Element
-import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 
 private val LOG = Logger.getInstance("com.intellij.configurationStore.statistic.eventLog.FeatureUsageSettingsEventPrinter")
-private val GROUP = EventLogGroup("settings", 5)
+private val GROUP = EventLogGroup("settings", 6)
+private const val CHANGES_GROUP = "settings.changes"
 
 private val recordedComponents: MutableSet<String> = ContainerUtil.newConcurrentSet()
 private val recordedOptionNames: MutableSet<String> = ContainerUtil.newConcurrentSet()
@@ -50,20 +51,31 @@ internal object FeatureUsageSettingsEvents {
       }
     }
   }
+
+  fun logConfigurationChanged(componentName: String, state: Any, project: Project?) {
+    NonUrgentExecutor.getInstance().execute {
+      if (FeatureUsageLogger.isEnabled()) {
+        printer.logConfigurationStateChanged(componentName, state, project)
+      }
+    }
+  }
 }
 
 open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) {
+  private val valuesExtractor = ConfigurationStateExtractor(recordDefault)
+
   fun logDefaultConfigurationState(componentName: String, clazz: Class<*>, project: Project?) {
     try {
       if (recordDefault) {
         val default = jdomSerializer.getDefaultSerializationFilter().getDefaultValue(clazz)
         logConfigurationState(componentName, default, project)
       }
-      else if (clazz != Element::class.java && getPluginInfo(clazz).isDevelopedByJetBrains()) {
-        recordedComponents.add(componentName)
-        val isDefaultProject = project?.isDefault == true
-        val hash = if (!isDefaultProject) toHash(project) else null
-        logSettingCollectorWasInvoked(componentName, isDefaultProject, hash)
+      else if (clazz != Element::class.java) {
+        val pluginInfo = getPluginInfo(clazz)
+        if (pluginInfo.isDevelopedByJetBrains()) {
+          recordedComponents.add(componentName)
+          logConfig(GROUP, "invoked", createComponentData(project, componentName, pluginInfo))
+        }
       }
     }
     catch (e: Exception) {
@@ -71,118 +83,148 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
     }
   }
 
+  fun logConfigurationStateChanged(componentName: String, state: Any?, project: Project?) {
+    val (optionsValues, pluginInfo) = valuesExtractor.extract(project, componentName, state) ?: return
+    val id = counter.incrementAndGet()
+    for (data in optionsValues) {
+      logSettingsChanged("component_changed_option", data, id)
+    }
+
+    if (!recordDefault) {
+      logSettingsChanged("component_changed", createComponentData(project, componentName, pluginInfo), id)
+    }
+  }
+
   fun logConfigurationState(componentName: String, state: Any?, project: Project?) {
+    val (optionsValues, pluginInfo) = valuesExtractor.extract(project, componentName, state) ?: return
+    val eventId = if (recordDefault) "option" else "not.default"
+    for (data in optionsValues) {
+      logConfig(GROUP, eventId, data)
+    }
+
+    if (!recordDefault) {
+      logConfig(GROUP, "invoked", createComponentData(project, componentName, pluginInfo))
+    }
+  }
+
+  protected open fun logConfig(group: EventLogGroup, eventId: String, data: FeatureUsageData) {
+    FeatureUsageLogger.logState(group, eventId, data.build())
+  }
+
+  protected open fun logSettingsChanged(eventId: String, data: FeatureUsageData, id: Int) {
+    FUCounterUsageLogger.getInstance().logEvent(CHANGES_GROUP, eventId, data.addData("id", id))
+  }
+
+  companion object {
+    private val counter = AtomicInteger(0)
+
+    fun createComponentData(project: Project?, componentName: String, pluginInfo: PluginInfo): FeatureUsageData {
+      val data = FeatureUsageData()
+        .addData("component", componentName)
+        .addPluginInfo(pluginInfo)
+      if (project?.isDefault == true) {
+        data.addData("default_project", true)
+      }
+      else {
+        data.addProject(project)
+      }
+      return data
+    }
+  }
+}
+
+internal data class ConfigurationState(val optionsValues: List<FeatureUsageData>, val pluginInfo: PluginInfo)
+
+internal data class ConfigurationStateExtractor(val recordDefault: Boolean) {
+  internal fun extract(project: Project?, componentName: String, state: Any?): ConfigurationState? {
     if (state == null || state is Element) {
-      return
+      return null
     }
 
     val pluginInfo = getPluginInfo(state.javaClass)
     if (!pluginInfo.isDevelopedByJetBrains()) {
-      return
+      return null
     }
 
     val accessors = BeanBinding.getAccessors(state.javaClass)
     if (accessors.isEmpty()) {
-      return
+      return null
     }
 
     recordedComponents.add(componentName)
-    val eventId = if (recordDefault) "option" else "not.default"
-    val isDefaultProject = project?.isDefault == true
-    val hash = if (!isDefaultProject) toHash(project) else null
-
-    for (accessor in accessors) {
-      val type = accessor.genericType
-      if (type === Boolean::class.javaPrimitiveType) {
-        logConfigValue(accessor, state, "bool", eventId, isDefaultProject, true, hash, componentName, pluginInfo)
-      }
-      else if (type === Int::class.javaPrimitiveType || type === Long::class.javaPrimitiveType) {
-        logConfigValue(accessor, state, "int", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName, pluginInfo)
-      }
-      else if (type === Float::class.javaPrimitiveType || type === Double::class.javaPrimitiveType) {
-        logConfigValue(accessor, state, "float", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName, pluginInfo)
-      }
-      else if (type is Class<*> && type.isEnum) {
-        logConfigValue(accessor, state, "enum", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName, pluginInfo) {
-          (it as? Enum<*>)?.name
-        }
-      }
-      else if (type == String::class.java) {
-        val annotation = accessor.getAnnotation(ReportValue::class.java)
-        logConfigValue(accessor, state, "string", eventId, isDefaultProject, shouldReportValue(accessor), hash, componentName, pluginInfo) {
-          if (it in annotation.possibleValues) it else null
-        }
-      }
-    }
-
-    if (!recordDefault) {
-      logSettingCollectorWasInvoked(componentName, isDefaultProject, hash)
-    }
+    val optionsValues = accessors.mapNotNull { extractOptionValue(project, it, state, componentName, pluginInfo) }
+    return ConfigurationState(optionsValues, pluginInfo)
   }
 
-  private fun shouldReportValue(accessor: MutableAccessor): Boolean = accessor.getAnnotation(ReportValue::class.java) != null
-
-  private fun logConfigValue(accessor: MutableAccessor,
-                             state: Any,
-                             type: String,
-                             eventId: String,
-                             isDefaultProject: Boolean,
-                             reportValue: Boolean,
-                             hash: String?,
-                             componentName: String,
-                             pluginInfo: PluginInfo,
-                             transformValue: ((Any?) -> Any?)? = null) {
+  private fun extractOptionValue(project: Project?,
+                                 accessor: Accessor,
+                                 state: Any,
+                                 componentName: String,
+                                 pluginInfo: PluginInfo): FeatureUsageData? {
     val isDefault = !jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
     if (!isDefault || recordDefault) {
+      val data = FeatureUsageSettingsEventPrinter.createComponentData(project, componentName, pluginInfo)
       recordedOptionNames.add(accessor.name)
-      val content = HashMap<String, Any>()
-      content["type"] = type
-      content["component"] = componentName
-      content["name"] = accessor.name
-      if (reportValue) {
-        val value = accessor.readUnsafe(state)
-        val transformedValue = if (transformValue != null) transformValue(value) else value
-        if (transformedValue != null) {
-          content["value"] = transformedValue
+      data.addData("name", accessor.name)
+      if (tryAddTypedValue(data, accessor, state)) {
+        if (recordDefault) {
+          data.addData("default", isDefault)
         }
-      }
-      if (recordDefault) {
-        content["default"] = isDefault
-      }
-      addProjectOptions(content, isDefaultProject, hash)
-      addPluginInfoTo(pluginInfo, content)
-      logConfig(GROUP, eventId, content)
-    }
-  }
-
-  private fun addProjectOptions(content: HashMap<String, Any>,
-                                isDefaultProject: Boolean,
-                                projectHash: String?) {
-    if (isDefaultProject) {
-      content["default_project"] = true
-    }
-    else {
-      projectHash?.let {
-        content["project"] = projectHash
+        return data
       }
     }
+    return null
   }
 
-  @Suppress("SameParameterValue")
-  protected open fun logConfig(group: EventLogGroup, eventId: String, data: Map<String, Any>) {
-    FeatureUsageLogger.logState(group, eventId, data)
+  private fun tryAddTypedValue(data: FeatureUsageData, accessor: Accessor, state: Any): Boolean {
+    val type = accessor.genericType
+    when {
+      type === Boolean::class.javaPrimitiveType -> {
+        data.addData("type", "bool")
+        val value = accessor.readUnsafe(state) as? Boolean
+        value?.let { data.addData("value", it) }
+      }
+      type === Int::class.javaPrimitiveType -> addValue<Int>(data, accessor, state, "int") { data.addData("value", it) }
+      type === Long::class.javaPrimitiveType -> addValue<Long>(data, accessor, state, "int") { data.addData("value", it) }
+      type === Float::class.javaPrimitiveType -> addValue<Float>(data, accessor, state, "float") { data.addData("value", it) }
+      type === Double::class.javaPrimitiveType -> addValue<Double>(data, accessor, state, "float") { data.addData("value", it) }
+      type is Class<*> && type.isEnum -> {
+        data.addData("type", "enum")
+        readValue(accessor, state) { (it as? Enum<*>)?.name }?.let { data.addData("value", it) }
+      }
+      type == String::class.java -> {
+        data.addData("type", "string")
+        val value = readValue(accessor, state) { value ->
+          if (value is String && value in accessor.getAnnotation(ReportValue::class.java).possibleValues) {
+            value
+          }
+          else null
+        }
+        value?.let { data.addData("value", it) }
+      }
+      else -> return false
+    }
+    return true
   }
 
-  private fun logSettingCollectorWasInvoked(componentName: String, isDefaultProject: Boolean, projectHash: String?) {
-    val content = HashMap<String, Any>()
-    content["component"] = componentName
-    addProjectOptions(content, isDefaultProject, projectHash)
-    logConfig(GROUP, "invoked", content)
+  private inline fun <reified T> readValue(accessor: Accessor, state: Any, noinline transformValue: ((Any?) -> T?)? = null): T? {
+    if (accessor.getAnnotation(ReportValue::class.java) != null) {
+      val value = accessor.readUnsafe(state)
+      return if (transformValue != null) {
+        transformValue(value)
+      }
+      else {
+        value as? T
+      }
+    }
+    return null
   }
 
-  internal fun toHash(project: Project?): String? {
-    return project?.let {
-      return StatisticsUtil.getProjectId(project)
+  private inline fun <reified T> addValue(data: FeatureUsageData, accessor: Accessor, state: Any, type: String, add: (T) -> Unit) {
+    data.addData("type", type)
+    val value =  readValue<T>(accessor, state)
+    if (value != null) {
+      add(value)
     }
   }
 }
