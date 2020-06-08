@@ -260,6 +260,7 @@ task sanity {
     dependsOn(tasksOf(FrameworkTest) { task ->
         task.getDependsOn().every { !platformLibsTasks.contains(it) }
     })
+    dependsOn(tasksOf(MetadataComparisonTest))
 
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
