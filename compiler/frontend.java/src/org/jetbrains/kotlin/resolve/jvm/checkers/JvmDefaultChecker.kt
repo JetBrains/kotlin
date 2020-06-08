@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefault
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
@@ -31,9 +32,19 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
             if (!DescriptorUtils.isInterface(descriptor.containingDeclaration)) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_NOT_IN_INTERFACE.on(reportOn))
             } else if (jvmTarget == JvmTarget.JVM_1_6) {
-                context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_JVM6_TARGET.on(reportOn))
+                context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_JVM6_TARGET.on(reportOn, "JvmDefault"))
             } else if (!jvmDefaultMode.isEnabled) {
-                context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_DECLARATION.on(declaration))
+                context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_DECLARATION.on(declaration, "JvmDefault"))
+            }
+            return@check
+        }
+
+        descriptor.annotations.findAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)?.let { annotationDescriptor ->
+            val reportOn = DescriptorToSourceUtils.getSourceFromAnnotation(annotationDescriptor) ?: declaration
+            if (jvmTarget == JvmTarget.JVM_1_6) {
+                context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_JVM6_TARGET.on(reportOn, "JvmDefaultWithoutCompatibility"))
+            } else if (!jvmDefaultMode.isEnabled) {
+                context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_DECLARATION.on(reportOn, "JvmDefaultWithoutCompatibility"))
             }
             return@check
         }

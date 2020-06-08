@@ -135,9 +135,9 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                                                    "See https://youtrack.jetbrains.com/issue/KT-21354 for more details");
 
         MAP.put(JVM_DEFAULT_NOT_IN_INTERFACE,"'@JvmDefault' is only supported on interface members");
-        MAP.put(JVM_DEFAULT_IN_JVM6_TARGET,"'@JvmDefault' is only supported since JVM target 1.8. Recompile with '-jvm-target 1.8'");
+        MAP.put(JVM_DEFAULT_IN_JVM6_TARGET,"''@{0}'' is only supported since JVM target 1.8. Recompile with ''-jvm-target 1.8''", STRING);
         MAP.put(JVM_DEFAULT_REQUIRED_FOR_OVERRIDE, "'@JvmDefault' is required for an override of a '@JvmDefault' member");
-        MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of '@JvmDefault' is only allowed with -Xjvm-default option");
+        MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with -Xjvm-default option", STRING);
         MAP.put(JVM_DEFAULT_THROUGH_INHERITANCE, "Inheritance from an interface with '@JvmDefault' members is only allowed with -Xjvm-default option");
         MAP.put(USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL, "Super calls of '@JvmDefault' members are only allowed with -Xjvm-default option");
         MAP.put(NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT, "Non-@JvmDefault interface method cannot override default Java method. Please annotate this method with @JvmDefault");
