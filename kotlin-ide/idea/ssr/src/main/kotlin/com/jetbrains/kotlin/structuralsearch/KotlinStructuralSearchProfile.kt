@@ -147,8 +147,16 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     ): Boolean {
         when (constraintName) {
             UIUtil.TYPE -> variableNode?.let { varNode ->
-                val parent = varNode.parent
-                if (parent is KtExpression) return@isApplicableConstraint true
+                val parent: PsiElement? = varNode.parent
+                val gParent: PsiElement? = parent?.parent
+                val ggParent: PsiElement? = gParent?.parent
+                val gggParent: PsiElement? = ggParent?.parent
+                return@isApplicableConstraint when {
+                    gParent is KtDeclarationWithInitializer && gParent.initializer == parent -> false
+                    gggParent is KtCallableDeclaration && gggParent.typeReference == ggParent -> false
+                    parent is KtExpression -> true
+                    else -> false
+                }
             } ?: return false
         }
         return super.isApplicableConstraint(constraintName, variableNode, completePattern, target)
