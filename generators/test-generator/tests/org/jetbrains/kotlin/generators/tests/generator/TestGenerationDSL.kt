@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.generators.tests.generator
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker.Companion.hasDryRunArg
+import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker.Companion.inconsistencyChecker
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.*
@@ -16,7 +18,8 @@ class TestGroup(
     val testDataRoot: String,
     val testRunnerMethodName: String,
     val additionalRunnerArguments: List<String> = emptyList(),
-    val annotations: List<AnnotationModel> = emptyList()
+    val annotations: List<AnnotationModel> = emptyList(),
+    private val dryRun: Boolean = false
 ) {
     inline fun <reified T : TestCase> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
@@ -34,13 +37,16 @@ class TestGroup(
         annotations: List<AnnotationModel> = emptyList(),
         init: TestClass.() -> Unit
     ) {
-        TestGenerator(
+        val testGenerator = TestGenerator(
             testsRoot,
             suiteTestClassName,
             baseTestClassName,
             TestClass(annotations).apply(init).testModels,
             useJunit4
-        ).generateAndSave()
+        )
+        if (testGenerator.generateAndSave(dryRun)) {
+            inconsistencyChecker(dryRun).add(testGenerator.testSourceFilePath)
+        }
     }
 
     inner class TestClass(val annotations: List<AnnotationModel>) {
@@ -85,14 +91,67 @@ class TestGroup(
     }
 }
 
-fun testGroup(
-    testsRoot: String,
-    testDataRoot: String,
-    testRunnerMethodName: String = RunTestMethodModel.METHOD_NAME,
-    additionalRunnerArguments: List<String> = emptyList(),
-    init: TestGroup.() -> Unit
+fun testGroupSuite(
+    args: Array<String>,
+    init: TestGroupSuite.() -> Unit
 ) {
-    TestGroup(testsRoot, testDataRoot, testRunnerMethodName, additionalRunnerArguments).init()
+    testGroupSuite(hasDryRunArg(args), init)
+}
+
+fun testGroupSuite(
+    dryRun: Boolean = false,
+    init: TestGroupSuite.() -> Unit
+) {
+    TestGroupSuite(dryRun).init()
+}
+
+class TestGroupSuite(private val dryRun: Boolean) {
+    fun testGroup(
+        testsRoot: String,
+        testDataRoot: String,
+        testRunnerMethodName: String = RunTestMethodModel.METHOD_NAME,
+        additionalRunnerArguments: List<String> = emptyList(),
+        init: TestGroup.() -> Unit
+    ) {
+        TestGroup(
+            testsRoot,
+            testDataRoot,
+            testRunnerMethodName,
+            additionalRunnerArguments,
+            dryRun = dryRun
+        ).init()
+    }
+}
+
+interface InconsistencyChecker {
+    fun add(affectedFile: String)
+
+    val affectedFiles: List<String>
+
+    companion object {
+        fun hasDryRunArg(args: Array<String>) = args.any { it == "dryRun" }
+
+        fun inconsistencyChecker(dryRun: Boolean) = if (dryRun) DefaultInconsistencyChecker else EmptyInconsistencyChecker
+    }
+}
+
+object DefaultInconsistencyChecker : InconsistencyChecker {
+    private val files = mutableListOf<String>()
+
+    override fun add(affectedFile: String) {
+        files.add(affectedFile)
+    }
+
+    override val affectedFiles: List<String>
+        get() = files
+}
+
+object EmptyInconsistencyChecker : InconsistencyChecker {
+    override fun add(affectedFile: String) {
+    }
+
+    override val affectedFiles: List<String>
+        get() = emptyList()
 }
 
 fun getDefaultSuiteTestClassName(baseTestClassName: String): String {
