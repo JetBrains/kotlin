@@ -34,6 +34,70 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor =
         KotlinJdkAndLibraryProjectDescriptor(TestKotlinArtifacts.kotlinStdlib)
 
+    fun testIsHiddenByDeprecated() {
+        myFixture.configureByText(
+            "test.kt", """
+            import kotlin.DeprecationLevel.WARNING
+            import kotlin.DeprecationLevel.HIDDEN
+            import java.lang.annotation.ElementType
+            import kotlin.DeprecationLevel
+            import kotlin.annotation.AnnotationTarget
+
+            @kotlin.annotation.Target(kotlin.annotation.AnnotationTarget.FUNCTION)
+            annotation class Dep(
+                val message: String = "",
+                val message1: String = "",
+                val level: DeprecationLevel = DeprecationLevel.WARNING
+            )
+
+            typealias LOL = Deprecated
+            typealias DL = DeprecationLevel
+
+            class A {
+                @Deprecated("", ReplaceWith("a"), HIDDEN)
+                fun a() {}
+
+                @Deprecated(message = "", level = HIDDEN)
+                fun b() {}
+
+                @Deprecated(message = "", replaceWith = ReplaceWith(""), level = DeprecationLevel.HIDDEN)
+                fun c() {}
+
+                @Deprecated(message = "", replaceWith = ReplaceWith(""), level = DeprecationLevel.WARNING)
+                fun d() {}
+
+                @Deprecated(message = "", replaceWith = ReplaceWith(""), level = WARNING)
+                fun e() {}
+
+                @Deprecated(message = "", replaceWith = ReplaceWith(""))
+                fun f() {}
+
+                @Deprecated("")
+                fun g() {}
+
+                @Deprecated(message = "", level = WARNING)
+                fun h() {}
+
+                @Dep(level = DeprecationLevel.HIDDEN)
+                fun i() {}
+
+                @Dep("", "", DeprecationLevel.HIDDEN)
+                fun j() {}
+
+                @LOL(level = HIDDEN, message="")
+                fun k() {}
+
+                @Deprecated(level = DL.HIDDEN, message="")
+                fun l() {}
+            }
+        """.trimIndent()
+        )
+        myFixture.testHighlighting("test.kt")
+
+        val methods = myFixture.findClass("A").methods.map { it.name }.sorted()
+        TestCase.assertEquals(listOf("A","d","e","f","g","h","i","j"), methods)
+    }
+
     fun testBooleanAnnotationDefaultValue() {
         myFixture.addClass(
             """
