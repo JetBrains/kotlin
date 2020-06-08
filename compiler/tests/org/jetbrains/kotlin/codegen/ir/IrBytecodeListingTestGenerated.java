@@ -59,6 +59,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/emptyMultifileFacade.kt");
     }
 
+    @TestMetadata("extension.kt")
+    public void testExtension() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/extension.kt");
+    }
+
     @TestMetadata("immutableCollection.kt")
     public void testImmutableCollection() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/immutableCollection.kt");

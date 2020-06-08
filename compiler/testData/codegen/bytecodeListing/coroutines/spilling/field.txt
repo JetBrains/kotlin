@@ -21,7 +21,7 @@ public final class FieldKt {
 @kotlin.Metadata
 public final class Foo$DefaultImpls {
     inner class Foo$DefaultImpls
-    public static @org.jetbrains.annotations.NotNull method getValue(p0: Foo, @org.jetbrains.annotations.NotNull p1: Result): java.lang.Object
+    public static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: Foo, @org.jetbrains.annotations.NotNull p1: Result): java.lang.Object
 }
 
 @kotlin.Metadata
