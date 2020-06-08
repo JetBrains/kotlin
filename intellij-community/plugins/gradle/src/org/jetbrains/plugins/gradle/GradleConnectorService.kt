@@ -89,10 +89,15 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
       }
       workaroundJavaVersionIssueIfNeeded(newConnection, taskId, listener, cancellationToken)
 
-      if (conn != null && connectorParams != conn.params &&
-          connectorParams.distributionType != DistributionType.WRAPPED) {
-        // release obsolete connection
-        conn.disconnect()
+      if (conn != null && connectorParams != conn.params) {
+        if (connectorParams.distributionType == DistributionType.WRAPPED && conn.params.distributionType == DistributionType.WRAPPED) {
+          val unwrappedConnection = conn.connection as WrappedConnection
+          unwrappedConnection.delegate.close()
+        }
+        else {
+          // release obsolete connection
+          conn.disconnect()
+        }
       }
       val wrappedConnection = WrappedConnection(newConnection)
       return@compute GradleProjectConnection(connectorParams, newConnector, wrappedConnection)
@@ -128,6 +133,7 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
 
   companion object {
     private val LOG = logger<GradleConnectorService>()
+
     /** disable stop IDLE Gradle daemons on IDE project close. Applicable for Gradle versions w/o disconnect support (older than 6.5). */
     private val DISABLE_STOP_OLD_IDLE_DAEMONS = java.lang.Boolean.getBoolean("idea.gradle.disableStopIdleDaemonsOnProjectClose")
 
