@@ -18,7 +18,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
-import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
 private class PossibleSpilledValue(val source: AbstractInsnNode, type: Type?) : BasicValue(type) {
     val usages = mutableSetOf<AbstractInsnNode>()
