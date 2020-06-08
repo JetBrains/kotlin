@@ -16,7 +16,6 @@ import com.intellij.util.io.exists
 import org.jetbrains.annotations.ApiStatus
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
-import java.util.function.Predicate
 
 @ApiStatus.Experimental
 abstract class AbstractOpenProjectProvider : OpenProjectProvider {
@@ -43,7 +42,7 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
                                   forceOpenInNewFrame = forceOpenInNewFrame,
                                   projectToClose = projectToClose,
                                   runConfigurators = false,
-                                  beforeOpen = Predicate { project ->
+                                  beforeOpen = { project ->
                                     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
                                     linkAndRefreshProject(projectDirectory.path, project)
                                     updateLastProjectLocation(projectDirectory.toNioPath())
