@@ -43,7 +43,7 @@ private class TypeAliasLiftingUpCommonizer(cache: CirClassifiersCache) : Abstrac
     private val typeParameters = TypeParameterListCommonizer(cache)
     private val underlyingType = TypeCommonizer(cache)
     private lateinit var expandedType: CirSimpleType
-    private val visibility = VisibilityCommonizer.lowering(allowPrivate = false)
+    private val visibility = VisibilityCommonizer.lowering()
 
     override fun commonizationResult(): CirTypeAlias = CirTypeAliasFactory.create(
         annotations = emptyList(),
