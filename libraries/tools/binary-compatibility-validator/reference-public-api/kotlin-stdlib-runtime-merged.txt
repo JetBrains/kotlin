@@ -3143,6 +3143,9 @@ public final class kotlin/jvm/JvmClassMappingKt {
 public abstract interface annotation class kotlin/jvm/JvmDefault : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/jvm/JvmDefaultWithoutCompatibility : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/jvm/JvmField : java/lang/annotation/Annotation {
 }
 
