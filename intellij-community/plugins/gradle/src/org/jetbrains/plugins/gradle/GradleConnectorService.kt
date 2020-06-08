@@ -22,7 +22,9 @@ import org.gradle.initialization.BuildCancellationToken
 import org.gradle.internal.classpath.ClassPath
 import org.gradle.internal.classpath.DefaultClassPath
 import org.gradle.internal.logging.progress.ProgressLoggerFactory
-import org.gradle.tooling.*
+import org.gradle.tooling.CancellationToken
+import org.gradle.tooling.GradleConnector
+import org.gradle.tooling.ProjectConnection
 import org.gradle.tooling.internal.consumer.DefaultGradleConnector
 import org.gradle.tooling.internal.consumer.Distribution
 import org.gradle.tooling.internal.protocol.InternalBuildProgressListener
@@ -35,7 +37,6 @@ import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.tooling.loader.rt.MarkerRt
 import java.io.File
-import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.function.Function
@@ -108,18 +109,10 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
     }
   }
 
-  private class WrappedConnection(val delegate: ProjectConnection) : ProjectConnection {
-    override fun newBuild(): BuildLauncher = delegate.newBuild()
-    override fun <T : Any?> action(p0: BuildAction<T>?): BuildActionExecuter<T> = delegate.action(p0)
-    override fun action(): BuildActionExecuter.Builder = delegate.action()
-    override fun <T : Any?> model(p0: Class<T>?): ModelBuilder<T> = delegate.model(p0)
+  private class WrappedConnection(val delegate: ProjectConnection) : ProjectConnection by delegate {
     override fun close() {
       throw IllegalStateException("This connection should not be closed explicitly.")
     }
-    override fun newTestLauncher(): TestLauncher = delegate.newTestLauncher()
-    override fun <T : Any?> getModel(p0: Class<T>?): T = delegate.getModel(p0)
-    override fun <T : Any?> getModel(p0: Class<T>?, p1: ResultHandler<in T>?) = delegate.getModel(p0, p1)
-    override fun notifyDaemonsAboutChangedPaths(p0: MutableList<Path>?) = delegate.notifyDaemonsAboutChangedPaths(p0)
   }
 
   private data class ConnectorParams(
