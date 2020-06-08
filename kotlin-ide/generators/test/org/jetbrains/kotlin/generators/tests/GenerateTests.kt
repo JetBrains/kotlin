@@ -856,19 +856,25 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         testClass<AbstractKtDeclarationAndFirDeclarationEqualityChecker> {
             model("ktDeclarationAndFirDeclarationEqualityChecker")
         }
+
+        testClass<AbstractResolveCallTest> {
+            model("analysisSession/resolveCall")
+        }
     }
 
-    testGroup("fir", testDataPath = "../idea/testData") {
+    testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/testData") {
         testClass<AbstractFirMultiModuleResolveTest> {
-            model("fir/multiModule", isRecursive = false, pattern = DIRECTORY)
-        }
-
-        testClass<AbstractFirHighlightingTest> {
-            model("highlighter")
+            model("fir/multiModule", recursive = false, extension = null)
         }
 
         testClass<AbstractFirLazyResolveTest> {
-            model("fir/lazyResolve", pattern = TEST, flatten = true, filenameStartsLowerCase = true)
+            model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
+        }
+    }
+
+    testGroup("fir", testDataPath = "../idea/testData") {
+        testClass<AbstractFirHighlightingTest> {
+            model("highlighter")
         }
 
         testClass<AbstractFirReferenceResolveTest> {
