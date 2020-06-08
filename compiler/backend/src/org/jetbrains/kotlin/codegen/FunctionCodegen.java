@@ -710,8 +710,7 @@ public class FunctionCodegen {
             @NotNull JvmDefaultMode jvmDefaultMode
     ) {
         return OwnerKind.DEFAULT_IMPLS == context.getContextKind() &&
-               JvmAnnotationUtilKt
-                       .isCompiledToJvmDefault(DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(functionDescriptor),
+               JvmAnnotationUtilKt.isCompiledToJvmDefault(DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(functionDescriptor),
                                                jvmDefaultMode) &&
                jvmDefaultMode.isCompatibility();
     }
@@ -1656,7 +1655,9 @@ public class FunctionCodegen {
 
         if (JvmAnnotationUtilKt.isCompiledToJvmDefault(memberDescriptor, mode)) {
             return (kind != OwnerKind.DEFAULT_IMPLS && !isSynthetic) ||
-                   (kind == OwnerKind.DEFAULT_IMPLS && (isSynthetic || mode.isCompatibility()));
+                   (kind == OwnerKind.DEFAULT_IMPLS &&
+                    (isSynthetic || //TODO: move synthetic method generation into interface
+                     (mode.isCompatibility() && !JvmAnnotationUtilKt.hasJvmDefaultNoCompatibilityAnnotation(containingDeclaration))));
         } else {
             switch (kind) {
                 case DEFAULT_IMPLS: return true;
