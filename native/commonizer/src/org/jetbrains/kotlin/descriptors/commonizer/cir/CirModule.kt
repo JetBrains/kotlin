@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-interface CirModule : CirNamedDeclaration
+interface CirModule : CirDeclaration, CirHasName

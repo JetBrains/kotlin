@@ -23,30 +23,31 @@ import org.jetbrains.kotlin.name.Name
  */
 interface CirDeclaration
 
-interface CirAnnotatedDeclaration : CirDeclaration {
+interface CirHasAnnotations {
     val annotations: List<CirAnnotation>
 }
 
-interface CirNamedDeclaration : CirDeclaration {
+interface CirHasName {
     val name: Name
 }
 
-// TODO: merge with [CirDeclarationWithVisibility]
+interface CirHasFqName {
+    val fqName: FqName
+}
+
 interface CirHasVisibility {
     val visibility: Visibility
 }
 
-interface CirDeclarationWithVisibility : CirDeclaration, CirHasVisibility
-
-interface CirDeclarationWithModality : CirDeclaration {
+interface CirHasModality {
     val modality: Modality
 }
 
-interface CirMaybeCallableMemberOfClass : CirDeclaration {
+interface CirMaybeCallableMemberOfClass {
     val containingClassDetails: CirContainingClassDetails? // null assumes no containing class
 }
 
-interface CirDeclarationWithTypeParameters : CirDeclaration {
+interface CirHasTypeParameters {
     val typeParameters: List<CirTypeParameter>
 }
 

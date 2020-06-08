@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
-interface CirAnnotation {
-    val fqName: FqName
+interface CirAnnotation : CirHasFqName {
     val constantValueArguments: Map<Name, ConstantValue<*>>
     val annotationValueArguments: Map<Name, CirAnnotation>
 }
