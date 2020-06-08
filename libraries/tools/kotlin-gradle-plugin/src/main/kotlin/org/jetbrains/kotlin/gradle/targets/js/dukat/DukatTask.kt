@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import java.io.File
 
-open class PackageJsonDukatTask : AbstractDukatTask() {
+open class DukatTask : AbstractDukatTask() {
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
 
     @get:Internal
