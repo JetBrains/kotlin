@@ -40,8 +40,6 @@ internal class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), Dep
 
   override fun isMarked(element: Any): Boolean = true
 
-  override fun setList(list: List<Any>) {}
-
   override fun setOpenProjectSettingsAfter(on: Boolean) {}
 
   private fun getPathToBeImported(path: String): String {
@@ -58,7 +56,7 @@ internal class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), Dep
     }
   }
 
-  override fun validate(current: Project?, project: Project): Boolean {
+  override fun validate(currentProject: Project?, project: Project): Boolean {
     return canLinkAndRefreshGradleProject(fileToImport, project)
   }
 
