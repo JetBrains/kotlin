@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.Fir2IrTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
@@ -165,6 +167,28 @@ class Fir2IrClassifierStorage(
         irClass.setThisReceiver(regularClass.typeParameters)
         irClass.declareSupertypes(regularClass)
         return irClass
+    }
+
+    fun registerTypeAlias(
+        typeAlias: FirTypeAlias,
+        parent: IrFile
+    ): IrTypeAlias {
+        val signature = signatureComposer.composeSignature(typeAlias)!!
+        preCacheTypeParameters(typeAlias)
+        return typeAlias.convertWithOffsets { startOffset, endOffset ->
+            symbolTable.declareTypeAlias(signature, { Fir2IrTypeAliasSymbol(signature) }) { symbol ->
+                IrTypeAliasImpl(
+                    startOffset, endOffset, symbol,
+                    typeAlias.name, typeAlias.visibility,
+                    typeAlias.expandedTypeRef.toIrType(),
+                    typeAlias.isActual, IrDeclarationOrigin.DEFINED
+                ).apply {
+                    this.parent = parent
+                    setTypeParameters(typeAlias)
+                    parent.declarations += this
+                }
+            }
+        }
     }
 
     private fun declareIrClass(signature: IdSignature?, factory: (IrClassSymbol) -> IrClass): IrClass {

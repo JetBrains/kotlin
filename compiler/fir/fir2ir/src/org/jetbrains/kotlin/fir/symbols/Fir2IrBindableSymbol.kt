@@ -60,6 +60,7 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
                 WrappedPropertyDescriptor()
             }.apply { bind(owner) }
             is IrField -> WrappedFieldDescriptor().apply { bind(owner) }
+            is IrTypeAlias -> WrappedTypeAliasDescriptor().apply { bind(owner) }
             else -> throw IllegalStateException("Unsupported owner in Fir2IrBindableSymbol: $owner")
         } as D
     }

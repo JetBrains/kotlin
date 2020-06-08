@@ -15,6 +15,10 @@ class Fir2IrClassSymbol(signature: IdSignature) :
     Fir2IrBindableSymbol<ClassDescriptor, IrClass>(signature),
     IrClassSymbol
 
+class Fir2IrTypeAliasSymbol(signature: IdSignature) :
+    Fir2IrBindableSymbol<TypeAliasDescriptor, IrTypeAlias>(signature),
+    IrTypeAliasSymbol
+
 class Fir2IrEnumEntrySymbol(signature: IdSignature) :
     Fir2IrBindableSymbol<ClassDescriptor, IrEnumEntry>(signature),
     IrEnumEntrySymbol

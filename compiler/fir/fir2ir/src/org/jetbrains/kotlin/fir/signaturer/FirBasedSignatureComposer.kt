@@ -35,6 +35,10 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
             //platformSpecificClass(descriptor)
         }
 
+        override fun visitTypeAlias(typeAlias: FirTypeAlias) {
+            setExpected(typeAlias.isExpect)
+        }
+
         override fun visitConstructor(constructor: FirConstructor) {
             hashId = mangler.run { constructor.signatureMangle }
             setExpected(constructor.isExpect)
@@ -66,6 +70,10 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
         return when {
             declaration is FirRegularClass && declaration.visibility != Visibilities.LOCAL -> {
                 val classId = declaration.classId
+                IdSignature.PublicSignature(classId.packageFqName, classId.relativeClassName, builder.hashId, builder.mask)
+            }
+            declaration is FirTypeAlias -> {
+                val classId = declaration.symbol.classId
                 IdSignature.PublicSignature(classId.packageFqName, classId.relativeClassName, builder.hashId, builder.mask)
             }
             declaration is FirCallableMemberDeclaration<*> -> {

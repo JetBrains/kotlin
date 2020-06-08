@@ -61,8 +61,9 @@ class Fir2IrConverter(
 
     fun processClassHeaders(file: FirFile) {
         file.declarations.forEach {
-            if (it is FirRegularClass) {
-                processClassAndNestedClassHeaders(it)
+            when (it) {
+                is FirRegularClass -> processClassAndNestedClassHeaders(it)
+                is FirTypeAlias -> classifierStorage.registerTypeAlias(it, declarationStorage.getIrFile(file))
             }
         }
     }

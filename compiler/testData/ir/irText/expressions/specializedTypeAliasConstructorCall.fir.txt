@@ -1,4 +1,5 @@
 FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
+  TYPEALIAS name:IntAlias visibility:public expandedType:<root>.Cell<kotlin.Int>
   CLASS CLASS name:Cell modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Cell<T of <root>.Cell>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
