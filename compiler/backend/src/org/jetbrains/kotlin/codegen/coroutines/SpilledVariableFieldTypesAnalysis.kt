@@ -37,6 +37,10 @@ internal open class SpilledVariableFieldTypeValue(open var type: Type?, val insn
 private class MergedSpilledVariableFieldTypeValue(
     val values: Set<SpilledVariableFieldTypeValue>
 ) : SpilledVariableFieldTypeValue(null, null) {
+    init {
+        require(values.none { it is MergedSpilledVariableFieldTypeValue })
+    }
+
     override var type: Type?
         get() = values.first().type
         set(newType) {
@@ -155,13 +159,6 @@ private class SpilledVariableFieldTypesInterpreter(
         v != null && v.type == null -> w
         w != null && w.type == null -> v
         v?.type == w?.type -> v
-        v?.type?.sort == Type.OBJECT && w?.type?.sort == Type.OBJECT -> {
-            when {
-                v.type == AsmTypes.OBJECT_TYPE -> v
-                w.type == AsmTypes.OBJECT_TYPE -> w
-                else -> SpilledVariableFieldTypeValue(AsmTypes.OBJECT_TYPE, v.insn)
-            }
-        }
         else -> SpilledVariableFieldTypeValue(null, v?.insn ?: w?.insn)
     }
 
