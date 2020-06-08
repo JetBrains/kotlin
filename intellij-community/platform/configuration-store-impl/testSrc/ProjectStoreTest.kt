@@ -253,9 +253,7 @@ internal class ProjectStoreTest {
       assertThat(miscXml).contains("""<option name="AAvalue" value="foo" />""")
     }
     finally {
-      runInEdt {
-        PlatformTestUtil.forceCloseProjectWithoutSaving(newProject)
-      }
+      PlatformTestUtil.forceCloseProjectWithoutSaving(newProject)
     }
   }
 
