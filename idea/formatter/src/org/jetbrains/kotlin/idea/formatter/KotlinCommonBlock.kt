@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.*
+import com.intellij.formatting.blocks.prev
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
@@ -1038,7 +1039,7 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Closing parenthesis for conditions")
         .forType(RPAR)
-        .forElement { node -> !hasErrorElementBefore(node) }
+        .forElement { node -> !hasErrorElementBefore(node) || node.prev()?.textLength == 0 }
         .within(IF, WHEN_ENTRY, WHILE, DO_WHILE, FOR, WHEN)
         .set(Indent.getNoneIndent()),
 

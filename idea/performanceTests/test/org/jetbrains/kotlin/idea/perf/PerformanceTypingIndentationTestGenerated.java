@@ -208,9 +208,269 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/ElseWithoutBrace2.kt");
     }
 
+    @TestMetadata("EmptyArgumentInCallByReference.kt")
+    public void testEmptyArgumentInCallByReference() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInCallByReference.kt");
+    }
+
+    @TestMetadata("EmptyArgumentInCallByReference2.kt")
+    public void testEmptyArgumentInCallByReference2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInCallByReference2.kt");
+    }
+
+    @TestMetadata("EmptyArgumentInCallByReferenceInSuperType.kt")
+    public void testEmptyArgumentInCallByReferenceInSuperType() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInCallByReferenceInSuperType.kt");
+    }
+
+    @TestMetadata("EmptyArgumentInCallByReferenceInSuperType2.kt")
+    public void testEmptyArgumentInCallByReferenceInSuperType2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInCallByReferenceInSuperType2.kt");
+    }
+
+    @TestMetadata("EmptyArgumentInCallByReferenceInSuperTypeWithTypeArguments.kt")
+    public void testEmptyArgumentInCallByReferenceInSuperTypeWithTypeArguments() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInCallByReferenceInSuperTypeWithTypeArguments.kt");
+    }
+
+    @TestMetadata("EmptyArgumentInCallByReferenceInSuperTypeWithTypeArguments2.kt")
+    public void testEmptyArgumentInCallByReferenceInSuperTypeWithTypeArguments2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInCallByReferenceInSuperTypeWithTypeArguments2.kt");
+    }
+
+    @TestMetadata("EmptyArgumentInCallByReferenceWithTypeArguments.kt")
+    public void testEmptyArgumentInCallByReferenceWithTypeArguments() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInCallByReferenceWithTypeArguments.kt");
+    }
+
+    @TestMetadata("EmptyArgumentInCallByReferenceWithTypeArguments2.kt")
+    public void testEmptyArgumentInCallByReferenceWithTypeArguments2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInCallByReferenceWithTypeArguments2.kt");
+    }
+
+    @TestMetadata("EmptyArgumentInThisAsClassicFunction.kt")
+    public void testEmptyArgumentInThisAsClassicFunction() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInThisAsClassicFunction.kt");
+    }
+
+    @TestMetadata("EmptyArgumentInThisAsConstructor.kt")
+    public void testEmptyArgumentInThisAsConstructor() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInThisAsConstructor.kt");
+    }
+
+    @TestMetadata("EmptyArgumentInThisAsConstructor2.kt")
+    public void testEmptyArgumentInThisAsConstructor2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyArgumentInThisAsConstructor2.kt");
+    }
+
+    @TestMetadata("EmptyConditionInCatch.kt")
+    public void testEmptyConditionInCatch() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyConditionInCatch.kt");
+    }
+
+    @TestMetadata("EmptyConditionInCatch2.kt")
+    public void testEmptyConditionInCatch2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyConditionInCatch2.kt");
+    }
+
+    @TestMetadata("EmptyConditionInDoWhile.kt")
+    public void testEmptyConditionInDoWhile() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyConditionInDoWhile.kt");
+    }
+
+    @TestMetadata("EmptyConditionInFor.kt")
+    public void testEmptyConditionInFor() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyConditionInFor.kt");
+    }
+
+    @TestMetadata("EmptyConditionInIf.kt")
+    public void testEmptyConditionInIf() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyConditionInIf.kt");
+    }
+
+    @TestMetadata("EmptyConditionInWhen.kt")
+    public void testEmptyConditionInWhen() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyConditionInWhen.kt");
+    }
+
+    @TestMetadata("EmptyConditionInWhile.kt")
+    public void testEmptyConditionInWhile() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyConditionInWhile.kt");
+    }
+
+    @TestMetadata("EmptyParameterInAnnonymousFunction.kt")
+    public void testEmptyParameterInAnnonymousFunction() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInAnnonymousFunction.kt");
+    }
+
+    @TestMetadata("EmptyParameterInAnnonymousFunction2.kt")
+    public void testEmptyParameterInAnnonymousFunction2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInAnnonymousFunction2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInAnnonymousFunctionWithNullableReceiver.kt")
+    public void testEmptyParameterInAnnonymousFunctionWithNullableReceiver() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInAnnonymousFunctionWithNullableReceiver.kt");
+    }
+
+    @TestMetadata("EmptyParameterInAnnonymousFunctionWithNullableReceiver2.kt")
+    public void testEmptyParameterInAnnonymousFunctionWithNullableReceiver2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInAnnonymousFunctionWithNullableReceiver2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInAnnonymousFunctionWithReceiver.kt")
+    public void testEmptyParameterInAnnonymousFunctionWithReceiver() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInAnnonymousFunctionWithReceiver.kt");
+    }
+
+    @TestMetadata("EmptyParameterInAnnonymousFunctionWithReceiver2.kt")
+    public void testEmptyParameterInAnnonymousFunctionWithReceiver2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInAnnonymousFunctionWithReceiver2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInDestructuringDeclaration.kt")
+    public void testEmptyParameterInDestructuringDeclaration() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInDestructuringDeclaration.kt");
+    }
+
+    @TestMetadata("EmptyParameterInDestructuringDeclaration2.kt")
+    public void testEmptyParameterInDestructuringDeclaration2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInDestructuringDeclaration2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInDestructuringDeclaration3.kt")
+    public void testEmptyParameterInDestructuringDeclaration3() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInDestructuringDeclaration3.kt");
+    }
+
+    @TestMetadata("EmptyParameterInExplicitPrimaryConstructor.kt")
+    public void testEmptyParameterInExplicitPrimaryConstructor() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInExplicitPrimaryConstructor.kt");
+    }
+
+    @TestMetadata("EmptyParameterInExplicitPrimaryConstructor2.kt")
+    public void testEmptyParameterInExplicitPrimaryConstructor2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInExplicitPrimaryConstructor2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInFunction.kt")
+    public void testEmptyParameterInFunction() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInFunction.kt");
+    }
+
+    @TestMetadata("EmptyParameterInFunction2.kt")
+    public void testEmptyParameterInFunction2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInFunction2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInFunctionWithReceiver.kt")
+    public void testEmptyParameterInFunctionWithReceiver() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInFunctionWithReceiver.kt");
+    }
+
+    @TestMetadata("EmptyParameterInFunctionWithReceiver2.kt")
+    public void testEmptyParameterInFunctionWithReceiver2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInFunctionWithReceiver2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInFunctionWithTypeParameters.kt")
+    public void testEmptyParameterInFunctionWithTypeParameters() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInFunctionWithTypeParameters.kt");
+    }
+
+    @TestMetadata("EmptyParameterInFunctionWithTypeParameters2.kt")
+    public void testEmptyParameterInFunctionWithTypeParameters2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInFunctionWithTypeParameters2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInFunctionWithTypeParametersAndReceiver.kt")
+    public void testEmptyParameterInFunctionWithTypeParametersAndReceiver() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInFunctionWithTypeParametersAndReceiver.kt");
+    }
+
+    @TestMetadata("EmptyParameterInFunctionWithTypeParametersAndReceiver2.kt")
+    public void testEmptyParameterInFunctionWithTypeParametersAndReceiver2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInFunctionWithTypeParametersAndReceiver2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInFunctionWithTypeParametersAndReceiver3.kt")
+    public void testEmptyParameterInFunctionWithTypeParametersAndReceiver3() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInFunctionWithTypeParametersAndReceiver3.kt");
+    }
+
+    @TestMetadata("EmptyParameterInFunctionWithTypeParametersAndReceiver4.kt")
+    public void testEmptyParameterInFunctionWithTypeParametersAndReceiver4() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInFunctionWithTypeParametersAndReceiver4.kt");
+    }
+
+    @TestMetadata("EmptyParameterInGetter.kt")
+    public void testEmptyParameterInGetter() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInGetter.kt");
+    }
+
+    @TestMetadata("EmptyParameterInGetter2.kt")
+    public void testEmptyParameterInGetter2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInGetter2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInImplicitPrimaryConstructor.kt")
+    public void testEmptyParameterInImplicitPrimaryConstructor() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInImplicitPrimaryConstructor.kt");
+    }
+
+    @TestMetadata("EmptyParameterInImplicitPrimaryConstructor2.kt")
+    public void testEmptyParameterInImplicitPrimaryConstructor2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInImplicitPrimaryConstructor2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInImplicitPrimaryConstructorWithTypeParameters.kt")
+    public void testEmptyParameterInImplicitPrimaryConstructorWithTypeParameters() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInImplicitPrimaryConstructorWithTypeParameters.kt");
+    }
+
+    @TestMetadata("EmptyParameterInImplicitPrimaryConstructorWithTypeParameters2.kt")
+    public void testEmptyParameterInImplicitPrimaryConstructorWithTypeParameters2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInImplicitPrimaryConstructorWithTypeParameters2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInInnerAnnonymousFunction.kt")
+    public void testEmptyParameterInInnerAnnonymousFunction() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInInnerAnnonymousFunction.kt");
+    }
+
+    @TestMetadata("EmptyParameterInInnerAnnonymousFunction2.kt")
+    public void testEmptyParameterInInnerAnnonymousFunction2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInInnerAnnonymousFunction2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInSecondaryConstructor.kt")
+    public void testEmptyParameterInSecondaryConstructor() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInSecondaryConstructor.kt");
+    }
+
+    @TestMetadata("EmptyParameterInSecondaryConstructor2.kt")
+    public void testEmptyParameterInSecondaryConstructor2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInSecondaryConstructor2.kt");
+    }
+
+    @TestMetadata("EmptyParameterInSetter.kt")
+    public void testEmptyParameterInSetter() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInSetter.kt");
+    }
+
+    @TestMetadata("EmptyParameterInSetter2.kt")
+    public void testEmptyParameterInSetter2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameterInSetter2.kt");
+    }
+
     @TestMetadata("EmptyParameters.kt")
     public void testEmptyParameters() throws Exception {
         runTest("idea/testData/indentationOnNewline/EmptyParameters.kt");
+    }
+
+    @TestMetadata("EmptyParameters2.kt")
+    public void testEmptyParameters2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/EmptyParameters2.kt");
     }
 
     @TestMetadata("Finally.kt")
