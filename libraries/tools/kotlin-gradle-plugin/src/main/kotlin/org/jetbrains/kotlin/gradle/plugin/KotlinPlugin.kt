@@ -407,7 +407,7 @@ internal class KotlinCommonSourceSetProcessor(
     override fun doTargetSpecificProcessing() {
         project.tasks.findByName(kotlinCompilation.compileAllTaskName)!!.dependsOn(kotlinTask)
         // can be missing (e.g. in case of tests)
-        if (kotlinCompilation.compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) {
+        if (kotlinCompilation.isMain()) {
             project.tasks.findByName(kotlinCompilation.target.artifactsTaskName)?.dependsOn(kotlinTask)
         }
 

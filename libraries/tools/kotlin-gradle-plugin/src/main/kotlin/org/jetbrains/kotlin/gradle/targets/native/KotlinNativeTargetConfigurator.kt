@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
@@ -170,7 +169,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
 
         project.tasks.getByName(compilation.compileAllTaskName).dependsOn(compileTask)
 
-        if (compilation.compilationName == MAIN_COMPILATION_NAME) {
+        if (compilation.isMain()) {
             compilation as? KotlinNativeCompilation ?: error("Main shared-Native compilation is not yet supported!")
 
             project.tasks.getByName(compilation.target.artifactsTaskName).apply {

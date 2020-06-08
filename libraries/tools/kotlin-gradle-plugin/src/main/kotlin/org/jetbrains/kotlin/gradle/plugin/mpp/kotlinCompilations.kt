@@ -1,7 +1,7 @@
 /*
-* Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
-* Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
-*/
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettin
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.*
 import java.util.*
 import java.util.concurrent.Callable
@@ -37,6 +35,9 @@ internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: St
 
     return lowerCamelCaseName(prefix, targetNamePart, compilationNamePart, suffix)
 }
+
+internal fun KotlinCompilation<*>.isMain(): Boolean =
+    name == KotlinCompilation.MAIN_COMPILATION_NAME
 
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     target: KotlinTarget,
@@ -73,7 +74,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         get() = lowerCamelCaseName(
             target.disambiguationClassifier.takeIf { target !is KotlinMetadataTarget },
             when {
-                compilationName == KotlinCompilation.MAIN_COMPILATION_NAME && target is KotlinMetadataTarget ->
+                isMain() && target is KotlinMetadataTarget ->
                     KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME // corner case: main compilation of the metadata target compiles commonMain
                 else -> compilationName
             }
@@ -206,12 +207,14 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
      */
     internal open val friendArtifacts: FileCollection
         get() = with(target.project) {
-            if (associateWithTransitiveClosure.any { it.name == KotlinCompilation.MAIN_COMPILATION_NAME }) {
+            if (associateWithTransitiveClosure.any { it.isMain() }) {
                 // In case the main artifact is transitively added to the test classpath via a test dependency on another module
                 // that depends on this module's production part, include the main artifact in the friend artifacts, lazily:
                 files(
                     provider {
-                        listOfNotNull(tasks.withType(AbstractArchiveTask::class.java).findByName(target.artifactsTaskName)?.archivePathCompatible)
+                        listOfNotNull(
+                            tasks.withType(AbstractArchiveTask::class.java).findByName(target.artifactsTaskName)?.archivePathCompatible
+                        )
                     }
                 )
             } else files()
@@ -259,7 +262,7 @@ internal val KotlinCompilation<*>.ownModuleName: String
         val project = target.project
         val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
             ?: project.name
-        val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) "" else "_$compilationName"
+        val suffix = if (isMain()) "" else "_$compilationName"
         return filterModuleName("$baseName$suffix")
     }
 

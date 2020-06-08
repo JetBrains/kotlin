@@ -11,6 +11,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
@@ -140,7 +141,7 @@ constructor(
             jsBinaryType: KotlinJsBinaryType?
         ) =
             lowerCamelCaseName(
-                compilation.name.let { if (it == KotlinCompilation.MAIN_COMPILATION_NAME) null else it },
+                if (compilation.isMain()) null else compilation.name,
                 mode.name.toLowerCase(),
                 jsBinaryType?.name?.toLowerCase()
             )

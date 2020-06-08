@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -138,7 +139,7 @@ abstract class KotlinJsSubTarget(
 
     private fun configureMain() {
         target.compilations.all { compilation ->
-            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+            if (compilation.isMain()) {
                 configureMain(compilation)
             }
         }

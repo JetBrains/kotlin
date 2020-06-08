@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
@@ -68,7 +68,7 @@ internal class KotlinRootNpmResolver internal constructor(
     fun findDependentResolver(src: Project, target: Project): List<KotlinCompilationNpmResolver>? {
         // todo: proper finding using KotlinTargetComponent.findUsageContext
         val targetResolver = this[target]
-        val mainCompilations = targetResolver.compilationResolvers.filter { it.compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME }
+        val mainCompilations = targetResolver.compilationResolvers.filter { it.compilation.isMain() }
 
         return if (mainCompilations.isNotEmpty()) {
             //TODO[Ilya Goncharov] Hack for Mixed mode of legacy and IR tooling

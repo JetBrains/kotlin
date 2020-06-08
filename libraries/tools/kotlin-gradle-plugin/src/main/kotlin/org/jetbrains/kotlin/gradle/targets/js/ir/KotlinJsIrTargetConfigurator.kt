@@ -72,7 +72,7 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
                 )
 
                 // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
-                val baseName = if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+                val baseName = if (compilation.isMain()) {
                     target.project.name
                 } else {
                     "${target.project.name}_${compilation.name}"
