@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.compiletest.lldbTest
+import org.jetbrains.kotlin.native.test.debugger.lldbTest
 import org.junit.Test
 
 class LldbTests {

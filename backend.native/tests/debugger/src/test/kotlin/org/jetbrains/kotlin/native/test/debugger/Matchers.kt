@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kotlin.compiletest
+package org.jetbrains.kotlin.native.test.debugger
 
 import org.intellij.lang.annotations.Language
 import org.junit.Assert.fail

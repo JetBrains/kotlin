@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kotlin.compiletest
+package org.jetbrains.kotlin.native.test.debugger
 
 import org.jetbrains.kotlin.cli.bc.K2Native
 import java.nio.file.Files
@@ -24,7 +24,6 @@ class ToolDriver(
             K2Native.main(allArgs)
         } else {
             subprocess(konancDriver, *allArgs).thrownIfFailed()
-
         }
         check(Files.exists(output)) {
             "Compiler has not produced an output at $output"

@@ -240,6 +240,8 @@ run {
     dependsOn(tasksOf(KonanTest))
     // Add framework tests
     dependsOn(tasksOf(FrameworkTest))
+    // Add regular gradle test tasks
+    dependsOn(tasksOf(Test))
 }
 
 task sanity {
@@ -257,6 +259,9 @@ task sanity {
     dependsOn(tasksOf(FrameworkTest) { task ->
         task.getDependsOn().every { !platformLibsTasks.contains(it) }
     })
+
+    // Add regular gradle test tasks
+    dependsOn(tasksOf(Test))
 }
 
 // Collect reports in one json.
@@ -4440,6 +4445,11 @@ sourceSets {
             srcDir 'extensions/nop/src/main/kotlin'
         }
     }
+    test {
+        kotlin {
+            srcDir 'debugger/src/test/kotlin'
+        }
+    }
 }
 
 Task pluginTest(String name, String pluginName, Closure configureClosure) {
@@ -4476,6 +4486,18 @@ pluginTest("runtime_basic_init", "nopPlugin") {
 
 dependencies {
     nopPluginCompile kotlinCompilerModule
+    compile kotlinCompilerModule
+    compile project(path: ':backend.native', configuration: 'cli_bc')
+    compile 'junit:junit:4.12'
+}
+
+// MacOS only: KT-30366
+if (target.family == Family.OSX) {
+    project.tasks.register("debugger_test", Test.class) {
+        testLogging { exceptionFormat = 'full' }
+        UtilsKt.dependsOnDist(it)
+        systemProperties = ['kotlin.native.home': dist]
+    }
 }
 
 // Configure build for iOS device targets.

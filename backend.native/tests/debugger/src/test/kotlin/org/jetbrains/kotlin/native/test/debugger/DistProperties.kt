@@ -3,16 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kotlin.compiletest
+package org.jetbrains.kotlin.native.test.debugger
 
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.nio.file.Path
 import java.nio.file.Paths
 
-
 object DistProperties {
-    private val dist: Path = Paths.get(requireProp("org.jetbrains.kotlin.native.home"))
+    private val dist: Path = Paths.get(requireProp("kotlin.native.home"))
     private val konancDriver = if (HostManager.host.family == Family.MINGW) "konanc.bat" else "konanc"
     val konanc: Path = dist.resolve("bin/$konancDriver")
     val lldb: Path = Paths.get("lldb")
