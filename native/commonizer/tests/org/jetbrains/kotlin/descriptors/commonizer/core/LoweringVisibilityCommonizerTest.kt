@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.unsupported
 import org.junit.Test
 
 abstract class LoweringVisibilityCommonizerTest(
-    private val allowPrivate: Boolean,
     private val areMembersVirtual: Boolean
 ) : AbstractCommonizerTest<CirHasVisibility, Visibility>() {
 
@@ -43,7 +42,7 @@ abstract class LoweringVisibilityCommonizerTest(
         PUBLIC.toMock(), LOCAL.toMock()
     )
 
-    final override fun createCommonizer() = VisibilityCommonizer.lowering(allowPrivate = allowPrivate)
+    final override fun createCommonizer() = VisibilityCommonizer.lowering()
 
     protected fun Visibility.toMock() = object : CirFunctionOrProperty {
         override val annotations get() = unsupported()
@@ -59,39 +58,7 @@ abstract class LoweringVisibilityCommonizerTest(
         override val kind get() = unsupported()
     }
 
-    class PrivateMembers : LoweringVisibilityCommonizerTest(true, false) {
-
-        @Test
-        fun publicAndProtected() = doTestSuccess(
-            expected = PROTECTED,
-            PUBLIC.toMock(), PROTECTED.toMock(), PUBLIC.toMock()
-        )
-
-        @Test
-        fun publicAndInternal() = doTestSuccess(
-            expected = INTERNAL,
-            PUBLIC.toMock(), INTERNAL.toMock(), PUBLIC.toMock()
-        )
-
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun publicAndInternalAndProtected() = doTestFailure(
-            PUBLIC.toMock(), INTERNAL.toMock(), PROTECTED.toMock()
-        )
-
-        @Test
-        fun publicAndInternalAndPrivate() = doTestSuccess(
-            expected = PRIVATE,
-            PUBLIC.toMock(), INTERNAL.toMock(), PRIVATE.toMock()
-        )
-
-        @Test
-        fun privateOnly() = doTestSuccess(
-            expected = PRIVATE,
-            PRIVATE.toMock(), PRIVATE.toMock(), PRIVATE.toMock()
-        )
-    }
-
-    class NonVirtualMembers : LoweringVisibilityCommonizerTest(false, false) {
+    class NonVirtualMembers : LoweringVisibilityCommonizerTest(false) {
 
         @Test
         fun publicAndProtected() = doTestSuccess(
@@ -121,7 +88,7 @@ abstract class LoweringVisibilityCommonizerTest(
         )
     }
 
-    class VirtualMembers : LoweringVisibilityCommonizerTest(false, true) {
+    class VirtualMembers : LoweringVisibilityCommonizerTest(true) {
 
         @Test(expected = IllegalCommonizerStateException::class)
         fun publicAndProtected1() = doTestFailure(
