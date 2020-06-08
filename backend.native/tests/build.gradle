@@ -4491,13 +4491,11 @@ dependencies {
     compile 'junit:junit:4.12'
 }
 
-// MacOS only: KT-30366
-if (target.family == Family.OSX) {
-    project.tasks.register("debugger_test", Test.class) {
-        testLogging { exceptionFormat = 'full' }
-        UtilsKt.dependsOnDist(it)
-        systemProperties = ['kotlin.native.home': dist]
-    }
+project.tasks.register("debugger_test", Test.class) {
+    enabled = (target.family == Family.OSX)  // KT-30366
+    testLogging { exceptionFormat = 'full' }
+    UtilsKt.dependsOnDist(it)
+    systemProperties = ['kotlin.native.home': dist]
 }
 
 // Configure build for iOS device targets.
