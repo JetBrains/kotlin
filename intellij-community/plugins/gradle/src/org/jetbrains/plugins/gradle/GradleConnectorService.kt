@@ -9,8 +9,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import org.gradle.tooling.GradleConnector
-import org.gradle.tooling.ProjectConnection
+import org.gradle.tooling.*
 import org.gradle.tooling.internal.consumer.DefaultGradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.ApiStatus
@@ -19,6 +18,7 @@ import org.jetbrains.plugins.gradle.service.project.DistributionFactoryExt
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import java.io.File
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.function.Function
@@ -69,7 +69,8 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
         // release obsolete connection
         conn.disconnect()
       }
-      return@compute GradleProjectConnection(connectorParams, newConnector, newConnection)
+      val wrappedConnection = WrappedConnection(newConnection)
+      return@compute GradleProjectConnection(connectorParams, newConnector, wrappedConnection)
     }!!.connection
   }
 
@@ -82,6 +83,20 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
         LOG.warn("Failed to disconnect Gradle connector during project close. Project path: '${params.projectPath}'", e)
       }
     }
+  }
+
+  private class WrappedConnection(val delegate: ProjectConnection) : ProjectConnection {
+    override fun newBuild(): BuildLauncher = delegate.newBuild()
+    override fun <T : Any?> action(p0: BuildAction<T>?): BuildActionExecuter<T> = delegate.action(p0)
+    override fun action(): BuildActionExecuter.Builder = delegate.action()
+    override fun <T : Any?> model(p0: Class<T>?): ModelBuilder<T> = delegate.model(p0)
+    override fun close() {
+      throw IllegalStateException("This connection should not be closed explicitly.")
+    }
+    override fun newTestLauncher(): TestLauncher = delegate.newTestLauncher()
+    override fun <T : Any?> getModel(p0: Class<T>?): T = delegate.getModel(p0)
+    override fun <T : Any?> getModel(p0: Class<T>?, p1: ResultHandler<in T>?) = delegate.getModel(p0, p1)
+    override fun notifyDaemonsAboutChangedPaths(p0: MutableList<Path>?) = delegate.notifyDaemonsAboutChangedPaths(p0)
   }
 
   private data class ConnectorParams(
