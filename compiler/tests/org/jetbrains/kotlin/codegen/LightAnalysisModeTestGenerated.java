@@ -8300,6 +8300,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/i2bResult.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("listThrowablePairInOneSlot.kt")
+            public void testListThrowablePairInOneSlot() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/listThrowablePairInOneSlot.kt");
+            }
+
             @TestMetadata("loadFromBooleanArray.kt")
             public void testLoadFromBooleanArray_1_2() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/loadFromBooleanArray.kt", "kotlin.coroutines.experimental");
