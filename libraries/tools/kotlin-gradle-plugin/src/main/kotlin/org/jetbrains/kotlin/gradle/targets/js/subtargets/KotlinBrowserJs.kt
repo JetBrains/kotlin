@@ -107,7 +107,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     disambiguateCamelCased(
                         binary.executeTaskBaseName,
                         RUN_TASK_NAME
-                    )
+                    ),
+                    listOf(compilation)
                 ) {
                     it.commonConfigure(
                         compilation = compilation,
@@ -118,7 +119,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     )
 
                     it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
-                    it.compilation = compilation
                     it.description = "start ${type.name.toLowerCase()} webpack dev server"
 
                     it.devServer = KotlinWebpackConfig.DevServer(
@@ -169,7 +169,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         binary.executeTaskBaseName,
                         WEBPACK_TASK_NAME
 
-                    )
+                    ),
+                    listOf(compilation)
                 ) {
                     it.commonConfigure(
                         compilation = compilation,
@@ -185,7 +186,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                     it.configureOptimization(type)
 
-                    it.compilation = compilation
                     it.description = "build webpack ${type.name.toLowerCase()} bundle"
                     it._destinationDirectory = distribution.directory
                 }

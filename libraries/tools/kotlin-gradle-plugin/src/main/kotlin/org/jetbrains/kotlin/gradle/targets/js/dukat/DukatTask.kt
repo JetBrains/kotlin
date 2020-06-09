@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.gradle.targets.js.dukat
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import java.io.File
+import javax.inject.Inject
 
-open class DukatTask : AbstractDukatTask() {
+open class DukatTask
+@Inject
+constructor(
+    compilation: KotlinJsCompilation
+) : AbstractDukatTask(compilation) {
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
 
     @get:Internal

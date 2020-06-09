@@ -25,8 +25,10 @@ internal class DukatCompilationResolverPlugin(
     init {
         compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
 
-        val task = project.registerTask<DukatTask>(taskName) {
-            it.compilation = compilation
+        val task = project.registerTask<DukatTask>(
+            taskName,
+            listOf(compilation)
+        ) {
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Generate Kotlin/JS external declarations for .d.ts files in ${compilation}"
             it.dependsOn(nodeJs.npmInstallTask, npmProject.packageJsonTask)

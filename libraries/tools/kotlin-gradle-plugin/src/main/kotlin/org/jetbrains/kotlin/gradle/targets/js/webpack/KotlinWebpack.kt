@@ -31,7 +31,12 @@ import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 
-open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
+open class KotlinWebpack
+@Inject
+constructor(
+    @Internal
+    override val compilation: KotlinJsCompilation
+) : DefaultTask(), RequiresNpmDependencies {
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
 
@@ -42,9 +47,6 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @get:Inject
     open val execHandleFactory: ExecHandleFactory
         get() = injected
-
-    @Internal
-    override lateinit var compilation: KotlinJsCompilation
 
     @Suppress("unused")
     val compilationId: String
