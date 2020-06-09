@@ -4,7 +4,7 @@ package com.intellij.openapi.externalSystem.importing
 import com.intellij.ide.highlighter.ProjectFileType
 import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.ProjectUtil.*
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -15,17 +15,17 @@ import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.util.io.exists
 import org.jetbrains.annotations.ApiStatus
 import java.nio.file.InvalidPathException
+import java.nio.file.Path
 import java.nio.file.Paths
 
 @ApiStatus.Experimental
 abstract class AbstractOpenProjectProvider : OpenProjectProvider {
   protected abstract fun isProjectFile(file: VirtualFile): Boolean
 
-  protected abstract fun linkAndRefreshProject(projectDirectory: String, project: Project)
+  protected abstract fun linkAndRefreshProject(projectDirectory: Path, project: Project)
 
   override fun canOpenProject(file: VirtualFile): Boolean {
-    if (!file.isDirectory) return isProjectFile(file)
-    return file.children.any(::isProjectFile)
+    return if (file.isDirectory) file.children.any(::isProjectFile) else isProjectFile(file)
   }
 
   override fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
@@ -38,23 +38,24 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
       return openPlatformProject(projectDirectory, projectToClose, forceOpenInNewFrame)
     }
 
+    val nioPath = projectDirectory.toNioPath()
     val options = OpenProjectTask(isNewProject = true,
                                   forceOpenInNewFrame = forceOpenInNewFrame,
                                   projectToClose = projectToClose,
                                   runConfigurators = false,
                                   beforeOpen = { project ->
                                     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
-                                    linkAndRefreshProject(projectDirectory.path, project)
-                                    updateLastProjectLocation(projectDirectory.toNioPath())
+                                    linkAndRefreshProject(nioPath, project)
+                                    updateLastProjectLocation(nioPath)
                                     true
                                   })
-    return ProjectManagerEx.getInstanceEx().openProject(projectDirectory.toNioPath(), options)
+    return ProjectManagerEx.getInstanceEx().openProject(nioPath, options)
   }
 
   override fun linkToExistingProject(projectFile: VirtualFile, project: Project) {
     LOG.debug("Import project from $projectFile")
     val projectDirectory = getProjectDirectory(projectFile)
-    linkAndRefreshProject(projectDirectory.path, project)
+    linkAndRefreshProject(projectDirectory.toNioPath(), project)
   }
 
   private fun canOpenPlatformProject(projectDirectory: VirtualFile): Boolean {
@@ -91,17 +92,14 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
 
   private fun openPlatformProject(projectDirectory: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
     val openProcessor = PlatformProjectOpenProcessor.getInstance()
-    val project = openProcessor.doOpenProject(projectDirectory, projectToClose, forceOpenInNewFrame)
-    if (project == null) return null
-    return project
+    return openProcessor.doOpenProject(projectDirectory, projectToClose, forceOpenInNewFrame)
   }
 
   private fun getProjectDirectory(file: VirtualFile): VirtualFile {
-    if (!file.isDirectory) return file.parent
-    return file
+    return if (file.isDirectory) file else file.parent
   }
 
   companion object {
-    protected val LOG = Logger.getInstance(AbstractOpenProjectProvider::class.java)
+    protected val LOG = logger<AbstractOpenProjectProvider>()
   }
 }

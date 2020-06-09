@@ -1,14 +1,16 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 @file:JvmName("GradlePropertiesUtil")
-
 package org.jetbrains.plugins.gradle.util
 
 import com.intellij.openapi.externalSystem.util.environment.Environment
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.io.exists
+import com.intellij.util.io.inputStream
+import com.intellij.util.io.isFile
 import org.jetbrains.plugins.gradle.settings.GradleSystemSettings
 import org.jetbrains.plugins.gradle.util.GradleProperties.EMPTY
 import org.jetbrains.plugins.gradle.util.GradleProperties.GradleProperty
-import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.*
 
 const val USER_HOME = "user.home"
@@ -16,15 +18,15 @@ const val GRADLE_CACHE_DIR_NAME = ".gradle"
 const val PROPERTIES_FILE_NAME = "gradle.properties"
 const val GRADLE_JAVA_HOME_PROPERTY = "org.gradle.java.home"
 
-fun getGradleProperties(externalProjectPath: String): GradleProperties {
+fun getGradleProperties(externalProjectPath: Path): GradleProperties {
   return getPossiblePropertiesFiles(externalProjectPath)
     .asSequence()
-    .map(FileUtil::toCanonicalPath)
+    .map { it.toAbsolutePath().normalize() }
     .map(::loadGradleProperties)
     .reduce(::mergeGradleProperties)
 }
 
-private fun getPossiblePropertiesFiles(externalProjectPath: String): List<String> {
+private fun getPossiblePropertiesFiles(externalProjectPath: Path): List<Path> {
   return listOfNotNull(
     getGradleServiceDirectoryPath(),
     getGradleHomePropertiesPath(),
@@ -32,40 +34,42 @@ private fun getPossiblePropertiesFiles(externalProjectPath: String): List<String
   )
 }
 
-private fun getGradleServiceDirectoryPath(): String? {
+private fun getGradleServiceDirectoryPath(): Path? {
   val systemSettings = GradleSystemSettings.getInstance()
   val gradleUserHome = systemSettings.serviceDirectoryPath
   if (gradleUserHome == null) return null
-  return FileUtil.join(gradleUserHome, PROPERTIES_FILE_NAME)
+  return Paths.get(gradleUserHome, PROPERTIES_FILE_NAME)
 }
 
-private fun getGradleHomePropertiesPath(): String? {
+private fun getGradleHomePropertiesPath(): Path? {
   val gradleUserHome = Environment.getVariable(GradleConstants.SYSTEM_DIRECTORY_PATH_KEY)
   if (gradleUserHome != null) {
-    return FileUtil.join(gradleUserHome, PROPERTIES_FILE_NAME)
+    return Paths.get(gradleUserHome, PROPERTIES_FILE_NAME)
   }
+
   val userHome = Environment.getProperty(USER_HOME)
   if (userHome != null) {
-    return FileUtil.join(userHome, GRADLE_CACHE_DIR_NAME, PROPERTIES_FILE_NAME)
+    return Paths.get(userHome, GRADLE_CACHE_DIR_NAME, PROPERTIES_FILE_NAME)
   }
   return null
 }
 
-private fun getGradleProjectPropertiesPath(externalProjectPath: String): String {
-  return FileUtil.join(externalProjectPath, PROPERTIES_FILE_NAME)
+private fun getGradleProjectPropertiesPath(externalProjectPath: Path): Path {
+  return externalProjectPath.resolve(PROPERTIES_FILE_NAME)
 }
 
-private fun loadGradleProperties(propertiesPath: String): GradleProperties {
+private fun loadGradleProperties(propertiesPath: Path): GradleProperties {
   val properties = loadProperties(propertiesPath) ?: return EMPTY
   val javaHome = properties.getProperty(GRADLE_JAVA_HOME_PROPERTY)
-  val javaHomeProperty = javaHome?.let { GradleProperty(it, propertiesPath) }
+  val javaHomeProperty = javaHome?.let { GradleProperty(it, propertiesPath.toString()) }
   return GradlePropertiesImpl(javaHomeProperty)
 }
 
-private fun loadProperties(propertiesPath: String): Properties? {
-  val propertiesFile = File(propertiesPath)
-  if (!propertiesFile.isFile) return null
-  if (!propertiesFile.exists()) return null
+private fun loadProperties(propertiesFile: Path): Properties? {
+  if (!propertiesFile.isFile() || !propertiesFile.exists()) {
+    return null
+  }
+
   val properties = Properties()
   propertiesFile.inputStream().use {
     properties.load(it)

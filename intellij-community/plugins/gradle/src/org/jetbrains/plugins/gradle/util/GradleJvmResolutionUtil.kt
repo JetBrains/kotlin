@@ -1,14 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 @file:JvmName("GradleJvmResolutionUtil")
 @file:ApiStatus.Internal
-
 package org.jetbrains.plugins.gradle.util
 
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkProvider
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
@@ -20,6 +17,8 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.JavaHomeValidationStatus.Success
+import java.nio.file.Path
+import java.nio.file.Paths
 
 private data class GradleJvmProviderId(val projectSettings: GradleProjectSettings) : Id
 
@@ -27,44 +26,46 @@ fun getGradleJvmLookupProvider(project: Project, projectSettings: GradleProjectS
   SdkLookupProvider.getInstance(project, GradleJvmProviderId(projectSettings))
 
 fun setupGradleJvm(project: Project, projectSettings: GradleProjectSettings, gradleVersion: GradleVersion) {
-  with(GradleJvmResolutionContext(project, projectSettings.externalProjectPath, gradleVersion)) {
-    projectSettings.gradleJvm = findGradleJvm()
-    if (projectSettings.gradleJvm != null) return
-    when {
-      canUseProjectSdk() -> projectSettings.gradleJvm = ExternalSystemJdkUtil.USE_PROJECT_JDK
-      canUseGradleJavaHomeJdk() -> projectSettings.gradleJvm = USE_GRADLE_JAVA_HOME
-      canUseJavaHomeJdk() -> projectSettings.gradleJvm = ExternalSystemJdkUtil.USE_JAVA_HOME
-      else -> getGradleJvmLookupProvider(project, projectSettings)
-        .newLookupBuilder()
-        .withVersionFilter { isSupported(gradleVersion, it) }
-        .withSdkType(ExternalSystemJdkUtil.getJavaSdkType())
-        .withSdkHomeFilter { ExternalSystemJdkUtil.isValidJdk(it) }
-        .onSdkNameResolved { sdk ->
-          /* We have two types of sdk resolving:
-           *  1. Download sdk manually
-           *    a. by download action from SdkComboBox
-           *    b. by sdk downloader
-           *    c. by action that detects incorrect project sdk
-           *  2. Lookup sdk (search in fs, download and etc)
-           *    a. search in fs, search in sdk table and etc
-           *    b. download
-           *
-           * All download actions generates fake (invalid) sdk and puts it to jdk table.
-           * This code allows to avoid some irregular conflicts
-           * For example: strange duplications in SdkComboBox or unexpected modifications of gradleJvm
-           */
-          val fakeSdk = sdk?.let(::findRegisteredSdk)
-          if (fakeSdk != null && projectSettings.gradleJvm == null) {
-            projectSettings.gradleJvm = fakeSdk.name
-          }
+  val resolutionContext = GradleJvmResolutionContext(project, Paths.get(projectSettings.externalProjectPath), gradleVersion)
+  projectSettings.gradleJvm = resolutionContext.findGradleJvm()
+  if (projectSettings.gradleJvm != null) {
+    return
+  }
+
+  when {
+    resolutionContext.canUseProjectSdk() -> projectSettings.gradleJvm = ExternalSystemJdkUtil.USE_PROJECT_JDK
+    resolutionContext.canUseGradleJavaHomeJdk() -> projectSettings.gradleJvm = USE_GRADLE_JAVA_HOME
+    resolutionContext.canUseJavaHomeJdk() -> projectSettings.gradleJvm = ExternalSystemJdkUtil.USE_JAVA_HOME
+    else -> getGradleJvmLookupProvider(project, projectSettings)
+      .newLookupBuilder()
+      .withVersionFilter { isSupported(gradleVersion, it) }
+      .withSdkType(ExternalSystemJdkUtil.getJavaSdkType())
+      .withSdkHomeFilter { ExternalSystemJdkUtil.isValidJdk(it) }
+      .onSdkNameResolved { sdk ->
+        /* We have two types of sdk resolving:
+         *  1. Download sdk manually
+         *    a. by download action from SdkComboBox
+         *    b. by sdk downloader
+         *    c. by action that detects incorrect project sdk
+         *  2. Lookup sdk (search in fs, download and etc)
+         *    a. search in fs, search in sdk table and etc
+         *    b. download
+         *
+         * All download actions generates fake (invalid) sdk and puts it to jdk table.
+         * This code allows to avoid some irregular conflicts
+         * For example: strange duplications in SdkComboBox or unexpected modifications of gradleJvm
+         */
+        val fakeSdk = sdk?.let(::findRegisteredSdk)
+        if (fakeSdk != null && projectSettings.gradleJvm == null) {
+          projectSettings.gradleJvm = fakeSdk.name
         }
-        .onSdkResolved { sdk ->
-          if (projectSettings.gradleJvm == null) {
-            projectSettings.gradleJvm = sdk?.name
-          }
+      }
+      .onSdkResolved { sdk ->
+        if (projectSettings.gradleJvm == null) {
+          projectSettings.gradleJvm = sdk?.name
         }
-        .executeLookup()
-    }
+      }
+      .executeLookup()
   }
 }
 
@@ -109,7 +110,7 @@ private fun findGradleVersion(project: Project): GradleVersion? {
 
 private class GradleJvmResolutionContext(
   val project: Project,
-  val externalProjectPath: String,
+  val externalProjectPath: Path,
   val gradleVersion: GradleVersion
 )
 

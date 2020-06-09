@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project.wizard;
 
 import com.intellij.application.options.CodeStyle;
@@ -64,9 +64,14 @@ import org.jetbrains.plugins.gradle.util.GradleJvmValidationUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.MODAL_SYNC;
 import static com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.setupCreatedProject;
@@ -102,7 +107,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   private boolean myInheritGroupId;
   private boolean myInheritVersion;
   private ProjectId myProjectId;
-  private String rootProjectPath;
+  private Path rootProjectPath;
   private boolean myUseKotlinDSL;
   private boolean isCreatingNewProject;
   private boolean isCreatingNewLinkedProject;
@@ -145,12 +150,11 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     Project project = modifiableRootModel.getProject();
     Module module = modifiableRootModel.getModule();
     if (myParentProject != null) {
-      rootProjectPath = myParentProject.getLinkedExternalProjectPath();
+      rootProjectPath = Paths.get(myParentProject.getLinkedExternalProjectPath());
     }
     else {
-      rootProjectPath = FileUtil.toCanonicalPath(isCreatingNewProject ? project.getBasePath() : modelContentRootDir.getPath());
+      rootProjectPath = isCreatingNewProject ? Paths.get(Objects.requireNonNull(project.getBasePath())) : modelContentRootDir.toNioPath();
     }
-    assert rootProjectPath != null;
 
     final VirtualFile gradleBuildFile = setupGradleBuildFile(modelContentRootDir);
     setupGradleSettingsFile(
@@ -186,8 +190,8 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     ExternalSystemModulePropertyManager modulePropertyManager = ExternalSystemModulePropertyManager.getInstance(module);
     modulePropertyManager.setExternalId(GradleConstants.SYSTEM_ID);
     // set linked project path to be able to map the module with the module data obtained from the import
-    modulePropertyManager.setRootProjectPath(rootProjectPath);
-    modulePropertyManager.setLinkedProjectPath(rootProjectPath);
+    modulePropertyManager.setRootProjectPath(rootProjectPath.toString());
+    modulePropertyManager.setLinkedProjectPath(rootProjectPath.toString());
 
     Project project = module.getProject();
 
@@ -231,22 +235,19 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     }, ModalityState.NON_MODAL, project.getDisposed());
   }
 
-  private void setupAndLinkGradleProject(@NotNull Project project, @NotNull GradleVersion gradleVersion) {
-  }
-
   private void loadPreviewProject(@NotNull Project project) {
     ImportSpecBuilder previewSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID);
     previewSpec.usePreviewMode();
     previewSpec.use(MODAL_SYNC);
     previewSpec.callback(new ConfigureGradleModuleCallback(previewSpec));
-    ExternalSystemUtil.refreshProject(rootProjectPath, previewSpec);
+    ExternalSystemUtil.refreshProject(rootProjectPath.toString(), previewSpec);
   }
 
   private void reloadProject(@NotNull Project project) {
     ImportSpecBuilder importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID);
     importSpec.createDirectoriesForEmptyContentRoots();
     importSpec.callback(new ConfigureGradleModuleCallback(importSpec));
-    ExternalSystemUtil.refreshProject(rootProjectPath, importSpec);
+    ExternalSystemUtil.refreshProject(rootProjectPath.toString(), importSpec);
   }
 
   private void createWrapper(@NotNull Project project, @NotNull GradleVersion gradleVersion, @NotNull Runnable callback) {
@@ -327,10 +328,18 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     String scriptName;
     if (myUseKotlinDSL) {
       scriptName = GradleConstants.KOTLIN_DSL_SCRIPT_NAME;
-    } else {
+    }
+    else {
       scriptName = GradleConstants.DEFAULT_SCRIPT_NAME;
     }
-    final VirtualFile file = getOrCreateExternalProjectConfigFile(modelContentRootDir.getPath(), scriptName, true);
+    VirtualFile file;
+    try {
+      file = getOrCreateExternalProjectConfigFile(modelContentRootDir.toNioPath(), scriptName, true);
+    }
+    catch (IOException e) {
+      LOG.error(e);
+      throw new ConfigurationException(e.getMessage());
+    }
 
     final String templateName;
     if (myUseKotlinDSL) {
@@ -355,19 +364,26 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
   }
 
   @NotNull
-  public static VirtualFile setupGradleSettingsFile(@NotNull String rootProjectPath,
+  public static VirtualFile setupGradleSettingsFile(@NotNull Path rootProjectPath,
                                                     @NotNull VirtualFile modelContentRootDir,
                                                     String projectName,
                                                     String moduleName,
                                                     boolean renderNewFile,
                                                     boolean useKotlinDSL) throws ConfigurationException {
     if (!renderNewFile) {
-      File settingsFile = new File(rootProjectPath, GradleConstants.SETTINGS_FILE_NAME);
-      File kotlinKtsSettingsFile = new File(rootProjectPath, GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME);
-      useKotlinDSL = !settingsFile.exists() && (kotlinKtsSettingsFile.exists() || useKotlinDSL);
+      Path settingsFile = rootProjectPath.resolve(GradleConstants.SETTINGS_FILE_NAME);
+      Path kotlinKtsSettingsFile = rootProjectPath.resolve(GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME);
+      useKotlinDSL = !Files.exists(settingsFile) && (Files.exists(kotlinKtsSettingsFile) || useKotlinDSL);
     }
     String scriptName = useKotlinDSL ? GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME : GradleConstants.SETTINGS_FILE_NAME;
-    final VirtualFile file = getOrCreateExternalProjectConfigFile(rootProjectPath, scriptName, renderNewFile);
+    VirtualFile file;
+    try {
+      file = getOrCreateExternalProjectConfigFile(rootProjectPath, scriptName, renderNewFile);
+    }
+    catch (IOException e) {
+      LOG.error(e);
+      throw new ConfigurationException(e.getMessage());
+    }
 
     if (renderNewFile) {
       String templateName = useKotlinDSL ? KOTLIN_DSL_TEMPLATE_GRADLE_SETTINGS : TEMPLATE_GRADLE_SETTINGS;
@@ -432,20 +448,28 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     }
   }
 
-  @NotNull
-  private static VirtualFile getOrCreateExternalProjectConfigFile(@NotNull String parent,
-                                                                  @NotNull String fileName,
-                                                                  boolean deleteExistingFile)
-    throws ConfigurationException {
-    File file = new File(parent, fileName);
-    if (deleteExistingFile) FileUtilRt.delete(file);
-    FileUtilRt.createIfNotExists(file);
-    VirtualFile virtualFile = VfsUtil.findFileByIoFile(file, true);
+  private static @NotNull VirtualFile getOrCreateExternalProjectConfigFile(@NotNull Path parent,
+                                                                           @NotNull String fileName,
+                                                                           boolean deleteExistingFile)
+    throws ConfigurationException, IOException {
+    Path file = parent.resolve(fileName);
+    if (deleteExistingFile) {
+      Files.deleteIfExists(file);
+    }
+
+    Files.createDirectories(file.getParent());
+    try {
+      Files.createFile(file);
+    }
+    catch (FileAlreadyExistsException ignore) {
+    }
+
+    VirtualFile virtualFile = VfsUtil.findFile(file, true);
     if (virtualFile == null) {
-      throw new ConfigurationException(String.format("Can't create configuration file '%s'", file.getPath()));
+      throw new ConfigurationException(String.format("Can't create configuration file '%s'", file));
     }
     if (virtualFile.isDirectory()) {
-      throw new ConfigurationException(String.format("Configuration file is a directory '%s'", file.getPath()));
+      throw new ConfigurationException(String.format("Configuration file is a directory '%s'", file));
     }
     VfsUtil.markDirtyAndRefresh(false, false, false, virtualFile);
     return virtualFile;

@@ -22,9 +22,10 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.service.project.GradleNotification.NOTIFICATION_GROUP
 import org.jetbrains.plugins.gradle.util.GradleProperties.GradleProperty
 import java.io.File
+import java.nio.file.Path
 import javax.swing.event.HyperlinkEvent
 
-fun validateJavaHome(project: Project, externalProjectPath: String, gradleVersion: GradleVersion) {
+fun validateJavaHome(project: Project, externalProjectPath: Path, gradleVersion: GradleVersion) {
   val gradleProperties = getGradleProperties(externalProjectPath)
   val javaHomeProperty = gradleProperties.javaHomeProperty
   if (javaHomeProperty != null) {

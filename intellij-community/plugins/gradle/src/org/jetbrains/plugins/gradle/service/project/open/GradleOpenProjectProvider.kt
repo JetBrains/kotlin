@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project.open
 
 import com.intellij.openapi.application.ApplicationManager
@@ -26,13 +26,14 @@ import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
 import org.jetbrains.plugins.gradle.util.setupGradleJvm
 import org.jetbrains.plugins.gradle.util.updateGradleJvm
 import org.jetbrains.plugins.gradle.util.validateJavaHome
+import java.nio.file.Path
 
 internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
   override fun isProjectFile(file: VirtualFile): Boolean {
     return !file.isDirectory && BUILD_FILE_EXTENSIONS.any { file.name.endsWith(it) }
   }
 
-  override fun linkAndRefreshProject(projectDirectory: String, project: Project) {
+  override fun linkAndRefreshProject(projectDirectory: Path, project: Project) {
     val gradleSettings = GradleSettings.getInstance(project)
     gradleSettings.setupGradleSettings()
     val gradleProjectSettings = GradleProjectSettings()
