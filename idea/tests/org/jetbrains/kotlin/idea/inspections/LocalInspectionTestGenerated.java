@@ -13680,6 +13680,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unnecessaryVariable/it.kt");
         }
 
+        @TestMetadata("override.kt")
+        public void testOverride() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/override.kt");
+        }
+
         @TestMetadata("paramCopy.kt")
         public void testParamCopy() throws Exception {
             runTest("idea/testData/inspectionsLocal/unnecessaryVariable/paramCopy.kt");
