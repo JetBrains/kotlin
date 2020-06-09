@@ -90,6 +90,11 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/FunctionBlock.after.kt");
         }
 
+        @TestMetadata("FunctionBlock2.after.kt")
+        public void testFunctionBlock2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/FunctionBlock2.after.kt");
+        }
+
         @TestMetadata("InDelegationListAfterColon.after.kt")
         public void testInDelegationListAfterColon() throws Exception {
             runTest("idea/testData/indentationOnNewline/InDelegationListAfterColon.after.kt");

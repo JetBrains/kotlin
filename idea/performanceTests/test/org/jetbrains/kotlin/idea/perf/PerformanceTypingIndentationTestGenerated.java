@@ -88,6 +88,11 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/FunctionBlock.kt");
     }
 
+    @TestMetadata("FunctionBlock2.kt")
+    public void testFunctionBlock2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/FunctionBlock2.kt");
+    }
+
     @TestMetadata("InDelegationListAfterColon.kt")
     public void testInDelegationListAfterColon() throws Exception {
         runTest("idea/testData/indentationOnNewline/InDelegationListAfterColon.kt");

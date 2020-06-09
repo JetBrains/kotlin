@@ -68,6 +68,9 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         val before = currentPosition.beforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
         val after = currentPosition.afterOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
         when {
+            before.isAt(BlockOpeningBrace) && after.isAt(BlockClosingBrace) && !currentPosition.hasLineBreaksAfter(offset) ->
+                return factory.createIndentCalculator(Indent.getNoneIndent(), before.startOffset)
+
             after.isAt(Quest) && after.after().isAt(Colon) -> {
                 val indent = if (settings.continuationIndentInElvis)
                     Indent.getContinuationIndent()
@@ -110,10 +113,8 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
                 }
             }
 
-            before.isAt(LeftParenthesis) && after.isAt(RightParenthesis) -> {
-                val indentCalculator = factory.createIndentCalculatorForParenthesis(before, currentPosition, after, offset, settings)
-                if (indentCalculator != null) return indentCalculator
-            }
+            before.isAt(LeftParenthesis) && after.isAt(RightParenthesis) ->
+                factory.createIndentCalculatorForParenthesis(before, currentPosition, after, offset, settings)?.let { return it }
         }
 
         findFunctionOrPropertyDeclarationBefore(before)?.let {
