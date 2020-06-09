@@ -87,7 +87,7 @@ data class NpmDependency(
 
     val key: String = name
 
-    override fun toString() = "$key: $version"
+    override fun toString() = "$scope $key: $version, $generateExternals"
 
     override fun getFiles(): FileCollection = project.files(resolve(true))
 
