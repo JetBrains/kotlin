@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
@@ -13,7 +15,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import kotlin.reflect.KClass
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
@@ -38,6 +43,22 @@ internal class KotlinProjectNpmResolver(
 
     init {
         addContainerListeners()
+
+        val nodeJs = resolver.nodeJs
+        project.tasks.implementing(RequiresNpmDependencies::class)
+            .configureEach { task ->
+                if (task.enabled) {
+                    task as RequiresNpmDependencies
+                    // KotlinJsTest delegates npm dependencies to testFramework,
+                    // which can be defined after this configure action
+                    val packageJsonTaskHolder = get(task.compilation).packageJsonTaskHolder
+                    if (task !is KotlinJsTest) {
+                        nodeJs.taskRequirements.addTaskRequirements(task)
+                    }
+                    task.dependsOn(packageJsonTaskHolder)
+                    task.dependsOn(nodeJs.npmInstallTask)
+                }
+            }
     }
 
     private fun addContainerListeners() {
@@ -93,3 +114,13 @@ internal class KotlinProjectNpmResolver(
         )
     }
 }
+
+
+/**
+ * Filters a [TaskCollection] by type that is not a subtype of [Task] (for use with interfaces)
+ *
+ * TODO properly express within the type system? The result should be a TaskCollection<T & R>
+ */
+private fun <T : Task, R : Any> TaskCollection<T>.implementing(kclass: KClass<R>): TaskCollection<T> =
+    @Suppress("UNCHECKED_CAST")
+    withType(kclass.java as Class<T>)

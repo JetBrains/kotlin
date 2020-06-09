@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
@@ -15,7 +14,6 @@ import org.gradle.api.initialization.IncludedBuild
 import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -32,14 +30,12 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_J
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
 import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.gradle.utils.topRealPath
 import java.io.File
 import java.io.Serializable
-import kotlin.reflect.KClass
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
@@ -73,22 +69,6 @@ internal class KotlinCompilationNpmResolver(
                     }
             }
         }
-
-    init {
-        project.tasks.implementing(RequiresNpmDependencies::class)
-            .configureEach { task ->
-                if (task.enabled) {
-                    task as RequiresNpmDependencies
-                    // KotlinJsTest delegates npm dependencies to testFramework,
-                    // which can be defined after this configure action
-                    if (task !is KotlinJsTest) {
-                        nodeJs.taskRequirements.addTaskRequirements(task)
-                    }
-                    task.dependsOn(packageJsonTaskHolder)
-                    task.dependsOn(nodeJs.npmInstallTask)
-                }
-            }
-    }
 
     val plugins: List<CompilationResolverPlugin> = projectResolver.resolver.plugins
         .flatMap {
@@ -385,12 +365,3 @@ internal class KotlinCompilationNpmResolver(
         }
     }
 }
-
-/**
- * Filters a [TaskCollection] by type that is not a subtype of [Task] (for use with interfaces)
- *
- * TODO properly express within the type system? The result should be a TaskCollection<T & R>
- */
-private fun <T : Task, R : Any> TaskCollection<T>.implementing(kclass: KClass<R>): TaskCollection<T> =
-    @Suppress("UNCHECKED_CAST")
-    withType(kclass.java as Class<T>)
