@@ -227,7 +227,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitConstantExpression(expression: KtConstantExpression) {
         val other = getTreeElementDepar<KtConstantExpression>() ?: return
-        myMatchingVisitor.result = expression.text == other.text
+        myMatchingVisitor.result = matchTextOrVariable(expression, other)
     }
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
@@ -471,8 +471,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
 
         myMatchingVisitor.result = typeMatched
-                && nameIdentifierMatched
                 && myMatchingVisitor.match(parameter.defaultValue, other.defaultValue)
+                && nameIdentifierMatched
     }
 
     override fun visitTypeParameterList(list: KtTypeParameterList) {
@@ -538,7 +538,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitClass(klass: KtClass) {
         val other = getTreeElementDepar<KtClass>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
-                && matchTextOrVariable(klass.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
                 && myMatchingVisitor.match(klass.typeParameterList, other.typeParameterList)
                 && myMatchingVisitor.match(klass.primaryConstructor, other.primaryConstructor)
@@ -546,9 +545,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
                 && myMatchingVisitor.match(klass.docComment, other.docComment)
-        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(klass.nameIdentifier)) {
-            myMatchingVisitor.result = myMatchingVisitor.handleTypedElement(klass.identifyingElement, other.identifyingElement)
-        }
+                && matchTextOrVariable(klass.nameIdentifier, other.nameIdentifier) // only match identifier if others match
     }
 
     override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
@@ -559,10 +556,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitObjectDeclaration(declaration: KtObjectDeclaration) {
         val other = getTreeElementDepar<KtObjectDeclaration>() ?: return
         val otherIdentifier = if (other.isCompanion()) (other.parent.parent as KtClass).nameIdentifier else other.nameIdentifier
-        myMatchingVisitor.result = matchTextOrVariable(declaration.nameIdentifier, otherIdentifier)
-                && myMatchingVisitor.match(declaration.modifierList, other.modifierList)
+        myMatchingVisitor.result = myMatchingVisitor.match(declaration.modifierList, other.modifierList)
                 && myMatchingVisitor.match(declaration.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(declaration.body, other.body)
+                && matchTextOrVariable(declaration.nameIdentifier, otherIdentifier)
     }
 
     private fun normalizeExpressionRet(expression: KtExpression?) = if (
@@ -580,17 +577,14 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtNamedFunction>() ?: return
         val funExpr = normalizeExpressionRet(function.bodyExpression)
         val othExpr = normalizeExpressionRet(other.bodyExpression)
-        myMatchingVisitor.result = matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
-                && myMatchingVisitor.match(function.modifierList, other.modifierList)
+        myMatchingVisitor.result = myMatchingVisitor.match(function.modifierList, other.modifierList)
+                && matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)
                 && matchTypeReferenceWithDeclaration(function.typeReference, other)
                 && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
                 && if (funExpr == null || othExpr == null) { // both bodies are not single expression
             myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
         } else myMatchingVisitor.match(funExpr, othExpr)
-        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(function.nameIdentifier)) {
-            myMatchingVisitor.result = myMatchingVisitor.handleTypedElement(function.identifyingElement, other.identifyingElement)
-        }
     }
 
     override fun visitModifierList(list: KtModifierList) {
@@ -674,8 +668,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitTypeAlias(typeAlias: KtTypeAlias) {
         val other = getTreeElementDepar<KtTypeAlias>() ?: return
-        myMatchingVisitor.result = matchTextOrVariable(typeAlias.nameIdentifier, other.nameIdentifier)
-                && myMatchingVisitor.match(typeAlias.getTypeReference(), other.getTypeReference())
+        myMatchingVisitor.result = myMatchingVisitor.match(typeAlias.getTypeReference(), other.getTypeReference())
+                && matchTextOrVariable(typeAlias.nameIdentifier, other.nameIdentifier)
     }
 
     override fun visitConstructorCalleeExpression(constructorCalleeExpression: KtConstructorCalleeExpression) {
@@ -698,14 +692,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = matchTypeReferenceWithDeclaration(property.typeReference, other)
                 && myMatchingVisitor.match(property.modifierList, other.modifierList)
                 && property.isVar == other.isVar
-                && matchTextOrVariable(property.nameIdentifier, other.nameIdentifier)
+                && myMatchingVisitor.match(property.docComment, other.docComment)
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.match(
             property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
-        ))
-                && myMatchingVisitor.match(property.docComment, other.docComment)
-        if (myMatchingVisitor.result && myMatchingVisitor.matchContext.pattern.isTypedVar(property.nameIdentifier)) {
-            myMatchingVisitor.result = myMatchingVisitor.handleTypedElement(property.identifyingElement, other.identifyingElement)
-        }
+        )) && matchTextOrVariable(property.nameIdentifier, other.nameIdentifier) // match text only if others match
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
