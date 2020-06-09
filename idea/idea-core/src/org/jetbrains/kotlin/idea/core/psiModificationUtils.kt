@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.idea.core
 
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -187,10 +189,31 @@ fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     val expression = argument.getArgumentExpression()!!
     assert(expression.unpackFunctionLiteral() != null)
 
-    val dummyCall = KtPsiFactory(project).createExpression("foo() {}") as KtCallExpression
+    fun isWhiteSpaceOrComment(e: PsiElement) = e is PsiWhiteSpace || e is PsiComment
+    val prevComma = argument.siblings(forward = false, withItself = false).firstOrNull { it.elementType == KtTokens.COMMA }
+    val prevComments = (prevComma ?: argumentList.leftParenthesis)
+        ?.siblings(forward = true, withItself = false)
+        ?.takeWhile(::isWhiteSpaceOrComment)?.toList().orEmpty()
+    val nextComments = argumentList.rightParenthesis
+        ?.siblings(forward = false, withItself = false)
+        ?.takeWhile(::isWhiteSpaceOrComment)?.toList()?.reversed().orEmpty()
+
+    val psiFactory = KtPsiFactory(project)
+    val dummyCall = psiFactory.createExpression("foo() {}") as KtCallExpression
     val functionLiteralArgument = dummyCall.lambdaArguments.single()
     functionLiteralArgument.getArgumentExpression()?.replace(expression)
+
+    if (prevComments.any { it is PsiComment }) {
+        if (prevComments.firstOrNull() !is PsiWhiteSpace) this.add(psiFactory.createWhiteSpace())
+        prevComments.forEach { this.add(it) }
+        prevComments.forEach { if (it is PsiComment) it.delete() }
+    }
     this.add(functionLiteralArgument)
+    if (nextComments.any { it is PsiComment }) {
+        nextComments.forEach { this.add(it) }
+        nextComments.forEach { if (it is PsiComment) it.delete() }
+    }
+
     /* we should not remove empty parenthesis when callee is a call too - it won't parse */
     if (argumentList.arguments.size == 1 && calleeExpression !is KtCallExpression) {
         argumentList.delete()

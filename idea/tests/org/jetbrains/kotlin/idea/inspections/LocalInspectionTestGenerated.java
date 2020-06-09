@@ -6581,6 +6581,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/functionalValueCall.kt");
         }
 
+        @TestMetadata("hasComments.kt")
+        public void testHasComments() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/hasComments.kt");
+        }
+
+        @TestMetadata("hasComments2.kt")
+        public void testHasComments2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/hasComments2.kt");
+        }
+
         @TestMetadata("inapplicable1.kt")
         public void testInapplicable1() throws Exception {
             runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/inapplicable1.kt");
