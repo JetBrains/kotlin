@@ -1018,7 +1018,7 @@
       <option name="ignoreParametersOfOverridingMethods" value="true" />
     </inspection_tool>
     <inspection_tool class="RedundantArrayCreation" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="RedundantCast" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="RedundantCast" enabled="true" level="Strong Warning" enabled_by_default="true">
       <option name="IGNORE_SUSPICIOUS_METHOD_CALLS" value="true" />
     </inspection_tool>
     <inspection_tool class="RedundantClassCall" enabled="true" level="Strong Warning" enabled_by_default="true" />

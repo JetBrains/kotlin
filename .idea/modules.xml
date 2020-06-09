@@ -908,6 +908,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/langs/fleet.langs.iml" filepath="$PROJECT_DIR$/intellij/fleet/langs/fleet.langs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/fleet.noria.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/fleet.noria.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/engine/fleet.noria.engine.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/engine/fleet.noria.engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/framework/fleet.noria.framework.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/framework/fleet.noria.framework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/model/fleet.noria.model.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/model/fleet.noria.model.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/compiler-plugin/fleet.noria.plugin.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/compiler-plugin/fleet.noria.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/ui/fleet.noria.ui.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/ui/fleet.noria.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/preferences/fleet.preferences.iml" filepath="$PROJECT_DIR$/intellij/fleet/preferences/fleet.preferences.iml" />
@@ -1018,6 +1020,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/behat/intellij.behat.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/behat/intellij.behat.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/blade/intellij.blade.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/blade/intellij.blade.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang/intellij.c.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang/intellij.c.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang/debugger/intellij.c.debugger.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang/debugger/intellij.c.debugger.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang-dfa/intellij.c.dfa.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang-dfa/intellij.c.dfa.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/doxygen/intellij.c.doxygen.iml" filepath="$PROJECT_DIR$/intellij/CIDR/doxygen/intellij.c.doxygen.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/CFML/intellij.cfml.iml" filepath="$PROJECT_DIR$/intellij/contrib/CFML/intellij.cfml.iml" />
@@ -1726,6 +1729,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/ssh-nio/intellij.platform.ssh.nio.iml" filepath="$PROJECT_DIR$/intellij/platform/ssh-nio/intellij.platform.ssh.nio.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/ssh/tests-util/intellij.platform.ssh.tests.util.iml" filepath="$PROJECT_DIR$/intellij/platform/ssh/tests-util/intellij.platform.ssh.tests.util.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/statistics/intellij.platform.statistics.iml" filepath="$PROJECT_DIR$/intellij/community/platform/statistics/intellij.platform.statistics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/statistics/config/intellij.platform.statistics.config.iml" filepath="$PROJECT_DIR$/intellij/community/platform/statistics/config/intellij.platform.statistics.config.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/statistics/devkit/intellij.platform.statistics.devkit.iml" filepath="$PROJECT_DIR$/intellij/community/platform/statistics/devkit/intellij.platform.statistics.devkit.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/statistics/envTests/intellij.platform.statistics.envTests.iml" filepath="$PROJECT_DIR$/intellij/community/platform/statistics/envTests/intellij.platform.statistics.envTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/platform/statistics/uploader/intellij.platform.statistics.uploader.iml" filepath="$PROJECT_DIR$/intellij/community/platform/statistics/uploader/intellij.platform.statistics.uploader.iml" />
@@ -1929,6 +1933,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/slim-lang/intellij.slim.iml" filepath="$PROJECT_DIR$/intellij/plugins/slim-lang/intellij.slim.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/slim-lang/tests/intellij.slim.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/slim-lang/tests/intellij.slim.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/space/intellij.space.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/space/intellij.space.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/space-auth/intellij.space.auth.iml" filepath="$PROJECT_DIR$/intellij/plugins/space-auth/intellij.space.auth.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/spellchecker/intellij.spellchecker.iml" filepath="$PROJECT_DIR$/intellij/community/spellchecker/intellij.spellchecker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/spring/spring-api/intellij.spring.iml" filepath="$PROJECT_DIR$/intellij/plugins/spring/spring-api/intellij.spring.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/spring/spring-framework/spring-aop/intellij.spring.aop.iml" filepath="$PROJECT_DIR$/intellij/plugins/spring/spring-framework/spring-aop/intellij.spring.aop.iml" />
