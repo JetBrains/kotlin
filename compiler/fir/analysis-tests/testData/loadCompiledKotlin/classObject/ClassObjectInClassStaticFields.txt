@@ -12,7 +12,7 @@ public final class Test : R|kotlin/Any| {
 
         public final var prop2: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final val prop3: R|kotlin/Int|
             public get(): R|kotlin/Int|
@@ -27,7 +27,7 @@ public final class Test : R|kotlin/Any| {
 
         public final var prop7: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(i: R|kotlin/Int|): R|kotlin/Unit|
 
         private constructor(): R|test/Test.Companion|
 

@@ -20,15 +20,16 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class FirDeserializationContext(
     val nameResolver: NameResolver,
@@ -172,13 +173,77 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val symbol = FirPropertySymbol(CallableId(c.packageFqName, c.relativeClassName, callableName))
         val local = c.childContext(proto.typeParameterList)
 
-        val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else flags
-        val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else flags
+        // Per documentation on Property.getter_flags in metadata.proto, if an accessor flags field is absent, its value should be computed
+        // by taking hasAnnotations/visibility/modality from property flags, and using false for the rest
+        val defaultAccessorFlags = Flags.getAccessorFlags(
+            Flags.HAS_ANNOTATIONS.get(flags),
+            Flags.VISIBILITY.get(flags),
+            Flags.MODALITY.get(flags),
+            false, false, false
+        )
+
+        val returnTypeRef = proto.returnType(c.typeTable).toTypeRef(local)
+
+        val getter = if (Flags.HAS_GETTER.get(flags)) {
+            val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else defaultAccessorFlags
+            val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))
+            val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags))
+            if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
+                buildPropertyAccessor {
+                    session = c.session
+                    origin = FirDeclarationOrigin.Library
+                    this.returnTypeRef = returnTypeRef
+                    isGetter = true
+                    status = FirDeclarationStatusImpl(visibility, modality)
+                    annotations += c.annotationDeserializer.loadPropertyGetterAnnotations(proto, local.nameResolver, getterFlags)
+                    this.symbol = FirPropertyAccessorSymbol()
+                }
+            } else {
+                FirDefaultPropertyGetter(null, c.session, FirDeclarationOrigin.Library, returnTypeRef, visibility)
+            }
+        } else {
+            null
+        }
+
+        val setter = if (Flags.HAS_SETTER.get(flags)) {
+            val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else defaultAccessorFlags
+            val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))
+            val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags))
+            if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
+                buildPropertyAccessor {
+                    session = c.session
+                    origin = FirDeclarationOrigin.Library
+                    this.returnTypeRef = FirImplicitUnitTypeRef(source)
+                    isGetter = false
+                    status = FirDeclarationStatusImpl(visibility, modality)
+                    annotations += c.annotationDeserializer.loadPropertySetterAnnotations(proto, local.nameResolver, setterFlags)
+                    this.symbol = FirPropertyAccessorSymbol()
+                    valueParameters += proto.setterValueParameter.let {
+                        val parameterFlags = if (it.hasFlags()) it.flags else 0
+                        buildValueParameter {
+                            session = c.session
+                            origin = FirDeclarationOrigin.Library
+                            this.returnTypeRef = returnTypeRef
+                            name = if (it.hasName()) c.nameResolver.getName(it.name) else Name.special("<default-setter-parameter>")
+                            this.symbol = FirVariableSymbol(CallableId(FqName.ROOT, name))
+                            isCrossinline = Flags.IS_CROSSINLINE.get(parameterFlags)
+                            isNoinline = Flags.IS_NOINLINE.get(parameterFlags)
+                            isVararg = it.hasVarargElementType()
+                        }
+                    }
+                }
+            } else {
+                FirDefaultPropertySetter(null, c.session, FirDeclarationOrigin.Library, returnTypeRef, visibility)
+            }
+        } else {
+            null
+        }
+
         val isVar = Flags.IS_VAR.get(flags)
         return buildProperty {
             session = c.session
             origin = FirDeclarationOrigin.Library
-            returnTypeRef = proto.returnType(c.typeTable).toTypeRef(local)
+            this.returnTypeRef = returnTypeRef
             receiverTypeRef = proto.receiverType(c.typeTable)?.toTypeRef(local)
             name = callableName
             this.isVar = isVar
@@ -198,10 +263,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             annotations += c.annotationDeserializer.loadPropertyAnnotations(proto, local.nameResolver)
-            getter = FirDefaultPropertyGetter(null, c.session, FirDeclarationOrigin.Library, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags)))
-            setter = if (isVar) {
-                FirDefaultPropertySetter(null, c.session, FirDeclarationOrigin.Library, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags)))
-            } else null
+            this.getter = getter
+            this.setter = setter
             this.containerSource = c.containerSource
             this.initializer = if (Flags.HAS_CONSTANT.get(flags)) {
                 proto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue)?.let {
