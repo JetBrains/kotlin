@@ -290,7 +290,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
     }
 
-    private fun loadAnnotationIfNotSpecial(
+    internal fun loadAnnotationIfNotSpecial(
         annotationClassId: ClassId, result: MutableList<FirAnnotationCall>,
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
         if (annotationClassId in AbstractBinaryClassAnnotationAndConstantLoader.SPECIAL_ANNOTATIONS) return null
