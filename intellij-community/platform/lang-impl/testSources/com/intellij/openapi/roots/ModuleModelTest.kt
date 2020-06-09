@@ -273,6 +273,27 @@ class ModuleModelTest {
     assertThat(committedEntry.moduleName).isEqualTo("c")
   }
 
+  @Test
+  fun `rename module after creating modifiable root model for it`() {
+    val moduleModel = createModifiableModuleModel()
+    val a = projectModel.createModule("a", moduleModel)
+    val rootModel = runReadAction {
+      ModuleRootManagerEx.getInstanceEx(a).getModifiableModelForMultiCommit(ModifiableModuleModelAccessor(moduleModel))
+    }
+    val root = projectModel.baseProjectDir.newVirtualDirectory("root")
+    rootModel.addContentEntry(root)
+    moduleModel.renameModule(a, "b")
+    val root2 = projectModel.baseProjectDir.newVirtualDirectory("root2")
+    rootModel.addContentEntry(root2)
+    assertThat(rootModel.module).isEqualTo(a)
+    assertThat(rootModel.contentRoots).containsExactly(root, root2)
+
+    runWriteActionAndWait { ModifiableModelCommitter.multiCommit(listOf(rootModel), moduleModel) }
+    val moduleManager = projectModel.moduleManager
+    assertThat(moduleManager.modules).containsExactly(a)
+    assertThat(ModuleRootManager.getInstance(a).contentRoots).containsExactly(root, root2)
+  }
+
   class ModifiableModuleModelAccessor(private val moduleModel: ModifiableModuleModel) : RootConfigurationAccessor() {
     override fun getModule(module: Module?, moduleName: String): Module? {
       return module ?: moduleModel.findModuleByName(moduleName)
