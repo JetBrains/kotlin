@@ -66,7 +66,7 @@ abstract class FirScope {
     }
 }
 
-fun FirScope.processOverriddenFunctionsAndSelf(
+fun FirTypeScope.processOverriddenFunctionsAndSelf(
     functionSymbol: FirFunctionSymbol<*>,
     processor: (FirFunctionSymbol<*>) -> ProcessorAction
 ): ProcessorAction {

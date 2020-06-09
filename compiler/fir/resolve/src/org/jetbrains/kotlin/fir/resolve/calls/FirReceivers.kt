@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -34,7 +34,7 @@ interface ReceiverValue : Receiver {
 
     val receiverExpression: FirExpression
 
-    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? =
+    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? =
         type.scope(useSiteSession, scopeSession)
 }
 
@@ -85,10 +85,10 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     final override var type: ConeKotlinType = type
         private set
 
-    var implicitScope: FirScope? = type.scope(useSiteSession, scopeSession)
+    var implicitScope: FirTypeScope? = type.scope(useSiteSession, scopeSession)
         private set
 
-    override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? = implicitScope
+    override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
 
     private val originalReceiverExpression: FirThisReceiverExpression = receiverExpression(boundSymbol, type)
     final override var receiverExpression: FirExpression = originalReceiverExpression

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctionsAndSelf
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -35,7 +36,7 @@ class FirSyntheticFunctionSymbol(
 
 class FirSyntheticPropertiesScope(
     val session: FirSession,
-    private val baseScope: FirScope
+    private val baseScope: FirTypeScope
 ) : FirScope() {
 
     private fun checkGetAndCreateSynthetic(
