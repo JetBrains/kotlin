@@ -188,6 +188,22 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     }
 
     @Test
+    fun testComposableLambdaInvoke(): Unit = validateBytecode(
+        """
+        @Composable fun NonNull(content: @Composable() () -> Unit) {
+            content.invoke()
+        }
+        @Composable fun Nullable(content: (@Composable() () -> Unit)?) {
+            content?.invoke()
+        }
+        """
+    ) {
+        assert(!it.contains(
+            "INVOKEINTERFACE kotlin/jvm/functions/Function0.invoke ()Ljava/lang/Object; (itf)"
+        ))
+    }
+
+    @Test
     fun testAnonymousParamNaming(): Unit = validateBytecode(
         """
         @Composable

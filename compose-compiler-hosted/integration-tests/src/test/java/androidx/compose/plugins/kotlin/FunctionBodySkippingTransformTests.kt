@@ -2368,4 +2368,33 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             }
         """
     )
+
+    @Test
+    fun testComposableLambdaInvoke(): Unit = comparisonPropagation(
+        """
+        """,
+        """
+            @Composable fun Example(content: @Composable() () -> Unit) {
+                content.invoke()
+            }
+        """,
+        """
+            @Composable
+            fun Example(content: Function3<Composer<*>, Int, Int, Unit>, %composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startRestartGroup(%key)
+              val %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                content(%composer, <>, 0b0110 and %dirty)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
+                Example(content, %composer, %key, %changed or 0b0001)
+              }
+            }
+        """
+    )
 }

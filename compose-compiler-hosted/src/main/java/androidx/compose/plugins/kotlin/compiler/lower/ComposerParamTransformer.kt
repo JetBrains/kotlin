@@ -651,8 +651,7 @@ class ComposerParamTransformer(
     }
 
     private fun IrCall.isComposableLambdaInvoke(): Boolean {
-        return origin == IrStatementOrigin.INVOKE &&
-                dispatchReceiver?.type?.hasComposableAnnotation() == true
+        return isInvoke() && dispatchReceiver?.type?.hasComposableAnnotation() == true
     }
 
     private fun IrFunction.isNonComposableInlinedLambda(): Boolean {

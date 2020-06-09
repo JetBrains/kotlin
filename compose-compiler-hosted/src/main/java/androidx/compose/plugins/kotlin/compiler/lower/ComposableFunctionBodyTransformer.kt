@@ -2286,7 +2286,7 @@ class ComposableFunctionBodyTransformer(
         val numChanged: Int
         val numRealValueParams: Int
 
-        if (expression.origin == IrStatementOrigin.INVOKE) {
+        if (expression.isInvoke()) {
             // in the case of an invoke, all of the parameters are going to be type parameter
             // args which won't have special names. In this case, we know that the values cannot
             // be defaulted though, so we can calculate the number of real parameters based on
