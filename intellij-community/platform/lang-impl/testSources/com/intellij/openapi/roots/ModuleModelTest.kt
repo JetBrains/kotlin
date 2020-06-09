@@ -4,8 +4,9 @@ package com.intellij.openapi.roots
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.module.ModifiableModuleModel
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.impl.ModifiableModelCommitter
-import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.roots.impl.RootConfigurationAccessor
 import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.rules.ProjectModelRule
 import org.assertj.core.api.Assertions.assertThat
@@ -232,6 +233,31 @@ class ModuleModelTest {
     }
     assertThat(ModuleRootManager.getInstance(a).dependencies.single()).isEqualTo(b)
     assertThat(ModuleRootManager.getInstance(b).dependencies.single()).isEqualTo(a)
+  }
+
+  @Test
+  fun `rename module referenced from modifiable model`() {
+    val a = projectModel.createModule("a")
+    val b = projectModel.createModule("b")
+    ModuleRootModificationUtil.addDependency(a, b)
+    val moduleModel = createModifiableModuleModel()
+    val modelA = createModifiableModel(a, ModifiableModuleModelAccessor(moduleModel))
+    moduleModel.renameModule(b, "c")
+    val moduleEntry = dropModuleSourceEntry(modelA, 1).single() as ModuleOrderEntry
+    assertThat(moduleEntry.module).isEqualTo(b)
+
+    runWriteActionAndWait { ModifiableModelCommitter.multiCommit(listOf(modelA), moduleModel) }
+    val moduleManager = projectModel.moduleManager
+    assertThat(moduleManager.modules).containsExactlyInAnyOrder(a, b)
+    val committedEntry = dropModuleSourceEntry(ModuleRootManager.getInstance(a), 1).single() as ModuleOrderEntry
+    assertThat(committedEntry.module).isEqualTo(b)
+    assertThat(committedEntry.moduleName).isEqualTo("c")
+  }
+
+  class ModifiableModuleModelAccessor(private val moduleModel: ModifiableModuleModel) : RootConfigurationAccessor() {
+    override fun getModule(module: Module?, moduleName: String): Module? {
+      return module ?: moduleModel.findModuleByName(moduleName)
+    }
   }
 
   private fun createModifiableModuleModel(): @NotNull ModifiableModuleModel {
