@@ -689,7 +689,7 @@ public final class ExternalProjectDataSelectorDialog extends DialogWrapper {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      TreeModel treeModel = (DefaultTreeModel)myTree.getModel();
+      TreeModel treeModel = myTree.getModel();
       Object root = treeModel.getRoot();
       if (!(root instanceof CheckedTreeNode)) {
         return;
