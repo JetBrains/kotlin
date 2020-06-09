@@ -117,7 +117,7 @@ abstract class AbstractFileRankingTest : LowLevelDebuggerTestBase() {
 
         if (problems.isNotEmpty()) {
             throw AssertionError(buildString {
-                appendln("There were association errors:").appendln()
+                appendLine("There were association errors:").appendLine()
                 problems.joinTo(this, "\n\n")
             })
         }

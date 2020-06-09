@@ -45,12 +45,12 @@ abstract class AbstractKotlinTypeAliasByExpansionShortNameIndexTest : KotlinLigh
         val result = index.get(key, project, scope)
         if (value !in result.map { it.name }) {
             Assert.fail(buildString {
-                appendln("Record $record not found in index")
-                appendln("Index contents:")
+                appendLine("Record $record not found in index")
+                appendLine("Index contents:")
                 index.getAllKeys(project).asSequence().forEach {
-                    appendln("KEY: $it")
+                    appendLine("KEY: $it")
                     index.get(it, project, scope).forEach {
-                        appendln("    ${it.name}")
+                        appendLine("    ${it.name}")
                     }
                 }
             })

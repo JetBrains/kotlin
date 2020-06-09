@@ -38,7 +38,7 @@ class Stats(
     init {
         statsOutput = statsFile.bufferedWriter()
 
-        statsOutput.appendln(header.joinToString())
+        statsOutput.appendLine(header.joinToString())
 
         PerformanceCounter.setTimeCounterEnabled(true)
     }
@@ -112,7 +112,7 @@ class Stats(
     private fun append(values: Array<Any>) {
         require(values.size == header.size) { "Expected ${header.size} values, actual ${values.size} values" }
         with(statsOutput) {
-            appendln(values.joinToString { it.toString() })
+            appendLine(values.joinToString { it.toString() })
             flush()
         }
     }

@@ -730,12 +730,12 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
             for (i in 0..classCount) {
                 val code = buildString {
-                    appendln("package foo")
-                    appendln("class Foo$i {")
+                    appendLine("package foo")
+                    appendLine("class Foo$i {")
                     for (j in 0..methodCount) {
-                        appendln("  fun get${j*j}(): Int = square($j)")
+                        appendLine("  fun get${j*j}(): Int = square($j)")
                     }
-                    appendln("}")
+                    appendLine("}")
 
                 }
                 File(srcDir, "Foo$i.kt").writeText(code)

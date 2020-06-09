@@ -251,7 +251,7 @@ object UltraLightChecker {
         val initializingClass = initializingClass ?: return name
 
         return buildString {
-            appendln("$name {")
+            appendLine("$name {")
             append(initializingClass.renderMembers())
             append("}")
         }
@@ -272,7 +272,7 @@ object UltraLightChecker {
             append(typeParameters.renderTypeParams())
             append(extendsList.renderRefList("extends"))
             append(implementsList.renderRefList("implements"))
-            appendln(" {")
+            appendLine(" {")
 
             if (isEnum) {
                 append(

@@ -80,7 +80,7 @@ class RTableContext {
                 out.append(HLINE.repeat(size))
             }
             out.append(postfix)
-            out.appendln()
+            out.appendLine()
         }
 
         appendHLine(CORNER_LU, TOP_T, CORNER_RU)
@@ -93,7 +93,7 @@ class RTableContext {
                         out.append(VLINE)
                         out.append(" ")
                     }
-                    out.appendln()
+                    out.appendLine()
                 }
                 is Row.Separator -> {
                     appendHLine(LEFT_T, CROSS, RIGHT_T)

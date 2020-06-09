@@ -213,12 +213,12 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
     fun doTest(path: String) {
         val sb = StringBuilder()
         fun StringBuilder.indentln(string: String) {
-            appendln("  $string")
+            appendLine("  $string")
         }
         fun CompilerOutput.logOutput(stepName: String) {
-            sb.appendln("==== $stepName ====")
+            sb.appendLine("==== $stepName ====")
 
-            sb.appendln("Compiling files:")
+            sb.appendLine("Compiling files:")
             for (compiledFile in compiledFiles.sortedBy { it.canonicalPath }) {
                 val lookupsFromFile = lookups[compiledFile]
                 val lookupStatus = when {
@@ -230,10 +230,10 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
                 sb.indentln("$relativePath$lookupStatus")
             }
 
-            sb.appendln("Exit code: $exitCode")
+            sb.appendLine("Exit code: $exitCode")
             errors.forEach(sb::indentln)
 
-            sb.appendln()
+            sb.appendLine()
         }
 
         val testDir = File(path)
