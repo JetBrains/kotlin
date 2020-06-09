@@ -121,6 +121,6 @@ internal class KotlinProjectNpmResolver(
  *
  * TODO properly express within the type system? The result should be a TaskCollection<T & R>
  */
-private fun <T : Task, R : Any> TaskCollection<T>.implementing(kclass: KClass<R>): TaskCollection<T> =
+internal fun <T : Task, R : Any> TaskCollection<T>.implementing(kclass: KClass<R>): TaskCollection<T> =
     @Suppress("UNCHECKED_CAST")
     withType(kclass.java as Class<T>)

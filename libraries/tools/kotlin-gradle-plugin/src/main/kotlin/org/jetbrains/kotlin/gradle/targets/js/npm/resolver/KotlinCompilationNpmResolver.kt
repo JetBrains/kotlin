@@ -108,7 +108,11 @@ internal class KotlinCompilationNpmResolver(
     fun getResolutionOrResolveIfForced(): KotlinCompilationNpmResolution? {
         if (resolution != null) return resolution
         if (packageJsonTaskHolder.get().state.upToDate) return resolve(skipWriting = true)
-        if (resolver.forceFullResolve && resolution == null) return resolve()
+        if (resolver.forceFullResolve && resolution == null) {
+            // need to force all NPM tasks to be configured in IDEA import
+            project.tasks.implementing(RequiresNpmDependencies::class).all {}
+            return resolve()
+        }
         return null
     }
 
@@ -284,7 +288,7 @@ internal class KotlinCompilationNpmResolver(
                 internalDependencies.map { it.npmProject.name },
                 internalCompositeDependencies.flatMap { it.getPackages() },
                 externalGradleDependencies.map { it.artifact.file },
-                externalNpmDependencies.map { "${it.scope} ${it.key}:${it.version}" }
+                externalNpmDependencies.map { it.uniqueRepresentation() }
             )
 
         fun createPackageJson(skipWriting: Boolean): KotlinCompilationNpmResolution {
