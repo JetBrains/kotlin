@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 
-abstract class FrontendAnalysisSession : Invalidatable {
+abstract class FrontendAnalysisSession(project: Project) : Invalidatable {
+    protected val validityToken = ReadActionConfinementValidityToken(project)
+    override fun isValid(): Boolean = validityToken.isValid()
+    override fun invalidationReason(): String = validityToken.invalidationReason()
+
+
     abstract fun getSmartCastedToTypes(expression: KtExpression): Collection<TypeInfo>?
 
     abstract fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast>
