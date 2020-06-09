@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
@@ -16,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
-import kotlin.reflect.KClass
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
@@ -96,12 +93,3 @@ internal class KotlinProjectNpmResolver(
         )
     }
 }
-
-/**
- * Filters a [TaskCollection] by type that is not a subtype of [Task] (for use with interfaces)
- *
- * TODO properly express within the type system? The result should be a TaskCollection<T & R>
- */
-private fun <T : Task, R : Any> TaskCollection<T>.implementing(kclass: KClass<R>): TaskCollection<T> =
-    @Suppress("UNCHECKED_CAST")
-    withType(kclass.java as Class<T>)
