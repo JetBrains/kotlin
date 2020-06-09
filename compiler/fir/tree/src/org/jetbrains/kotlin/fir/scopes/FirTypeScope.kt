@@ -8,15 +8,32 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 abstract class FirTypeScope : FirScope() {
-    // Initially, this method is intended to belong only to this class, but not to FirScope
-    // But the main-use case (FirSyntheticPropertiesScope) uses it on arbitrary type (intersection and others) that currently use
-    // scope implementations for type-unrelated scopes as well
-    // One of the idea how to fix it is considered extracting it to the interface
-    //
-    // The idea behind this class and abstract override is to explicitly state that those implementations should implement this method properly
-    // and use other FirOverrideAwareScope when delegating to them (as in FirClassSubstitutionScope)
-    abstract override fun processOverriddenFunctions(
+    // Currently, this function has very weak guarantees
+    // - It may silently do nothing on symbols originated from different scope instance
+    // - It may return the same overridden symbols more then once in case of substitution
+    // - It doesn't guarantee any specific order in which overridden tree will be traversed
+    // But if the scope instance is the same as the one from which the symbol was originated, this function will enumarate all members
+    // of the overridden tree
+    abstract fun processOverriddenFunctions(
         functionSymbol: FirFunctionSymbol<*>,
         processor: (FirFunctionSymbol<*>) -> ProcessorAction
     ): ProcessorAction
+
+    // This is just a helper for a common implementation
+    protected fun doProcessOverriddenFunctions(
+        functionSymbol: FirFunctionSymbol<*>,
+        processor: (FirFunctionSymbol<*>) -> ProcessorAction,
+        directOverriddenMap: Map<FirFunctionSymbol<*>, Collection<FirFunctionSymbol<*>>>,
+        baseScope: FirTypeScope
+    ): ProcessorAction {
+        val directOverridden =
+            directOverriddenMap[functionSymbol] ?: return baseScope.processOverriddenFunctions(functionSymbol, processor)
+
+        for (overridden in directOverridden) {
+            if (!processor(overridden)) return ProcessorAction.STOP
+            if (!baseScope.processOverriddenFunctions(overridden, processor)) return ProcessorAction.STOP
+        }
+
+        return ProcessorAction.NEXT
+    }
 }
