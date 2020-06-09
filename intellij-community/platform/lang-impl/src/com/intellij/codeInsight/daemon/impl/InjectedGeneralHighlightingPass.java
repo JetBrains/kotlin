@@ -85,7 +85,6 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
     // all infos for the "injected fragment for the host which is inside" are indeed inside
     // but some of the infos for the "injected fragment for the host which is outside" can be still inside
     Set<PsiFile> injected = getInjectedPsiFiles(allInsideElements, allOutsideElements, progress);
-    setProgressLimit(injected.size());
 
     Set<HighlightInfo> injectedResult = new THashSet<>();
     if (!addInjectedPsiHighlights(injected, progress, Collections.synchronizedSet(injectedResult))) {
@@ -166,6 +165,7 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
         hosts.add(context);
       }
     }
+
     InjectedLanguageManagerImpl injectedLanguageManager = InjectedLanguageManagerImpl.getInstanceImpl(myProject);
     Processor<PsiElement> collectInjectableProcessor = Processors.cancelableCollectProcessor(hosts);
     injectedLanguageManager.processInjectableElements(elements1, collectInjectableProcessor);
@@ -178,11 +178,17 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
         outInjected.add(injectedPsi);
       }
     };
+
+    // the most expensive process is running injectors for these hosts, comparing to highlighting the resulting injected fragments,
+    // so instead of showing "highlighted 1% of injected fragments", show "ran injectors for 1% of hosts"
+    setProgressLimit(hosts.size());
+
     if (!JobLauncher.getInstance().invokeConcurrentlyUnderProgress(new ArrayList<>(hosts), progress,
                                                                    element -> {
                                                                      ApplicationManager.getApplication().assertReadAccessAllowed();
                                                                      InjectedLanguageManager.getInstance(myFile.getProject()).enumerateEx(
                                                                        element, myFile, false, visitor);
+                                                                     advanceProgress(1);
                                                                      return true;
                                                                    })) {
       throw new ProcessCanceledException();
@@ -275,7 +281,6 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
         addPatchedInfos(info, injectedPsi, documentWindow, injectedLanguageManager, null, outInfos);
       }
     }
-    advanceProgress(1);
     return true;
   }
 
