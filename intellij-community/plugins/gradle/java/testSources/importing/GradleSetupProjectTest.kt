@@ -1,7 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.externalSystem.action.AttachExternalProjectAction
 import com.intellij.openapi.externalSystem.importing.ExternalSystemSetupProjectTest
@@ -61,7 +61,7 @@ class GradleSetupProjectTest : ExternalSystemSetupProjectTest, GradleImportingTe
   }
 
   override fun waitForImportCompletion(project: Project) {
-    invokeAndWaitIfNeeded { PlatformTestUtil.dispatchAllEventsInIdeEventQueue() }
+    ApplicationManager.getApplication().invokeAndWait { PlatformTestUtil.dispatchAllEventsInIdeEventQueue() }
   }
 
   override fun cleanupProjectTestResources(project: Project) {
@@ -78,7 +78,7 @@ class GradleSetupProjectTest : ExternalSystemSetupProjectTest, GradleImportingTe
     fun tests(): Collection<Array<out String>> = arrayListOf(arrayOf(BASE_GRADLE_VERSION))
 
     fun removeGradleJvmSdk(project: Project) {
-      invokeAndWaitIfNeeded {
+      ApplicationManager.getApplication().invokeAndWait {
         runWriteAction {
           val projectJdkTable = ProjectJdkTable.getInstance()
           val settings = GradleSettings.getInstance(project)

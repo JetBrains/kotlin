@@ -3,7 +3,6 @@ package org.jetbrains.plugins.gradle.importing
 
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkProvider
@@ -100,9 +99,9 @@ abstract class GradleProjectResolverTestCase : GradleImportingTestCase() {
   }
 
   private fun setProjectSdk(sdk: Sdk?) {
-    invokeAndWaitIfNeeded {
+    val projectRootManager = ProjectRootManager.getInstance(myProject)
+    ApplicationManager.getApplication().invokeAndWait {
       runWriteAction {
-        val projectRootManager = ProjectRootManager.getInstance(myProject)
         projectRootManager.projectSdk = sdk
       }
     }

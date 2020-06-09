@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
 import com.intellij.ide.impl.NewProjectUtil
@@ -6,6 +6,7 @@ import com.intellij.ide.projectWizard.NewProjectWizard
 import com.intellij.ide.projectWizard.ProjectTypeStep
 import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.externalSystem.model.project.ProjectData
@@ -48,7 +49,7 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
   }
 
   fun deleteProject(projectInfo: ProjectInfo) {
-    invokeAndWaitIfNeeded {
+    ApplicationManager.getApplication().invokeAndWait {
       runWriteAction {
         for (module in projectInfo.modules) {
           val root = module.root
@@ -130,7 +131,7 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
 
   private fun createModule(directory: String, project: Project, configure: (ModuleWizardStep) -> Unit) {
     waitForProjectReload {
-      invokeAndWaitIfNeeded {
+      ApplicationManager.getApplication().invokeAndWait {
         val wizard = createWizard(project, directory)
         wizard.runWizard(configure)
         wizard.disposeIfNeeded()
@@ -285,7 +286,7 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
       ExternalSystemProgressNotificationManager.getInstance()
         .addNotificationListener(executionListener, executionListenerDisposable)
       val result = action()
-      invokeAndWaitIfNeeded { PlatformTestUtil.waitForPromise(projectReloadPromise, TimeUnit.MINUTES.toMillis(1)) }
+      ApplicationManager.getApplication().invokeAndWait { PlatformTestUtil.waitForPromise(projectReloadPromise, TimeUnit.MINUTES.toMillis(1)) }
       return result
     }
 
