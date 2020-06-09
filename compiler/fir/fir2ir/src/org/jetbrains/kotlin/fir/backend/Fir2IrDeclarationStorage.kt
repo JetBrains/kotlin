@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -22,10 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
-import org.jetbrains.kotlin.fir.symbols.Fir2IrConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -53,6 +52,9 @@ class Fir2IrDeclarationStorage(
     conversionScope: Fir2IrConversionScope,
     fakeOverrideMode: FakeOverrideMode
 ) : Fir2IrComponents by components {
+
+    internal var annotationGenerator: AnnotationGenerator? = null
+
     private val fakeOverrideGenerator = FakeOverrideGenerator(
         session, components.scopeSession, classifierStorage, this, conversionScope, fakeOverrideMode
     )
@@ -262,6 +264,7 @@ class Fir2IrDeclarationStorage(
                 irDeclaration.parent = irClass
             }
         }
+        irClass.convertAnnotationsFromLibrary(regularClass)
     }
 
     internal fun findIrParent(packageFqName: FqName, parentClassId: ClassId?, firBasedSymbol: FirBasedSymbol<*>): IrDeclarationParent? {
@@ -477,6 +480,7 @@ class Fir2IrDeclarationStorage(
                     isOperator = simpleFunction?.isOperator == true
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
+                    convertAnnotationsFromLibrary(function)
                     enterScope(this)
                     bindAndDeclareParameters(
                         function, irParent,
@@ -600,8 +604,11 @@ class Fir2IrDeclarationStorage(
                 isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
                 isOperator = false
             ).apply {
+                correspondingPropertySymbol = correspondingProperty.symbol
                 if (propertyAccessor != null) {
                     metadata = FirMetadataSource.Function(propertyAccessor)
+                    // Note that deserialized annotations are stored in the accessor, not the property.
+                    convertAnnotationsFromLibrary(propertyAccessor)
                 }
                 with(classifierStorage) {
                     setTypeParameters(
@@ -625,7 +632,6 @@ class Fir2IrDeclarationStorage(
                 if (irParent != null) {
                     parent = irParent
                 }
-                correspondingPropertySymbol = correspondingProperty.symbol
                 if (!isFakeOverride && thisReceiverOwner != null) {
                     populateOverriddenSymbols(thisReceiverOwner)
                 }
@@ -661,6 +667,7 @@ class Fir2IrDeclarationStorage(
                 }
             }.apply {
                 metadata = FirMetadataSource.Property(property)
+                convertAnnotationsFromLibrary(property)
             }
         }
     }
@@ -709,6 +716,7 @@ class Fir2IrDeclarationStorage(
                     isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
                 ).apply {
                     metadata = FirMetadataSource.Variable(property)
+                    convertAnnotationsFromLibrary(property)
                     enterScope(this)
                     if (irParent != null) {
                         parent = irParent
@@ -1021,6 +1029,12 @@ class Fir2IrDeclarationStorage(
             .filterIsInstance<IrFieldSymbol>().singleOrNull()?.let {
                 overriddenSymbols = listOf(it)
             }
+    }
+
+    private fun IrMutableAnnotationContainer.convertAnnotationsFromLibrary(firAnnotationContainer: FirAnnotationContainer) {
+        if ((firAnnotationContainer as? FirDeclaration)?.isFromLibrary == true) {
+            annotationGenerator?.generate(this, firAnnotationContainer)
+        }
     }
 
     companion object {

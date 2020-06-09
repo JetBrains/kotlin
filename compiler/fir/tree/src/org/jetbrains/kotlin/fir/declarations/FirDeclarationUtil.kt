@@ -33,6 +33,8 @@ fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = fal
     }
 }
 
+inline val FirDeclaration.isFromLibrary: Boolean
+    get() = origin == FirDeclarationOrigin.Library
 inline val FirRegularClass.isInner get() = status.isInner
 inline val FirRegularClass.isCompanion get() = status.isCompanion
 inline val FirRegularClass.isData get() = status.isData
