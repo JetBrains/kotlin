@@ -20,6 +20,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleLog
 import org.jetbrains.plugins.gradle.util.suggestGradleVersion
 import java.io.File
+import java.nio.file.Paths
 
 fun refreshGradleProject(projectPath: String, project: Project) {
     _importProject(File(projectPath).absolutePath, project)
@@ -40,7 +41,7 @@ private fun _importProject(projectPath: String, project: Project) {
     GradleSettings.getInstance(project).gradleVmOptions =
         "-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${System.getProperty("user.dir")}"
 
-    gradleProjectSettings.setupGradleProjectSettings(projectPath)
+    gradleProjectSettings.setupGradleProjectSettings(Paths.get(projectPath))
     gradleProjectSettings.gradleJvm = GRADLE_JDK_NAME
 
     GradleSettings.getInstance(project).getLinkedProjectSettings(projectPath)?.let { linkedProjectSettings ->
