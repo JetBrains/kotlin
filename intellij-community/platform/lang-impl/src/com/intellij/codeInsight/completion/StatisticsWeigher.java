@@ -13,7 +13,8 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.containers.MultiMap;
-import gnu.trove.THashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,7 @@ import java.util.*;
 /**
  * @author peter
 */
-public class StatisticsWeigher extends CompletionWeigher {
+public final class StatisticsWeigher extends CompletionWeigher {
   private static final Logger LOG = Logger.getInstance(LookupStatisticsWeigher.class);
   private static final Key<StatisticsInfo> BASE_STATISTICS_INFO = Key.create("Base statistics info");
 
@@ -34,8 +35,8 @@ public class StatisticsWeigher extends CompletionWeigher {
   public static class LookupStatisticsWeigher extends Classifier<LookupElement> {
     private final CompletionLocation myLocation;
     private final Map<LookupElement, StatisticsComparable> myWeights = new IdentityHashMap<>();
-    private final Set<String> myStringsWithWeights = new THashSet<>();
-    private final Set<LookupElement> myNoStats = ContainerUtil.newIdentityTroveSet();
+    private final Set<String> myStringsWithWeights = new ObjectOpenHashSet<>();
+    private final Set<LookupElement> myNoStats = new ReferenceOpenHashSet<>();
 
     public LookupStatisticsWeigher(CompletionLocation location, Classifier<LookupElement> next) {
       super(next, "stats");
@@ -67,7 +68,7 @@ public class StatisticsWeigher extends CompletionWeigher {
     }
 
     private static Iterable<LookupElement> withoutInitial(Iterable<? extends LookupElement> allItems, List<? extends LookupElement> initial) {
-      Set<LookupElement> initialSet = ContainerUtil.newIdentityTroveSet(initial);
+      Set<LookupElement> initialSet = new ReferenceOpenHashSet<>(initial);
       return JBIterable.<LookupElement>from(allItems).filter(element -> !initialSet.contains(element));
     }
 

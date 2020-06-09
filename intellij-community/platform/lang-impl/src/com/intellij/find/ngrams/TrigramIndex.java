@@ -1,22 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/*
- * @author max
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.ngrams;
 
 import com.intellij.openapi.fileTypes.FileType;
@@ -28,18 +10,16 @@ import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.EnumeratorIntegerDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import gnu.trove.THashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
-public class TrigramIndex extends ScalarIndexExtension<Integer> implements CustomInputsIndexFileBasedIndexExtension<Integer>,
+public final class TrigramIndex extends ScalarIndexExtension<Integer> implements CustomInputsIndexFileBasedIndexExtension<Integer>,
                                                                            DocumentChangeDependentIndex {
   /**
    * @deprecated not used anymore, always enabled
@@ -70,7 +50,6 @@ public class TrigramIndex extends ScalarIndexExtension<Integer> implements Custo
       public Map<Integer, Void> map(@NotNull FileContent inputData) {
         MyTrigramProcessor trigramProcessor = new MyTrigramProcessor();
         TrigramBuilder.processTrigrams(inputData.getContentAsText(), trigramProcessor);
-
         return trigramProcessor.map;
       }
     };
@@ -137,9 +116,9 @@ public class TrigramIndex extends ScalarIndexExtension<Integer> implements Custo
       @Override
       public Collection<Integer> read(@NotNull DataInput in) throws IOException {
         int size = DataInputOutputUtil.readINT(in);
-        ArrayList<Integer> result = new ArrayList<>(size);
+        List<Integer> result = new ArrayList<>(size);
         int prev = 0;
-        while(size -- > 0) {
+        while (size-- > 0) {
           int l = (int)(DataInputOutputUtil.readLONG(in) + prev);
           result.add(l);
           prev = l;
@@ -149,16 +128,17 @@ public class TrigramIndex extends ScalarIndexExtension<Integer> implements Custo
     };
   }
 
-  private static class MyTrigramProcessor extends TrigramBuilder.TrigramProcessor {
-    Map<Integer, Void> map;
+  private static final class MyTrigramProcessor extends TrigramBuilder.TrigramProcessor {
+    Int2ObjectMap<Void> map;
+
     @Override
     public boolean consumeTrigramsCount(int count) {
-      map = new THashMap<>(count);
+      map = new Int2ObjectOpenHashMap<>(count);
       return true;
     }
 
     @Override
-    public boolean execute(int value) {
+    public boolean test(int value) {
       map.put(value, null);
       return true;
     }

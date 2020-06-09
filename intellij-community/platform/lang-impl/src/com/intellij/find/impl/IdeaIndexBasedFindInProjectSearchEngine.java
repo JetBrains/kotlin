@@ -18,19 +18,19 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.DumbModeAccessType;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileBasedIndexImpl;
-import gnu.trove.THashSet;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class IdeaIndexBasedFindInProjectSearchEngine implements FindInProjectSearchEngine {
+public final class IdeaIndexBasedFindInProjectSearchEngine implements FindInProjectSearchEngine {
   @Override
-  public @Nullable FindInProjectSearcher createSearcher(@NotNull FindModel findModel, @NotNull Project project) {
+  public @NotNull FindInProjectSearcher createSearcher(@NotNull FindModel findModel, @NotNull Project project) {
     return new MyFindInProjectSearcher(project, findModel);
   }
 
-  private static class MyFindInProjectSearcher implements FindInProjectSearcher {
+  private static final class MyFindInProjectSearcher implements FindInProjectSearcher {
     private @NotNull final ProjectFileIndex myFileIndex;
     private @NotNull final FileBasedIndexImpl myFileBasedIndex;
     private @NotNull final Project myProject;
@@ -67,17 +67,17 @@ public class IdeaIndexBasedFindInProjectSearchEngine implements FindInProjectSea
       final GlobalSearchScope scope = GlobalSearchScopeUtil.toGlobalSearchScope(FindInProjectUtil.getScopeFromModel(myProject, myFindModel),
                                                                                 myProject);
 
-      final Set<Integer> keys = new THashSet<>();
+      IntSet keys = new IntOpenHashSet();
       TrigramBuilder.processTrigrams(stringToFind, new TrigramBuilder.TrigramProcessor() {
         @Override
-        public boolean execute(int value) {
+        public boolean test(int value) {
           keys.add(value);
           return true;
         }
       });
 
       if (!keys.isEmpty()) {
-        final List<VirtualFile> hits = new ArrayList<>();
+        List<VirtualFile> hits = new ArrayList<>();
         FileBasedIndex.getInstance().ignoreDumbMode(() -> {
           FileBasedIndex.getInstance().getFilesWithKey(TrigramIndex.INDEX_ID, keys, Processors.cancelableCollectProcessor(hits), scope);
         }, DumbModeAccessType.RAW_INDEX_DATA_ACCEPTABLE);
@@ -85,8 +85,7 @@ public class IdeaIndexBasedFindInProjectSearchEngine implements FindInProjectSea
         return Collections.unmodifiableCollection(hits);
       }
 
-      final Set<VirtualFile> resultFiles = new THashSet<>();
-
+      Set<VirtualFile> resultFiles = new HashSet<>();
       PsiSearchHelper helper = PsiSearchHelper.getInstance(myProject);
       helper.processCandidateFilesForText(scope, UsageSearchContext.ANY, myFindModel.isCaseSensitive(), stringToFind, file -> {
         ContainerUtil.addIfNotNull(resultFiles, file);
@@ -129,7 +128,7 @@ public class IdeaIndexBasedFindInProjectSearchEngine implements FindInProjectSea
     private static boolean hasTrigrams(@NotNull String text) {
       return !TrigramBuilder.processTrigrams(text, new TrigramBuilder.TrigramProcessor() {
         @Override
-        public boolean execute(int value) {
+        public boolean test(int value) {
           return false;
         }
       });
