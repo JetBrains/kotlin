@@ -11,9 +11,12 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
@@ -49,6 +52,8 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
     }
 
     val experimental = Experimental()
+
+    val taskRequirements = TasksRequirements()
 
     val nodeJsSetupTask: NodeJsSetupTask
         get() = rootProject.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
@@ -119,5 +124,23 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
 
     companion object {
         const val EXTENSION_NAME: String = "kotlinNodeJs"
+    }
+}
+
+class TasksRequirements {
+    val byTask = mutableMapOf<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>()
+    val byCompilation = mutableMapOf<KotlinJsCompilation, MutableList<RequiresNpmDependencies>>()
+
+    fun getTaskRequirements(compilation: KotlinJsCompilation): Collection<RequiresNpmDependencies> =
+        byCompilation[compilation] ?: listOf()
+
+    fun addTaskRequirements(task: RequiresNpmDependencies) {
+        val requirements = task.requiredNpmDependencies.toList()
+
+        byTask[task] = requirements
+
+        byCompilation
+            .getOrPut(task.compilation) { mutableListOf() }
+            .add(task)
     }
 }
