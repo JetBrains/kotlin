@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -36,6 +33,14 @@ open class KotlinPackageJsonTask : DefaultTask() {
         } + producer.internalCompositeDependencies.map { dependency ->
             dependency.includedBuild.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME")
         }
+
+    @get:Input
+    internal val toolsNpmDependencies: List<String>
+        get() = nodeJs.taskRequirements
+            .getTaskRequirements(compilation)
+            .flatMap { it.requiredNpmDependencies }
+            .map { it.createDependency(project) }
+            .map { it.toString() }
 
     @get:Nested
     internal val producerInputs: KotlinCompilationNpmResolver.PackageJsonProducerInputs
