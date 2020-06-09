@@ -88,11 +88,6 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/FunctionBlock.kt");
     }
 
-    @TestMetadata("FunctionWithInference.kt")
-    public void testFunctionWithInference() throws Exception {
-        runTest("idea/testData/indentationOnNewline/FunctionWithInference.kt");
-    }
-
     @TestMetadata("InDelegationListAfterColon.kt")
     public void testInDelegationListAfterColon() throws Exception {
         runTest("idea/testData/indentationOnNewline/InDelegationListAfterColon.kt");
@@ -178,24 +173,9 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/ModifierListInUnfinishedDeclaration.kt");
     }
 
-    @TestMetadata("MultideclarationAfterEq.kt")
-    public void testMultideclarationAfterEq() throws Exception {
-        runTest("idea/testData/indentationOnNewline/MultideclarationAfterEq.kt");
-    }
-
-    @TestMetadata("MultideclarationBeforeEq.kt")
-    public void testMultideclarationBeforeEq() throws Exception {
-        runTest("idea/testData/indentationOnNewline/MultideclarationBeforeEq.kt");
-    }
-
     @TestMetadata("NotFirstParameter.kt")
     public void testNotFirstParameter() throws Exception {
         runTest("idea/testData/indentationOnNewline/NotFirstParameter.kt");
-    }
-
-    @TestMetadata("PropertyWithInference.kt")
-    public void testPropertyWithInference() throws Exception {
-        runTest("idea/testData/indentationOnNewline/PropertyWithInference.kt");
     }
 
     @TestMetadata("ReturnContinue.kt")
@@ -862,6 +842,109 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         @TestMetadata("IsExpressionAfterIs.kt")
         public void testIsExpressionAfterIs() throws Exception {
             runTest("idea/testData/indentationOnNewline/emptyParenthesisInBinaryExpression/IsExpressionAfterIs.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/indentationOnNewline/expressionBody")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ExpressionBody extends AbstractPerformanceTypingIndentationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("AfterFunctionWithExplicitType.kt")
+        public void testAfterFunctionWithExplicitType() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/AfterFunctionWithExplicitType.kt");
+        }
+
+        @TestMetadata("AfterFunctionWithInference.kt")
+        public void testAfterFunctionWithInference() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/AfterFunctionWithInference.kt");
+        }
+
+        @TestMetadata("AfterFunctionWithTypeParameter.kt")
+        public void testAfterFunctionWithTypeParameter() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/AfterFunctionWithTypeParameter.kt");
+        }
+
+        @TestMetadata("AfterMultideclaration.kt")
+        public void testAfterMultideclaration() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/AfterMultideclaration.kt");
+        }
+
+        @TestMetadata("AfterMutableProperty.kt")
+        public void testAfterMutableProperty() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/AfterMutableProperty.kt");
+        }
+
+        @TestMetadata("AfterPropertyWithExplicitType.kt")
+        public void testAfterPropertyWithExplicitType() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/AfterPropertyWithExplicitType.kt");
+        }
+
+        @TestMetadata("AfterPropertyWithInference.kt")
+        public void testAfterPropertyWithInference() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/AfterPropertyWithInference.kt");
+        }
+
+        @TestMetadata("AfterPropertyWithReceiver.kt")
+        public void testAfterPropertyWithReceiver() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/AfterPropertyWithReceiver.kt");
+        }
+
+        @TestMetadata("AfterPropertyWithTypeParameterReceiver.kt")
+        public void testAfterPropertyWithTypeParameterReceiver() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/AfterPropertyWithTypeParameterReceiver.kt");
+        }
+
+        public void testAllFilesPresentInExpressionBody() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/expressionBody"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("FunctionWithExplicitType.kt")
+        public void testFunctionWithExplicitType() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/FunctionWithExplicitType.kt");
+        }
+
+        @TestMetadata("FunctionWithInference.kt")
+        public void testFunctionWithInference() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/FunctionWithInference.kt");
+        }
+
+        @TestMetadata("FunctionWithTypeParameter.kt")
+        public void testFunctionWithTypeParameter() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/FunctionWithTypeParameter.kt");
+        }
+
+        @TestMetadata("Multideclaration.kt")
+        public void testMultideclaration() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/Multideclaration.kt");
+        }
+
+        @TestMetadata("MutableProperty.kt")
+        public void testMutableProperty() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/MutableProperty.kt");
+        }
+
+        @TestMetadata("PropertyWithExplicitType.kt")
+        public void testPropertyWithExplicitType() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/PropertyWithExplicitType.kt");
+        }
+
+        @TestMetadata("PropertyWithInference.kt")
+        public void testPropertyWithInference() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/PropertyWithInference.kt");
+        }
+
+        @TestMetadata("PropertyWithReceiver.kt")
+        public void testPropertyWithReceiver() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/PropertyWithReceiver.kt");
+        }
+
+        @TestMetadata("PropertyWithTypeParameterReceiver.kt")
+        public void testPropertyWithTypeParameterReceiver() throws Exception {
+            runTest("idea/testData/indentationOnNewline/expressionBody/PropertyWithTypeParameterReceiver.kt");
         }
     }
 

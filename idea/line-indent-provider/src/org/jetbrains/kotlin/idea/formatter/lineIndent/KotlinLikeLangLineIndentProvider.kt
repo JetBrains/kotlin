@@ -98,10 +98,26 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
                 return factory.createIndentCalculator(indent, after.startOffset)
             }
 
+            before.isAt(Eq) -> {
+                val declaration = findFunctionOrPropertyDeclarationBefore(before.copyAnd { it.moveBeforeIgnoringWhiteSpaceOrComment() })
+                if (declaration != null) {
+                    val indent = if (settings.continuationIndentForExpressionBodies)
+                        Indent.getContinuationIndent()
+                    else
+                        Indent.getNormalIndent()
+
+                    return factory.createIndentCalculator(indent, declaration.startOffset)
+                }
+            }
+
             before.isAt(LeftParenthesis) && after.isAt(RightParenthesis) -> {
                 val indentCalculator = factory.createIndentCalculatorForParenthesis(before, currentPosition, after, offset, settings)
                 if (indentCalculator != null) return indentCalculator
             }
+        }
+
+        findFunctionOrPropertyDeclarationBefore(before)?.let {
+            return factory.createIndentCalculator(Indent.getNoneIndent(), it.startOffset)
         }
 
         return before.controlFlowStatementBefore()?.let { controlFlowKeywordPosition ->
@@ -132,9 +148,8 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
                 if (settings.alignWhenMultilineFunctionParentheses) createAlignMultilineIndent(leftParenthesis) else Indent.getNoneIndent()
             }
 
-            val functionKeyword = findFunctionDeclarationBefore(leftParenthesis)
-            if (functionKeyword != null) {
-                return createIndentCalculator(indentForParentheses, functionKeyword.startOffset)
+            findFunctionKeywordBeforeIdentifier(leftParenthesis.copyAnd { it.moveBeforeIgnoringWhiteSpaceOrComment() })?.let {
+                return createIndentCalculator(indentForParentheses, it.startOffset)
             }
 
             // NB: this covered [KtTokens.CONSTRUCTOR_KEYWORD], [KtTokens.SET_KEYWORD], [KtTokens.GET_KEYWORD], [KtTokens.INIT_KEYWORD] as well
@@ -164,34 +179,73 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
     }
 
     /**
+     * @param declarationPosition is position before '=' for expression body or '{'
+     */
+    private fun findFunctionOrPropertyDeclarationBefore(declarationPosition: SemanticEditorPosition): SemanticEditorPosition? {
+        // `val a = 5`
+        // this is false positive for declaration with explicit return type
+        if (declarationPosition.isAt(Identifier)) {
+            findPropertyKeywordBeforeIdentifier(declarationPosition)?.let { return it }
+        }
+
+        return with(declarationPosition.copy()) {
+            // explicit type `fun a(): String` or `val a: String`
+            if (moveBeforeTypeQualifierIfPossible(true)) {
+                if (!isAt(Colon)) return null
+                moveBeforeIgnoringWhiteSpaceOrComment()
+            }
+
+            if (isAt(RightParenthesis)) {
+                if (!moveBeforeParenthesesIfPossible()) return null
+
+                // destructuring declaration `val (a, b)`
+                if (isVarOrVal())
+                    this
+                else
+                    findFunctionKeywordBeforeIdentifier(this)
+            } else {
+                findPropertyKeywordBeforeIdentifier(this)
+            }
+        }
+    }
+
+    private fun findPropertyKeywordBeforeIdentifier(identifierPosition: SemanticEditorPosition): SemanticEditorPosition? {
+        if (!identifierPosition.isAt(Identifier)) return null
+        return with(identifierPosition.copy()) {
+            if (!moveBeforeTypeQualifierIfPossible(false)) return null
+            // `val <T> List<T>.prop`
+            moveBeforeTypeParametersIfPossible()
+            takeIf { it.isVarOrVal() }
+        }
+    }
+
+    /**
      * @return position of `fun` keyword before the declaration or null
      * TODO: support [KtTokens.CONSTRUCTOR_KEYWORD], [KtTokens.INIT_KEYWORD]. Maybe [KtTokens.SET_KEYWORD], [KtTokens.GET_KEYWORD] (related to KT-39444)
      */
-    private fun findFunctionDeclarationBefore(leftParenthesis: SemanticEditorPosition): SemanticEditorPosition? =
-        with(leftParenthesis.copy()) {
-            assert(leftParenthesis.isAt(LeftParenthesis))
+    private fun findFunctionKeywordBeforeIdentifier(identifierPosition: SemanticEditorPosition): SemanticEditorPosition? {
+        // anonymous function `val a = fun() { }`
+        if (identifierPosition.isAt(FunctionKeyword)) return identifierPosition
 
-            moveBeforeIgnoringWhiteSpaceOrComment()
-
-            // anonymous function `val a = fun() { }`
-            if (isAt(FunctionKeyword)) return this
+        return with(identifierPosition.copy()) {
             moveBeforeWhileThisIsWhiteSpaceOrComment()
 
             // anonymous function with receiver `val a = fun String.Companion????.() { }`
             if (isAt(Dot)) {
                 moveBeforeIgnoringWhiteSpaceOrComment()
-                if (!moveBeforeTypeQualifierIfPossible()) return null
+                if (!moveBeforeTypeQualifierIfPossible(true)) return null
                 return if (isAt(FunctionKeyword)) this else null
             }
 
             // name of declaration
             if (!isAt(Identifier)) return null
-            if (!moveBeforeTypeQualifierIfPossible()) return null
+            if (!moveBeforeTypeQualifierIfPossible(false)) return null
 
             moveBeforeTypeParametersIfPossible()
 
             takeIf { it.isAt(FunctionKeyword) }
         }
+    }
 
     private fun isSimilarToFunctionInvocation(leftParenthesis: SemanticEditorPosition): Boolean = with(leftParenthesis.copy()) {
         assert(isAt(LeftParenthesis))
@@ -210,9 +264,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         moveBeforeIgnoringWhiteSpaceOrComment()
 
         // val (a, b) = 1 to 2
-        if (isAt(KtTokens.VAR_KEYWORD) || isAt(KtTokens.VAL_KEYWORD)) {
-            return true
-        }
+        if (isVarOrVal()) return true
 
         // in lambda like `val a = { i: Int -> println(i) }`
         if (!rightParenthesis.moveBeforeParametersIfPossible()) return false
@@ -242,7 +294,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         //           ^
         if (isAt(RightParenthesis)) return moveBeforeParenthesesIfPossible()
 
-        if (!moveBeforeTypeQualifierIfPossible()) return false
+        if (!moveBeforeTypeQualifierIfPossible(true)) return false
 
         // optional colon
         // { a: Int ->
@@ -273,7 +325,9 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
      *
      * @receiver position of identifier
      */
-    private fun SemanticEditorPosition.moveBeforeTypeQualifierIfPossible(): Boolean {
+    private fun SemanticEditorPosition.moveBeforeTypeQualifierIfPossible(canStartWithTypeParameter: Boolean): Boolean {
+        if (!canStartWithTypeParameter && !isAt(Identifier)) return false
+
         while (!isAtEnd) {
             moveBeforeOptionalMix(Quest, *WHITE_SPACE_OR_COMMENT_BIT_SET)
             moveBeforeTypeParametersIfPossible()
@@ -363,6 +417,8 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         }
     }
 
+    private fun SemanticEditorPosition.isVarOrVal(): Boolean = isAtAnyOf(Var, Val)
+
     private fun SemanticEditorPosition.moveBeforeBlockIfPossible(): Boolean = moveBeforeParenthesesIfPossible(
         leftParenthesis = BlockOpeningBrace,
         rightParenthesis = BlockClosingBrace,
@@ -410,6 +466,10 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         FunctionKeyword,
         Dot,
         Quest,
+
+        Eq,
+
+        Val, Var,
     }
 
     companion object {
@@ -443,6 +503,11 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             KtTokens.QUEST to Quest,
             KtTokens.COMMA to Comma,
             KtTokens.COLON to Colon,
+
+            KtTokens.EQ to Eq,
+
+            KtTokens.VAL_KEYWORD to Val,
+            KtTokens.VAR_KEYWORD to Var,
         )
 
         private val CONTROL_FLOW_KEYWORDS: HashSet<SemanticEditorPosition.SyntaxElement> = hashSetOf(
