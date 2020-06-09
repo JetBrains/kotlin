@@ -137,31 +137,7 @@ internal class KotlinCompilationNpmResolver(
             }
         }
 
-        createNpmToolsConfiguration()?.let { tools ->
-            all.extendsFrom(tools)
-        }
-
         return all
-    }
-
-    private fun createNpmToolsConfiguration(): Configuration? {
-        val taskRequirements = projectResolver.taskRequirements.getTaskRequirements(compilation)
-        if (taskRequirements.isEmpty()) return null
-
-        val toolsConfiguration = project.configurations.create(compilation.disambiguateName("npmTools"))
-
-        toolsConfiguration.isVisible = false
-        toolsConfiguration.isCanBeConsumed = false
-        toolsConfiguration.isCanBeResolved = true
-        toolsConfiguration.description = "NPM Tools configuration for $compilation."
-
-        taskRequirements.forEach { requirement ->
-            requirement.requiredNpmDependencies.forEach { requiredNpmDependency ->
-                toolsConfiguration.dependencies.add(requiredNpmDependency.createDependency(project))
-            }
-        }
-
-        return toolsConfiguration
     }
 
     data class ExternalGradleDependency(
