@@ -523,10 +523,9 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
     textEditor.putClientProperty("StatusVisibleFunction", function);
     StatusText statusText = textEditor.getEmptyText();
-    statusText.setIsVerticalFlow(false);
     statusText.setShowAboveCenter(false);
     statusText.setText(leftText, SimpleTextAttributes.GRAY_ATTRIBUTES);
-    statusText.appendSecondaryText(rightText, SimpleTextAttributes.GRAY_ATTRIBUTES, null);
+    statusText.appendText(false, 0, rightText, SimpleTextAttributes.GRAY_ATTRIBUTES, null);
     statusText.setFont(UIUtil.getLabelFont(UIUtil.FontSize.SMALL));
   }
 
