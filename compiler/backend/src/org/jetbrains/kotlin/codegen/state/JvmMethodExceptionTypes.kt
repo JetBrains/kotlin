@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-typealias JvmMethodExceptionTypes = Array<out String>?
+typealias JvmMethodExceptionTypes = Array<out String?>?
