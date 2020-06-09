@@ -6,5 +6,5 @@ fun foo(p: Any) {
     if (p !is String) {
         myNothingFun()
     }
-    println(<caret>p.length())
+    println(<caret>p.length)
 }
