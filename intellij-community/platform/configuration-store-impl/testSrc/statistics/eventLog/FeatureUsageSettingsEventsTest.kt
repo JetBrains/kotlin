@@ -472,6 +472,35 @@ class FeatureUsageSettingsEventsTest {
     assertThat(isComponentOptionNameWhitelisted("listOption")).isFalse()
   }
 
+  @Test
+  fun `not report transient field`() {
+    val component = TestComponent()
+    component.loadState(ComponentStateWithTransientField("bar"))
+    val recordDefault = false
+    val printer = TestFeatureUsageSettingsEventsPrinter(recordDefault)
+    printer.logConfigurationState(getStateSpec(component).name, component.state, null)
+
+    val withProject = false
+    val defaultProject = false
+    assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
+    Assert.assertEquals(1, printer.result.size)
+    assertThat(isComponentOptionNameWhitelisted("stringOption")).isFalse()
+  }
+
+  @Test
+  fun `ignore state presentableName`() {
+    val component = TestComponentWithPresentableName()
+    component.loadState(ComponentState())
+    val recordDefault = false
+    val printer = TestFeatureUsageSettingsEventsPrinter(recordDefault)
+    printer.logConfigurationState(getStateSpec(component).name, component.state, null)
+
+    val withProject = false
+    val defaultProject = false
+    assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
+    Assert.assertEquals(1, printer.result.size)
+  }
+
   private fun assertDefaultWithoutDefaultRecording(printer: TestFeatureUsageSettingsEventsPrinter,
                                                    withProject: Boolean,
                                                    defaultProject: Boolean) {
@@ -745,4 +774,28 @@ class FeatureUsageSettingsEventsTest {
     val setOption: Set<String> = set
   }
 
+  @Suppress("unused")
+  private class ComponentStateWithTransientField(stringOpt: String = "foo") : ComponentState() {
+    @Transient
+    val stringOption: String = stringOpt
+  }
+
+  @State(name = "MyTestComponent", presentableName = TestComponentWithPresentableName.PresentableNameGetter::class)
+  private class TestComponentWithPresentableName : PersistentStateComponent<ComponentState> {
+    private var state = ComponentState()
+
+    override fun loadState(s: ComponentState) {
+      state = s
+    }
+
+    override fun getState(): ComponentState? {
+      return state
+    }
+
+    class PresentableNameGetter : State.NameGetter() {
+      override fun get(): String {
+        return "PresentableName"
+      }
+    }
+  }
 }
