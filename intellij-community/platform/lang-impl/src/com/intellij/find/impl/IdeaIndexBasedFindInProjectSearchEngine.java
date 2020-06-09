@@ -96,7 +96,9 @@ public final class IdeaIndexBasedFindInProjectSearchEngine implements FindInProj
       CacheManager cacheManager = CacheManager.getInstance(myProject);
       VirtualFile[] filesWithWord = cacheManager.getVirtualFilesWithWord(stringToFind, UsageSearchContext.ANY, scope,
                                                                          myFindModel.isCaseSensitive());
-      return Collections.unmodifiableCollection(Arrays.asList(filesWithWord));
+
+      Collections.addAll(resultFiles, filesWithWord);
+      return Collections.unmodifiableCollection(resultFiles);
     }
 
     @Override
