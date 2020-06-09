@@ -28,6 +28,9 @@ class KotlinLineIndentProvider : KotlinLikeLangLineIndentProvider() {
 
         override val alignWhenMultilineBinaryExpression: Boolean
             get() = settings.kotlinCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION
+
+        override val continuationIndentInElvis: Boolean
+            get() = settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_ELVIS
     }
 
     companion object {
