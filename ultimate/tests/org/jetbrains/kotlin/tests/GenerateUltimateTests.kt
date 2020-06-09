@@ -28,33 +28,35 @@ import org.jetbrains.kotlin.idea.spring.tests.rename.AbstractSpringRenameTest
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    testGroup("kotlin-ultimate/ultimate/tests", "kotlin-ultimate/ultimate/testData") {
-        testClass<AbstractSpringInspectionTest> {
-            model("inspections/spring", pattern = "^(inspections\\.test)$", singleClass = true)
-        }
+    testGroupSuite(args) {
+        testGroup("kotlin-ultimate/ultimate/tests", "kotlin-ultimate/ultimate/testData") {
+            testClass<AbstractSpringInspectionTest> {
+                model("inspections/spring", pattern = "^(inspections\\.test)$", singleClass = true)
+            }
 
-        testClass<AbstractSpringQuickFixTest> {
-            model("quickFixes/spring", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
-        }
+            testClass<AbstractSpringQuickFixTest> {
+                model("quickFixes/spring", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
+            }
 
-        testClass<AbstractSpringReferenceCompletionHandlerTest>() {
-            model("spring/core/references/completion/handler")
-        }
+            testClass<AbstractSpringReferenceCompletionHandlerTest>() {
+                model("spring/core/references/completion/handler")
+            }
 
-        testClass<AbstractSpringReferenceCompletionTest>() {
-            model("spring/core/references/completion/variants")
-        }
+            testClass<AbstractSpringReferenceCompletionTest>() {
+                model("spring/core/references/completion/variants")
+            }
 
-        testClass<AbstractSpringReferenceNavigationTest>() {
-            model("spring/core/references/navigation")
-        }
+            testClass<AbstractSpringReferenceNavigationTest>() {
+                model("spring/core/references/navigation")
+            }
 
-        testClass<AbstractSpringRenameTest>() {
-            model("spring/core/rename", extension = "test", singleClass = true)
-        }
+            testClass<AbstractSpringRenameTest>() {
+                model("spring/core/rename", extension = "test", singleClass = true)
+            }
 
-        testClass<AbstractSpringFindUsagesTest>() {
-            model("spring/core/findUsages", pattern = """^(.+)\.kt$""")
+            testClass<AbstractSpringFindUsagesTest>() {
+                model("spring/core/findUsages", pattern = """^(.+)\.kt$""")
+            }
         }
     }
 }
