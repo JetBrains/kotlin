@@ -900,6 +900,44 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/WhileWithoutCondition.after.kt");
         }
 
+        @TestMetadata("idea/testData/indentationOnNewline/elvis")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Elvis extends AbstractTypingIndentationTestBase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doNewlineTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("AfterElvis.after.kt")
+            public void testAfterElvis() throws Exception {
+                runTest("idea/testData/indentationOnNewline/elvis/AfterElvis.after.kt");
+            }
+
+            @TestMetadata("AfterElvis2.after.kt")
+            public void testAfterElvis2() throws Exception {
+                runTest("idea/testData/indentationOnNewline/elvis/AfterElvis2.after.kt");
+            }
+
+            @TestMetadata("AfterElvisInBinaryExpression.after.kt")
+            public void testAfterElvisInBinaryExpression() throws Exception {
+                runTest("idea/testData/indentationOnNewline/elvis/AfterElvisInBinaryExpression.after.kt");
+            }
+
+            public void testAllFilesPresentInElvis() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/elvis"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("BeforeElvis.after.kt")
+            public void testBeforeElvis() throws Exception {
+                runTest("idea/testData/indentationOnNewline/elvis/BeforeElvis.after.kt");
+            }
+
+            @TestMetadata("BeforeElvisInBinaryExpression.after.kt")
+            public void testBeforeElvisInBinaryExpression() throws Exception {
+                runTest("idea/testData/indentationOnNewline/elvis/BeforeElvisInBinaryExpression.after.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/indentationOnNewline/script")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1074,6 +1112,44 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("SettingAlignMultilineParametersInCalls.after.inv.kt")
         public void testSettingAlignMultilineParametersInCalls() throws Exception {
             runTest("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.inv.kt");
+        }
+
+        @TestMetadata("idea/testData/indentationOnNewline/elvis")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Elvis extends AbstractTypingIndentationTestBase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doNewlineTestWithInvert, this, testDataFilePath);
+            }
+
+            @TestMetadata("AfterElvis.after.inv.kt")
+            public void testAfterElvis() throws Exception {
+                runTest("idea/testData/indentationOnNewline/elvis/AfterElvis.after.inv.kt");
+            }
+
+            @TestMetadata("AfterElvis2.after.inv.kt")
+            public void testAfterElvis2() throws Exception {
+                runTest("idea/testData/indentationOnNewline/elvis/AfterElvis2.after.inv.kt");
+            }
+
+            @TestMetadata("AfterElvisInBinaryExpression.after.inv.kt")
+            public void testAfterElvisInBinaryExpression() throws Exception {
+                runTest("idea/testData/indentationOnNewline/elvis/AfterElvisInBinaryExpression.after.inv.kt");
+            }
+
+            public void testAllFilesPresentInElvis() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/elvis"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("BeforeElvis.after.inv.kt")
+            public void testBeforeElvis() throws Exception {
+                runTest("idea/testData/indentationOnNewline/elvis/BeforeElvis.after.inv.kt");
+            }
+
+            @TestMetadata("BeforeElvisInBinaryExpression.after.inv.kt")
+            public void testBeforeElvisInBinaryExpression() throws Exception {
+                runTest("idea/testData/indentationOnNewline/elvis/BeforeElvisInBinaryExpression.after.inv.kt");
+            }
         }
 
         @TestMetadata("idea/testData/indentationOnNewline/script")

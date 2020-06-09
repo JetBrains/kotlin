@@ -903,6 +903,44 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/WhileWithoutCondition.kt");
     }
 
+    @TestMetadata("idea/testData/indentationOnNewline/elvis")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Elvis extends AbstractPerformanceTypingIndentationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("AfterElvis.kt")
+        public void testAfterElvis() throws Exception {
+            runTest("idea/testData/indentationOnNewline/elvis/AfterElvis.kt");
+        }
+
+        @TestMetadata("AfterElvis2.kt")
+        public void testAfterElvis2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/elvis/AfterElvis2.kt");
+        }
+
+        @TestMetadata("AfterElvisInBinaryExpression.kt")
+        public void testAfterElvisInBinaryExpression() throws Exception {
+            runTest("idea/testData/indentationOnNewline/elvis/AfterElvisInBinaryExpression.kt");
+        }
+
+        public void testAllFilesPresentInElvis() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/elvis"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("BeforeElvis.kt")
+        public void testBeforeElvis() throws Exception {
+            runTest("idea/testData/indentationOnNewline/elvis/BeforeElvis.kt");
+        }
+
+        @TestMetadata("BeforeElvisInBinaryExpression.kt")
+        public void testBeforeElvisInBinaryExpression() throws Exception {
+            runTest("idea/testData/indentationOnNewline/elvis/BeforeElvisInBinaryExpression.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/indentationOnNewline/script")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

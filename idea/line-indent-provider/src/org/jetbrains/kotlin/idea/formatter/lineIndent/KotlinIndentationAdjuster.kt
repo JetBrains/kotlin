@@ -13,4 +13,8 @@ interface KotlinIndentationAdjuster {
     // ALIGN_MULTILINE_BINARY_OPERATION
     val alignWhenMultilineBinaryExpression: Boolean
         get() = false
+
+    // CONTINUATION_INDENT_IN_ELVIS
+    val continuationIndentInElvis: Boolean
+        get() = false
 }

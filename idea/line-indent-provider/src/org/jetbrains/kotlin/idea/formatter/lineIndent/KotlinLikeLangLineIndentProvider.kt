@@ -68,6 +68,18 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         val before = currentPosition.beforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
         val after = currentPosition.afterOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
         when {
+            after.isAt(Quest) && after.after().isAt(Colon) -> {
+                val indent = if (settings.continuationIndentInElvis)
+                    Indent.getContinuationIndent()
+                else
+                    Indent.getNormalIndent()
+
+                return factory.createIndentCalculator(indent, before.startOffset)
+            }
+
+            before.isAt(Colon) && before.before().isAt(Quest) ->
+                return factory.createIndentCalculator(Indent.getNoneIndent(), before.startOffset)
+
             before.isAt(TemplateEntryOpen) -> {
                 val indent = if (!currentPosition.hasLineBreaksAfter(offset) && after.isAt(TemplateEntryClose))
                     Indent.getNoneIndent()
@@ -77,10 +89,8 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
                 return factory.createIndentCalculator(indent, before.startOffset)
             }
 
-            before.isAtAnyOf(TryKeyword) || before.isFinallyKeyword() -> return factory.createIndentCalculator(
-                Indent.getNoneIndent(),
-                IndentCalculator.LINE_BEFORE,
-            )
+            before.isAtAnyOf(TryKeyword) || before.isFinallyKeyword() ->
+                return factory.createIndentCalculator(Indent.getNoneIndent(), IndentCalculator.LINE_BEFORE)
 
             after.isAt(TemplateEntryClose) -> {
                 val indent = if (currentPosition.hasEmptyLineAfter(offset)) Indent.getNormalIndent() else Indent.getNoneIndent()
@@ -456,8 +466,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
 private fun JavaLikeLangLineIndentProvider.IndentCalculatorFactory.createIndentCalculator(
     indent: Indent,
     baseLineOffset: Int,
-): IndentCalculator =
-    createIndentCalculator(indent) { baseLineOffset } ?: error("Contract (null, _ -> null) is broken")
+): IndentCalculator = createIndentCalculator(indent) { baseLineOffset } ?: error("Contract (null, _ -> null) is broken")
 
 private fun SemanticEditorPosition.textOfCurrentPosition(): String =
     if (isAtEnd) "" else chars.subSequence(startOffset, after().startOffset).toString()
