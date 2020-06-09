@@ -33,12 +33,8 @@ import org.jetbrains.kotlin.psi.*
 
 class FirAnalysisSession(
     project: Project
-) : FrontendAnalysisSession() {
-    private val validityToken = ReadActionConfinementValidityToken(project)
-    override fun isValid(): Boolean = validityToken.isValid()
-    override fun invalidationReason(): String = validityToken.invalidationReason()
-
-    constructor(element: KtElement) : this(element.project)
+) : FrontendAnalysisSession(project) {
+   constructor(element: KtElement) : this(element.project)
 
     init {
         assertIsValid()
