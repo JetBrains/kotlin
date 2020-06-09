@@ -25,21 +25,24 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 
 /**
  * A generator for delegated members from implementation by delegation.
@@ -105,6 +108,12 @@ internal class DelegatedMemberGenerator(
         val descriptor = WrappedSimpleFunctionDescriptor()
         val origin = IrDeclarationOrigin.DELEGATED_MEMBER
         val modality = if (superFunction.modality == Modality.ABSTRACT) Modality.OPEN else superFunction.modality
+        // TODO: external classes, as the type parameters are converted using deserialized descriptors when used inside the classes.
+        val addTypeSubstitution = irField.type.classOrNull?.owner?.origin?.let {
+            it != IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+                    && it != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+        } == true
+        lateinit var irTypeSubstitutor: IrTypeSubstitutor
         val delegateFunction = symbolTable.declareSimpleFunction(descriptor) { symbol ->
             IrFunctionImpl(
                 startOffset,
@@ -127,15 +136,48 @@ internal class DelegatedMemberGenerator(
                 this.parent = subClass
                 overriddenSymbols = listOf(superFunction.symbol)
                 dispatchReceiverParameter = declareThisReceiverParameter(symbolTable, subClass.defaultType, origin)
-                // TODO: type parameters from superFunctions and type substitution when super interface types are generic
+                if (addTypeSubstitution) {
+                    val substParameters = mutableListOf<IrTypeParameterSymbol>()
+                    val substArguments = mutableListOf<IrTypeArgument>()
+                    initializeTypeSubstitution(substParameters, substArguments, irField.type)
+                    superFunction.typeParameters.forEach { typeParameter ->
+                        val parameterDescriptor = WrappedTypeParameterDescriptor()
+                        typeParameters += symbolTable.declareScopedTypeParameter(
+                            startOffset, endOffset, origin, parameterDescriptor
+                        ) { symbol ->
+                            IrTypeParameterImpl(
+                                startOffset,
+                                endOffset,
+                                origin,
+                                symbol,
+                                typeParameter.name,
+                                typeParameter.index,
+                                typeParameter.isReified,
+                                typeParameter.variance
+                            ).also {
+                                parameterDescriptor.bind(it)
+                                it.parent = this
+                                substParameters.add(typeParameter.symbol)
+                                substArguments.add(
+                                    makeTypeProjection(
+                                        variance = Variance.INVARIANT,
+                                        type = IrSimpleTypeImpl(it.symbol, false, emptyList(), emptyList())
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    irTypeSubstitutor = IrTypeSubstitutor(substParameters, substArguments, irBuiltIns)
+                }
                 superFunction.valueParameters.forEach { valueParameter ->
                     val parameterDescriptor = WrappedValueParameterDescriptor()
+                    val substedType = if (addTypeSubstitution) irTypeSubstitutor.substitute(valueParameter.type) else valueParameter.type
                     valueParameters += symbolTable.declareValueParameter(
-                        startOffset, endOffset, origin, parameterDescriptor, valueParameter.type
+                        startOffset, endOffset, origin, parameterDescriptor, substedType
                     ) { symbol ->
                         IrValueParameterImpl(
                             startOffset, endOffset, origin, symbol,
-                            valueParameter.name, valueParameter.index, valueParameter.type,
+                            valueParameter.name, valueParameter.index, substedType,
                             null, valueParameter.isCrossinline, valueParameter.isNoinline
                         ).also {
                             parameterDescriptor.bind(it)
@@ -177,7 +219,7 @@ internal class DelegatedMemberGenerator(
         val irCall = IrCallImpl(
             startOffset,
             endOffset,
-            superFunction.returnType,
+            if (addTypeSubstitution) irTypeSubstitutor.substitute(superFunction.returnType) else superFunction.returnType,
             superFunction.symbol,
             superFunction.typeParameters.size,
             superFunction.valueParameters.size
@@ -209,6 +251,20 @@ internal class DelegatedMemberGenerator(
         }
         delegateFunction.body = body
         return delegateFunction
+    }
+
+    private fun initializeTypeSubstitution(
+        typeParameters: MutableList<IrTypeParameterSymbol>,
+        typeArguments: MutableList<IrTypeArgument>,
+        type: IrType
+    ) {
+        if (type is IrSimpleTypeImpl && type.arguments.isNotEmpty()) {
+            val classTypeParameters = type.classOrNull?.owner?.typeParameters
+            if (classTypeParameters?.size == type.arguments.size) {
+                typeParameters.addAll(classTypeParameters.map { it.symbol })
+                typeArguments.addAll(type.arguments)
+            }
+        }
     }
 
     private fun generateDelegatedProperty(
