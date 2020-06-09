@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsi
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -24,9 +22,9 @@ enum class EvaluationMode {
 }
 
 class IrCompileTimeChecker(
-    containingDeclaration: IrSymbol? = null, private val mode: EvaluationMode = EvaluationMode.FULL
+    containingDeclaration: IrElement? = null, private val mode: EvaluationMode = EvaluationMode.FULL
 ) : IrElementVisitor<Boolean, Nothing?> {
-    private val callStack = mutableListOf<IrSymbol>().apply { if (containingDeclaration != null) add(containingDeclaration) }
+    private val visitedStack = mutableListOf<IrElement>().apply { if (containingDeclaration != null) add(containingDeclaration) }
 
     private val compileTimeTypeAliases = setOf(
         "java.lang.StringBuilder", "java.lang.IllegalArgumentException", "java.util.NoSuchElementException"
@@ -55,10 +53,10 @@ class IrCompileTimeChecker(
         return backingFieldExpression?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
     }
 
-    private fun IrSymbol.withCallStack(block: () -> Boolean): Boolean {
-        callStack += this
+    private fun IrElement.asVisited(block: () -> Boolean): Boolean {
+        visitedStack += this
         val result = block()
-        callStack.removeAt(callStack.lastIndex)
+        visitedStack.removeAt(visitedStack.lastIndex)
         return result
     }
 
@@ -80,7 +78,7 @@ class IrCompileTimeChecker(
     override fun visitCall(expression: IrCall, data: Nothing?): Boolean {
         if (expression.symbol.owner.isContract()) return false
 
-        val property = (expression.symbol.owner as? IrFunctionImpl)?.correspondingPropertySymbol?.owner
+        val property = (expression.symbol.owner as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
         if (expression.symbol.owner.isMarkedAsCompileTime() || property.isCompileTime()) {
             val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
             val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
@@ -148,7 +146,7 @@ class IrCompileTimeChecker(
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): Boolean {
         val parent = expression.symbol.owner.parent as IrSymbolOwner
         val isObject = (parent as? IrClass)?.isObject == true //used to evaluate constants inside object
-        return callStack.contains(parent.symbol) || isObject
+        return visitedStack.contains(parent) || isObject
     }
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): Boolean {
@@ -160,7 +158,7 @@ class IrCompileTimeChecker(
         val parent = owner.parent as IrSymbolOwner
         val isJavaPrimitiveStatic = owner.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && owner.isStatic &&
                 owner.parentAsClass.fqNameWhenAvailable.isJavaPrimitive()
-        return callStack.contains(parent.symbol) || isJavaPrimitiveStatic
+        return visitedStack.contains(parent) || isJavaPrimitiveStatic
     }
 
     // TODO find similar method in utils
@@ -175,7 +173,7 @@ class IrCompileTimeChecker(
     override fun visitSetField(expression: IrSetField, data: Nothing?): Boolean {
         //todo check receiver?
         val parent = expression.symbol.owner.parent as IrSymbolOwner
-        return callStack.contains(parent.symbol) && expression.value.accept(this, data)
+        return visitedStack.contains(parent) && expression.value.accept(this, data)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): Boolean {
@@ -187,7 +185,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): Boolean {
-        return expression.symbol.withCallStack {
+        return expression.asVisited {
             expression.symbol.owner.isMarkedAsCompileTime() && expression.symbol.owner.body?.accept(this, data) == true
         }
     }
@@ -195,7 +193,7 @@ class IrCompileTimeChecker(
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?): Boolean {
         val isLambda = expression.origin == IrStatementOrigin.LAMBDA || expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION
         val isCompileTime = expression.function.isMarkedAsCompileTime()
-        return expression.function.symbol.withCallStack {
+        return expression.function.asVisited {
             if (isLambda || isCompileTime) expression.function.body?.accept(this, data) == true else false
         }
     }
@@ -207,7 +205,7 @@ class IrCompileTimeChecker(
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST,
             IrTypeOperator.IMPLICIT_NOTNULL -> {
                 val operand = expression.typeOperand.classifierOrNull?.owner
-                if (operand is IrTypeParameter && !callStack.contains((operand.parent as IrSymbolOwner).symbol)) return false
+                if (operand is IrTypeParameter && !visitedStack.contains(operand.parent)) return false
                 expression.argument.accept(this, data)
             }
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> false
@@ -224,25 +222,30 @@ class IrCompileTimeChecker(
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): Boolean {
-        return loop.condition.accept(this, data) && (loop.body?.accept(this, data) ?: true)
+        return loop.asVisited {
+            loop.condition.accept(this, data) && (loop.body?.accept(this, data) ?: true)
+        }
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): Boolean {
-        return loop.condition.accept(this, data) && (loop.body?.accept(this, data) ?: true)
+        return loop.asVisited {
+            loop.condition.accept(this, data) && (loop.body?.accept(this, data) ?: true)
+        }
     }
 
     override fun visitTry(aTry: IrTry, data: Nothing?): Boolean {
+        if (mode == EvaluationMode.ONLY_BUILTINS) return false
         if (!aTry.tryResult.accept(this, data)) return false
         if (aTry.finallyExpression != null && aTry.finallyExpression?.accept(this, data) == false) return false
         return aTry.catches.all { it.result.accept(this, data) }
     }
 
-    override fun visitBreak(jump: IrBreak, data: Nothing?): Boolean = true
+    override fun visitBreak(jump: IrBreak, data: Nothing?): Boolean = visitedStack.contains(jump.loop)
 
-    override fun visitContinue(jump: IrContinue, data: Nothing?): Boolean = true
+    override fun visitContinue(jump: IrContinue, data: Nothing?): Boolean = visitedStack.contains(jump.loop)
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): Boolean {
-        if (!callStack.contains(expression.returnTargetSymbol)) return false
+        if (!visitedStack.contains(expression.returnTargetSymbol.owner)) return false
         return expression.value.accept(this, data)
     }
 
