@@ -166,38 +166,43 @@ internal data class ConfigurationStateExtractor(val recordDefault: Boolean) {
       return null
     }
     val isDefault = !jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
-    if (!isDefault || recordDefault) {
-      val data = FeatureUsageSettingsEventPrinter.createComponentData(project, componentName, pluginInfo)
-      if (tryAddTypedValue(data, accessor, state)) {
-        recordedOptionNames.add(accessor.name)
-        data.addData("name", accessor.name)
-        if (recordDefault) {
-          data.addData("default", isDefault)
-        }
-        return data
-      }
+    if (isDefault && !recordDefault) {
+      return null
     }
-    return null
-  }
-
-  private fun tryAddTypedValue(data: FeatureUsageData, accessor: Accessor, state: Any): Boolean {
     val type = accessor.genericType
-    when {
+    return when {
       type === Boolean::class.javaPrimitiveType -> {
-        data.addData("type", "bool")
-        val value = accessor.readUnsafe(state) as? Boolean
-        value?.let { data.addData("value", it) }
+        val data = createOptionData(project, componentName, pluginInfo, accessor, isDefault, "bool")
+        (accessor.readUnsafe(state) as? Boolean)?.let { data.addData("value", it) }
+        data
       }
-      type === Int::class.javaPrimitiveType -> addValue<Int>(data, accessor, state, "int") { data.addData("value", it) }
-      type === Long::class.javaPrimitiveType -> addValue<Long>(data, accessor, state, "int") { data.addData("value", it) }
-      type === Float::class.javaPrimitiveType -> addValue<Float>(data, accessor, state, "float") { data.addData("value", it) }
-      type === Double::class.javaPrimitiveType -> addValue<Double>(data, accessor, state, "float") { data.addData("value", it) }
+      type === Int::class.javaPrimitiveType -> {
+        val data = createOptionData(project, componentName, pluginInfo, accessor, isDefault, "int")
+        readValue<Int>(accessor, state)?.let { data.addData("value", it) }
+        data
+      }
+      type === Long::class.javaPrimitiveType -> {
+        val data = createOptionData(project, componentName, pluginInfo, accessor, isDefault, "int")
+        readValue<Long>(accessor, state)?.let { data.addData("value", it) }
+        data
+      }
+      type === Float::class.javaPrimitiveType -> {
+        val data = createOptionData(project, componentName, pluginInfo, accessor, isDefault, "float")
+        readValue<Float>(accessor, state)?.let { data.addData("value", it) }
+        data
+      }
+      type === Double::class.javaPrimitiveType -> {
+        val data = createOptionData(project, componentName, pluginInfo, accessor, isDefault, "float")
+        readValue<Double>(accessor, state)?.let { data.addData("value", it) }
+        data
+      }
       type is Class<*> && type.isEnum -> {
-        data.addData("type", "enum")
+        val data = createOptionData(project, componentName, pluginInfo, accessor, isDefault, "enum")
         readValue(accessor, state) { (it as? Enum<*>)?.name }?.let { data.addData("value", it) }
+        data
       }
       type == String::class.java -> {
-        data.addData("type", "string")
+        val data = createOptionData(project, componentName, pluginInfo, accessor, isDefault, "string")
         val value = readValue(accessor, state) { value ->
           if (value is String && value in accessor.getAnnotation(ReportValue::class.java).possibleValues) {
             value
@@ -205,10 +210,26 @@ internal data class ConfigurationStateExtractor(val recordDefault: Boolean) {
           else null
         }
         value?.let { data.addData("value", it) }
+        data
       }
-      else -> return false
+      else -> null
     }
-    return true
+  }
+
+  private fun createOptionData(project: Project?,
+                               componentName: String,
+                               pluginInfo: PluginInfo,
+                               accessor: Accessor,
+                               isDefault: Boolean,
+                               type: String): FeatureUsageData {
+    val data = FeatureUsageSettingsEventPrinter.createComponentData(project, componentName, pluginInfo)
+    data.addData("type", type)
+    data.addData("name", accessor.name)
+    recordedOptionNames.add(accessor.name)
+    if (recordDefault) {
+      data.addData("default", isDefault)
+    }
+    return data
   }
 
   private inline fun <reified T> readValue(accessor: Accessor, state: Any, noinline transformValue: ((Any?) -> T?)? = null): T? {
@@ -224,11 +245,4 @@ internal data class ConfigurationStateExtractor(val recordDefault: Boolean) {
     return null
   }
 
-  private inline fun <reified T> addValue(data: FeatureUsageData, accessor: Accessor, state: Any, type: String, add: (T) -> Unit) {
-    data.addData("type", type)
-    val value =  readValue<T>(accessor, state)
-    if (value != null) {
-      add(value)
-    }
-  }
 }
