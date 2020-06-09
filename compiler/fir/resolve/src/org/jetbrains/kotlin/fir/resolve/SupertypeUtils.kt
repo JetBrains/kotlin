@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.inferenceContext
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -43,7 +44,7 @@ inline fun <reified ID : Any, reified FS : FirScope> scopeSessionKey(): ScopeSes
     return object : ScopeSessionKey<ID, FS>() {}
 }
 
-val USE_SITE = scopeSessionKey<FirClassSymbol<*>, FirScope>()
+val USE_SITE = scopeSessionKey<FirClassSymbol<*>, FirTypeScope>()
 
 data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassLikeSymbol<*>, FirClassSubstitutionScope>()
 
@@ -79,11 +80,11 @@ fun createSubstitution(
 
 fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
-    useSiteMemberScope: FirScope,
+    useSiteMemberScope: FirTypeScope,
     declaration: FirClassLikeDeclaration<*>,
     builder: ScopeSession,
     derivedClassId: ClassId? = null
-): FirScope {
+): FirTypeScope {
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
         val typeParameters = (declaration as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()

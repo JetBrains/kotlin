@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -28,7 +30,7 @@ import kotlin.collections.HashSet
 class FirSuperTypeScope private constructor(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
-    val scopes: List<FirScope>
+    private val scopes: List<FirScope>,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
     private val absentFunctions = mutableSetOf<Name>()
@@ -260,5 +262,13 @@ class FirSuperTypeScope private constructor(
 
             return FirSuperTypeScope(session, overrideChecker, scopes)
         }
+
+        // This methods is needed just to preserve the possibility to move
+        // org.jetbrains.kotlin.fir.scopes.FirScope.processOverriddenFunctions to FirOverrideAwareScope
+        fun prepareOverrideAwareSupertypeScope(
+            session: FirSession,
+            overrideChecker: FirOverrideChecker,
+            scopes: List<FirTypeScope>
+        ): FirTypeScope = prepareSupertypeScope(session, overrideChecker, scopes) as FirTypeScope
     }
 }

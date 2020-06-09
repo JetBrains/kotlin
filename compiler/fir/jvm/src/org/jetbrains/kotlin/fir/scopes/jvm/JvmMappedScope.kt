@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -19,7 +21,7 @@ class JvmMappedScope(
     private val declaredMemberScope: FirScope,
     private val javaMappedClassUseSiteScope: FirScope,
     private val signatures: Signatures
-) : FirScope() {
+) : FirTypeScope() {
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         val whiteListSignatures = signatures.whiteListSignaturesByName[name]
@@ -36,6 +38,14 @@ class JvmMappedScope(
 
         declaredMemberScope.processFunctionsByName(name, processor)
     }
+
+    // JvmMappedScope is basically used as declaration scope but it's being wrapped into substitution scopes where
+    // a use-site (FirOverrideAwareScope) is expected
+    // So, we put here a stub implementation
+    override fun processOverriddenFunctions(
+        functionSymbol: FirFunctionSymbol<*>,
+        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+    ) = ProcessorAction.NONE
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         val constructorBlackList = signatures.constructorBlackList

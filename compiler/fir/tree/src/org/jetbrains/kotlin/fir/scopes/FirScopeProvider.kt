@@ -14,7 +14,7 @@ abstract class FirScopeProvider {
         klass: FirClass<*>,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): FirScope
+    ): FirTypeScope
 
     abstract fun getStaticMemberScopeForCallables(
         klass: FirClass<*>,

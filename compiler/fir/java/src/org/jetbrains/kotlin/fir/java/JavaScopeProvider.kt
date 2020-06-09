@@ -14,10 +14,13 @@ import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverrideChecker
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 
@@ -34,7 +37,7 @@ class JavaScopeProvider(
         klass: FirClass<*>,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): FirScope =
+    ): FirTypeScope =
         buildJavaEnhancementScope(useSiteSession, klass.symbol as FirRegularClassSymbol, scopeSession, mutableSetOf())
 
     private fun buildJavaEnhancementScope(
@@ -86,7 +89,7 @@ class JavaScopeProvider(
                     }
             JavaClassUseSiteMemberScope(
                 regularClass, useSiteSession,
-                FirSuperTypeScope.prepareSupertypeScope(
+                FirSuperTypeScope.prepareOverrideAwareSupertypeScope(
                     useSiteSession,
                     JavaOverrideChecker(
                         useSiteSession,
@@ -110,7 +113,14 @@ class JavaScopeProvider(
             val wrappedDeclaredScope = declaredMemberScopeDecorator(klass, declaredScope, useSiteSession, scopeSession)
             JavaClassEnhancementScope(
                 useSiteSession, JavaClassUseSiteMemberScope(
-                    klass, useSiteSession, superTypesScope = object : FirScope() {}, declaredMemberScope = wrappedDeclaredScope
+                    klass, useSiteSession,
+                    superTypesScope = object : FirTypeScope() {
+                        override fun processOverriddenFunctions(
+                            functionSymbol: FirFunctionSymbol<*>,
+                            processor: (FirFunctionSymbol<*>) -> ProcessorAction
+                        ): ProcessorAction = ProcessorAction.STOP
+                    },
+                    declaredMemberScope = wrappedDeclaredScope
                 )
             )
         }

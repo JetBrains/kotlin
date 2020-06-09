@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -34,12 +35,12 @@ import org.jetbrains.kotlin.name.Name
 
 class FirClassSubstitutionScope(
     private val session: FirSession,
-    private val useSiteMemberScope: FirScope,
+    private val useSiteMemberScope: FirTypeScope,
     scopeSession: ScopeSession,
     private val substitutor: ConeSubstitutor,
     private val skipPrivateMembers: Boolean,
     private val derivedClassId: ClassId? = null
-) : FirScope() {
+) : FirTypeScope() {
 
     private val fakeOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
     private val fakeOverrideConstructors = mutableMapOf<FirConstructorSymbol, FirConstructorSymbol>()
@@ -48,7 +49,7 @@ class FirClassSubstitutionScope(
     private val fakeOverrideAccessors = mutableMapOf<FirAccessorSymbol, FirAccessorSymbol>()
 
     constructor(
-        session: FirSession, useSiteMemberScope: FirScope, scopeSession: ScopeSession,
+        session: FirSession, useSiteMemberScope: FirTypeScope, scopeSession: ScopeSession,
         substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
         skipPrivateMembers: Boolean, derivedClassId: ClassId? = null
     ) : this(session, useSiteMemberScope, scopeSession, substitutorByMap(substitution), skipPrivateMembers, derivedClassId)
