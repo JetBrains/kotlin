@@ -141,6 +141,9 @@ internal class KotlinCompilationNpmResolver(
             }
         }
 
+        // We don't have `kotlin-js-test-runner` in NPM yet
+        all.dependencies.add(nodeJs.versions.kotlinJsTestRunner.createDependency(project))
+
         return all
     }
 
