@@ -59,6 +59,16 @@ internal class ClassMemberGenerator(
                     else -> null
                 }
             }
+            // Add delegated members *before* fake override generations.
+            // Otherwise, fake overrides for delegated members, which are redundant, will be added.
+            irClass.declarations.filter {
+                it.origin == IrDeclarationOrigin.DELEGATED_MEMBER
+            }.forEach {
+                when (it) {
+                    is IrSimpleFunction -> processedCallableNames += it.name
+                    is IrProperty -> processedCallableNames += it.name
+                }
+            }
             // Add synthetic members *before* fake override generations.
             // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
             if (irClass.isInline && klass.getPrimaryConstructorIfAny() != null) {

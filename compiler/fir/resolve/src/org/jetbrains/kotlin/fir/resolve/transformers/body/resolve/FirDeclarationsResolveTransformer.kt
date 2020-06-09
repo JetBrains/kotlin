@@ -741,7 +741,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             else
                 staticsAndCompanion
 
-        val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull() as? FirConstructor
+        val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
         val primaryConstructorParametersScope =
             if (constructor?.isPrimary == true) {
                 constructor.valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
