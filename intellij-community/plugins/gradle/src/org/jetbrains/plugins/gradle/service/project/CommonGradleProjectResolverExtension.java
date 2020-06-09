@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.build.events.MessageEvent;
@@ -31,7 +31,6 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.PathUtil;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.MultiMap;
@@ -765,7 +764,7 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
     }
     List<String> lines = new ArrayList<>();
 
-    String esRtJarPath = PathUtil.getCanonicalPath(PathManager.getJarPathForClass(ExternalSystemSourceType.class));
+    String esRtJarPath = FileUtil.toCanonicalPath(PathManager.getJarPathForClass(ExternalSystemSourceType.class));
     lines.add("initscript { dependencies { classpath files(\""+ esRtJarPath + "\") } }"); // bring external-system-rt.jar
 
     for (DebuggerBackendExtension extension: DebuggerBackendExtension.EP_NAME.getExtensionList()) {

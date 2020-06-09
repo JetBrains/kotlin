@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.view;
 
 import com.intellij.execution.RunManager;
@@ -10,7 +10,7 @@ import com.intellij.openapi.externalSystem.service.execution.AbstractExternalSys
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.externalSystem.util.Order;
-import com.intellij.util.PathUtil;
+import com.intellij.openapi.util.io.FileUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,12 +59,12 @@ public class RunConfigurationsNode extends ExternalSystemNode<Void> {
       RunManager.getInstance(myProject).getConfigurationSettingsList(configurationType));
 
 
-    String directory = PathUtil.getCanonicalPath(myModuleData.getLinkedExternalProjectPath());
+    String directory = FileUtil.toCanonicalPath(myModuleData.getLinkedExternalProjectPath());
 
     for (RunnerAndConfigurationSettings cfg : settings) {
       ExternalSystemRunConfiguration externalSystemRunConfiguration = (ExternalSystemRunConfiguration)cfg.getConfiguration();
 
-      if (directory.equals(PathUtil.getCanonicalPath(externalSystemRunConfiguration.getSettings().getExternalProjectPath()))) {
+      if (directory.equals(FileUtil.toCanonicalPath(externalSystemRunConfiguration.getSettings().getExternalProjectPath()))) {
         runConfigurationNodes.add(new RunConfigurationNode(getExternalProjectsView(), this, cfg));
       }
     }

@@ -651,7 +651,7 @@ public class GradleExecutionHelper {
           LOG.warn("The gradle api jar shouldn't be added to the gradle daemon classpath: {" + aClass + "," + path + "}");
           return null;
         }
-        return PathUtil.getCanonicalPath(path);
+        return FileUtil.toCanonicalPath(path);
       }
       return null;
     });

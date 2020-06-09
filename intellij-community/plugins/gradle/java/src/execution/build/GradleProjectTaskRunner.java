@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.execution.build;
 
 import com.intellij.build.BuildViewManager;
@@ -28,7 +28,6 @@ import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.task.*;
 import com.intellij.task.impl.JpsProjectTaskRunner;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
@@ -185,7 +184,7 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
 
       Collection<String> scripts = initScripts.getModifiable(rootProjectPath);
       if (outputPathsFile != null && context.isCollectionOfGeneratedFilesEnabled()) {
-        scripts.add(String.format(COLLECT_OUTPUT_PATHS_INIT_SCRIPT_TEMPLATE, PathUtil.getCanonicalPath(outputPathsFile.getAbsolutePath())));
+        scripts.add(String.format(COLLECT_OUTPUT_PATHS_INIT_SCRIPT_TEMPLATE, FileUtil.toCanonicalPath(outputPathsFile.getAbsolutePath())));
       }
       userData.putUserData(GradleTaskManager.INIT_SCRIPT_KEY, join(scripts, SystemProperties.getLineSeparator()));
       userData.putUserData(GradleTaskManager.INIT_SCRIPT_PREFIX_KEY, executionName);
