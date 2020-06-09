@@ -21,5 +21,4 @@
         <projectConfigurator implementation="org.jetbrains.kotlin.ide.konan.gradle.KotlinNativeGradleConfigurator"/>
       </extensions>
 
-    <depends optional="true" config-file="native-run-configuration.xml">com.intellij.gradle</depends>
 </idea-plugin>

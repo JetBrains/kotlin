@@ -15,4 +15,5 @@
         <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.KotlinNativeFileTypeFactory"/>
     </extensions>
 
+    <depends optional="true" config-file="native-run-configuration.xml">org.jetbrains.plugins.gradle</depends>
 </idea-plugin>
