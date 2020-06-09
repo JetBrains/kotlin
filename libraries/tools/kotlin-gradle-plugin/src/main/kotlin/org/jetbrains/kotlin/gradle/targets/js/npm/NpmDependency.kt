@@ -87,7 +87,7 @@ data class NpmDependency(
 
     val key: String = name
 
-    override fun toString() = "$scope $key: $version, $generateExternals"
+    override fun toString() = "$key: $version"
 
     override fun getFiles(): FileCollection = project.files(resolve(true))
 
@@ -110,6 +110,9 @@ data class NpmDependency(
     }
 
     override fun getReason(): String? = reason
+
+    fun uniqueRepresentation() =
+        "$scope $key:$version, $generateExternals"
 }
 
 internal fun directoryNpmDependency(
