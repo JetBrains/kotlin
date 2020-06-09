@@ -90,14 +90,9 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
       workaroundJavaVersionIssueIfNeeded(newConnection, taskId, listener, cancellationToken)
 
       if (conn != null && connectorParams != conn.params) {
-        if (connectorParams.distributionType == DistributionType.WRAPPED && conn.params.distributionType == DistributionType.WRAPPED) {
-          val unwrappedConnection = conn.connection as WrappedConnection
-          unwrappedConnection.delegate.close()
-        }
-        else {
-          // release obsolete connection
-          conn.disconnect()
-        }
+        // close obsolete connection, can not disconnect the connector here - it may cause build cancel for the new connection operations
+        val unwrappedConnection = conn.connection as WrappedConnection
+        unwrappedConnection.delegate.close()
       }
       val wrappedConnection = WrappedConnection(newConnection)
       return@compute GradleProjectConnection(connectorParams, newConnector, wrappedConnection)
