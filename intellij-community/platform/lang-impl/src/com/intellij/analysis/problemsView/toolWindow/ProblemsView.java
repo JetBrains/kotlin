@@ -29,6 +29,7 @@ import static com.intellij.psi.util.PsiUtilCore.findFileSystemItem;
 
 public final class ProblemsView implements DumbAware, ToolWindowFactory {
   private static final String ID = "Problems View";
+  private static final int CURRENT_FILE_INDEX = 0;
 
   public static @Nullable ToolWindow getToolWindow(@Nullable Project project) {
     return project == null || project.isDisposed() ? null : ToolWindowManager.getInstance(project).getToolWindow(ID);
@@ -37,12 +38,12 @@ public final class ProblemsView implements DumbAware, ToolWindowFactory {
   public static void toggleCurrentFileProblems(@NotNull Project project) {
     ToolWindow window = getToolWindow(project);
     if (window == null) return; // does not exist
-    selectContent(window.getContentManager(), 0);
-
-    if (window.isVisible()) {
-      window.hide();
+    ContentManager manager = window.getContentManager();
+    if (window.isVisible() && manager.getSelectedContent() == manager.getContent(CURRENT_FILE_INDEX)) {
+      window.hide(); // hide toolwindow only if the Current File tab is selected
     }
     else {
+      selectContent(manager, CURRENT_FILE_INDEX);
       window.setAvailable(true, null);
       window.activate(null, true);
     }
