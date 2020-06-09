@@ -16,13 +16,7 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration<D>> : AbstractFirBas
         get() = null
 }
 
-inline fun <reified E : FirCallableSymbol<*>> E.unwrapOverriddenOnce(): E {
-    overriddenSymbol?.let { return it as E }
-
-    return this
-}
-
-inline fun <reified E : FirCallableSymbol<*>> E.unwrapOverridden(): E {
+inline fun <reified E : FirCallableSymbol<*>> E.unwrapSubstitutionOverrides(): E {
     var current = this
     while (current.overriddenSymbol != null) {
         current = current.overriddenSymbol as E

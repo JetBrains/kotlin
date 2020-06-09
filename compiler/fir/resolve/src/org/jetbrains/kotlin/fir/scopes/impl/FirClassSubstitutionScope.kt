@@ -69,7 +69,7 @@ class FirClassSubstitutionScope(
         functionSymbol: FirFunctionSymbol<*>,
         processor: (FirFunctionSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
-        val unwrapped = functionSymbol.unwrapOverriddenOnce()
+        val unwrapped = functionSymbol.overriddenSymbol as FirFunctionSymbol<*>? ?: functionSymbol
         return useSiteMemberScope.processOverriddenFunctions(unwrapped, processor)
     }
 

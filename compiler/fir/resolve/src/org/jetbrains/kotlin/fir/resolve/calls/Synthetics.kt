@@ -85,7 +85,7 @@ class FirSyntheticPropertiesScope(
     private fun FirFunctionSymbol<*>.hasJavaOverridden(): Boolean {
         var result = false
         baseScope.processOverriddenFunctionsAndSelf(this) {
-            if (it.unwrapOverridden().fir.origin == FirDeclarationOrigin.Enhancement) {
+            if (it.unwrapSubstitutionOverrides().fir.origin == FirDeclarationOrigin.Enhancement) {
                 result = true
                 ProcessorAction.STOP
             } else {
