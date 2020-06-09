@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 
 class KmmBuildSystemAvailabilityWizardService : BuildSystemAvailabilityWizardService {
     override fun isAvailable(buildSystemType: BuildSystemType): Boolean = when {
-        buildSystemType.isGradle -> isPluginEnabled("org.jetbrains.plugins.gradle")
+        buildSystemType.isGradle -> isPluginEnabled("com.intellij.gradle")
         else -> false
     }
 

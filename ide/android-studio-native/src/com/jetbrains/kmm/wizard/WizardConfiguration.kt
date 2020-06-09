@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugi
 
 object WizardConfiguration {
     val commonServices: List<WizardService> = listOf(
-        KmmBuildSystemAvailabilityWizardService(),
-        KmmFileSystemWizardService(),
-        KmmKotlinVersionProviderService(),
-        SettingSavingWizardServiceImpl(),
-        VelocityTemplateEngineServiceImpl(),
         DummyFileFormattingService(),
-        RunConfigurationsServiceImpl()
+        KmmBuildSystemAvailabilityWizardService(),
+        KotlinVersionProviderServiceImpl(),
+        OsFileSystemWizardService(),
+        RunConfigurationsServiceImpl(),
+        SettingSavingWizardServiceImpl(),
+        VelocityTemplateEngineServiceImpl()
     )
 
     val productionServices: List<WizardService> = listOf(
