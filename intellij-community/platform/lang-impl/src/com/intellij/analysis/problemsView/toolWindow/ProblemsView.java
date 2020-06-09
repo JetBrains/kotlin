@@ -21,7 +21,7 @@ import com.intellij.ui.content.ContentManagerListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.intellij.ide.actions.ToggleToolbarAction.isToolbarVisible;
@@ -34,12 +34,18 @@ public final class ProblemsView implements DumbAware, ToolWindowFactory {
     return project == null || project.isDisposed() ? null : ToolWindowManager.getInstance(project).getToolWindow(ID);
   }
 
-  public static void showCurrentFileProblems(@NotNull Project project) {
+  public static void toggleCurrentFileProblems(@NotNull Project project) {
     ToolWindow window = getToolWindow(project);
     if (window == null) return; // does not exist
     selectContent(window.getContentManager(), 0);
-    window.setAvailable(true, null);
-    window.activate(null, true);
+
+    if (window.isVisible()) {
+      window.hide();
+    }
+    else {
+      window.setAvailable(true, null);
+      window.activate(null, true);
+    }
   }
 
   public static void selectHighlighterIfVisible(@NotNull Project project, @NotNull RangeHighlighterEx highlighter) {

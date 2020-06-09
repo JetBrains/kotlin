@@ -56,7 +56,7 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.intellij.analysis.problemsView.toolWindow.ProblemsView.showCurrentFileProblems;
+import static com.intellij.analysis.problemsView.toolWindow.ProblemsView.toggleCurrentFileProblems;
 
 public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   @NotNull
@@ -592,8 +592,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     }
 
     @Override
-    public void openProblemsView() {
-      showCurrentFileProblems(getProject());
+    public void toggleProblemsView() {
+      toggleCurrentFileProblems(getProject());
     }
   }
 
