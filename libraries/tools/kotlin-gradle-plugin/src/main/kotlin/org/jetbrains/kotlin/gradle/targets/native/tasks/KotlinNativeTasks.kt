@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import java.io.File
@@ -790,7 +791,9 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary) {
     }
 
     private fun ensureCompilerProvidedLibsPrecached() {
-        val platformLibs = libraries.filter { it.providedByCompiler(project) }.associateBy { it.name }
+        val distribution = Distribution(project.konanHome)
+        val platformLibs = (listOf(File(distribution.stdlib)) + File(distribution.platformLibs(compilation.konanTarget))
+            .listFiles()).associateBy { it.name }
         val visitedLibs = mutableSetOf<String>()
         for (platformLibName in platformLibs.keys)
             ensureCompilerProvidedLibPrecached(platformLibName, platformLibs, visitedLibs)
