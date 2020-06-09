@@ -100,6 +100,12 @@ public class GradleExecutionHelper {
     File projectPathFile = new File(projectPath);
     if (projectPathFile.isFile() && projectPath.endsWith(GradleConstants.EXTENSION) && projectPathFile.getParent() != null) {
       projectDir = projectPathFile.getParent();
+      if (settings != null) {
+        List<String> arguments = settings.getArguments();
+        if (!arguments.contains("-b") && !arguments.contains("--build-file")) {
+          settings.withArguments("-b", projectPath);
+        }
+      }
     }
     else {
       projectDir = projectPath;
