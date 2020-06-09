@@ -307,9 +307,19 @@ internal class KotlinCompilationNpmResolver(
             }
                 .filterNotNull()
 
+            val toolsNpmDependencies = nodeJs.taskRequirements
+                .getTaskRequirements(compilation)
+                .flatMap { requirement ->
+                    requirement.requiredNpmDependencies
+                }
+                .map { it.createDependency(project) }
+                .filterIsInstance<NpmDependency>()
+
+            val allNpmDependencies = externalNpmDependencies + toolsNpmDependencies
+
             val packageJson = packageJson(
                 npmProject,
-                externalNpmDependencies
+                allNpmDependencies
             )
 
             compositeDependencies.forEach {
@@ -338,7 +348,7 @@ internal class KotlinCompilationNpmResolver(
                 resolvedInternalDependencies,
                 compositeDependencies,
                 importedExternalGradleDependencies,
-                externalNpmDependencies,
+                allNpmDependencies,
                 packageJson
             )
         }
