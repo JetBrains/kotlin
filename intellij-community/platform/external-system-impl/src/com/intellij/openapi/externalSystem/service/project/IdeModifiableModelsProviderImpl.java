@@ -54,7 +54,7 @@ public class IdeModifiableModelsProviderImpl extends AbstractIdeModifiableModels
   @Override
   @NotNull
   protected ModifiableRootModel doGetModifiableRootModel(@NotNull final Module module) {
-    return ReadAction.compute(() -> ModuleRootManagerEx.getInstanceEx(module).getModifiableModelForExternalSystem(new RootConfigurationAccessor() {
+    return ReadAction.compute(() -> ModuleRootManagerEx.getInstanceEx(module).getModifiableModelForMultiCommit(new RootConfigurationAccessor() {
       @Nullable
       @Override
       public Library getLibrary(Library library, String libraryName, String libraryLevel) {

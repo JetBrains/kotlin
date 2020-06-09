@@ -254,6 +254,25 @@ class ModuleModelTest {
     assertThat(committedEntry.moduleName).isEqualTo("c")
   }
 
+  @Test
+  fun `rename newly created module referenced from modifiable model`() {
+    val moduleModel = createModifiableModuleModel()
+    val a = projectModel.createModule("a", moduleModel)
+    val b = projectModel.createModule("b", moduleModel)
+    val modelA = runReadAction { ModuleRootManagerEx.getInstanceEx(a).getModifiableModelForMultiCommit(ModifiableModuleModelAccessor(moduleModel)) }
+    modelA.addModuleOrderEntry(b)
+    moduleModel.renameModule(b, "c")
+    val moduleEntry = dropModuleSourceEntry(modelA, 1).single() as ModuleOrderEntry
+    assertThat(moduleEntry.module).isEqualTo(b)
+
+    runWriteActionAndWait { ModifiableModelCommitter.multiCommit(listOf(modelA), moduleModel) }
+    val moduleManager = projectModel.moduleManager
+    assertThat(moduleManager.modules).containsExactlyInAnyOrder(a, b)
+    val committedEntry = dropModuleSourceEntry(ModuleRootManager.getInstance(a), 1).single() as ModuleOrderEntry
+    assertThat(committedEntry.module).isEqualTo(b)
+    assertThat(committedEntry.moduleName).isEqualTo("c")
+  }
+
   class ModifiableModuleModelAccessor(private val moduleModel: ModifiableModuleModel) : RootConfigurationAccessor() {
     override fun getModule(module: Module?, moduleName: String): Module? {
       return module ?: moduleModel.findModuleByName(moduleName)
