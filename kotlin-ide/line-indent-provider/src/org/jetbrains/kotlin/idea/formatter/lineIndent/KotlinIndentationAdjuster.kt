@@ -17,4 +17,8 @@ interface KotlinIndentationAdjuster {
     // CONTINUATION_INDENT_IN_ELVIS
     val continuationIndentInElvis: Boolean
         get() = false
+
+    // CONTINUATION_INDENT_FOR_EXPRESSION_BODIES
+    val continuationIndentForExpressionBodies: Boolean
+        get() = false
 }

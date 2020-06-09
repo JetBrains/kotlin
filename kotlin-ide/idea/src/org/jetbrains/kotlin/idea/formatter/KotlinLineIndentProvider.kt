@@ -31,6 +31,9 @@ class KotlinLineIndentProvider : KotlinLikeLangLineIndentProvider() {
 
         override val continuationIndentInElvis: Boolean
             get() = settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_ELVIS
+
+        override val continuationIndentForExpressionBodies: Boolean
+            get() = settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_EXPRESSION_BODIES
     }
 
     companion object {
