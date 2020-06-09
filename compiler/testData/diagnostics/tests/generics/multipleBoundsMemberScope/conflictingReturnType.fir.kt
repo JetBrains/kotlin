@@ -9,5 +9,5 @@ interface B {
 }
 
 fun <T> test(x: T) where T : B, T : A {
-    x.<!AMBIGUITY!>foo<!>()
+    x.foo()
 }

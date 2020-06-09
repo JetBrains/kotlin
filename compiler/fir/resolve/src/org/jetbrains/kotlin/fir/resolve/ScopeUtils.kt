@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerLiteralTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 
-fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {
     return when (this) {
         is ConeKotlinErrorType -> null
         is ConeClassLikeType -> {
@@ -32,7 +33,9 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
         is ConeTypeParameterType -> {
             // TODO: support LibraryTypeParameterSymbol or get rid of it
             val fir = lookupTag.toSymbol().fir
-            FirCompositeScope(
+            FirTypeIntersectionScope.prepareIntersectionScope(
+                useSiteSession,
+                FirStandardOverrideChecker(useSiteSession),
                 fir.bounds.mapNotNullTo(mutableListOf()) {
                     it.coneTypeUnsafe<ConeKotlinType>().scope(useSiteSession, scopeSession)
                 }
@@ -40,7 +43,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
         }
         is ConeRawType -> lowerBound.scope(useSiteSession, scopeSession)
         is ConeFlexibleType -> lowerBound.scope(useSiteSession, scopeSession)
-        is ConeIntersectionType -> FirSuperTypeScope.prepareSupertypeScope(
+        is ConeIntersectionType -> FirTypeIntersectionScope.prepareIntersectionScope(
             useSiteSession,
             FirStandardOverrideChecker(useSiteSession),
             intersectedTypes.mapNotNullTo(mutableListOf()) {
@@ -59,7 +62,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
                 FirIntegerLiteralTypeScope.SCOPE_SESSION_KEY
             ) {
                 FirIntegerLiteralTypeScope(useSiteSession, isUnsigned)
-            } as FirScope
+            } as FirTypeScope
         }
         else -> null
     }

@@ -3766,31 +3766,31 @@ class Case61_3<T>: InterfaceWithTypeParameter1<T>, Case61_1<T>, Case61_2<T> {
 
 fun <T> T.case_61() where T : InterfaceWithTypeParameter1<T>?, T: Case61_3<T>?, T: Case61_1<T>?, T: Case61_2<T>? {
     if (this != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T!!")!>this<!>.<!AMBIGUITY!>test1<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T!!")!>this<!>.<!AMBIGUITY!>test2<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T!!")!>this<!>.<!AMBIGUITY!>ip1test1<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T!!")!>this<!>.test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T!!")!>this<!>.test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T!!")!>this<!>.ip1test1()
         <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T!!")!>this<!>.test4()
 
-        <!AMBIGUITY!>test1<!>()
-        <!AMBIGUITY!>test2<!>()
-        <!AMBIGUITY!>ip1test1<!>()
+        test1()
+        test2()
+        ip1test1()
         test4()
         apply {
             <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>
-            <!AMBIGUITY!>test1<!>()
-            <!AMBIGUITY!>test2<!>()
-            <!AMBIGUITY!>ip1test1<!>()
+            test1()
+            test2()
+            ip1test1()
             test4()
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.<!AMBIGUITY!>test1<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.<!AMBIGUITY!>test2<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.<!AMBIGUITY!>ip1test1<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.test1()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.test2()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.ip1test1()
             <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.test4()
         }
         also {
             <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.<!AMBIGUITY!>test1<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.<!AMBIGUITY!>test2<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.<!AMBIGUITY!>ip1test1<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.test1()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.test2()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.ip1test1()
             <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.test4()
         }
     }

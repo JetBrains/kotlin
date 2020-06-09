@@ -61,7 +61,7 @@ class KotlinScopeProvider(
                 }
             FirClassUseSiteMemberScope(
                 useSiteSession,
-                FirSuperTypeScope.prepareOverrideAwareSupertypeScope(
+                FirTypeIntersectionScope.prepareIntersectionScope(
                     useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes
                 ),
                 decoratedDeclaredMemberScope
@@ -100,7 +100,7 @@ internal fun FirClass<*>.scope(
     scopeSession: ScopeSession,
     skipPrivateMembers: Boolean,
     classId: ClassId? = this.classId
-): FirScope {
+): FirTypeScope {
     val basicScope = scopeProvider.getUseSiteMemberScope(
         this, useSiteSession, scopeSession
     )

@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.*
 import kotlin.collections.HashSet
 
-class FirSuperTypeScope private constructor(
+class FirTypeIntersectionScope private constructor(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
-    private val scopes: List<FirScope>,
+    private val scopes: List<FirTypeScope>,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
     private val absentFunctions = mutableSetOf<Name>()
@@ -253,22 +253,14 @@ class FirSuperTypeScope private constructor(
     }
 
     companion object {
-        fun prepareSupertypeScope(
-            session: FirSession,
-            overrideChecker: FirOverrideChecker,
-            scopes: List<FirScope>
-        ): FirScope {
-            scopes.singleOrNull()?.let { return it }
-
-            return FirSuperTypeScope(session, overrideChecker, scopes)
-        }
-
-        // This methods is needed just to preserve the possibility to move
-        // org.jetbrains.kotlin.fir.scopes.FirScope.processOverriddenFunctions to FirOverrideAwareScope
-        fun prepareOverrideAwareSupertypeScope(
+        fun prepareIntersectionScope(
             session: FirSession,
             overrideChecker: FirOverrideChecker,
             scopes: List<FirTypeScope>
-        ): FirTypeScope = prepareSupertypeScope(session, overrideChecker, scopes) as FirTypeScope
+        ): FirTypeScope {
+            scopes.singleOrNull()?.let { return it }
+
+            return FirTypeIntersectionScope(session, overrideChecker, scopes)
+        }
     }
 }

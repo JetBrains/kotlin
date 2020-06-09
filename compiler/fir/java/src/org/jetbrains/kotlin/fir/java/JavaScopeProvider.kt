@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverrideChecker
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -89,7 +89,7 @@ class JavaScopeProvider(
                     }
             JavaClassUseSiteMemberScope(
                 regularClass, useSiteSession,
-                FirSuperTypeScope.prepareOverrideAwareSupertypeScope(
+                FirTypeIntersectionScope.prepareIntersectionScope(
                     useSiteSession,
                     JavaOverrideChecker(
                         useSiteSession,
