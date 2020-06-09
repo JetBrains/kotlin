@@ -206,8 +206,8 @@ class CodeConformanceTest : TestCase() {
                 for (test in tests) {
                     if (test.result.isNotEmpty()) {
                         append(test.message.format(test.result.size, test.result.joinToString("\n")))
-                        appendln()
-                        appendln()
+                        appendLine()
+                        appendLine()
                     }
                 }
             })

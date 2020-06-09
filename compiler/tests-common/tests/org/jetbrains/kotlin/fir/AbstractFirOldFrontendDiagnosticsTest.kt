@@ -63,9 +63,9 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
 
     private fun checkFailureFile(failure: FirRuntimeException, failureFile: File) {
         val failureMessage = buildString {
-            appendln(failure.message)
+            appendLine(failure.message)
             append("Cause: ")
-            appendln(failure.cause)
+            appendLine(failure.cause)
         }
         KotlinTestUtils.assertEqualsToFile(failureFile, failureMessage)
     }

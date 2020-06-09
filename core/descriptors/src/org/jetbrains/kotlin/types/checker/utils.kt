@@ -86,7 +86,7 @@ fun findCorrespondingSupertype(
 private fun KotlinType.approximate() = approximateCapturedTypes(this).upper
 
 private fun TypeConstructor.debugInfo() = buildString {
-    operator fun String.unaryPlus() = appendln(this)
+    operator fun String.unaryPlus() = appendLine(this)
 
     + "type: ${this@debugInfo}"
     + "hashCode: ${this@debugInfo.hashCode()}"

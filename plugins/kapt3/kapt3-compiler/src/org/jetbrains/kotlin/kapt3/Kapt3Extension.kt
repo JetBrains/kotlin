@@ -240,8 +240,8 @@ abstract class AbstractKapt3Extension(
 
             for (leak in leaks) {
                 logger.warn(buildString {
-                    appendln("Memory leak detected!")
-                    appendln("Location: '${leak.className}', static field '${leak.fieldName}'")
+                    appendLine("Memory leak detected!")
+                    appendLine("Location: '${leak.className}', static field '${leak.fieldName}'")
                     append(leak.description)
                 })
             }

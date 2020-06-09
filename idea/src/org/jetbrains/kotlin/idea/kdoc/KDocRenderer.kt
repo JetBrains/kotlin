@@ -227,7 +227,7 @@ object KDocRenderer {
                 sb.append("<$tag>")
                 processChildren()
                 sb.append("</$tag>")
-                if (newline) sb.appendln()
+                if (newline) sb.appendLine()
             }
 
             val nodeType = node.type

@@ -97,10 +97,10 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
                 val typeParameters = functionFoo.typeParameters
                 val type = functionFoo.returnType
 
-                appendln(testType)
+                appendLine(testType)
 
                 if (bindingContext.diagnostics.noSuppression().any { it.severity == Severity.ERROR }) {
-                    appendln("  compiler error\n")
+                    appendLine("  compiler error\n")
                     continue
                 }
 
@@ -119,9 +119,9 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
                         if (testSubstitution.size > 1) append("${typeParameter.name} = ")
                         append("${testSubstitution[typeParameter]}. ")
                     }
-                    appendln("lower: $lower; upper: $upper; substitution: $substitution")
+                    appendLine("lower: $lower; upper: $upper; substitution: $substitution")
                 }
-                if (testTypes.lastIndex != index) appendln()
+                if (testTypes.lastIndex != index) appendLine()
             }
         }
 

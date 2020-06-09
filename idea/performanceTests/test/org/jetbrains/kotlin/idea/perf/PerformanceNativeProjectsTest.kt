@@ -258,9 +258,9 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
                         buildString {
                             originalKtFileContents.forEachIndexed { index, line ->
                                 if (index == packageLineIndex) {
-                                    appendln(line.replace("perfTestPackage1", "perfTestPackage$n"))
+                                    appendLine(line.replace("perfTestPackage1", "perfTestPackage$n"))
                                 } else {
-                                    appendln(line)
+                                    appendLine(line)
                                 }
                             }
                         }

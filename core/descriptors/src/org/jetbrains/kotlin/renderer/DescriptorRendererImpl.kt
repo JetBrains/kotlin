@@ -415,7 +415,7 @@ internal class DescriptorRendererImpl(
             ) {
                 append(renderAnnotation(annotation, target))
                 if (eachAnnotationOnNewLine) {
-                    appendln()
+                    appendLine()
                 } else {
                     append(" ")
                 }

@@ -59,9 +59,9 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
     }
 
     private fun renderAsyncStackTrace(trace: List<StackFrameItem>) = buildString {
-        appendln("Async stack trace:")
+        appendLine("Async stack trace:")
         for (item in trace) {
-            append(MARGIN).appendln(item.toString())
+            append(MARGIN).appendLine(item.toString())
             val declaredFields = listDeclaredFields(item.javaClass)
 
             @Suppress("UNCHECKED_CAST")
@@ -77,7 +77,7 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
                     val name = descriptor.calcValueName()
                     val value = descriptor.calcValue(evaluationContext)
 
-                    append(MARGIN).append(MARGIN).append(name).append(" = ").appendln(value)
+                    append(MARGIN).append(MARGIN).append(name).append(" = ").appendLine(value)
                 }
             }
         }

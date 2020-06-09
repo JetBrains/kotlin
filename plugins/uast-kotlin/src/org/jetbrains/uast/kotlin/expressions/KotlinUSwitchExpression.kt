@@ -42,9 +42,9 @@ class KotlinUSwitchExpression(
 
     override fun asRenderString() = buildString {
         val expr = expression?.let { "(" + it.asRenderString() + ") " } ?: ""
-        appendln("switch $expr {")
-        appendln(body.asRenderString())
-        appendln("}")
+        appendLine("switch $expr {")
+        appendLine(body.asRenderString())
+        appendLine("}")
     }
 
     override val switchIdentifier: UIdentifier
@@ -62,9 +62,9 @@ class KotlinUSwitchEntry(
     override val body: UExpressionList by lz {
         object : KotlinUExpressionList(sourcePsi, KotlinSpecialExpressionKinds.WHEN_ENTRY, this@KotlinUSwitchEntry) {
             override fun asRenderString() = buildString {
-                appendln("{")
-                expressions.forEach { appendln(it.asRenderString().withMargin) }
-                appendln("}")
+                appendLine("{")
+                expressions.forEach { appendLine(it.asRenderString().withMargin) }
+                appendLine("}")
             }
         }.apply KotlinUExpressionList@{
             val exprPsi = this@KotlinUSwitchEntry.sourcePsi.expression

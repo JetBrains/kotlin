@@ -79,15 +79,15 @@ abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsT
                     }
 
                     if (wasExpected.isNotEmpty()) {
-                        appendln("Some diagnostics was expected:")
+                        appendLine("Some diagnostics was expected:")
                         wasExpected.forEach {
-                            appendln(it.errorMessage())
+                            appendLine(it.errorMessage())
                         }
                     }
                     if (isActual.isNotEmpty()) {
-                        appendln("Some new diagnostics:")
+                        appendLine("Some new diagnostics:")
                         isActual.forEach {
-                            appendln(it.errorMessage())
+                            appendLine(it.errorMessage())
                         }
                     }
 

@@ -37,7 +37,7 @@ class MultiplesRequiredTypesTest : AbstractKotlinUastTest() {
                 if (uElement != null) {
                     builder.append("    ".repeat(level))
                     builder.append(uElement.asLogString())
-                    builder.appendln()
+                    builder.appendLine()
                 }
                 if (uElement != null) level++
                 element.acceptChildren(this)

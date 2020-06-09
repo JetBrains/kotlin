@@ -64,7 +64,7 @@ class JavaContextDeclarationRenderer {
         buildString {
             for (member in this@render) {
                 renderJavaDeclaration(member)
-                appendln()
+                appendLine()
             }
         }
 

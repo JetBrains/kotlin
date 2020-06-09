@@ -66,7 +66,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
         for (name in provider.getAllCallableNamesInPackage(packageFqName)) {
             for (symbol in provider.getTopLevelCallableSymbols(packageFqName, name)) {
                 symbol.fir.accept(firRenderer)
-                builder.appendln()
+                builder.appendLine()
             }
         }
 
@@ -75,7 +75,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
                 provider.getClassLikeSymbolByFqName(ClassId.topLevel(packageFqName.child(name))) as FirClassSymbol?
                     ?: continue
             classLikeSymbol.fir.accept(firRenderer)
-            builder.appendln()
+            builder.appendLine()
         }
 
         val testDataDirectoryPath =

@@ -44,7 +44,7 @@ abstract class AbstractFirOldFrontendLightClassesTest : AbstractFirOldFrontendDi
             )
 
             psiClass.appendMirrorText(0, stringBuilder)
-            stringBuilder.appendln()
+            stringBuilder.appendLine()
         }
 
         val expectedPath = testDataFile.path.replace(".kt", ".txt")

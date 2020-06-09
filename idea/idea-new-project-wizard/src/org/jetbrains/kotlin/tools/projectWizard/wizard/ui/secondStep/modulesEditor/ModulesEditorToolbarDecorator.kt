@@ -79,9 +79,9 @@ class ModulesEditorToolbarDecorator(
                     buildString {
                         val moduleName = selectedModule?.name!!
                         if (tree.selectedSettingItem.safeAs<Module>()?.kind != ModuleKind.target) {
-                            appendln(KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.module", moduleName))
+                            appendLine(KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.module", moduleName))
                         } else {
-                            appendln(KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.target", moduleName))
+                            appendLine(KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.target", moduleName))
                         }
                     },
                     KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.question", moduleKindText),

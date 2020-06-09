@@ -91,7 +91,7 @@ abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
                      "%1$-${valueColumnWidth}s".format(valueDecl(value)) +
                      "   " +
                      "%1$-${valueDescColumnWidth}s".format(description)
-            out.appendln(line.trimEnd())
+            out.appendLine(line.trimEnd())
         }
     }
 
