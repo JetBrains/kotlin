@@ -157,11 +157,19 @@ class MyAppDelegate() : NSObject(), NSApplicationDelegateProtocol {
             backgroundColor = NSColor.grayColor()
             releasedWhenClosed = false
 
-            delegate = object : NSObject(), NSWindowDelegateProtocol {
+            val delegateImpl = object : NSObject(), NSWindowDelegateProtocol {
                 override fun windowShouldClose(sender: NSWindow): Boolean {
                     NSApplication.sharedApplication().stop(this)
                     return true
                 }
+            }
+
+            // Wrapping to autoreleasepool is a workaround for false-positive memory leak detected:
+            // NSWindow.delegate setter appears to put the delegate to autorelease pool.
+            // Since this code runs during top-level val initializer, it misses the autoreleasepool in [main],
+            // so the object gets released too late.
+            autoreleasepool {
+                delegate = delegateImpl
             }
         }
 
