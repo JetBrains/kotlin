@@ -4491,6 +4491,12 @@ dependencies {
     compile 'junit:junit:4.12'
 }
 
+project.tasks.named("test").configure {
+    // Don't run this task as it will try to execute debugger tests too
+    // that is not desired as they are platform-specific.
+    enabled = false
+}
+
 project.tasks.register("debugger_test", Test.class) {
     enabled = (target.family == Family.OSX)  // KT-30366
     testLogging { exceptionFormat = 'full' }
