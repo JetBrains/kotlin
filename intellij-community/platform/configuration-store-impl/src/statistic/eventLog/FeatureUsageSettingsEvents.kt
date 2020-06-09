@@ -168,9 +168,9 @@ internal data class ConfigurationStateExtractor(val recordDefault: Boolean) {
     val isDefault = !jdomSerializer.getDefaultSerializationFilter().accepts(accessor, state)
     if (!isDefault || recordDefault) {
       val data = FeatureUsageSettingsEventPrinter.createComponentData(project, componentName, pluginInfo)
-      recordedOptionNames.add(accessor.name)
-      data.addData("name", accessor.name)
       if (tryAddTypedValue(data, accessor, state)) {
+        recordedOptionNames.add(accessor.name)
+        data.addData("name", accessor.name)
         if (recordDefault) {
           data.addData("default", isDefault)
         }

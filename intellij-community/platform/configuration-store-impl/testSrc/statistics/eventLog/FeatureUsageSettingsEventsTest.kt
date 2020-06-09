@@ -3,6 +3,7 @@ package com.intellij.configurationStore.statistics.eventLog
 
 import com.intellij.configurationStore.getStateSpec
 import com.intellij.configurationStore.statistic.eventLog.FeatureUsageSettingsEventPrinter
+import com.intellij.configurationStore.statistic.eventLog.isComponentOptionNameWhitelisted
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.openapi.components.PersistentStateComponent
@@ -454,6 +455,23 @@ class FeatureUsageSettingsEventsTest {
     Assert.assertEquals(1, printer.result.size)
   }
 
+  @Test
+  fun `not report collections`() {
+    val component = TestComponent()
+    component.loadState(ComponentStateWithCollections(listOf("foo"), hashMapOf("foo" to "bar"), setOf("bar")))
+    val recordDefault = false
+    val printer = TestFeatureUsageSettingsEventsPrinter(recordDefault)
+    printer.logConfigurationState(getStateSpec(component).name, component.state, null)
+
+    val withProject = false
+    val defaultProject = false
+    assertInvokedRecorded(printer.getInvokedEvent(), withProject, defaultProject)
+    Assert.assertEquals(1, printer.result.size)
+    assertThat(isComponentOptionNameWhitelisted("setOption")).isFalse()
+    assertThat(isComponentOptionNameWhitelisted("mapOption")).isFalse()
+    assertThat(isComponentOptionNameWhitelisted("listOption")).isFalse()
+  }
+
   private fun assertDefaultWithoutDefaultRecording(printer: TestFeatureUsageSettingsEventsPrinter,
                                                    withProject: Boolean,
                                                    defaultProject: Boolean) {
@@ -462,7 +480,10 @@ class FeatureUsageSettingsEventsTest {
   }
 
   @Suppress("SameParameterValue")
-  private fun assertNotDefaultState(printer: TestFeatureUsageSettingsEventsPrinter,withRecordDefault: Boolean, withProject: Boolean, defaultProject: Boolean) {
+  private fun assertNotDefaultState(printer: TestFeatureUsageSettingsEventsPrinter,
+                                    withRecordDefault: Boolean,
+                                    withProject: Boolean,
+                                    defaultProject: Boolean) {
     assertThat(printer.result).hasSize(1)
     assertNotDefaultState(printer.result[0], "boolOption", true, "bool", withRecordDefault, withProject, defaultProject)
   }
@@ -708,6 +729,20 @@ class FeatureUsageSettingsEventsTest {
     @SkipReportingStatistics
     @Attribute("disabled-option")
     val disabledField: Boolean = bool
+  }
+
+  @Suppress("unused")
+  private class ComponentStateWithCollections(list: List<String> = listOf(),
+                                              map: Map<String, String> = hashMapOf(),
+                                              set: Set<String> = hashSetOf()) : ComponentState() {
+    @Attribute("list-option")
+    val listOption: List<String> = list
+
+    @Attribute("map-option")
+    val mapOption: Map<String, String> = map
+
+    @Attribute("set-option")
+    val setOption: Set<String> = set
   }
 
 }
