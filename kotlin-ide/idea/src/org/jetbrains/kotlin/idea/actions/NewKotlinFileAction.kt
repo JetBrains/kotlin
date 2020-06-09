@@ -58,7 +58,7 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
     KotlinBundle.message("action.new.file.description"),
     KotlinFileType.INSTANCE.icon
 ), DumbAware {
-    override fun postProcess(createdElement: PsiFile?, templateName: String?, customProperties: Map<String, String>?) {
+    override fun postProcess(createdElement: PsiFile, templateName: String?, customProperties: Map<String, String>?) {
         super.postProcess(createdElement, templateName, customProperties)
 
         val module = ModuleUtilCore.findModuleForPsiElement(createdElement!!)
