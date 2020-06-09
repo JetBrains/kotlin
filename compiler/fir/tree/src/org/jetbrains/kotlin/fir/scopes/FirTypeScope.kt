@@ -34,6 +34,6 @@ abstract class FirTypeScope : FirScope() {
             if (!baseScope.processOverriddenFunctions(overridden, processor)) return ProcessorAction.STOP
         }
 
-        return ProcessorAction.NEXT
+        return baseScope.processOverriddenFunctions(functionSymbol, processor)
     }
 }

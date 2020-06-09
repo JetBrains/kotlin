@@ -1732,6 +1732,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/properties/javaAccessorConversion.kt");
         }
 
+        @TestMetadata("javaAccessorsComplex.kt")
+        public void testJavaAccessorsComplex() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/properties/javaAccessorsComplex.kt");
+        }
+
         @TestMetadata("noBackingFieldForExtension.kt")
         public void testNoBackingFieldForExtension() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/properties/noBackingFieldForExtension.kt");

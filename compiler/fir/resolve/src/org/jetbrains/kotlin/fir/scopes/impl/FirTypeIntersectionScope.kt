@@ -41,6 +41,8 @@ class FirTypeIntersectionScope private constructor(
 
     private val typeContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = false, session)
 
+    private val overriddenSymbols = mutableMapOf<FirCallableSymbol<*>, Collection<FirCallableSymbol<*>>>()
+
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         if (!processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)) {
             super.processFunctionsByName(name, processor)
@@ -81,8 +83,10 @@ class FirTypeIntersectionScope private constructor(
 
         membersByScope.singleOrNull()?.let { members ->
             for (member in members) {
+                overriddenSymbols[member] = listOf(member)
                 processor(member)
             }
+
 
             return false
         }
@@ -94,7 +98,7 @@ class FirTypeIntersectionScope private constructor(
             val extractedOverrides = extractBothWaysOverridable(maxByVisibility, allMembers)
 
             val mostSpecific = selectMostSpecificMember(extractedOverrides)
-
+            overriddenSymbols[mostSpecific] = extractedOverrides
             processor(mostSpecific)
         }
 
@@ -245,8 +249,17 @@ class FirTypeIntersectionScope private constructor(
         functionSymbol: FirFunctionSymbol<*>,
         processor: (FirFunctionSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
-        for (scope in scopes) {
-            if (!scope.processOverriddenFunctions(functionSymbol, processor)) return ProcessorAction.STOP
+        @Suppress("UNCHECKED_CAST")
+        val directOverriddenSymbols =
+            overriddenSymbols[functionSymbol] as Collection<FirFunctionSymbol<*>>?
+                ?: return ProcessorAction.NEXT
+
+        for (directOverridden in directOverriddenSymbols) {
+            // TODO: Preserve the scope where directOverridden came from
+            for (scope in scopes) {
+                if (!processor(directOverridden)) return ProcessorAction.STOP
+                if (!scope.processOverriddenFunctions(directOverridden, processor)) return ProcessorAction.STOP
+            }
         }
 
         return ProcessorAction.NEXT
