@@ -3,6 +3,7 @@ package org.jetbrains.konan.resolve.translation
 import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbol
 import com.jetbrains.cidr.lang.types.OCNullability
 import com.jetbrains.cidr.lang.types.OCPointerType
+import com.jetbrains.cidr.lang.types.OCReferenceType
 import org.jetbrains.konan.resolve.symbols.objc.KtOCInterfaceSymbol
 
 class KtOCSymbolTranslatorTest : KtSymbolTranslatorTestCase() {
@@ -48,5 +49,25 @@ class KtOCSymbolTranslatorTest : KtSymbolTranslatorTestCase() {
         assertEquals("b pointer nullability", OCNullability.NONNULL, bReturn.nullability)
         assertEquals("b ref name", "NSString", bReturn.refType.name)
         assertEquals("b ref nullability", OCNullability.NONNULL, bReturn.refType.nullability)
+    }
+
+    fun `test meta class type translation`() {
+        val file = configure("import kotlinx.cinterop.ObjCClass; class A { fun a(c: ObjCClass?) {}; fun b(c: ObjCClass) {} }")
+        val translatedSymbols = KtOCSymbolTranslator.translate(file)
+        assertSize(2, translatedSymbols)
+
+        val translatedSymbol = translatedSymbols.first() as KtOCInterfaceSymbol
+        val (a, b) = translatedSymbol.members
+            .filterIsInstance<OCMethodSymbol>().filter { it.name == "aC:" || it.name == "bC:" }.sortedBy { it.name }
+
+        assertEquals("aC:", a.name)
+        val aParam = a.parameterSymbols.single().type as OCReferenceType
+        assertEquals("a ref nullability", OCNullability.NULLABLE, aParam.nullability)
+        assertEquals("a ref name", "Class", aParam.name)
+
+        assertEquals("bC:", b.name)
+        val bParam = b.parameterSymbols.single().type as OCReferenceType
+        assertEquals("b ref nullability", OCNullability.NONNULL, bParam.nullability)
+        assertEquals("b ref name", "Class", bParam.name)
     }
 }

@@ -46,6 +46,9 @@ abstract class KtLazySymbol<State : StubState, Stb : ObjCTopLevel<*>> : KtSymbol
                     if (!stubTrace.isValid) return@runReadAction null
                     try {
                         computeState(stub, project)
+                    } catch (e: AssertionError) {
+                        CidrLog.LOG.error(e) // likely ObjC backend failed to generate stubs
+                        null
                     } catch (e: InvalidModuleException) {
                         CidrLog.LOG.error(e)
                         null

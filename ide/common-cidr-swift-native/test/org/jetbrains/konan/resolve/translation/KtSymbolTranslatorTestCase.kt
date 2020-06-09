@@ -49,6 +49,8 @@ abstract class KtSymbolTranslatorTestCase : KotlinLightCodeInsightFixtureTestCas
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     override fun setUp(): Unit = super.setUp().also {
+        myFixture.testDataPath = "kotlin-ultimate/ide/common-cidr-swift-native/testData"
+        myFixture.copyFileToProject("native-stdlib.kt", "src/native-stdlib.kt")
         FileSymbolTablesCache.setShouldBuildTablesInTests(SymbolsProperties(SymbolsKind.ONLY_USED, false, false))
         FileSymbolTablesCache.forceSymbolsLoadedInTests(true)
     }

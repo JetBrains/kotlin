@@ -30,63 +30,48 @@ private class TypeBuilder(
     private val file: VirtualFile?,
     private val assumeNonNull: Boolean
 ) {
-    fun build(objCType: ObjCType, nullability: Boolean = false): OCType {
-        when (objCType) {
-            is ObjCRawType -> {
-                //todo improve
-                val codeFragment = OCElementFactory.typeCodeFragment(objCType.rawText, project, null, false, false)
-                val typeElement = PsiTreeUtil.getChildOfType(codeFragment, OCTypeElement::class.java)!!
-                return typeElement.rawType
-            }
-
-            is ObjCClassType -> {
-                return OCPointerType.to(
-                    referenceType(objCType.className, objCType.typeArguments.map { arg -> build(arg) }, false),
-                    null, null, nullability.toOCNullability(), false, false
-                )
-            }
-
-            is ObjCProtocolType -> {
-                val ref = OCSymbolReference.getDummyGlobalReference(OCQualifiedName.interned("id"))
-                return OCReferenceTypeBuilder(ref)
-                    .setSingleProtocolName(objCType.protocolName)
-                    .setNullability(nullability.toOCNullability())
-                    .build()
-            }
-
-            ObjCIdType -> {
-                return referenceType("id", emptyList(), nullability)
-            }
-
-            ObjCInstanceType -> {
-                return referenceType(OCMethodSymbol.INSTANCETYPE, emptyList(), nullability)
-            }
-
-            is ObjCBlockPointerType -> {
-                val returnType = build(objCType.returnType)
-                val parameterTypes = objCType.parameterTypes.map { p -> build(p) }
-                val functionType = OCFunctionType(returnType, parameterTypes, null)
-                return OCBlockPointerType(functionType, null, nullability.toOCNullability(), false, false)
-            }
-
-            is ObjCNullableReferenceType -> {
-                return build(objCType.nonNullType, true)
-            }
-
-            is ObjCPrimitiveType -> {
-                return referenceType(objCType.cName, emptyList(), false)
-            }
-
-            is ObjCPointerType -> {
-                return OCPointerType.to(build(objCType.pointee), null, null, objCType.nullable.toOCNullability(), false, false)
-            }
-
-            ObjCVoidType -> {
-                return OCVoidType.instance()
-            }
-            is ObjCGenericTypeDeclaration -> TODO()
-            ObjCMetaClassType -> TODO()
+    fun build(objCType: ObjCType, nullability: Boolean = false): OCType = when (objCType) {
+        is ObjCRawType -> {
+            //todo improve
+            val codeFragment = OCElementFactory.typeCodeFragment(objCType.rawText, project, null, false, false)
+            val typeElement = PsiTreeUtil.getChildOfType(codeFragment, OCTypeElement::class.java)!!
+            typeElement.rawType
         }
+
+        is ObjCClassType ->
+            OCPointerType.to(
+                referenceType(objCType.className, objCType.typeArguments.map { arg -> build(arg) }, false),
+                null, null, nullability.toOCNullability(), false, false
+            )
+
+        is ObjCProtocolType -> {
+            val ref = OCSymbolReference.getDummyGlobalReference(OCQualifiedName.interned("id"))
+            OCReferenceTypeBuilder(ref)
+                .setSingleProtocolName(objCType.protocolName)
+                .setNullability(nullability.toOCNullability())
+                .build()
+        }
+
+        ObjCIdType -> referenceType("id", emptyList(), nullability)
+
+        ObjCInstanceType -> referenceType(OCMethodSymbol.INSTANCETYPE, emptyList(), nullability)
+
+        is ObjCBlockPointerType -> {
+            val returnType = build(objCType.returnType)
+            val parameterTypes = objCType.parameterTypes.map { p -> build(p) }
+            val functionType = OCFunctionType(returnType, parameterTypes, null)
+            OCBlockPointerType(functionType, null, nullability.toOCNullability(), false, false)
+        }
+
+        is ObjCNullableReferenceType -> build(objCType.nonNullType, true)
+
+        is ObjCPrimitiveType -> referenceType(objCType.cName, emptyList(), false)
+
+        is ObjCPointerType -> OCPointerType.to(build(objCType.pointee), null, null, objCType.nullable.toOCNullability(), false, false)
+
+        ObjCVoidType -> OCVoidType.instance()
+        is ObjCGenericTypeDeclaration -> OCUnknownType.INSTANCE //todo
+        ObjCMetaClassType -> referenceType("Class", emptyList(), nullability)
     }
 
     private fun Boolean.toOCNullability(): OCNullability = when (this) {
