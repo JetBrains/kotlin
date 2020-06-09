@@ -221,11 +221,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         configureOptimization(mode)
 
-        devServer = KotlinWebpackConfig.DevServer(
-            open = true,
-            contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
-        )
-
         val actualDceTaskProvider = when (mode) {
             KotlinJsBinaryMode.PRODUCTION -> dceTaskProvider
             KotlinJsBinaryMode.DEVELOPMENT -> devDceTaskProvider
