@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.psi.KtElement;
@@ -187,10 +186,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         generateClosureBody();
 
         if (samType != null) {
-            ClassDescriptor funInterface = samType.getClassDescriptor();
-            if (!(funInterface instanceof JavaClassDescriptor)) {
-                SamWrapperCodegen.generateDelegatesToDefaultImpl(asmType, classDescriptor, funInterface, functionCodegen, state);
-            }
+            SamWrapperCodegen.generateDelegatesToDefaultImpl(
+                    asmType, classDescriptor, samType.getClassDescriptor(), functionCodegen, state
+            );
         }
 
         this.constructor = generateConstructor();
