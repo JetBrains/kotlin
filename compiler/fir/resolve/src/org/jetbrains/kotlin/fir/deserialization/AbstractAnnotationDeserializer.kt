@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
@@ -56,7 +57,8 @@ abstract class AbstractAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    fun loadPropertyGetterAnnotations(
+    open fun loadPropertyGetterAnnotations(
+        containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
         getterFlags: Int
@@ -66,7 +68,8 @@ abstract class AbstractAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    fun loadPropertySetterAnnotations(
+    open fun loadPropertySetterAnnotations(
+        containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
         setterFlags: Int

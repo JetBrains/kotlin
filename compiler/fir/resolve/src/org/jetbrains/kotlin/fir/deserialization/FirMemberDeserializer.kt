@@ -195,7 +195,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     this.returnTypeRef = returnTypeRef
                     isGetter = true
                     status = FirDeclarationStatusImpl(visibility, modality)
-                    annotations += c.annotationDeserializer.loadPropertyGetterAnnotations(proto, local.nameResolver, getterFlags)
+                    annotations +=
+                        c.annotationDeserializer.loadPropertyGetterAnnotations(c.containerSource, proto, local.nameResolver, getterFlags)
                     this.symbol = FirPropertyAccessorSymbol()
                 }
             } else {
@@ -216,7 +217,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     this.returnTypeRef = FirImplicitUnitTypeRef(source)
                     isGetter = false
                     status = FirDeclarationStatusImpl(visibility, modality)
-                    annotations += c.annotationDeserializer.loadPropertySetterAnnotations(proto, local.nameResolver, setterFlags)
+                    annotations +=
+                        c.annotationDeserializer.loadPropertySetterAnnotations(c.containerSource, proto, local.nameResolver, setterFlags)
                     this.symbol = FirPropertyAccessorSymbol()
                     valueParameters += proto.setterValueParameter.let {
                         val parameterFlags = if (it.hasFlags()) it.flags else 0
