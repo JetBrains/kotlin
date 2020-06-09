@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
+import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -36,12 +37,9 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrErrorType
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -77,6 +75,8 @@ class Fir2IrDeclarationStorage(
     private val fieldCache = mutableMapOf<FirField, IrField>()
 
     private val localStorage = Fir2IrLocalStorage()
+
+    private val delegatedMemberGenerator = DelegatedMemberGenerator(components)
 
     private fun areCompatible(firFunction: FirFunction<*>, irFunction: IrFunction): Boolean {
         if (firFunction is FirSimpleFunction && irFunction is IrSimpleFunction) {
@@ -700,9 +700,39 @@ class Fir2IrDeclarationStorage(
 
     fun getCachedIrProperty(property: FirProperty): IrProperty? = propertyCache[property]
 
-    private fun createIrField(field: FirField): IrField {
+    fun getCachedIrField(field: FirField): IrField? = fieldCache[field]
+
+    fun createIrFieldAndDelegatedMembers(field: FirField, parent: IrClass): IrField {
+        val irField = createIrField(field, origin = IrDeclarationOrigin.DELEGATE)
+        irField.setAndModifyParent(parent)
+        delegatedMemberGenerator.generate(irField, parent)
+        return irField
+    }
+
+    internal fun findOverriddenFirFunction(irFunction: IrSimpleFunction, superClassId: ClassId): FirFunction<*>? {
+        val functions = getFirClassByFqName(superClassId)?.declarations?.filter {
+            it is FirFunction<*> && functionCache.containsKey(it) && irFunction.overrides(functionCache[it]!!)
+        }
+        return if (functions.isNullOrEmpty()) null else functions.first() as FirFunction<*>
+    }
+
+    internal fun findOverriddenFirProperty(irProperty: IrProperty, superClassId: ClassId): FirProperty? {
+        val properties = getFirClassByFqName(superClassId)?.declarations?.filter {
+            it is FirProperty && it.name == irProperty.name
+        }
+        return if (properties.isNullOrEmpty()) null else properties.first() as FirProperty
+    }
+
+    private fun getFirClassByFqName(classId: ClassId): FirClass<*>? {
+        val declaration = firProvider.getClassLikeSymbolByFqName(classId) ?: firSymbolProvider.getClassLikeSymbolByFqName(classId)
+        return declaration?.fir as? FirClass<*>
+    }
+
+    private fun createIrField(
+        field: FirField,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+    ): IrField {
         val descriptor = WrappedFieldDescriptor()
-        val origin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         val type = field.returnTypeRef.toIrType()
         return field.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareField(

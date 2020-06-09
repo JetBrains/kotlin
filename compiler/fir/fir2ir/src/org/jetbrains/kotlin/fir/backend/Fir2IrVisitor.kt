@@ -76,6 +76,14 @@ class Fir2IrVisitor(
         TODO("Should not be here: ${element.render()}")
     }
 
+    override fun visitField(field: FirField, data: Any?): IrField {
+        if (field.isSynthetic) {
+            return declarationStorage.getCachedIrField(field)!!
+        } else {
+            throw AssertionError("Unexpected field: ${field.render()}")
+        }
+    }
+
     override fun visitFile(file: FirFile, data: Any?): IrFile {
         return conversionScope.withParent(declarationStorage.getIrFile(file)) {
             file.declarations.forEach {

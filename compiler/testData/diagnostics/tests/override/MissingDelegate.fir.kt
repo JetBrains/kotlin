@@ -1,3 +1,3 @@
-class C : Base1 by Base2(1) {
+class C : Base1 by <!UNRESOLVED_REFERENCE!>Base2<!>(1) {
   fun test() { }
 }

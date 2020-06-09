@@ -87,7 +87,7 @@ class Fir2IrConverter(
         anonymousObject.getPrimaryConstructorIfAny()?.let {
             irClass.declarations += declarationStorage.createIrConstructor(it, irClass)
         }
-        for (declaration in anonymousObject.declarations) {
+        for (declaration in sortBySynthetic(anonymousObject.declarations)) {
             if (declaration is FirRegularClass) {
                 registerClassAndNestedClasses(declaration, irClass)
                 processClassAndNestedClassHeaders(declaration)
@@ -98,6 +98,13 @@ class Fir2IrConverter(
         return irClass
     }
 
+    // Sort declarations so that all non-synthetic declarations are before synthetic ones.
+    // This is needed because converting synthetic fields for implementation delegation needs to know
+    // existing declarations in the class to avoid adding redundant delegated members.
+    private fun sortBySynthetic(declarations: List<FirDeclaration>) : Iterable<FirDeclaration> {
+        return declarations.sortedBy { it.isSynthetic }
+    }
+
     private fun processClassMembers(
         regularClass: FirRegularClass,
         irClass: IrClass = classifierStorage.getCachedIrClass(regularClass)!!
@@ -105,7 +112,7 @@ class Fir2IrConverter(
         regularClass.getPrimaryConstructorIfAny()?.let {
             irClass.declarations += declarationStorage.createIrConstructor(it, irClass)
         }
-        for (declaration in regularClass.declarations) {
+        for (declaration in sortBySynthetic(regularClass.declarations)) {
             val irDeclaration = processMemberDeclaration(declaration, irClass) ?: continue
             irClass.declarations += irDeclaration
         }
@@ -141,6 +148,13 @@ class Fir2IrConverter(
             }
             is FirProperty -> {
                 declarationStorage.createIrProperty(declaration, parent)
+            }
+            is FirField -> {
+                if (declaration.isSynthetic) {
+                    declarationStorage.createIrFieldAndDelegatedMembers(declaration, parent as IrClass)
+                } else {
+                    throw AssertionError("Unexpected non-synthetic field: ${declaration::class}")
+                }
             }
             is FirConstructor -> if (!declaration.isPrimary) {
                 declarationStorage.createIrConstructor(declaration, parent as IrClass)
