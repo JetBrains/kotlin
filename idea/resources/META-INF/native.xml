@@ -11,4 +11,5 @@
                   language="KND"
                   extensions="def"/>
     </extensions>
+    <depends optional="true" config-file="native-run-configuration.xml">com.intellij.gradle</depends>
 </idea-plugin>
