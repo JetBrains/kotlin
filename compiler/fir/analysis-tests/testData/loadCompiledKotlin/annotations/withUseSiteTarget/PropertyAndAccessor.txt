@@ -17,7 +17,7 @@ public final annotation class B : R|kotlin/Annotation| {
 public abstract interface I : R|kotlin/Any| {
     public abstract var getterAndSetter: R|kotlin/Int|
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     public abstract var propertyAndGetter: R|kotlin/Int|
         public get(): R|kotlin/Int|
@@ -25,6 +25,6 @@ public abstract interface I : R|kotlin/Any| {
 
     public abstract var propertyAndSetter: R|kotlin/Int|
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
 }

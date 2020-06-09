@@ -56,6 +56,26 @@ abstract class AbstractAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
+    fun loadPropertyGetterAnnotations(
+        propertyProto: ProtoBuf.Property,
+        nameResolver: NameResolver,
+        getterFlags: Int
+    ): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(getterFlags)) return emptyList()
+        val annotations = propertyProto.getExtension(protocol.propertyGetterAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
+    }
+
+    fun loadPropertySetterAnnotations(
+        propertyProto: ProtoBuf.Property,
+        nameResolver: NameResolver,
+        setterFlags: Int
+    ): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(setterFlags)) return emptyList()
+        val annotations = propertyProto.getExtension(protocol.propertySetterAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
+    }
+
     fun loadConstructorAnnotations(constructorProto: ProtoBuf.Constructor, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(constructorProto.flags)) return emptyList()
         val annotations = constructorProto.getExtension(protocol.constructorAnnotation).orEmpty()
