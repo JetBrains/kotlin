@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
@@ -280,6 +281,10 @@ abstract class AbstractComposeLowering(
 
     fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
         any { it.symbol.descriptor.constructedClass.fqNameSafe == fqName }
+
+    fun IrCall.isInvoke(): Boolean {
+        return origin == IrStatementOrigin.INVOKE || symbol.descriptor is FunctionInvokeDescriptor
+    }
 
     fun IrCall.isTransformedComposableCall(): Boolean {
         return context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_CALL, this] ?: false
