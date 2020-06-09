@@ -16,17 +16,18 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun IrFunction.getDispatchReceiver(): IrSymbol? {
+fun IrFunction.getDispatchReceiver(): IrValueParameterSymbol? {
     return this.dispatchReceiverParameter?.symbol
 }
 
-fun IrFunction.getExtensionReceiver(): IrSymbol? {
+fun IrFunction.getExtensionReceiver(): IrValueParameterSymbol? {
     return this.extensionReceiverParameter?.symbol
 }
 
@@ -211,3 +212,18 @@ fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State? {
     val other = irFunction.parentClassOrNull?.thisReceiver ?: return this
     return generateSequence(original) { it.superClass }.firstOrNull { it.irClass.thisReceiver == other } ?: this
 }
+
+fun State.checkNullability(irType: IrType?): State {
+    if (irType !is IrSimpleType) return this
+    if (this.isNull() && !irType.hasQuestionMark) {
+        throw NullPointerException()
+    }
+    return this
+}
+
+fun IrValueParameterSymbol.isNullable(): Boolean {
+    val type = this.owner.type as? IrSimpleType ?: return false
+    return type.isNullable()
+}
+
+fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalize()

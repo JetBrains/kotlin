@@ -31,7 +31,8 @@ object EmptyArray : IntrinsicBase() {
     override suspend fun evaluate(
         irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
     ): ExecutionResult {
-        stack.pushReturnValue(emptyArray<Any?>().toState(irFunction.returnType))
+        val typeArguments = irFunction.typeParameters.map { stack.getVariable(it.symbol) }
+        stack.pushReturnValue(emptyArray<Any?>().toState(irFunction.returnType).apply { addTypeArguments(typeArguments) })
         return Next
     }
 }
@@ -46,7 +47,8 @@ object ArrayOf : IntrinsicBase() {
         irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
     ): ExecutionResult {
         val array = irFunction.getArgsForMethodInvocation(stack.getAll()).toTypedArray()
-        stack.pushReturnValue(array.toState(irFunction.returnType))
+        val typeArguments = irFunction.typeParameters.map { stack.getVariable(it.symbol) }
+        stack.pushReturnValue(array.toState(irFunction.returnType).apply { addTypeArguments(typeArguments) })
         return Next
     }
 }
@@ -62,7 +64,8 @@ object ArrayOfNulls : IntrinsicBase() {
     ): ExecutionResult {
         val size = stack.getVariable(irFunction.valueParameters.first().symbol).state.asInt()
         val array = arrayOfNulls<Any?>(size)
-        stack.pushReturnValue(array.toState(irFunction.returnType))
+        val typeArguments = irFunction.typeParameters.map { stack.getVariable(it.symbol) }
+        stack.pushReturnValue(array.toState(irFunction.returnType).apply { addTypeArguments(typeArguments) })
         return Next
     }
 }

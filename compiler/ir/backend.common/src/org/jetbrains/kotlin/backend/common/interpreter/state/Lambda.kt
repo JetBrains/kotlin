@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State {
     override val fields: MutableList<Variable> = mutableListOf()
+    override val typeArguments: MutableList<Variable> = mutableListOf()
 
     private val invokeSymbol = irClass.declarations
         .single { it.nameForIrSerialization.asString() == "invoke" }

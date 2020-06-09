@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter
 
+import org.jetbrains.kotlin.backend.common.interpreter.stack.Stack
+import org.jetbrains.kotlin.backend.common.interpreter.state.Primitive
+import org.jetbrains.kotlin.backend.common.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
@@ -12,6 +15,11 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 
 enum class ReturnLabel {
     NEXT, RETURN, BREAK_LOOP, BREAK_WHEN, CONTINUE, EXCEPTION
@@ -25,6 +33,21 @@ interface ExecutionResult {
 
 inline fun ExecutionResult.check(toCheckLabel: ReturnLabel = ReturnLabel.NEXT, returnBlock: (ExecutionResult) -> Unit): ExecutionResult {
     if (this.returnLabel != toCheckLabel) returnBlock(this)
+    return this
+}
+
+fun ExecutionResult.implicitCastIfNeeded(expectedType: IrType, actualType: IrType, stack: Stack): ExecutionResult {
+    if (actualType.classifierOrNull !is IrTypeParameterSymbol) return this
+
+    if (expectedType.classifierOrFail is IrTypeParameterSymbol) return this
+
+    val actualState = stack.peekReturnValue()
+    if (actualState is Primitive<*> && actualState.value == null) return this // this is handled as NullPointerException
+
+    if (!actualState.isSubtypeOf(expectedType)) {
+        val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
+        throw ClassCastException("$convertibleClassName cannot be cast to ${expectedType.getFqName(withNullableSymbol = true)}")
+    }
     return this
 }
 

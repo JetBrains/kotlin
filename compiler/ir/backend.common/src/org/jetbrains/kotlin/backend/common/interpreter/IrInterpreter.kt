@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.*
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterException
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterMethodNotFoundException
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterTimeOutException
 import org.jetbrains.kotlin.backend.common.interpreter.intrinsics.IntrinsicEvaluator
-import org.jetbrains.kotlin.backend.common.interpreter.stack.*
+import org.jetbrains.kotlin.backend.common.interpreter.stack.StackImpl
+import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.backend.common.interpreter.state.*
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.ir.IrElement
@@ -54,7 +57,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             is String -> irBuiltIns.stringType
             is Float -> irBuiltIns.floatType
             is Double -> irBuiltIns.doubleType
-            null -> irBuiltIns.nothingType
+            null -> irBuiltIns.nothingNType
             else -> when (defaultType.classifierOrNull?.owner) {
                 is IrTypeParameter -> stack.getVariable(defaultType.classifierOrFail).state.irClass.defaultType
                 else -> defaultType
@@ -239,7 +242,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             true -> listOfNotNull(irFunction.getExtensionReceiver())
             else -> listOf()
         }
-        val valueParametersDescriptors = receiverAsFirstArgument + irFunction.valueParameters.map { it.symbol }
+        val valueParametersSymbols = receiverAsFirstArgument + irFunction.valueParameters.map { it.symbol }
 
         val valueArguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
         val defaultValues = expression.symbol.owner.valueParameters.map { it.defaultValue?.expression }
@@ -249,7 +252,13 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
                 (valueArguments[i] ?: defaultValues[i])?.interpret()?.check { return@newFrame it }
                     ?: stack.pushReturnValue(listOf<Any?>().toPrimitiveStateArray(expression.getVarargType(i)!!)) // if vararg is empty
 
-                with(Variable(valueParametersDescriptors[i], stack.popReturnValue())) {
+                if (stack.peekReturnValue().isNull() && !valueParametersSymbols[i].isNullable()) {
+                    val method = irFunction.getCapitalizedFileName() + "." + irFunction.fqNameWhenAvailable
+                    val parameter = valueParametersSymbols[i].owner.name
+                    throw IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter")
+                }
+
+                with(Variable(valueParametersSymbols[i], stack.popReturnValue())) {
                     stack.addVar(this)  //must add value argument in current stack because it can be used later as default argument
                     pool.add(this)
                 }
@@ -263,19 +272,18 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         // dispatch receiver processing
         val rawDispatchReceiver = expression.dispatchReceiver
         rawDispatchReceiver?.interpret()?.check { return it }
-        val dispatchReceiver = rawDispatchReceiver?.let { stack.popReturnValue() }
+        val dispatchReceiver = rawDispatchReceiver?.let { stack.popReturnValue() }?.checkNullability(expression.dispatchReceiver?.type)
 
         // extension receiver processing
         val rawExtensionReceiver = expression.extensionReceiver
         rawExtensionReceiver?.interpret()?.check { return it }
-        val extensionReceiver = rawExtensionReceiver?.let { stack.popReturnValue() }
+        val extensionReceiver = rawExtensionReceiver?.let { stack.popReturnValue() }?.checkNullability(expression.extensionReceiver?.type)
 
         // get correct ir function
         val irFunction = dispatchReceiver?.getIrFunctionByIrCall(expression) ?: expression.symbol.owner
         val functionReceiver = dispatchReceiver.getCorrectReceiverByFunction(irFunction)
 
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
-        // TODO what if receiver is null
         irFunction.getDispatchReceiver()?.let { functionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
         irFunction.getExtensionReceiver()?.let { extensionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
 
@@ -302,7 +310,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
                 irFunction.body == null -> irFunction.trySubstituteFunctionBody() ?: calculateBuiltIns(irFunction)
                 else -> irFunction.interpret()
             }
-        }
+        }.check { return it }.implicitCastIfNeeded(expression.type, irFunction.returnType, stack)
     }
 
     private suspend fun IrFunction.trySubstituteFunctionBody(): ExecutionResult? {
@@ -351,15 +359,16 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         val typeArguments = getTypeArguments(irClass, constructorCall) { stack.getVariable(it).state }
         if (irClass.hasAnnotation(evaluateIntrinsicAnnotation) || irClass.fqNameWhenAvailable!!.startsWith(Name.identifier("java"))) {
             return stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
-                .apply { (stack.peekReturnValue() as? Wrapper)?.typeArguments?.addAll(typeArguments) } // 'as?' because can be exception
+                .apply { stack.peekReturnValue().addTypeArguments(typeArguments) }
         }
 
         if (irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray()) {
             // array constructor doesn't have body so must be treated separately
             return stack.newFrame(initPool = valueArguments) { handleIntrinsicMethods(owner) }
+                .apply { stack.peekReturnValue().addTypeArguments(typeArguments) }
         }
 
-        val state = Common(irClass).apply { this.typeArguments.addAll(typeArguments) }
+        val state = Common(irClass).apply { this.addTypeArguments(typeArguments) }
         if (irClass.isLocal) state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
         if (irClass.isInner) {
             constructorCall.dispatchReceiver!!.interpret().check { return it }
@@ -601,30 +610,32 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
 
     private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall): ExecutionResult {
         val executionResult = expression.argument.interpret().check { return it }
-        val typeOperandDescriptor = expression.typeOperand.classifierOrFail
-        val typeOperandClass = expression.typeOperand.classOrNull?.owner ?: stack.getVariable(typeOperandDescriptor).state.irClass
+        val typeClassifier = expression.typeOperand.classifierOrFail
+        val isReified = (typeClassifier.owner as? IrTypeParameter)?.isReified == true
+        val isErased = typeClassifier.owner is IrTypeParameter && !isReified
+        val typeOperand = if (isReified) stack.getVariable(typeClassifier).state.irClass.defaultType else expression.typeOperand
 
         when (expression.operator) {
             // coercion to unit means that return value isn't used
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> stack.popReturnValue()
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
-                if (!stack.peekReturnValue().irClass.let { it.isSubclassOf(typeOperandClass) || it.defaultType.isNothing() }) {
+                if (!isErased && !stack.peekReturnValue().isSubtypeOf(typeOperand)) {
                     val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
-                    throw ClassCastException("$convertibleClassName cannot be cast to ${typeOperandClass.fqNameWhenAvailable}")
+                    throw ClassCastException("$convertibleClassName cannot be cast to ${typeOperand.getFqName(withNullableSymbol = true)}")
                 }
             }
             IrTypeOperator.SAFE_CAST -> {
-                if (!stack.peekReturnValue().irClass.let { it.isSubclassOf(typeOperandClass) || it.defaultType.isNothing() }) {
+                if (!isErased && !stack.peekReturnValue().isSubtypeOf(typeOperand)) {
                     stack.popReturnValue()
-                    stack.pushReturnValue(null.toState(irBuiltIns.nothingType))
+                    stack.pushReturnValue(null.toState(irBuiltIns.nothingNType))
                 }
             }
             IrTypeOperator.INSTANCEOF -> {
-                val isInstance = stack.popReturnValue().irClass.let { it.isSubclassOf(typeOperandClass) || it.defaultType.isNothing() }
+                val isInstance = isErased || stack.peekReturnValue().isSubtypeOf(typeOperand)
                 stack.pushReturnValue(isInstance.toState(irBuiltIns.nothingType))
             }
             IrTypeOperator.NOT_INSTANCEOF -> {
-                val isInstance = stack.popReturnValue().irClass.let { it.isSubclassOf(typeOperandClass) || it.defaultType.isNothing() }
+                val isInstance = isErased || stack.peekReturnValue().isSubtypeOf(typeOperand)
                 stack.pushReturnValue((!isInstance).toState(irBuiltIns.nothingType))
             }
             IrTypeOperator.IMPLICIT_NOTNULL -> {

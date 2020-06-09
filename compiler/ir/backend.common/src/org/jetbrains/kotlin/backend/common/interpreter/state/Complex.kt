@@ -22,7 +22,7 @@ abstract class Complex(override val irClass: IrClass, override val fields: Mutab
     var superClass: Complex? = null
     var subClass: Complex? = null
     val interfaces: MutableList<Complex> = mutableListOf() // filled lazily, as needed
-    val typeArguments: MutableList<Variable> = mutableListOf()
+    override val typeArguments: MutableList<Variable> = mutableListOf()
     var outerClass: Variable? = null
 
     fun setSuperClassInstance(superClass: Complex) {

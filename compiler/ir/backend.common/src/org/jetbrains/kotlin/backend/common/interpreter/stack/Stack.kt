@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.interpreter.stack
 
 import org.jetbrains.kotlin.backend.common.interpreter.ExecutionResult
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterException
+import org.jetbrains.kotlin.backend.common.interpreter.getCapitalizedFileName
 import org.jetbrains.kotlin.backend.common.interpreter.state.State
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.name
@@ -62,7 +63,7 @@ class StackImpl : Stack {
 
     override fun setCurrentFrameName(irFunction: IrFunction) {
         val fileName = irFunction.file.name
-        val fileNameCapitalized = fileName.replace(".kt", "Kt").capitalize()
+        val fileNameCapitalized = irFunction.getCapitalizedFileName()
         val lineNum = irFunction.fileEntry.getLineNumber(irFunction.startOffset) + 1
         if (getCurrentFrame().frameEntryPoint == null)
             getCurrentFrame().frameEntryPoint = "at $fileNameCapitalized.${irFunction.fqNameWhenAvailable}($fileName:$lineNum)"
