@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Annotations) : DeclarationDescriptor {
     private val annotations_ = annotations
 
@@ -161,7 +161,7 @@ abstract class WrappedCallableDescriptor<T : IrDeclaration>(
 
 // TODO: (Roman Artemev) do not create this kind of descriptor for dispatch receiver parameters
 // WrappedReceiverParameterDescriptor should be used instead
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedValueParameterDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -206,7 +206,7 @@ open class WrappedValueParameterDescriptor(
     }
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedReceiverParameterDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -244,7 +244,7 @@ open class WrappedReceiverParameterDescriptor(
     }
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedTypeParameterDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -310,7 +310,7 @@ open class WrappedTypeParameterDescriptor(
 
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedVariableDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -346,7 +346,7 @@ open class WrappedVariableDescriptor(
     }
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedVariableDescriptorWithAccessor() : VariableDescriptorWithAccessors,
     WrappedCallableDescriptor<IrLocalDelegatedProperty>(Annotations.EMPTY, SourceElement.NO_SOURCE) {
     override fun getName(): Name = owner.name
@@ -377,7 +377,7 @@ open class WrappedVariableDescriptorWithAccessor() : VariableDescriptorWithAcces
 
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedSimpleFunctionDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -462,12 +462,12 @@ open class WrappedSimpleFunctionDescriptor(
     }
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class WrappedFunctionDescriptorWithContainerSource(
     override val containerSource: DeserializedContainerSource?
 ) : WrappedSimpleFunctionDescriptor(), DescriptorWithContainerSource
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedClassConstructorDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -562,7 +562,7 @@ open class WrappedClassConstructorDescriptor(
     }
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedClassDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -680,7 +680,7 @@ class LazyTypeConstructor(
         get() = SupertypeLoopChecker.EMPTY
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedEnumEntryDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -777,7 +777,7 @@ open class WrappedEnumEntryDescriptor(
     override fun isDefinitelyNotSamInterface() = true
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedPropertyDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -887,7 +887,7 @@ class WrappedPropertyDescriptorWithContainerSource(
     override var containerSource: DeserializedContainerSource?
 ) : WrappedPropertyDescriptor(), DescriptorWithContainerSource
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class WrappedPropertyAccessorDescriptor(annotations: Annotations, sourceElement: SourceElement) :
     WrappedSimpleFunctionDescriptor(annotations, sourceElement), PropertyAccessorDescriptor {
     override fun isDefault(): Boolean = false
@@ -915,7 +915,7 @@ class WrappedPropertySetterDescriptor(annotations: Annotations, sourceElement: S
     override fun getOriginal(): WrappedPropertySetterDescriptor = this
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedTypeAliasDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -972,7 +972,7 @@ open class WrappedTypeAliasDescriptor(
     }
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedFieldDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -1077,7 +1077,7 @@ open class WrappedFieldDescriptor(
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getContainingDeclaration(declaration: IrDeclarationWithName): DeclarationDescriptor {
     val parent = declaration.parent
     val parentDescriptor = (parent as IrSymbolOwner).symbol.descriptor

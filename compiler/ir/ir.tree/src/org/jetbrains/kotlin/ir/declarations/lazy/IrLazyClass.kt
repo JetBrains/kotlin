@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyClass(
     startOffset: Int,
     endOffset: Int,

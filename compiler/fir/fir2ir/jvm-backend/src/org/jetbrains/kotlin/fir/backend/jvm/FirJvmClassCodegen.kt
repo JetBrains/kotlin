@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -97,7 +97,7 @@ class FirJvmClassCodegen(
         }
     }
 
-    @OptIn(DescriptorBasedIr::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun generateKotlinMetadataAnnotation() {
 
         val localDelegatedProperties = (irClass.attributeOwnerId as? IrClass)?.let(context.localDelegatedProperties::get)

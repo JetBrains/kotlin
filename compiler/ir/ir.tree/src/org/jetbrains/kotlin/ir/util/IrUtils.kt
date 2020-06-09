@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
  * The arguments are to be evaluated in the same order as they appear in the resulting list.
  */
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 fun IrMemberAccessExpression.getArguments(): List<Pair<ParameterDescriptor, IrExpression>> {
     val res = mutableListOf<Pair<ParameterDescriptor, IrExpression>>()
     val descriptor = symbol.descriptor as CallableDescriptor
@@ -64,7 +64,7 @@ fun IrMemberAccessExpression.getArguments(): List<Pair<ParameterDescriptor, IrEx
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
  * The arguments are to be evaluated in the same order as they appear in the resulting list.
  */
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 fun IrFunctionAccessExpression.getArgumentsWithSymbols(): List<Pair<IrValueParameterSymbol, IrExpression>> {
     val res = mutableListOf<Pair<IrValueParameterSymbol, IrExpression>>()
     val irFunction = symbol.owner
@@ -124,7 +124,7 @@ fun IrMemberAccessExpression.getArgumentsWithIr(): List<Pair<IrValueParameter, I
 /**
  * Sets arguments that are specified by given mapping of parameters.
  */
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 fun IrMemberAccessExpression.addArguments(args: Map<ParameterDescriptor, IrExpression>) {
     val descriptor = symbol.descriptor as CallableDescriptor
     descriptor.dispatchReceiverParameter?.let {
@@ -149,7 +149,7 @@ fun IrMemberAccessExpression.addArguments(args: Map<ParameterDescriptor, IrExpre
     }
 }
 
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 fun IrMemberAccessExpression.addArguments(args: List<Pair<ParameterDescriptor, IrExpression>>) =
     this.addArguments(args.toMap())
 
@@ -161,17 +161,17 @@ fun IrExpression.isFalseConst() = this is IrConst<*> && this.kind == IrConstKind
 
 fun IrExpression.isIntegerConst(value: Int) = this is IrConst<*> && this.kind == IrConstKind.Int && this.value == value
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrExpression.coerceToUnit(builtins: IrBuiltIns): IrExpression {
     val valueType = getKotlinType(this)
     return coerceToUnitIfNeeded(valueType, builtins)
 }
 
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 private fun getKotlinType(irExpression: IrExpression) =
     irExpression.type.toKotlinType()
 
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType, irBuiltIns: IrBuiltIns): IrExpression {
     return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, irBuiltIns.unitType.toKotlinType()))
         this
@@ -198,7 +198,7 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns)
         )
 }
 
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 fun IrMemberAccessExpression.usesDefaultArguments(): Boolean =
     (symbol.descriptor as CallableDescriptor).valueParameters.any { this.getValueArgument(it) == null }
 
@@ -303,13 +303,13 @@ tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     }
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
     annotations.find {
         it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
     }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrAnnotationContainer.hasAnnotation(name: FqName) =
     annotations.any {
         it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
@@ -377,7 +377,7 @@ fun IrValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
     { current -> current.defaultValue != null }
 )
 
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
     assert(this.descriptor.type == newDescriptor.type)
 

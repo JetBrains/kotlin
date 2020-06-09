@@ -6,4 +6,4 @@
 package org.jetbrains.kotlin.ir
 
 @RequiresOptIn(message = "Please use IR declaration properties and not its descriptor properties", level = RequiresOptIn.Level.ERROR)
-annotation class DescriptorBasedIr
+annotation class ObsoleteDescriptorBasedAPI

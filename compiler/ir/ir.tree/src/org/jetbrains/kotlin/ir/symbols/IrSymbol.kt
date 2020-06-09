@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.ir.symbols
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
 interface IrSymbol {
     val owner: IrSymbolOwner
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     val descriptor: DeclarationDescriptor
 
     val isBound: Boolean
@@ -44,14 +44,14 @@ interface IrSymbol {
 interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : IrSymbol {
     override val owner: B
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: D
 
     fun bind(owner: B)
 }
 
 interface IrPackageFragmentSymbol : IrSymbol {
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: PackageFragmentDescriptor
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
@@ -96,7 +96,7 @@ interface IrFieldSymbol :
 interface IrClassifierSymbol :
     IrSymbol, TypeConstructorMarker {
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassifierDescriptor
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
@@ -127,7 +127,7 @@ interface IrTypeParameterSymbol :
 interface IrValueSymbol :
     IrSymbol {
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: ValueDescriptor
 
     override val owner: IrValueDeclaration
@@ -153,7 +153,7 @@ interface IrVariableSymbol :
 interface IrReturnTargetSymbol :
     IrSymbol {
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
 
     override val owner: IrReturnTarget

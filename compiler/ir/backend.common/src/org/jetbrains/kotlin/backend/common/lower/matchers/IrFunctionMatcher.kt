@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower.matchers
 
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrType
@@ -52,7 +52,7 @@ internal class ParameterCountMatcher(
     }
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class FqNameMatcher(
     val restriction: (FqName) -> Boolean
 ) : IrFunctionMatcher {

@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.ir.symbols
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 
@@ -9,7 +9,7 @@ abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner,
     IrBindableSymbol<D, B> {
     override val owner: B get() = delegate.owner
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: D get() = delegate.descriptor
 
     override val isBound: Boolean get() = delegate.isBound

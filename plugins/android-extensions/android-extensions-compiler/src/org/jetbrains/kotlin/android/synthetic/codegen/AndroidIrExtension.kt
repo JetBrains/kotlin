@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isClass
@@ -51,7 +49,7 @@ abstract class AndroidIrExtension : IrGenerationExtension {
     }
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 private class AndroidIrTransformer(val extension: AndroidIrExtension, val pluginContext: IrPluginContext) :
     IrElementTransformerVoidWithContext() {
 
@@ -203,7 +201,7 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
 
 private fun FqName.child(name: String) = child(Name.identifier(name))
 
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 private fun IrSimpleFunction.callWithRanges(source: IrExpression) =
     IrCallImpl(source.startOffset, source.endOffset, returnType, symbol)
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -32,7 +32,7 @@ class IrConstructorCallImpl(
 
     companion object {
 
-        @DescriptorBasedIr
+        @ObsoleteDescriptorBasedAPI
         fun fromSymbolDescriptor(
             startOffset: Int,
             endOffset: Int,

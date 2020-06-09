@@ -179,7 +179,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             element.acceptChildrenVoid(this)
         }
 
-        @OptIn(DescriptorBasedIr::class)
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitDeclaration(declaration: IrDeclaration) {
             if (declaration is IrSymbolOwner) {
                 declaration.symbol.checkBinding("decl", declaration)
@@ -218,7 +218,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             }
         }
 
-        @OptIn(DescriptorBasedIr::class)
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitFunction(declaration: IrFunction) {
             visitDeclaration(declaration)
 
@@ -303,14 +303,14 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             }
         }
 
-        @OptIn(DescriptorBasedIr::class)
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitClass(declaration: IrClass) {
             visitDeclaration(declaration)
 
             checkTypeParameters(declaration.descriptor, declaration, declaration.descriptor.declaredTypeParameters)
         }
 
-        @DescriptorBasedIr
+        @ObsoleteDescriptorBasedAPI
         private fun checkTypeParameters(
             descriptor: DeclarationDescriptor,
             declaration: IrTypeParametersContainer,

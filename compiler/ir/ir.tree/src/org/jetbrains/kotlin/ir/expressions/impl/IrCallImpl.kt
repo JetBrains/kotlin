@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
@@ -51,7 +51,7 @@ class IrCallImpl(
         }
     }
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -64,7 +64,7 @@ class IrCallImpl(
         origin, superQualifierSymbol
     )
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     constructor(
         startOffset: Int,
         endOffset: Int,

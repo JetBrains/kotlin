@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -64,7 +64,7 @@ fun IrType.makeNullable() =
     else
         this
 
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 fun IrType.toKotlinType(): KotlinType {
     originalKotlinType?.let {
         return it
@@ -87,7 +87,7 @@ fun IrClassSymbol.createType(hasQuestionMark: Boolean, arguments: List<IrTypeArg
         emptyList()
     )
 
-@DescriptorBasedIr
+@ObsoleteDescriptorBasedAPI
 private fun makeKotlinType(
     classifier: IrClassifierSymbol,
     arguments: List<IrTypeArgument>,

@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 interface IrProperty :
     IrDeclarationWithName,
@@ -28,7 +26,7 @@ interface IrProperty :
     IrOverridableMember,
     IrSymbolOwner {
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor
     override val symbol: IrPropertySymbol
 

@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -41,7 +40,7 @@ class IrDelegatingConstructorCallImpl(
     ),
     IrDelegatingConstructorCall {
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -49,7 +48,7 @@ class IrDelegatingConstructorCallImpl(
         symbol: IrConstructorSymbol
     ) : this(startOffset, endOffset, type, symbol, symbol.descriptor.typeParametersCount, symbol.descriptor.valueParameters.size)
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     constructor(
         startOffset: Int,
         endOffset: Int,

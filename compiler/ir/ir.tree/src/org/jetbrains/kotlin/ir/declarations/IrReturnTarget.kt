@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 
 interface IrReturnTarget : IrSymbolOwner {
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     val descriptor: FunctionDescriptor
 
     override val symbol: IrReturnTargetSymbol

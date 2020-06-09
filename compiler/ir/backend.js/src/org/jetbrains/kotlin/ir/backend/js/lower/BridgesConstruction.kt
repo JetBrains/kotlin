@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.ir.util.*
 //            fun foo(t: Any?) = foo(t as Int)  // Constructed bridge
 //          }
 //
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class BridgesConstruction(val context: CommonBackendContext) : DeclarationTransformer {
 
     private val specialBridgeMethods = SpecialBridgeMethods(context)

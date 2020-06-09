@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.nonSourceAnnotations
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
@@ -76,7 +76,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         return classBuilderMode != ClassBuilderMode.ABI || nestedClass.effectiveVisibility != FirEffectiveVisibilityImpl.Private
     }
 
-    @OptIn(DescriptorBasedIr::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun serializeClass(
         klass: FirClass<*>,
         proto: ProtoBuf.Class.Builder,

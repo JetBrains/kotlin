@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -31,7 +31,7 @@ import java.util.*
 
 class Closure(val capturedValues: List<ValueDescriptor>)
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
     protected abstract fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure)
     protected abstract fun recordClassClosure(classDescriptor: ClassDescriptor, closure: Closure)

@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrValueDeclaration : IrDeclarationWithName, IrSymbolOwner {
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: ValueDescriptor
 
     override val symbol: IrValueSymbol

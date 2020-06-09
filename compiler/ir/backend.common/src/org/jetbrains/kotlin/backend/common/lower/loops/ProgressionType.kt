@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.irChar
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irLong
@@ -190,7 +190,7 @@ internal abstract class UnsignedProgressionType(
     }
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
     UnsignedProgressionType(
         symbols,
@@ -208,7 +208,7 @@ internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
 
-@OptIn(DescriptorBasedIr::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>) :
     UnsignedProgressionType(
         symbols,

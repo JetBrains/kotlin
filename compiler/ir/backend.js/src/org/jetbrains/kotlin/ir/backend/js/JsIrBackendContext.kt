@@ -58,7 +58,7 @@ class JsIrBackendContext(
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
     val externalDeclarations = hashSetOf<IrDeclaration>()
 
-    @OptIn(DescriptorBasedIr::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     val bodilessBuiltInsPackageFragment: IrPackageFragment = run {
 
         class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSymbol {

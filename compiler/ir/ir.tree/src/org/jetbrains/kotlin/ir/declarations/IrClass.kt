@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -25,7 +25,7 @@ interface IrClass :
     IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithName, IrDeclarationWithVisibility,
     IrDeclarationContainer, IrTypeParametersContainer, IrAttributeContainer {
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor
 
     override var visibility: Visibility

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.DescriptorBasedIr
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.FunctionCarrier
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
@@ -39,7 +39,7 @@ abstract class IrFunctionCommonImpl(
     IrSimpleFunction,
     FunctionCarrier {
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: FunctionDescriptor
 
     override var overriddenSymbolsField: List<IrSimpleFunctionSymbol> = emptyList()
@@ -129,7 +129,7 @@ class IrFunctionImpl(
         IrSimpleFunctionSymbolImpl(descriptor), returnType, descriptor
     )
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor get() = symbol.descriptor
 
     init {
@@ -163,11 +163,11 @@ class IrFakeOverrideFunctionImpl(
     override val symbol: IrSimpleFunctionSymbol
         get() = _symbol ?: error("$this has not acquired a symbol yet")
 
-    @DescriptorBasedIr
+    @ObsoleteDescriptorBasedAPI
     override val descriptor
         get() = _symbol?.descriptor ?: WrappedSimpleFunctionDescriptor()
 
-    @OptIn(DescriptorBasedIr::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun acquireSymbol(symbol: IrSimpleFunctionSymbol) {
         assert(_symbol == null) { "$this already has symbol _symbol" }
         _symbol = symbol
