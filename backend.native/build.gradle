@@ -56,6 +56,7 @@ compileCompilerKotlin {
     // but not for Kotlin.
     dependsOn('generateCompilerProto')
     kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.freeCompilerArgs += "-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
 }
 
 compileCompilerJava {
