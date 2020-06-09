@@ -911,7 +911,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/framework/fleet.noria.framework.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/framework/fleet.noria.framework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/model/fleet.noria.model.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/model/fleet.noria.model.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/compiler-plugin/fleet.noria.plugin.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/compiler-plugin/fleet.noria.plugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/ui/fleet.noria.ui.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/ui/fleet.noria.ui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/scene/fleet.noria.scene.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/scene/fleet.noria.scene.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/preferences/fleet.preferences.iml" filepath="$PROJECT_DIR$/intellij/fleet/preferences/fleet.preferences.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/protocol/fleet.protocol.iml" filepath="$PROJECT_DIR$/intellij/fleet/protocol/fleet.protocol.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/rhizomedb/fleet.rhizomedb.iml" filepath="$PROJECT_DIR$/intellij/fleet/rhizomedb/fleet.rhizomedb.iml" />
