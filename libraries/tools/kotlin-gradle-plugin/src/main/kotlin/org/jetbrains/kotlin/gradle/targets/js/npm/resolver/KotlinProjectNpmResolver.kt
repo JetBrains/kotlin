@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import kotlin.reflect.KClass
 
@@ -40,8 +38,6 @@ internal class KotlinProjectNpmResolver(
 
     val compilationResolvers: Collection<KotlinCompilationNpmResolver>
         get() = byCompilation.values
-
-    val taskRequirements by lazy { TasksRequirements(this) }
 
     init {
         addContainerListeners()
@@ -96,36 +92,8 @@ internal class KotlinProjectNpmResolver(
         return KotlinProjectNpmResolution(
             project,
             byCompilation.values.mapNotNull { it.close() },
-            taskRequirements.byTask
+            resolver.nodeJs.taskRequirements.byTask
         )
-    }
-
-    class TasksRequirements(val projectNpmResolver: KotlinProjectNpmResolver) {
-        val byTask = mutableMapOf<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>()
-        val byCompilation = mutableMapOf<KotlinJsCompilation, MutableList<RequiresNpmDependencies>>()
-
-        fun getTaskRequirements(compilation: KotlinJsCompilation): Collection<RequiresNpmDependencies> =
-            byCompilation[compilation] ?: listOf()
-
-        init {
-            projectNpmResolver.project.tasks.implementing(RequiresNpmDependencies::class).configureEach { task ->
-                if (task.enabled) {
-                    addTaskRequirements(task as RequiresNpmDependencies)
-                    task.dependsOn(projectNpmResolver[task.compilation].packageJsonTaskHolder)
-                    task.dependsOn(projectNpmResolver.resolver.nodeJs.npmInstallTask)
-                }
-            }
-        }
-
-        private fun addTaskRequirements(task: RequiresNpmDependencies) {
-            val requirements = task.requiredNpmDependencies.toList()
-
-            byTask[task] = requirements
-
-            byCompilation
-                .getOrPut(task.compilation) { mutableListOf() }
-                .add(task)
-        }
     }
 }
 
