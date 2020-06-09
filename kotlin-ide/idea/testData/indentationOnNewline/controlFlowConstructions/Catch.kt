@@ -1,5 +1,3 @@
 fun a() = try {
     // do smth
-} finally<caret> {
-
-}
+} catch (e: Exception)<caret>
