@@ -96,21 +96,21 @@ public class GradleExecutionHelper {
                        @Nullable ExternalSystemTaskNotificationListener listener,
                        @Nullable CancellationTokenSource cancellationTokenSource,
                        @NotNull Function<? super ProjectConnection, ? extends T> f) {
+    String projectDir;
+    File projectPathFile = new File(projectPath);
+    if (projectPathFile.isFile() && projectPath.endsWith(GradleConstants.EXTENSION) && projectPathFile.getParent() != null) {
+      projectDir = projectPathFile.getParent();
+    }
+    else {
+      projectDir = projectPath;
+    }
     CancellationToken cancellationToken = cancellationTokenSource != null ? cancellationTokenSource.token() : null;
     return withGradleConnection(
-      projectPath, taskId, settings, listener, cancellationToken,
+      projectDir, taskId, settings, listener, cancellationToken,
       connection -> {
         String userDir = null;
         if (!GradleEnvironment.ADJUST_USER_DIR) {
           try {
-            String projectDir;
-            File projectPathFile = new File(projectPath);
-            if (projectPathFile.isFile() && projectPath.endsWith(GradleConstants.EXTENSION) && projectPathFile.getParent() != null) {
-              projectDir = projectPathFile.getParent();
-            }
-            else {
-              projectDir = projectPath;
-            }
             userDir = System.getProperty("user.dir");
             if (userDir != null) System.setProperty("user.dir", projectDir);
           }
