@@ -193,7 +193,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
   }
 
   override fun remove(id: ExternalSystemProjectId) {
-    val projectData = projectDataMap(id) { remove(it) } ?: return
+    val projectData = projectDataMap.remove(id) ?: return
     Disposer.dispose(projectData.parentDisposable)
   }
 
