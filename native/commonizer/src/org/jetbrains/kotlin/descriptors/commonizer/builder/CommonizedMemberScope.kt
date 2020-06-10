@@ -102,7 +102,5 @@ class CommonizedMemberScope : MemberScope {
         // Heuristic memory usage optimization. During commonization of ios_x64 and ios_arm64 the getContributedDescriptors() call
         // returns empty list in 27% times and list of size 1 in 63% times. The default capacity of 0 looks reasonable.
         private const val INITIAL_CAPACITY_FOR_CONTRIBUTED_DESCRIPTORS = 0
-
-        internal val STATS = HashMap<Int, Int>()
     }
 }
