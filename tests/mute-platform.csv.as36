@@ -1,6 +1,4 @@
 Test key, Issue, State (optional: MUTE or FAIL), Status (optional: FLAKY)
-org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testClassObjects, ERROR: Access to tree elements not allowed.,,
-org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testUsingKotlinPackageDeclarations, ERROR: Access to tree elements not allowed.,,
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testAndroidGradleJsDetection, NPE during import,,
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testKotlinAndroidPluginDetection, NPE during import,,
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleMigrateTest.testMigrateStdlib, Can't get migration information,,
