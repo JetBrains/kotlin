@@ -5,32 +5,36 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.CompileTimeFunction
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.binaryFunctions
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.unaryFunctions
+import org.jetbrains.kotlin.backend.common.interpreter.builtins.*
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeUtils
+import java.lang.invoke.MethodHandles
+import java.lang.invoke.MethodType
 
 enum class Code(var info: String = "") {
     NEXT, RETURN, BREAK_LOOP, BREAK_WHEN, CONTINUE, EXCEPTION
 }
 
-class IrInterpreter(private val irSymbols: Symbols<CommonBackendContext>) {
+class IrInterpreter(private val irBuiltIns: IrBuiltIns) {
 
     fun interpret(expression: IrExpression): IrExpression {
-        return InterpreterFrame().apply { expression.interpret(this) }.popReturnValue().toIrExpression(expression)
+        return InterpreterFrame().apply { expression.interpret(this) }.popReturnValue().toIrExpression(irBuiltIns, expression)
     }
 
     private fun IrElement.interpret(data: Frame): Code {
@@ -83,18 +87,30 @@ class IrInterpreter(private val irSymbols: Symbols<CommonBackendContext>) {
     }
 
     private fun calculateAbstract(irFunction: IrFunction, data: Frame): Code {
-        return irFunction.body?.interpret(data)
-            ?: throw NoSuchMethodException("Method \"${irFunction.name}\" wasn't implemented")
+        if (irFunction.body == null) {
+            val receiver = data.getVariableState(irFunction.symbol.getReceiver()!!) as Complex
+            val instance = receiver.instance!!
+
+            val functionImplementation = instance.getIrFunction(irFunction.descriptor)
+            if (functionImplementation?.body == null) throw NoSuchMethodException("Method \"${irFunction.name}\" wasn't implemented")
+            val arguments = functionImplementation.valueParameters.map { Variable(it.descriptor, data.getVariableState(it.descriptor)) }
+            val newFrame = InterpreterFrame()
+            newFrame.addVar(Variable(functionImplementation.symbol.getReceiver()!!, instance))
+            newFrame.addAll(arguments)
+            return functionImplementation.body!!.interpret(newFrame).apply { data.pushReturnValue(newFrame) }
+        }
+        return irFunction.body!!.interpret(data)
     }
 
     private fun calculateOverridden(owner: IrFunctionImpl, data: Frame): Code {
-        val variableDescriptor = owner.symbol.getThisAsReceiver()!!
-        val superQualifier = (data.getVariableState(variableDescriptor) as Complex).getSuperQualifier()!!
-        val overridden = owner.overriddenSymbols.first { it.getThisAsReceiver()?.equalTo(superQualifier.getThisReceiver()) == true }
+        val variableDescriptor = owner.symbol.getReceiver()!!
+        val superQualifier = (data.getVariableState(variableDescriptor) as Complex).superType!!
+        val overridden = owner.overriddenSymbols.first { it.getReceiver()?.equalTo(superQualifier.getReceiver()) == true }
 
         val valueParameters = owner.valueParameters.zip(overridden.owner.valueParameters)
             .map { Variable(it.second.descriptor, data.getVariableState(it.first.descriptor)) }
-        val newStates = InterpreterFrame((valueParameters + Variable(superQualifier.getThisReceiver(), superQualifier)).toMutableList())
+        val newStates = InterpreterFrame(valueParameters.toMutableList())
+        newStates.addVar(Variable(overridden.getReceiver()!!, superQualifier))
 
         val overriddenOwner = overridden.owner as IrFunctionImpl
         val body = overriddenOwner.body
@@ -104,26 +120,15 @@ class IrInterpreter(private val irSymbols: Symbols<CommonBackendContext>) {
         }.apply { data.pushReturnValue(newStates) }
     }
 
-    private fun isBuiltIn(irFunction: IrFunction): Boolean {
+    private fun calculateBuiltIns(irFunction: IrFunction, data: Frame): Code {
         val descriptor = irFunction.descriptor
-        val methodName = descriptor.name.asString()
-        val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { TypeUtils.makeNotNullable(it.original.type) }
-        val signature = CompileTimeFunction(
-            methodName,
-            argsType.map { it.toString() })
-        return (unaryFunctions[signature] ?: binaryFunctions[signature]) != null
-    }
-
-    private fun calculateBuiltIns(expression: IrCall, data: Frame): Code {
-        val descriptor = expression.symbol.descriptor
         val methodName = descriptor.name.asString()
         val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { TypeUtils.makeNotNullable(it.original.type) }
         val argsValues = data.getAll()
             .map { it.state }
             .map { it as? Primitive<*> ?: throw IllegalArgumentException("Builtin functions accept only const args") }
-            .map { it.getIrConst().value }
+            .map { it.getValue() }
         val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
         //todo try catch
         val result = when (argsType.size) {
@@ -136,22 +141,27 @@ class IrInterpreter(private val irSymbols: Symbols<CommonBackendContext>) {
                 val function = binaryFunctions[signature]
                     ?: throw NoSuchMethodException("For given function $signature there is no entry in binary map")
                 when (methodName) {
-                    "rangeTo" -> return calculateRangeTo(expression, data)
+                    "rangeTo" -> return calculateRangeTo(irFunction.returnType, data)
                     else -> function.invoke(argsValues[0], argsValues[1])
                 }
             }
+            3 -> {
+                val function = ternaryFunctions[signature]
+                    ?: throw NoSuchMethodException("For given function $signature there is no entry in ternary map")
+                function.invoke(argsValues[0], argsValues[1], argsValues[2])
+            }
             else -> throw UnsupportedOperationException("Unsupported number of arguments")
         }
-        data.pushReturnValue(result.toState(expression))
+        data.pushReturnValue(result.toState(irBuiltIns))
         return Code.NEXT
     }
 
-    private fun calculateRangeTo(expression: IrExpression, data: Frame): Code {
-        val constructor = expression.type.classOrNull!!.owner.constructors.first()
+    private fun calculateRangeTo(type: IrType, data: Frame): Code {
+        val constructor = type.classOrNull!!.owner.constructors.first()
         val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
 
         val primitiveValueParameters = data.getAll().map { it.state as Primitive<*> }
-        primitiveValueParameters.forEachIndexed { index, primitive -> constructorCall.putValueArgument(index, primitive.getIrConst()) }
+        primitiveValueParameters.forEachIndexed { index, primitive -> constructorCall.putValueArgument(index, primitive.getValue().toIrConst(irBuiltIns)) }
 
         val constructorValueParameters = constructor.valueParameters.map { it.descriptor }.zip(primitiveValueParameters)
         val newFrame = InterpreterFrame(constructorValueParameters.map { Variable(it.first, it.second) }.toMutableList())
@@ -159,6 +169,27 @@ class IrInterpreter(private val irSymbols: Symbols<CommonBackendContext>) {
         val code = constructorCall.interpret(newFrame)
         data.pushReturnValue(newFrame)
         return code
+    }
+
+    private fun calculateIntrinsic(irFunction: IrFunction, data: Frame): Code {
+        val annotation = irFunction.getAnnotation(evaluateIntrinsicAnnotation)
+        val argsValues = data.getAll()
+            .map { it.state }
+            .map { it as? Primitive<*> ?: throw IllegalArgumentException("Builtin functions accept only const args") }
+            .map { it.getValue() }
+
+        val textClass = Class.forName((annotation.getValueArgument(0) as IrConst<*>).value.toString())
+        val returnClass = irFunction.returnType.getFqName()!!.let { getPrimitiveClass(it) ?: Class.forName(it) }
+        val extensionClass = irFunction.extensionReceiverParameter?.type?.getFqName()?.let { getPrimitiveClass(it) ?: Class.forName(it) }
+        val argsClasses = irFunction.valueParameters.map {
+            it.descriptor.fqNameSafe.asString().let { getPrimitiveClass(it) ?: Class.forName(it) }
+        }
+
+        val methodSignature = MethodType.methodType(returnClass, listOfNotNull(extensionClass) + argsClasses)
+        val method = MethodHandles.lookup().findStatic(textClass, irFunction.name.asString(), methodSignature)
+        val result = method.invokeWithArguments(argsValues)
+        data.pushReturnValue(result.toState(irBuiltIns))
+        return Code.NEXT
     }
 
     private fun interpretValueParameters(parametersContainer: IrMemberAccessExpression, data: Frame): Code {
@@ -175,25 +206,28 @@ class IrInterpreter(private val irSymbols: Symbols<CommonBackendContext>) {
         interpretValueParameters(expression, data).also { if (it != Code.NEXT) return it }
         val valueParameters = expression.symbol.descriptor.valueParameters.map { Variable(it, data.popReturnValue()) }
 
-        val rawReceiver = expression.dispatchReceiver ?: expression.extensionReceiver
-        rawReceiver?.interpret(data)?.also { if (it != Code.NEXT) return it }
+        // dispatch receiver processing
+        val rawDispatchReceiver = expression.dispatchReceiver
+        rawDispatchReceiver?.interpret(data)?.also { if (it != Code.NEXT) return it }
+        val irCallReceiver = rawDispatchReceiver?.let { data.popReturnValue() }
+        val irFunctionReceiver = if (expression.superQualifierSymbol == null) irCallReceiver else (irCallReceiver as Complex).superType
+        // it is important firstly to add receiver, then arguments; this order is used in builtin method call
+        val irFunction = irFunctionReceiver?.getIrFunction(expression.symbol.descriptor) ?: expression.symbol.owner
+        irFunctionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getDispatchReceiver()!!, it)) }
 
-        val receiver = rawReceiver?.let { data.popReturnValue() }
-        val irFunction = receiver.getIrFunction(expression)
-        val receiverParameter = irFunction.symbol.getThisAsReceiver()
-        // it is important firstly to add receiver, then arguments
-        receiver?.let { newFrame.addVar(Variable(receiverParameter!!, it)) }
+        // extension receiver processing
+        val rawExtensionReceiver = expression.extensionReceiver
+        rawExtensionReceiver?.interpret(data)?.also { if (it != Code.NEXT) return it }
+        rawExtensionReceiver?.let { newFrame.addVar(Variable(irFunction.symbol.getExtensionReceiver()!!, data.popReturnValue())) }
+
         newFrame.addAll(valueParameters)
 
         val code = when {
-            //irFunction.annotations.any { it.descriptor.containingDeclaration.fqNameSafe == evaluateIntrinsicAnnotation } -> empty
-            isBuiltIn(irFunction) -> calculateBuiltIns(expression, newFrame)
-            expression.isAbstract() -> calculateAbstract(
-                irFunction,
-                newFrame
-            ) //abstract check must be before fake overridden check
-            expression.isFakeOverridden() -> calculateOverridden(irFunction as IrFunctionImpl, newFrame)
-            else -> (irFunction.body ?: expression.getBody())!!.interpret(newFrame)
+            irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> calculateIntrinsic(irFunction, newFrame)
+            irFunction.isAbstract() -> calculateAbstract(irFunction, newFrame) //abstract check must be before fake overridden check
+            irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrFunctionImpl, newFrame)
+            irFunction.body == null -> calculateBuiltIns(irFunction, newFrame)
+            else -> irFunction.body!!.interpret(newFrame)
         }
         data.pushReturnValue(newFrame)
         return code
@@ -208,14 +242,17 @@ class IrInterpreter(private val irSymbols: Symbols<CommonBackendContext>) {
         newFrame.addVar(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
         val code = constructorCall.getBody()?.interpret(newFrame) ?: Code.NEXT
         if (newFrame.hasReturnValue()) {
-            state.setSuperQualifier(newFrame.popReturnValue() as Complex)
+            state.superType = newFrame.popReturnValue() as Complex
         }
         data.pushReturnValue(state)
         return code
     }
 
     private fun interpretConstructorCall(constructorCall: IrConstructorCall, data: Frame): Code {
-        return interpretConstructor(constructorCall, data)
+        return interpretConstructor(constructorCall, data).apply {
+            val instance = data.peekReturnValue() as Complex
+            instance.setInstanceRecursive(instance)
+        }
     }
 
     private fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall, data: Frame): Code {
@@ -261,7 +298,7 @@ class IrInterpreter(private val irSymbols: Symbols<CommonBackendContext>) {
         var code = Code.NEXT
         while (code == Code.NEXT) {
             code = expression.condition.interpret(data)
-            if (code == Code.NEXT && (data.popReturnValue() as? Primitive<*>)?.getIrConst()?.value as? Boolean == true) {
+            if (code == Code.NEXT && (data.popReturnValue() as? Primitive<*>)?.getValue() as? Boolean == true) {
                 code = expression.body?.interpret(data) ?: Code.NEXT
             } else {
                 break
@@ -281,7 +318,7 @@ class IrInterpreter(private val irSymbols: Symbols<CommonBackendContext>) {
 
     private fun interpretBranch(expression: IrBranch, data: Frame): Code {
         var code = expression.condition.interpret(data)
-        if (code == Code.NEXT && (data.popReturnValue() as? Primitive<*>)?.getIrConst()?.value as? Boolean == true) {
+        if (code == Code.NEXT && (data.popReturnValue() as? Primitive<*>)?.getValue() as? Boolean == true) {
             code = expression.result.interpret(data)
             if (code == Code.NEXT) return Code.BREAK_WHEN
         }

@@ -397,3 +397,7 @@ val binaryFunctions = mapOf<CompileTimeFunction, Function2<Any?, Any?, Any>>(
     binaryOperation<Boolean, Boolean>("ANDAND", "Boolean", "Boolean") { a, b -> a && b },
     binaryOperation<Boolean, Boolean>("OROR", "Boolean", "Boolean") { a, b -> a || b }
 )
+val ternaryFunctions = mapOf<CompileTimeFunction, Function3<Any?, Any?, Any?, Any>>(
+    ternaryOperation<String, Int, Int>("subSequence", "String", "Int", "Int") { a, b, c -> a.subSequence(b, c) }
+)
+

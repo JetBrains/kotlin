@@ -29,9 +29,7 @@ interface Frame {
     fun pushReturnValue(state: State)
     fun pushReturnValue(frame: Frame)
     fun peekReturnValue(): State
-    //fun peekReturnValueOrNull(): State?
     fun popReturnValue(): State
-    //fun popReturnValueOrNull(): State?
     fun hasReturnValue(): Boolean
     fun copy(): Frame
 }

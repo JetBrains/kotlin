@@ -5,30 +5,49 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.stack
 
+import org.jetbrains.kotlin.backend.common.interpreter.builtins.CompileTimeFunction
+import org.jetbrains.kotlin.backend.common.interpreter.builtins.unaryFunctions
 import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.name.Name
 
 interface State {
-    fun getState(descriptor: DeclarationDescriptor): State?
-    fun setState(newVar: Variable)
-    fun copy(): State
-    fun getIrFunctionByName(name: Name): IrFunction?
-}
+    val fields: MutableList<Variable>
 
-class Primitive<T>(private var value: IrConst<T>) : State {
-    fun getIrConst(): IrConst<T> {
-        return value
+    fun getState(descriptor: DeclarationDescriptor): State? {
+        return fields.firstOrNull { it.descriptor.equalTo(descriptor) }?.state
     }
 
-    override fun getState(descriptor: DeclarationDescriptor): State {
-        throw UnsupportedOperationException("Only complex are allowed")
+    fun setState(newVar: Variable)
+    fun copy(): State
+    fun getIrFunction(descriptor: FunctionDescriptor): IrFunction?
+}
+
+class Primitive<T>(private var value: T, private val type: IrType?) : State {
+    override val fields: MutableList<Variable> = mutableListOf()
+
+    init {
+        if (type != null) {
+            val properties = type.classOrNull!!.owner.declarations.filterIsInstance<IrProperty>()
+            for (property in properties) {
+                val propertySignature = CompileTimeFunction(property.name.asString(), listOf(type.getName()))
+                val propertyValue = unaryFunctions[propertySignature]?.invoke(value)
+                    ?: throw NoSuchMethodException("For given property $propertySignature there is no entry in unary map")
+                fields.add(Variable(property.descriptor, Primitive(propertyValue, null)))
+            }
+        }
+    }
+
+    private fun IrType?.getName() = this?.classOrNull!!.owner.name.asString()
+
+    fun getValue(): T {
+        return value
     }
 
     override fun setState(newVar: Variable) {
@@ -37,60 +56,57 @@ class Primitive<T>(private var value: IrConst<T>) : State {
     }
 
     override fun copy(): State {
-        return Primitive(value)
+        return Primitive(value, type)
     }
 
-    override fun getIrFunctionByName(name: Name): IrFunction? {
-        //if (this.value.kind != IrConstKind.String) return null
-        val declarations = value.type.classOrNull!!.owner.declarations.flatMap {
-            when {
-                it is IrProperty -> listOf(it, it.getter)
-                else -> listOf(it)
-            }
-        }
-        return declarations.firstOrNull { it?.descriptor?.name == name } as? IrFunction
+    override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
+        if (type == null) return null
+        // must add property's getter to declaration's list because they are not present in ir class for primitives
+        val declarations = type.classOrNull!!.owner.declarations.map { if (it is IrProperty) it.getter else it }
+        return declarations.filterIsInstance<IrFunction>()
+            .filter { it.descriptor.name == descriptor.name }
+            .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
     }
 
     override fun toString(): String {
-        return "Primitive(value=${value.value})"
+        return "Primitive(value=$value, type=${type?.getName()})"
     }
 }
 
-class Complex(private var classOfObject: IrClass, private val values: MutableList<Variable>) : State {
+class Complex(private var type: IrClass, override val fields: MutableList<Variable>) : State {
     var superType: Complex? = null
+    var instance: Complex? = null
 
-    fun setSuperQualifier(superType: Complex) {
-        this.superType = superType
+    fun setInstanceRecursive(instance: Complex) {
+        this.instance = instance
+        superType?.setInstanceRecursive(instance)
     }
 
-    fun getSuperQualifier(): Complex? {
-        return superType
-    }
-
-    fun getThisReceiver(): DeclarationDescriptor {
-        return classOfObject.thisReceiver!!.descriptor
-    }
-
-    override fun getIrFunctionByName(name: Name): IrFunction? {
-        return classOfObject.declarations.filterIsInstance<IrFunction>().firstOrNull { it.descriptor.name == name }
-    }
-
-    override fun getState(descriptor: DeclarationDescriptor): State? {
-        return values.firstOrNull { it.descriptor.equalTo(descriptor) }?.state
+    fun getReceiver(): DeclarationDescriptor {
+        return type.thisReceiver!!.descriptor
     }
 
     override fun setState(newVar: Variable) {
-        when (val oldState = values.firstOrNull { it.descriptor == newVar.descriptor }) {
-            null -> values.add(newVar)                          // newVar isn't present in value list
-            else -> values[values.indexOf(oldState)] = newVar   // newVar already present
+        when (val oldState = fields.firstOrNull { it.descriptor == newVar.descriptor }) {
+            null -> fields.add(newVar)                          // newVar isn't present in value list
+            else -> fields[fields.indexOf(oldState)] = newVar   // newVar already present
         }
     }
 
+    override fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
+        return type.declarations.filterIsInstance<IrFunction>()
+            .filter { it.descriptor.name == descriptor.name }
+            .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
+    }
+
     override fun copy(): State {
-        return Complex(classOfObject, values).apply { this@apply.superType = this@Complex.superType }
+        return Complex(type, fields).apply {
+            this@apply.superType = this@Complex.superType
+            this@apply.instance = this@Complex.instance
+        }
     }
 
     override fun toString(): String {
-        return "Complex(obj='${classOfObject.fqNameForIrSerialization}', super=$superType, values=$values)"
+        return "Complex(obj='${type.fqNameForIrSerialization}', super=$superType, values=$fields)"
     }
 }
