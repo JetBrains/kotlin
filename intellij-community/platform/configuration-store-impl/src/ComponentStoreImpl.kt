@@ -28,7 +28,6 @@ import com.intellij.util.ArrayUtilRt
 import com.intellij.util.SmartList
 import com.intellij.util.SystemProperties
 import com.intellij.util.ThreeState
-import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.xmlb.XmlSerializerUtil
 import kotlinx.coroutines.CancellationException
@@ -578,7 +577,7 @@ abstract class ComponentStoreImpl : IComponentStore {
       return emptySet()
     }
 
-    val componentNames = SmartHashSet<String>()
+    val componentNames = HashSet<String>()
     for (storage in changedStorages) {
       LOG.runAndLogException {
         // we must update (reload in-memory storage data) even if non-reloadable component will be detected later
@@ -587,7 +586,7 @@ abstract class ComponentStoreImpl : IComponentStore {
       }
     }
 
-    if (componentNames.isEmpty) {
+    if (componentNames.isEmpty()) {
       return emptySet()
     }
 

@@ -39,5 +39,5 @@ private object NonPersistentStateStorage : StateStorage {
   override fun <T : Any> getState(component: Any?, componentName: String, stateClass: Class<T>, mergeInto: T?, reload: Boolean): T? = null
   override fun hasState(componentName: String, reloadData: Boolean): Boolean = false
   override fun createSaveSessionProducer(): SaveSessionProducer? = null
-  override fun analyzeExternalChangesAndUpdateIfNeeded(componentNames: MutableSet<in String>) = Unit
+  override fun analyzeExternalChangesAndUpdateIfNeeded(componentNames: MutableSet<String>) = Unit
 }

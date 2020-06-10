@@ -12,7 +12,6 @@ import com.intellij.openapi.components.StateStorageOperation
 import com.intellij.openapi.components.impl.stores.FileStorageCoreUtil
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.runAndLogException
-import com.intellij.openapi.extensions.AbstractExtensionPointBean
 import com.intellij.openapi.options.SchemeProcessor
 import com.intellij.openapi.options.SchemeState
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -69,7 +68,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
   internal val filesToDelete = ContainerUtil.newConcurrentSet<String>()
 
   // scheme could be changed - so, hashcode will be changed - we must use identity hashing strategy
-  internal val schemeToInfo = ConcurrentCollectionFactory.createMap<T, ExternalInfo>(ContainerUtil.identityStrategy())
+  internal val schemeToInfo = ConcurrentCollectionFactory.createConcurrentIdentityMap<T, ExternalInfo>()
 
   init {
     if (processor is SchemeExtensionProvider) {
@@ -112,8 +111,9 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
 
   override fun loadBundledScheme(resourceName: String, requestor: Any) {
     try {
+      @Suppress("DEPRECATION")
       val url = when (requestor) {
-        is AbstractExtensionPointBean -> requestor.loaderForClass.getResource(resourceName)
+        is com.intellij.openapi.extensions.AbstractExtensionPointBean -> requestor.loaderForClass.getResource(resourceName)
         is TempUIThemeBasedLookAndFeelInfo -> File(resourceName).toURI().toURL()
         is UITheme -> DecodeDefaultsUtil.getDefaults(requestor.providerClassLoader, resourceName)
         else -> DecodeDefaultsUtil.getDefaults(requestor, resourceName)

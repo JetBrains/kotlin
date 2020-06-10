@@ -5,7 +5,6 @@ import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.annotations.MapAnnotation
 import com.intellij.util.xmlb.annotations.Property
 import com.intellij.util.xmlb.annotations.Tag
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.junit.Test
 import java.util.*
 
@@ -14,7 +13,7 @@ internal class XmlSerializerOldMapAnnotationTest {
     @Tag("bean")
     class Bean {
       @MapAnnotation(surroundWithTag = false, surroundKeyWithTag = false, surroundValueWithTag = false)
-      var values: Map<String, BeanWithProperty> = Object2ObjectOpenHashMap()
+      var values: Map<String, BeanWithProperty> = HashMap()
     }
 
     val bean = Bean()
@@ -156,7 +155,7 @@ internal class XmlSerializerOldMapAnnotationTest {
       @Property(surroundWithTag = false)
       @MapAnnotation(keyAttributeName = "type")
       @JvmField
-      var branches = Object2ObjectOpenHashMap<String, String>()
+      var branches = HashMap<String, String>()
     }
 
     val bean = BranchStorage()

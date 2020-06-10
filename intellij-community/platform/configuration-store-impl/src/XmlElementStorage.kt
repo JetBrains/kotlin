@@ -15,11 +15,10 @@ import com.intellij.openapi.vfs.LargeFileWriteRequestor
 import com.intellij.openapi.vfs.SafeWriteRequestor
 import com.intellij.util.LineSeparator
 import com.intellij.util.SmartList
-import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.io.delete
 import com.intellij.util.io.outputStream
 import com.intellij.util.io.safeOutputStream
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import org.jdom.Attribute
 import org.jdom.Element
 import org.jetbrains.annotations.ApiStatus
@@ -27,6 +26,7 @@ import java.io.FileNotFoundException
 import java.io.OutputStream
 import java.io.Writer
 import java.nio.file.Path
+import kotlin.math.min
 
 abstract class XmlElementStorage protected constructor(val fileSpec: String,
                                                        protected val rootElementName: String?,
@@ -90,7 +90,7 @@ abstract class XmlElementStorage protected constructor(val fileSpec: String,
 
   protected abstract fun createSaveSession(states: StateMap): SaveSessionProducer
 
-  override fun analyzeExternalChangesAndUpdateIfNeeded(componentNames: MutableSet<in String>) {
+  override fun analyzeExternalChangesAndUpdateIfNeeded(componentNames: MutableSet<String>) {
     val oldData = storageDataRef.get()
     val newData = getStorageData(true)
     if (oldData == null) {
@@ -115,7 +115,7 @@ abstract class XmlElementStorage protected constructor(val fileSpec: String,
   abstract class XmlElementStorageSaveSession<T : XmlElementStorage>(private val originalStates: StateMap, protected val storage: T) : SaveSessionBase() {
     private var copiedStates: MutableMap<String, Any>? = null
 
-    private var newLiveStates: MutableMap<String, Element>? = Object2ObjectOpenHashMap()
+    private var newLiveStates: MutableMap<String, Element>? = HashMap()
 
     protected open fun isSaveAllowed() = !storage.checkIsSavingDisabled()
 
@@ -349,12 +349,20 @@ internal fun Element.normalizeRootName(): Element {
 
 // newStorageData - myStates contains only live (unarchived) states
 private fun StateMap.getChangedComponentNames(newStates: StateMap): Set<String> {
-  val bothStates = keys().toMutableSet()
-  bothStates.retainAll(newStates.keys())
+  val newKeys = newStates.keys()
+  val existingKeys = keys()
 
-  val diffs = SmartHashSet<String>()
-  diffs.addAll(newStates.keys())
-  diffs.addAll(keys())
+  val bothStates = ArrayList<String>(min(newKeys.size, existingKeys.size))
+  val existingKeysSet = if (existingKeys.size < 3) existingKeys.asList() else ObjectOpenHashSet(existingKeys)
+  for (newKey in newKeys) {
+    if (existingKeysSet.contains(newKey)) {
+      bothStates.add(newKey)
+    }
+  }
+
+  val diffs = ObjectOpenHashSet<String>(newKeys.size + existingKeys.size)
+  diffs.addAll(newKeys)
+  diffs.addAll(existingKeys)
   diffs.removeAll(bothStates)
 
   for (componentName in bothStates) {

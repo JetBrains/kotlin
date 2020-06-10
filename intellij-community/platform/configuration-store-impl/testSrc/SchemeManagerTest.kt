@@ -19,7 +19,6 @@ import com.intellij.util.PathUtil
 import com.intellij.util.io.*
 import com.intellij.util.toByteArray
 import com.intellij.util.xmlb.annotations.Tag
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.jdom.Element
@@ -637,7 +636,7 @@ internal class SchemeManagerTest {
 
 private fun checkSchemes(baseDir: Path, expected: String, ignoreDeleted: Boolean) {
   val filesToScheme = StringUtil.split(expected, ";")
-  val fileToSchemeMap = Object2ObjectOpenHashMap<String, String>()
+  val fileToSchemeMap = HashMap<String, String>()
   for (fileToScheme in filesToScheme) {
     val index = fileToScheme.indexOf("->")
     fileToSchemeMap.put(fileToScheme.substring(0, index), fileToScheme.substring(index + 2))
