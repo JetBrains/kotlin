@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -734,6 +735,10 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       }
       catch (RuntimeException e) {
         LOG.info("Gradle project resolve error", e);
+        ExternalSystemException esException = ExceptionUtil.findCause(e, ExternalSystemException.class);
+        if (esException != null) {
+          LOG.info("\nCaused by: " + esException.getOriginalReason());
+        }
         throw myProjectResolverChain.getUserFriendlyError(
           myResolverContext.getBuildEnvironment(), e, myResolverContext.getProjectPath(), null);
       }
