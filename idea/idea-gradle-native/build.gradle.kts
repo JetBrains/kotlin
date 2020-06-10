@@ -97,3 +97,9 @@ projectTest(parallel = true) {
 }
 
 configureFormInstrumentation()
+
+if (Ide.AS41.orHigher()) {
+    getOrCreateTask<Test>("test") {
+        setExcludes(listOf("**"))
+    }
+}
