@@ -95,6 +95,21 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/FunctionBlock2.after.kt");
         }
 
+        @TestMetadata("HigherOrderFunction.after.kt")
+        public void testHigherOrderFunction() throws Exception {
+            runTest("idea/testData/indentationOnNewline/HigherOrderFunction.after.kt");
+        }
+
+        @TestMetadata("HigherOrderFunction2.after.kt")
+        public void testHigherOrderFunction2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/HigherOrderFunction2.after.kt");
+        }
+
+        @TestMetadata("HigherOrderFunction3.after.kt")
+        public void testHigherOrderFunction3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/HigherOrderFunction3.after.kt");
+        }
+
         @TestMetadata("InDelegationListAfterColon.after.kt")
         public void testInDelegationListAfterColon() throws Exception {
             runTest("idea/testData/indentationOnNewline/InDelegationListAfterColon.after.kt");
@@ -1155,6 +1170,11 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("ArgumentListNormalIndent.after.inv.kt")
         public void testArgumentListNormalIndent() throws Exception {
             runTest("idea/testData/indentationOnNewline/ArgumentListNormalIndent.after.inv.kt");
+        }
+
+        @TestMetadata("HigherOrderFunction2.after.inv.kt")
+        public void testHigherOrderFunction2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/HigherOrderFunction2.after.inv.kt");
         }
 
         @TestMetadata("InDelegationListAfterColon.after.inv.kt")

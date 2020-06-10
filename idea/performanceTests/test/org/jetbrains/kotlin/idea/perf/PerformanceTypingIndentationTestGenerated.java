@@ -93,6 +93,21 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/FunctionBlock2.kt");
     }
 
+    @TestMetadata("HigherOrderFunction.kt")
+    public void testHigherOrderFunction() throws Exception {
+        runTest("idea/testData/indentationOnNewline/HigherOrderFunction.kt");
+    }
+
+    @TestMetadata("HigherOrderFunction2.kt")
+    public void testHigherOrderFunction2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/HigherOrderFunction2.kt");
+    }
+
+    @TestMetadata("HigherOrderFunction3.kt")
+    public void testHigherOrderFunction3() throws Exception {
+        runTest("idea/testData/indentationOnNewline/HigherOrderFunction3.kt");
+    }
+
     @TestMetadata("InDelegationListAfterColon.kt")
     public void testInDelegationListAfterColon() throws Exception {
         runTest("idea/testData/indentationOnNewline/InDelegationListAfterColon.kt");
