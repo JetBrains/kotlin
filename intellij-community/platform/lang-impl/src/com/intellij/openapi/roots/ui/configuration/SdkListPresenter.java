@@ -18,9 +18,11 @@ import com.intellij.util.Function;
 import com.intellij.util.IconUtil;
 import com.intellij.util.Producer;
 import com.intellij.util.ui.EmptyIcon;
+import com.intellij.util.ui.accessibility.AccessibleContextDelegate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -62,6 +64,13 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
 
     SimpleColoredComponent component = (SimpleColoredComponent)super.getListCellRendererComponent(list, value, index, selected, hasFocus);
     JPanel panel = new JPanel(new BorderLayout()) {
+      private final AccessibleContext myContext = component.getAccessibleContext();
+
+      @Override
+      public AccessibleContext getAccessibleContext() {
+        return myContext;
+      }
+
       @Override
       public void setBorder(Border border) {
         // we do not want to outer UI to add a border to that JPanel
@@ -119,6 +128,7 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
                                        boolean hasFocus) {
 
     setIcon(EMPTY_ICON);    // to fix vertical size
+    getAccessibleContext().setAccessibleName(null);
     if (value instanceof InvalidSdkItem) {
       InvalidSdkItem item = (InvalidSdkItem)value;
       final String str = ProjectBundle.message("jdk.combo.box.invalid.item", item.getSdkName());
@@ -203,8 +213,9 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
       SdkAppearanceService.getInstance()
         .forNullSdk(selected)
         .customize(this);
+      getAccessibleContext().setAccessibleName(ProjectBundle.message("jdk.combo.box.no.sdk.item.accessibility"));
     }
-    else if(value instanceof SdkReferenceItem) {
+    else if (value instanceof SdkReferenceItem) {
       SdkReferenceItem item = (SdkReferenceItem)value;
 
       SdkAppearanceService.getInstance()
@@ -236,5 +247,36 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
     home = FileUtil.getLocationRelativeToUserHome(home);
     home = StringUtil.shortenTextWithEllipsis(home, maxLength, suffixLength);
     return home;
+  }
+
+  @Override
+  public AccessibleContext getAccessibleContext() {
+    if (accessibleContext == null) {
+      accessibleContext = new AccessibleSdkListPresenter(super.getAccessibleContext());
+    }
+    return accessibleContext;
+  }
+
+  static private class AccessibleSdkListPresenter extends AccessibleContextDelegate {
+    private String myAccessibleString = null;
+
+    AccessibleSdkListPresenter(AccessibleContext context) {
+      super(context);
+    }
+
+    @Override
+    protected Container getDelegateParent() {
+      return null;
+    }
+
+    @Override
+    public String getAccessibleName() {
+      return myAccessibleString == null ? super.getDelegate().getAccessibleName() : myAccessibleString;
+    }
+
+    @Override
+    public void setAccessibleName(String s) {
+      myAccessibleString = s;
+    }
   }
 }
