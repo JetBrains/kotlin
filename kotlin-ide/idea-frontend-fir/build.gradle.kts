@@ -24,6 +24,7 @@ dependencies {
     testCompile(intellijDep())
     testCompile(intellijCoreDep())
     testCompile(toolsJar())
+    testCompile(project(":kotlin-reflect"))
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea:idea-test-framework"))
