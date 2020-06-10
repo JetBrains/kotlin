@@ -89,7 +89,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         if (elements.first() is KtAnnotatedExpression && elements.first().lastChild is PsiErrorElement)
             elements = getNonWhitespaceChildren(elements.first()).dropLast(1)
 
-        for (element in elements) print(DebugUtil.psiToString(element, false))
+        //for (element in elements) print(DebugUtil.psiToString(element, false))
 
         return elements.toTypedArray()
     }
@@ -170,7 +170,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val result = SmartList<MatchPredicate>()
         if (!StringUtil.isEmptyOrSpaces(constraint!!.expressionTypes)) {
             val predicate = KotlinExprTypePredicate(
-                searchedTypeName = constraint.expressionTypes,
+                searchedTypeName = constraint.expressionTypes.split("|"),
                 withinHierachy = constraint.isExprTypeWithinHierarchy,
                 ignoreCase = !options.isCaseSensitiveMatch
             )
