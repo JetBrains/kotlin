@@ -258,6 +258,17 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 }
                 data.pushReturnValue(result.toState(irBuiltIns.stringType))
             }
+            "hashCode" -> {
+                if (irFunction.parentAsClass.isEnumClass) {
+                    var anyHashCode = irFunction as IrFunctionImpl
+                    while (anyHashCode.overriddenSymbols.isNotEmpty()) {
+                        anyHashCode = anyHashCode.overriddenSymbols.first().owner as IrFunctionImpl
+                    }
+                    calculateBuiltIns(anyHashCode as IrFunctionImpl, data)
+                } else {
+                    throw AssertionError("Hash code function intrinsic is supported only for enum class")
+                }
+            }
             else -> throw AssertionError("Unsupported intrinsic ${irFunction.name}")
         }
 
@@ -301,8 +312,6 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val overriddenOwner = overridden.owner as IrFunctionImpl
         return when {
-            // TODO figure something better
-            superQualifier.irClassFqName() == "kotlin.Enum" && owner.name.asString() == "hashCode" -> calculateOverridden(overriddenOwner, newStates)
             overriddenOwner.body != null -> overriddenOwner.interpret(newStates)
             superQualifier.superType == null -> calculateBuiltIns(overriddenOwner, newStates)
             else -> calculateOverridden(overriddenOwner, newStates)
