@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // main purpose is to get receiver from constructor call
 fun IrMemberAccessExpression.getThisAsReceiver(): DeclarationDescriptor {
@@ -238,6 +239,7 @@ fun State?.getFunctionReceiver(superIrClass: IrClass?): State? {
 
 fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
     val varargType = this.symbol.owner.valueParameters[index].varargElementType ?: return null
+    varargType.classOrNull?.let { return this.symbol.owner.valueParameters[index].type }
     val typeParameter = varargType.classifierOrFail.owner as IrTypeParameter
     return this.getTypeArgument(typeParameter.index)
 }
@@ -245,15 +247,25 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
 fun getTypeArguments(
     container: IrTypeParametersContainer, expression: IrFunctionAccessExpression, mapper: (TypeParameterDescriptor) -> State
 ): List<Variable> {
-    return container.typeParameters.mapIndexed { index, typeParameter ->
-        val typeArgument = expression.getTypeArgument(index)!!
-        val argumentState = typeArgument.classOrNull?.owner?.let { Common(it) }
-            ?: mapper(typeArgument.classifierOrFail.descriptor as TypeParameterDescriptor)
-        Variable(typeParameter.descriptor, argumentState)
+    fun IrType.getState(): State {
+        return this.classOrNull?.owner?.let { Common(it) } ?: mapper(this.classifierOrFail.descriptor as TypeParameterDescriptor)
     }
+
+    val typeArguments = container.typeParameters.mapIndexed { index, typeParameter ->
+        val typeArgument = expression.getTypeArgument(index)!!
+        Variable(typeParameter.descriptor, typeArgument.getState())
+    }.toMutableList()
+
+    if (container is IrSimpleFunction) {
+        container.returnType.classifierOrFail.owner.safeAs<IrTypeParameter>()
+            ?.let { typeArguments.add(Variable(it.descriptor, expression.type.getState())) }
+    }
+
+    return typeArguments
 }
 
 fun State?.extractNonLocalDeclarations(): List<Variable> {
     this ?: return listOf()
-    return this.fields.filterNot { it.descriptor.containingDeclaration == this.irClass.descriptor }
+    val state = this.takeIf { it !is Complex } ?: (this as Complex).getOriginal()
+    return state.fields.filterNot { it.descriptor.containingDeclaration == state.irClass.descriptor }
 }

@@ -18,6 +18,7 @@ import kotlin.math.min
 class ExceptionState private constructor(
     override val irClass: IrClass, override val fields: MutableList<Variable>, stackTrace: List<String>, subClass: Complex? = null
 ) : Complex(irClass, fields, null, subClass) {
+    override val typeArguments: MutableList<Variable> = mutableListOf()
 
     private lateinit var exceptionFqName: String
     private val exceptionHierarchy = mutableListOf<String>()

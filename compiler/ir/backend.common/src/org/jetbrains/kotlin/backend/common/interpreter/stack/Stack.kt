@@ -65,7 +65,8 @@ class StackImpl : Stack {
         val fileName = irFunction.file.name
         val fileNameCapitalized = fileName.replace(".kt", "Kt").capitalize()
         val lineNum = irFunction.fileEntry.getLineNumber(irFunction.startOffset) + 1
-        getCurrentFrame().frameEntryPoint = "at $fileNameCapitalized.${irFunction.fqNameWhenAvailable}($fileName:$lineNum)"
+        if (getCurrentFrame().frameEntryPoint == null)
+            getCurrentFrame().frameEntryPoint = "at $fileNameCapitalized.${irFunction.fqNameWhenAvailable}($fileName:$lineNum)"
     }
 
     override fun getStackTrace(): List<String> {

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -35,13 +36,13 @@ import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 
 class Wrapper private constructor(
-    val value: Any, override val irClass: IrClass, subClass: Complex?
+    val value: Any, override val irClass: IrClass, subClass: Complex?, override val typeArguments: MutableList<Variable>
 ) : Complex(irClass, mutableListOf(), null, subClass) {
 
     private val typeFqName = irClass.fqNameForIrSerialization.toUnsafe()
     private val receiverClass = irClass.defaultType.getClass(true)
 
-    constructor(value: Any, irClass: IrClass) : this(value, irClass, null)
+    constructor(value: Any, irClass: IrClass) : this(value, irClass, null, mutableListOf())
 
     fun getMethod(irFunction: IrFunction): MethodHandle? {
         if (irFunction.getEvaluateIntrinsicValue()?.isEmpty() == true) return null // this method will handle IntrinsicEvaluator
@@ -136,9 +137,22 @@ class Wrapper private constructor(
                 this.isArray() -> if (asObject) Array<Any?>::class.javaObjectType else Array<Any?>::class.java
                 owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
                 //TODO primitive array
-                this.isTypeParameter() -> Any::class.java
-                else -> JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(fqName!!))?.let { Class.forName(it.asSingleFqName().toString()) }
+                this.isTypeParameter() -> Any::class.java // TODO use typeArguments
+                else -> JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(fqName!!))?.let { Class.forName(it.getAsString()) }
             } ?: Class.forName(fqName)
+        }
+
+        private fun ClassId.getAsString(): String {
+            // TODO come up with something better
+            val fqName = this.asSingleFqName().toString()
+            val names = fqName.split(".")
+            val result = StringBuilder()
+            for (i in 0 until (names.size - 1)) {
+                result.append(names[i])
+                if (names[i][0].isUpperCase() && names[i + 1][0].isUpperCase()) result.append("$") else result.append(".")
+            }
+            result.append(names.last())
+            return result.toString()
         }
 
         private fun IrFunction.getOriginalOverriddenSymbols(): MutableList<IrFunctionSymbol> {
@@ -184,7 +198,7 @@ class Wrapper private constructor(
     }
 
     override fun copy(): State {
-        return Wrapper(value, irClass, subClass ?: this)
+        return Wrapper(value, irClass, subClass ?: this, typeArguments)
     }
 
     override fun toString(): String {

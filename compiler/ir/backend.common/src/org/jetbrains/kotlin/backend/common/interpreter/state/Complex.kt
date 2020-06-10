@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 abstract class Complex(
     override val irClass: IrClass, override val fields: MutableList<Variable>, var superClass: Complex?, var subClass: Complex?
 ) : State {
+    abstract val typeArguments: MutableList<Variable>
+
     fun setSuperClassInstance(superClass: Complex) {
         if (this.irClass == superClass.irClass) {
             // if superClass is just secondary constructor instance, then copy properties that isn't already present in instance

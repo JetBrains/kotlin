@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isInterface
 
 class Common private constructor(
-    override val irClass: IrClass, override val fields: MutableList<Variable>, val typeArguments: MutableList<Variable>,
+    override val irClass: IrClass, override val fields: MutableList<Variable>, override val typeArguments: MutableList<Variable>,
     superClass: Complex?, subClass: Complex?
 ) : Complex(irClass, fields, superClass, subClass) {
 

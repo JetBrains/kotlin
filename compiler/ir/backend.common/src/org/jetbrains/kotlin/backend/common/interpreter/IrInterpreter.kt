@@ -54,7 +54,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
             is Float -> irBuiltIns.floatType
             is Double -> irBuiltIns.doubleType
             null -> irBuiltIns.nothingType
-            else -> defaultType
+            else -> when (defaultType.classifierOrNull?.owner) {
+                is IrTypeParameter -> stack.getVariableState(defaultType.classifierOrFail.descriptor).irClass.defaultType
+                else -> defaultType
+            }
         }
     }
 
@@ -173,7 +176,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             functionImplementation.valueParameters
                 .map { Variable(it.descriptor, stack.getVariableState(it.descriptor)) }
                 .forEach { valueArguments.add(it) }
-            return stack.newFrame(initPool = valueArguments) {
+            return stack.newFrame(asSubFrame = true, initPool = valueArguments) {
                 functionImplementation.interpret()
             }
         }
@@ -195,7 +198,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             .map { Variable(it.second.descriptor, stack.getVariableState(it.first.descriptor)) }
             .forEach { valueArguments.add(it) }
 
-        return stack.newFrame(initPool = valueArguments) {
+        return stack.newFrame(asSubFrame = true, initPool = valueArguments) {
             val overriddenOwner = overridden.owner
             return@newFrame when {
                 overriddenOwner.body != null -> overriddenOwner.interpret()
@@ -316,10 +319,11 @@ class IrInterpreter(irModule: IrModuleFragment) {
         interpretValueParameters(expression, irFunction, valueArguments).check { return it }
 
         valueArguments.addAll(getTypeArguments(irFunction, expression) { stack.getVariableState(it) })
-        if (dispatchReceiver is Common) valueArguments.addAll(dispatchReceiver.typeArguments)
-        if (extensionReceiver is Common) valueArguments.addAll(extensionReceiver.typeArguments)
+        if (dispatchReceiver is Complex) valueArguments.addAll(dispatchReceiver.typeArguments)
+        if (extensionReceiver is Complex) valueArguments.addAll(extensionReceiver.typeArguments)
 
-        if (irFunction.isLocal) valueArguments.addAll(dispatchReceiver.extractNonLocalDeclarations())
+        val isLocal = (dispatchReceiver as? Complex)?.getOriginal()?.irClass?.isLocal ?: irFunction.isLocal
+        if (isLocal) valueArguments.addAll(dispatchReceiver.extractNonLocalDeclarations())
 
         return stack.newFrame(asSubFrame = irFunction.isInline || irFunction.isLocal, initPool = valueArguments) {
             val isWrapper = dispatchReceiver is Wrapper && rawExtensionReceiver == null
@@ -364,8 +368,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
         interpretValueParameters(constructorCall, owner, valueArguments).check { return it }
 
         val parent = owner.parent as IrClass
+        val typeArguments = getTypeArguments(parent, constructorCall) { stack.getVariableState(it) } + stack.getAllTypeArguments()
         if (parent.hasAnnotation(evaluateIntrinsicAnnotation)) {
             return stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
+                .apply { (stack.peekReturnValue() as? Wrapper)?.typeArguments?.addAll(typeArguments) } // can be exception
         }
 
         if (parent.defaultType.isArray() || parent.defaultType.isPrimitiveArray()) {
@@ -373,8 +379,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             return stack.newFrame(initPool = valueArguments) { handleIntrinsicMethods(owner) }
         }
 
-        val state = Common(parent)
-        state.typeArguments.addAll(getTypeArguments(parent, constructorCall) { stack.getVariableState(it) } + stack.getAllTypeArguments())
+        val state = Common(parent).apply { this.typeArguments.addAll(typeArguments) }
         if (parent.isLocal) state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
         valueArguments.add(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
         return stack.newFrame(initPool = valueArguments + state.typeArguments) {
