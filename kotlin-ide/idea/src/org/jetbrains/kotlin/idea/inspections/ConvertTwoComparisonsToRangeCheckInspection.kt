@@ -10,17 +10,22 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ConvertTwoComparisonsToRangeCheckInspection :
     AbstractApplicabilityBasedInspection<KtBinaryExpression>(KtBinaryExpression::class.java) {
@@ -28,24 +33,35 @@ class ConvertTwoComparisonsToRangeCheckInspection :
 
     override val defaultFixText get() = KotlinBundle.message("convert.to.a.range.check")
 
-    override fun isApplicable(element: KtBinaryExpression) = generateRangeExpressionData(element) != null
+    override fun isApplicable(element: KtBinaryExpression): Boolean {
+        val rangeData = generateRangeExpressionData(element) ?: return false
+        val function = element.getStrictParentOfType<KtNamedFunction>()
+        if (function != null && function.hasModifier(KtTokens.OPERATOR_KEYWORD) && function.nameAsName == OperatorNameConventions.CONTAINS) {
+            val context = element.analyze(BodyResolveMode.PARTIAL)
+            val functionDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function]
+            val newExpression = rangeData.createExpression()
+            val newContext = newExpression.analyzeAsReplacement(element, context)
+            if (newExpression.operationReference.getResolvedCall(newContext)?.resultingDescriptor == functionDescriptor) return false
+        }
+        return true
+    }
 
     override fun applyTo(element: KtBinaryExpression, project: Project, editor: Editor?) {
         val rangeData = generateRangeExpressionData(element) ?: return
-        val factory = KtPsiFactory(element)
-        val replaced = element.replace(
-            factory.createExpressionByPattern(
-                "$0 in $1..$2", rangeData.value,
-                factory.createExpression(rangeData.min),
-                factory.createExpression(rangeData.max)
-            )
-        )
+        val replaced = element.replace(rangeData.createExpression())
         (replaced as? KtBinaryExpression)?.right?.let {
             ReplaceRangeToWithUntilInspection.applyFixIfApplicable(it)
         }
     }
 
-    private data class RangeExpressionData(val value: KtExpression, val min: String, val max: String)
+    private data class RangeExpressionData(val value: KtExpression, val min: String, val max: String) {
+        fun createExpression(): KtBinaryExpression {
+            val factory = KtPsiFactory(value)
+            return factory.createExpressionByPattern(
+                "$0 in $1..$2", value, factory.createExpression(min), factory.createExpression(max)
+            ) as KtBinaryExpression
+        }
+    }
 
     private fun generateRangeExpressionData(condition: KtBinaryExpression): RangeExpressionData? {
         if (condition.operationToken != KtTokens.ANDAND) return null
