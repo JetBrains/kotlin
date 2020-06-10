@@ -1,0 +1,35 @@
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class Component1Kt$test$1 {
+    field L$0: java.lang.Object
+    field label: int
+    private field p$: Foo
+    inner class Component1Kt$test$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Component1Kt {
+    inner class Component1Kt$test$1
+    public final static @org.jetbrains.annotations.NotNull method generate(): Result
+    public final static method test(): void
+    public final static method use(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): void
+}
+
+@kotlin.Metadata
+public final class Foo$DefaultImpls {
+    inner class Foo$DefaultImpls
+    public static @org.jetbrains.annotations.Nullable method component1(p0: Foo, @org.jetbrains.annotations.NotNull p1: Result, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface Foo {
+    inner class Foo$DefaultImpls
+    public abstract @org.jetbrains.annotations.Nullable method component1(@org.jetbrains.annotations.NotNull p0: Result, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface Result

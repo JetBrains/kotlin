@@ -1,0 +1,234 @@
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$1 {
+    field label: int
+    private field p$0: double
+    private field p$1: java.lang.String
+    inner class LambdaKt$test$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$10 {
+    field label: int
+    private field p$1: java.lang.String
+    private field p$: long
+    inner class LambdaKt$test$10
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$11 {
+    field label: int
+    private field p$: long
+    inner class LambdaKt$test$11
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$12 {
+    field label: int
+    inner class LambdaKt$test$12
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$13 {
+    field label: int
+    private field p$0: java.lang.String
+    private field p$: long
+    inner class LambdaKt$test$13
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$14 {
+    field label: int
+    private field p$: long
+    inner class LambdaKt$test$14
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$15 {
+    field label: int
+    private field p$0: java.lang.String
+    inner class LambdaKt$test$15
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$16 {
+    field label: int
+    inner class LambdaKt$test$16
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$17 {
+    field label: int
+    private field p$: long
+    inner class LambdaKt$test$17
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$2 {
+    field label: int
+    private field p$0: double
+    inner class LambdaKt$test$2
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$3 {
+    field label: int
+    private field p$1: java.lang.String
+    inner class LambdaKt$test$3
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$4 {
+    field label: int
+    private field p$0: double
+    inner class LambdaKt$test$4
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$5 {
+    field label: int
+    private field p$1: java.lang.String
+    inner class LambdaKt$test$5
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$6 {
+    field label: int
+    private field p$0: double
+    private field p$1: java.lang.String
+    private field p$: long
+    inner class LambdaKt$test$6
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$7 {
+    field label: int
+    private field p$0: double
+    private field p$: long
+    inner class LambdaKt$test$7
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$8 {
+    field label: int
+    private field p$1: java.lang.String
+    private field p$: long
+    inner class LambdaKt$test$8
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class LambdaKt$test$9 {
+    field label: int
+    private field p$0: double
+    private field p$: long
+    inner class LambdaKt$test$9
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class LambdaKt {
+    inner class LambdaKt$test$1
+    inner class LambdaKt$test$10
+    inner class LambdaKt$test$11
+    inner class LambdaKt$test$12
+    inner class LambdaKt$test$13
+    inner class LambdaKt$test$14
+    inner class LambdaKt$test$15
+    inner class LambdaKt$test$16
+    inner class LambdaKt$test$17
+    inner class LambdaKt$test$2
+    inner class LambdaKt$test$3
+    inner class LambdaKt$test$4
+    inner class LambdaKt$test$5
+    inner class LambdaKt$test$6
+    inner class LambdaKt$test$7
+    inner class LambdaKt$test$8
+    inner class LambdaKt$test$9
+    public final static method blackhole(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static method test(): void
+    public final static method use(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function3): void
+    public final static method use2(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function4): void
+}

@@ -103,7 +103,7 @@ class CapturingInClosureChecker : CallChecker {
         // We cannot box function/lambda arguments, destructured lambda arguments, for-loop index variables,
         // exceptions inside catch blocks ans vals in when
         return if (isArgument(variable, variableParent) ||
-            isDestructuredVariable(variable, variableParent) ||
+            findDestructuredVariable(variable, variableParent) != null ||
             isForLoopParameter(variable) ||
             isCatchBlockParameter(variable) ||
             isValInWhen(variable)
@@ -117,12 +117,6 @@ class CapturingInClosureChecker : CallChecker {
     private fun isArgument(variable: VariableDescriptor, variableParent: DeclarationDescriptor): Boolean =
         variable is ValueParameterDescriptor && variableParent is CallableDescriptor
                 && variableParent.valueParameters.contains(variable)
-
-    private fun isDestructuredVariable(variable: VariableDescriptor, variableParent: DeclarationDescriptor): Boolean =
-        variable is LocalVariableDescriptor && variableParent is AnonymousFunctionDescriptor &&
-                variableParent.valueParameters.any {
-                    it is ValueParameterDescriptorImpl.WithDestructuringDeclaration && it.destructuringVariables.contains(variable)
-                }
 
     private fun isValInWhen(variable: VariableDescriptor): Boolean {
         val psi = ((variable as? LocalVariableDescriptor)?.source as? KotlinSourceElement)?.psi ?: return false
@@ -178,3 +172,10 @@ class CapturingInClosureChecker : CallChecker {
         return getCalleeDescriptorAndParameter(bindingContext, argument)?.second?.isCrossinline == true
     }
 }
+
+fun findDestructuredVariable(variable: VariableDescriptor, variableParent: DeclarationDescriptor): ValueParameterDescriptor? =
+    if (variable is LocalVariableDescriptor && variableParent is AnonymousFunctionDescriptor) {
+        variableParent.valueParameters.find {
+            it is ValueParameterDescriptorImpl.WithDestructuringDeclaration && it.destructuringVariables.contains(variable)
+        }
+    } else null

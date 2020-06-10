@@ -270,6 +270,49 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         public void testTcoContinuation_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/coroutines/tcoContinuation.kt", "kotlin.coroutines");
         }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/coroutines/spilling")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Spilling extends AbstractIrBytecodeListingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInSpilling() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/coroutines/spilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("component1.kt")
+            public void testComponent1() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/coroutines/spilling/component1.kt");
+            }
+
+            @TestMetadata("destructured.kt")
+            public void testDestructured() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/coroutines/spilling/destructured.kt");
+            }
+
+            @TestMetadata("field.kt")
+            public void testField() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/coroutines/spilling/field.kt");
+            }
+
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/coroutines/spilling/lambda.kt");
+            }
+
+            @TestMetadata("select.kt")
+            public void testSelect() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/coroutines/spilling/select.kt");
+            }
+
+            @TestMetadata("unreachable.kt")
+            public void testUnreachable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/coroutines/spilling/unreachable.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/inline")
