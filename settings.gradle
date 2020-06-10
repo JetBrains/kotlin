@@ -60,8 +60,7 @@ gradleEnterprise {
 BuildCacheKt.setupBuildCache(settings)
 
 // modules
-include ":kotlin-build-common",
-        ":benchmarks",
+include ":benchmarks",
         ":compiler",
         ":compiler:util",
         ":compiler:config",
