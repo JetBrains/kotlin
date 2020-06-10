@@ -127,7 +127,6 @@
       <reference id="ExternalSystem.SelectProjectDataToImport"/>
     </group>
     <group id="ExternalSystemView.ActionsToolbar.RightPanel">
-      <reference id="ExternalSystem.ToggleAutoReload"/>
     </group>
 
     <group id="ExternalSystemView.TaskActivationGroup">

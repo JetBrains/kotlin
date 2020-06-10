@@ -156,8 +156,7 @@
 
     <group id="Gradle.View.ActionsToolbar.RightPanel">
       <reference id="Gradle.ToggleOfflineAction"/>
-      <add-to-group group-id="ExternalSystemView.ActionsToolbar.RightPanel" anchor="before"
-                    relative-to-action="ExternalSystem.ToggleAutoReload"/>
+      <add-to-group group-id="ExternalSystemView.ActionsToolbar.RightPanel"/>
     </group>
 
     <group id="Gradle.View.ProjectMenu">
