@@ -61,8 +61,20 @@ public abstract class LookupManager {
 
   @NonNls public static final String PROP_ACTIVE_LOOKUP = "activeLookup";
 
+  /**
+   * @deprecated Use {@link LookupManagerListener.TOPIC}
+   */
+  @Deprecated
   public abstract void addPropertyChangeListener(@NotNull PropertyChangeListener listener);
+  /**
+   * @deprecated Use {@link LookupManagerListener.TOPIC}
+   */
+  @Deprecated
   public abstract void addPropertyChangeListener(@NotNull PropertyChangeListener listener, @NotNull Disposable disposable);
+  /**
+   * @deprecated Use {@link LookupManagerListener.TOPIC}
+   */
+  @Deprecated
   public abstract void removePropertyChangeListener(@NotNull PropertyChangeListener listener);
 
   @NotNull

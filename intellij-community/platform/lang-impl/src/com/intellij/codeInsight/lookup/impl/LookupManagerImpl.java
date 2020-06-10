@@ -155,7 +155,7 @@ public class LookupManagerImpl extends LookupManager {
       public void dispose() {
         myActiveLookup = null;
         myActiveLookupEditor = null;
-        myPropertyChangeSupport.firePropertyChange(PROP_ACTIVE_LOOKUP, lookup, null);
+        fireActiveLookupChanged(lookup, null);
       }
     });
 
@@ -170,8 +170,13 @@ public class LookupManagerImpl extends LookupManager {
       alarm.cancelAllRequests(); // no items -> no doc
     }
 
-    myPropertyChangeSupport.firePropertyChange(PROP_ACTIVE_LOOKUP, null, myActiveLookup);
+    fireActiveLookupChanged(null, myActiveLookup);
     return lookup;
+  }
+
+  void fireActiveLookupChanged(LookupImpl oldLookup, LookupImpl newLookup) {
+    myPropertyChangeSupport.firePropertyChange(PROP_ACTIVE_LOOKUP, oldLookup, newLookup);
+    myProject.getMessageBus().syncPublisher(LookupManagerListener.TOPIC).activeLookupChanged(oldLookup, newLookup);
   }
 
   private void showJavadoc(LookupImpl lookup) {
