@@ -38,7 +38,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private val stackTrace = mutableListOf<String>()
 
-    private val mapOfEnums = mutableMapOf<Pair<IrClass, String>, Common>()
+    private val mapOfEnums = mutableMapOf<Pair<IrClass, String>, Complex>()
 
     private fun Any?.getType(defaultType: IrType): IrType {
         return when (this) {
@@ -624,6 +624,18 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val enumEntry = expression.symbol.owner
         val enumSignature = Pair(enumEntry.parentAsClass, enumEntry.name.asString())
         mapOfEnums[enumSignature]?.let { return Code.NEXT.apply { data.pushReturnValue(it) } }
+
+        val enumClass = enumEntry.symbol.owner.parentAsClass
+        if (enumClass.hasAnnotation(evaluateIntrinsicAnnotation)) {
+            val valueOfFun = enumClass.declarations.single { it.nameForIrSerialization.asString() == "valueOf" } as IrFunction
+            val enumName = Variable(valueOfFun.valueParameters.first().descriptor, enumEntry.name.asString().toState(irBuiltIns.stringType))
+            val newFrame = InterpreterFrame(mutableListOf(enumName))
+            return Wrapper.getEnumEntry(enumClass)!!.invokeMethod(valueOfFun, newFrame).apply {
+                if (this == Code.NEXT) mapOfEnums[enumSignature] = newFrame.peekReturnValue() as Wrapper
+                data.pushReturnValue(newFrame)
+            }
+        }
+
         return interpretEnumEntry(enumEntry, data).apply {
             if (this == Code.NEXT) mapOfEnums[enumSignature] = data.peekReturnValue() as Common
         }

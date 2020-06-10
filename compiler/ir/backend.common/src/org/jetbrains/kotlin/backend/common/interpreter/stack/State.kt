@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.common.interpreter.stack
 
 import org.jetbrains.kotlin.backend.common.interpreter.*
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.CompileTimeFunction
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.unaryFunctions
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -17,8 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -190,6 +186,15 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
 
             val methodType = irFunction.getMethodType()
             return MethodHandles.lookup().findStatic(jvmClassName, irFunction.name.asString(), methodType)
+        }
+
+        fun getEnumEntry(enumClass: IrClass): MethodHandle? {
+            val intrinsicName = enumClass.getEvaluateIntrinsicValue()
+            if (intrinsicName?.isEmpty() == true) return null
+            val enumClassName = Class.forName(intrinsicName!!)
+
+            val methodType = MethodType.methodType(enumClassName, String::class.java)
+            return MethodHandles.lookup().findStatic(enumClassName, "valueOf", methodType)
         }
 
         private fun IrFunction.getMethodType(): MethodType {
