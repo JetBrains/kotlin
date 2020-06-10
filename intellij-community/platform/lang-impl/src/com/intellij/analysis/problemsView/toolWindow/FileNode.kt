@@ -28,7 +28,10 @@ internal class FileNode(parent: Node, val file: VirtualFile) : Node(parent) {
     }
     val root = findAncestor(Root::class.java)
     val count = root?.getProblemsCount(file) ?: 0
-    if (count > 0) presentation.addText("  $count problems", GRAYED_ATTRIBUTES)
+    if (count > 0) {
+      val text = ProblemsViewBundle.message("problems.view.file.problems", count)
+      presentation.addText("  $text", GRAYED_ATTRIBUTES)
+    }
   }
 
   override fun getChildren(): Collection<Node> {
