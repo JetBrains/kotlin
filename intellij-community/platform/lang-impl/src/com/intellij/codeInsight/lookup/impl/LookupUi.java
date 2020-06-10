@@ -234,10 +234,6 @@ class LookupUi {
     }
     if (isPositionedAboveCaret()) {
       location.y -= dim.height + editor.getLineHeight();
-      if (pos.line == 0) {
-        location.y += 1;
-        //otherwise the lookup won't intersect with the editor and every editor's resize (e.g. after typing in console) will close the lookup
-      }
     }
 
     if (!screenRectangle.contains(location)) {
