@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.backend.common.interpreter.getPrimitiveClass
 import org.jetbrains.kotlin.backend.common.interpreter.hasAnnotation
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -21,7 +23,13 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
@@ -36,23 +44,39 @@ class Wrapper private constructor(
     constructor(value: Any, irClass: IrClass) : this(value, irClass, null)
 
     fun getMethod(irFunction: IrFunction): MethodHandle? {
+        if (irFunction.getEvaluateIntrinsicValue()?.isEmpty() == true) return null // this method will handle IntrinsicEvaluator
         // if function is actually a getter, then use "get${property.name.capitalize()}" as method name
-        val propertyName = (irFunction as? IrFunctionImpl)?.correspondingPropertySymbol?.owner?.name?.asString()
-        val propertyExplicitCall = propertyName?.takeIf { receiverClass.methods.map { it.name }.contains(it) }
-        val propertyGetCall = "get${propertyName?.capitalize()}".takeIf { receiverClass.methods.map { it.name }.contains(it) }
+        val propertyName = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.name?.asString()
+        val propertyCall = listOfNotNull(propertyName, "get${propertyName?.capitalize()}")
+            .firstOrNull { receiverClass.methods.any { method -> method.name == it } }
 
-        // intrinsicName is used to get correct java method
-        // for example: - method 'get' in kotlin StringBuilder is actually 'charAt' in java StringBuilder
-        val intrinsicName = irFunction.getEvaluateIntrinsicValue()
-        if (intrinsicName?.isEmpty() == true) return null
-        val methodName = intrinsicName ?: propertyExplicitCall ?: propertyGetCall ?: irFunction.name.toString()
-
+        val intrinsicName = getJavaOriginalName(irFunction)
+        val methodName = intrinsicName ?: propertyCall ?: irFunction.name.toString()
         val methodType = irFunction.getMethodType()
         return MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
     }
 
     override fun setState(newVar: Variable) {
         throw UnsupportedOperationException("Method setState is not supported in Wrapper class")
+    }
+
+    // this method is used to get correct java method name
+    // for example: - method 'get' in kotlin StringBuilder is actually 'charAt' in java StringBuilder
+    //              - method 'keys' in kotlin Map is actually 'keySet' in java
+    private fun getJavaOriginalName(irFunction: IrFunction): String? {
+        return when {
+            (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol != null -> {
+                val property = irFunction.descriptor.firstOverridden {
+                    BuiltinSpecialProperties.hasBuiltinSpecialPropertyFqName(it.propertyIfAccessor)
+                }
+                property?.let { BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[it.propertyIfAccessor.fqNameSafe]?.asString() }
+            }
+            irFunction.descriptor is SimpleFunctionDescriptor -> {
+                val last = irFunction.descriptor.overriddenTreeAsSequence(true).last()
+                BuiltinMethodsWithDifferentJvmName.getJvmName(last as SimpleFunctionDescriptor)?.asString()
+            }
+            else -> null
+        }
     }
 
     companion object {

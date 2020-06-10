@@ -246,7 +246,9 @@ fun getTypeArguments(
     container: IrTypeParametersContainer, expression: IrFunctionAccessExpression, mapper: (TypeParameterDescriptor) -> State
 ): List<Variable> {
     return container.typeParameters.mapIndexed { index, typeParameter ->
-        val argumentState = expression.getTypeArgument(index)?.classOrNull?.owner?.let { Common(it) } ?: mapper(typeParameter.descriptor)
+        val typeArgument = expression.getTypeArgument(index)!!
+        val argumentState = typeArgument.classOrNull?.owner?.let { Common(it) }
+            ?: mapper(typeArgument.classifierOrFail.descriptor as TypeParameterDescriptor)
         Variable(typeParameter.descriptor, argumentState)
     }
 }
