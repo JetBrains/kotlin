@@ -31,11 +31,13 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.types.Variance
 
 interface FakeOverrideBuilder {
     fun buildFakeOverridesForClass(clazz: IrClass)
@@ -77,8 +79,11 @@ class FakeOverrideBuilderImpl(
         require(classifier is IrClassSymbol) { "superType classifier is not IrClassSymbol: $classifier" }
 
         val typeParameters = classifier.owner.typeParameters.map { it.symbol }
-        val typeArguments =
-            superType.arguments.map { it as? IrSimpleType ?: error("Unexpected super type $it") }
+        val typeArguments = superType.arguments.map {
+            require(it is IrTypeProjection) { "Unexpected super type argument: $it" }
+            assert(it.variance == Variance.INVARIANT) { "Unexpected variance in super type argument: ${it.variance}" }
+            it.type
+        }
 
         assert(typeParameters.size == typeArguments.size) {
             "typeParameters = $typeParameters size != typeArguments = $typeArguments size "
