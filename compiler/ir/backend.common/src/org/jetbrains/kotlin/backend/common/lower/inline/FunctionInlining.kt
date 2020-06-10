@@ -143,9 +143,12 @@ class FunctionInlining(
             callee: IrFunction,
             performRecursiveInline: Boolean
         ): IrReturnableBlock {
-            val copiedCallee = if (performRecursiveInline)
-                visitElement(copyIrElement.copy(callee)) as IrFunction
-            else copyIrElement.copy(callee) as IrFunction
+            val copiedCallee = copyIrElement.copy(callee).let {
+                (it as IrFunction).parent = callee.parent
+                if (performRecursiveInline)
+                    visitElement(it) as IrFunction
+                else it
+            }
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as IrBlockBody).statements
