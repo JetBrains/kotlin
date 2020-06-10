@@ -106,7 +106,8 @@ fun State.toIrExpression(expression: IrExpression): IrExpression {
 fun Any?.toState(irType: IrType): State {
     return when (this) {
         is State -> this
-        is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double -> Primitive(this, irType)
+        is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double, is Array<*>, is ByteArray,
+        is CharArray, is ShortArray, is IntArray, is LongArray, is FloatArray, is DoubleArray, is BooleanArray -> Primitive(this, irType)
         null -> Primitive(this, irType)
         else -> Wrapper(this, irType.classOrNull!!.owner)
     }
@@ -145,9 +146,11 @@ fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
         ?: ((this as IrFunction).parent as IrClass).annotations.first { it.symbol.descriptor.containingDeclaration.fqNameSafe == annotation }
 }
 
+const val defaultIntrinsicLocation = "org.jetbrains.kotlin.backend.common.interpreter.intrinsic.InterpreterIntrinsicsKt"
 fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
     if (!this.hasAnnotation(evaluateIntrinsicAnnotation)) return null
-    return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
+    val value = (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
+    return if (value.isEmpty()) defaultIntrinsicLocation else value
 }
 
 fun getPrimitiveClass(fqName: String, asObject: Boolean = false): Class<*>? {

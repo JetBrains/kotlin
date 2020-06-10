@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -166,11 +165,10 @@ class Wrapper(val value: Any, override var irClass: IrClass) : Complex(irClass, 
         }
 
         fun getStaticMethod(irFunction: IrFunction): MethodHandle {
-            val annotation = irFunction.getAnnotation(evaluateIntrinsicAnnotation)
-            val jvmFileName = Class.forName((annotation.getValueArgument(0) as IrConst<*>).value.toString())
+            val jvmClassName = Class.forName(irFunction.getEvaluateIntrinsicValue()!!)
 
             val methodType = irFunction.getMethodType()
-            return MethodHandles.lookup().findStatic(jvmFileName, irFunction.name.asString(), methodType)
+            return MethodHandles.lookup().findStatic(jvmClassName, irFunction.name.asString(), methodType)
         }
 
         private fun IrFunction.getMethodType(): MethodType {

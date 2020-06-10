@@ -355,6 +355,20 @@ class IrInterpreter(irModule: IrModuleFragment) {
             data.pushReturnValue(Lambda(irLambdaFunction.symbol.owner, irLambdaFunction.type.classOrNull!!.owner))
             return Code.NEXT
         }
+
+        val inlineFunOwner = (block as? IrReturnableBlock)?.inlineFunctionSymbol?.owner
+        if (inlineFunOwner?.hasAnnotation(evaluateIntrinsicAnnotation) == true) {
+            val rawArgs = block.statements.filterIsInstance<IrVariable>().zip(inlineFunOwner.valueParameters)
+            val args = mutableListOf<Variable>()
+            for ((variable, valueParameter) in rawArgs) {
+                val tempFrame = data.copy().apply { variable.initializer!!.interpret(this).also { if (it != Code.NEXT) return it } }
+                // must set variable descriptor here because temp variables inside ir returnable block have different from methods args names
+                args += Variable(valueParameter.descriptor, tempFrame.popReturnValue())
+            }
+            val newFrame = data.copy().apply { addAll(args) }
+            return Wrapper.getStaticMethod(inlineFunOwner).invokeMethod(inlineFunOwner, newFrame).apply { data.pushReturnValue(newFrame) }
+        }
+
         return interpretStatements(block.statements, data)
     }
 
@@ -466,9 +480,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall, data: Frame): Code {
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> {
-                expression.argument.interpret(data)
-            }
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression.argument.interpret(data)
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
                 val code = expression.argument.interpret(data)
                 if (!data.peekReturnValue().irClass.defaultType.isSubtypeOf(expression.type, irBuiltIns)) {
