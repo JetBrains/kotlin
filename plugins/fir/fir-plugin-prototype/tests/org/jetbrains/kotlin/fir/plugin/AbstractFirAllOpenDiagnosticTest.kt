@@ -17,8 +17,8 @@ abstract class AbstractFirAllOpenDiagnosticTest : AbstractFirDiagnosticsTest() {
         service.registerExtensions(FirAllOpenComponentRegistrar().configure())
     }
 
-    override fun performCustomConfiguration(configuration: CompilerConfiguration) {
-        super.performCustomConfiguration(configuration)
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
         val jar = File("plugins/fir/fir-plugin-prototype/plugin-annotations/build/libs/plugin-annotations-1.4.255-SNAPSHOT.jar")
         if (!jar.exists()) {
             throw AssertionError("Jar with annotations does not exist. Please run :plugins:fir:fir-plugin-prototype:plugin-annotations:jar")

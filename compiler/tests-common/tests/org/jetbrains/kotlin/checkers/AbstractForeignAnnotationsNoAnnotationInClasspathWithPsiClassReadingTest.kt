@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 
 abstract class AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest :
     AbstractForeignAnnotationsNoAnnotationInClasspathTest() {
-    override fun performCustomConfiguration(configuration: CompilerConfiguration) {
-        super.performCustomConfiguration(configuration)
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
         configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
     }
 }

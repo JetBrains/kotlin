@@ -9,5 +9,5 @@ import org.jetbrains.kotlin.codegen.AbstractAsmLikeInstructionListingTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrAsmLikeInstructionListingTest : AbstractAsmLikeInstructionListingTest() {
-    override fun getBackend() = TargetBackend.JVM_IR
+    override val backend = TargetBackend.JVM_IR
 }
