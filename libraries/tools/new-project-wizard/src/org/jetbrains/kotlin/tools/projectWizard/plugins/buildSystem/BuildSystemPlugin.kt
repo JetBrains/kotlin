@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 
 abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
+    override val path = "buildSystem"
+
     val type by enumSetting<BuildSystemType>(
         KotlinNewProjectWizardBundle.message("plugin.buildsystem.setting.type"),
         GenerationPhase.FIRST_STEP

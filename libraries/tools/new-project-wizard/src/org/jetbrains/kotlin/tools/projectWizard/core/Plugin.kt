@@ -29,8 +29,7 @@ abstract class Plugin(override val context: Context) : EntityBase(),
     ): ReadOnlyProperty<Any, PluginSetting<V, T>> = context.pluginSettingDelegate(create)
 
     val reference = this::class
-    override val path = reference.path
-    open val title: String = reference.name
+    abstract override val path: String
 
     abstract val settings: List<PluginSetting<*, *>>
     abstract val pipelineTasks: List<PipelineTask>

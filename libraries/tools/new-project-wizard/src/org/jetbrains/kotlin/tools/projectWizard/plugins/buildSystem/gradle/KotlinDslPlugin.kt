@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemT
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
 class KotlinDslPlugin(context: Context) : GradlePlugin(context) {
+    override val path = "buildSystem.gradle.kotlinDsl"
+
     val addBuildSystemData by addBuildSystemData(
         BuildSystemData(
             type = BuildSystemType.GradleKotlinDsl,

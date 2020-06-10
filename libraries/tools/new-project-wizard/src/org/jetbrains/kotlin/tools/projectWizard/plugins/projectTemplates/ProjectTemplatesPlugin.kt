@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 
 class ProjectTemplatesPlugin(context: Context) : Plugin(context) {
+    override val path = "projectTemplates"
+
     val template by dropDownSetting<ProjectTemplate>(
         KotlinNewProjectWizardBundle.message("plugin.templates.setting.template"),
         GenerationPhase.INIT_TEMPLATE,

@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 
 class RunConfigurationsPlugin(context: Context) : Plugin(context) {
+    override val path = "runConfigurations"
+
     val configurations by listProperty<WizardRunConfiguration>()
 
     val createRunConfigurationsTask by pipelineTask(GenerationPhase.PROJECT_IMPORT) {

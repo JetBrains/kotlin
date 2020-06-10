@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 
 
 abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
+    override val path = "buildSystem.gradle"
+
     val gradleProperties by listProperty(
         "kotlin.code.style" to "official"
     )

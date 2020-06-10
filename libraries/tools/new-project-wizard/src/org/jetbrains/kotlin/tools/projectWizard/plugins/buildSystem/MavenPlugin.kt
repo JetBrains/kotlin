@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 
 class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
+    override val path = "buildSystem.maven"
+
     private val isMaven = checker {
         BuildSystemPlugin::type.settingValue == BuildSystemType.Maven
     }
