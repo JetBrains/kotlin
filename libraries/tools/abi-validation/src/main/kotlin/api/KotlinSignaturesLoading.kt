@@ -8,17 +8,16 @@ package kotlinx.validation.api
 import kotlinx.validation.*
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
-import java.io.InputStream
-import java.util.jar.JarFile
-
+import java.io.*
+import java.util.jar.*
 
 @ExternalApi
 @Suppress("unused")
-fun JarFile.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> =
+public fun JarFile.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> =
         classEntries().map { entry -> getInputStream(entry) }.loadApiFromJvmClasses(visibilityFilter)
 
 @ExternalApi
-fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> {
+public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> {
     val classNodes = map {
         it.use { stream ->
             val classNode = ClassNode()
@@ -46,16 +45,35 @@ fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String) -> Bo
                 ClassBinarySignature(
                     name, superName, outerClassName, supertypes, memberSignatures, classAccess,
                     isEffectivelyPublic(mVisibility),
-                    metadata.isFileOrMultipartFacade() || isDefaultImpls(metadata)
+                    metadata.isFileOrMultipartFacade() || isDefaultImpls(metadata),
+                    annotations(visibleAnnotations, invisibleAnnotations)
                 )
         }}
         .asIterable()
         .sortedBy { it.name }
 }
 
+internal fun List<ClassBinarySignature>.filterOutAnnotated(targetAnnotations: Set<String>): List<ClassBinarySignature> {
+    if (targetAnnotations.isEmpty()) return this
+    return filter {
+        it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) }  }
+    }.map {
+        ClassBinarySignature(
+            it.name,
+            it.superName,
+            it.outerName,
+            it.supertypes,
+            it.memberSignatures.filter { it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) } } },
+            it.access,
+            it.isEffectivelyPublic,
+            it.isNotUsedWhenEmpty,
+            it.annotations
+        )
+    }
+}
 
 @ExternalApi
-fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: Collection<String> = emptyList()): List<ClassBinarySignature> {
+public fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: Collection<String> = emptyList()): List<ClassBinarySignature> {
     val nonPublicPaths = nonPublicPackages.map { it.replace('.', '/') + '/' }
     val classByName = associateBy { it.name }
 
@@ -93,10 +111,10 @@ fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: Collection<
 }
 
 @ExternalApi
-fun List<ClassBinarySignature>.dump() = dump(to = System.out)
+public fun List<ClassBinarySignature>.dump() = dump(to = System.out)
 
 @ExternalApi
-fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {
+public fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {
     forEach { classApi ->
         with(to) {
             append(classApi.signature).appendln(" {")
@@ -112,3 +130,6 @@ fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {
 private fun JarFile.classEntries() = Sequence { entries().iterator() }.filter {
     !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
 }
+
+internal fun annotations(l1: List<AnnotationNode>?, l2: List<AnnotationNode>?): List<AnnotationNode> =
+    ((l1 ?: emptyList()) + (l2 ?: emptyList()))

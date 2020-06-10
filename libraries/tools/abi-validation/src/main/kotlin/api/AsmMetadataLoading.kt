@@ -6,7 +6,7 @@
 package kotlinx.validation.api
 
 import kotlinx.metadata.jvm.*
-import org.objectweb.asm.Opcodes
+import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
 
 val ACCESS_NAMES = mapOf(
@@ -70,8 +70,14 @@ private fun List<Any>.annotationValue(key: String): Any? {
     return null
 }
 
-private fun findAnnotation(annotationName: String, visibleAnnotations: List<AnnotationNode>?, invisibleAnnotations: List<AnnotationNode>?, includeInvisible: Boolean): AnnotationNode? =
+private fun findAnnotation(
+    annotationName: String,
+    visibleAnnotations: List<AnnotationNode>?,
+    invisibleAnnotations: List<AnnotationNode>?,
+    includeInvisible: Boolean
+): AnnotationNode? =
     visibleAnnotations?.firstOrNull { it.refersToName(annotationName) }
-            ?: if (includeInvisible) invisibleAnnotations?.firstOrNull { it.refersToName(annotationName) } else null
+        ?: if (includeInvisible) invisibleAnnotations?.firstOrNull { it.refersToName(annotationName) } else null
 
-fun AnnotationNode.refersToName(name: String) = desc.startsWith('L') && desc.endsWith(';') && desc.regionMatches(1, name, 0, name.length)
+fun AnnotationNode.refersToName(name: String) =
+    desc.startsWith('L') && desc.endsWith(';') && desc.regionMatches(1, name, 0, name.length)

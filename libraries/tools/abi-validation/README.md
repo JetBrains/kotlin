@@ -63,6 +63,18 @@ apiValidation {
      * Sub-projects that are excluded from API validation 
      */
     ignoredProjects += ["benchmarks", "examples"]
+    
+    /**
+     * Set of annotations that exclude API from being public.
+     * Typically, it is all kinds of `@InternalApi` annotations that mark 
+     * effectively private API that cannot be actually private for technical reasons.
+     */
+    nonPublicMarkers += ["my.package.MyInternalApiAnnotation"]
+
+    /**
+     * Flag to programmatically disable compatibility validator
+     */
+    validationDisabled = true
 }
 ```
 

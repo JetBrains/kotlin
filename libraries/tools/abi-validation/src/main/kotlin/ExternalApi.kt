@@ -6,7 +6,7 @@
 package kotlinx.validation
 
 /**
- * API that is used externally and programmatically by Kotlin standard library
+ * API that is used externally and programmatically by binary-compatibility-validator tool in Kotlin standard library
  */
 @Retention(AnnotationRetention.SOURCE)
 annotation class ExternalApi

@@ -7,8 +7,7 @@ package kotlinx.validation.api
 
 import kotlinx.metadata.jvm.*
 import kotlinx.validation.*
-import org.objectweb.asm.tree.FieldNode
-import org.objectweb.asm.tree.MethodNode
+import org.objectweb.asm.tree.*
 
 @ExternalApi // Only name is part of the API, nothing else is used by stdlib
 data class ClassBinarySignature(
@@ -19,7 +18,8 @@ data class ClassBinarySignature(
     val memberSignatures: List<MemberBinarySignature>,
     val access: AccessFlags,
     val isEffectivelyPublic: Boolean,
-    val isNotUsedWhenEmpty: Boolean
+    val isNotUsedWhenEmpty: Boolean,
+    val annotations: List<AnnotationNode>
 ) {
     val signature: String
         get() = "${access.getModifierString()} class $name" + if (supertypes.isEmpty()) "" else " : ${supertypes.joinToString()}"
@@ -31,6 +31,7 @@ interface MemberBinarySignature {
     val desc: String get() = jvmMember.desc
     val access: AccessFlags
     val isPublishedApi: Boolean
+    val annotations: List<AnnotationNode>
 
     fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?) =
         access.isPublic && !(access.isProtected && classAccess.isFinal)
@@ -46,7 +47,8 @@ interface MemberBinarySignature {
 data class MethodBinarySignature(
     override val jvmMember: JvmMethodSignature,
     override val isPublishedApi: Boolean,
-    override val access: AccessFlags
+    override val access: AccessFlags,
+    override val annotations: List<AnnotationNode>
 ) : MemberBinarySignature {
     override val signature: String
         get() = "${access.getModifierString()} fun $name $desc"
@@ -87,12 +89,17 @@ data class MethodBinarySignature(
 }
 
 fun MethodNode.toMethodBinarySignature() =
-        MethodBinarySignature(JvmMethodSignature(name, desc), isPublishedApi(), AccessFlags(access))
+    MethodBinarySignature(
+        JvmMethodSignature(name, desc),
+        isPublishedApi(),
+        AccessFlags(access),
+        annotations(visibleAnnotations, invisibleAnnotations))
 
 data class FieldBinarySignature(
     override val jvmMember: JvmFieldSignature,
     override val isPublishedApi: Boolean,
-    override val access: AccessFlags
+    override val access: AccessFlags,
+    override val annotations: List<AnnotationNode>
 ) : MemberBinarySignature {
     override val signature: String
         get() = "${access.getModifierString()} field $name $desc"
@@ -104,7 +111,11 @@ data class FieldBinarySignature(
 }
 
 fun FieldNode.toFieldBinarySignature() =
-        FieldBinarySignature(JvmFieldSignature(name, desc), isPublishedApi(), AccessFlags(access))
+    FieldBinarySignature(
+        JvmFieldSignature(name, desc),
+        isPublishedApi(),
+        AccessFlags(access),
+        annotations(visibleAnnotations, invisibleAnnotations))
 
 private val MemberBinarySignature.kind: Int
     get() = when (this) {

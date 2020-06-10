@@ -40,6 +40,7 @@ open class KotlinApiBuildTask : DefaultTask() {
             .map { it.inputStream() }
             .loadApiFromJvmClasses()
             .filterOutNonPublic(extension.ignoredPackages)
+            .filterOutAnnotated(extension.nonPublicMarkers.map { it.replace(".", "/") }.toSet())
 
         outputApiDir.resolve("${project.name}.api").bufferedWriter().use { writer ->
             signatures

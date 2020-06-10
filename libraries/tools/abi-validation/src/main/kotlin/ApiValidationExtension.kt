@@ -22,4 +22,10 @@ open class ApiValidationExtension {
      * Projects that are ignored by the API check.
      */
     public var ignoredProjects: MutableSet<String> = HashSet()
+
+    /**
+     * Fully qualified names of annotations that effectively exclude declarations from being public.
+     * Example of such annotation could be `kotlinx.coroutines.InternalCoroutinesApi`.
+     */
+    public var nonPublicMarkers: MutableSet<String> = HashSet()
 }
