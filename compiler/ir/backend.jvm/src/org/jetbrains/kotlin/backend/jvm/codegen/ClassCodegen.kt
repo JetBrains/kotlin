@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -28,8 +30,12 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
@@ -43,15 +49,12 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.File
 
-abstract class ClassCodegen(val irClass: IrClass, val context: JvmBackendContext, val parentFunction: IrFunction?) : InnerClassConsumer {
-    val type = typeMapper.mapClass(irClass)
+class ClassCodegen(val irClass: IrClass, val context: JvmBackendContext, val parentFunction: IrFunction?) {
+    val type = context.typeMapper.mapClass(irClass)
     val parent = (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { context.getClassCodegen(it) }
     val innerClasses =
         generateSequence(this) { it.parent }.takeWhile { it.parent != null }.mapTo(mutableSetOf()) { it.irClass }
     val reifiedTypeParametersUsages = ReifiedTypeParametersUsages()
-
-    protected val state get() = context.state
-    protected val typeMapper get() = context.typeMapper
 
     private val regeneratedObjectNameGenerator = NameGenerator(type.internalName)
     private val generatedInlineMethods = mutableMapOf<IrFunction, SMAPAndMethodNode>()
@@ -70,7 +73,7 @@ abstract class ClassCodegen(val irClass: IrClass, val context: JvmBackendContext
         //      (and inline lambdas) to be generated multiple times.
         if (generated) return
         generated = true
-        begin(null).generate()
+        ClassCodegenState(this, null).generate()
     }
 
     fun generateAssertFieldIfNeeded(generatingClInit: Boolean): IrExpression? {
@@ -119,7 +122,7 @@ abstract class ClassCodegen(val irClass: IrClass, val context: JvmBackendContext
         return SMAPAndMethodNode(copy, smap)
     }
 
-    override fun addInnerClassInfoFromAnnotation(innerClass: IrClass) {
+    fun addInnerClassInfoFromAnnotation(innerClass: IrClass) {
         // It's necessary for proper recovering of classId by plain string JVM descriptor when loading annotations
         // See FileBasedKotlinClass.convertAnnotationVisitor
         generateSequence<IrDeclaration>(innerClass) { it.parent as? IrDeclaration }.takeWhile { !it.isTopLevelDeclaration }.forEach {
@@ -128,23 +131,29 @@ abstract class ClassCodegen(val irClass: IrClass, val context: JvmBackendContext
             }
         }
     }
-
-    abstract fun begin(parent: ClassCodegenState?): ClassCodegenState
 }
 
-// TODO add `interface ClassMetadataSerializer` & make this non-abstract
-abstract class ClassCodegenState(protected val codegen: ClassCodegen) {
-    private val classOrigin = codegen.irClass.descriptorOrigin
-    private val jvmSignatureClashDetector = JvmSignatureClashDetector(codegen.irClass, codegen.type, codegen.context)
-    private val smap = codegen.context.getSourceMapper(codegen.irClass)
+interface ClassMetadataSerializer {
+    val isSynthetic: Boolean
+    val stringTable: JvmStringTable
 
-    protected val type get() = codegen.type
-    protected val state get() = codegen.context.state
-    protected val context get() = codegen.context
-    protected val irClass get() = codegen.irClass
-    protected val typeMapper get() = codegen.context.typeMapper
+    fun generateMetadataProto(type: Type): MessageLite?
+    fun bindFieldMetadata(field: IrField, fieldType: Type, fieldName: String)
+    fun bindMethodMetadata(method: IrFunction, signature: Method)
+}
 
-    protected val visitor = state.factory.newVisitor(classOrigin, type, irClass.fileParent.loadSourceFilesInfo(context)).apply {
+private class ClassCodegenState(private val codegen: ClassCodegen, parent: ClassCodegenState?) {
+    private val type get() = codegen.type
+    private val state get() = context.state
+    private val context get() = codegen.context
+    private val irClass get() = codegen.irClass
+    private val typeMapper get() = context.typeMapper
+
+    private val classOrigin = irClass.descriptorOrigin
+    private val jvmSignatureClashDetector = JvmSignatureClashDetector(irClass, type, context)
+    private val smap = context.getSourceMapper(irClass)
+
+    private val visitor = state.factory.newVisitor(classOrigin, type, irClass.fileParent.loadSourceFilesInfo(context)).apply {
         val signature = irClass.getSignature(type, typeMapper)
         // Ensure that the backend only produces class names that would be valid in the frontend for JVM.
         if (context.state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
@@ -160,6 +169,9 @@ abstract class ClassCodegenState(protected val codegen: ClassCodegen) {
             signature.interfaces.toTypedArray()
         )
     }
+
+    private val serializer: ClassMetadataSerializer =
+        context.classMetadataSerializerFactory(irClass, context, visitor.serializationBindings, parent?.serializer)
 
     fun generate() {
         // Generating a method node may cause the addition of a field with an initializer if an inline function
@@ -182,17 +194,16 @@ abstract class ClassCodegenState(protected val codegen: ClassCodegen) {
         //    everything moved to the outer class has already been recorded in `globalSerializationBindings`.
         for (declaration in irClass.declarations) {
             if (declaration is IrClass) {
-                context.getClassCodegen(declaration).begin(this).generate()
+                ClassCodegenState(context.getClassCodegen(declaration), this).generate()
             }
         }
 
-        object : AnnotationCodegen(codegen, context) {
+        object : AnnotationCodegen(codegen) {
             override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                 return visitor.visitor.visitAnnotation(descr, visible)
             }
         }.genAnnotations(codegen.irClass, null, null)
         generateKotlinMetadataAnnotation()
-
         generateInnerAndOuterClasses()
 
         // For compatibility with old versions of the inliner, all objects within inline functions should
@@ -225,7 +236,7 @@ abstract class ClassCodegenState(protected val codegen: ClassCodegen) {
             val skipNullabilityAnnotations =
                 flags and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_ENUM) != 0 ||
                         field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_LAMBDA_INSTANCE
-            object : AnnotationCodegen(codegen, context, skipNullabilityAnnotations) {
+            object : AnnotationCodegen(codegen, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                     return fv.visitAnnotation(descr, visible)
                 }
@@ -236,7 +247,7 @@ abstract class ClassCodegenState(protected val codegen: ClassCodegen) {
             }.genAnnotations(field, fieldType, field.type)
         }
 
-        bindFieldMetadata(field, fieldType, fieldName)
+        serializer.bindFieldMetadata(field, fieldType, fieldName)
     }
 
     private fun generateMethod(method: IrFunction) {
@@ -260,7 +271,7 @@ abstract class ClassCodegenState(protected val codegen: ClassCodegen) {
             // Generate a state machine within this method. The continuation class for it should be generated
             // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.
             val continuationClass = method.continuationClass() // null for lambdas' invokeSuspend
-            val continuationState = lazy { continuationClass?.let { context.getClassCodegen(it, method).begin(null) } ?: this }
+            val continuationState = lazy { continuationClass?.let { ClassCodegenState(context.getClassCodegen(it, method), null) } ?: this }
             node.acceptWithStateMachine(method, codegen, smapCopyingVisitor) { continuationState.value.visitor }
             if (continuationClass != null && (continuationState.isInitialized() || method.alwaysNeedsContinuation())) {
                 continuationState.value.generate()
@@ -269,7 +280,7 @@ abstract class ClassCodegenState(protected val codegen: ClassCodegen) {
             node.accept(smapCopyingVisitor)
         }
         jvmSignatureClashDetector.trackMethod(method, RawSignature(node.name, node.desc, MemberKind.METHOD))
-        bindMethodMetadata(method, Method(node.name, node.desc))
+        serializer.bindMethodMetadata(method, Method(node.name, node.desc))
     }
 
     private fun generateInnerAndOuterClasses() {
@@ -300,11 +311,44 @@ abstract class ClassCodegenState(protected val codegen: ClassCodegen) {
         }
     }
 
-    abstract fun generateKotlinMetadataAnnotation()
+    private fun generateKotlinMetadataAnnotation() {
+        context.localDelegatedProperties[irClass.attributeOwnerId]?.let { properties ->
+            val descriptors = properties.mapNotNull { it.owner.metadata?.descriptor }
+            state.bindingTrace.record(CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA, type, descriptors)
+        }
 
-    abstract fun bindFieldMetadata(field: IrField, fieldType: Type, fieldName: String)
+        // TODO: if `-Xmultifile-parts-inherit` is enabled, write the corresponding flag for parts and facades to [Metadata.extraInt].
+        val extraFlags = JvmAnnotationNames.METADATA_JVM_IR_FLAG or
+                if (state.isIrWithStableAbi) JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG else 0
 
-    abstract fun bindMethodMetadata(method: IrFunction, signature: Method)
+        val entry = irClass.fileParent.fileEntry
+        val facadeClassName = context.multifileFacadeForPart[irClass.attributeOwnerId]
+        val kind = when {
+            entry is MultifileFacadeFileEntry -> KotlinClassHeader.Kind.MULTIFILE_CLASS
+            facadeClassName != null -> KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
+            irClass.metadata is MetadataSource.File -> KotlinClassHeader.Kind.FILE_FACADE
+            serializer.isSynthetic -> KotlinClassHeader.Kind.SYNTHETIC_CLASS
+            else -> KotlinClassHeader.Kind.CLASS
+        }
+        writeKotlinMetadata(visitor, state, kind, extraFlags) { av ->
+            serializer.generateMetadataProto(type)?.let { AsmUtil.writeAnnotationData(av, it, serializer.stringTable) }
+            if (entry is MultifileFacadeFileEntry) {
+                val arv = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
+                for (partFile in entry.partFiles) {
+                    partFile.declarations.singleOrNull { it.isFileClass }?.let {
+                        arv.visit(null, typeMapper.mapClass(it as IrClass).internalName)
+                    }
+                }
+                arv.visitEnd()
+            }
+            if (facadeClassName != null) {
+                av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassName.internalName)
+            }
+            if (irClass in context.classNameOverride) {
+                av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
+            }
+        }
+    }
 
     private val IrDeclaration.descriptorOrigin: JvmDeclarationOrigin
         get() {

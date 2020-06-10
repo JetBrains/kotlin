@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
-import org.jetbrains.kotlin.backend.jvm.codegen.IrTypeMapper
-import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.codegen.createFakeContinuation
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
@@ -21,6 +19,7 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.CollectionStubComputer
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.MemoizedInlineClassReplacements
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -45,6 +44,9 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
+typealias ClassMetadataSerializerFactory =
+            (IrClass, JvmBackendContext, JvmSerializationBindings, ClassMetadataSerializer?) -> ClassMetadataSerializer
+
 class JvmBackendContext(
     val state: GenerationState,
     val psiSourceManager: PsiSourceManager,
@@ -55,7 +57,7 @@ class JvmBackendContext(
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.
     val classNameOverride: MutableMap<IrClass, JvmClassName>,
-    private val createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen,
+    val classMetadataSerializerFactory: ClassMetadataSerializerFactory,
 ) : CommonBackendContext {
     override val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
         get() = TODO("not implemented")
@@ -96,7 +98,7 @@ class JvmBackendContext(
     private val classCodegens = mutableMapOf<IrClass, ClassCodegen>()
 
     internal fun getClassCodegen(irClass: IrClass, parentFunction: IrFunction? = null): ClassCodegen =
-        classCodegens.getOrPut(irClass) { createCodegen(irClass, this, parentFunction) }.also {
+        classCodegens.getOrPut(irClass) { ClassCodegen(irClass, this, parentFunction) }.also {
             assert(parentFunction == null || it.parentFunction == parentFunction) {
                 "inconsistent parent function for ${irClass.render()}:\n" +
                         "New: ${parentFunction!!.render()}\n" +

@@ -45,7 +45,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager,
-        createCodegen: (IrClass, JvmBackendContext, IrFunction?) -> ClassCodegen,
+        classMetadataSerializerFactory: ClassMetadataSerializerFactory
     ) {
         irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
         val extensions = JvmGeneratorExtensions()
@@ -54,7 +54,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         )
 
         JvmBackendFacade.doGenerateFilesInternal(
-            state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, createCodegen
+            state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, classMetadataSerializerFactory
         )
     }
 

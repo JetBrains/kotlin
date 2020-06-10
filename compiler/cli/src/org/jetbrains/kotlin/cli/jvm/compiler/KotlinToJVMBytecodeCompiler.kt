@@ -56,8 +56,8 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmMetadataSerializer
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -410,8 +410,8 @@ object KotlinToJVMBytecodeCompiler {
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
                 generationState, moduleFragment, symbolTable, sourceManager
-            ) { irClass, context, parentFunction ->
-                FirJvmClassCodegen(irClass, context, parentFunction, session)
+            ) { irClass, context, localSerializationBindings, parent ->
+                FirJvmMetadataSerializer(session, irClass, context, localSerializationBindings, parent)
             }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()

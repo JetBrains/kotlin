@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -75,7 +74,7 @@ class FunctionCodegen(
             irFunction.origin != IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
         ) {
             val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
-            object : AnnotationCodegen(classCodegen, context, skipNullabilityAnnotations) {
+            object : AnnotationCodegen(classCodegen, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotation(descr, visible)
                 }
@@ -86,8 +85,10 @@ class FunctionCodegen(
                     )
                 }
             }.genAnnotations(irFunction, signature.asmMethod.returnType, irFunction.returnType)
+            // Not generating parameter annotations for default stubs fixes KT-7892, though
+            // this certainly looks like a workaround for a javac bug.
             if (shouldGenerateAnnotationsOnValueParameters()) {
-                generateParameterAnnotations(irFunction, methodVisitor, signature, classCodegen, context, skipNullabilityAnnotations)
+                generateParameterAnnotations(methodVisitor, signature, skipNullabilityAnnotations)
             }
         }
 
@@ -119,24 +120,16 @@ class FunctionCodegen(
     }
 
     private fun shouldGenerateAnnotationsOnValueParameters(): Boolean =
-        when {
-            irFunction.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS ->
-                false
-            irFunction is IrConstructor && irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations() ->
-                // Not generating parameter annotations for default stubs fixes KT-7892, though
-                // this certainly looks like a workaround for a javac bug.
-                false
-            else ->
-                true
-        }
+        irFunction.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS &&
+                (irFunction !is IrConstructor || irFunction.parentAsClass.shouldGenerateConstructorParameterAnnotations())
 
     // Since the only arguments to anonymous object constructors are captured variables and complex
     // super constructor arguments, there shouldn't be any annotations on them other than @NonNull,
     // and those are meaningless on synthetic parameters. (Also, the inliner cannot handle them and
     // will throw an exception if we generate any.)
     // The same applies for continuations.
-    private fun IrClass.shouldNotGenerateConstructorParameterAnnotations() =
-        isAnonymousObject || origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS || origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
+    private fun IrClass.shouldGenerateConstructorParameterAnnotations() =
+        !isAnonymousObject && origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS && origin != JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
     private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
         when (visibility) {
@@ -195,12 +188,11 @@ class FunctionCodegen(
 
     private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {
         getAnnotationDefaultValueExpression()?.let { defaultValueExpression ->
-            val annotationCodegen = object : AnnotationCodegen(classCodegen, context) {
+            object : AnnotationCodegen(classCodegen) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotationDefault()
                 }
-            }
-            annotationCodegen.generateAnnotationDefaultValue(defaultValueExpression)
+            }.generateAnnotationDefaultValue(defaultValueExpression)
         }
     }
 
@@ -235,12 +227,9 @@ class FunctionCodegen(
 
     // Borrowed from org.jetbrains.kotlin.codegen.FunctionCodegen.java
     private fun generateParameterAnnotations(
-        irFunction: IrFunction,
         mv: MethodVisitor,
         jvmSignature: JvmMethodSignature,
-        innerClassConsumer: InnerClassConsumer,
-        context: JvmBackendContext,
-        skipNullabilityAnnotations: Boolean = false
+        skipNullabilityAnnotations: Boolean
     ) {
         val iterator = irFunction.valueParameters.iterator()
         val kotlinParameterTypes = jvmSignature.valueParameters
@@ -256,7 +245,7 @@ class FunctionCodegen(
             }
 
             if (annotated != null && !kind.isSkippedInGenericSignature && !annotated.isSyntheticMarkerParameter()) {
-                object : AnnotationCodegen(innerClassConsumer, context, skipNullabilityAnnotations) {
+                object : AnnotationCodegen(classCodegen, skipNullabilityAnnotations) {
                     override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                         return mv.visitParameterAnnotation(
                             i - syntheticParameterCount,

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -48,10 +47,10 @@ import org.jetbrains.org.objectweb.asm.TypePath
 import java.lang.annotation.RetentionPolicy
 
 abstract class AnnotationCodegen(
-    private val innerClassConsumer: InnerClassConsumer,
-    private val context: JvmBackendContext,
+    private val classCodegen: ClassCodegen,
     private val skipNullabilityAnnotations: Boolean = false
 ) {
+    private val context = classCodegen.context
     private val typeMapper = context.typeMapper
     private val methodSignatureMapper = context.methodSignatureMapper
 
@@ -193,7 +192,7 @@ abstract class AnnotationCodegen(
             return null
         }
 
-        innerClassConsumer.addInnerClassInfoFromAnnotation(annotationClass)
+        classCodegen.addInnerClassInfoFromAnnotation(annotationClass)
 
         val asmTypeDescriptor = typeMapper.mapType(annotation.type).descriptor
         val annotationVisitor =
@@ -247,7 +246,7 @@ abstract class AnnotationCodegen(
                         val annotationClassType = callee.returnType
                         val internalAnnName = typeMapper.mapType(annotationClassType).descriptor
                         val visitor = annotationVisitor.visitAnnotation(name, internalAnnName)
-                        annotationClassType.classOrNull?.owner?.let(innerClassConsumer::addInnerClassInfoFromAnnotation)
+                        annotationClassType.classOrNull?.owner?.let(classCodegen::addInnerClassInfoFromAnnotation)
                         genAnnotationArguments(value, visitor)
                         visitor.visitEnd()
                     }
@@ -257,7 +256,7 @@ abstract class AnnotationCodegen(
             is IrGetEnumValue -> {
                 val enumEntry = value.symbol.owner
                 val enumClass = enumEntry.parentAsClass
-                innerClassConsumer.addInnerClassInfoFromAnnotation(enumClass)
+                classCodegen.addInnerClassInfoFromAnnotation(enumClass)
                 annotationVisitor.visitEnum(name, typeMapper.mapClass(enumClass).descriptor, enumEntry.name.asString())
             }
             is IrVararg -> { // array constructor
@@ -269,7 +268,7 @@ abstract class AnnotationCodegen(
             }
             is IrClassReference -> {
                 val classType = value.classType
-                classType.classOrNull?.owner?.let(innerClassConsumer::addInnerClassInfoFromAnnotation)
+                classType.classOrNull?.owner?.let(classCodegen::addInnerClassInfoFromAnnotation)
                 annotationVisitor.visit(name, typeMapper.mapType(classType))
             }
             is IrErrorExpression -> error("Don't know how to compile annotation value ${ir2string(value)}")
@@ -359,10 +358,6 @@ abstract class AnnotationCodegen(
                         isCompiledToJvm8OrHigher(source)
     }
 
-}
-
-interface InnerClassConsumer {
-    fun addInnerClassInfoFromAnnotation(innerClass: IrClass)
 }
 
 private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {
