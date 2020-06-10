@@ -53,7 +53,7 @@ constructor(
 
         if (target is KotlinJsTarget) {
             target.irTarget
-                ?.let { throw IllegalStateException("Unfortunately you can't use `executable()` with 'both' compiler type") }
+                ?.let { throw IllegalStateException("Can't use `executable()` with 'both' compiler type") }
 
             target.whenBrowserConfigured {
                 (this as KotlinJsSubTarget).produceExecutable()
