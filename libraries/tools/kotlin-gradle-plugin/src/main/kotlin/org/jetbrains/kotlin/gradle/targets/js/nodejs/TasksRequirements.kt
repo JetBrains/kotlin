@@ -12,27 +12,31 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 
 class TasksRequirements {
     private val _byTask = mutableMapOf<RequiresNpmDependencies, Set<RequiredKotlinJsDependency>>()
-    private val byCompilation = mutableMapOf<KotlinJsCompilation, MutableSet<RequiresNpmDependencies>>()
+    private val byCompilation = mutableMapOf<KotlinJsCompilation, MutableSet<NpmDependency>>()
 
     val byTask: Map<RequiresNpmDependencies, Set<RequiredKotlinJsDependency>>
         get() = _byTask
 
-    fun getCompilationNpmRequirements(compilation: KotlinJsCompilation): List<NpmDependency> =
+    fun getCompilationNpmRequirements(compilation: KotlinJsCompilation): Set<NpmDependency> =
         byCompilation[compilation]
-            ?.asSequence()
-            ?.flatMap { it.requiredNpmDependencies.asSequence() }
-            ?.map { it.createDependency(compilation.target.project) }
-            ?.filterIsInstance<NpmDependency>()
-            ?.toList()
-            ?: listOf()
+            ?: setOf()
 
     fun addTaskRequirements(task: RequiresNpmDependencies) {
         val requirements = task.requiredNpmDependencies
 
         _byTask[task] = requirements
 
-        byCompilation
-            .getOrPut(task.compilation) { mutableSetOf() }
-            .add(task)
+        val requiredNpmDependencies = task.requiredNpmDependencies
+            .asSequence()
+            .map { it.createDependency(task.compilation.target.project) }
+            .filterIsInstance<NpmDependency>()
+            .toMutableSet()
+
+        val compilation = task.compilation
+        if (compilation in byCompilation) {
+            byCompilation[compilation]!!.addAll(requiredNpmDependencies)
+        } else {
+            byCompilation[compilation] = requiredNpmDependencies
+        }
     }
 }

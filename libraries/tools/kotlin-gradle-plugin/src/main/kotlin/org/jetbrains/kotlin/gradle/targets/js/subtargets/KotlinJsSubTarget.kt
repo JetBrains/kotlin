@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -136,7 +135,7 @@ abstract class KotlinJsSubTarget(
                 }
 
                 if (it.enabled) {
-                    nodeJs.taskRequirements.addTaskRequirements(it as RequiresNpmDependencies)
+                    nodeJs.taskRequirements.addTaskRequirements(it)
                 }
             }
         }
