@@ -6,9 +6,11 @@
 package kotlinx.validation.api
 
 import kotlinx.metadata.jvm.*
+import kotlinx.validation.*
 import org.objectweb.asm.tree.FieldNode
 import org.objectweb.asm.tree.MethodNode
 
+@ExternalApi // Only name is part of the API, nothing else is used by stdlib
 data class ClassBinarySignature(
     val name: String,
     val superName: String,
