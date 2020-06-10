@@ -9,8 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.builtins.isKSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorChecks
-import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 
 fun KtContainerNode.description(): String? {
     when (node.elementType) {
@@ -357,12 +356,10 @@ internal fun Sequence<PsiElement>.lastWithPersistedElementOrNull(elementShouldPe
     return if (checked) lastElement else null
 }
 
-fun KotlinType.isKFunction(): Boolean {
-    return constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.KFunction
-}
-
 fun KotlinType.reflectToRegularFunctionType(): KotlinType {
     val isTypeAnnotatedWithExtensionFunctionType = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null
     val parameterCount = if (isTypeAnnotatedWithExtensionFunctionType) arguments.size - 2 else arguments.size - 1
-    return KotlinTypeFactory.simpleNotNullType(annotations, builtIns.getFunction(parameterCount), arguments)
+    val classDescriptor =
+        if (isKSuspendFunctionType) builtIns.getSuspendFunction(parameterCount) else builtIns.getFunction(parameterCount)
+    return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
 }

@@ -2348,6 +2348,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSmartcastedArgument.kt");
         }
 
+        @TestMetadata("addFunctionParameterWithSuspendFunctionReference.kt")
+        public void testAddFunctionParameterWithSuspendFunctionReference() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSuspendFunctionReference.kt");
+        }
+
         @TestMetadata("addNothingReturnType.kt")
         public void testAddNothingReturnType() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/addNothingReturnType.kt");
