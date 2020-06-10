@@ -5,14 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import java.util.regex.Pattern
 
 internal val functionPattern = Pattern.compile("^K?(Suspend)?Function\\d+$")
 
-internal val kotlinFqn = FqName("kotlin")
-internal val kotlinCoroutinesFqn = kotlinFqn.child(Name.identifier("coroutines"))
-internal val kotlinReflectFqn = kotlinFqn.child(Name.identifier("reflect"))
-
-internal val functionalPackages = listOf(kotlinFqn, kotlinCoroutinesFqn, kotlinReflectFqn)
+internal val functionalPackages = listOf("kotlin", "kotlin.coroutines", "kotlin.reflect")

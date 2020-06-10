@@ -184,8 +184,8 @@ open class IrFileSerializer(
 
     private fun serializePublicSignature(signature: IdSignature.PublicSignature): ProtoPublicIdSignature {
         val proto = ProtoPublicIdSignature.newBuilder()
-        proto.addAllPackageFqName(serializeFqName(signature.packageFqn))
-        proto.addAllDeclarationFqName(serializeFqName(signature.declarationFqn))
+        proto.addAllPackageFqName(serializeFqName(signature.packageFqName))
+        proto.addAllDeclarationFqName(serializeFqName(signature.declarationFqName))
 
         signature.id?.let { proto.memberUniqId = it }
         if (signature.mask != 0L) {
@@ -200,7 +200,7 @@ open class IrFileSerializer(
 
         proto.propertySignature = protoIdSignature(signature.propertySignature)
         with(signature.accessorSignature) {
-            proto.name = serializeString(declarationFqn.shortName().asString())
+            proto.name = serializeString(shortName)
             proto.accessorHashId = id ?: error("Expected hash Id")
             if (mask != 0L) {
                 proto.flags = mask
@@ -297,7 +297,7 @@ open class IrFileSerializer(
     private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
         annotations.map { serializeConstructorCall(it) }
 
-    private fun serializeFqName(fqName: FqName) = fqName.pathSegments().map { serializeString(it.asString()) }
+    private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map(::serializeString)
 
     private fun serializeIrStarProjection() = BinaryTypeProjection.STAR_CODE
 
@@ -1228,7 +1228,7 @@ open class IrFileSerializer(
 
         val proto = ProtoFile.newBuilder()
             .setFileEntry(serializeFileEntry(file.fileEntry))
-            .addAllFqName(serializeFqName(file.fqName))
+            .addAllFqName(serializeFqName(file.fqName.asString()))
             .addAllAnnotation(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {

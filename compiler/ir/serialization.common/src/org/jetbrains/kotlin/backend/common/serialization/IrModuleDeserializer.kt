@@ -7,16 +7,17 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.IrLibrary
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 internal fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     return when (this) {
@@ -81,19 +82,11 @@ class IrModuleDeserializerWithBuiltIns(
     }.toMap()
 
     private fun checkIsFunctionInterface(idSig: IdSignature): Boolean {
-        val publicSig = idSig.asPublic() ?: return false
-
-        if (publicSig.packageFqn !in functionalPackages) return false
-
-        val declarationFqn = publicSig.declarationFqn
-
-        if (declarationFqn.isRoot) return false
-
-        val fqnParts = declarationFqn.pathSegments()
-
-        val className = fqnParts.first()
-
-        return functionPattern.matcher(className.asString()).find()
+        val publicSig = idSig.asPublic()
+        return publicSig != null &&
+                publicSig.packageFqName in functionalPackages &&
+                publicSig.declarationFqName.isNotEmpty() &&
+                functionPattern.matcher(publicSig.firstNameSegment).find()
     }
 
     override operator fun contains(idSig: IdSignature): Boolean {
@@ -106,11 +99,10 @@ class IrModuleDeserializerWithBuiltIns(
         delegate.deserializeReachableDeclarations()
     }
 
-    private fun computeFunctionDescriptor(className: Name): FunctionClassDescriptor {
-        val nameString = className.asString()
-        val isK = nameString[0] == 'K'
-        val isSuspend = (if (isK) nameString[1] else nameString[0]) == 'S'
-        val arity = nameString.run { substring(indexOfFirst { it.isDigit() }).toInt(10) }
+    private fun computeFunctionDescriptor(className: String): FunctionClassDescriptor {
+        val isK = className[0] == 'K'
+        val isSuspend = (if (isK) className[1] else className[0]) == 'S'
+        val arity = className.run { substring(indexOfFirst { it.isDigit() }).toInt(10) }
         return functionFactory.run {
             when {
                 isK && isSuspend -> kSuspendFunctionClassDescriptor(arity)
@@ -124,11 +116,11 @@ class IrModuleDeserializerWithBuiltIns(
     private fun resolveFunctionalInterface(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         val publicSig = idSig.asPublic() ?: error("$idSig has to be public")
 
-        val fqnParts = publicSig.declarationFqn.pathSegments()
+        val fqnParts = publicSig.nameSegments
         val className = fqnParts.firstOrNull() ?: error("Expected class name for $idSig")
 
         val functionDescriptor = computeFunctionDescriptor(className)
-        val topLevelSignature = IdSignature.PublicSignature(publicSig.packageFqn, FqName(className.asString()), null, publicSig.mask)
+        val topLevelSignature = IdSignature.PublicSignature(publicSig.packageFqName, className, null, publicSig.mask)
 
         val functionClass = when (functionDescriptor.functionKind) {
             FunctionClassDescriptor.Kind.KSuspendFunction -> functionFactory.kSuspendFunctionN(functionDescriptor.arity) { callback ->
@@ -148,19 +140,19 @@ class IrModuleDeserializerWithBuiltIns(
         return when (fqnParts.size) {
             1 -> functionClass.symbol.also { assert(symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL) }
             2 -> {
-                val memberName = fqnParts[1]!!
-                functionClass.declarations.single { it is IrDeclarationWithName && it.name == memberName }.let {
+                val memberName = fqnParts[1]
+                functionClass.declarations.single { it is IrDeclarationWithName && it.name.asString() == memberName }.let {
                     (it as IrSymbolOwner).symbol
                 }
             }
             3 -> {
                 assert(idSig is IdSignature.AccessorSignature)
                 assert(symbolKind == BinarySymbolData.SymbolKind.FUNCTION_SYMBOL)
-                val propertyName = fqnParts[1]!!
-                val accessorName = fqnParts[2]!!
-                functionClass.declarations.filterIsInstance<IrProperty>().single { it.name == propertyName }.let { p ->
-                    p.getter?.let { g -> if (g.name == accessorName) return g.symbol }
-                    p.setter?.let { s -> if (s.name == accessorName) return s.symbol }
+                val propertyName = fqnParts[1]
+                val accessorName = fqnParts[2]
+                functionClass.declarations.filterIsInstance<IrProperty>().single { it.name.asString() == propertyName }.let { p ->
+                    p.getter?.let { g -> if (g.name.asString() == accessorName) return g.symbol }
+                    p.setter?.let { s -> if (s.name.asString() == accessorName) return s.symbol }
                     error("No accessor found for signature $idSig")
                 }
             }

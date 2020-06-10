@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
+import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
@@ -99,10 +101,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWh
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature as ProtoPublicIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
 
 abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBuiltIns, val symbolTable: SymbolTable, var constructFakeOverrides: Boolean, protected var deserializeBodies: Boolean) {
 
@@ -122,11 +121,8 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
 
     abstract val deserializeInlineFunctions: Boolean
 
-    fun deserializeFqName(fqn: List<Int>): FqName {
-        return fqn.run {
-            if (isEmpty()) FqName.ROOT else FqName.fromSegments(map { deserializeString(it) })
-        }
-    }
+    fun deserializeFqName(fqn: List<Int>): String =
+        fqn.joinToString(".", transform = ::deserializeString)
 
     private fun deserializeIrSymbolAndRemap(code: Long): IrSymbol {
         // TODO: could be simplified
@@ -224,9 +220,8 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         val hash = proto.accessorHashId
         val mask = proto.flags
 
-        val accessorSignature = with(propertySignature) {
-            IdSignature.PublicSignature(packageFqn, declarationFqn.child(Name.special(name)), hash, mask)
-        }
+        val accessorSignature =
+            IdSignature.PublicSignature(propertySignature.packageFqName, "${propertySignature.declarationFqName}.$name", hash, mask)
 
         return IdSignature.AccessorSignature(propertySignature, accessorSignature)
     }

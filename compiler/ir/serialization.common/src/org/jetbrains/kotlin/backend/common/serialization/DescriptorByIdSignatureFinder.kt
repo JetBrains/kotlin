@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 
 class DescriptorByIdSignatureFinder(
     private val moduleDescriptor: ModuleDescriptor,
@@ -43,26 +44,25 @@ class DescriptorByIdSignatureFinder(
     private fun findDescriptorForAccessorSignature(signature: IdSignature.AccessorSignature): DeclarationDescriptor? {
         val propertyDescriptor = findDescriptorBySignature(signature.propertySignature) as? PropertyDescriptor
             ?: return null
-        return propertyDescriptor.accessors.singleOrNull {
-            it.name == signature.accessorSignature.declarationFqn.shortName()
-        }
+        val shortName = signature.accessorSignature.shortName
+        return propertyDescriptor.accessors.singleOrNull { it.name.asString() == shortName }
     }
 
     private fun performLookup(signature: IdSignature.PublicSignature): Collection<DeclarationDescriptor> {
-        val declarationName = signature.declarationFqn.pathSegments().first()
+        val declarationName = signature.firstNameSegment
         return when (lookupMode) {
             LookupMode.MODULE_WITH_DEPENDENCIES -> {
                 moduleDescriptor
                     .getPackage(signature.packageFqName())
                     .memberScope
-                    .getContributedDescriptors { name -> name == declarationName }
+                    .getContributedDescriptors { name -> name.asString() == declarationName }
             }
             LookupMode.MODULE_ONLY -> {
                 (moduleDescriptor as ModuleDescriptorImpl)
                     .packageFragmentProviderForModuleContentWithoutDependencies
                     .getPackageFragments(signature.packageFqName())
                     .map { it.getMemberScope() }
-                    .flatMap { it.getContributedDescriptors { name -> name == declarationName } }
+                    .flatMap { it.getContributedDescriptors { name -> name.asString() == declarationName } }
             }
         }
     }
@@ -70,16 +70,13 @@ class DescriptorByIdSignatureFinder(
     private fun findDescriptorForPublicSignature(signature: IdSignature.PublicSignature): DeclarationDescriptor? {
         val toplevelDescriptors = performLookup(signature)
             .ifEmpty { return null }
-        val pathSegments = signature.declarationFqn.pathSegments()
-        val candidates = pathSegments.drop(1).fold(toplevelDescriptors) { acc, current ->
+        val candidates = signature.nameSegments.drop(1).fold(toplevelDescriptors) { acc, current ->
             acc.flatMap { container ->
-                val classDescriptor = container as? ClassDescriptor
-                    ?: return@flatMap emptyList<DeclarationDescriptor>()
-                val nextStepCandidates = classDescriptor.constructors +
-                        classDescriptor.unsubstitutedMemberScope.getContributedDescriptors { name -> name == current } +
+                val classDescriptor = container as? ClassDescriptor ?: return@flatMap emptyList<DeclarationDescriptor>()
+                classDescriptor.constructors.filter { it.name.asString() == current } +
+                        classDescriptor.unsubstitutedMemberScope.getDescriptorsFiltered { name -> name.asString() == current } +
                         // Static scope is required only for Enum.values() and Enum.valueOf().
-                        classDescriptor.staticScope.getContributedDescriptors { name -> name == current }
-                nextStepCandidates.filter { it.name == current }
+                        classDescriptor.staticScope.getDescriptorsFiltered { name -> name.asString() == current }
             }
         }
 

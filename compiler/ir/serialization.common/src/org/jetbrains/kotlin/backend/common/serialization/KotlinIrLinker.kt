@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -173,7 +174,7 @@ abstract class KotlinIrLinker(
                     }
                 }
 
-            val fqName = fileDeserializer.deserializeFqName(fileProto.fqNameList)
+            val fqName = FqName(fileDeserializer.deserializeFqName(fileProto.fqNameList))
 
             val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
 

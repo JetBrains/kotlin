@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.Fir2IrSignatureComposer
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatureComposer {
     inner class SignatureBuilder : FirVisitorVoid() {
@@ -70,15 +69,21 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
         return when {
             declaration is FirRegularClass && declaration.visibility != Visibilities.LOCAL -> {
                 val classId = declaration.classId
-                IdSignature.PublicSignature(classId.packageFqName, classId.relativeClassName, builder.hashId, builder.mask)
+                IdSignature.PublicSignature(
+                    classId.packageFqName.asString(), classId.relativeClassName.asString(), builder.hashId, builder.mask
+                )
             }
             declaration is FirTypeAlias -> {
                 val classId = declaration.symbol.classId
-                IdSignature.PublicSignature(classId.packageFqName, classId.relativeClassName, builder.hashId, builder.mask)
+                IdSignature.PublicSignature(
+                    classId.packageFqName.asString(), classId.relativeClassName.asString(), builder.hashId, builder.mask
+                )
             }
             declaration is FirCallableMemberDeclaration<*> -> {
                 val callableId = declaration.symbol.callableId
-                IdSignature.PublicSignature(callableId.packageName, callableId.relativeCallableName, builder.hashId, builder.mask)
+                IdSignature.PublicSignature(
+                    callableId.packageName.asString(), callableId.relativeCallableName.asString(), builder.hashId, builder.mask
+                )
             }
             else -> throw AssertionError("Unsupported FIR declaration in signature composer: ${declaration.render()}")
         }
@@ -87,10 +92,10 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
     override fun composeAccessorSignature(property: FirProperty, isSetter: Boolean): IdSignature? {
         val propertySignature = composeSignature(property) as? IdSignature.PublicSignature ?: return null
         val accessorFqName = if (isSetter) {
-            propertySignature.declarationFqn.child(Name.special("<set-${property.name}>"))
+            propertySignature.declarationFqName + ".<set-${property.name.asString()}>"
         } else {
-            propertySignature.declarationFqn.child(Name.special("<get-${property.name}>"))
+            propertySignature.declarationFqName + ".<get-${property.name.asString()}>"
         }
-        return IdSignature.PublicSignature(propertySignature.packageFqn, accessorFqName, propertySignature.id, propertySignature.mask)
+        return IdSignature.PublicSignature(propertySignature.packageFqName, accessorFqName, propertySignature.id, propertySignature.mask)
     }
 }

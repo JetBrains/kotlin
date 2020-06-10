@@ -46,10 +46,16 @@ sealed class IdSignature {
         return "${if (isPublic) "public" else "private"} ${render()}"
     }
 
-    class PublicSignature(val packageFqn: FqName, val declarationFqn: FqName, val id: Long?, val mask: Long) : IdSignature() {
+    class PublicSignature(val packageFqName: String, val declarationFqName: String, val id: Long?, val mask: Long) : IdSignature() {
         override val isPublic = true
 
-        override fun packageFqName() = packageFqn
+        override fun packageFqName(): FqName = FqName(packageFqName)
+
+        val shortName: String get() = declarationFqName.substringAfterLast('.')
+
+        val firstNameSegment: String get() = declarationFqName.substringBefore('.')
+
+        val nameSegments: List<String> get() = declarationFqName.split('.')
 
         private fun adaptMask(old: Long): Long {
             return old xor Flags.values().fold(0L) { a, f ->
@@ -59,35 +65,34 @@ sealed class IdSignature {
         }
 
         override fun topLevelSignature(): IdSignature {
-            if (declarationFqn.isRoot) {
+            if (declarationFqName.isEmpty()) {
                 assert(id == null)
                 // package signature
                 return this
             }
 
-            val pathSegments = declarationFqn.pathSegments()
+            val nameSegments = nameSegments
+            if (nameSegments.size == 1) return this
 
-            if (pathSegments.size == 1) return this
-
-            return PublicSignature(packageFqn, FqName(pathSegments.first().asString()), null, adaptMask(mask))
+            return PublicSignature(packageFqName, nameSegments.first(), null, adaptMask(mask))
         }
 
-        override fun isPackageSignature(): Boolean = id == null && declarationFqn.isRoot
+        override fun isPackageSignature(): Boolean = id == null && declarationFqName.isEmpty()
 
         override fun nearestPublicSig(): PublicSignature = this
 
         override fun flags(): Long = mask
 
-        override fun render(): String = "${packageFqn.asString()}/${declarationFqn.asString()}|$id[${mask.toString(2)}]"
+        override fun render(): String = "$packageFqName/$declarationFqName|$id[${mask.toString(2)}]"
 
         override fun asPublic(): PublicSignature? = this
 
         override fun equals(other: Any?): Boolean =
-            other is PublicSignature &&
-                    packageFqn == other.packageFqn && declarationFqn == other.declarationFqn && id == other.id && mask == other.mask
+            other is PublicSignature && packageFqName == other.packageFqName && declarationFqName == other.declarationFqName &&
+                    id == other.id && mask == other.mask
 
         override fun hashCode(): Int =
-            ((packageFqn.hashCode() * 31 + declarationFqn.hashCode()) * 31 + id.hashCode()) * 31 + mask.hashCode()
+            ((packageFqName.hashCode() * 31 + declarationFqName.hashCode()) * 31 + id.hashCode()) * 31 + mask.hashCode()
     }
 
     class AccessorSignature(val propertySignature: IdSignature, val accessorSignature: PublicSignature) : IdSignature() {
@@ -121,7 +126,7 @@ sealed class IdSignature {
         override fun topLevelSignature(): IdSignature {
             val topLevelContainer = container.topLevelSignature()
             if (topLevelContainer === container) {
-                if (topLevelContainer is PublicSignature && topLevelContainer.declarationFqn.isRoot) {
+                if (topLevelContainer is PublicSignature && topLevelContainer.declarationFqName.isEmpty()) {
                     // private top level
                     return this
                 }
