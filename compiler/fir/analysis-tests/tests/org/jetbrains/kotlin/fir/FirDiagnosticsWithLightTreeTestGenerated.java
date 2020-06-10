@@ -634,6 +634,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/safeCallOnTypeAlias.kt");
         }
 
+        @TestMetadata("syntheticPropertiesWrongImplicitReceiver.kt")
+        public void testSyntheticPropertiesWrongImplicitReceiver() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/syntheticPropertiesWrongImplicitReceiver.kt");
+        }
+
         @TestMetadata("typeAliasWithNotNullBound.kt")
         public void testTypeAliasWithNotNullBound() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");
