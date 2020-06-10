@@ -4,4 +4,4 @@ object Test {   // TODO restore correct behavior
     }
 }
 
-// WITHOUT_CUSTOM_LINE_INDENT_PROVIDER
+// IGNORE_FORMATTER

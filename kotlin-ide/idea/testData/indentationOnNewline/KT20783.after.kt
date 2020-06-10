@@ -1,8 +1,8 @@
 object Test {   // TODO restore correct behavior
 //    some
     fun test() {
-    <caret>
+        <caret>
     }
 }
 
-// WITHOUT_CUSTOM_LINE_INDENT_PROVIDER
+// IGNORE_FORMATTER

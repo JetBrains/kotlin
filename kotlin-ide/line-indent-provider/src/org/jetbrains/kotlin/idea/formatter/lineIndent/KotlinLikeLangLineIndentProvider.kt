@@ -71,6 +71,9 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             before.isAt(BlockOpeningBrace) && after.isAt(BlockClosingBrace) && !currentPosition.hasLineBreaksAfter(offset) ->
                 return factory.createIndentCalculator(Indent.getNoneIndent(), before.startOffset)
 
+            before.isAt(BlockOpeningBrace) && before.beforeIgnoringWhiteSpaceOrComment().isFunctionDeclaration() ->
+                return factory.createIndentCalculator(Indent.getNormalIndent(), before.startOffset)
+
             after.isAt(Quest) && after.after().isAt(Colon) -> {
                 val indent = if (settings.continuationIndentInElvis)
                     Indent.getContinuationIndent()
@@ -102,7 +105,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             }
 
             before.isAt(Eq) -> {
-                val declaration = findFunctionOrPropertyDeclarationBefore(before.copyAnd { it.moveBeforeIgnoringWhiteSpaceOrComment() })
+                val declaration = findFunctionOrPropertyOrMultiDeclarationBefore(before.beforeIgnoringWhiteSpaceOrComment())
                 if (declaration != null) {
                     val indent = if (settings.continuationIndentForExpressionBodies)
                         Indent.getContinuationIndent()
@@ -117,7 +120,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
                 factory.createIndentCalculatorForParenthesis(before, currentPosition, after, offset, settings)?.let { return it }
         }
 
-        findFunctionOrPropertyDeclarationBefore(before)?.let {
+        findFunctionOrPropertyOrMultiDeclarationBefore(before)?.let {
             return factory.createIndentCalculator(Indent.getNoneIndent(), it.startOffset)
         }
 
@@ -149,7 +152,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
                 if (settings.alignWhenMultilineFunctionParentheses) createAlignMultilineIndent(leftParenthesis) else Indent.getNoneIndent()
             }
 
-            findFunctionKeywordBeforeIdentifier(leftParenthesis.copyAnd { it.moveBeforeIgnoringWhiteSpaceOrComment() })?.let {
+            findFunctionKeywordBeforeIdentifier(leftParenthesis.beforeIgnoringWhiteSpaceOrComment())?.let {
                 return createIndentCalculator(indentForParentheses, it.startOffset)
             }
 
@@ -162,7 +165,7 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
                 return createIndentCalculator(Indent.getNoneIndent(), leftParenthesis.startOffset)
             }
 
-            leftParenthesis.copyAnd { it.moveBeforeIgnoringWhiteSpaceOrComment() }.let { keyword ->
+            leftParenthesis.beforeIgnoringWhiteSpaceOrComment().let { keyword ->
                 if (keyword.isControlFlowKeyword()) {
                     return createIndentCalculator(Indent.getNoneIndent(), keyword.startOffset)
                 }
@@ -180,35 +183,75 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
     }
 
     /**
-     * @param declarationPosition is position before '=' for expression body or '{'
+     * @receiver is position before '=' for expression body or '{' for block body
      */
-    private fun findFunctionOrPropertyDeclarationBefore(declarationPosition: SemanticEditorPosition): SemanticEditorPosition? {
+    private fun SemanticEditorPosition.isFunctionDeclaration(): Boolean = findFunctionDeclarationBeforeBody(this) != null
+
+    /**
+     * @param endOfDeclaration is position before '=' for expression body or '{' for block body
+     */
+    private fun findFunctionOrPropertyOrMultiDeclarationBefore(endOfDeclaration: SemanticEditorPosition): SemanticEditorPosition? =
+        findFunctionDeclarationBeforeBody(endOfDeclaration)
+            ?: findPropertyDeclarationBeforeAssignment(endOfDeclaration)
+            ?: findMultiDeclarationBeforeAssignment(endOfDeclaration)
+
+    /**
+     * `val (a, b) = 1 to 2`
+     *           ^
+     */
+    private fun findMultiDeclarationBeforeAssignment(rightParenthesis: SemanticEditorPosition): SemanticEditorPosition? {
+        if (!rightParenthesis.isAt(RightParenthesis)) return null
+        return with(rightParenthesis.copy()) {
+            if (!moveBeforeParenthesesIfPossible()) return null
+            takeIf { isVarOrVal() }
+        }
+    }
+
+    /**
+     * `val a = 5`
+     * `val a: Int = 5`
+     * `val List<Int>.a: Int = 5`
+     * `val <T> List<Int>.a: Int = 5`
+     */
+    private fun findPropertyDeclarationBeforeAssignment(endOfDeclaration: SemanticEditorPosition): SemanticEditorPosition? {
         // `val a = 5`
-        // this is false positive for declaration with explicit return type
-        if (declarationPosition.isAt(Identifier)) {
-            findPropertyKeywordBeforeIdentifier(declarationPosition)?.let { return it }
+        // this is a false positive for a declaration with explicit return type
+        if (endOfDeclaration.isAt(Identifier)) {
+            findPropertyKeywordBeforeIdentifier(endOfDeclaration)?.let { return it }
         }
 
-        return with(declarationPosition.copy()) {
+        return with(endOfDeclaration.copy()) {
             // explicit type `fun a(): String` or `val a: String`
             if (moveBeforeTypeQualifierIfPossible(true)) {
                 if (!isAt(Colon)) return null
                 moveBeforeIgnoringWhiteSpaceOrComment()
             }
 
-            if (isAt(RightParenthesis)) {
-                if (!moveBeforeParenthesesIfPossible()) return null
-
-                // destructuring declaration `val (a, b)`
-                if (isVarOrVal())
-                    this
-                else
-                    findFunctionKeywordBeforeIdentifier(this)
-            } else {
-                findPropertyKeywordBeforeIdentifier(this)
-            }
+            findPropertyKeywordBeforeIdentifier(this)
         }
     }
+
+    /**
+     * `val a = fun() { }`
+     * `val a = fun String.Companion????.() { }`
+     * `fun a() = 4`
+     * `fun a(): Int = 4`
+     * `fun Int.a(): Int = 4`
+     * `fun <T> T.a(): Int = 4`
+     */
+    private fun findFunctionDeclarationBeforeBody(endOfDeclaration: SemanticEditorPosition): SemanticEditorPosition? =
+        with(endOfDeclaration.copy()) {
+            // explicit type `fun a(): String`
+            //                              ^
+            if (moveBeforeTypeQualifierIfPossible(true)) {
+                if (!isAt(Colon)) return null
+                moveBeforeIgnoringWhiteSpaceOrComment()
+            }
+
+            if (!moveBeforeParenthesesIfPossible()) return null
+
+            findFunctionKeywordBeforeIdentifier(this)
+        }
 
     private fun findPropertyKeywordBeforeIdentifier(identifierPosition: SemanticEditorPosition): SemanticEditorPosition? {
         if (!identifierPosition.isAt(Identifier)) return null
@@ -226,12 +269,14 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
      */
     private fun findFunctionKeywordBeforeIdentifier(identifierPosition: SemanticEditorPosition): SemanticEditorPosition? {
         // anonymous function `val a = fun() { }`
+        //                               ^
         if (identifierPosition.isAt(FunctionKeyword)) return identifierPosition
 
         return with(identifierPosition.copy()) {
             moveBeforeWhileThisIsWhiteSpaceOrComment()
 
             // anonymous function with receiver `val a = fun String.Companion????.() { }`
+            //                                                                   ^
             if (isAt(Dot)) {
                 moveBeforeIgnoringWhiteSpaceOrComment()
                 if (!moveBeforeTypeQualifierIfPossible(true)) return null
@@ -452,6 +497,8 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         moveBefore()
         moveBeforeWhileThisIsWhiteSpaceOrComment()
     }
+
+    private fun SemanticEditorPosition.beforeIgnoringWhiteSpaceOrComment() = copyAnd { it.moveBeforeIgnoringWhiteSpaceOrComment() }
 
     private enum class KotlinElement : SemanticEditorPosition.SyntaxElement {
         TemplateEntryOpen,
