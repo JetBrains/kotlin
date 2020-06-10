@@ -191,16 +191,22 @@ public class DocRenderItem {
     Project project = editor.getProject();
     if (project == null) return null;
     PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
-    return items.stream().filter(item -> {
-      if (!item.isValid()) return false;
+    DocRenderItem foundItem = null;
+    int foundStartOffset = 0;
+    for (DocRenderItem item : items) {
+      if (!item.isValid()) continue;
       PsiDocCommentBase comment = item.getComment();
-      if (comment == null) return false;
+      if (comment == null) continue;
       PsiElement owner = comment.getOwner();
-      if (owner == null) return false;
+      if (owner == null) continue;
       TextRange ownerTextRange = owner.getTextRange();
-      if (ownerTextRange == null) return false;
-      return ownerTextRange.containsOffset(offset);
-    }).findFirst().orElse(null);
+      if (ownerTextRange == null || !ownerTextRange.containsOffset(offset)) continue;
+      int startOffset = ownerTextRange.getStartOffset();
+      if (foundItem != null && foundStartOffset >= startOffset) continue;
+      foundItem = item;
+      foundStartOffset = startOffset;
+    }
+    return foundItem;
   }
 
   static void resetToDefaultState(@NotNull Editor editor) {
