@@ -111,7 +111,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
 
     class ConverterImpl(private val context: ConversionContext) : ProjectConverter() {
         private val projectLibrariesByName by lazy {
-            context.projectLibrariesSettings.projectLibraries.groupBy { it.getAttributeValue(JpsLibraryTableSerializer.NAME_ATTRIBUTE) }
+            context.projectLibrariesSettings.projectLibraries.groupBy { it.getAttributeValue(NAME_ATTRIBUTE) }
         }
 
         private fun findGlobalLibrary(name: String) = ApplicationLibraryTable.getApplicationTable().getLibraryByName(name)
