@@ -241,7 +241,13 @@ private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinTy
         return captureTypeFromExpressionOrNull(argumentType.lowerBound)
     }
 
-    if (argumentType.typeArguments.isEmpty() || argumentType !is ConeClassLikeType) return null
+    if (argumentType !is ConeClassLikeType) return null
+
+    argumentType.fullyExpandedType(bodyResolveComponents.session).let {
+        if (it !== argumentType) return captureTypeFromExpressionOrNull(it)
+    }
+
+    if (argumentType.typeArguments.isEmpty()) return null
 
     return bodyResolveComponents.inferenceComponents.ctx.captureFromArguments(
         argumentType, CaptureStatus.FROM_EXPRESSION

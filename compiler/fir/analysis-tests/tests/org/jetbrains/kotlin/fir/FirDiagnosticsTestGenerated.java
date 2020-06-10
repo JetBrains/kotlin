@@ -633,6 +633,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         public void testSafeCallOnTypeAlias() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/safeCallOnTypeAlias.kt");
         }
+
+        @TestMetadata("typeAliasWithNotNullBound.kt")
+        public void testTypeAliasWithNotNullBound() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg")
