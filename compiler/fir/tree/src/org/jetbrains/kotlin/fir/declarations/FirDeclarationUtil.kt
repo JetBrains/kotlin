@@ -63,6 +63,8 @@ inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEn
 
 inline val FirPropertyAccessor.modality get() = status.modality
 inline val FirPropertyAccessor.visibility get() = status.visibility
+inline val FirPropertyAccessor.isInline get() = status.isInline
+inline val FirPropertyAccessor.isExternal get() = status.isExternal
 inline val FirPropertyAccessor.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.INVISIBLE_FAKE
 

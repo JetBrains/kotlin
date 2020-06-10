@@ -600,7 +600,9 @@ class Fir2IrDeclarationStorage(
                 Name.special("<$prefix-${correspondingProperty.name}>"),
                 propertyAccessor?.visibility ?: correspondingProperty.visibility,
                 correspondingProperty.modality, accessorReturnType,
-                isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false,
+                isInline = propertyAccessor?.isInline == true,
+                isExternal = propertyAccessor?.isExternal == true,
+                isTailrec = false, isSuspend = false, isExpect = false,
                 isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
                 isOperator = false
             ).apply {
@@ -657,7 +659,8 @@ class Fir2IrDeclarationStorage(
             IrFieldImpl(
                 startOffset, endOffset, origin, symbol,
                 name, inferredType,
-                visibility, isFinal = isFinal, isExternal = false,
+                visibility, isFinal = isFinal,
+                isExternal = property.isExternal,
                 isStatic = property.isStatic || parent !is IrClass,
                 isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
             ).also {
@@ -710,8 +713,7 @@ class Fir2IrDeclarationStorage(
                     isConst = property.isConst,
                     isLateinit = property.isLateInit,
                     isDelegated = property.delegate != null,
-                    // TODO
-                    isExternal = false,
+                    isExternal = property.isExternal,
                     isExpect = property.isExpect,
                     isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
                 ).apply {
