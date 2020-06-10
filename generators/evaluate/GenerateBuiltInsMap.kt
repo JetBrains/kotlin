@@ -51,7 +51,7 @@ fun generateMap(): String {
     val ternaryOperationsMap = mutableMapOf<CallableDescriptor, Pair<String, String>>()
     val builtIns = DefaultBuiltIns.Instance
 
-    //save common built ins
+    //save common builtins
     @Suppress("UNCHECKED_CAST")
     val allPrimitiveTypes = builtIns.builtInsPackageScope.getContributedDescriptors()
         .filter { it is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(it.defaultType) } as List<ClassDescriptor>
@@ -86,9 +86,10 @@ fun generateMap(): String {
         }
     }
 
-    //save ir built ins
+    //save ir builtins
     val binaryIrOperationsMap = mutableMapOf<CallableDescriptor, Pair<String, String>>()
     val irBuiltIns = getIrBuiltIns()
+    val irNullCheck = irBuiltIns.checkNotNullSymbol.descriptor
     val irFunSymbols =
         (irBuiltIns.lessFunByOperandType.values +
                 irBuiltIns.lessOrEqualFunByOperandType.values +
@@ -113,11 +114,11 @@ fun generateMap(): String {
 
     //save to file
     p.println("val unaryFunctions = mapOf<CompileTimeFunction, Function1<Any?, Any?>>(")
-    val unaryBody = unaryOperationsMap.entries.joinToString(",\n") { (function, parameters) ->
+    val unaryBody = unaryOperationsMap.entries.joinToString(",\n", postfix = ",\n") { (function, parameters) ->
         val methodName = "${function.name}"
         val parentheses = if (function is FunctionDescriptor) "()" else ""
         "    unaryOperation${parameters.first}(\"$methodName\", ${parameters.second}) { a -> a.$methodName$parentheses }"
-    }
+    } + "    unaryOperation<Any?>(\"${irNullCheck.name}\", \"${irNullCheck.valueParameters.first().type}\") { a -> a!! }"
     p.println(unaryBody)
     p.println(")")
     p.println()

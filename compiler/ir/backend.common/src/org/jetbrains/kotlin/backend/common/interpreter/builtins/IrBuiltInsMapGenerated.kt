@@ -112,7 +112,8 @@ val unaryFunctions = mapOf<CompileTimeFunction, Function1<Any?, Any?>>(
     unaryOperation<LongArray>("size", "LongArray") { a -> a.size },
     unaryOperation<LongArray>("iterator", "LongArray") { a -> a.iterator() },
     unaryOperation<DoubleArray>("size", "DoubleArray") { a -> a.size },
-    unaryOperation<DoubleArray>("iterator", "DoubleArray") { a -> a.iterator() }
+    unaryOperation<DoubleArray>("iterator", "DoubleArray") { a -> a.iterator() },
+    unaryOperation<Any?>("CHECK_NOT_NULL", "T0?") { a -> a!! }
 )
 
 val binaryFunctions = mapOf<CompileTimeFunction, Function2<Any?, Any?, Any?>>(
