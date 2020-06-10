@@ -84,7 +84,7 @@ fun showParameterHintsDialog(e: AnActionEvent, getPattern: (HintInfo) -> String?
 
   when (val pattern = getPattern(info)) {
     null -> InlayHintsConfigurable.showSettingsDialogForLanguage(file.project, fileLanguage, Predicate { it is ParameterInlayProviderSettingsModel })
-    else -> BlackListDialog(selectedLanguage, pattern).show()
+    else -> ExcludeListDialog(selectedLanguage, pattern).show()
   }
 }
 
@@ -142,7 +142,7 @@ class BlacklistCurrentMethodIntention : IntentionAction, LowPriorityAction {
   }
   
   private fun showSettings(language: Language) {
-    BlackListDialog(language).show()
+    ExcludeListDialog(language).show()
   }
   
   private fun undo(language: Language, info: MethodInfo) {

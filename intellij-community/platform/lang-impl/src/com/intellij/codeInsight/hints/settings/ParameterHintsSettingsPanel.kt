@@ -2,7 +2,7 @@
 package com.intellij.codeInsight.hints.settings
 
 import com.intellij.codeInsight.CodeInsightBundle
-import com.intellij.codeInsight.hints.BlackListDialog
+import com.intellij.codeInsight.hints.ExcludeListDialog
 import com.intellij.lang.Language
 import com.intellij.ui.components.labels.LinkLabel
 import java.awt.Component
@@ -15,8 +15,8 @@ class ParameterHintsSettingsPanel(val language: Language,
   init {
     layout = BoxLayout(this, BoxLayout.Y_AXIS)
     if (blackListSupported) {
-      val label = LinkLabel.create(CodeInsightBundle.message("settings.inlay.java.black.list")) {
-        BlackListDialog(language).show()
+      val label = LinkLabel.create(CodeInsightBundle.message("settings.inlay.java.exclude.list")) {
+        ExcludeListDialog(language).show()
       }
       label.alignmentX = Component.LEFT_ALIGNMENT
       add(label)

@@ -21,7 +21,7 @@ fun getHintProviders(): List<Pair<Language, InlayParameterHintsProvider>> {
 }
 
 
-fun getBlackListInvalidLineNumbers(text: String): List<Int> {
+fun getExcludeListInvalidLineNumbers(text: String): List<Int> {
   val rules = StringUtil.split(text, "\n", true, false)
   return rules
     .asSequence()

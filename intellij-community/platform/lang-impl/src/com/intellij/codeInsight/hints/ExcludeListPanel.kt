@@ -22,32 +22,32 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 
 
-class BlackListDialog(val language: Language, private val patternToAdd: String? = null) : DialogWrapper(null) {
+class ExcludeListDialog(val language: Language, private val patternToAdd: String? = null) : DialogWrapper(null) {
   lateinit var myEditor: EditorTextField
   private var myPatternsAreValid = true
 
   init {
-    title = CodeInsightBundle.message("settings.inlay.parameter.hints.blacklist")
+    title = CodeInsightBundle.message("settings.inlay.parameter.hints.exclude.list")
     init()
   }
 
   override fun createCenterPanel(): JComponent? {
-    return createBlacklistPanel(language)
+    return createExcludePanel(language)
   }
 
 
-  private fun createBlacklistPanel(language: Language): JPanel? {
+  private fun createExcludePanel(language: Language): JPanel? {
     val provider = InlayParameterHintsExtension.forLanguage(language)
     if (!provider.isBlackListSupported) return null
 
-    val blackList = getLanguageBlackList(language)
+    val blackList = getLanguageExcludeList(language)
     val finalText = if (patternToAdd != null) {
       blackList + "\n" + patternToAdd
     }
     else {
       blackList
     }
-    val editorTextField = createBlacklistEditorField(finalText)
+    val editorTextField = createExcludeListEditorField(finalText)
     editorTextField.alignmentX = Component.LEFT_ALIGNMENT
     editorTextField.addDocumentListener(object : DocumentListener {
       override fun documentChanged(e: DocumentEvent) {
@@ -95,7 +95,7 @@ class BlackListDialog(val language: Language, private val patternToAdd: String? 
 
   private fun updateOkEnabled(editorTextField: EditorTextField) {
     val text = editorTextField.text
-    val invalidLines = getBlackListInvalidLineNumbers(text)
+    val invalidLines = getExcludeListInvalidLineNumbers(text)
     myPatternsAreValid = invalidLines.isEmpty()
 
     okAction.isEnabled = myPatternsAreValid
@@ -108,11 +108,11 @@ class BlackListDialog(val language: Language, private val patternToAdd: String? 
 
   override fun doOKAction() {
     super.doOKAction()
-    val blacklist = myEditor.text
-    storeBlackListDiff(language, blacklist)
+    val excludeList = myEditor.text
+    storeExcludeListDiff(language, excludeList)
   }
 
-  private fun storeBlackListDiff(language: Language, text: String) {
+  private fun storeExcludeListDiff(language: Language, text: String) {
     val updatedBlackList = text.split("\n").filter { e -> e.trim { it <= ' ' }.isNotEmpty() }.toSet()
 
     val provider = InlayParameterHintsExtension.forLanguage(language)
@@ -124,14 +124,14 @@ class BlackListDialog(val language: Language, private val patternToAdd: String? 
 }
 
 
-private fun getLanguageBlackList(language: Language): String {
+private fun getLanguageExcludeList(language: Language): String {
   val hintsProvider = InlayParameterHintsExtension.forLanguage(language) ?: return ""
   val diff = ParameterNameHintsSettings.getInstance().getBlackListDiff(getLanguageForSettingKey(language))
-  val blackList = diff.applyOn(hintsProvider.defaultBlackList)
-  return StringUtil.join(blackList, "\n")
+  val excludeList = diff.applyOn(hintsProvider.defaultBlackList)
+  return StringUtil.join(excludeList, "\n")
 }
 
-private fun createBlacklistEditorField(text: String): EditorTextField {
+private fun createExcludeListEditorField(text: String): EditorTextField {
   val document = EditorFactory.getInstance().createDocument(text)
   val field = EditorTextField(document, null, FileTypes.PLAIN_TEXT, false, false)
   field.preferredSize = Dimension(400, 350)
@@ -139,7 +139,7 @@ private fun createBlacklistEditorField(text: String): EditorTextField {
     editor.setVerticalScrollbarVisible(true)
     editor.setHorizontalScrollbarVisible(true)
     editor.settings.additionalLinesCount = 2
-    highlightErrorLines(getBlackListInvalidLineNumbers(text), editor)
+    highlightErrorLines(getExcludeListInvalidLineNumbers(text), editor)
   }
   return field
 }
