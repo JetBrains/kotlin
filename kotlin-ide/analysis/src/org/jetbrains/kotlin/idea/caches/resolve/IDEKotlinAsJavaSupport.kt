@@ -182,7 +182,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
             if (facadeKtFile is KtClsFile) {
                 val partClassFile = facadeKtFile.virtualFile.parent.findChild(partClassFileShortName) ?: return@mapNotNull null
                 val javaClsClass = createClsJavaClassFromVirtualFile(facadeKtFile, partClassFile, null) ?: return@mapNotNull null
-                KtLightClassForDecompiledDeclaration(javaClsClass, null, facadeKtFile)
+                KtLightClassForDecompiledDeclaration(javaClsClass, javaClsClass.parent, facadeKtFile, null)
             } else {
                 // TODO should we build light classes for parts from source?
                 null
@@ -291,7 +291,7 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
             correspondingClassOrObject = classOrObject
         ) ?: return null
 
-        return KtLightClassForDecompiledDeclaration(javaClsClass, classOrObject, file)
+        return KtLightClassForDecompiledDeclaration(javaClsClass, javaClsClass.parent, file, classOrObject)
     }
 
     private fun createClsJavaClassFromVirtualFile(
