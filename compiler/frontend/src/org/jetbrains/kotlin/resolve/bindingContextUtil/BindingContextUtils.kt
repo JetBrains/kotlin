@@ -56,7 +56,13 @@ fun KtReturnExpression.getTargetFunction(context: BindingContext): KtCallableDec
     return getTargetFunctionDescriptor(context)?.let { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtCallableDeclaration }
 }
 
-fun KtExpression.isUsedAsExpression(context: BindingContext): Boolean = context[USED_AS_EXPRESSION, this]!!
+fun KtExpression.isUsedAsExpression(context: BindingContext): Boolean =
+    context[USED_AS_EXPRESSION, this]
+        ?: throw AssertionError(
+            "BindingContext returned null for Boolean slice: " +
+                    if (context == EMPTY) "BindingContext.EMPTY" else context.javaClass.toString()
+        )
+
 fun KtExpression.isUsedAsResultOfLambda(context: BindingContext): Boolean = context[USED_AS_RESULT_OF_LAMBDA, this]!!
 fun KtExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)
 
