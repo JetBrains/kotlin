@@ -515,6 +515,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
                     runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes.kt");
                 }
 
+                @TestMetadata("newAndOldSchemes2.kt")
+                public void testNewAndOldSchemes2() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2.kt");
+                }
+
                 @TestMetadata("newSchemeWithJvmDefault.kt")
                 public void testNewSchemeWithJvmDefault() throws Exception {
                     runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newSchemeWithJvmDefault.kt");
