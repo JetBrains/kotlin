@@ -27,26 +27,6 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
 
     override fun isSuitableForLanguage(language: Language): Boolean = language.isKindOf(KotlinLanguage.INSTANCE)
 
-    private fun debugInfo(currentPosition: SemanticEditorPosition): String {
-        val after = currentPosition.after()
-        val before = currentPosition.before()
-        val chars = currentPosition.chars
-        fun print(position: SemanticEditorPosition, next: SemanticEditorPosition? = null) = "${position.currElement} =>\n'${
-            if (position.isAtEnd)
-                "end"
-            else
-                chars.subSequence(position.startOffset, next?.takeIf { !it.isAtEnd }?.startOffset ?: chars.length)
-        }'"
-
-        return "==\nbefore ${
-            print(before, currentPosition)
-        }\ncurr ${
-            print(currentPosition, after)
-        }\nafter ${
-            print(after)
-        }\n=="
-    }
-
     override fun getLineIndent(project: Project, editor: Editor, language: Language?, offset: Int): String? {
         // HACK: TODO: KT-34566 investigate this hack (necessary for [org.jetbrains.kotlin.idea.editor.Kotlin.MultilineStringEnterHandler])
         return if (offset > 0 && getPosition(editor, offset - 1).isAt(RegularStringPart))
@@ -60,10 +40,6 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
         val settings = indentionSettings(project)
         val currentPosition = getPosition(editor, offset)
         if (!currentPosition.matchesRule { it.isAt(Whitespace) && it.isAtMultiline }) return null
-
-        // ~~~ TESTING ~~~
-//        println(debugInfo(currentPosition))
-        // ~~~ TESTING ~~~
 
         val before = currentPosition.beforeOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
         val after = currentPosition.afterOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET)
