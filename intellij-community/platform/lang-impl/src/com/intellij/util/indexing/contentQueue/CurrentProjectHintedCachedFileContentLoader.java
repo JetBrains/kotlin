@@ -4,6 +4,7 @@ package com.intellij.util.indexing.contentQueue;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectLocator;
+import com.intellij.openapi.util.io.FileTooBigException;
 import com.intellij.openapi.vfs.VFileProperty;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -18,7 +19,7 @@ public class CurrentProjectHintedCachedFileContentLoader implements CachedFileCo
 
   @Override
   @NotNull
-  public CachedFileContent loadContent(@NotNull VirtualFile file) throws FailedToLoadContentException {
+  public CachedFileContent loadContent(@NotNull VirtualFile file) throws FailedToLoadContentException, TooLargeContentException {
     CachedFileContent content = new CachedFileContent(file);
     if (file.isDirectory() || !file.isValid() || file.is(VFileProperty.SPECIAL) || VfsUtilCore.isBrokenLink(file)) {
       content.setEmptyContent();
@@ -31,6 +32,9 @@ public class CurrentProjectHintedCachedFileContentLoader implements CachedFileCo
     }
     catch (ProcessCanceledException e) {
       throw e;
+    }
+    catch (FileTooBigException e) {
+      throw new TooLargeContentException(file);
     }
     catch (Throwable e) {
       throw new FailedToLoadContentException(file, e);
