@@ -47,7 +47,7 @@ sealed class IdSignature {
     }
 
     class PublicSignature(val packageFqName: String, val declarationFqName: String, val id: Long?, val mask: Long) : IdSignature() {
-        override val isPublic = true
+        override val isPublic: Boolean get() = true
 
         override fun packageFqName(): FqName = FqName(packageFqName)
 
@@ -96,7 +96,7 @@ sealed class IdSignature {
     }
 
     class AccessorSignature(val propertySignature: IdSignature, val accessorSignature: PublicSignature) : IdSignature() {
-        override val isPublic: Boolean = true
+        override val isPublic: Boolean get() = true
 
         override fun topLevelSignature() = propertySignature.topLevelSignature()
 
@@ -119,7 +119,7 @@ sealed class IdSignature {
     }
 
     class FileLocalSignature(val container: IdSignature, val id: Long) : IdSignature() {
-        override val isPublic = false
+        override val isPublic: Boolean get() = false
 
         override fun packageFqName(): FqName = container.packageFqName()
 
@@ -144,9 +144,9 @@ sealed class IdSignature {
 
     // Used to reference local variable and value parameters in function
     class ScopeLocalDeclaration(val id: Int, val description: String = "<no description>") : IdSignature() {
-        override val isPublic: Boolean = false
+        override val isPublic: Boolean get() = false
 
-        override val hasTopLevel: Boolean = false
+        override val hasTopLevel: Boolean get() = false
 
         override fun topLevelSignature(): IdSignature = error("Is not supported for Local ID")
 
