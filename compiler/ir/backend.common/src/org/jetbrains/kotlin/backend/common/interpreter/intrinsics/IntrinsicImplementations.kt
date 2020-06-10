@@ -25,7 +25,7 @@ sealed class IntrinsicBase {
 object EmptyArray : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
-        return fqName == "kotlin.emptyArray"
+        return fqName in setOf("kotlin.emptyArray", "kotlin.ArrayIntrinsicsKt.emptyArray")
     }
 
     override suspend fun evaluate(

@@ -19,18 +19,20 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import java.lang.invoke.MethodHandle
 
 private const val MAX_STACK_SIZE = 10_000
 private const val MAX_COMMANDS = 500_000
 
-class IrInterpreter(irModule: IrModuleFragment) {
+class IrInterpreter(irModule: IrModuleFragment, private val declarationsMap: Map<IdSignature, IrBody> = emptyMap()) {
     private val irBuiltIns = irModule.irBuiltins
     private val irExceptions = irModule.files.flatMap { it.declarations }.filterIsInstance<IrClass>()
         .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
@@ -91,6 +93,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             incrementAndCheckCommands()
             val executionResult = when (this) {
                 is IrFunctionImpl -> interpretFunction(this)
+                is IrLazyFunction -> interpretFunction(this as IrSimpleFunction)
                 is IrCall -> interpretCall(this)
                 is IrConstructorCall -> interpretConstructorCall(this)
                 is IrEnumConstructorCall -> interpretEnumConstructorCall(this)
@@ -141,7 +144,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     // this method is used to get stack trace after exception
-    private suspend fun interpretFunction(irFunction: IrFunctionImpl): ExecutionResult {
+    private suspend fun interpretFunction(irFunction: IrSimpleFunction): ExecutionResult {
         yield()
 
         if (irFunction.fileOrNull != null) stack.setCurrentFrameName(irFunction)
@@ -274,6 +277,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val functionReceiver = dispatchReceiver.getCorrectReceiverByFunction(irFunction)
 
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
+        // TODO what if receiver is null
         irFunction.getDispatchReceiver()?.let { functionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
         irFunction.getExtensionReceiver()?.let { extensionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
 
@@ -296,10 +300,24 @@ class IrInterpreter(irModule: IrModuleFragment) {
             return@newFrame when {
                 dispatchReceiver is Wrapper && !isInlineOnly -> dispatchReceiver.getMethod(irFunction).invokeMethod(irFunction)
                 irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction)
-                irFunction.body == null || dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction) // 'is Primitive' because of js char and long
+                dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction) // 'is Primitive' check for js char and js long
+                irFunction.body == null -> irFunction.substituteFunctionBody()
                 else -> irFunction.interpret()
             }
         }
+    }
+
+    private suspend fun IrFunction.substituteFunctionBody(): ExecutionResult {
+        val body = declarationsMap[this.symbol.signature]
+
+        return body?.let {
+            try {
+                this.body = it
+                this.interpret()
+            } finally {
+                this.body = null
+            }
+        } ?: calculateBuiltIns(this)
     }
 
     private suspend fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall): ExecutionResult {
@@ -332,7 +350,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val irClass = owner.parent as IrClass
         val typeArguments = getTypeArguments(irClass, constructorCall) { stack.getVariableState(it) } + stack.getAllTypeArguments()
-        if (irClass.hasAnnotation(evaluateIntrinsicAnnotation)) {
+        if (irClass.hasAnnotation(evaluateIntrinsicAnnotation) || irClass.fqNameWhenAvailable!!.startsWith(Name.identifier("java"))) {
             return stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
                 .apply { (stack.peekReturnValue() as? Wrapper)?.typeArguments?.addAll(typeArguments) } // 'as?' because can be exception
         }
@@ -582,24 +600,27 @@ class IrInterpreter(irModule: IrModuleFragment) {
             // coercion to unit means that return value isn't used
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> stack.popReturnValue()
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
-                if (!stack.peekReturnValue().irClass.isSubclassOf(typeOperandClass)) {
+                if (!stack.peekReturnValue().irClass.let { it.isSubclassOf(typeOperandClass) || it.defaultType.isNothing() }) {
                     val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
                     throw ClassCastException("$convertibleClassName cannot be cast to ${typeOperandClass.fqNameWhenAvailable}")
                 }
             }
             IrTypeOperator.SAFE_CAST -> {
-                if (!stack.peekReturnValue().irClass.isSubclassOf(typeOperandClass)) {
+                if (!stack.peekReturnValue().irClass.let { it.isSubclassOf(typeOperandClass) || it.defaultType.isNothing() }) {
                     stack.popReturnValue()
                     stack.pushReturnValue(null.toState(irBuiltIns.nothingType))
                 }
             }
             IrTypeOperator.INSTANCEOF -> {
-                val isInstance = stack.popReturnValue().irClass.isSubclassOf(typeOperandClass)
+                val isInstance = stack.popReturnValue().irClass.let { it.isSubclassOf(typeOperandClass) || it.defaultType.isNothing() }
                 stack.pushReturnValue(isInstance.toState(irBuiltIns.nothingType))
             }
             IrTypeOperator.NOT_INSTANCEOF -> {
-                val isInstance = stack.popReturnValue().irClass.isSubclassOf(typeOperandClass)
+                val isInstance = stack.popReturnValue().irClass.let { it.isSubclassOf(typeOperandClass) || it.defaultType.isNothing() }
                 stack.pushReturnValue((!isInstance).toState(irBuiltIns.nothingType))
+            }
+            IrTypeOperator.IMPLICIT_NOTNULL -> {
+
             }
             else -> TODO("${expression.operator} not implemented")
         }
