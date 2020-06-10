@@ -274,8 +274,14 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
 
     private fun isSimilarToFunctionInvocation(leftParenthesis: SemanticEditorPosition): Boolean = with(leftParenthesis.copy()) {
         assert(isAt(LeftParenthesis))
-
         moveBeforeIgnoringWhiteSpaceOrComment()
+
+        // `a()()()`
+        //      ^
+        while (moveBeforeParenthesesIfPossible()) {
+            // loop
+        }
+
         // calls with types e.g. `test<Int>()`
         moveBeforeTypeParametersIfPossible()
 
