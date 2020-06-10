@@ -736,7 +736,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       catch (RuntimeException e) {
         LOG.info("Gradle project resolve error", e);
         ExternalSystemException esException = ExceptionUtil.findCause(e, ExternalSystemException.class);
-        if (esException != null) {
+        if (esException != null && esException != e) {
           LOG.info("\nCaused by: " + esException.getOriginalReason());
         }
         throw myProjectResolverChain.getUserFriendlyError(
