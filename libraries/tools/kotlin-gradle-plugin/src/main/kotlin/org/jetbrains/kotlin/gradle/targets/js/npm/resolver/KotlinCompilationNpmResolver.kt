@@ -315,12 +315,7 @@ internal class KotlinCompilationNpmResolver(
                 .filterNotNull()
 
             val toolsNpmDependencies = nodeJs.taskRequirements
-                .getTaskRequirements(compilation)
-                .flatMap { requirement ->
-                    requirement.requiredNpmDependencies
-                }
-                .map { it.createDependency(project) }
-                .filterIsInstance<NpmDependency>()
+                .getCompilationNpmRequirements(compilation)
 
             val allNpmDependencies = externalNpmDependencies + toolsNpmDependencies
 
