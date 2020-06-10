@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -42,6 +43,7 @@ abstract class FirValueParameter : FirVariable<FirValueParameter>() {
     abstract val isCrossinline: Boolean
     abstract val isNoinline: Boolean
     abstract val isVararg: Boolean
+    abstract val controlFlowGraphReference: FirControlFlowGraphReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitValueParameter(this, data)
 
@@ -64,6 +66,8 @@ abstract class FirValueParameter : FirVariable<FirValueParameter>() {
     abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameter
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirValueParameter
+
+    abstract fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirValueParameter
 
     abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirValueParameter
 }

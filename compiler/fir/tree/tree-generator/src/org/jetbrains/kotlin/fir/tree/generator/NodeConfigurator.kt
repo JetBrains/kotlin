@@ -351,6 +351,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(variable, "F", valueParameter)
             +field("defaultValue", expression, nullable = true)
             generateBooleanFields("crossinline", "noinline", "vararg")
+            +controlFlowGraphReferenceField
         }
 
         variable.configure {
