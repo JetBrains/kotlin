@@ -153,16 +153,21 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
     private val typeFqName = irClass.fqNameForIrSerialization.toUnsafe()
     private val receiverClass = irClass.defaultType.getClass(true)
 
+    init {
+        instance = this
+    }
+
     fun getMethod(irFunction: IrFunction): MethodHandle? {
-        // if function is actually a getter, then use property name as method name
-        val property = (irFunction as? IrFunctionImpl)?.correspondingPropertySymbol?.owner
+        // if function is actually a getter, then use "get${property.name.capitalize()}" as method name
+        val propertyName = (irFunction as? IrFunctionImpl)?.correspondingPropertySymbol?.owner?.name?.asString()
+        val propertyExplicitCall = propertyName?.takeIf { receiverClass.methods.map { it.name }.contains(it) }
+        val propertyGetCall = "get${propertyName?.capitalize()}".takeIf { receiverClass.methods.map { it.name }.contains(it) }
 
         // intrinsicName is used to get correct java method
         // for example: - method 'get' in kotlin StringBuilder is actually 'charAt' in java StringBuilder
-        //              - use getter for private fields such as detailMessage in java.lang.Throwable
-        val intrinsicName = property?.getEvaluateIntrinsicValue() ?: irFunction.getEvaluateIntrinsicValue()
+        val intrinsicName = irFunction.getEvaluateIntrinsicValue()
         if (intrinsicName?.isEmpty() == true) return null
-        val methodName = intrinsicName ?: (property ?: irFunction).name.toString()
+        val methodName = intrinsicName ?: propertyExplicitCall ?: propertyGetCall ?: irFunction.name.toString()
 
         val methodType = irFunction.getMethodType()
         return MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
@@ -173,6 +178,14 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
     }
 
     companion object {
+        private val companionObjectValue = mapOf<String, Any>("kotlin.text.Regex\$Companion" to Regex.Companion)
+
+        fun getCompanionObject(irClass: IrClass): Wrapper {
+            val objectName = irClass.getEvaluateIntrinsicValue()!!
+            val objectValue = companionObjectValue[objectName] ?: throw AssertionError("Companion object $objectName cannot be interpreted")
+            return Wrapper(objectValue, irClass)
+        }
+
         fun getConstructorMethod(irConstructor: IrFunction): MethodHandle {
             val methodType = irConstructor.getMethodType()
 

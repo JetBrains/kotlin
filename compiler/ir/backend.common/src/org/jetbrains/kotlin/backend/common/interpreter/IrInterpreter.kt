@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter
 
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
+import kotlinx.coroutines.*
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.*
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -245,6 +243,20 @@ class IrInterpreter(irModule: IrModuleFragment) {
                     enumEntry.interpret(data).also { if (it != Code.NEXT) return it }
                 }
             }
+            "replace" -> {
+                val states = data.getAll().map { it.state }
+                val regex = states.filterIsInstance<Wrapper>().single().value as Regex
+                val input = states.filterIsInstance<Primitive<*>>().single().value.toString()
+                val transform = states.filterIsInstance<Lambda>().single().irFunction
+                val matchResultParameter = transform.valueParameters.single()
+                val result = regex.replace(input) {
+                    val itAsState = Variable(matchResultParameter.descriptor, Wrapper(it, matchResultParameter.type.classOrNull!!.owner))
+                    val newFrame = InterpreterFrame(mutableListOf(itAsState))
+                    runBlocking { transform.interpret(newFrame) }
+                    (newFrame.popReturnValue() as Primitive<*>).value.toString()
+                }
+                data.pushReturnValue(result.toState(irBuiltIns.stringType))
+            }
             else -> throw AssertionError("Unsupported intrinsic ${irFunction.name}")
         }
 
@@ -353,8 +365,9 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretValueParameters(parametersContainer: IrMemberAccessExpression, data: Frame): Code {
+        val defaultValues = (parametersContainer.symbol.owner as IrFunction).valueParameters.map { it.defaultValue }
         for (i in (parametersContainer.valueArgumentsCount - 1) downTo 0) {
-            val code = parametersContainer.getValueArgument(i)?.interpret(data) ?: Code.NEXT
+            val code = parametersContainer.getValueArgument(i)?.interpret(data) ?: defaultValues[i]!!.expression.interpret(data)
             if (code != Code.NEXT) return code
         }
         return Code.NEXT
@@ -395,8 +408,9 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
 
         val isWrapper = dispatchReceiver is Wrapper && rawExtensionReceiver == null
+        val isInterfaceDefaultMethod = irFunction.body != null && (irFunction.parent as? IrClass)?.isInterface == true
         val code = when {
-            isWrapper -> (dispatchReceiver as Wrapper).getMethod(irFunction).invokeMethod(irFunction, newFrame)
+            isWrapper && !isInterfaceDefaultMethod -> (dispatchReceiver as Wrapper).getMethod(irFunction).invokeMethod(irFunction, newFrame)
             irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, newFrame)
             irFunction.isAbstract() -> calculateAbstract(irFunction, newFrame) //abstract check must be before fake overridden check
             irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrFunctionImpl, newFrame)
@@ -615,7 +629,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
     }
 
     private suspend fun interpretGetObjectValue(expression: IrGetObjectValue, data: Frame): Code {
-        val objectState = Common(expression.symbol.owner, mutableListOf()).apply { this.instance = this }
+        val owner = expression.symbol.owner
+        if (owner.hasAnnotation(evaluateIntrinsicAnnotation)) {
+            data.pushReturnValue(Wrapper.getCompanionObject(owner))
+            return Code.NEXT
+        }
+        val objectState = Common(owner, mutableListOf()).apply { this.instance = this }
         data.pushReturnValue(objectState)
         return Code.NEXT
     }
