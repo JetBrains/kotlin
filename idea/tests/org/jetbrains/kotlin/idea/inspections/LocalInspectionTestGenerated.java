@@ -3871,6 +3871,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/convertTwoComparisonsToRangeCheck/nonConstants.kt");
         }
 
+        @TestMetadata("recursiveCall.kt")
+        public void testRecursiveCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/convertTwoComparisonsToRangeCheck/recursiveCall.kt");
+        }
+
         @TestMetadata("until.kt")
         public void testUntil() throws Exception {
             runTest("idea/testData/inspectionsLocal/convertTwoComparisonsToRangeCheck/until.kt");
