@@ -43,6 +43,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.*
+import org.junit.Assert.assertFalse
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -63,7 +65,14 @@ class ExternalSystemStorageTest {
   val tempDirManager = TemporaryDirectory()
 
   @Test
-  fun `save single module`() = saveProjectAndCheckResult("singleModule") { project, projectDir ->
+  fun `save single module`() = saveProjectInExternalStorageAndCheckResult("singleModule") { project, projectDir ->
+    val module = ModuleManager.getInstance(project).newModule(projectDir.resolve("test.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
+    ModuleRootModificationUtil.addContentRoot(module, projectDir.systemIndependentPath)
+    ExternalSystemModulePropertyManager.getInstance(module).setMavenized(true)
+  }
+
+  @Test
+  fun `save imported module in internal storage`() = saveProjectInInternalStorageAndCheckResult("singleModuleInInternalStorage") { project, projectDir ->
     val module = ModuleManager.getInstance(project).newModule(projectDir.resolve("test.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
     ModuleRootModificationUtil.addContentRoot(module, projectDir.systemIndependentPath)
     ExternalSystemModulePropertyManager.getInstance(module).setMavenized(true)
@@ -79,7 +88,7 @@ class ExternalSystemStorageTest {
   }
 
   @Test
-  fun `save mixed modules`() = saveProjectAndCheckResult("mixedModules") { project, projectDir ->
+  fun `save mixed modules`() = saveProjectInExternalStorageAndCheckResult("mixedModules") { project, projectDir ->
     val regular = ModuleManager.getInstance(project).newModule(projectDir.resolve("regular.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
     ModuleRootModificationUtil.addContentRoot(regular, projectDir.resolve("regular").systemIndependentPath)
     val imported = ModuleManager.getInstance(project).newModule(projectDir.resolve("imported.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
@@ -108,7 +117,7 @@ class ExternalSystemStorageTest {
   }
 
   @Test
-  fun `save regular facet in imported module`() = saveProjectAndCheckResult("regularFacetInImportedModule") { project, projectDir ->
+  fun `save regular facet in imported module`() = saveProjectInExternalStorageAndCheckResult("regularFacetInImportedModule") { project, projectDir ->
     val imported = ModuleManager.getInstance(project).newModule(projectDir.resolve("imported.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
     FacetManager.getInstance(imported).addFacet(MockFacetType.getInstance(), "regular", null)
     ExternalSystemModulePropertyManager.getInstance(imported).setMavenized(true)
@@ -132,7 +141,7 @@ class ExternalSystemStorageTest {
     }
 
   @Test
-  fun `save imported facet in imported module`() = saveProjectAndCheckResult("importedFacetInImportedModule") { project, projectDir ->
+  fun `save imported facet in imported module`() = saveProjectInExternalStorageAndCheckResult("importedFacetInImportedModule") { project, projectDir ->
     val imported = ModuleManager.getInstance(project).newModule(projectDir.resolve("imported.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
     val facetManager = FacetManager.getInstance(imported)
     val model = facetManager.createModifiableModel()
@@ -152,7 +161,7 @@ class ExternalSystemStorageTest {
   }
 
   @Test
-  fun `save libraries`() = saveProjectAndCheckResult("libraries") { project, _ ->
+  fun `save libraries`() = saveProjectInExternalStorageAndCheckResult("libraries") { project, _ ->
     val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
     val model = libraryTable.modifiableModel
     model.createLibrary("regular", null)
@@ -176,7 +185,7 @@ class ExternalSystemStorageTest {
   }
 
   @Test
-  fun `save artifacts`() = saveProjectAndCheckResult("artifacts") { project, projectDir ->
+  fun `save artifacts`() = saveProjectInExternalStorageAndCheckResult("artifacts") { project, projectDir ->
     val model = ArtifactManager.getInstance(project).createModifiableModel()
     val regular = model.addArtifact("regular", PlainArtifactType.getInstance())
     regular.outputPath = projectDir.resolve("out/artifacts/regular").systemIndependentPath
@@ -211,10 +220,22 @@ class ExternalSystemStorageTest {
 
   private val externalSource get() = ExternalProjectSystemRegistry.getInstance().getSourceById("test")
 
-  private fun saveProjectAndCheckResult(testDataDirName: String, setupProject: (Project, Path) -> Unit) {
+  private fun saveProjectInInternalStorageAndCheckResult(testDataDirName: String, setupProject: (Project, Path) -> Unit) {
+    doNotEnableExternalStorageByDefaultInTests {
+      saveProjectAndCheckResult(testDataDirName, false, setupProject)
+    }
+  }
+
+  private fun saveProjectInExternalStorageAndCheckResult(testDataDirName: String, setupProject: (Project, Path) -> Unit) {
+    saveProjectAndCheckResult(testDataDirName, true, setupProject)
+  }
+
+  private fun saveProjectAndCheckResult(testDataDirName: String,
+                                        storeExternally: Boolean,
+                                        setupProject: (Project, Path) -> Unit) {
     runBlocking {
       createProjectAndUseInLoadComponentStateMode(tempDirManager, directoryBased = true, useDefaultProjectSettings = false) { project ->
-        ExternalProjectsManagerImpl.getInstance(project).setStoreExternally(true)
+        ExternalProjectsManagerImpl.getInstance(project).setStoreExternally(storeExternally)
         val projectDir = Paths.get(project.stateStore.directoryStorePath).parent
         val cacheDir = ExternalProjectsDataStorage.getProjectConfigurationDir(project)
         cacheDir.delete()
@@ -236,7 +257,13 @@ class ExternalSystemStorageTest {
         FileUtil.copyDir(testDataRoot.resolve(testDataDirName).toFile(), expectedDir.toFile())
 
         projectDir.toFile().assertMatches(directoryContentOf(expectedDir.resolve("project")))
-        cacheDir.toFile().assertMatches(directoryContentOf(expectedDir.resolve("cache")), FileTextMatcher.ignoreBlankLines())
+        val expectedCacheDir = expectedDir.resolve("cache")
+        if (Files.exists(expectedCacheDir)) {
+          cacheDir.toFile().assertMatches(directoryContentOf(expectedCacheDir), FileTextMatcher.ignoreBlankLines())
+        }
+        else {
+          assertFalse("$cacheDir doesn't exist", Files.exists(cacheDir))
+        }
       }
     }
   }
