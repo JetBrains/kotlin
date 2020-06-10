@@ -71,6 +71,7 @@ fun generateMap(): String {
         """
         private fun Any.defaultToString(): String {
             return when (this) {
+                is Lambda -> this.toString()
                 is State -> "${'$'}{this.irClass.name}@" + System.identityHashCode(this).toString(16).padStart(8, '0')
                 else -> this.toString().replaceAfter("@", System.identityHashCode(this).toString(16).padStart(8, '0'))
             }

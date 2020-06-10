@@ -172,13 +172,18 @@ class IrInterpreter(irModule: IrModuleFragment) {
         }
         val args = stack.getAll().map { it.state }
 
-        val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
+        val receiverType = descriptor.dispatchReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { it.original.type }
         val argsValues = args.map {
             when (it) {
-                is Complex -> it.getOriginal()
+                is Complex -> when (irFunction.fqNameWhenAvailable?.asString()) {
+                    // must explicitly convert Common to String in String plus method or else will be taken default toString from Common
+                    "kotlin.String.plus" -> stack.apply { interpretToString(it) }.popReturnValue().asString()
+                    else -> it.getOriginal()
+                }
                 is Primitive<*> -> it.value
-                else -> it // lambda can be used in built in calculation, for example, in null check
+                is Lambda -> it // lambda can be used in built in calculation, for example, in null check or toString
+                else -> TODO("unsupported type of argument for builtins calculations: ${it::class.java}")
             }
         }
         val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
@@ -684,23 +689,28 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val result = StringBuilder()
         expression.arguments.forEach {
             it.interpret().check { executionResult -> return executionResult }
-            result.append(
-                when (val returnValue = stack.popReturnValue()) {
-                    is Primitive<*> -> returnValue.value.toString()
-                    is Wrapper -> returnValue.value.toString()
-                    is Common -> {
-                        val toStringFun = returnValue.getToStringFunction()
-                        stack.newFrame(initPool = mutableListOf(Variable(toStringFun.getReceiver()!!, returnValue))) {
-                            toStringFun.body?.let { toStringFun.interpret() } ?: calculateBuiltIns(toStringFun)
-                        }.check { executionResult -> return executionResult }
-                        stack.popReturnValue().asString()
-                    }
-                    else -> throw InterpreterException("$returnValue cannot be used in StringConcatenation expression")
-                }
-            )
+            interpretToString(stack.popReturnValue()).check { executionResult -> return executionResult }
+            result.append(stack.popReturnValue().asString())
         }
 
         stack.pushReturnValue(result.toString().toState(expression.type))
+        return Next
+    }
+
+    private suspend fun interpretToString(state: State): ExecutionResult {
+        val result = when (state) {
+            is Primitive<*> -> state.value.toString()
+            is Wrapper -> state.value.toString()
+            is Common -> {
+                val toStringFun = state.getToStringFunction()
+                return stack.newFrame(initPool = mutableListOf(Variable(toStringFun.getReceiver()!!, state))) {
+                    toStringFun.body?.let { toStringFun.interpret() } ?: calculateBuiltIns(toStringFun)
+                }
+            }
+            is Lambda -> state.toString()
+            else -> throw InterpreterException("${state::class.java} cannot be used in StringConcatenation expression")
+        }
+        stack.pushReturnValue(result.toState(irBuiltIns.stringType))
         return Next
     }
 

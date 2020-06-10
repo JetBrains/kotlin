@@ -470,6 +470,7 @@ val ternaryFunctions = mapOf<CompileTimeFunction, Function3<Any?, Any?, Any?, An
 
 private fun Any.defaultToString(): String {
     return when (this) {
+        is Lambda -> this.toString()
         is State -> "${this.irClass.name}@" + System.identityHashCode(this).toString(16).padStart(8, '0')
         else -> this.toString().replaceAfter("@", System.identityHashCode(this).toString(16).padStart(8, '0'))
     }

@@ -163,8 +163,8 @@ fun getPrimitiveClass(fqName: String, asObject: Boolean = false): Class<*>? {
     }
 }
 
-fun IrType.getFqName(): String? {
-    return this.classOrNull?.owner?.fqNameWhenAvailable?.asString()
+fun IrType.getFqName(withNullableSymbol: Boolean = false): String? {
+    return this.classOrNull?.owner?.fqNameWhenAvailable?.asString()?.let { if (this.isNullable() && withNullableSymbol) "$it?" else it }
 }
 
 fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
