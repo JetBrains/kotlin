@@ -515,6 +515,9 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     }
 
     private fun interpretGetValue(expression: IrGetValue): ExecutionResult {
+        val owner = expression.type.classOrNull?.owner
+        // used to evaluate constants inside object
+        if (owner != null && owner.isObject) return getOrCreateObjectValue(owner) // TODO is this correct behaviour?
         stack.pushReturnValue(stack.getVariableState(expression.symbol.descriptor).copy())
         return Next
     }
@@ -538,13 +541,16 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     }
 
     private fun interpretGetObjectValue(expression: IrGetObjectValue): ExecutionResult {
-        val owner = expression.symbol.owner
-        val objectSignature = owner.fqNameWhenAvailable.toString()
+        return getOrCreateObjectValue(expression.symbol.owner)
+    }
+
+    private fun getOrCreateObjectValue(objectClass: IrClass): ExecutionResult {
+        val objectSignature = objectClass.fqNameWhenAvailable.toString()
         mapOfObjects[objectSignature]?.let { return Next.apply { stack.pushReturnValue(it) } }
 
         val objectState = when {
-            owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getCompanionObject(owner)
-            else -> Common(owner).apply { setSuperClassRecursive() } // TODO test type arguments
+            objectClass.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getCompanionObject(objectClass)
+            else -> Common(objectClass).apply { setSuperClassRecursive() } // TODO test type arguments
         }
         mapOfObjects[objectSignature] = objectState
         stack.pushReturnValue(objectState)

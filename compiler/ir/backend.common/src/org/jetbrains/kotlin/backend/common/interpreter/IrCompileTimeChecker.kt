@@ -14,20 +14,22 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 
-enum class CompileTimeMode {
+enum class EvaluationMode {
     FULL, ONLY_BUILTINS
 }
 
 class IrCompileTimeChecker(
-    containingDeclaration: String = "", private val mode: CompileTimeMode = CompileTimeMode.FULL
+    containingDeclaration: IrSymbol? = null, private val mode: EvaluationMode = EvaluationMode.FULL
 ) : IrElementVisitor<Boolean, Nothing?> {
-    private val callStack = mutableListOf<String>().apply { if (containingDeclaration.isNotEmpty()) add(containingDeclaration) }
+    private val callStack = mutableListOf<IrSymbol>().apply { if (containingDeclaration != null) add(containingDeclaration) }
 
     private val compileTimeTypeAliases = setOf(
         "java.lang.StringBuilder", "java.lang.IllegalArgumentException", "java.util.NoSuchElementException"
@@ -57,7 +59,7 @@ class IrCompileTimeChecker(
     }
 
     private fun IrSymbol.withCallStack(block: () -> Boolean): Boolean {
-        callStack += this.descriptor.toString()
+        callStack += this
         val result = block()
         callStack.removeAt(callStack.lastIndex)
         return result
@@ -66,7 +68,7 @@ class IrCompileTimeChecker(
     override fun visitElement(element: IrElement, data: Nothing?) = false
 
     private fun visitStatements(statements: List<IrStatement>, data: Nothing?): Boolean {
-        if (mode == CompileTimeMode.ONLY_BUILTINS) return false
+        if (mode == EvaluationMode.ONLY_BUILTINS) return false
         return statements.all { it.accept(this, data) }
     }
 
@@ -147,7 +149,9 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): Boolean {
-        return callStack.contains(expression.symbol.descriptor.containingDeclaration.toString())
+        val parent = expression.symbol.owner.parent as IrSymbolOwner
+        val isObject = (parent as? IrClass)?.isObject == true //used to evaluate constants inside object
+        return callStack.contains(parent.symbol) || isObject
     }
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): Boolean {
@@ -155,12 +159,14 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): Boolean {
-        return callStack.contains(expression.symbol.descriptor.containingDeclaration.toString())
+        val parent = expression.symbol.owner.parent as IrSymbolOwner
+        return callStack.contains(parent.symbol)
     }
 
     override fun visitSetField(expression: IrSetField, data: Nothing?): Boolean {
         //todo check receiver?
-        return callStack.contains(expression.symbol.descriptor.containingDeclaration.toString()) && expression.value.accept(this, data)
+        val parent = expression.symbol.owner.parent as IrSymbolOwner
+        return callStack.contains(parent.symbol) && expression.value.accept(this, data)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): Boolean {
@@ -223,7 +229,7 @@ class IrCompileTimeChecker(
     override fun visitContinue(jump: IrContinue, data: Nothing?): Boolean = true
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): Boolean {
-        if (!callStack.contains(expression.returnTargetSymbol.descriptor.toString())) return false
+        if (!callStack.contains(expression.returnTargetSymbol)) return false
         return expression.value.accept(this, data)
     }
 
