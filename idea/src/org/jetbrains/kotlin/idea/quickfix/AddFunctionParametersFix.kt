@@ -20,6 +20,9 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.util.getDataFlowAwareTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -196,6 +200,15 @@ class AddFunctionParametersFix(
     }
 
     private fun hasOtherUsages(function: PsiElement): Boolean {
+        (function as? PsiNamedElement)?.let {
+            val name = it.name ?: return false
+            val project = runReadAction { it.project }
+            val psiSearchHelper = PsiSearchHelper.getInstance(project)
+            val globalSearchScope = GlobalSearchScope.projectScope(project)
+            val cheapEnoughToSearch = psiSearchHelper.isCheapEnoughToSearch(name, globalSearchScope, null, null)
+            if (cheapEnoughToSearch == PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES) return false
+        }
+
         return ReferencesSearch.search(function).any {
             val call = it.element.getParentOfType<KtCallElement>(false)
             call != null && callElement != call
