@@ -341,13 +341,18 @@ abstract class AnnotationCodegen(
         override fun KotlinTypeMarker.extractAnnotations(): List<IrConstructorCall> {
             require(this is IrType)
             return annotations.filter {
-                //We only generate annotations which have the TYPE_USE Java target.
+                // We only generate annotations which have the TYPE_USE Java target.
                 // Those are type annotations which were compiled with JVM target bytecode version 1.8 or greater
                 (it.annotationClass.origin != IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
                         it.annotationClass.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) ||
-                        isCompiledToJvm8OrHigher(it.annotationClass.descriptor)
+                        it.annotationClass.isCompiledToJvm8OrHigher
             }
         }
+
+        private val IrClass.isCompiledToJvm8OrHigher: Boolean
+            get() =
+                (origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) &&
+                        isCompiledToJvm8OrHigher(source)
     }
 
 }
