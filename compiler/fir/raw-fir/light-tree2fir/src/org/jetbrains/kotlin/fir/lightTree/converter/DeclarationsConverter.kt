@@ -940,16 +940,8 @@ class DeclarationsConverter(
                     }
 
                     val propertyVisibility = modifiers.getVisibility()
-                    status = FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality()).apply {
-                        isExpect = modifiers.hasExpect()
-                        isActual = modifiers.hasActual()
-                        isOverride = modifiers.hasOverride()
-                        isConst = modifiers.isConst()
-                        isLateInit = modifiers.hasLateinit()
-                    }
 
-
-                    val convertedAccessors = accessors.map { convertGetterOrSetter(it, returnType, propertyVisibility) }
+                    val convertedAccessors = accessors.map { convertGetterOrSetter(it, returnType, propertyVisibility, modifiers) }
                     this.getter = convertedAccessors.find { it.isGetter }
                         ?: FirDefaultPropertyGetter(null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility)
                     this.setter =
@@ -957,6 +949,19 @@ class DeclarationsConverter(
                             convertedAccessors.find { it.isSetter }
                                 ?: FirDefaultPropertySetter(null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility)
                         } else null
+
+                    // Upward propagation of `inline` and `external` modifiers (from accessors to property)
+                    // Note that, depending on `var` or `val`, checking setter's modifiers should be careful: for `val`, setter doesn't
+                    // exist (null); for `var`, the retrieval of the specific modifier is supposed to be `true`
+                    status = FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality()).apply {
+                        isExpect = modifiers.hasExpect()
+                        isActual = modifiers.hasActual()
+                        isOverride = modifiers.hasOverride()
+                        isConst = modifiers.isConst()
+                        isLateInit = modifiers.hasLateinit()
+                        isInline = modifiers.hasInline() || (getter!!.isInline && setter?.isInline != false)
+                        isExternal = modifiers.hasExternal() || (getter!!.isExternal && setter?.isExternal != false)
+                    }
 
                     val receiver = delegateExpression?.let {
                         expressionConverter.getAsFirExpression<FirExpression>(it, "Should have delegate")
@@ -1031,7 +1036,8 @@ class DeclarationsConverter(
     private fun convertGetterOrSetter(
         getterOrSetter: LighterASTNode,
         propertyTypeRef: FirTypeRef,
-        propertyVisibility: Visibility
+        propertyVisibility: Visibility,
+        propertyModifiers: Modifier
     ): FirPropertyAccessor {
         var modifiers = Modifier()
         var isGetter = true
@@ -1060,6 +1066,12 @@ class DeclarationsConverter(
         if (accessorVisibility == Visibilities.UNKNOWN) {
             accessorVisibility = propertyVisibility
         }
+        val status =
+            // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
+            FirDeclarationStatusImpl(accessorVisibility, Modality.FINAL).apply {
+                isInline = propertyModifiers.hasInline() || modifiers.hasInline()
+                isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
+            }
         val sourceElement = getterOrSetter.toFirSourceElement()
         if (block == null && expression == null) {
             return FirDefaultPropertyAccessor
@@ -1073,6 +1085,7 @@ class DeclarationsConverter(
                 )
                 .also {
                     it.annotations += modifiers.annotations
+                    it.status = status
                 }
         }
         val target = FirFunctionTarget(labelName = null, isLambda = false)
@@ -1083,7 +1096,7 @@ class DeclarationsConverter(
             returnTypeRef = returnType ?: if (isGetter) propertyTypeRef else implicitUnitType
             symbol = FirPropertyAccessorSymbol()
             this.isGetter = isGetter
-            status = FirDeclarationStatusImpl(accessorVisibility, Modality.FINAL)
+            this.status = status
             context.firFunctionTargets += target
             annotations += modifiers.annotations
 

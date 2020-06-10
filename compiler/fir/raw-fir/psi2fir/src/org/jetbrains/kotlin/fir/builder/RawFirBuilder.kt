@@ -261,6 +261,14 @@ class RawFirBuilder(
         ): FirPropertyAccessor {
             val accessorVisibility =
                 if (this?.visibility != null && this.visibility != Visibilities.UNKNOWN) this.visibility else property.visibility
+            // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
+            val status =
+                FirDeclarationStatusImpl(accessorVisibility, Modality.FINAL).apply {
+                    isInline = property.hasModifier(INLINE_KEYWORD) ||
+                            this@toFirPropertyAccessor?.hasModifier(INLINE_KEYWORD) == true
+                    isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
+                            this@toFirPropertyAccessor?.hasModifier(EXTERNAL_KEYWORD) == true
+                }
             if (this == null || !hasBody()) {
                 val propertySource = property.toFirSourceElement()
                 return FirDefaultPropertyAccessor
@@ -276,6 +284,7 @@ class RawFirBuilder(
                         if (this != null) {
                             it.extractAnnotationsFrom(this)
                         }
+                        it.status = status
                     }
             }
             val source = this.toFirSourceElement()
@@ -290,7 +299,7 @@ class RawFirBuilder(
                     returnTypeReference.toFirOrUnitType()
                 }
                 this.isGetter = isGetter
-                status = FirDeclarationStatusImpl(accessorVisibility, Modality.FINAL)
+                this.status = status
                 extractAnnotationsTo(this)
                 this@RawFirBuilder.context.firFunctionTargets += accessorTarget
                 extractValueParametersTo(this, propertyTypeRef)
@@ -1078,18 +1087,24 @@ class RawFirBuilder(
                                 expression = { delegateExpression }.toFirExpression("Should have delegate")
                             }
                         } else null
+
+                        getter = this@toFirProperty.getter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = true)
+                        setter = if (isVar) {
+                            this@toFirProperty.setter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = false)
+                        } else null
+
+                        // Upward propagation of `inline` and `external` modifiers (from accessors to property)
+                        // Note that, depending on `var` or `val`, checking setter's modifiers should be careful: for `val`, setter doesn't
+                        // exist (null); for `var`, the retrieval of the specific modifier is supposed to be `true`
                         status = FirDeclarationStatusImpl(visibility, modality).apply {
                             isExpect = hasExpectModifier()
                             isActual = hasActualModifier()
                             isOverride = hasModifier(OVERRIDE_KEYWORD)
                             isConst = hasModifier(CONST_KEYWORD)
                             isLateInit = hasModifier(LATEINIT_KEYWORD)
+                            isInline = hasModifier(INLINE_KEYWORD) || (getter!!.isInline && setter?.isInline != false)
+                            isExternal = hasModifier(EXTERNAL_KEYWORD) || (getter!!.isExternal && setter?.isExternal != false)
                         }
-
-                        getter = this@toFirProperty.getter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = true)
-                        setter = if (isVar) {
-                            this@toFirProperty.setter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = false)
-                        } else null
 
                         val receiver = delegateExpression?.toFirExpression("Should have delegate")
                         generateAccessorsByDelegate(
@@ -1350,6 +1365,7 @@ class RawFirBuilder(
                 else -> null
             }
             val hasSubject = subjectExpression != null
+
             @OptIn(FirContractViolation::class)
             val ref = FirExpressionRef<FirWhenExpression>()
             return buildWhenExpression {
