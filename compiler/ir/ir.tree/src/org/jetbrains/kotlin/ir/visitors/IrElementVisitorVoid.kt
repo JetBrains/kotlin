@@ -190,6 +190,10 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?) =
         visitLocalDelegatedPropertyReference(expression)
 
+    fun visitRawFunctionReference(expression: IrRawFunctionReference) = visitDeclarationReference(expression)
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: Nothing?) =
+        visitRawFunctionReference(expression)
+
     fun visitFunctionExpression(expression: IrFunctionExpression) = visitExpression(expression)
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?) = visitFunctionExpression(expression)
 
