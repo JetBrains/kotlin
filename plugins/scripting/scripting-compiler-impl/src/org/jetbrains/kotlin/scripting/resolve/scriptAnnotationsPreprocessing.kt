@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
-import org.jetbrains.kotlin.resolve.CollectionLiteralResolver.Companion.ARRAY_OF_FUNCTION
-import org.jetbrains.kotlin.resolve.CollectionLiteralResolver.Companion.PRIMITIVE_TYPE_TO_ARRAY
+import org.jetbrains.kotlin.resolve.ArrayFqNames.ARRAY_OF_FUNCTION
+import org.jetbrains.kotlin.resolve.ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -69,7 +69,7 @@ internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out
 
         // TODO: consider inspecting `trace` to find diagnostics reported during the computation (such as division by zero, integer overflow, invalid annotation parameters etc.)
         val argName = arg.getArgumentName()?.asName?.toString()
-        argName to result?.value
+        argName to result?.toRuntimeValue()
     }
     val mappedArguments: Map<KParameter, Any?> =
         tryCreateCallableMappingFromNamedArgs(targetClass.constructors.first(), valueArguments)
@@ -90,6 +90,11 @@ internal fun ConstantExpressionEvaluator.evaluateToConstantArrayValue(
 ): ArrayValue {
     val constants = elementExpressions.mapNotNull { evaluateExpression(it, trace, expectedElementType)?.toConstantValue(expectedElementType) }
     return ConstantValueFactory.createArrayValue(constants, TypeUtils.NO_EXPECTED_TYPE)
+}
+
+private fun ConstantValue<*>.toRuntimeValue(): Any? = when (this) {
+    is ArrayValue -> value.map { it.toRuntimeValue() }.toTypedArray()
+    else -> value
 }
 
 // NOTE: this class is used for error reporting. But in order to pass plugin verification, it should derive directly from java's Annotation
