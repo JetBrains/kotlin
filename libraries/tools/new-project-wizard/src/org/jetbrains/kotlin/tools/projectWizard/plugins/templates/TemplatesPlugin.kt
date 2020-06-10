@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.SRC_DIR
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.service.TemplateEngineService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfiguratorWithTests
@@ -160,4 +162,12 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
             }
         }
     }
+
+    override val settings: List<PluginSetting<*, *>> = listOf()
+    override val pipelineTasks: List<PipelineTask> =
+        listOf(
+            renderFileTemplates,
+            addTemplatesToModules,
+            postApplyTemplatesToModules
+        )
 }

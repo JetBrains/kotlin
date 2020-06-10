@@ -11,7 +11,6 @@ import java.nio.file.Path
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.full.memberProperties
 
 typealias PluginReference = KClass<out Plugin>
 typealias PluginsCreator = (Context) -> List<Plugin>
@@ -33,15 +32,8 @@ abstract class Plugin(override val context: Context) : EntityBase(),
     override val path = reference.path
     open val title: String = reference.name
 
-    val declaredSettings get() = entitiesOfType<PluginSetting<*, *>>().toSet()
-    val declaredTasks get() = entitiesOfType<Task>()
-
-    private inline fun <reified E : Entity> entitiesOfType() =
-        reference.memberProperties.filter { kProperty ->
-            kProperty.returnType.classifier.safeAs<KClass<*>>()?.isSubclassOf(E::class) == true
-        }.mapNotNull { kProperty ->
-            kProperty.safeAs<EntityReference>()?.getter?.call(this) as? E
-        }
+    abstract val settings: List<PluginSetting<*, *>>
+    abstract val pipelineTasks: List<PipelineTask>
 
     fun pipelineTask(phase: GenerationPhase, init: PipelineTask.Builder.() -> Unit) =
         context.pipelineTaskDelegate(phase, init)

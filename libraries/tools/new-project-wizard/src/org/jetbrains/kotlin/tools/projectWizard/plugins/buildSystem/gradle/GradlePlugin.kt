@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle
 
 import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
@@ -128,6 +130,15 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
             )
         }
     }
+    override val settings: List<PluginSetting<*, *>> = super.settings
+    override val pipelineTasks: List<PipelineTask> = super.pipelineTasks +
+            listOf(
+                createGradlePropertiesFile,
+                createLocalPropertiesFile,
+                initGradleWrapperTask,
+                createSettingsFileTask,
+            )
+
 }
 
 val Reader.settingsGradleBuildFileData

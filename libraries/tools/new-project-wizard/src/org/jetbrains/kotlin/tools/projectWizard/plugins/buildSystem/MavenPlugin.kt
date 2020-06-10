@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.asSuccess
 import org.jetbrains.kotlin.tools.projectWizard.core.checker
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RootFileModuleStructureIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.ModulesDependencyMavenIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.PluginRepositoryMavenIR
@@ -61,4 +62,11 @@ class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
             )
         )
     )
+
+    override val pipelineTasks: List<PipelineTask> = super.pipelineTasks +
+            listOf(
+                createSettingsFileTask,
+                addBuildSystemPluginRepositories,
+                addBuildSystemData
+            )
 }
