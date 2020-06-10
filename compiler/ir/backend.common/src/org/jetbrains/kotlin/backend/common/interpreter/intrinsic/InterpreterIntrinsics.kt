@@ -10,3 +10,5 @@ package org.jetbrains.kotlin.backend.common.interpreter.intrinsic
 public fun emptyArray(): Array<Any?> = kotlin.emptyArray()
 
 public fun arrayOf(vararg elements: Any?): Array<Any?> = elements as Array<Any?>
+
+public fun arrayOfNulls(size: Int): Array<Any?> = arrayOfNulls<Any?>(size)

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.*
 import java.lang.invoke.MethodHandle
@@ -323,6 +324,30 @@ class IrInterpreter(irModule: IrModuleFragment) {
             return Wrapper.getConstructorMethod(owner).invokeMethod(owner, newFrame).apply { data.pushReturnValue(newFrame) }
         }
 
+        if (parent.defaultType.isArray() || parent.defaultType.isPrimitiveArray()) {
+            // array constructor doesn't have body so must be treated separately
+            // here we must except only one possible constructor, with one value parameter size
+            // the other one, with lambda, is transforming into ir returnable block
+            val arrayConstructor = irBuiltIns.primitiveArrays.first().constructors.single { it.owner.valueParameters.size == 2 }
+            val sizeDescriptor = arrayConstructor.owner.valueParameters.single { it.name.asString() == "size" }.descriptor
+            val size = (newFrame.getVariableState(sizeDescriptor) as Primitive<Int>).value
+
+            val array = when (parent.defaultType.getFqName()) {
+                "kotlin.ByteArray" -> Primitive(ByteArray(size), parent.defaultType)
+                "kotlin.CharArray" -> Primitive(CharArray(size), parent.defaultType)
+                "kotlin.ShortArray" -> Primitive(ShortArray(size), parent.defaultType)
+                "kotlin.IntArray" -> Primitive(IntArray(size), parent.defaultType)
+                "kotlin.LongArray" -> Primitive(LongArray(size), parent.defaultType)
+                "kotlin.FloatArray" -> Primitive(FloatArray(size), parent.defaultType)
+                "kotlin.DoubleArray" -> Primitive(DoubleArray(size), parent.defaultType)
+                "kotlin.BooleanArray" -> Primitive(BooleanArray(size), parent.defaultType)
+                else -> throw AssertionError("Unsupported array class ${parent.defaultType.getFqName()}")
+            }
+
+            data.pushReturnValue(array)
+            return Code.NEXT
+        }
+
         val state = Common(parent, mutableListOf())
         newFrame.addVar(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
         val code = constructorCall.getBody()?.interpret(newFrame) ?: Code.NEXT
@@ -333,8 +358,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private suspend fun interpretConstructorCall(constructorCall: IrConstructorCall, data: Frame): Code {
         return interpretConstructor(constructorCall, data).apply {
-            val instance = data.peekReturnValue() as Complex
-            instance.setInstanceRecursive(instance)
+            // constructor can return primitive object; fot example, when create array by constructor
+            (data.peekReturnValue() as? Complex)?.let { it.setInstanceRecursive(it) }
         }
     }
 
@@ -372,17 +397,26 @@ class IrInterpreter(irModule: IrModuleFragment) {
             return Code.NEXT
         }
 
-        val inlineFunOwner = (block as? IrReturnableBlock)?.inlineFunctionSymbol?.owner
-        if (inlineFunOwner?.hasAnnotation(evaluateIntrinsicAnnotation) == true) {
-            val rawArgs = block.statements.filterIsInstance<IrVariable>().zip(inlineFunOwner.valueParameters)
-            val args = mutableListOf<Variable>()
-            for ((variable, valueParameter) in rawArgs) {
-                val tempFrame = data.copy().apply { variable.initializer!!.interpret(this).also { if (it != Code.NEXT) return it } }
-                // must set variable descriptor here because temp variables inside ir returnable block have different from methods args names
-                args += Variable(valueParameter.descriptor, tempFrame.popReturnValue())
+        val inlineFun = (block as? IrReturnableBlock)?.inlineFunctionSymbol?.owner
+        if (inlineFun?.hasAnnotation(evaluateIntrinsicAnnotation) == true) {
+            val newFrame = data.copy()
+            block.statements.filterIsInstance<IrVariable>().forEach { variable ->
+                variable.initializer!!.interpret(newFrame).also { if (it != Code.NEXT) return it }
+                newFrame.addVar(Variable(variable.descriptor, newFrame.popReturnValue()))
             }
-            val newFrame = data.copy().apply { addAll(args) }
-            return Wrapper.getStaticMethod(inlineFunOwner).invokeMethod(inlineFunOwner, newFrame).apply { data.pushReturnValue(newFrame) }
+
+            val originalVarToInline = ParallelVisitorForInlineFun()
+                .apply { this.visitElement(inlineFun.body!!.statements.first(), block.statements.last()) }
+                .originalVarToInline
+
+            val frameForWrapper = InterpreterFrame()
+            (listOfNotNull(inlineFun.extensionReceiverParameter, inlineFun.dispatchReceiverParameter) + inlineFun.valueParameters)
+                .map { it.descriptor }
+                .forEach { frameForWrapper.addVar(Variable(it, newFrame.getVariableState(originalVarToInline[it]!!))) }
+
+            return Wrapper.getStaticMethod(inlineFun)
+                .invokeMethod(inlineFun, frameForWrapper)
+                .apply { data.pushReturnValue(frameForWrapper) }
         }
 
         return interpretStatements(block.statements, data)
