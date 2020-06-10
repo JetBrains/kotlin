@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.settingValue
 import java.nio.file.Path
 
 class TemplatesPlugin(context: Context) : Plugin(context) {
+    override val path = "templates"
+
     val templates by property<Map<String, Template>>(
         emptyMap()
     )

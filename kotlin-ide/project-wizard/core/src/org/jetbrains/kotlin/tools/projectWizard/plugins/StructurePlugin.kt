@@ -17,6 +17,8 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 class StructurePlugin(context: Context) : Plugin(context) {
+    override val path = "structure"
+
     val projectPath by pathSetting(
         KotlinNewProjectWizardBundle.message("plugin.structure.setting.location"),
         GenerationPhase.FIRST_STEP

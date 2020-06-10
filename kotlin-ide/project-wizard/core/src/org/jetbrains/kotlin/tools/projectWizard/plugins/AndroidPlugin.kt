@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 
 class AndroidPlugin(context: Context) : Plugin(context) {
+    override val path = "android"
+
     val androidSdkPath by pathSetting(
         KotlinNewProjectWizardBundle.message("plugin.android.setting.sdk"),
         neededAtPhase = GenerationPhase.PROJECT_GENERATION

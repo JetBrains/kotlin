@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 
 abstract class TemplatePlugin(context: Context) : Plugin(context) {
+    override val path = "template"
+
     fun addTemplateTask(template: Template) = pipelineTask(GenerationPhase.PREPARE) {
         withAction {
             TemplatesPlugin::addTemplate.execute(template)
