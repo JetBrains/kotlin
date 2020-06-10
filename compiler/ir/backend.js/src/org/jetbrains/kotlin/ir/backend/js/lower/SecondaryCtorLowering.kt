@@ -19,15 +19,13 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -98,9 +96,28 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
 
                 call.putValueArgument(constructor.valueParameters.size, irCreateCall)
             }
-            val irReturn = JsIrBuilder.buildReturn(stub.symbol, irDelegateCall, context.irBuiltIns.nothingType)
 
-            statements += irReturn
+            if (irClass.isSubclassOf(context.irBuiltIns.throwableClass.owner)) {
+                val tmp = JsIrBuilder.buildVar(
+                    type = irDelegateCall.type,
+                    parent = stub,
+                    initializer = irDelegateCall
+                )
+
+                statements += tmp
+                statements += JsIrBuilder.buildCall(context.intrinsics.captureStack).also { call ->
+                    call.putValueArgument(0, JsIrBuilder.buildGetValue(tmp.symbol))
+                    call.putValueArgument(
+                        1,
+                        IrRawFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.anyType, stub.symbol)
+                    )
+                }
+                statements += JsIrBuilder.buildReturn(stub.symbol, JsIrBuilder.buildGetValue(tmp.symbol), context.irBuiltIns.nothingType)
+            } else {
+                val irReturn = JsIrBuilder.buildReturn(stub.symbol, irDelegateCall, context.irBuiltIns.nothingType)
+                statements += irReturn
+            }
+
         }
     }
 

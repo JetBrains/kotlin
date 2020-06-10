@@ -2621,6 +2621,11 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
                 runTest("js/js.translator/testData/box/expression/misc/safeCallComputesExpressionOnlyOnce.kt");
             }
 
+            @TestMetadata("stackTraceCapturing.kt")
+            public void testStackTraceCapturing() throws Exception {
+                runTest("js/js.translator/testData/box/expression/misc/stackTraceCapturing.kt");
+            }
+
             @TestMetadata("stringInterpolationEvaluationOrder.kt")
             public void testStringInterpolationEvaluationOrder() throws Exception {
                 runTest("js/js.translator/testData/box/expression/misc/stringInterpolationEvaluationOrder.kt");

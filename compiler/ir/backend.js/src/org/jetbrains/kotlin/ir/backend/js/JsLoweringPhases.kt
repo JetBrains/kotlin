@@ -624,6 +624,12 @@ private val objectUsageLoweringPhase = makeBodyLoweringPhase(
     description = "Transform IrGetObjectValue into instance generator call"
 )
 
+private val captureStackTraceInThrowablesPhase = makeBodyLoweringPhase(
+    ::CaptureStackTraceInThrowables,
+    name = "CaptureStackTraceInThrowables",
+    description = "Capture stack trace in Throwable constructors"
+)
+
 private val cleanupLoweringPhase = makeBodyLoweringPhase(
     { CleanupLowering() },
     name = "CleanupLowering",
@@ -704,6 +710,7 @@ val loweringList = listOf<Lowering>(
     constLoweringPhase,
     objectDeclarationLoweringPhase,
     objectUsageLoweringPhase,
+    captureStackTraceInThrowablesPhase,
     callsLoweringPhase,
     cleanupLoweringPhase,
     validateIrAfterLowering
@@ -784,6 +791,7 @@ val es6LoweringList = listOf<Lowering>(
     constLoweringPhase,
     objectDeclarationLoweringPhase,
     objectUsageLoweringPhase,
+    captureStackTraceInThrowablesPhase,
     callsLoweringPhase,
     cleanupLoweringPhase,
     validateIrAfterLowering
