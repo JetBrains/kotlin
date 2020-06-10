@@ -627,8 +627,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             data.pushReturnValue(Wrapper.getCompanionObject(owner))
             return Next
         }
-        val objectState = Common(owner)
-        data.pushReturnValue(objectState)
+        data.pushReturnValue(Common(owner).apply { setSuperClassRecursive() })
         return Next
     }
 
