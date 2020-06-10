@@ -82,10 +82,15 @@ fun IrFunction.isFakeOverridden(): Boolean {
 
 fun State.toIrExpression(expression: IrExpression): IrExpression {
     return when (this) {
-        is Primitive<*> -> this.value.toIrConst(   // this is necessary to replace ir offsets
-            this.type, expression.startOffset, expression.endOffset
-        )
-        else -> TODO("not supported")
+        is Primitive<*> ->
+            when (this.value) {
+                // toIrConst call is necessary to replace ir offsets
+                is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double ->
+                    this.value.toIrConst(this.type, expression.startOffset, expression.endOffset)
+                null -> this.value.toIrConst(this.type, expression.startOffset, expression.endOffset)
+                else -> expression // TODO support for arrays
+            }
+        else -> expression // TODO support
     }
 }
 

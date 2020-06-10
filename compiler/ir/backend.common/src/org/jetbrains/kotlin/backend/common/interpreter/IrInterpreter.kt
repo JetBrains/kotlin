@@ -82,7 +82,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
             return when (code) {
                 Code.RETURN -> when (this) {
-                    is IrCall -> Code.NEXT
+                    is IrCall, is IrReturnableBlock -> Code.NEXT
                     else -> Code.RETURN
                 }
                 Code.BREAK_WHEN -> when (this) {
@@ -419,7 +419,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
                 expression.argument.interpret(data)
             }
-            IrTypeOperator.CAST -> {
+            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> {
                 expression.argument.interpret(data) //todo check cast correctness
             }
             else -> TODO("${expression.operator} not implemented")
