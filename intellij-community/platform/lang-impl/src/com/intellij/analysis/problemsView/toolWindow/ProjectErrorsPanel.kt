@@ -33,10 +33,8 @@ internal class ProjectErrorsPanel(project: Project, state: ProblemsViewState)
 
   override fun problemsAppeared(file: VirtualFile) {
     LOG.debug("problemsAppeared: ", file)
-    synchronized(watchers) {
-      val watcher = watchers.computeIfAbsent(file) { HighlightingWatcher(root, it) }
-      Disposer.register(root, watcher)
-    }
+    val watcher = synchronized(watchers) { watchers.computeIfAbsent(file) { HighlightingWatcher(root, it) } }
+    Disposer.register(root, watcher)
   }
 
   override fun problemsChanged(file: VirtualFile) {
@@ -45,12 +43,8 @@ internal class ProjectErrorsPanel(project: Project, state: ProblemsViewState)
 
   override fun problemsDisappeared(file: VirtualFile) {
     LOG.debug("problemsDisappeared: ", file)
-    synchronized(watchers) {
-      val watcher = watchers.remove(file)
-      if (watcher != null) {
-        Disposer.dispose(watcher)
-        root.removeProblems(file)
-      }
-    }
+    val watcher = synchronized(watchers) { watchers.remove(file) } ?: return
+    Disposer.dispose(watcher) // removes a markup model listener
+    root.removeProblems(file, *watcher.getProblems().toTypedArray())
   }
 }

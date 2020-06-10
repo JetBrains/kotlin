@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 
 internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualFile) : Root(panel) {
 
-  private val problems = FileProblems(file)
+  private val fileProblems = FileProblems(file)
   private val watcher = HighlightingWatcher(this, file, INFORMATION.myVal + 1)
 
   init {
@@ -16,39 +16,34 @@ internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualF
   }
 
   override fun getChildren(): Collection<Node> {
-    return synchronized(problems) { listOf(problems.getFileNode(this)) }
+    return synchronized(fileProblems) { listOf(fileProblems.getFileNode(this)) }
   }
 
   override fun getChildren(file: VirtualFile): Collection<Node> {
-    return synchronized(problems) { problems.getProblemNodes() }
+    return synchronized(fileProblems) { fileProblems.getProblemNodes() }
   }
 
   fun findProblemNode(highlighter: RangeHighlighterEx): ProblemNode? {
     val problem = watcher.findProblem(highlighter) ?: return null
-    return synchronized(problems) { problems.findProblemNode(problem) }
+    return synchronized(fileProblems) { fileProblems.findProblemNode(problem) }
   }
 
-  override fun getProblemsCount() = synchronized(problems) { problems.count() }
+  override fun getProblemsCount() = synchronized(fileProblems) { fileProblems.count() }
 
-  override fun getProblemsCount(file: VirtualFile) = synchronized(problems) { problems.count() }
+  override fun getProblemsCount(file: VirtualFile) = synchronized(fileProblems) { fileProblems.count() }
 
-  override fun addProblem(file: VirtualFile, problem: Problem) {
-    synchronized(problems) { problems.add(problem) }
+  override fun addProblems(file: VirtualFile, vararg problems: Problem) {
+    synchronized(fileProblems) { problems.forEach { fileProblems.add(it) } }
     structureChanged()
   }
 
-  override fun removeProblem(file: VirtualFile, problem: Problem) {
-    synchronized(problems) { problems.remove(problem) }
+  override fun removeProblems(file: VirtualFile, vararg problems: Problem) {
+    synchronized(fileProblems) { problems.forEach { fileProblems.remove(it) } }
     structureChanged()
   }
 
   override fun updateProblem(file: VirtualFile, problem: Problem) {
-    synchronized(problems) { problems.findProblemNode(problem) }?.let { structureChanged() }
-  }
-
-  override fun updateProblems(file: VirtualFile, collection: Collection<Problem>) {
-    synchronized(problems) { problems.update(collection) }
-    structureChanged()
+    synchronized(fileProblems) { fileProblems.findProblemNode(problem) }?.let { structureChanged() }
   }
 
   private fun structureChanged() {

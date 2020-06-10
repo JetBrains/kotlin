@@ -27,11 +27,11 @@ internal class HighlightingWatcher(
   override fun dispose() = Unit
 
   override fun afterAdded(highlighter: RangeHighlighterEx) {
-    getProblem(highlighter)?.let { root.addProblem(file, it) }
+    getProblem(highlighter)?.let { root.addProblems(file, it) }
   }
 
   override fun beforeRemoved(highlighter: RangeHighlighterEx) {
-    getProblem(highlighter)?.let { root.removeProblem(file, it) }
+    getProblem(highlighter)?.let { root.removeProblems(file, it) }
   }
 
   override fun attributesChanged(highlighter: RangeHighlighterEx, renderersChanged: Boolean, fontStyleOrColorChanged: Boolean) {
@@ -40,13 +40,13 @@ internal class HighlightingWatcher(
 
   fun update() {
     val model = reference?.get() ?: getMarkupModel() ?: return
-    val problems = mutableSetOf<Problem>()
     model.processRangeHighlightersOverlappingWith(0, model.document.textLength) { highlighter: RangeHighlighterEx ->
-      getProblem(highlighter)?.let { problems += it }
+      afterAdded(highlighter)
       true
     }
-    root.updateProblems(file, problems)
   }
+
+  fun getProblems(): Collection<Problem> = synchronized(problems) { problems.values }
 
   fun findProblem(highlighter: RangeHighlighterEx) = synchronized(problems) { problems[highlighter] }
 
