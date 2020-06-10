@@ -9,68 +9,33 @@ import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsi
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.backend.common.interpreter.state.*
 import org.jetbrains.kotlin.builtins.UnsignedTypes
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun IrFunction.getDispatchReceiver(): DeclarationDescriptor? {
-    return (this.symbol.descriptor.containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter
+fun IrFunction.getDispatchReceiver(): IrSymbol? {
+    return this.dispatchReceiverParameter?.symbol
 }
 
-fun IrFunction.getExtensionReceiver(): DeclarationDescriptor? {
-    return this.extensionReceiverParameter?.descriptor
+fun IrFunction.getExtensionReceiver(): IrSymbol? {
+    return this.extensionReceiverParameter?.symbol
 }
 
-fun IrFunction.getReceiver(): DeclarationDescriptor? {
+fun IrFunction.getReceiver(): IrSymbol? {
     return this.getDispatchReceiver() ?: this.getExtensionReceiver()
 }
 
 fun IrFunctionAccessExpression.getBody(): IrBody? {
     return this.symbol.owner.body
-}
-
-fun DeclarationDescriptor.equalTo(other: DeclarationDescriptor): Boolean {
-    return this.isEqualByReceiverTo(other) || this.hasSameNameAs(other) || this == other
-}
-
-private fun WrappedReceiverParameterDescriptor.isEqualTo(other: DeclarationDescriptor): Boolean {
-    return when (val container = this.containingDeclaration) {
-        is ClassDescriptor -> container == other.containingDeclaration
-        is FunctionDescriptor -> container.dispatchReceiverParameter == other || container.extensionReceiverParameter == other
-        else -> false
-    }
-}
-
-private fun DeclarationDescriptor.isEqualByReceiverTo(other: DeclarationDescriptor): Boolean {
-    if (this !is ReceiverParameterDescriptor || other !is ReceiverParameterDescriptor) return false
-    return when {
-        this is WrappedReceiverParameterDescriptor && other is WrappedReceiverParameterDescriptor ->
-            this.isEqualTo(other) || other.isEqualTo(this)
-        this is WrappedReceiverParameterDescriptor -> this.isEqualTo(other)
-        other is WrappedReceiverParameterDescriptor -> other.isEqualTo(this)
-        this.value is ImplicitClassReceiver && other.value is ImplicitClassReceiver -> this.value.type == other.value.type
-        this.value is ExtensionReceiver && other.value is ExtensionReceiver -> this.value == other.value
-        else -> false
-    }
-}
-
-private fun DeclarationDescriptor.hasSameNameAs(other: DeclarationDescriptor): Boolean {
-    return (this is VariableDescriptor && other is VariableDescriptor && this.name == other.name) ||
-            (this is TypeParameterDescriptor && other is TypeParameterDescriptor && this.name == other.name) ||
-            (this is FunctionDescriptor && other is FunctionDescriptor && //this == other
-                    this.valueParameters.map { it.type.toString() } == other.valueParameters.map { it.type.toString() } &&
-                    this.name == other.name)
 }
 
 fun State.toIrExpression(expression: IrExpression): IrExpression {
@@ -130,14 +95,14 @@ fun <T> IrConst<T>.toPrimitive(): Primitive<T> {
 fun IrAnnotationContainer?.hasAnnotation(annotation: FqName): Boolean {
     this ?: return false
     if (this.annotations.isNotEmpty()) {
-        return this.annotations.any { it.symbol.descriptor.containingDeclaration.fqNameSafe == annotation }
+        return this.annotations.any { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
     }
     return false
 }
 
 fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
-    return this.annotations.firstOrNull { it.symbol.descriptor.containingDeclaration.fqNameSafe == annotation }
-        ?: ((this as IrFunction).parent as IrClass).annotations.first { it.symbol.descriptor.containingDeclaration.fqNameSafe == annotation }
+    return this.annotations.firstOrNull { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
+        ?: ((this as IrFunction).parent as IrClass).annotations.first { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
 }
 
 fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
@@ -214,20 +179,20 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
 }
 
 fun getTypeArguments(
-    container: IrTypeParametersContainer, expression: IrFunctionAccessExpression, mapper: (TypeParameterDescriptor) -> State
+    container: IrTypeParametersContainer, expression: IrFunctionAccessExpression, mapper: (IrTypeParameterSymbol) -> State
 ): List<Variable> {
     fun IrType.getState(): State {
-        return this.classOrNull?.owner?.let { Common(it) } ?: mapper(this.classifierOrFail.descriptor as TypeParameterDescriptor)
+        return this.classOrNull?.owner?.let { Common(it) } ?: mapper(this.classifierOrFail as IrTypeParameterSymbol)
     }
 
     val typeArguments = container.typeParameters.mapIndexed { index, typeParameter ->
         val typeArgument = expression.getTypeArgument(index)!!
-        Variable(typeParameter.descriptor, typeArgument.getState())
+        Variable(typeParameter.symbol, typeArgument.getState())
     }.toMutableList()
 
     if (container is IrSimpleFunction) {
         container.returnType.classifierOrFail.owner.safeAs<IrTypeParameter>()
-            ?.let { typeArguments.add(Variable(it.descriptor, expression.type.getState())) }
+            ?.let { typeArguments.add(Variable(it.symbol, expression.type.getState())) }
     }
 
     return typeArguments
@@ -236,13 +201,13 @@ fun getTypeArguments(
 fun State?.extractNonLocalDeclarations(): List<Variable> {
     this ?: return listOf()
     val state = this.takeIf { it !is Complex } ?: (this as Complex).getOriginal()
-    return state.fields.filterNot { it.descriptor.containingDeclaration == state.irClass.descriptor }
+    return state.fields.filter { it.symbol !is IrFieldSymbol }
 }
 
 fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State? {
     if (this !is Complex) return this
 
     val original: Complex? = this.getOriginal()
-    val other = irFunction.dispatchReceiverParameter?.descriptor ?: return this
-    return generateSequence(original) { it.superClass }.firstOrNull { it.irClass.descriptor.thisAsReceiverParameter.equalTo(other) } ?: this
+    val other = irFunction.parentClassOrNull?.thisReceiver ?: return this
+    return generateSequence(original) { it.superClass }.firstOrNull { it.irClass.thisReceiver == other } ?: this
 }

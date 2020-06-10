@@ -56,7 +56,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             is Double -> irBuiltIns.doubleType
             null -> irBuiltIns.nothingType
             else -> when (defaultType.classifierOrNull?.owner) {
-                is IrTypeParameter -> stack.getVariable(defaultType.classifierOrFail.descriptor).state.irClass.defaultType
+                is IrTypeParameter -> stack.getVariable(defaultType.classifierOrFail).state.irClass.defaultType
                 else -> defaultType
             }
         }
@@ -225,7 +225,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             constructorCall.putValueArgument(index, primitive.value.toIrConst(primitive.type))
         }
 
-        val constructorValueParameters = constructor.valueParameters.map { it.descriptor }.zip(primitiveValueParameters)
+        val constructorValueParameters = constructor.valueParameters.map { it.symbol }.zip(primitiveValueParameters)
         return stack.newFrame(initPool = constructorValueParameters.map { Variable(it.first, it.second) }) {
             constructorCall.interpret()
         }
@@ -239,7 +239,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             true -> listOfNotNull(irFunction.getExtensionReceiver())
             else -> listOf()
         }
-        val valueParametersDescriptors = receiverAsFirstArgument + irFunction.descriptor.valueParameters
+        val valueParametersDescriptors = receiverAsFirstArgument + irFunction.valueParameters.map { it.symbol }
 
         val valueArguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
         val defaultValues = expression.symbol.owner.valueParameters.map { it.defaultValue?.expression }
@@ -326,11 +326,11 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         val classProperties = irClass.declarations.filterIsInstance<IrProperty>()
         classProperties.forEach { property ->
             property.backingField?.initializer?.expression?.interpret()?.check { return it }
-            val receiver = irClass.descriptor.thisAsReceiverParameter
+            val receiver = irClass.thisReceiver!!.symbol
             if (property.backingField?.initializer != null) {
                 val receiverState = stack.getVariable(receiver).state
-                val property = Variable(property.backingField!!.descriptor, stack.popReturnValue())
-                receiverState.setField(property)
+                val propertyVar = Variable(property.backingField!!.symbol, stack.popReturnValue())
+                receiverState.setField(propertyVar)
             }
         }
 
@@ -363,9 +363,9 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         if (irClass.isLocal) state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
         if (irClass.isInner) {
             constructorCall.dispatchReceiver!!.interpret().check { return it }
-            state.outerClass = Variable(constructorCall.symbol.owner.dispatchReceiverParameter!!.descriptor, stack.popReturnValue())
+            state.outerClass = Variable(irClass.parentAsClass.thisReceiver!!.symbol, stack.popReturnValue())
         }
-        valueArguments.add(Variable(irClass.thisReceiver!!.descriptor, state)) //used to set up fields in body
+        valueArguments.add(Variable(irClass.thisReceiver!!.symbol, state)) //used to set up fields in body
         return stack.newFrame(initPool = valueArguments + state.typeArguments) {
             val statements = constructorCall.getBody()!!.statements
             // enum entry use IrTypeOperatorCall with IMPLICIT_COERCION_TO_UNIT as delegation call, but we need the value
@@ -443,7 +443,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
 
     private suspend fun interpretReturn(expression: IrReturn): ExecutionResult {
         expression.value.interpret().check { return it }
-        return Return.addInfo(expression.returnTargetSymbol.descriptor.toString())
+        return Return.addOwnerInfo(expression.returnTargetSymbol.owner)
     }
 
     private suspend fun interpretWhile(expression: IrWhileLoop): ExecutionResult {
@@ -487,24 +487,24 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     }
 
     private fun interpretBreak(breakStatement: IrBreak): ExecutionResult {
-        return BreakLoop.addInfo(breakStatement.label ?: "")
+        return BreakLoop.addOwnerInfo(breakStatement.loop)
     }
 
     private fun interpretContinue(continueStatement: IrContinue): ExecutionResult {
-        return Continue.addInfo(continueStatement.label ?: "")
+        return Continue.addOwnerInfo(continueStatement.loop)
     }
 
     private suspend fun interpretSetField(expression: IrSetField): ExecutionResult {
         expression.value.interpret().check { return it }
 
         // receiver is null only for top level var, but it cannot be used in constexpr; corresponding check is on frontend
-        val receiver = (expression.receiver as IrDeclarationReference).symbol.descriptor
-        stack.getVariable(receiver).apply { this.state.setField(Variable(expression.symbol.owner.descriptor, stack.popReturnValue())) }
+        val receiver = (expression.receiver as IrDeclarationReference).symbol
+        stack.getVariable(receiver).apply { this.state.setField(Variable(expression.symbol, stack.popReturnValue())) }
         return Next
     }
 
     private suspend fun interpretGetField(expression: IrGetField): ExecutionResult {
-        val receiver = (expression.receiver as? IrDeclarationReference)?.symbol?.descriptor
+        val receiver = (expression.receiver as? IrDeclarationReference)?.symbol
         val field = expression.symbol.owner
         // for java static variables
         if (field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic) {
@@ -512,7 +512,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             return Next
         }
         // receiver is null, for example, for top level fields
-        val result = receiver?.let { stack.getVariable(receiver).state.getState(expression.symbol.descriptor) }
+        val result = receiver?.let { stack.getVariable(receiver).state.getState(expression.symbol) }
             ?: return (expression.symbol.owner.initializer?.expression?.interpret() ?: Next)
         stack.pushReturnValue(result)
         return Next
@@ -522,23 +522,23 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         val owner = expression.type.classOrNull?.owner
         // used to evaluate constants inside object
         if (owner != null && owner.isObject) return getOrCreateObjectValue(owner) // TODO is this correct behaviour?
-        stack.pushReturnValue(stack.getVariable(expression.symbol.descriptor).state)
+        stack.pushReturnValue(stack.getVariable(expression.symbol).state)
         return Next
     }
 
     private suspend fun interpretVariable(expression: IrVariable): ExecutionResult {
         expression.initializer?.interpret()?.check { return it } ?: return Next
-        stack.addVar(Variable(expression.descriptor, stack.popReturnValue()))
+        stack.addVar(Variable(expression.symbol, stack.popReturnValue()))
         return Next
     }
 
     private suspend fun interpretSetVariable(expression: IrSetVariable): ExecutionResult {
         expression.value.interpret().check { return it }
 
-        if (stack.contains(expression.symbol.descriptor)) {
-            stack.getVariable(expression.symbol.descriptor).apply { this.state = stack.popReturnValue() }
+        if (stack.contains(expression.symbol)) {
+            stack.getVariable(expression.symbol).apply { this.state = stack.popReturnValue() }
         } else {
-            stack.addVar(Variable(expression.symbol.descriptor, stack.popReturnValue()))
+            stack.addVar(Variable(expression.symbol, stack.popReturnValue()))
         }
         return Next
     }
@@ -569,7 +569,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             val executionResult = when {
                 enumClass.hasAnnotation(evaluateIntrinsicAnnotation) -> {
                     val enumEntryName = it.name.asString().toState(irBuiltIns.stringType)
-                    val enumNameAsVariable = Variable(valueOfFun.valueParameters.first().descriptor, enumEntryName)
+                    val enumNameAsVariable = Variable(valueOfFun.valueParameters.first().symbol, enumEntryName)
                     stack.newFrame(initPool = listOf(enumNameAsVariable)) { Wrapper.getEnumEntry(enumClass)!!.invokeMethod(valueOfFun) }
                 }
                 else -> interpretEnumEntry(it)
@@ -601,7 +601,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
 
     private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall): ExecutionResult {
         val executionResult = expression.argument.interpret().check { return it }
-        val typeOperandDescriptor = expression.typeOperand.classifierOrFail.descriptor
+        val typeOperandDescriptor = expression.typeOperand.classifierOrFail
         val typeOperandClass = expression.typeOperand.classOrNull?.owner ?: stack.getVariable(typeOperandDescriptor).state.irClass
 
         when (expression.operator) {
@@ -657,16 +657,16 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             }
         }
 
-        val array = when (expression.type.classifierOrFail.descriptor.name.asString()) {
+        val array = when ((expression.type.classifierOrFail.owner as? IrDeclaration)?.nameForIrSerialization?.asString()) {
             "UByteArray", "UShortArray", "UIntArray", "ULongArray" -> {
                 val owner = expression.type.classOrNull!!.owner
-                val constructor = owner.primaryConstructor!!
-                val storageParameter = constructor.valueParameters.single()
+                val storageProperty = owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "storage" }
+                val storageField = storageProperty.backingField!!
                 val primitiveArray = args.map { ((it as Common).fields.single().state as Primitive<*>).value }
-                val unsignedArray = primitiveArray.toPrimitiveStateArray(storageParameter.type)
+                val unsignedArray = primitiveArray.toPrimitiveStateArray(storageField.type)
                 Common(owner).apply {
                     setSuperClassRecursive()
-                    fields.add(Variable(storageParameter.descriptor, unsignedArray))
+                    fields.add(Variable(storageField.symbol, unsignedArray))
                 }
             }
             else -> args.toPrimitiveStateArray(expression.type)
@@ -697,7 +697,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     }
 
     private suspend fun interpretCatch(expression: IrCatch): ExecutionResult {
-        val catchParameter = Variable(expression.parameter, stack.popReturnValue())
+        val catchParameter = Variable(expression.catchParameter.symbol, stack.popReturnValue())
         return stack.newFrame(asSubFrame = true, initPool = listOf(catchParameter)) {
             expression.result.interpret()
         }

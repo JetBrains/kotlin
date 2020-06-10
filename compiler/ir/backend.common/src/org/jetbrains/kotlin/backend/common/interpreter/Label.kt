@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.interpreter
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrWhen
@@ -27,7 +28,7 @@ inline fun ExecutionResult.check(toCheckLabel: ReturnLabel = ReturnLabel.NEXT, r
     return this
 }
 
-open class ExecutionResultWithoutInfo(override val returnLabel: ReturnLabel) : ExecutionResult {
+open class ExecutionResultWithoutInfoAboutOwner(override val returnLabel: ReturnLabel) : ExecutionResult {
     override suspend fun getNextLabel(irElement: IrElement, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult {
         return when (returnLabel) {
             ReturnLabel.RETURN -> this
@@ -42,18 +43,18 @@ open class ExecutionResultWithoutInfo(override val returnLabel: ReturnLabel) : E
         }
     }
 
-    fun addInfo(info: String): ExecutionResultWithInfo {
-        return ExecutionResultWithInfo(returnLabel, info)
+    fun addOwnerInfo(owner: IrElement): ExecutionResultWithInfoAboutOwner {
+        return ExecutionResultWithInfoAboutOwner(returnLabel, owner)
     }
 }
 
-class ExecutionResultWithInfo(override val returnLabel: ReturnLabel, val info: String) : ExecutionResultWithoutInfo(returnLabel) {
+class ExecutionResultWithInfoAboutOwner(
+    override val returnLabel: ReturnLabel, private val owner: IrElement
+) : ExecutionResultWithoutInfoAboutOwner(returnLabel) {
     override suspend fun getNextLabel(irElement: IrElement, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult {
         return when (returnLabel) {
             ReturnLabel.RETURN -> when (irElement) {
-                is IrCall -> if (info == irElement.symbol.descriptor.toString()) Next else this
-                is IrReturnableBlock -> if (info == irElement.symbol.descriptor.toString()) Next else this
-                is IrFunctionImpl -> if (info == irElement.descriptor.toString()) Next else this
+                is IrCall, is IrReturnableBlock, is IrFunctionImpl, is IrLazyFunction -> if (owner == irElement) Next else this
                 else -> this
             }
             ReturnLabel.BREAK_WHEN -> when (irElement) {
@@ -61,11 +62,11 @@ class ExecutionResultWithInfo(override val returnLabel: ReturnLabel, val info: S
                 else -> this
             }
             ReturnLabel.BREAK_LOOP -> when (irElement) {
-                is IrWhileLoop -> if ((irElement.label ?: "") == info) Next else this
+                is IrWhileLoop -> if (owner == irElement) Next else this
                 else -> this
             }
             ReturnLabel.CONTINUE -> when (irElement) {
-                is IrWhileLoop -> if ((irElement.label ?: "") == info) irElement.interpret() else this
+                is IrWhileLoop -> if (owner == irElement) irElement.interpret() else this
                 else -> this
             }
             ReturnLabel.EXCEPTION -> Exception
@@ -74,9 +75,9 @@ class ExecutionResultWithInfo(override val returnLabel: ReturnLabel, val info: S
     }
 }
 
-object Next : ExecutionResultWithoutInfo(ReturnLabel.NEXT)
-object Return : ExecutionResultWithoutInfo(ReturnLabel.RETURN)
-object BreakLoop : ExecutionResultWithoutInfo(ReturnLabel.BREAK_LOOP)
-object BreakWhen : ExecutionResultWithoutInfo(ReturnLabel.BREAK_WHEN)
-object Continue : ExecutionResultWithoutInfo(ReturnLabel.CONTINUE)
-object Exception : ExecutionResultWithoutInfo(ReturnLabel.EXCEPTION)
+object Next : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.NEXT)
+object Return : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.RETURN)
+object BreakLoop : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.BREAK_LOOP)
+object BreakWhen : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.BREAK_WHEN)
+object Continue : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.CONTINUE)
+object Exception : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.EXCEPTION)

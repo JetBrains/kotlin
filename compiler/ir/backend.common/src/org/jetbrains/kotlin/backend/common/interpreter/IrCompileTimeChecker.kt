@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
@@ -204,7 +205,11 @@ class IrCompileTimeChecker(
             IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF,
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST,
-            IrTypeOperator.IMPLICIT_NOTNULL -> expression.argument.accept(this, data)
+            IrTypeOperator.IMPLICIT_NOTNULL -> {
+                val operand = expression.typeOperand.classifierOrNull?.owner
+                if (operand is IrTypeParameter && !callStack.contains((operand.parent as IrSymbolOwner).symbol)) return false
+                expression.argument.accept(this, data)
+            }
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> false
             else -> false
         }

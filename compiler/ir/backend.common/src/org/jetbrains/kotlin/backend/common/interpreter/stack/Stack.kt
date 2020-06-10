@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.backend.common.interpreter.stack
 import org.jetbrains.kotlin.backend.common.interpreter.ExecutionResult
 import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterException
 import org.jetbrains.kotlin.backend.common.interpreter.state.State
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
@@ -28,10 +28,10 @@ interface Stack {
     fun clean()
     fun addVar(variable: Variable)
     fun addAll(variables: List<Variable>)
-    fun getVariable(variableDescriptor: DeclarationDescriptor): Variable
+    fun getVariable(symbol: IrSymbol): Variable
     fun getAll(): List<Variable>
 
-    fun contains(descriptor: DeclarationDescriptor): Boolean
+    fun contains(symbol: IrSymbol): Boolean
     fun hasReturnValue(): Boolean
     fun pushReturnValue(state: State)
     fun popReturnValue(): State
@@ -43,8 +43,8 @@ class StackImpl : Stack {
     private fun getCurrentFrame() = frameList.last()
 
     override suspend fun newFrame(asSubFrame: Boolean, initPool: List<Variable>, block: suspend () -> ExecutionResult): ExecutionResult {
-        val typeArgumentsPool = initPool.filter { it.descriptor is TypeParameterDescriptor }
-        val valueArguments = initPool.filter { it.descriptor !is TypeParameterDescriptor }
+        val typeArgumentsPool = initPool.filter { it.symbol is IrTypeParameterSymbol }
+        val valueArguments = initPool.filter { it.symbol !is IrTypeParameterSymbol }
         val newFrame = InterpreterFrame(valueArguments.toMutableList(), typeArgumentsPool)
         if (asSubFrame) getCurrentFrame().addSubFrame(newFrame) else frameList.add(FrameContainer(newFrame))
 
@@ -86,16 +86,16 @@ class StackImpl : Stack {
         getCurrentFrame().addAll(variables)
     }
 
-    override fun getVariable(variableDescriptor: DeclarationDescriptor): Variable {
-        return getCurrentFrame().getVariable(variableDescriptor)
+    override fun getVariable(symbol: IrSymbol): Variable {
+        return getCurrentFrame().getVariable(symbol)
     }
 
     override fun getAll(): List<Variable> {
         return getCurrentFrame().getAll()
     }
 
-    override fun contains(descriptor: DeclarationDescriptor): Boolean {
-        return getCurrentFrame().contains(descriptor)
+    override fun contains(symbol: IrSymbol): Boolean {
+        return getCurrentFrame().contains(symbol)
     }
 
     override fun hasReturnValue(): Boolean {
@@ -132,12 +132,12 @@ private class FrameContainer(current: Frame = InterpreterFrame()) {
     fun addVar(variable: Variable) = getTopFrame().addVar(variable)
     fun addAll(variables: List<Variable>) = getTopFrame().addAll(variables)
     fun getAll() = innerStack.flatMap { it.getAll() }
-    fun getVariable(variableDescriptor: DeclarationDescriptor): Variable {
-        return innerStack.firstNotNullResult { it.getVariable(variableDescriptor) }
-            ?: throw InterpreterException("$variableDescriptor not found") // TODO better message
+    fun getVariable(symbol: IrSymbol): Variable {
+        return innerStack.firstNotNullResult { it.getVariable(symbol) }
+            ?: throw InterpreterException("$symbol not found") // TODO better message
     }
 
-    fun contains(descriptor: DeclarationDescriptor) = innerStack.any { it.contains(descriptor) }
+    fun contains(symbol: IrSymbol) = innerStack.any { it.contains(symbol) }
     fun hasReturnValue() = getTopFrame().hasReturnValue()
     fun pushReturnValue(container: FrameContainer) = getTopFrame().pushReturnValue(container.getTopFrame())
     fun pushReturnValue(state: State) = getTopFrame().pushReturnValue(state)

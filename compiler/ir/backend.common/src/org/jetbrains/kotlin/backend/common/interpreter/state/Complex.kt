@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.state
 
-import org.jetbrains.kotlin.backend.common.interpreter.equalTo
-import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
 import org.jetbrains.kotlin.backend.common.interpreter.getCorrectReceiverByFunction
+import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.overrides
 
 abstract class Complex(override val irClass: IrClass, override val fields: MutableList<Variable>) : State {
     var superClass: Complex? = null
@@ -45,12 +45,14 @@ abstract class Complex(override val irClass: IrClass, override val fields: Mutab
         return irClass.fqNameForIrSerialization.toString()
     }
 
-    private fun contains(variable: Variable) = fields.any { it.descriptor == variable.descriptor }
+    private fun contains(variable: Variable) = fields.any { it.symbol == variable.symbol }
 
-    private fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {
+    private fun getIrFunction(symbol: IrFunctionSymbol): IrFunction? {
         val propertyGetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }
         val functions = irClass.declarations.filterIsInstance<IrFunction>()
-        return (propertyGetters + functions).singleOrNull { it.descriptor.equalTo(descriptor) }
+        return (propertyGetters + functions).firstOrNull {
+            if (it is IrSimpleFunction) it.overrides(symbol.owner as IrSimpleFunction) else it == symbol.owner
+        }
     }
 
     private fun getThisOrSuperReceiver(superIrClass: IrClass?): Complex? {
@@ -80,7 +82,7 @@ abstract class Complex(override val irClass: IrClass, override val fields: Mutab
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
         val receiver = getThisOrSuperReceiver(expression.superQualifierSymbol?.owner) ?: return null
 
-        val irFunction = receiver.getIrFunction(expression.symbol.descriptor) ?: return null
+        val irFunction = receiver.getIrFunction(expression.symbol) ?: return null
 
         return when (irFunction.body) {
             null -> getOverridden(irFunction as IrSimpleFunction, this.getCorrectReceiverByFunction(irFunction))

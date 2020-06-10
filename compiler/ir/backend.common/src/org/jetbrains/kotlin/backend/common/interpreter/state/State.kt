@@ -5,23 +5,22 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.state
 
-import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 interface State {
     val fields: MutableList<Variable>
     val irClass: IrClass
 
-    fun getState(descriptor: DeclarationDescriptor): State? {
-        return fields.firstOrNull { it.descriptor.equalTo(descriptor) }?.state
+    fun getState(symbol: IrSymbol): State? {
+        return fields.firstOrNull { it.symbol == symbol }?.state
     }
 
     fun setField(newVar: Variable) {
-        when (val oldState = fields.firstOrNull { it.descriptor == newVar.descriptor }) {
+        when (val oldState = fields.firstOrNull { it.symbol == newVar.symbol }) {
             null -> fields.add(newVar)                                      // newVar isn't present in value list
             else -> fields[fields.indexOf(oldState)].state = newVar.state   // newVar already present
         }

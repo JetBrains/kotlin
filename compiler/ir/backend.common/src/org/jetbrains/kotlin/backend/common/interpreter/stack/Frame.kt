@@ -5,18 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.stack
 
-import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.backend.common.interpreter.state.State
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import kotlin.NoSuchElementException
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 
 interface Frame {
     fun addVar(variable: Variable)
     fun addAll(variables: List<Variable>)
-    fun getVariable(variableDescriptor: DeclarationDescriptor): Variable?
+    fun getVariable(symbol: IrSymbol): Variable?
     fun getAll(): List<Variable>
-    fun contains(descriptor: DeclarationDescriptor): Boolean
+    fun contains(symbol: IrSymbol): Boolean
     fun pushReturnValue(state: State)
     fun pushReturnValue(frame: Frame) // TODO rename to getReturnValueFrom
     fun peekReturnValue(): State
@@ -39,17 +37,16 @@ class InterpreterFrame(
         pool.addAll(variables)
     }
 
-    override fun getVariable(variableDescriptor: DeclarationDescriptor): Variable? {
-        return (if (variableDescriptor is TypeParameterDescriptor) typeArguments else pool)
-            .firstOrNull { it.descriptor.equalTo(variableDescriptor) }
+    override fun getVariable(symbol: IrSymbol): Variable? {
+        return (if (symbol is IrTypeParameterSymbol) typeArguments else pool).firstOrNull { it.symbol == symbol }
     }
 
     override fun getAll(): List<Variable> {
         return pool
     }
 
-    override fun contains(descriptor: DeclarationDescriptor): Boolean {
-        return (typeArguments + pool).any { it.descriptor == descriptor }
+    override fun contains(symbol: IrSymbol): Boolean {
+        return (typeArguments + pool).any { it.symbol == symbol }
     }
 
     override fun pushReturnValue(state: State) {

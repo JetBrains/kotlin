@@ -5,22 +5,26 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.state
 
-import org.jetbrains.kotlin.backend.common.interpreter.equalTo
 import org.jetbrains.kotlin.backend.common.interpreter.getFqName
+import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State {
     override val fields: MutableList<Variable> = mutableListOf()
 
-    // irFunction is anonymous declaration, but irCall will contain descriptor of invoke method from Function interface
-    private val invokeDescriptor = irClass.declarations.single { it.nameForIrSerialization.asString() == "invoke" }.descriptor
+    private val invokeSymbol = irClass.declarations
+        .single { it.nameForIrSerialization.asString() == "invoke" }
+        .cast<IrSimpleFunction>()
+        .getLastOverridden().symbol
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
-        return if (invokeDescriptor.equalTo(expression.symbol.descriptor)) irFunction else null
+        return if (invokeSymbol == expression.symbol) irFunction else null
     }
 
     override fun toString(): String {

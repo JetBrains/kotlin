@@ -60,7 +60,7 @@ object ArrayOfNulls : IntrinsicBase() {
     override suspend fun evaluate(
         irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
     ): ExecutionResult {
-        val size = stack.getVariable(irFunction.valueParameters.first().descriptor).state.asInt()
+        val size = stack.getVariable(irFunction.valueParameters.first().symbol).state.asInt()
         val array = arrayOfNulls<Any?>(size)
         stack.pushReturnValue(array.toState(irFunction.returnType))
         return Next
@@ -77,7 +77,7 @@ object EnumValues : IntrinsicBase() {
         irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
     ): ExecutionResult {
         val enumClass = when (irFunction.fqNameWhenAvailable.toString()) {
-            "kotlin.enumValues" -> stack.getVariable(irFunction.typeParameters.first().descriptor).state.irClass
+            "kotlin.enumValues" -> stack.getVariable(irFunction.typeParameters.first().symbol).state.irClass
             else -> irFunction.parent as IrClass
         }
 
@@ -98,10 +98,10 @@ object EnumValueOf : IntrinsicBase() {
         irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
     ): ExecutionResult {
         val enumClass = when (irFunction.fqNameWhenAvailable.toString()) {
-            "kotlin.enumValueOf" -> stack.getVariable(irFunction.typeParameters.first().descriptor).state.irClass
+            "kotlin.enumValueOf" -> stack.getVariable(irFunction.typeParameters.first().symbol).state.irClass
             else -> irFunction.parent as IrClass
         }
-        val enumEntryName = stack.getVariable(irFunction.valueParameters.first().descriptor).state.asString()
+        val enumEntryName = stack.getVariable(irFunction.valueParameters.first().symbol).state.asString()
         val enumEntry = enumClass.declarations.filterIsInstance<IrEnumEntry>().singleOrNull { it.name.asString() == enumEntryName }
         enumEntry?.interpret()?.check { return it }
             ?: throw IllegalArgumentException("No enum constant ${enumClass.fqNameWhenAvailable}.$enumEntryName")
@@ -125,7 +125,7 @@ object RegexReplace : IntrinsicBase() {
         val transform = states.filterIsInstance<Lambda>().single().irFunction
         val matchResultParameter = transform.valueParameters.single()
         val result = regex.replace(input) {
-            val itAsState = Variable(matchResultParameter.descriptor, Wrapper(it, matchResultParameter.type.classOrNull!!.owner))
+            val itAsState = Variable(matchResultParameter.symbol, Wrapper(it, matchResultParameter.type.classOrNull!!.owner))
             runBlocking { stack.newFrame(initPool = listOf(itAsState)) { transform.interpret() } }//.check { return it }
             stack.popReturnValue().asString()
         }
@@ -160,12 +160,12 @@ object JsPrimitives : IntrinsicBase() {
     ): ExecutionResult {
         when (irFunction.fqNameWhenAvailable.toString()) {
             "kotlin.Long.<init>" -> {
-                val low = stack.getVariable(irFunction.valueParameters[0].descriptor).state.asInt()
-                val high = stack.getVariable(irFunction.valueParameters[1].descriptor).state.asInt()
+                val low = stack.getVariable(irFunction.valueParameters[0].symbol).state.asInt()
+                val high = stack.getVariable(irFunction.valueParameters[1].symbol).state.asInt()
                 stack.pushReturnValue((high.toLong().shl(32) + low).toState(irFunction.returnType))
             }
             "kotlin.Char.<init>" -> {
-                val value = stack.getVariable(irFunction.valueParameters[0].descriptor).state.asInt()
+                val value = stack.getVariable(irFunction.valueParameters[0].symbol).state.asInt()
                 stack.pushReturnValue(value.toChar().toState(irFunction.returnType))
             }
         }
@@ -182,20 +182,22 @@ object ArrayConstructor : IntrinsicBase() {
     override suspend fun evaluate(
         irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
     ): ExecutionResult {
-        val sizeDescriptor = irFunction.valueParameters[0].descriptor
+        val sizeDescriptor = irFunction.valueParameters[0].symbol
         val size = stack.getVariable(sizeDescriptor).state.asInt()
         val arrayValue = MutableList<Any>(size) { 0 }
 
         if (irFunction.valueParameters.size == 2) {
-            val initDescriptor = irFunction.valueParameters[1].descriptor
+            val initDescriptor = irFunction.valueParameters[1].symbol
             val initLambda = stack.getVariable(initDescriptor).state as Lambda
             val index = initLambda.irFunction.valueParameters.single()
+            val nonLocalDeclarations = initLambda.extractNonLocalDeclarations()
             for (i in 0 until size) {
-                val indexVar = listOf(Variable(index.descriptor, i.toState(index.type)))
+                val indexVar = listOf(Variable(index.symbol, i.toState(index.type)))
                 // TODO throw exception if label != RETURN
-                stack.newFrame(asSubFrame = initLambda.irFunction.isLocal || initLambda.irFunction.isInline, initPool = indexVar) {
-                    initLambda.irFunction.body!!.interpret()
-                }.check(ReturnLabel.RETURN) { return it }
+                stack.newFrame(
+                    asSubFrame = initLambda.irFunction.isLocal || initLambda.irFunction.isInline,
+                    initPool = nonLocalDeclarations + indexVar
+                ) { initLambda.irFunction.body!!.interpret() }.check(ReturnLabel.RETURN) { return it }
                 arrayValue[i] = stack.popReturnValue().let { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }
             }
         }

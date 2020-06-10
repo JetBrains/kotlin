@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.interpreter.getEvaluateIntrinsicValue
 import org.jetbrains.kotlin.backend.common.interpreter.getFqName
 import org.jetbrains.kotlin.backend.common.interpreter.getPrimitiveClass
 import org.jetbrains.kotlin.backend.common.interpreter.hasAnnotation
-import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass

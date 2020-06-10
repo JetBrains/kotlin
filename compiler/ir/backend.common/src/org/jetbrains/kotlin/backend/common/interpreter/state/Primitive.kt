@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.isFakeOverride
@@ -20,8 +21,8 @@ class Primitive<T>(var value: T, val type: IrType) : State {
     override val fields: MutableList<Variable> = mutableListOf()
     override val irClass: IrClass = type.classOrNull!!.owner
 
-    override fun getState(descriptor: DeclarationDescriptor): State {
-        return super.getState(descriptor) ?: this
+    override fun getState(symbol: IrSymbol): State {
+        return super.getState(symbol) ?: this
     }
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
