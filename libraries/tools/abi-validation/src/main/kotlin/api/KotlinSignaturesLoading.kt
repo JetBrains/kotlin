@@ -5,19 +5,19 @@
 
 package kotlinx.validation.api
 
+import kotlinx.validation.*
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
 import java.io.InputStream
 import java.util.jar.JarFile
 
 
-private fun JarFile.classEntries() = Sequence { entries().iterator() }.filter {
-    !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
-}
-
+@ExternalApi
+@Suppress("unused")
 fun JarFile.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> =
         classEntries().map { entry -> getInputStream(entry) }.loadApiFromJvmClasses(visibilityFilter)
 
+@ExternalApi
 fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String) -> Boolean = { true }): List<ClassBinarySignature> {
     val classNodes = map {
         it.use { stream ->
@@ -28,7 +28,6 @@ fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String) -> Bo
     }
 
     val visibilityMapNew = classNodes.readKotlinVisibilities().filterKeys(visibilityFilter)
-
     return classNodes
         .map { classNode -> with(classNode) {
                 val metadata = kotlinMetadata
@@ -55,6 +54,7 @@ fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String) -> Bo
 }
 
 
+@ExternalApi
 fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: Collection<String> = emptyList()): List<ClassBinarySignature> {
     val nonPublicPaths = nonPublicPackages.map { it.replace('.', '/') + '/' }
     val classByName = associateBy { it.name }
@@ -92,8 +92,10 @@ fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: Collection<
         .filterNot { it.isNotUsedWhenEmpty && it.memberSignatures.isEmpty() }
 }
 
+@ExternalApi
 fun List<ClassBinarySignature>.dump() = dump(to = System.out)
 
+@ExternalApi
 fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {
     forEach { classApi ->
         with(to) {
@@ -105,4 +107,8 @@ fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {
         }
     }
     return to
+}
+
+private fun JarFile.classEntries() = Sequence { entries().iterator() }.filter {
+    !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
 }
