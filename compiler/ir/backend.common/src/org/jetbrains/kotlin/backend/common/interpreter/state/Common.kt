@@ -5,22 +5,19 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.state
 
-import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.isInterface
 
 class Common private constructor(
-    override val irClass: IrClass, override val fields: MutableList<Variable>, override val typeArguments: MutableList<Variable>,
-    superClass: Complex?, subClass: Complex?
-) : Complex(irClass, fields, superClass, subClass) {
+    override val irClass: IrClass, override val fields: MutableList<Variable>
+) : Complex(irClass, fields) {
 
-    constructor(irClass: IrClass) : this(irClass, mutableListOf(), mutableListOf(), null, null)
+    constructor(irClass: IrClass) : this(irClass, mutableListOf())
 
     fun setSuperClassRecursive() {
         var thisClass: Common? = this
@@ -51,9 +48,7 @@ class Common private constructor(
             .let { getOverridden(it as IrSimpleFunction, this) }
     }
 
-    override fun copy(): State {
-        return Common(irClass, fields, typeArguments, superClass, subClass ?: this)
-    }
+    override fun copy() = Common(irClass, fields).copyFrom(this)
 
     override fun toString(): String {
         return "Common(obj='${irClass.fqNameForIrSerialization}', super=$superClass, values=$fields)"

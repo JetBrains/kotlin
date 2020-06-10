@@ -281,6 +281,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val isLocal = (dispatchReceiver as? Complex)?.getOriginal()?.irClass?.isLocal ?: irFunction.isLocal
         if (isLocal) valueArguments.addAll(dispatchReceiver.extractNonLocalDeclarations())
 
+        if (functionReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) {
+            generateSequence(functionReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { valueArguments.add(it) }
+        }
+
         return stack.newFrame(asSubFrame = irFunction.isInline || irFunction.isLocal, initPool = valueArguments) {
             // inline only methods are not presented in lookup table, so must be interpreted instead of execution
             val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
@@ -321,20 +325,24 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         interpretValueParameters(constructorCall, owner, valueArguments).check { return it }
 
-        val parent = owner.parent as IrClass
-        val typeArguments = getTypeArguments(parent, constructorCall) { stack.getVariableState(it) } + stack.getAllTypeArguments()
-        if (parent.hasAnnotation(evaluateIntrinsicAnnotation)) {
+        val irClass = owner.parent as IrClass
+        val typeArguments = getTypeArguments(irClass, constructorCall) { stack.getVariableState(it) } + stack.getAllTypeArguments()
+        if (irClass.hasAnnotation(evaluateIntrinsicAnnotation)) {
             return stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
-                .apply { (stack.peekReturnValue() as? Wrapper)?.typeArguments?.addAll(typeArguments) } // can be exception
+                .apply { (stack.peekReturnValue() as? Wrapper)?.typeArguments?.addAll(typeArguments) } // 'as?' because can be exception
         }
 
-        if (parent.defaultType.isArray() || parent.defaultType.isPrimitiveArray()) {
+        if (irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray()) {
             // array constructor doesn't have body so must be treated separately
             return stack.newFrame(initPool = valueArguments) { handleIntrinsicMethods(owner) }
         }
 
-        val state = Common(parent).apply { this.typeArguments.addAll(typeArguments) }
-        if (parent.isLocal) state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
+        val state = Common(irClass).apply { this.typeArguments.addAll(typeArguments) }
+        if (irClass.isLocal) state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
+        if (irClass.isInner) {
+            constructorCall.dispatchReceiver!!.interpret().check { return it }
+            state.outerClass = Variable(constructorCall.symbol.owner.dispatchReceiverParameter!!.descriptor, stack.popReturnValue())
+        }
         valueArguments.add(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
         return stack.newFrame(initPool = valueArguments + state.typeArguments) {
             val statements = constructorCall.getBody()!!.statements

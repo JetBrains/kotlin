@@ -18,10 +18,11 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isInterface
 
-abstract class Complex(
-    override val irClass: IrClass, override val fields: MutableList<Variable>, var superClass: Complex?, var subClass: Complex?
-) : State {
-    abstract val typeArguments: MutableList<Variable>
+abstract class Complex(override val irClass: IrClass, override val fields: MutableList<Variable>) : State {
+    var superClass: Complex? = null
+    var subClass: Complex? = null
+    val typeArguments: MutableList<Variable> = mutableListOf()
+    var outerClass: Variable? = null
 
     fun setSuperClassInstance(superClass: Complex) {
         if (this.irClass == superClass.irClass) {
@@ -50,6 +51,14 @@ abstract class Complex(
             null -> fields.add(newVar)                          // newVar isn't present in value list
             else -> fields[fields.indexOf(oldState)] = newVar   // newVar already present
         }
+    }
+
+    protected fun copyFrom(other: Complex): State {
+        this.superClass = other.superClass
+        this.subClass = other.subClass ?: other
+        this.typeArguments.addAll(other.typeArguments)
+        this.outerClass = other.outerClass
+        return this
     }
 
     private fun getIrFunction(descriptor: FunctionDescriptor): IrFunction? {

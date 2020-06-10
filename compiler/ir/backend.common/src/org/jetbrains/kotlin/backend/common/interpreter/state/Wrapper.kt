@@ -34,14 +34,10 @@ import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 
-class Wrapper private constructor(
-    val value: Any, override val irClass: IrClass, subClass: Complex?, override val typeArguments: MutableList<Variable>
-) : Complex(irClass, mutableListOf(), null, subClass) {
+class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, mutableListOf()) {
 
     private val typeFqName = irClass.fqNameForIrSerialization.toUnsafe()
     private val receiverClass = irClass.defaultType.getClass(true)
-
-    constructor(value: Any, irClass: IrClass) : this(value, irClass, null, mutableListOf())
 
     fun getMethod(irFunction: IrFunction): MethodHandle? {
         if (irFunction.getEvaluateIntrinsicValue()?.isEmpty() == true) return null // this method will handle IntrinsicEvaluator
@@ -198,9 +194,7 @@ class Wrapper private constructor(
         }
     }
 
-    override fun copy(): State {
-        return Wrapper(value, irClass, subClass ?: this, typeArguments)
-    }
+    override fun copy() = Wrapper(value, irClass).copyFrom(this)
 
     override fun toString(): String {
         return "Wrapper(obj='$typeFqName', value=$value)"
