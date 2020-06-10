@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.backend.common.interpreter.toState
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.isSubclassOf
@@ -22,15 +21,15 @@ class ExceptionState private constructor(
 
     private lateinit var exceptionFqName: String
     private val exceptionHierarchy = mutableListOf<String>()
-    private val messageField = irClass.getFieldByName("message")
-    private val causeField = irClass.getFieldByName("cause")
+    private val messageProperty = irClass.getPropertyByName("message")
+    private val causeProperty = irClass.getPropertyByName("cause")
 
     private val stackTrace: List<String> = stackTrace.reversed()
 
     init {
         if (!this::exceptionFqName.isInitialized) this.exceptionFqName = irClassFqName()
 
-        if (fields.none { it.symbol == messageField.symbol }) {
+        if (fields.none { it.symbol == messageProperty.symbol }) {
             setMessage()
         }
     }
@@ -81,17 +80,17 @@ class ExceptionState private constructor(
     }
 
     private fun setMessage(messageValue: String? = null) {
-        setField(Variable(messageField.symbol, Primitive(messageValue, messageField.type)))
+        setField(Variable(messageProperty.symbol, Primitive(messageValue, messageProperty.getter!!.returnType)))
     }
 
     private fun setCause(causeValue: State?) {
-        setField(Variable(causeField.symbol, causeValue ?: Primitive<Throwable?>(null, causeField.type)))
+        setField(Variable(causeProperty.symbol, causeValue ?: Primitive<Throwable?>(null, causeProperty.getter!!.returnType)))
     }
 
-    fun getMessage(): String? = (getState(messageField.symbol) as Primitive<*>).value as String?
+    fun getMessage(): String? = (getState(messageProperty.symbol) as Primitive<*>).value as String?
     private fun getMessageWithName(): String = getMessage()?.let { "$exceptionFqName: $it" } ?: exceptionFqName
 
-    fun getCause(): ExceptionState? = getState(causeField.symbol)?.let { if (it is ExceptionState) it else null }
+    fun getCause(): ExceptionState? = getState(causeProperty.symbol)?.let { if (it is ExceptionState) it else null }
 
     fun getFullDescription(): String {
         // TODO remainder of the stack trace with "..."
@@ -107,18 +106,18 @@ class ExceptionState private constructor(
     fun getThisAsCauseForException() = ExceptionData(this)
 
     companion object {
-        private fun IrClass.getFieldByName(name: String): IrField {
+        private fun IrClass.getPropertyByName(name: String): IrProperty {
             val property = this.declarations.single { it.nameForIrSerialization.asString() == name } as IrProperty
-            return (property.getter!!.getLastOverridden() as IrSimpleFunction).correspondingPropertySymbol!!.owner.backingField!!
+            return (property.getter!!.getLastOverridden() as IrSimpleFunction).correspondingPropertySymbol!!.owner
         }
 
         private fun evaluateFields(exception: Throwable, irClass: IrClass, stackTrace: List<String>): MutableList<Variable> {
-            val messageField = irClass.getFieldByName("message")
-            val causeField = irClass.getFieldByName("cause")
+            val messageProperty = irClass.getPropertyByName("message")
+            val causeProperty = irClass.getPropertyByName("cause")
 
-            val messageVar = Variable(messageField.symbol, exception.message.toState(messageField.type))
+            val messageVar = Variable(messageProperty.symbol, exception.message.toState(messageProperty.getter!!.returnType))
             val causeVar = exception.cause?.let {
-                Variable(causeField.symbol, ExceptionState(it, irClass, stackTrace + it.stackTrace.reversed().map { "at $it" }))
+                Variable(causeProperty.symbol, ExceptionState(it, irClass, stackTrace + it.stackTrace.reversed().map { "at $it" }))
             }
             return listOfNotNull(messageVar, causeVar).toMutableList()
         }

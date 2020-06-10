@@ -337,7 +337,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             val receiver = irClass.thisReceiver!!.symbol
             if (property.backingField?.initializer != null) {
                 val receiverState = stack.getVariable(receiver).state
-                val propertyVar = Variable(property.backingField!!.symbol, stack.popReturnValue())
+                val propertyVar = Variable(property.symbol, stack.popReturnValue())
                 receiverState.setField(propertyVar)
             }
         }
@@ -508,7 +508,8 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
 
         // receiver is null only for top level var, but it cannot be used in constexpr; corresponding check is on frontend
         val receiver = (expression.receiver as IrDeclarationReference).symbol
-        stack.getVariable(receiver).apply { this.state.setField(Variable(expression.symbol, stack.popReturnValue())) }
+        val propertySymbol = expression.symbol.owner.correspondingPropertySymbol!!
+        stack.getVariable(receiver).apply { this.state.setField(Variable(propertySymbol, stack.popReturnValue())) }
         return Next
     }
 
@@ -521,7 +522,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             return Next
         }
         // receiver is null, for example, for top level fields
-        val result = receiver?.let { stack.getVariable(receiver).state.getState(expression.symbol) }
+        val result = receiver?.let { stack.getVariable(receiver).state.getState(field.correspondingPropertySymbol!!) }
             ?: return (expression.symbol.owner.initializer?.expression?.interpret() ?: Next)
         stack.pushReturnValue(result)
         return Next
@@ -672,12 +673,11 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             "UByteArray", "UShortArray", "UIntArray", "ULongArray" -> {
                 val owner = expression.type.classOrNull!!.owner
                 val storageProperty = owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "storage" }
-                val storageField = storageProperty.backingField!!
                 val primitiveArray = args.map { ((it as Common).fields.single().state as Primitive<*>).value }
-                val unsignedArray = primitiveArray.toPrimitiveStateArray(storageField.type)
+                val unsignedArray = primitiveArray.toPrimitiveStateArray(storageProperty.backingField!!.type)
                 Common(owner).apply {
                     setSuperClassRecursive()
-                    fields.add(Variable(storageField.symbol, unsignedArray))
+                    fields.add(Variable(storageProperty.symbol, unsignedArray))
                 }
             }
             else -> args.toPrimitiveStateArray(expression.type)
