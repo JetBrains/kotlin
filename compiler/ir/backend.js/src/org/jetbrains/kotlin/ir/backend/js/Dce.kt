@@ -270,6 +270,12 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                     expression.symbol.owner.enqueue("function access")
                 }
 
+                override fun visitRawFunctionReference(expression: IrRawFunctionReference) {
+                    super.visitRawFunctionReference(expression)
+
+                    expression.symbol.owner.enqueue("raw function access")
+                }
+
                 override fun visitVariableAccess(expression: IrValueAccessExpression) {
                     super.visitVariableAccess(expression)
 

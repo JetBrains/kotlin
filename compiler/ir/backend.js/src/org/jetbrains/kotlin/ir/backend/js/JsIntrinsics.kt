@@ -301,6 +301,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsBoxIntrinsic = getInternalFunction("boxIntrinsic")
     val jsUnboxIntrinsic = getInternalFunction("unboxIntrinsic")
 
+    val captureStack = getInternalFunction("captureStack")
+
     val createSharedBox = defineCreateSharedBox()
     val readSharedBox = defineReadSharedBox()
     val writeSharedBox = defineWriteSharedBox()

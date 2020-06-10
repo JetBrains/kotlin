@@ -79,11 +79,9 @@ internal fun getStringHashCode(str: String): Int {
 
 internal fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
 
-internal fun captureStack(instance: Throwable) {
+internal fun captureStack(instance: Throwable, constructorFunction: Any) {
     if (js("Error").captureStackTrace != null) {
-        // TODO Why we generated get kclass for throwable in original code?
-        js("Error").captureStackTrace(instance, instance.asDynamic().constructor)
-//        js("Error").captureStackTrace(instance, instance::class.js)
+        js("Error").captureStackTrace(instance, constructorFunction)
     } else {
         instance.asDynamic().stack = js("new Error()").stack
     }
@@ -110,7 +108,6 @@ internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, 
         this_.cause = cause
     }
     this_.name = JsObject.getPrototypeOf(this_).constructor.name
-    captureStack(this_)
 }
 
 @JsName("Object")
