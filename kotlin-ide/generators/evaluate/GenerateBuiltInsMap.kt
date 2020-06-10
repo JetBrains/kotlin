@@ -48,6 +48,7 @@ fun generateMap(): String {
 
     val unaryOperationsMap = mutableMapOf<CallableDescriptor, List<KotlinType>>()
     val binaryOperationsMap = mutableMapOf<CallableDescriptor, List<KotlinType>>()
+    val ternaryOperationsMap = mutableMapOf<CallableDescriptor, List<KotlinType>>()
     val builtIns = DefaultBuiltIns.Instance
 
     //save common built ins
@@ -67,6 +68,7 @@ fun generateMap(): String {
             when (parametersTypes.size) {
                 1 -> unaryOperationsMap[function] = parametersTypes
                 2 -> binaryOperationsMap[function] = parametersTypes
+                3 -> ternaryOperationsMap[function] = parametersTypes
                 else -> throw IllegalStateException("Couldn't add following method from builtins to operations map: ${function.name} in class ${descriptor.name}")
             }
         }
@@ -133,6 +135,19 @@ fun generateMap(): String {
     }
     p.println(binaryBody)
     p.println(")")
+
+    p.println("val ternaryFunctions = mapOf<CompileTimeFunction, Function3<Any?, Any?, Any?, Any>>(")
+    val ternaryBody = ternaryOperationsMap.entries.joinToString(",\n") { (function, parameters) ->
+        val receiverType = parameters.last().toString()
+        val firstParameter = parameters[0].toString()
+        val secondParameter = parameters[1].toString()
+        val methodName = "${function.name}"
+        "    ternaryOperation<$receiverType, $firstParameter, $secondParameter>" +
+                "(\"$methodName\", \"$receiverType\", \"$firstParameter\", \"$secondParameter\") { a, b, c -> a.$methodName(b, c) }"
+    }
+    p.println(ternaryBody)
+    p.println(")")
+    p.println()
 
     return sb.toString()
 }
