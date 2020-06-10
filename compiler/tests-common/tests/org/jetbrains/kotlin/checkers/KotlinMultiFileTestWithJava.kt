@@ -44,11 +44,12 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         file: File,
         files: List<F>
     ): KotlinCoreEnvironment {
-        val configuration = KotlinTestUtils.newConfiguration(
+        val configuration = createConfiguration(
             extractConfigurationKind(files),
             getTestJdkKind(files),
             getClasspath(file),
-            if (isJavaSourceRootNeeded()) listOf(javaFilesDir) else emptyList()
+            if (isJavaSourceRootNeeded()) listOf(javaFilesDir) else emptyList(),
+            files
         )
         if (isScriptingNeeded(file)) {
             loadScriptingPlugin(configuration)
@@ -61,15 +62,11 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         // The main difference is the fact that the new class file reading implementation doesn't load parameter names from JDK classes.
         configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
 
-        performCustomConfiguration(configuration)
+        updateConfiguration(configuration)
         return createForTests(testRootDisposable, configuration, getEnvironmentConfigFiles())
     }
 
     protected open fun isJavaSourceRootNeeded(): Boolean = true
-
-    protected open fun performCustomConfiguration(configuration: CompilerConfiguration) {}
-
-    protected open fun setupEnvironment(environment: KotlinCoreEnvironment) {}
 
     protected open fun setupEnvironment(
         environment: KotlinCoreEnvironment,

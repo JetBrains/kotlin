@@ -8,5 +8,6 @@ package org.jetbrains.kotlin.codegen.debugInformation
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrLocalVariableTest : AbstractLocalVariableTest() {
-    override fun getBackend(): TargetBackend = TargetBackend.JVM_IR
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM_IR
 }
