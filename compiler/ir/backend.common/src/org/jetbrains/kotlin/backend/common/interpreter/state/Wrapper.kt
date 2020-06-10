@@ -14,15 +14,13 @@ import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.isTypeParameter
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -95,6 +93,12 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
 
             val methodType = irFunction.getMethodType()
             return MethodHandles.lookup().findStatic(jvmClassName, irFunction.name.asString(), methodType)
+        }
+
+        fun getStaticGetter(field: IrField): MethodHandle? {
+            val jvmClass = field.parentAsClass.defaultType.getClass(true)
+            val returnType = field.type.getClass(false)
+            return MethodHandles.lookup().findStaticGetter(jvmClass, field.name.asString(), returnType)
         }
 
         fun getEnumEntry(enumClass: IrClass): MethodHandle? {

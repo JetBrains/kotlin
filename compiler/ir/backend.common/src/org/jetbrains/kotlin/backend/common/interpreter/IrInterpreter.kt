@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterTim
 import org.jetbrains.kotlin.backend.common.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.backend.common.interpreter.state.*
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -389,7 +388,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     }
 
     private suspend fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall): ExecutionResult {
-        if (delegatingConstructorCall.symbol.descriptor.containingDeclaration.defaultType == DefaultBuiltIns.Instance.anyType) {
+        if (delegatingConstructorCall.symbol.owner.parent == irBuiltIns.anyClass.owner) {
             val anyAsStateObject = Common(irBuiltIns.anyClass.owner)
             stack.pushReturnValue(anyAsStateObject)
             return Next
@@ -506,6 +505,12 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
 
     private suspend fun interpretGetField(expression: IrGetField): ExecutionResult {
         val receiver = (expression.receiver as? IrDeclarationReference)?.symbol?.descriptor
+        val field = expression.symbol.owner
+        // for java static variables
+        if (field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic) {
+            stack.pushReturnValue(Wrapper.getStaticGetter(field)!!.invokeWithArguments().toState(field.type))
+            return Next
+        }
         // receiver is null, for example, for top level fields
         val result = receiver?.let { stack.getVariable(receiver).state.getState(expression.symbol.descriptor) }
             ?: return (expression.symbol.owner.initializer?.expression?.interpret() ?: Next)
