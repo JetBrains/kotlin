@@ -203,6 +203,24 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.kt");
     }
 
+    @TestMetadata("idea/testData/indentationOnNewline/arrayAccess")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ArrayAccess extends AbstractPerformanceTypingIndentationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInArrayAccess() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/arrayAccess"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("listAccess.kt")
+        public void testListAccess() throws Exception {
+            runTest("idea/testData/indentationOnNewline/arrayAccess/listAccess.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/indentationOnNewline/controlFlowConstructions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

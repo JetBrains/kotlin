@@ -47,6 +47,9 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             before.isAt(BlockOpeningBrace) && after.isAt(BlockClosingBrace) && !currentPosition.hasLineBreaksAfter(offset) ->
                 return factory.createIndentCalculator(Indent.getNoneIndent(), before.startOffset)
 
+            before.isAt(ArrayOpeningBracket) && after.isAt(ArrayClosingBracket) && !currentPosition.hasLineBreaksAfter(offset) ->
+                return factory.createIndentCalculator(Indent.getNoneIndent(), before.startOffset)
+
             before.isAt(BlockOpeningBrace) && before.beforeIgnoringWhiteSpaceOrComment().isFunctionDeclaration() ->
                 return factory.createIndentCalculator(Indent.getNormalIndent(), before.startOffset)
 

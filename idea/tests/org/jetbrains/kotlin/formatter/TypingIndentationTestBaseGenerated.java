@@ -205,6 +205,24 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.kt");
         }
 
+        @TestMetadata("idea/testData/indentationOnNewline/arrayAccess")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ArrayAccess extends AbstractTypingIndentationTestBase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doNewlineTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInArrayAccess() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/arrayAccess"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("listAccess.after.kt")
+            public void testListAccess() throws Exception {
+                runTest("idea/testData/indentationOnNewline/arrayAccess/listAccess.after.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/indentationOnNewline/controlFlowConstructions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1172,6 +1190,19 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("SettingAlignMultilineParametersInCalls.after.inv.kt")
         public void testSettingAlignMultilineParametersInCalls() throws Exception {
             runTest("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.inv.kt");
+        }
+
+        @TestMetadata("idea/testData/indentationOnNewline/arrayAccess")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ArrayAccess extends AbstractTypingIndentationTestBase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doNewlineTestWithInvert, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInArrayAccess() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/arrayAccess"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+            }
         }
 
         @TestMetadata("idea/testData/indentationOnNewline/controlFlowConstructions")
