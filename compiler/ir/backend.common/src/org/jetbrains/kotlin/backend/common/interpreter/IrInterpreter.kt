@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -41,8 +42,8 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     private var commandCount = 0
 
     companion object {
-        private val mapOfEnums = mutableMapOf<String, Complex>()
-        private val mapOfObjects = mutableMapOf<String, Complex>()
+        private val mapOfEnums = mutableMapOf<IrSymbol, Complex>()
+        private val mapOfObjects = mutableMapOf<IrSymbol, Complex>()
     }
 
     private fun Any?.getType(defaultType: IrType): IrType {
@@ -545,23 +546,21 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     }
 
     private fun getOrCreateObjectValue(objectClass: IrClass): ExecutionResult {
-        val objectSignature = objectClass.fqNameWhenAvailable.toString()
-        mapOfObjects[objectSignature]?.let { return Next.apply { stack.pushReturnValue(it) } }
+        mapOfObjects[objectClass.symbol]?.let { return Next.apply { stack.pushReturnValue(it) } }
 
         val objectState = when {
             objectClass.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getCompanionObject(objectClass)
             else -> Common(objectClass).apply { setSuperClassRecursive() } // TODO test type arguments
         }
-        mapOfObjects[objectSignature] = objectState
+        mapOfObjects[objectClass.symbol] = objectState
         stack.pushReturnValue(objectState)
         return Next
     }
 
     private suspend fun interpretGetEnumValue(expression: IrGetEnumValue): ExecutionResult {
-        val enumEntry = expression.symbol.owner
-        val enumSignature = enumEntry.fqNameWhenAvailable.toString()
-        mapOfEnums[enumSignature]?.let { return Next.apply { stack.pushReturnValue(it) } }
+        mapOfEnums[expression.symbol]?.let { return Next.apply { stack.pushReturnValue(it) } }
 
+        val enumEntry = expression.symbol.owner
         val enumClass = enumEntry.symbol.owner.parentAsClass
         val valueOfFun = enumClass.declarations.single { it.nameForIrSerialization.asString() == "valueOf" } as IrFunction
         enumClass.declarations.filterIsInstance<IrEnumEntry>().forEach {
@@ -574,10 +573,10 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
                 else -> interpretEnumEntry(it)
             }
             executionResult.check { result -> return result }
-            mapOfEnums[it.fqNameWhenAvailable.toString()] = stack.popReturnValue() as Complex
+            mapOfEnums[it.symbol] = stack.popReturnValue() as Complex
         }
 
-        stack.pushReturnValue(mapOfEnums[enumSignature]!!)
+        stack.pushReturnValue(mapOfEnums[expression.symbol]!!)
         return Next
     }
 
