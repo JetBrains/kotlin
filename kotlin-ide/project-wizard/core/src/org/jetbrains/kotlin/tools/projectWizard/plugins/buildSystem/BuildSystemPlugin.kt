@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.BuildSystemAvailabilityWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
@@ -110,6 +112,15 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
             BuildSystemPlugin::buildSystemData.addValues(data)
         }
     }
+
+    override val settings: List<PluginSetting<*, *>> = listOf(
+        type,
+    )
+    override val pipelineTasks: List<PipelineTask> = listOf(
+        takeRepositoriesFromDependencies,
+        createModules,
+        importProject,
+    )
 }
 
 data class BuildSystemData(

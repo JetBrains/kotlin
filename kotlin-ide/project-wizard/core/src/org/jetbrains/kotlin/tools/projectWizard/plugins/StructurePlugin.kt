@@ -3,8 +3,10 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins
 
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.PomIR
@@ -67,6 +69,17 @@ class StructurePlugin(context: Context) : Plugin(context) {
             service<FileSystemWizardService>().createDirectory(StructurePlugin::projectPath.reference.settingValue)
         }
     }
+
+    override val settings: List<PluginSetting<*, *>> =
+        listOf(
+            projectPath,
+            name,
+            groupId,
+            artifactId,
+            version
+        )
+    override val pipelineTasks: List<PipelineTask> =
+        listOf(createProjectDir)
 
     companion object {
         private val ALLOWED_SPECIAL_CHARS_IN_GROUP_ID = Module.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES + '.'

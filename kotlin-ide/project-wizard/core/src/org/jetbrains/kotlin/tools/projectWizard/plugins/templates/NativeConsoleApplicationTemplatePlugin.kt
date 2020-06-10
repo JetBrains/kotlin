@@ -6,8 +6,14 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.templates.NativeConsoleApplicationTemplate
 
 class NativeConsoleApplicationTemplatePlugin(context: Context) : TemplatePlugin(context) {
     val addTemplate by addTemplateTask(NativeConsoleApplicationTemplate())
+
+    override val pipelineTasks: List<PipelineTask> = super.pipelineTasks +
+            listOf(
+                addTemplate,
+            )
 }

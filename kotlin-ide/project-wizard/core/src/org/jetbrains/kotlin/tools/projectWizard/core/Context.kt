@@ -20,12 +20,13 @@ class Context private constructor(
     private val propertyContext: PropertyContext,
     private val taskContext: TaskContext
 ) {
+
     private lateinit var plugins: List<Plugin>
 
     private val settingWritingContext = SettingsWriter()
 
     private val pluginSettings by lazy(LazyThreadSafetyMode.NONE) {
-        plugins.flatMap(Plugin::declaredSettings).distinctBy(PluginSetting<*, *>::path)
+        plugins.flatMap(Plugin::settings).distinctBy(PluginSetting<*, *>::path)
     }
 
     fun <T> read(reader: Reader.() -> T): T =
@@ -107,7 +108,7 @@ class Context private constructor(
 
     private val pipelineLineTasks: List<PipelineTask>
         get() = plugins
-            .flatMap { it.declaredTasks.filterIsInstance<PipelineTask>() }
+            .flatMap { it.pipelineTasks }
 
     private fun task(reference: PipelineTaskReference) =
         taskContext.getEntity(reference) as? PipelineTask ?: error(reference.path)
@@ -251,7 +252,7 @@ class Context private constructor(
 fun Reader.getUnspecifiedSettings(phases: Set<GenerationPhase>): List<AnySetting> {
     val required = plugins
         .flatMap { plugin ->
-            plugin.declaredSettings.mapNotNull { setting ->
+            plugin.settings.mapNotNull { setting ->
                 if (setting.neededAtPhase !in phases) return@mapNotNull null
                 if (setting.isRequired) setting else null
             }

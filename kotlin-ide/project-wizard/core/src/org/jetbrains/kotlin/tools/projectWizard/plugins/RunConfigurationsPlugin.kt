@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
 import org.jetbrains.kotlin.tools.projectWizard.core.UNIT_SUCCESS
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.service.RunConfigurationsService
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
@@ -26,4 +28,7 @@ class RunConfigurationsPlugin(context: Context) : Plugin(context) {
             UNIT_SUCCESS
         }
     }
+
+    override val settings: List<PluginSetting<*, *>> = emptyList()
+    override val pipelineTasks: List<PipelineTask> = listOf(createRunConfigurationsTask)
 }
