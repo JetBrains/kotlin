@@ -129,7 +129,6 @@ org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertFunctionTypeP
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertFunctionTypeParameterToReceiver.testNonFirstParameterSecondaryConstructor, on ConvertFunctionTypeParameterToReceiver rerun,, FLAKY
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesAndMembers, Enum reorder,,
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesOnly, Generated entries reordered,,
-org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testWithNonObjectInheritors, Enum reorder,,
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testBlankLineBetween, KT-34408,,
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testLongInit, KT-34408,,
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testLongInit2, KT-34408,,
