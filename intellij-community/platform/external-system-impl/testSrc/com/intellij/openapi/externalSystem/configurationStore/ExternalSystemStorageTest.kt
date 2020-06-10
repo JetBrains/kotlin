@@ -74,6 +74,7 @@ class ExternalSystemStorageTest {
     val module = ModuleManager.getInstance(project).modules.single()
     assertThat(module.name).isEqualTo("test")
     assertThat(module.moduleTypeName).isEqualTo(ModuleTypeId.JAVA_MODULE)
+    assertThat(module.moduleFilePath).isEqualTo("${project.basePath}/test.iml")
     assertThat(ExternalSystemModulePropertyManager.getInstance(module).isMavenized()).isTrue()
   }
 
@@ -96,6 +97,8 @@ class ExternalSystemStorageTest {
     assertThat(regular.name).isEqualTo("regular")
     assertThat(imported.moduleTypeName).isEqualTo(ModuleTypeId.JAVA_MODULE)
     assertThat(regular.moduleTypeName).isEqualTo(ModuleTypeId.JAVA_MODULE)
+    assertThat(imported.moduleFilePath).isEqualTo("${project.basePath}/imported.iml")
+    assertThat(regular.moduleFilePath).isEqualTo("${project.basePath}/regular.iml")
     assertThat(ModuleRootManager.getInstance(imported).contentRootUrls.single()).isEqualTo(VfsUtil.pathToUrl("${project.basePath}/imported"))
     assertThat(ModuleRootManager.getInstance(regular).contentRootUrls.single()).isEqualTo(VfsUtil.pathToUrl("${project.basePath}/regular"))
     val externalModuleProperty = ExternalSystemModulePropertyManager.getInstance(imported)
