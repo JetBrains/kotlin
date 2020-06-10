@@ -366,6 +366,28 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                         || containingClass.hasModifier(KtTokens.SEALED_KEYWORD)
                         || containingClass.hasModifier(KtTokens.OPEN_KEYWORD)
                 if (isOpenClass && hasOverrides(containingClass, restrictedScope)) return true
+
+                val containingClassSearchScope = GlobalSearchScope.projectScope(project)
+                val isRequiredToCallFunction =
+                    ReferencesSearch.search(KotlinReferencesSearchParameters(containingClass, containingClassSearchScope)).any { ref ->
+                        val userType = ref.element.parent as? KtUserType ?: return@any false
+                        val typeArguments = userType.typeArguments
+                        if (typeArguments.isEmpty()) return@any false
+
+                        val parameter = userType.getStrictParentOfType<KtParameter>() ?: return@any false
+                        val callableDeclaration = parameter.getStrictParentOfType<KtCallableDeclaration>()?.let {
+                            if (it !is KtNamedFunction) it.containingClass() else it
+                        } ?: return@any false
+                        val typeParameters = callableDeclaration.typeParameters.map { it.text }
+                        if (typeParameters.isEmpty()) return@any false
+                        if (typeArguments.none { it.text in typeParameters }) return@any false
+
+                        ReferencesSearch.search(KotlinReferencesSearchParameters(callableDeclaration, containingClassSearchScope)).any {
+                            val callElement = it.element.parent as? KtCallElement
+                            callElement != null && callElement.typeArgumentList == null
+                        }
+                    }
+                if (isRequiredToCallFunction) return true
             }
         }
 
