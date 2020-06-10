@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 
@@ -37,8 +39,8 @@ interface State {
     fun getIrFunction(descriptor: FunctionDescriptor): IrFunction?
 }
 
-open class Primitive<T>(var value: T, val type: IrType) : State {
-    final override val fields: MutableList<Variable> = mutableListOf()
+class Primitive<T>(var value: T, val type: IrType) : State {
+    override val fields: MutableList<Variable> = mutableListOf()
 
     init {
         val properties = type.classOrNull!!.owner.declarations.filterIsInstance<IrProperty>()
@@ -132,79 +134,55 @@ open class Complex(private var type: IrClass, override val fields: MutableList<V
     }
 }
 
-class Wrapper(private val type: IrClass, private val wrapperValue: Any) : Complex(type, mutableListOf()) {
+class Wrapper(val value: Any, private val type: IrClass) : Complex(type, mutableListOf()) {
     private val typeFqName = type.fqNameForIrSerialization.toUnsafe()
-    private val receiverClass = getPrimitiveClass(typeFqName.toString(), asObject = true)
-        ?: JavaToKotlinClassMap.mapKotlinToJava(typeFqName)?.let { Class.forName(it.asSingleFqName().toString()) }
-        ?: Class.forName(typeFqName.toString())
+    private val receiverClass = type.defaultType.getClass(true)
 
-    fun invoke(irFunction: IrFunctionImpl, data: Frame): Code {
-        val methodName = (irFunction.correspondingPropertySymbol?.owner?.name ?: irFunction.name).toString()
+    fun getMethod(irFunction: IrFunction): MethodHandle {
+        // used to get correct java method
+        // for example, method 'get' in kotlin StringBuilder is actually 'charAt' in java StringBuilder
+        val intrinsicName = irFunction.getEvaluateIntrinsicValue()
+        val property = (irFunction as? IrFunctionImpl)?.correspondingPropertySymbol?.owner
+        val methodName = intrinsicName ?: (property ?: irFunction).name.toString()
 
         val methodType = irFunction.getMethodType()
-        val method = MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
-
-        val result = method.invokeWithArguments(irFunction.getArgs(data))
-        data.pushReturnValue(result.toState(irFunction.returnType))
-
-        return Code.NEXT
+        return MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
     }
 
     companion object {
-        fun invokeStatic(irFunction: IrFunctionImpl, data: Frame): Code {
+        fun getConstructorMethod(irConstructor: IrFunction): MethodHandle {
+            val methodType = irConstructor.getMethodType()
+
+            return MethodHandles.lookup().findConstructor(irConstructor.returnType.getClass(true), methodType)
+        }
+
+        fun getStaticMethod(irFunction: IrFunction): MethodHandle {
             val annotation = irFunction.getAnnotation(evaluateIntrinsicAnnotation)
             val jvmFileName = Class.forName((annotation.getValueArgument(0) as IrConst<*>).value.toString())
 
-            val methodType = irFunction.getMethodType(withExtensionReceiver = true)
-            val method = MethodHandles.lookup().findStatic(jvmFileName, irFunction.name.asString(), methodType)
-
-            val result = method.invokeWithArguments(irFunction.getArgs(data))
-            data.pushReturnValue(result.toState(irFunction.returnType))
-
-            return Code.NEXT
+            val methodType = irFunction.getMethodType()
+            return MethodHandles.lookup().findStatic(jvmFileName, irFunction.name.asString(), methodType)
         }
 
-        private fun IrFunctionImpl.getMethodType(withExtensionReceiver: Boolean = false): MethodType {
-            val returnClass = this.returnType.getClass(this.isReturnTypePrimitiveAsObject())
+        private fun IrFunction.getMethodType(): MethodType {
             val argsClasses = this.valueParameters.map { it.type.getClass(this.isValueParameterPrimitiveAsObject(it.index)) }
+            return if (this is IrFunctionImpl) {
+                // for regular methods and functions
+                val returnClass = this.returnType.getClass(this.isReturnTypePrimitiveAsObject())
+                val extensionClass = this.extensionReceiverParameter?.type?.getClass(this.isExtensionReceiverPrimitive())
 
-            val extensionClass = when {
-                withExtensionReceiver -> this.extensionReceiverParameter?.type?.getClass(this.isExtensionReceiverPrimitiveAsObject())
-                else -> null
+                MethodType.methodType(returnClass, listOfNotNull(extensionClass) + argsClasses)
+            } else {
+                // for constructors
+                MethodType.methodType(Void::class.javaPrimitiveType, argsClasses)
             }
-
-            return MethodType.methodType(returnClass, listOfNotNull(extensionClass) + argsClasses)
-        }
-
-        private fun IrFunctionImpl.getArgs(data: Frame): List<Any?> {
-            val argsValues = data.getAll().map { (it.state as? Wrapper)?.wrapperValue ?: (it.state as? Any) }.toMutableList()
-
-            if (this.extensionReceiverParameter?.type.isPrimitiveState()) {
-                val varargState = data.getVariableState(this.symbol.getExtensionReceiver()!!)
-                argsValues[0] = (varargState as Primitive<*>).value
-            }
-
-            for ((index, valueParameter) in this.valueParameters.withIndex().reversed()) {
-                if (valueParameter.type.isPrimitiveState()) {
-                    argsValues[argsValues.size - 1 - index] = (argsValues[argsValues.size - 1 - index] as Primitive<*>).value
-                }
-            }
-
-            // TODO if vararg isn't last parameter
-            // must convert vararg array into separated elements for correct invoke
-            if (this.valueParameters.lastOrNull()?.varargElementType != null) {
-                argsValues.removeAt(argsValues.size - 1)
-                val varargState = data.getVariableState(this.valueParameters.last().descriptor)
-                val varargValue = (varargState as? Wrapper)?.wrapperValue ?: (varargState as Primitive<*>).value
-                argsValues.addAll(varargValue as Array<out Any?>)
-            }
-
-            return argsValues
         }
 
         private fun IrType.getClass(asObject: Boolean): Class<out Any> {
             val fqName = this.getFqName()
+            val owner = this.classOrNull?.owner
             return when {
+                owner?.hasAnnotation(evaluateIntrinsicAnnotation) == true -> Class.forName(owner.getEvaluateIntrinsicValue())
                 this.isPrimitiveType() -> getPrimitiveClass(fqName!!, asObject)
                 this.isArray() -> if (asObject) Array<Any?>::class.javaObjectType else Array<Any?>::class.java
                 //TODO primitive array
@@ -213,16 +191,18 @@ class Wrapper(private val type: IrClass, private val wrapperValue: Any) : Comple
             } ?: Class.forName(fqName)
         }
 
-        private fun IrFunctionImpl.getOriginalOverriddenSymbols(): MutableList<IrSimpleFunctionSymbol> {
-            val overriddenSymbols = mutableListOf<IrSimpleFunctionSymbol>()
-            val pool = this.overriddenSymbols.toMutableList()
-            val iterator = pool.listIterator()
-            for (symbol in iterator) {
-                if (symbol.owner.overriddenSymbols.isEmpty()) {
-                    overriddenSymbols += symbol
-                    iterator.remove()
-                } else {
-                    symbol.owner.overriddenSymbols.forEach { iterator.add(it) }
+        private fun IrFunction.getOriginalOverriddenSymbols(): MutableList<IrFunctionSymbol> {
+            val overriddenSymbols = mutableListOf<IrFunctionSymbol>()
+            if (this is IrFunctionImpl) {
+                val pool = this.overriddenSymbols.toMutableList()
+                val iterator = pool.listIterator()
+                for (symbol in iterator) {
+                    if (symbol.owner.overriddenSymbols.isEmpty()) {
+                        overriddenSymbols += symbol
+                        iterator.remove()
+                    } else {
+                        symbol.owner.overriddenSymbols.forEach { iterator.add(it) }
+                    }
                 }
             }
 
@@ -230,11 +210,11 @@ class Wrapper(private val type: IrClass, private val wrapperValue: Any) : Comple
             return overriddenSymbols
         }
 
-        private fun IrFunctionImpl.isExtensionReceiverPrimitiveAsObject(): Boolean {
+        private fun IrFunction.isExtensionReceiverPrimitive(): Boolean {
             return this.extensionReceiverParameter?.type?.isPrimitiveType() == false
         }
 
-        private fun IrFunctionImpl.isReturnTypePrimitiveAsObject(): Boolean {
+        private fun IrFunction.isReturnTypePrimitiveAsObject(): Boolean {
             for (symbol in getOriginalOverriddenSymbols()) {
                 if (!symbol.owner.returnType.isTypeParameter() && !symbol.owner.returnType.isNullable()) {
                     return false
@@ -243,7 +223,7 @@ class Wrapper(private val type: IrClass, private val wrapperValue: Any) : Comple
             return true
         }
 
-        private fun IrFunctionImpl.isValueParameterPrimitiveAsObject(index: Int): Boolean {
+        private fun IrFunction.isValueParameterPrimitiveAsObject(index: Int): Boolean {
             for (symbol in getOriginalOverriddenSymbols()) {
                 if (!symbol.owner.valueParameters[index].type.isTypeParameter() && !symbol.owner.valueParameters[index].type.isNullable()) {
                     return false
@@ -254,10 +234,10 @@ class Wrapper(private val type: IrClass, private val wrapperValue: Any) : Comple
     }
 
     override fun copy(): State {
-        return Wrapper(type, wrapperValue)
+        return Wrapper(value, type)
     }
 
     override fun toString(): String {
-        return "Wrapper(obj='$typeFqName', value=$wrapperValue)"
+        return "Wrapper(obj='$typeFqName', value=$value)"
     }
 }

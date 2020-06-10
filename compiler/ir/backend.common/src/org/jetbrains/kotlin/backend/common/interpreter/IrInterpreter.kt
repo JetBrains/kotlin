@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.statements
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import java.lang.invoke.MethodHandles
-import java.lang.invoke.MethodType
+import java.lang.invoke.MethodHandle
 
 enum class Code(var info: String = "") {
     NEXT, RETURN, BREAK_LOOP, BREAK_WHEN, CONTINUE, EXCEPTION
@@ -110,6 +108,14 @@ class IrInterpreter(irModule: IrModuleFragment) {
     // this method is used to get stack trace after exception
     private fun interpretFunction(irFunction: IrFunctionImpl, data: Frame): Code {
         return irFunction.body?.interpret(data) ?: throw AssertionError("Ir function must be with body")
+    }
+
+    private fun MethodHandle.invokeMethod(irFunction: IrFunction, data: Frame): Code {
+        // TODO try catch
+        val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(data))
+        data.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+
+        return Code.NEXT
     }
 
     private fun calculateAbstract(irFunction: IrFunction, data: Frame): Code {
@@ -232,8 +238,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val isWrapper = (dispatchReceiver is Wrapper && rawExtensionReceiver == null) ||
                 (extensionReceiver is Wrapper && rawDispatchReceiver == null)
         val code = when {
-            isWrapper -> ((dispatchReceiver ?: extensionReceiver) as Wrapper).invoke(irFunction as IrFunctionImpl, newFrame)
-            irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.invokeStatic(irFunction as IrFunctionImpl, newFrame)
+            isWrapper -> ((dispatchReceiver ?: extensionReceiver) as Wrapper).getMethod(irFunction).invokeMethod(irFunction, newFrame)
+            irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, newFrame)
             irFunction.isAbstract() -> calculateAbstract(irFunction, newFrame) //abstract check must be before fake overridden check
             irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrFunctionImpl, newFrame)
             irFunction.body == null -> calculateBuiltIns(irFunction, newFrame)
@@ -247,7 +253,14 @@ class IrInterpreter(irModule: IrModuleFragment) {
         interpretValueParameters(constructorCall, data).also { if (it != Code.NEXT) return it }
         val valueParameters = constructorCall.symbol.descriptor.valueParameters.map { Variable(it, data.popReturnValue()) }.toMutableList()
         val newFrame = InterpreterFrame(valueParameters)
-        val state = Complex(constructorCall.symbol.owner.parent as IrClass, mutableListOf())
+
+        val owner = constructorCall.symbol.owner
+        val parent = owner.parent as IrClass
+        if (parent.hasAnnotation(evaluateIntrinsicAnnotation)) {
+            return Wrapper.getConstructorMethod(owner).invokeMethod(owner, newFrame).apply { data.pushReturnValue(newFrame) }
+        }
+
+        val state = Complex(parent, mutableListOf())
         newFrame.addVar(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
         val code = constructorCall.getBody()?.interpret(newFrame) ?: Code.NEXT
         if (newFrame.hasReturnValue()) {
@@ -419,7 +432,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             "kotlin.FloatArray" -> Primitive(args.map { (it as Primitive<Float>).value }.toFloatArray(), type)
             "kotlin.DoubleArray" -> Primitive(args.map { (it as Primitive<Double>).value }.toDoubleArray(), type)
             "kotlin.BooleanArray" -> Primitive(args.map { (it as Primitive<Boolean>).value }.toBooleanArray(), type)
-            else -> Primitive<Array<*>>(args.toTypedArray(), type)
+            else -> Primitive<Array<*>>(args.map { (it as? Wrapper)?.value ?: (it as? Primitive<*>)?.value ?: it }.toTypedArray(), type)
         }
         data.pushReturnValue(array)
 

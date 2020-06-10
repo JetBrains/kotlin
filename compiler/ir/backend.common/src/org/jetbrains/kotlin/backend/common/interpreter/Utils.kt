@@ -5,24 +5,23 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter
 
+import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
+import org.jetbrains.kotlin.backend.common.interpreter.stack.Frame
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Primitive
 import org.jetbrains.kotlin.backend.common.interpreter.stack.State
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Wrapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isArray
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -102,7 +101,7 @@ fun Any?.toState(irType: IrType): State {
         is State -> this
         is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double -> Primitive(this, irType)
         null -> Primitive(this, irType)
-        else -> Wrapper(irType.classOrNull!!.owner, this)
+        else -> Wrapper(this, irType.classOrNull!!.owner)
     }
 }
 
@@ -126,7 +125,8 @@ fun <T> IrConst<T>.toPrimitive(): Primitive<T> {
     return Primitive(this.value, this.type)
 }
 
-fun IrAnnotationContainer.hasAnnotation(annotation: FqName): Boolean {
+fun IrAnnotationContainer?.hasAnnotation(annotation: FqName): Boolean {
+    this ?: return false
     if (this.annotations.isNotEmpty()) {
         return this.annotations.any { it.symbol.descriptor.containingDeclaration.fqNameSafe == annotation }
     }
@@ -134,7 +134,13 @@ fun IrAnnotationContainer.hasAnnotation(annotation: FqName): Boolean {
 }
 
 fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
-    return this.annotations.first { it.symbol.descriptor.containingDeclaration.fqNameSafe == annotation }
+    return this.annotations.firstOrNull { it.symbol.descriptor.containingDeclaration.fqNameSafe == annotation }
+        ?: ((this as IrFunction).parent as IrClass).annotations.first { it.symbol.descriptor.containingDeclaration.fqNameSafe == annotation }
+}
+
+fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
+    if (!this.hasAnnotation(evaluateIntrinsicAnnotation)) return null
+    return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
 }
 
 fun getPrimitiveClass(fqName: String, asObject: Boolean = false): Class<*>? {
@@ -156,6 +162,17 @@ fun IrType.getFqName(): String? {
     return this.classOrNull?.owner?.fqNameForIrSerialization?.asString()
 }
 
-fun IrType?.isPrimitiveState(): Boolean {
-    return this?.isPrimitiveType() == true || this?.isArray() == true || this?.isPrimitiveArray() == true
+fun IrFunction.getArgsForMethodInvocation(data: Frame): List<Any?> {
+    val argsValues = data.getAll().map { (it.state as? Wrapper)?.value ?: (it.state as Primitive<*>).value }.toMutableList()
+
+    // TODO if vararg isn't last parameter
+    // must convert vararg array into separated elements for correct invoke
+    if (this.valueParameters.lastOrNull()?.varargElementType != null) {
+        argsValues.removeAt(argsValues.size - 1)
+        val varargState = data.getVariableState(this.valueParameters.last().descriptor)
+        val varargValue = (varargState as? Wrapper)?.value ?: (varargState as Primitive<*>).value
+        argsValues.addAll(varargValue as Array<out Any?>)
+    }
+
+    return argsValues
 }
