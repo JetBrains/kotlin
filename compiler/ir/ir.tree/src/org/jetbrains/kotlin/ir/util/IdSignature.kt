@@ -46,7 +46,7 @@ sealed class IdSignature {
         return "${if (isPublic) "public" else "private"} ${render()}"
     }
 
-    data class PublicSignature(val packageFqn: FqName, val declarationFqn: FqName, val id: Long?, val mask: Long) : IdSignature() {
+    class PublicSignature(val packageFqn: FqName, val declarationFqn: FqName, val id: Long?, val mask: Long) : IdSignature() {
         override val isPublic = true
 
         override fun packageFqName() = packageFqn
@@ -80,9 +80,14 @@ sealed class IdSignature {
 
         override fun render(): String = "${packageFqn.asString()}/${declarationFqn.asString()}|$id[${mask.toString(2)}]"
 
-        override fun toString() = super.toString()
-
         override fun asPublic(): PublicSignature? = this
+
+        override fun equals(other: Any?): Boolean =
+            other is PublicSignature &&
+                    packageFqn == other.packageFqn && declarationFqn == other.declarationFqn && id == other.id && mask == other.mask
+
+        override fun hashCode(): Int =
+            ((packageFqn.hashCode() * 31 + declarationFqn.hashCode()) * 31 + id.hashCode()) * 31 + mask.hashCode()
     }
 
     class AccessorSignature(val propertySignature: IdSignature, val accessorSignature: PublicSignature) : IdSignature() {
