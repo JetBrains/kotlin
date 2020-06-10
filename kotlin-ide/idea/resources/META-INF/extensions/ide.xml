@@ -128,6 +128,11 @@
                      defaultValue="false"
                      restartRequired="false"/>
 
+        <registryKey key="kotlin.enable.move.method.refactoring"
+                     description="Enable experimental move method refactoring"
+                     defaultValue="false"
+                     restartRequired="false"/>
+
         <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
 
         <jbProtocolCommand implementation="org.jetbrains.kotlin.tools.projectWizard.wizard.OpenNewProjectWizardProtocolCommand"/>
