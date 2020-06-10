@@ -69,7 +69,7 @@ constructor(
     override val nodeModulesRequired: Boolean
         @Internal get() = testFramework!!.nodeModulesRequired
 
-    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
 
     @Deprecated("Use useMocha instead", ReplaceWith("useMocha()"))

@@ -198,7 +198,7 @@ constructor(
     override val nodeModulesRequired: Boolean
         @Internal get() = true
 
-    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = createRunner().config.getRequiredDependencies(versions)
 
     @TaskAction

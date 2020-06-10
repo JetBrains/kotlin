@@ -44,8 +44,8 @@ constructor(
         get() = true
 
     @get:Internal
-    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
-        get() = mutableListOf<RequiredKotlinJsDependency>().also {
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
+        get() = mutableSetOf<RequiredKotlinJsDependency>().also {
             if (sourceMapStackTraces) {
                 it.add(nodeJs.versions.sourceMapSupport)
             }

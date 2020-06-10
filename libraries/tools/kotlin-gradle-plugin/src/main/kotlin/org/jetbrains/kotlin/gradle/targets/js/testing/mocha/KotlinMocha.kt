@@ -30,8 +30,8 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
     override val settingsState: String
         get() = "mocha"
 
-    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
-        get() = listOf(
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
+        get() = setOf(
             versions.kotlinJsTestRunner,
             versions.mocha,
             versions.sourceMapSupport

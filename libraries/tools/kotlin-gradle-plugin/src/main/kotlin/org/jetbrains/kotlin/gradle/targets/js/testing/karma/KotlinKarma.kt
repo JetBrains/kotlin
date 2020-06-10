@@ -52,8 +52,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         project.projectDir.resolve("karma.config.d")
     }
 
-    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
-        get() = requiredDependencies.toList()
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
+        get() = requiredDependencies
 
     override val settingsState: String
         get() = "KotlinKarma($config)"

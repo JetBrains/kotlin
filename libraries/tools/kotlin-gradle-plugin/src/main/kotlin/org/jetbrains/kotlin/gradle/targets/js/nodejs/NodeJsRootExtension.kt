@@ -128,14 +128,14 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
 }
 
 class TasksRequirements {
-    val byTask = mutableMapOf<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>()
-    val byCompilation = mutableMapOf<KotlinJsCompilation, MutableList<RequiresNpmDependencies>>()
+    val byTask = mutableMapOf<RequiresNpmDependencies, Set<RequiredKotlinJsDependency>>()
+    private val byCompilation = mutableMapOf<KotlinJsCompilation, MutableList<RequiresNpmDependencies>>()
 
     fun getTaskRequirements(compilation: KotlinJsCompilation): Collection<RequiresNpmDependencies> =
         byCompilation[compilation] ?: listOf()
 
     fun addTaskRequirements(task: RequiresNpmDependencies) {
-        val requirements = task.requiredNpmDependencies.toList()
+        val requirements = task.requiredNpmDependencies
 
         byTask[task] = requirements
 

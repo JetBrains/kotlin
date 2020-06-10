@@ -24,8 +24,8 @@ abstract class AbstractDukatTask(
         get() = true
 
     @get:Internal
-    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
-        get() = listOf(nodeJs.versions.dukat)
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
+        get() = setOf(nodeJs.versions.dukat)
 
     /**
      * Package name for the generated file (by default filename.d.ts renamed to filename.d.kt)
