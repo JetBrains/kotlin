@@ -1,0 +1,23 @@
+package
+
+public fun </*0*/ T, /*1*/ R> foo(/*0*/ x: kotlin.reflect.KFunction1<T, R>): kotlin.Unit
+public fun </*0*/ T, /*1*/ R> foo(/*0*/ x: kotlin.reflect.KProperty1<T, R>): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public final val foo: kotlin.String = "hello"
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ b: kotlin.Boolean): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Sample {
+    public constructor Sample()
+    public final fun bar(): kotlin.Unit
+    public final fun bar(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

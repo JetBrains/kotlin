@@ -2765,6 +2765,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/resolveEqualsOperatorWithAnyExpectedType.kt");
                 }
 
+                @TestMetadata("resolveReferenceAgainstKFunctionAndKPrpoerty.kt")
+                public void testResolveReferenceAgainstKFunctionAndKPrpoerty() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/resolveReferenceAgainstKFunctionAndKPrpoerty.kt");
+                }
+
                 @TestMetadata("valVsFun.kt")
                 public void testValVsFun() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/valVsFun.kt");
