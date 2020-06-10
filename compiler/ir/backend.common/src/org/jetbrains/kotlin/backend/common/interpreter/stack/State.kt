@@ -228,9 +228,9 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
             val fqName = this.getFqName()
             val owner = this.classOrNull?.owner
             return when {
-                owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
                 this.isPrimitiveType() -> getPrimitiveClass(fqName!!, asObject)
                 this.isArray() -> if (asObject) Array<Any?>::class.javaObjectType else Array<Any?>::class.java
+                owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
                 //TODO primitive array
                 this.isTypeParameter() -> Any::class.java
                 else -> JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(fqName!!))?.let { Class.forName(it.asSingleFqName().toString()) }

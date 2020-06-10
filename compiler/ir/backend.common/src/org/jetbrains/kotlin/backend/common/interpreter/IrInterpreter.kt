@@ -458,7 +458,20 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val owner = constructorCall.symbol.owner
         val parent = owner.parent as IrClass
         if (parent.hasAnnotation(evaluateIntrinsicAnnotation)) {
-            return Wrapper.getConstructorMethod(owner).invokeMethod(owner, newFrame).apply { data.pushReturnValue(newFrame) }
+            return when (constructorCall.symbol.owner.parentAsClass.getEvaluateIntrinsicValue()) {
+                "kotlin.Long" -> {
+                    val low = (valueParameters[0].state as Primitive<*>).value as Int
+                    val high = (valueParameters[1].state as Primitive<*>).value as Int
+                    data.pushReturnValue((high.toLong().shl(32) + low).toState(irBuiltIns.longType))
+                    Code.NEXT
+                }
+                "kotlin.Char" -> {
+                    val value = (valueParameters.single().state as Primitive<*>).value as Int
+                    data.pushReturnValue(value.toChar().toState(irBuiltIns.longType))
+                    Code.NEXT
+                }
+                else -> Wrapper.getConstructorMethod(owner).invokeMethod(owner, newFrame).apply { data.pushReturnValue(newFrame) }
+            }
         }
 
         if (parent.defaultType.isArray() || parent.defaultType.isPrimitiveArray()) {
