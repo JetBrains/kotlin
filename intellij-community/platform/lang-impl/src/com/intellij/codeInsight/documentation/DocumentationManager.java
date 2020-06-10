@@ -424,7 +424,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     return file != null ? file.findElementAt(editor.getCaretModel().getOffset()) : null;
   }
 
-  private void doShowJavaDocInfo(@NotNull CompletableFuture<PsiElement> elementFuture,
+  protected void doShowJavaDocInfo(@NotNull CompletableFuture<PsiElement> elementFuture,
                                  boolean requestFocus,
                                  @NotNull PopupUpdateProcessor updateProcessor,
                                  PsiElement originalElement,
@@ -1122,7 +1122,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     return null;
   }
 
-  Editor getEditor() {
+  protected Editor getEditor() {
     return myEditor;
   }
 
