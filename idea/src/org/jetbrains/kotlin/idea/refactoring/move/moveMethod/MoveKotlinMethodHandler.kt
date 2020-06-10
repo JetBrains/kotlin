@@ -2,8 +2,10 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveMethod
 
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.move.MoveCallback
@@ -17,6 +19,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+
+private const val optionName = "kotlin.enable.move.method.refactoring"
+private val refactoringIsDisabled: Boolean
+    get() = !Registry.`is`(optionName) && !ApplicationManager.getApplication().isUnitTestMode
 
 class MoveKotlinMethodHandler : MoveHandlerDelegate() {
     private fun showErrorHint(project: Project, dataContext: DataContext?, message: String) {
@@ -77,6 +83,7 @@ class MoveKotlinMethodHandler : MoveHandlerDelegate() {
     }
 
     override fun canMove(elements: Array<PsiElement?>, targetContainer: PsiElement?, reference: PsiReference?): Boolean {
+        if (refactoringIsDisabled) return false
         if (elements.size != 1) return false
         val method = elements[0] as? KtNamedFunction ?: return false
         val sourceContainer = method.containingClassOrObject
@@ -85,10 +92,12 @@ class MoveKotlinMethodHandler : MoveHandlerDelegate() {
     }
 
     override fun isValidTarget(psiElement: PsiElement?, sources: Array<out PsiElement>): Boolean {
+        if (refactoringIsDisabled) return false
         return psiElement is KtClassOrObject && !psiElement.hasModifier(KtTokens.ANNOTATION_KEYWORD)
     }
 
     override fun doMove(project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?) {
+        if (refactoringIsDisabled) return
         if (elements.size != 1) return
         val method = elements[0] as? KtNamedFunction ?: return
         val sourceContainer = method.containingClassOrObject
@@ -99,6 +108,7 @@ class MoveKotlinMethodHandler : MoveHandlerDelegate() {
     override fun tryToMove(
         element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?
     ): Boolean {
+        if (refactoringIsDisabled) return false
         if (element is KtNamedFunction) {
             element.containingClassOrObject?.let { sourceContainer ->
                 if (!sourceContainer.isObjectLiteral()) {
