@@ -22,15 +22,21 @@
         implementation="com.intellij.openapi.externalSystem.service.project.ExternalSystemWorkingDirectoryProvider"/>
     <applicationService serviceInterface="com.intellij.openapi.externalSystem.util.environment.Environment"
                         serviceImplementation="com.intellij.openapi.externalSystem.util.environment.SystemEnvironment"/>
-    <!--Project structure management services-->
-    <applicationService serviceInterface="com.intellij.openapi.externalSystem.service.project.ProjectDataManager"
-                        serviceImplementation="com.intellij.openapi.externalSystem.service.project.manage.ProjectDataManagerImpl"/>
+
+    <!--Auto-reload-->
     <projectService serviceInterface="com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTracker"
                     serviceImplementation="com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker"/>
     <projectService serviceInterface="com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTrackerSettings"
                     serviceImplementation="com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTrackerSettings"/>
     <projectService serviceImplementation="com.intellij.openapi.externalSystem.autoimport.ProjectNotificationAware"/>
     <editorFloatingToolbarProvider implementation="com.intellij.openapi.externalSystem.autoimport.ProjectRefreshFloatingProvider"/>
+    <projectConfigurable groupId="build" id="build.tools" groupWeight="1000"
+                         instance="com.intellij.openapi.externalSystem.service.settings.ExternalSystemGroupConfigurable"/>
+
+    <!--Project structure management services-->
+    <applicationService serviceInterface="com.intellij.openapi.externalSystem.service.project.ProjectDataManager"
+                        serviceImplementation="com.intellij.openapi.externalSystem.service.project.manage.ProjectDataManagerImpl"/>
+
     <projectService serviceInterface="com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager"
                     serviceImplementation="com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl"/>
     <externalSystemSettingsListener implementation="com.intellij.openapi.externalSystem.service.project.autoimport.ExternalProjectsSettingsWatcher"/>
