@@ -20,6 +20,10 @@ dependencies {
     compile(project(":idea:idea-core"))
 // </temp>
 
+// <neededFor>`AbstractFirLazyResolveTest` uses fir implementation of references which are not in classpath otherwise
+    testRuntimeOnly(project(":idea:idea-frontend-fir"))
+// </neededFor>
+
     testCompile(toolsJar())
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
@@ -37,7 +41,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-if (rootProject.findProperty("idea.fir.plugin") == "true")  {
+if (rootProject.findProperty("idea.fir.plugin") == "true") {
     projectTest {
         dependsOn(":dist")
         workingDir = rootDir
