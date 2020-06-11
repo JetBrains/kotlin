@@ -23,7 +23,6 @@ import com.intellij.openapi.externalSystem.service.project.settings.FacetConfigu
 import com.intellij.openapi.externalSystem.service.project.settings.RunConfigurationImporter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.util.Ref;
@@ -34,6 +33,7 @@ import com.intellij.openapi.vfs.encoding.EncodingProjectManager;
 import com.intellij.openapi.vfs.encoding.EncodingProjectManagerImpl;
 import com.intellij.profile.codeInspection.InspectionProfileManager;
 import com.intellij.testFramework.ExtensionTestUtil;
+import com.intellij.testFramework.PlatformTestUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
@@ -541,7 +541,7 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
       assertFalse(sourceFolderManager.isDisposed());
     }
     finally {
-      application.invokeAndWait(() -> ProjectManagerEx.getInstanceEx().forceCloseProject(project));
+      PlatformTestUtil.forceCloseProjectWithoutSaving(project);
     }
     assertTrue(project.isDisposed());
     assertTrue(sourceFolderManager.isDisposed());
