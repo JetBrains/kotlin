@@ -237,7 +237,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         when (val operation = typeOperatorCall.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
                 val expressionVariable = variableStorage.createSyntheticVariable(typeOperatorCall)
-                val isNotNullCheck = operation == FirOperation.IS && type.nullability == ConeNullability.NOT_NULL
+                val isNotNullCheck = type.nullability == ConeNullability.NOT_NULL
+                val isRegularIs = operation == FirOperation.IS
                 if (operandVariable.isReal()) {
                     val hasTypeInfo = operandVariable typeEq type
                     val hasNotTypeInfo = operandVariable typeNotEq type
@@ -252,13 +253,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                         flow.addTypeStatement(operandVariable typeEq any)
                     }
                     if (isNotNullCheck) {
-                        flow.addImplication((expressionVariable eq true) implies (operandVariable typeEq any))
-                        flow.addImplication((expressionVariable eq true) implies (operandVariable notEq null))
+                        flow.addImplication((expressionVariable eq isRegularIs) implies (operandVariable typeEq any))
+                        flow.addImplication((expressionVariable eq isRegularIs) implies (operandVariable notEq null))
                     }
 
                 } else {
                     if (isNotNullCheck) {
-                        flow.addImplication((expressionVariable eq true) implies (operandVariable notEq null))
+                        flow.addImplication((expressionVariable eq isRegularIs) implies (operandVariable notEq null))
                     }
                 }
             }

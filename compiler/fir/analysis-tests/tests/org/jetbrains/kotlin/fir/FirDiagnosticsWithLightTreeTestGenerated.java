@@ -2152,6 +2152,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/assignSafeCall.kt");
             }
 
+            @TestMetadata("boundSafeCallAndIsCheck.kt")
+            public void testBoundSafeCallAndIsCheck() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/boundSafeCallAndIsCheck.kt");
+            }
+
             @TestMetadata("safeCallAndEqualityToBool.kt")
             public void testSafeCallAndEqualityToBool() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/safeCallAndEqualityToBool.kt");
