@@ -427,8 +427,7 @@ tasks {
         }
     }
 
-    create("mainC" +
-                   "eck") {
+    create("mainCeck") {
         dependsOn("test")
     }
 }
