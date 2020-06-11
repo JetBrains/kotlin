@@ -79,7 +79,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val resolvedLibraries get() = resolve.resolvedLibraries
 
-    private val cacheSupport = CacheSupport(configuration, resolvedLibraries, target, produce)
+    internal val cacheSupport = CacheSupport(configuration, resolvedLibraries, target, produce)
 
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries

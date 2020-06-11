@@ -2375,7 +2375,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
     fun appendStaticInitializers() {
         // Null for "current" non-library module:
-        val libraries = (context.librariesWithDependencies + listOf(null))
+        val libraries = (context.llvm.allBitcodeDependencies + listOf(null))
 
         val libraryToInitializers = libraries.associateWith {
             mutableListOf<LLVMValueRef>()
