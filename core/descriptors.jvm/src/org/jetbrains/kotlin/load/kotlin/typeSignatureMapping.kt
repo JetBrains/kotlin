@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.utils.DO_NOTHING_3
 interface JvmTypeFactory<T : Any> {
     fun boxType(possiblyPrimitiveType: T): T
     fun createFromString(representation: String): T
+    fun createPrimitiveType(primitiveType: PrimitiveType): T
     fun createObjectType(internalName: String): T
     fun toString(type: T): String
 
@@ -40,6 +42,7 @@ interface TypeMappingConfiguration<out T : Any> {
     fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String?
     fun getPredefinedFullInternalNameForClass(classDescriptor: ClassDescriptor): String? = null
     fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor)
+
     // returns null when type doesn't need to be preprocessed
     fun preprocessType(kotlinType: KotlinType): KotlinType? = null
 
@@ -77,8 +80,8 @@ fun <T : Any> mapType(
 
     val constructor = kotlinType.constructor
     if (constructor is IntersectionTypeConstructor) {
-        val intersectionType = constructor.getAlternativeType() ?:
-            typeMappingConfiguration.commonSupertype(constructor.supertypes)
+        val intersectionType = constructor.getAlternativeType()
+            ?: typeMappingConfiguration.commonSupertype(constructor.supertypes)
         // interface In<in E>
         // open class A : In<A>
         // open class B : In<B>
@@ -199,7 +202,7 @@ fun <T : Any> TypeSystemCommonBackendContext.mapBuiltInType(
 
     val primitiveType = constructor.getPrimitiveType()
     if (primitiveType != null) {
-        val jvmType = typeFactory.createFromString(JvmPrimitiveType.get(primitiveType).desc)
+        val jvmType = typeFactory.createPrimitiveType(primitiveType)
         val isNullableInJava = type.isNullableType() || hasEnhancedNullability(type)
         return typeFactory.boxTypeIfNeeded(jvmType, isNullableInJava)
     }
