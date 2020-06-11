@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 internal inline val KotlinType.declarationDescriptor: ClassifierDescriptor
@@ -30,7 +28,8 @@ internal val KotlinType.fqNameWithTypeParameters: String
     }
 
 private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, exploredTypeParameters: MutableSet<KotlinType>) {
-    append(type.fqNameInterned)
+    val abbreviation = (type as? AbbreviatedType)?.abbreviation ?: type
+    append(abbreviation.fqNameInterned)
 
     val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
     if (typeParameterDescriptor != null) {
