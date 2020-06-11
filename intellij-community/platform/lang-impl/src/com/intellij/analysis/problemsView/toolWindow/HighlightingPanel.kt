@@ -2,9 +2,11 @@
 package com.intellij.analysis.problemsView.toolWindow
 
 import com.intellij.codeInsight.daemon.impl.SeverityRegistrar.getSeverityRegistrar
+import com.intellij.icons.AllIcons.Toolwindows
 import com.intellij.ide.TreeExpander
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option
+import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.application.ModalityState.stateForComponent
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.ex.EditorMarkupModel
@@ -14,9 +16,11 @@ import com.intellij.openapi.editor.markup.AnalyzingType.COMPLETE
 import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.problems.WolfTheProblemSolver
 import com.intellij.profile.codeInspection.ui.SingleInspectionProfilePanel.renderSeverity
 import com.intellij.util.SingleAlarm
 import com.intellij.util.ui.tree.TreeUtil.promiseSelectFirstLeaf
+import javax.swing.Icon
 
 internal class HighlightingPanel(project: Project, state: ProblemsViewState)
   : ProblemsViewPanel(project, state), FileEditorManagerListener {
@@ -32,6 +36,13 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
   override fun getDisplayName() = ProblemsViewBundle.message("problems.view.highlighting")
   override fun getSortFoldersFirst(): Option? = null
   override fun getTreeExpander(): TreeExpander? = null
+
+  override fun getToolWindowIcon(count: Int): Icon? {
+    if (Experiments.getInstance().isFeatureEnabled("problems.view.project.errors.enabled")) return null
+    val root = treeModel.root as? HighlightingFileRoot
+    val problem = root?.file?.let { WolfTheProblemSolver.getInstance(project).isProblemFile(it) }
+    return if (problem == true) Toolwindows.ToolWindowProblems else Toolwindows.ToolWindowProblemsEmpty
+  }
 
   override fun selectionChangedTo(selected: Boolean) {
     super.selectionChangedTo(selected)
