@@ -33,7 +33,7 @@ class SignatureChangePresentation(
   private val dummyFontRenderContext = FontRenderContext(
     AffineTransform(),
     AntialiasingType.getKeyForCurrentScope(false),
-    if (UISettings.FORCE_USE_FRACTIONAL_METRICS) RenderingHints.VALUE_FRACTIONALMETRICS_ON else RenderingHints.VALUE_FRACTIONALMETRICS_OFF
+    UISettings.PREFERRED_FRACTIONAL_METRICS_VALUE
   )
 
   val requiredSize by lazy {
