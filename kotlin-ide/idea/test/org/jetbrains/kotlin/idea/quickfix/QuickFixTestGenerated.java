@@ -13996,6 +13996,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/wrapWithSafeLetCall/invokeFuncUnsafe.kt");
         }
 
+        @TestMetadata("invokeFunctionType.kt")
+        public void testInvokeFunctionType() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/invokeFunctionType.kt");
+        }
+
+        @TestMetadata("invokeFunctionType2.kt")
+        public void testInvokeFunctionType2() throws Exception {
+            runTest("idea/testData/quickfix/wrapWithSafeLetCall/invokeFunctionType2.kt");
+        }
+
         @TestMetadata("invokeUnsafe.kt")
         public void testInvokeUnsafe() throws Exception {
             runTest("testData/quickfix/wrapWithSafeLetCall/invokeUnsafe.kt");
