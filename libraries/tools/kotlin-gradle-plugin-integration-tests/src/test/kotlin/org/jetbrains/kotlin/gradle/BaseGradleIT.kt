@@ -354,11 +354,11 @@ abstract class BaseGradleIT {
 
         val errors = "(?m)^.*\\[ERROR] \\[\\S+] (.*)$".toRegex().findAll(output)
         val errorMessage = buildString {
-            appendLine("Gradle build failed")
-            appendLine()
+            appendln("Gradle build failed")
+            appendln()
             if (errors.any()) {
-                appendLine("Possible errors:")
-                errors.forEach { match -> appendLine(match.groupValues[1]) }
+                appendln("Possible errors:")
+                errors.forEach { match -> appendln(match.groupValues[1]) }
             }
         }
         fail(errorMessage)
@@ -669,10 +669,10 @@ Finished executing task ':$taskName'|
             }
 
         val xmlString = buildString {
-            appendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-            appendLine("<results>")
+            appendln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+            appendln("<results>")
             files.forEach {
-                appendLine(
+                appendln(
                     it.readText()
                         .trimTrailingWhitespaces()
                         .replace(projectDir.absolutePath, "/\$PROJECT_DIR$")
@@ -680,7 +680,7 @@ Finished executing task ':$taskName'|
                         .replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "")
                 )
             }
-            appendLine("</results>")
+            appendln("</results>")
         }
 
         val doc = SAXBuilder().build(xmlString.reader())

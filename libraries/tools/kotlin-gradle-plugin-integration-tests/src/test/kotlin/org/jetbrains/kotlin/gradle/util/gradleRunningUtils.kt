@@ -39,7 +39,7 @@ fun runProcess(
         if (options?.forceOutputToStdout ?: false) {
             println(it)
         }
-        sb.appendLine(it)
+        sb.appendln(it)
     }
     val exitCode = process.waitFor()
 
