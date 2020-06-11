@@ -16,7 +16,7 @@ internal fun SimpleFunctionDescriptor.isDeprecatedTopLevelFunction() =
     containingDeclaration is PackageFragmentDescriptor && annotations.hasAnnotation(DEPRECATED_ANNOTATION_FQN)
 
 // the following logic determines Kotlin functions with conflicting overloads in Darwin library:
-internal fun SimpleFunctionDescriptor.isBlacklistedDarwinFunction(): Boolean {
+internal fun SimpleFunctionDescriptor.isIgnoredDarwinFunction(): Boolean {
     if ((containingDeclaration as? PackageFragmentDescriptor)?.fqName?.isUnderDarwinPackage != true)
         return false
 
