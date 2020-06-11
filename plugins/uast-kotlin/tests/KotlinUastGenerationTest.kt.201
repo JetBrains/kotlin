@@ -26,6 +26,8 @@ import org.jetbrains.uast.generate.replace
 import org.jetbrains.uast.kotlin.generate.KotlinUastElementFactory
 import org.jetbrains.uast.test.env.kotlin.findElementByTextFromPsi
 import org.jetbrains.uast.test.env.kotlin.findUElementByTextFromPsi
+import org.jetbrains.uast.visitor.UastVisitor
+import java.lang.StringBuilder
 import kotlin.test.fail as kfail
 
 class KotlinUastGenerationTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -935,4 +937,27 @@ class KotlinUastGenerationTest : KotlinLightCodeInsightFixtureTestCase() {
         return JavaPsiFacade.getElementFactory(myFixture.project).createTypeFromText(s, newClass)
     }
 
+}
+
+// it is a copy of org.jetbrains.uast.UastUtils.asRecursiveLogString with `appendLine` instead of `appendln` to avoid windows related issues
+private fun UElement.asRecursiveLogString(render: (UElement) -> String = { it.asLogString() }): String {
+    val stringBuilder = StringBuilder()
+    val indent = "    "
+
+    accept(object : UastVisitor {
+        private var level = 0
+
+        override fun visitElement(node: UElement): Boolean {
+            stringBuilder.append(indent.repeat(level))
+            stringBuilder.appendLine(render(node))
+            level++
+            return false
+        }
+
+        override fun afterVisitElement(node: UElement) {
+            super.afterVisitElement(node)
+            level--
+        }
+    })
+    return stringBuilder.toString()
 }
