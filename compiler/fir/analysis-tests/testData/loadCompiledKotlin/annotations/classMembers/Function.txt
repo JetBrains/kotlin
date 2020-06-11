@@ -4,7 +4,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 }
 
 public final class Class : R|kotlin/Any| {
-    public final fun foo(): R|kotlin/Unit|
+    @R|test/Anno|() public final fun foo(): R|kotlin/Unit|
 
     public constructor(): R|test/Class|
 

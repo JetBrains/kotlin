@@ -1,6 +1,6 @@
-public final fun baz(): R|kotlin/Unit|
+@R|test/Anno|(t = <implicitArrayOf>()) public final fun baz(): R|kotlin/Unit|
 
-public final fun foo(): R|kotlin/Unit|
+@R|test/Anno|(t = <implicitArrayOf>(R|java/lang/annotation/ElementType.METHOD|(), R|java/lang/annotation/ElementType.FIELD|())) public final fun foo(): R|kotlin/Unit|
 
 public final annotation class Anno : R|kotlin/Annotation| {
     public final val t: R|kotlin/Array<out java/lang/annotation/ElementType>|

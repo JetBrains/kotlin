@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -33,6 +35,7 @@ class JvmBinaryAnnotationDeserializer(
     private data class MemberAnnotations(val memberAnnotations: Map<MemberSignature, MutableList<FirAnnotationCall>>)
 
     private enum class CallableKind {
+        FUNCTION,
         PROPERTY_GETTER,
         PROPERTY_SETTER
     }
@@ -42,36 +45,55 @@ class JvmBinaryAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
+    override fun loadFunctionAnnotations(
+        containerSource: DeserializedContainerSource?,
+        functionProto: ProtoBuf.Function,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
+    ): List<FirAnnotationCall> {
+        val signature = getCallableSignature(functionProto, nameResolver, typeTable, CallableKind.FUNCTION) ?: return emptyList()
+        return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, signature)
+    }
+
     override fun loadPropertyGetterAnnotations(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
+        typeTable: TypeTable,
         getterFlags: Int
     ): List<FirAnnotationCall> {
-        val signature = getCallableSignature(propertyProto, nameResolver, CallableKind.PROPERTY_GETTER) ?: return emptyList()
-        val kotlinClass = containerSource?.toKotlinJvmBinaryClass() ?: return emptyList()
-        return loadMemberAnnotations(kotlinClass).memberAnnotations[signature] ?: emptyList()
+        val signature = getCallableSignature(propertyProto, nameResolver, typeTable, CallableKind.PROPERTY_GETTER) ?: return emptyList()
+        return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, signature)
     }
 
     override fun loadPropertySetterAnnotations(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
+        typeTable: TypeTable,
         setterFlags: Int
     ): List<FirAnnotationCall> {
-        val signature = getCallableSignature(propertyProto, nameResolver, CallableKind.PROPERTY_SETTER) ?: return emptyList()
-        val kotlinClass = containerSource?.toKotlinJvmBinaryClass() ?: return emptyList()
-        return loadMemberAnnotations(kotlinClass).memberAnnotations[signature] ?: emptyList()
+        val signature = getCallableSignature(propertyProto, nameResolver, typeTable, CallableKind.PROPERTY_SETTER) ?: return emptyList()
+        return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, signature)
     }
 
     private fun getCallableSignature(
         proto: MessageLite,
         nameResolver: NameResolver,
+        typeTable: TypeTable,
         kind: CallableKind
     ): MemberSignature? {
         return when (proto) {
             // TODO: ProtoBuf.Constructor
-            // TODO: ProtoBuf.Function
+            is ProtoBuf.Function -> {
+                val signature = JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver, typeTable) ?: return null
+                // TODO: Investigate why annotations for accessors affect resolution, resulting in dangling type parameter.
+                //   regressions: Fir2IrTextTest.Declarations.test*LevelProperties
+                if (signature.name.startsWith("get") || signature.name.startsWith("set")) {
+                    return null
+                }
+                MemberSignature.fromJvmMemberSignature(signature)
+            }
             is ProtoBuf.Property -> {
                 val signature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return null
                 when (kind) {
@@ -80,10 +102,20 @@ class JvmBinaryAnnotationDeserializer(
                     CallableKind.PROPERTY_SETTER ->
                         if (signature.hasSetter()) MemberSignature.fromMethod(nameResolver, signature.setter) else null
                     // TODO: PROPERTY
+                    else ->
+                        null
                 }
             }
             else -> null
         }
+    }
+
+    private fun findJvmBinaryClassAndLoadMemberAnnotations(
+        containerSource: DeserializedContainerSource?,
+        memberSignature: MemberSignature
+    ): List<FirAnnotationCall> {
+        val kotlinClass = containerSource?.toKotlinJvmBinaryClass() ?: return emptyList()
+        return loadMemberAnnotations(kotlinClass).memberAnnotations[memberSignature] ?: emptyList()
     }
 
     private fun DeserializedContainerSource.toKotlinJvmBinaryClass(): KotlinJvmBinaryClass? =

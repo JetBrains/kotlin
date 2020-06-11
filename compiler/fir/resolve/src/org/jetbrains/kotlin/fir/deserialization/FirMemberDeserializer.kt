@@ -196,7 +196,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     isGetter = true
                     status = FirDeclarationStatusImpl(visibility, modality)
                     annotations +=
-                        c.annotationDeserializer.loadPropertyGetterAnnotations(c.containerSource, proto, local.nameResolver, getterFlags)
+                        c.annotationDeserializer.loadPropertyGetterAnnotations(
+                            c.containerSource, proto, local.nameResolver, local.typeTable, getterFlags
+                        )
                     this.symbol = FirPropertyAccessorSymbol()
                 }
             } else {
@@ -218,7 +220,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     isGetter = false
                     status = FirDeclarationStatusImpl(visibility, modality)
                     annotations +=
-                        c.annotationDeserializer.loadPropertySetterAnnotations(c.containerSource, proto, local.nameResolver, setterFlags)
+                        c.annotationDeserializer.loadPropertySetterAnnotations(
+                            c.containerSource, proto, local.nameResolver, local.typeTable, setterFlags
+                        )
                     this.symbol = FirPropertyAccessorSymbol()
                     valueParameters += proto.setterValueParameter.let {
                         val parameterFlags = if (it.hasFlags()) it.flags else 0
@@ -316,7 +320,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
-            annotations += local.annotationDeserializer.loadFunctionAnnotations(proto, local.nameResolver)
+            annotations +=
+                c.annotationDeserializer.loadFunctionAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
             this.containerSource = c.containerSource
         }
         if (proto.hasContract()) {
