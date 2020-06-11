@@ -240,6 +240,10 @@ class Fir2IrConverter(
                 descriptor.owner.parent = parentClass ?: continue
             }
 
+            irModuleFragment.files.forEach {
+                it.transformChildren(IrConstTransformer(irModuleFragment), null)
+            }
+
             return Fir2IrResult(irModuleFragment, symbolTable, sourceManager, components)
         }
     }

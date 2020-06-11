@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
@@ -32,9 +34,21 @@ class IrCompileTimeChecker(
 
     private fun IrDeclaration.isContract() = isMarkedWith(contractsDslAnnotation)
     private fun IrDeclaration.isMarkedAsEvaluateIntrinsic() = isMarkedWith(evaluateIntrinsicAnnotation)
-    private fun IrDeclaration.isMarkedAsCompileTime(): Boolean = isMarkedWith(compileTimeAnnotation) ||
-            (this is IrSimpleFunction && this.isFakeOverride && this.overriddenSymbols.any { it.owner.isMarkedAsCompileTime() }) ||
-            (this.parent as? IrClass)?.fqNameWhenAvailable?.asString() in compileTimeTypeAliases
+    private fun IrDeclaration.isMarkedAsCompileTime(): Boolean {
+        if (mode == EvaluationMode.FULL)
+            return isMarkedWith(compileTimeAnnotation) ||
+                    (this is IrSimpleFunction && this.isFakeOverride && this.overriddenSymbols.any { it.owner.isMarkedAsCompileTime() }) ||
+                    this.parentClassOrNull?.fqNameWhenAvailable?.asString() in compileTimeTypeAliases
+
+        val parent = this.parentClassOrNull
+        val parentType = parent?.defaultType
+        return when {
+            parentType?.isPrimitiveType() == true -> (this as IrFunction).name.asString() !in setOf("inc", "dec", "rangeTo", "hashCode")
+            parentType?.isString() == true -> (this as IrDeclarationWithName).name.asString() !in setOf("subSequence", "hashCode")
+            parent?.isCompanion == true -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsigned() } == true
+            else -> false
+        }
+    }
 
     private fun IrDeclaration.isMarkedWith(annotation: FqName): Boolean {
         if (this is IrClass && this.isCompanion) return false
