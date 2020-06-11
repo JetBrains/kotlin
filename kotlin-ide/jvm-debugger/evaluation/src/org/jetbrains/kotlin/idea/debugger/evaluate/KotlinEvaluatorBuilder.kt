@@ -447,7 +447,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
 
     companion object {
         private val IGNORED_DIAGNOSTICS: Set<DiagnosticFactory<*>> =
-            Errors.INVISIBLE_REFERENCE_DIAGNOSTICS + setOf(Errors.EXPERIMENTAL_API_USAGE_ERROR)
+            Errors.INVISIBLE_REFERENCE_DIAGNOSTICS + setOf(Errors.EXPERIMENTAL_API_USAGE_ERROR, Errors.MISSING_DEPENDENCY_SUPERCLASS)
 
         private val DEFAULT_METHOD_MARKERS = listOf(AsmTypes.OBJECT_TYPE, AsmTypes.DEFAULT_CONSTRUCTOR_MARKER)
 
