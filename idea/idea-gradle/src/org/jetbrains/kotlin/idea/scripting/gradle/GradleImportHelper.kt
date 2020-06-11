@@ -33,7 +33,6 @@ fun runPartialGradleImport(project: Project) {
     }
 }
 
-fun getMissingConfigurationNotificationText() = KotlinIdeaGradleBundle.message("script.configurations.will.be.available.after.import")
 fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.label.import.project")
 
 fun autoReloadScriptConfigurations(project: Project): Boolean {
