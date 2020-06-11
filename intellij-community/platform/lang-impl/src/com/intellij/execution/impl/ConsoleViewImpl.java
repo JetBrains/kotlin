@@ -1070,7 +1070,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     }, 0);
   }
 
-  private void updateFoldings(final int startLine, final int endLine) {
+  protected void updateFoldings(final int startLine, final int endLine) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     myEditor.getFoldingModel().runBatchFoldingOperation(() -> {
       Document document = myEditor.getDocument();
