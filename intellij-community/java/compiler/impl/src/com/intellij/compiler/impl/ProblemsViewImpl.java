@@ -3,6 +3,7 @@ package com.intellij.compiler.impl;
 
 import com.intellij.compiler.ProblemsView;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.errorTreeView.ErrorTreeElement;
 import com.intellij.ide.errorTreeView.ErrorTreeElementKind;
 import com.intellij.ide.errorTreeView.ErrorViewStructure;
@@ -132,6 +133,7 @@ final class ProblemsViewImpl extends ProblemsView {
     boolean active = panel.getErrorViewStructure().hasMessages(
       EnumSet.of(ErrorTreeElementKind.ERROR, ErrorTreeElementKind.WARNING, ErrorTreeElementKind.NOTE));
     toolWindow.setIcon(active ? AllIcons.Toolwindows.Problems : AllIcons.Toolwindows.ProblemsEmpty);
+    toolWindow.setStripeTitle(IdeBundle.message("toolwindow.stripe.Problems"));
   }
 
   @Override
