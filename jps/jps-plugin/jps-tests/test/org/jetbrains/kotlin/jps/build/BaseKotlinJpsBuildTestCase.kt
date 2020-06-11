@@ -33,10 +33,10 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     @Throws(Exception::class)
     override fun tearDown() {
         System.clearProperty("kotlin.jps.tests")
-        super.tearDown()
         myModel = null
         myBuildParams.clear()
         JpsKotlinCompilerRunner.releaseCompileServiceSession()
+        super.tearDown()
     }
 
     private val libraries = mutableMapOf<String, JpsLibrary>()
