@@ -26,6 +26,11 @@ public class ScriptConfigurationNavigationTestGenerated extends AbstractScriptCo
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("buildSrcProblem")
+    public void testBuildSrcProblem() throws Exception {
+        runTest("testData/script/definition/navigation/buildSrcProblem/");
+    }
+
     @TestMetadata("conflictingModule")
     public void testConflictingModule() throws Exception {
         runTest("testData/script/definition/navigation/conflictingModule/");
