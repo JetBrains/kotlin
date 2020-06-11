@@ -28,11 +28,15 @@ class ReaderModeFileEditorListener : FileEditorManagerListener {
     }
 
     fun matchMode(project: Project?, file: VirtualFile?): Boolean {
-      return if (project == null || file == null) { false }
-      else when (instance(project).mode) {
-        ReaderMode.LIBRARIES ->
-          FileIndexFacade.getInstance(project).isInLibraryClasses(file) || FileIndexFacade.getInstance(project).isInLibrarySource(file)
-        ReaderMode.READ_ONLY -> !file.isWritable
+      if (project == null || file == null) return false
+
+      val inLibraries = FileIndexFacade.getInstance(project).isInLibraryClasses(file) || FileIndexFacade.getInstance(project).isInLibrarySource(file)
+      val isWritable = file.isWritable
+
+      return when (instance(project).mode) {
+        ReaderMode.LIBRARIES_AND_READ_ONLY -> inLibraries || !isWritable
+        ReaderMode.LIBRARIES -> inLibraries
+        ReaderMode.READ_ONLY -> !isWritable
       }
     }
   }
