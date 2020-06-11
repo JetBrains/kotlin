@@ -23,5 +23,6 @@
     <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
     <orderEntry type="library" scope="TEST" name="org.codehaus.groovy:groovy-json" level="project" />
     <orderEntry type="library" scope="TEST" name="commons-cli" level="project" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingLoaderRt" scope="TEST" />
   </component>
 </module>
