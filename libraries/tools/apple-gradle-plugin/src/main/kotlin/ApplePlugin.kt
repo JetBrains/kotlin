@@ -65,7 +65,7 @@ private abstract class AppleTask @Inject constructor(
         logger.lifecycle("RUNNING XCODEBUILD:")
 
         with(execActionFactory.newExecAction()) {
-            environment("DEVELOPER_DIR", XcodeBase.getBasePath())
+            environment("DEVELOPER_DIR", XcodeSettingsBase.INSTANCE.getSelectedXcodePath())
             commandLine(
                 "xcrun", "xcodebuild",
                 *args
