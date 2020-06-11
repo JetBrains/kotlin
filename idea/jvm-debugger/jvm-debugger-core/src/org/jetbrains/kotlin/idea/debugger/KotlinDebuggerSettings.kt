@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSteppingConfigurableUi
 class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>("kotlin_debugger"), Getter<KotlinDebuggerSettings> {
     var renderDelegatedProperties: Boolean = false
     var disableKotlinInternalClasses: Boolean = true
-    var isFilterForStdlibAlreadyAdded: Boolean = false
     var debugDisableCoroutineAgent: Boolean = false
 
     companion object {
