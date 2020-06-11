@@ -415,6 +415,7 @@ public final class IndexingStamp {
 
   @TestOnly
   public static void dropIndexingTimeStamps(int fileId) throws IOException {
+    myTimestampsCache.remove(fileId);
     try (DataOutputStream out =  FSRecords.writeAttribute(fileId, Timestamps.PERSISTENCE)) {
       new Timestamps(null).writeToStream(out);
     }
