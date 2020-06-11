@@ -268,7 +268,7 @@ class JavaObjectEqualsToEqOperatorProcessing : InspectionLikeProcessingForElemen
     }
 
     override fun isApplicableTo(element: KtCallExpression, settings: ConverterSettings?): Boolean {
-        if (element.callName() != CALL_FQ_NAME.shortName().identifier) return false
+        if (element.calleeExpression?.text != CALL_FQ_NAME.shortName().identifier) return false
         if (element.valueArguments.size != 2) return false
         if (element.valueArguments.any { it.getArgumentExpression() == null }) return false
         return element.isCalling(CALL_FQ_NAME)
