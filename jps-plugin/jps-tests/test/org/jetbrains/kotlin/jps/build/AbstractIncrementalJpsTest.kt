@@ -172,7 +172,6 @@ abstract class AbstractIncrementalJpsTest(
                 BuilderRegistry.getInstance(),
                 myBuildParams,
                 CanceledStatus.NULL,
-                mockConstantSearch,
                 true
             )
             val buildResult = BuildResult()
@@ -380,7 +379,7 @@ abstract class AbstractIncrementalJpsTest(
     // null means one module
     private fun configureModules(): ModulesTxt? {
         JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject).outputUrl =
-                JpsPathUtil.pathToUrl(getAbsolutePath("out"))
+            JpsPathUtil.pathToUrl(getAbsolutePath("out"))
 
         val jdk = addJdk("my jdk")
         val modulesTxt = readModulesTxt()
