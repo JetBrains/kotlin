@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.interpreter.state
 
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.backend.common.interpreter.getEvaluateIntrinsicValue
-import org.jetbrains.kotlin.backend.common.interpreter.getFqName
 import org.jetbrains.kotlin.backend.common.interpreter.getPrimitiveClass
 import org.jetbrains.kotlin.backend.common.interpreter.hasAnnotation
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -124,14 +123,14 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
         }
 
         private fun IrType.getClass(asObject: Boolean): Class<out Any> {
-            val fqName = this.getFqName() ?: return Any::class.java // null if this.isTypeParameter()
             val owner = this.classOrNull?.owner
             return when {
-                this.isPrimitiveType() -> getPrimitiveClass(fqName, asObject)!!
+                this.isPrimitiveType() -> getPrimitiveClass(this.makeNotNull(), asObject)!!
                 this.isArray() -> if (asObject) Array<Any?>::class.javaObjectType else Array<Any?>::class.java
                 //TODO primitive array
                 owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
                 else -> {
+                    val fqName = owner?.fqNameWhenAvailable?.asString() ?: return Any::class.java // null if this.isTypeParameter()
                     val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(fqName))
                     val className = javaClassId?.asSingleFqName()?.asString() ?: fqName
                     Class.forName(className.replaceDotWithDollarForInnerClasses())

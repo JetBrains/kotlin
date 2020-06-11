@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.state
 
-import org.jetbrains.kotlin.backend.common.interpreter.getFqName
 import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State {
@@ -29,9 +29,9 @@ class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State 
     }
 
     override fun toString(): String {
-        val receiver = (irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type)?.getFqName(true)
-        val arguments = irFunction.valueParameters.map { it.type.getFqName(true) }.joinToString(prefix = "(", postfix = ")")
-        val returnType = irFunction.returnType.getFqName(true)
+        val receiver = (irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type)?.render()
+        val arguments = irFunction.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.render() }
+        val returnType = irFunction.returnType.render()
         return ("$arguments -> $returnType").let { if (receiver != null) "$receiver.$it" else it }
     }
 }

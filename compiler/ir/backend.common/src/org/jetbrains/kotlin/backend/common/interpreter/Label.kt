@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.render
 
 enum class ReturnLabel {
     NEXT, RETURN, BREAK_LOOP, BREAK_WHEN, CONTINUE, EXCEPTION
@@ -46,7 +47,7 @@ fun ExecutionResult.implicitCastIfNeeded(expectedType: IrType, actualType: IrTyp
 
     if (!actualState.isSubtypeOf(expectedType)) {
         val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
-        throw ClassCastException("$convertibleClassName cannot be cast to ${expectedType.getFqName(withNullableSymbol = true)}")
+        throw ClassCastException("$convertibleClassName cannot be cast to ${expectedType.render()}")
     }
     return this
 }

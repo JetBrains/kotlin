@@ -407,13 +407,13 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     }
 
     private suspend fun interpretConst(expression: IrConst<*>): ExecutionResult {
-        fun getSignedType(unsignedClassName: String): IrType {
-            return when (unsignedClassName) {
-                "UByte" -> irBuiltIns.byteType
-                "UShort" -> irBuiltIns.shortType
-                "UInt" -> irBuiltIns.intType
-                "ULong" -> irBuiltIns.longType
-                else -> throw InterpreterException("Unsupported unsigned class $unsignedClassName")
+        fun getSignedType(unsignedType: IrType): IrType {
+            return when {
+                unsignedType.isUByte() -> irBuiltIns.byteType
+                unsignedType.isUShort() -> irBuiltIns.shortType
+                unsignedType.isUInt() -> irBuiltIns.intType
+                unsignedType.isULong() -> irBuiltIns.longType
+                else -> throw InterpreterException("Unsupported unsigned class ${unsignedType.render()}")
             }
         }
 
@@ -421,7 +421,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             val unsignedClass = expression.type.classOrNull!!
             val constructor = unsignedClass.constructors.single().owner
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-            constructorCall.putValueArgument(0, expression.value.toIrConst(getSignedType(unsignedClass.owner.name.asString())))
+            constructorCall.putValueArgument(0, expression.value.toIrConst(getSignedType(expression.type)))
 
             constructorCall.interpret()
         } else {
@@ -622,7 +622,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
                 if (!isErased && !stack.peekReturnValue().isSubtypeOf(typeOperand)) {
                     val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
-                    throw ClassCastException("$convertibleClassName cannot be cast to ${typeOperand.getFqName(withNullableSymbol = true)}")
+                    throw ClassCastException("$convertibleClassName cannot be cast to ${typeOperand.render()}")
                 }
             }
             IrTypeOperator.SAFE_CAST -> {

@@ -42,20 +42,18 @@ fun IrFunctionAccessExpression.getBody(): IrBody? {
 fun State.toIrExpression(expression: IrExpression): IrExpression {
     val start = expression.startOffset
     val end = expression.endOffset
+    val type = expression.type.makeNotNull()
     return when (this) {
         is Primitive<*> ->
-            when (this.value) {
-                // toIrConst call is necessary to replace ir offsets
-                is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double ->
-                    this.value.toIrConst(this.type, start, end)
-                null -> this.value.toIrConst(this.type, start, end)
+            when {
+                this.value == null -> this.value.toIrConst(type, start, end)
+                type.isPrimitiveType() || type.isString() -> this.value.toIrConst(type, start, end)
                 else -> expression // TODO support for arrays
             }
         is Complex -> {
-            val type = this.irClass.defaultType.toKotlinType()
+            val stateType = this.irClass.defaultType.toKotlinType()
             when {
-                UnsignedTypes.isUnsignedType(type) ->
-                    (this.fields.single().state as Primitive<*>).value.toIrConst(this.irClass.defaultType, start, end)
+                UnsignedTypes.isUnsignedType(stateType) -> (this.fields.single().state as Primitive<*>).value.toIrConst(type, start, end)
                 else -> expression
             }
         }
@@ -74,18 +72,23 @@ fun Any?.toState(irType: IrType): State {
 }
 
 fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*> {
-    return when (this) {
-        is Boolean -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Boolean, this)
-        is Char -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Char, this)
-        is Byte -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Byte, this)
-        is Short -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Short, this)
-        is Int -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Int, this)
-        is Long -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Long, this)
-        is String -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.String, this)
-        is Float -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Float, this)
-        is Double -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Double, this)
-        null -> IrConstImpl(startOffset, endOffset, irType, IrConstKind.Null, this)
-        else -> throw UnsupportedOperationException("Unsupported const element type ${this::class}")
+    val constType = irType.makeNotNull()
+    return when {
+        this == null -> IrConstImpl.constNull(startOffset, endOffset, irType)
+        constType.isBoolean() -> IrConstImpl.boolean(startOffset, endOffset, constType, this as Boolean)
+        constType.isChar() -> IrConstImpl.char(startOffset, endOffset, constType, this as Char)
+        constType.isByte() -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
+        constType.isShort() -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
+        constType.isInt() -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
+        constType.isLong() -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
+        constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
+        constType.isFloat() -> IrConstImpl.float(startOffset, endOffset, constType, (this as Number).toFloat())
+        constType.isDouble() -> IrConstImpl.double(startOffset, endOffset, constType, (this as Number).toDouble())
+        constType.isUByte() -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
+        constType.isUShort() -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
+        constType.isUInt() -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
+        constType.isULong() -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
+        else -> throw UnsupportedOperationException("Unsupported const element type ${constType.render()}")
     }
 }
 
@@ -112,23 +115,19 @@ fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
     return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
 }
 
-fun getPrimitiveClass(fqName: String, asObject: Boolean = false): Class<*>? {
-    return when (fqName) {
-        "kotlin.Boolean" -> if (asObject) Boolean::class.javaObjectType else Boolean::class.java
-        "kotlin.Char" -> if (asObject) Char::class.javaObjectType else Char::class.java
-        "kotlin.Byte" -> if (asObject) Byte::class.javaObjectType else Byte::class.java
-        "kotlin.Short" -> if (asObject) Short::class.javaObjectType else Short::class.java
-        "kotlin.Int" -> if (asObject) Int::class.javaObjectType else Int::class.java
-        "kotlin.Long" -> if (asObject) Long::class.javaObjectType else Long::class.java
-        "kotlin.String" -> if (asObject) String::class.javaObjectType else String::class.java
-        "kotlin.Float" -> if (asObject) Float::class.javaObjectType else Float::class.java
-        "kotlin.Double" -> if (asObject) Double::class.javaObjectType else Double::class.java
+fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? {
+    return when {
+        irType.isBoolean() -> if (asObject) Boolean::class.javaObjectType else Boolean::class.java
+        irType.isChar() -> if (asObject) Char::class.javaObjectType else Char::class.java
+        irType.isByte() -> if (asObject) Byte::class.javaObjectType else Byte::class.java
+        irType.isShort() -> if (asObject) Short::class.javaObjectType else Short::class.java
+        irType.isInt() -> if (asObject) Int::class.javaObjectType else Int::class.java
+        irType.isLong() -> if (asObject) Long::class.javaObjectType else Long::class.java
+        irType.isString() -> if (asObject) String::class.javaObjectType else String::class.java
+        irType.isFloat() -> if (asObject) Float::class.javaObjectType else Float::class.java
+        irType.isDouble() -> if (asObject) Double::class.javaObjectType else Double::class.java
         else -> null
     }
-}
-
-fun IrType.getFqName(withNullableSymbol: Boolean = false): String? {
-    return this.classOrNull?.owner?.fqNameWhenAvailable?.asString()?.let { if (this.isNullable() && withNullableSymbol) "$it?" else it }
 }
 
 fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
@@ -159,15 +158,15 @@ fun IrFunction.getLastOverridden(): IrFunction {
 }
 
 fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
-    return when (type.getFqName()) {
-        "kotlin.ByteArray" -> Primitive(ByteArray(size) { i -> (this[i] as Number).toByte() }, type)
-        "kotlin.CharArray" -> Primitive(CharArray(size) { i -> this[i] as Char }, type)
-        "kotlin.ShortArray" -> Primitive(ShortArray(size) { i -> (this[i] as Number).toShort() }, type)
-        "kotlin.IntArray" -> Primitive(IntArray(size) { i -> (this[i] as Number).toInt() }, type)
-        "kotlin.LongArray" -> Primitive(LongArray(size) { i -> (this[i] as Number).toLong() }, type)
-        "kotlin.FloatArray" -> Primitive(FloatArray(size) { i -> (this[i] as Number).toFloat() }, type)
-        "kotlin.DoubleArray" -> Primitive(DoubleArray(size) { i -> (this[i] as Number).toDouble() }, type)
-        "kotlin.BooleanArray" -> Primitive(BooleanArray(size) { i -> this[i].toString().toBoolean() }, type)
+    return when {
+        type.isByteArray() -> Primitive(ByteArray(size) { i -> (this[i] as Number).toByte() }, type)
+        type.isCharArray() -> Primitive(CharArray(size) { i -> this[i] as Char }, type)
+        type.isShortArray() -> Primitive(ShortArray(size) { i -> (this[i] as Number).toShort() }, type)
+        type.isIntArray() -> Primitive(IntArray(size) { i -> (this[i] as Number).toInt() }, type)
+        type.isLongArray() -> Primitive(LongArray(size) { i -> (this[i] as Number).toLong() }, type)
+        type.isFloatArray() -> Primitive(FloatArray(size) { i -> (this[i] as Number).toFloat() }, type)
+        type.isDoubleArray() -> Primitive(DoubleArray(size) { i -> (this[i] as Number).toDouble() }, type)
+        type.isBooleanArray() -> Primitive(BooleanArray(size) { i -> this[i].toString().toBoolean() }, type)
         else -> Primitive<Array<*>>(this.toTypedArray(), type)
     }
 }
