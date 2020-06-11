@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -379,7 +378,9 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression): FirTypeRef {
-        val baseTypeArguments = argument.typeRef.coneTypeSafe<ConeKotlinType>()?.typeArguments
+        // TODO: Everything should also work for case of checked-type itself is a type alias
+        val baseTypeArguments =
+            argument.typeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.typeArguments
         val type = coneTypeSafe<ConeKotlinType>()
         return if (type?.typeArguments?.isEmpty() != true ||
             type is ConeTypeParameterType ||
