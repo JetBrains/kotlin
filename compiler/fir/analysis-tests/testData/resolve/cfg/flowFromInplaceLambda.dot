@@ -272,12 +272,12 @@ digraph flowFromInplaceLambda_kt {
         107 [label="Postponed enter to lambda"];
         subgraph cluster_14 {
             color=blue
-            126 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-            128 [label="Access variable R|<local>/y|"];
-            129 [label="Function call: R|<local>/y|.<Unresolved name: inc>#()"];
-            130 [label="Access variable R|<local>/x|"];
-            131 [label="Type operator: (R|<local>/x| as R|kotlin/Int|)"];
-            127 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            124 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+            126 [label="Access variable R|<local>/y|"];
+            127 [label="Function call: R|<local>/y|.<Unresolved name: inc>#()"];
+            128 [label="Access variable R|<local>/x|"];
+            129 [label="Type operator: (R|<local>/x| as R|kotlin/Int|)"];
+            125 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
         108 [label="Postponed exit from lambda"];
         109 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
@@ -287,38 +287,36 @@ digraph flowFromInplaceLambda_kt {
         113 [label="Postponed enter to lambda"];
         subgraph cluster_15 {
             color=blue
-            132 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-            134 [label="Access variable R|<local>/x|"];
-            135 [label="Function call: R|<local>/x|.<Unresolved name: inc>#()"];
-            136 [label="Access variable R|<local>/y|"];
-            137 [label="Function call: R|<local>/y|.R|kotlin/Int.inc|()"];
-            138 [label="Const: Int(1)"];
-            133 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            130 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+            132 [label="Access variable R|<local>/x|"];
+            133 [label="Function call: R|<local>/x|.<Unresolved name: inc>#()"];
+            134 [label="Access variable R|<local>/y|"];
+            135 [label="Function call: R|<local>/y|.R|kotlin/Int.inc|()"];
+            136 [label="Const: Int(1)"];
+            131 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
         114 [label="Postponed exit from lambda"];
         115 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
         116 [label="Function call: R|/select|<R|kotlin/Int|>(...)"];
         117 [label="Variable declaration: lval a: R|kotlin/Int|"];
         118 [label="Access variable R|<local>/x|"];
-        119 [label="Access variable R|<local>/x|"];
-        120 [label="Access variable R|<local>/x|"];
-        121 [label="Function call: <Inapplicable(INAPPLICABLE): [/takeInt]>#(...)"];
-        122 [label="Access variable R|<local>/y|"];
+        119 [label="Function call: <Inapplicable(INAPPLICABLE): [/takeInt]>#(...)"];
+        120 [label="Access variable R|<local>/y|"];
+        121 [label="Function call: R|/takeInt|(...)"];
+        122 [label="Access variable R|<local>/a|"];
         123 [label="Function call: R|/takeInt|(...)"];
-        124 [label="Access variable R|<local>/a|"];
-        125 [label="Function call: R|/takeInt|(...)"];
         106 [label="Exit function test_4" style="filled" fillcolor=red];
     }
     105 -> {107};
     107 -> {108};
-    107 -> {126} [color=red];
+    107 -> {124} [color=red];
     108 -> {109};
     109 -> {110};
     110 -> {111};
     111 -> {112};
     112 -> {113};
     113 -> {114};
-    113 -> {132} [color=red];
+    113 -> {130} [color=red];
     114 -> {115};
     115 -> {116};
     116 -> {117};
@@ -328,110 +326,108 @@ digraph flowFromInplaceLambda_kt {
     120 -> {121};
     121 -> {122};
     122 -> {123};
-    123 -> {124};
-    124 -> {125};
-    125 -> {106};
-    126 -> {128};
+    123 -> {106};
+    124 -> {126};
+    126 -> {127};
+    127 -> {128};
     128 -> {129};
-    129 -> {130};
-    130 -> {131};
-    131 -> {127};
-    132 -> {134};
+    129 -> {125};
+    130 -> {132};
+    132 -> {133};
+    133 -> {134};
     134 -> {135};
     135 -> {136};
-    136 -> {137};
-    137 -> {138};
-    138 -> {133};
+    136 -> {131};
 
     subgraph cluster_16 {
         color=red
-        139 [label="Enter function test_5" style="filled" fillcolor=red];
-        141 [label="Postponed enter to lambda"];
+        137 [label="Enter function test_5" style="filled" fillcolor=red];
+        139 [label="Postponed enter to lambda"];
         subgraph cluster_17 {
             color=blue
-            152 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-            154 [label="Function call: R|/materialize|<R|kotlin/Int|>()"];
-            153 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            150 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+            152 [label="Function call: R|/materialize|<R|kotlin/Int|>()"];
+            151 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
-        142 [label="Postponed exit from lambda"];
-        143 [label="Function call: R|kotlin/run|<R|kotlin/Int|>(...)"];
-        144 [label="Postponed enter to lambda"];
+        140 [label="Postponed exit from lambda"];
+        141 [label="Function call: R|kotlin/run|<R|kotlin/Int|>(...)"];
+        142 [label="Postponed enter to lambda"];
         subgraph cluster_18 {
             color=blue
-            155 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-            157 [label="Function call: R|/materialize|<R|kotlin/Int|>()"];
-            156 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            153 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+            155 [label="Function call: R|/materialize|<R|kotlin/Int|>()"];
+            154 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
-        145 [label="Postponed exit from lambda"];
-        146 [label="Function call: R|kotlin/run|<R|kotlin/Int|>(...)"];
-        148 [label="Call arguments union" style="filled" fillcolor=yellow];
-        147 [label="Function call: R|/select|<R|kotlin/Int|>(...)"];
-        149 [label="Variable declaration: lval x: R|kotlin/Int|"];
-        150 [label="Access variable R|<local>/x|"];
-        151 [label="Function call: R|/takeInt|(...)"];
-        140 [label="Exit function test_5" style="filled" fillcolor=red];
+        143 [label="Postponed exit from lambda"];
+        144 [label="Function call: R|kotlin/run|<R|kotlin/Int|>(...)"];
+        146 [label="Call arguments union" style="filled" fillcolor=yellow];
+        145 [label="Function call: R|/select|<R|kotlin/Int|>(...)"];
+        147 [label="Variable declaration: lval x: R|kotlin/Int|"];
+        148 [label="Access variable R|<local>/x|"];
+        149 [label="Function call: R|/takeInt|(...)"];
+        138 [label="Exit function test_5" style="filled" fillcolor=red];
     }
-    139 -> {141};
-    141 -> {152};
-    141 -> {142} [color=red];
-    142 -> {143};
+    137 -> {139};
+    139 -> {150};
+    139 -> {140} [color=red];
+    140 -> {141};
+    141 -> {142};
+    142 -> {153};
+    142 -> {143} [color=red];
     143 -> {144};
-    144 -> {155};
-    144 -> {145} [color=red];
-    145 -> {146};
-    146 -> {148};
-    147 -> {149};
-    148 -> {147};
-    149 -> {150};
-    150 -> {151};
-    151 -> {140};
-    152 -> {154};
-    153 -> {142} [color=green];
-    153 -> {148} [color=red];
-    154 -> {153};
-    155 -> {157};
-    156 -> {145} [color=green];
-    156 -> {148} [color=red];
-    157 -> {156};
+    144 -> {146};
+    145 -> {147};
+    146 -> {145};
+    147 -> {148};
+    148 -> {149};
+    149 -> {138};
+    150 -> {152};
+    151 -> {140} [color=green];
+    151 -> {146} [color=red];
+    152 -> {151};
+    153 -> {155};
+    154 -> {143} [color=green];
+    154 -> {146} [color=red];
+    155 -> {154};
 
     subgraph cluster_19 {
         color=red
-        158 [label="Enter function test_6" style="filled" fillcolor=red];
-        160 [label="Postponed enter to lambda"];
+        156 [label="Enter function test_6" style="filled" fillcolor=red];
+        158 [label="Postponed enter to lambda"];
         subgraph cluster_20 {
             color=blue
-            165 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-            167 [label="Postponed enter to lambda"];
+            163 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+            165 [label="Postponed enter to lambda"];
             subgraph cluster_21 {
                 color=blue
-                170 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                172 [label="Function call: R|/materialize|<R|kotlin/String|>()"];
-                171 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                168 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                170 [label="Function call: R|/materialize|<R|kotlin/String|>()"];
+                169 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            168 [label="Postponed exit from lambda"];
-            169 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)"];
-            166 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            166 [label="Postponed exit from lambda"];
+            167 [label="Function call: R|kotlin/run|<R|kotlin/String|>(...)"];
+            164 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
-        161 [label="Postponed exit from lambda"];
-        162 [label="Function call: R|/myRun|<R|kotlin/String|>(...)"];
-        163 [label="Function call: R|/id|<R|kotlin/String|>(...)"];
-        164 [label="Variable declaration: lval x: R|kotlin/String|"];
-        159 [label="Exit function test_6" style="filled" fillcolor=red];
+        159 [label="Postponed exit from lambda"];
+        160 [label="Function call: R|/myRun|<R|kotlin/String|>(...)"];
+        161 [label="Function call: R|/id|<R|kotlin/String|>(...)"];
+        162 [label="Variable declaration: lval x: R|kotlin/String|"];
+        157 [label="Exit function test_6" style="filled" fillcolor=red];
     }
-    158 -> {160};
+    156 -> {158};
+    158 -> {159};
+    158 -> {163} [color=red];
+    159 -> {160};
     160 -> {161};
-    160 -> {165} [color=red];
     161 -> {162};
-    162 -> {163};
-    163 -> {164};
-    164 -> {159};
-    165 -> {167};
-    167 -> {170};
-    167 -> {168} [color=red];
-    168 -> {169};
-    169 -> {166};
-    170 -> {172};
-    171 -> {168} [color=green];
-    172 -> {171};
+    162 -> {157};
+    163 -> {165};
+    165 -> {168};
+    165 -> {166} [color=red];
+    166 -> {167};
+    167 -> {164};
+    168 -> {170};
+    169 -> {166} [color=green];
+    170 -> {169};
 
 }

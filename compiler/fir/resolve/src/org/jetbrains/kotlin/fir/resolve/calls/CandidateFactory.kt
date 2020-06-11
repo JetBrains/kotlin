@@ -5,10 +5,19 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -54,6 +63,51 @@ class CandidateFactory private constructor(
                 callInfo.withReceiverAsArgument(it)
             } ?: callInfo
         )
+    }
+
+    fun createErrorCandidate(diagnostic: ConeDiagnostic): Candidate {
+        val symbol: AbstractFirBasedSymbol<*> = when (callInfo.callKind) {
+            CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic)
+            CallKind.Function,
+            CallKind.DelegatingConstructorCall,
+            CallKind.CallableReference -> createErrorFunctionSymbol(diagnostic)
+            CallKind.SyntheticSelect -> throw IllegalStateException()
+            CallKind.SyntheticIdForCallableReferencesResolution -> throw IllegalStateException()
+        }
+        return Candidate(
+            symbol,
+            dispatchReceiverValue = null,
+            implicitExtensionReceiverValue = null,
+            explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            bodyResolveComponents,
+            baseSystem,
+            callInfo
+        )
+    }
+
+    private fun createErrorFunctionSymbol(diagnostic: ConeDiagnostic): FirErrorFunctionSymbol {
+        return FirErrorFunctionSymbol().also {
+            buildErrorFunction {
+                session = this@CandidateFactory.bodyResolveComponents.session
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
+                origin = FirDeclarationOrigin.Synthetic
+                this.diagnostic = diagnostic
+                symbol = it
+            }
+        }
+    }
+
+    private fun createErrorPropertySymbol(diagnostic: ConeDiagnostic): FirErrorPropertySymbol {
+        return FirErrorPropertySymbol(diagnostic).also {
+            buildErrorProperty {
+                session = this@CandidateFactory.bodyResolveComponents.session
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
+                origin = FirDeclarationOrigin.Synthetic
+                name = FirErrorPropertySymbol.NAME
+                this.diagnostic = diagnostic
+                symbol = it
+            }
+        }
     }
 }
 

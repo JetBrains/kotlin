@@ -12,5 +12,5 @@ FILE: implicitTypes.kt
         ^loop1 <Inapplicable(INAPPLICABLE): [/use]>#(::R|/loop2|)
     }
     public final fun loop2(): <ERROR TYPE REF: cycle> {
-        ^loop2 R?C|/loop1|()
+        ^loop2 R|/loop1|()
     }

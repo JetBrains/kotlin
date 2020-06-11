@@ -162,3 +162,5 @@ inline fun <T, R> Iterable<T>.same(extractor: (T) -> R): Boolean {
     }
     return true
 }
+
+inline fun <R> runIf(condition: Boolean, block: () -> R): R? = if (condition) block() else null

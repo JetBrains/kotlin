@@ -14,5 +14,5 @@ FILE fqName:test fileName:/boundInlineAdaptedReference.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [test/foo]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun id (s: kotlin.String, vararg xs: kotlin.Int): kotlin.String declared in test' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun id (s: kotlin.String, vararg xs: kotlin.Int): kotlin.String declared in test' type=kotlin.reflect.KFunction2<kotlin.String, kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
           $receiver: CONST String type=kotlin.String value="Fail"

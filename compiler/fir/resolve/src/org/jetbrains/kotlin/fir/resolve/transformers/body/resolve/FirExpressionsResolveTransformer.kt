@@ -220,12 +220,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     // name.invoke() case
                     callCompleter.completeCall(resultExplicitReceiver, noExpectedType)
                 }
-                val completionResult = callCompleter.completeCall(resultExpression, expectedTypeRef)
-
-                if (completionResult.result.typeRef is FirErrorTypeRef) {
-                    completionResult.result.argumentList.transformArguments(transformer, ResolutionMode.LambdaResolution(null))
-                }
-                completionResult
+                callCompleter.completeCall(resultExpression, expectedTypeRef)
             } catch (e: ProcessCanceledException) {
                 throw e
             } catch (e: Throwable) {

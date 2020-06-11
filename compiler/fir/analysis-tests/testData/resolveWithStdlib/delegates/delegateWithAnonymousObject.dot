@@ -117,7 +117,7 @@ digraph delegateWithAnonymousObject_kt {
 
     subgraph cluster_11 {
         color=red
-        66 [label="Enter class IssuesListUserProfile" style="filled" fillcolor=red];
+        64 [label="Enter class IssuesListUserProfile" style="filled" fillcolor=red];
         subgraph cluster_12 {
             color=blue
             48 [label="Enter function setter" style="filled" fillcolor=red];
@@ -144,36 +144,32 @@ digraph delegateWithAnonymousObject_kt {
             57 [label="Postponed exit from lambda"];
             58 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
             59 [label="Access variable this@R|/IssuesListUserProfile|"];
-            60 [label="Access variable this@R|/IssuesListUserProfile|"];
-            61 [label="Access variable this@R|/IssuesListUserProfile|"];
-            62 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).<Unresolved name: provideDelegate>#(...)"];
-            63 [label="Postponed enter to lambda"];
+            60 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).<Unresolved name: provideDelegate>#(...)"];
+            61 [label="Postponed enter to lambda"];
             subgraph cluster_15 {
                 color=blue
                 21 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 23 [label="Exit anonymous object"];
                 22 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            64 [label="Postponed exit from lambda"];
-            65 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
+            62 [label="Postponed exit from lambda"];
+            63 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
             55 [label="Exit property" style="filled" fillcolor=red];
         }
-        67 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
+        65 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
     }
-    66 -> {54} [color=green];
+    64 -> {54} [color=green];
     54 -> {56};
-    55 -> {67} [color=green];
+    55 -> {65} [color=green];
     56 -> {57};
     57 -> {58};
     58 -> {59};
     59 -> {60};
     60 -> {61};
     61 -> {62};
+    61 -> {21} [color=red];
     62 -> {63};
-    63 -> {64};
-    63 -> {21} [color=red];
-    64 -> {65};
-    65 -> {55};
+    63 -> {55};
     21 -> {23};
     21 -> {24 27 32} [color=red];
     23 -> {22};

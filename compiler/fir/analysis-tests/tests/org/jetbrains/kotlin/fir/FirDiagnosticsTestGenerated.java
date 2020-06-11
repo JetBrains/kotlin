@@ -614,6 +614,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/debugInfoCall.kt");
         }
 
+        @TestMetadata("errorCandidates.kt")
+        public void testErrorCandidates() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/errorCandidates.kt");
+        }
+
         @TestMetadata("extensionInvokeAfterSafeCall.kt")
         public void testExtensionInvokeAfterSafeCall() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/extensionInvokeAfterSafeCall.kt");

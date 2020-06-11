@@ -29,11 +29,11 @@ FILE: KotlinClass.kt
         }
         )
         R|<local>/invalidType|.R|tests/_checkType/checkType|<R|(JavaClass) -> kotlin/Boolean|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function1<JavaClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
-            ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
+            ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#()
         }
         )
         R|/Case1.Case1|(R|<local>/javaClass|).R|/Case1.x|.R|tests/_checkType/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
-            ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
+            ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#()
         }
         )
     }
@@ -122,11 +122,11 @@ FILE: KotlinClass.kt
         }
         )
         R|<local>/invalidType|.R|tests/_checkType/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
-            ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
+            ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#()
         }
         )
         R|/Case2.Case2|(R|<local>/kotlinClass|).R|/Case2.x|.R|tests/_checkType/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
-            ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
+            ^ <Inapplicable(WRONG_RECEIVER): [tests/_checkType/_]>#()
         }
         )
     }

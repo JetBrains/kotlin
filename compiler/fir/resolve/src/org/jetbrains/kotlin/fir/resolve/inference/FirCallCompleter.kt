@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
@@ -51,24 +52,9 @@ class FirCallCompleter(
     fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?): CompletionResult<T>
             where T : FirResolvable, T : FirStatement {
         val typeRef = typeFromCallee(call)
-        if (typeRef.type is ConeKotlinErrorType) {
-            if (call is FirExpression) {
-                call.resultType = typeRef
-            }
-            val errorCall = if (call is FirFunctionCall) {
-                call.argumentList.transformArguments(
-                    transformer,
-                    ResolutionMode.WithExpectedType(typeRef.resolvedTypeFromPrototype(session.builtinTypes.nullableAnyType.type))
-                )
-                call
-            } else {
-                call
-            }
-            inferenceSession.addErrorCall(errorCall)
-            return CompletionResult(errorCall, true)
-        }
 
-        val candidate = call.candidate() ?: return CompletionResult(call, true)
+        val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return CompletionResult(call, true)
+        val candidate = reference.candidate
         val initialSubstitutor = candidate.substitutor
 
         val initialType = initialSubstitutor.substituteOrSelf(typeRef.type)

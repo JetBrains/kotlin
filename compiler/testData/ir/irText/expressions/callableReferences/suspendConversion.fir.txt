@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/suspendConversion.kt
   FUN name:testWithDefaults visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspend]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun foo4 (i: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun foo4 (i: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
   FUN name:testWithBoundReceiver visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspend]>#' type=IrErrorType

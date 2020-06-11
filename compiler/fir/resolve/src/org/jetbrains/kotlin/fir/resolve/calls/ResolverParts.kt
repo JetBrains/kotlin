@@ -186,7 +186,8 @@ internal object CheckArguments : CheckerStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val argumentMapping =
             candidate.argumentMapping ?: throw IllegalStateException("Argument should be already mapped while checking arguments!")
-        for ((argument, parameter) in argumentMapping) {
+        for (argument in callInfo.arguments) {
+            val parameter = argumentMapping[argument]
             candidate.resolveArgument(
                 argument,
                 parameter,

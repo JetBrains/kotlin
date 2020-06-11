@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.math.min
 
 class FirCallCompletionResultsWriterTransformer(
@@ -78,11 +81,7 @@ class FirCallCompletionResultsWriterTransformer(
         val result = updatedQualifiedAccess
             .transformCalleeReference(
                 StoreCalleeReference,
-                buildResolvedNamedReference {
-                    source = calleeReference.source
-                    name = calleeReference.name
-                    resolvedSymbol = calleeReference.candidateSymbol
-                },
+                calleeReference.toResolvedReference(),
             )
             .transformDispatchReceiver(StoreReceiver, subCandidate.dispatchReceiverExpression())
             .transformExtensionReceiver(StoreReceiver, subCandidate.extensionReceiverExpression()) as T
@@ -131,10 +130,13 @@ class FirCallCompletionResultsWriterTransformer(
             }
             else -> {
                 resultType = typeRef.substituteTypeRef(subCandidate)
-                result.argumentList.transformArguments(this, subCandidate.createArgumentsMapping())
-                subCandidate.handleVarargs(result.argumentList)
-                subCandidate.argumentMapping?.let {
-                    result.replaceArgumentList(buildResolvedArgumentList(it))
+                val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
+                result.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
+                if (!calleeReference.isError) {
+                    subCandidate.handleVarargs(result.argumentList)
+                    subCandidate.argumentMapping?.let {
+                        result.replaceArgumentList(buildResolvedArgumentList(it))
+                    }
                 }
                 result.transformExplicitReceiver(integerApproximator, null)
             }
@@ -258,11 +260,7 @@ class FirCallCompletionResultsWriterTransformer(
         val typeArguments = computeTypeArguments(variableAssignment, calleeReference.candidate)
         return variableAssignment.transformCalleeReference(
             StoreCalleeReference,
-            buildResolvedNamedReference {
-                source = calleeReference.source
-                name = calleeReference.name
-                resolvedSymbol = calleeReference.candidateSymbol
-            },
+            calleeReference.toResolvedReference(),
         ).transformExplicitReceiver(integerApproximator, null).apply {
             replaceTypeArguments(typeArguments)
         }.compose()
@@ -310,18 +308,17 @@ class FirCallCompletionResultsWriterTransformer(
             delegatedConstructorCall.calleeReference as? FirNamedReferenceWithCandidate ?: return delegatedConstructorCall.compose()
         val subCandidate = calleeReference.candidate
 
-        delegatedConstructorCall.argumentList.transformArguments(this, calleeReference.candidate.createArgumentsMapping())
-        subCandidate.handleVarargs(delegatedConstructorCall.argumentList)
-        subCandidate.argumentMapping?.let {
-            delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it))
+        val argumentsMapping = runIf(!calleeReference.isError) { calleeReference.candidate.createArgumentsMapping() }
+        delegatedConstructorCall.argumentList.transformArguments(this, argumentsMapping)
+        if (!calleeReference.isError) {
+            subCandidate.handleVarargs(delegatedConstructorCall.argumentList)
+            subCandidate.argumentMapping?.let {
+                delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it))
+            }
         }
         return delegatedConstructorCall.transformCalleeReference(
             StoreCalleeReference,
-            buildResolvedNamedReference {
-                source = calleeReference.source
-                name = calleeReference.name
-                resolvedSymbol = calleeReference.candidateSymbol
-            },
+            calleeReference.toResolvedReference(),
         ).compose()
     }
 
@@ -433,11 +430,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         return (syntheticCall.transformCalleeReference(
             StoreCalleeReference,
-            buildResolvedNamedReference {
-                source = calleeReference.source
-                name = calleeReference.name
-                resolvedSymbol = calleeReference.candidateSymbol
-            },
+            calleeReference.toResolvedReference(),
         ) as D).compose()
     }
 
@@ -449,6 +442,20 @@ class FirCallCompletionResultsWriterTransformer(
         val expectedType = data?.getExpectedType(constExpression)
         return constExpression.transform(integerApproximator, expectedType)
     }
+
+    private fun FirNamedReferenceWithCandidate.toResolvedReference() = if (this is FirErrorReferenceWithCandidate) {
+        buildErrorNamedReference {
+            source = this@toResolvedReference.source
+            diagnostic = this@toResolvedReference.diagnostic
+        }
+    } else {
+        buildResolvedNamedReference {
+            source = this@toResolvedReference.source
+            name = this@toResolvedReference.name
+            resolvedSymbol = this@toResolvedReference.candidateSymbol
+        }
+    }
+
 }
 
 sealed class ExpectedArgumentType {

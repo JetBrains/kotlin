@@ -52,4 +52,4 @@ FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
   FUN name:testExtensionBoth visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun extensionBoth (i: kotlin.Int, s: kotlin.String, vararg t: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction3<<root>.C, kotlin.Int, kotlin.Array<out kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public final fun extensionBoth (i: kotlin.Int, s: kotlin.String, vararg t: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction4<<root>.C, kotlin.Int, kotlin.String, kotlin.Array<out kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>

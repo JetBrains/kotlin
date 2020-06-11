@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 fun Candidate.resolveArgumentExpression(
     csBuilder: ConstraintSystemBuilder,
     argument: FirExpression,
-    expectedType: ConeKotlinType,
-    expectedTypeRef: FirTypeRef,
+    expectedType: ConeKotlinType?,
+    expectedTypeRef: FirTypeRef?,
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean
@@ -73,7 +73,7 @@ fun Candidate.resolveArgumentExpression(
                 checkApplicabilityForArgumentType(
                     csBuilder,
                     StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
-                    expectedType.type,
+                    expectedType?.type,
                     SimpleConstraintSystemConstraintPosition,
                     isReceiver = false,
                     isDispatch = false,
@@ -122,8 +122,8 @@ fun Candidate.resolveArgumentExpression(
 private fun Candidate.resolveBlockArgument(
     csBuilder: ConstraintSystemBuilder,
     block: FirBlock,
-    expectedType: ConeKotlinType,
-    expectedTypeRef: FirTypeRef,
+    expectedType: ConeKotlinType?,
+    expectedTypeRef: FirTypeRef?,
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean
@@ -133,7 +133,7 @@ private fun Candidate.resolveBlockArgument(
         checkApplicabilityForArgumentType(
             csBuilder,
             block.typeRef.coneTypeUnsafe(),
-            expectedType.type,
+            expectedType?.type,
             SimpleConstraintSystemConstraintPosition,
             isReceiver = false,
             isDispatch = false,
@@ -157,7 +157,7 @@ private fun Candidate.resolveBlockArgument(
 fun Candidate.resolveSubCallArgument(
     csBuilder: ConstraintSystemBuilder,
     argument: FirResolvable,
-    expectedType: ConeKotlinType,
+    expectedType: ConeKotlinType?,
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean,
@@ -210,7 +210,7 @@ private fun Candidate.checkApplicabilityForIntegerOperatorCall(sink: CheckerSink
 fun Candidate.resolvePlainArgumentType(
     csBuilder: ConstraintSystemBuilder,
     argumentType: ConeKotlinType,
-    expectedType: ConeKotlinType,
+    expectedType: ConeKotlinType?,
     sink: CheckerSink,
     isReceiver: Boolean,
     isDispatch: Boolean,
@@ -257,12 +257,13 @@ private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinTy
 private fun checkApplicabilityForArgumentType(
     csBuilder: ConstraintSystemBuilder,
     argumentType: ConeKotlinType,
-    expectedType: ConeKotlinType,
+    expectedType: ConeKotlinType?,
     position: SimpleConstraintSystemConstraintPosition,
     isReceiver: Boolean,
     isDispatch: Boolean,
     sink: CheckerSink
 ) {
+    if (expectedType == null) return
     if (isReceiver && isDispatch) {
         if (!expectedType.isNullable && argumentType.isMarkedNullable) {
             sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER)
@@ -288,7 +289,7 @@ private fun checkApplicabilityForArgumentType(
 
 internal fun Candidate.resolveArgument(
     argument: FirExpression,
-    parameter: FirValueParameter,
+    parameter: FirValueParameter?,
     isReceiver: Boolean,
     isSafeCall: Boolean,
     sink: CheckerSink
@@ -299,14 +300,15 @@ internal fun Candidate.resolveArgument(
         this.system.getBuilder(),
         argument,
         expectedType,
-        parameter.returnTypeRef,
+        parameter?.returnTypeRef,
         sink,
         isReceiver,
         false
     )
 }
 
-private fun Candidate.prepareExpectedType(session: FirSession, argument: FirExpression, parameter: FirValueParameter): ConeKotlinType {
+private fun Candidate.prepareExpectedType(session: FirSession, argument: FirExpression, parameter: FirValueParameter?): ConeKotlinType? {
+    if (parameter == null) return null
     if (parameter.returnTypeRef is FirILTTypeRefPlaceHolder) return argument.resultType.coneTypeUnsafe()
     val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
     val expectedType = getExpectedTypeWithSAMConversion(session, argument, basicExpectedType) ?: basicExpectedType
