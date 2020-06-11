@@ -11,15 +11,11 @@ import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
-import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
-import org.jetbrains.kotlin.ir.types.impl.buildTypeProjection
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
 
 fun IrClassifierSymbol.superTypes() = when (this) {
@@ -80,22 +76,16 @@ fun Collection<IrType>.commonSupertype(irBuiltIns: IrBuiltIns): IrType {
     }
 }
 
-fun IrType.isNullable(): Boolean = DFS.ifAny(
-    listOf(this),
-    {
-        when (val classifier = it.classifierOrNull) {
-            is IrTypeParameterSymbol -> classifier.owner.superTypes
-            is IrClassSymbol -> emptyList()
-            null -> emptyList()
+fun IrType.isNullable(): Boolean =
+    when (this) {
+        is IrSimpleType -> when (val classifier = classifier) {
+            is IrClassSymbol -> hasQuestionMark
+            is IrTypeParameterSymbol -> hasQuestionMark || classifier.owner.superTypes.any(IrType::isNullable)
             else -> error("Unsupported classifier: $classifier")
         }
-    }, {
-        when (it) {
-            is IrSimpleType -> it.hasQuestionMark
-            else -> it is IrDynamicType
-        }
+        is IrDynamicType -> true
+        else -> false
     }
-)
 
 val IrType.isBoxedArray: Boolean
     get() = classOrNull?.owner?.fqNameWhenAvailable == KotlinBuiltIns.FQ_NAMES.array.toSafe()
