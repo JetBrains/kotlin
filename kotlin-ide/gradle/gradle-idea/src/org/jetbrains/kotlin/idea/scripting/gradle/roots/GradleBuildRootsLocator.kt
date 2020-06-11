@@ -53,9 +53,10 @@ abstract class GradleBuildRootsLocator {
         return findScriptBuildRoot(filePath, searchNearestLegacy = false)?.root as? GradleBuildRoot
     }
 
+    @Suppress("EnumEntryName")
     enum class NotificationKind {
         dontCare, // one of: imported, inside linked legacy gradle build
-        outsideAnyting, // suggest link related gradle build or just say that there is no one
+        outsideAnything, // suggest link related gradle build or just say that there is no one
         wasNotImportedAfterCreation, // project not yet imported after this file was created
         notEvaluatedInLastImport, // all other scripts, suggest to sync or mark as standalone
         standalone
@@ -78,7 +79,7 @@ abstract class GradleBuildRootsLocator {
             get() = when {
                 isImported -> NotificationKind.dontCare
                 standalone -> NotificationKind.standalone
-                nearest == null -> NotificationKind.outsideAnyting
+                nearest == null -> NotificationKind.outsideAnything
                 nearest.importing -> NotificationKind.dontCare
                 else -> when (nearest) {
                     is Legacy -> NotificationKind.dontCare
