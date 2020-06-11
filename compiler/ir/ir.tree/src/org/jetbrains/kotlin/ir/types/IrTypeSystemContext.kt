@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -345,13 +344,21 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
-        // TODO: get rid of descriptor
-        return KotlinBuiltIns.getPrimitiveType((this as IrClassifierSymbol).descriptor as ClassDescriptor)
+        if (this !is IrClassSymbol || !isPublicApi) return null
+
+        val signature = signature.asPublic()
+        if (signature == null || signature.packageFqName != "kotlin") return null
+
+        return PrimitiveType.getByShortName(signature.declarationFqName)
     }
 
     override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? {
-        // TODO: get rid of descriptor
-        return KotlinBuiltIns.getPrimitiveArrayType((this as IrClassifierSymbol).descriptor as ClassDescriptor)
+        if (this !is IrClassSymbol || !isPublicApi) return null
+
+        val signature = signature.asPublic()
+        if (signature == null || signature.packageFqName != "kotlin") return null
+
+        return PrimitiveType.getByShortArrayName(signature.declarationFqName)
     }
 
     override fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean {
