@@ -18,18 +18,17 @@ package org.jetbrains.kotlin.idea.debugger.filter
 
 import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.ui.classFilter.ClassFilter
-import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 
 private const val KOTLIN_STDLIB_FILTER = "kotlin.*"
 
 fun addKotlinStdlibDebugFilterIfNeeded() {
-    if (!KotlinDebuggerSettings.getInstance().isFilterForStdlibAlreadyAdded) {
-        val settings = DebuggerSettings.getInstance()!!
-        val newFilters = (settings.steppingFilters + ClassFilter(KOTLIN_STDLIB_FILTER))
+    val settings = DebuggerSettings.getInstance() ?: return
+    val existingFilters = settings.steppingFilters
 
-        settings.steppingFilters = newFilters
-
-        KotlinDebuggerSettings.getInstance().isFilterForStdlibAlreadyAdded = true
+    if (existingFilters.any { it.pattern == KOTLIN_STDLIB_FILTER }) {
+        return
     }
+
+    settings.steppingFilters = settings.steppingFilters + ClassFilter(KOTLIN_STDLIB_FILTER)
 }
 
