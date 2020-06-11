@@ -37,6 +37,7 @@ import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent;
 import com.intellij.problems.Problem;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.*;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.THashMap;
@@ -536,5 +537,13 @@ public final class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
     line = line <= 0 ? 0 : line - 1;
     int offset = document.getLineStartOffset(line) + (column <= 0 ? 0 : column - 1);
     return new TextRange(offset, offset);
+  }
+
+  public boolean processProblemFiles(@NotNull Processor<? super VirtualFile> processor) {
+    List<VirtualFile> files;
+    synchronized (myProblems) {
+      files = new ArrayList<>(myProblems.keySet());
+    }
+    return ContainerUtil.process(files, processor);
   }
 }
