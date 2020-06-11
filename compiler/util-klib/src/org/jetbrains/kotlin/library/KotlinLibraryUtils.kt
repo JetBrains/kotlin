@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.file
-import org.jetbrains.kotlin.konan.file.withMutableZipFileSystem
+import org.jetbrains.kotlin.konan.file.withZipFileSystem
 import org.jetbrains.kotlin.library.impl.zippedKotlinLibraryChecks
 
 const val KLIB_FILE_EXTENSION = "klib"
@@ -23,7 +23,7 @@ fun File.unpackZippedKonanLibraryTo(newDir: File) {
             newDir.delete()
     }
 
-    this.withMutableZipFileSystem {
+    this.withZipFileSystem {
         it.file("/").recursiveCopyTo(newDir)
     }
     check(newDir.exists) { "Could not unpack $this as $newDir." }
