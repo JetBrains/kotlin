@@ -13,10 +13,15 @@ import com.intellij.openapi.application.ex.PathManagerEx
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
+import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.model.project.ModuleData
+import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsDataStorage
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleTypeId
+import com.intellij.openapi.project.ExternalStorageConfigurationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.doNotEnableExternalStorageByDefaultInTests
 import com.intellij.openapi.project.getProjectCacheFileName
@@ -42,6 +47,7 @@ import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.annotations.NotNull
 import org.junit.*
 import org.junit.Assert.assertFalse
 import java.nio.file.Files
@@ -65,26 +71,98 @@ class ExternalSystemStorageTest {
   val tempDirManager = TemporaryDirectory()
 
   @Test
-  fun `save single module`() = saveProjectInExternalStorageAndCheckResult("singleModule") { project, projectDir ->
+  fun `save single mavenized module`() = saveProjectInExternalStorageAndCheckResult("singleModule") { project, projectDir ->
     val module = ModuleManager.getInstance(project).newModule(projectDir.resolve("test.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
     ModuleRootModificationUtil.addContentRoot(module, projectDir.systemIndependentPath)
     ExternalSystemModulePropertyManager.getInstance(module).setMavenized(true)
   }
 
   @Test
-  fun `save imported module in internal storage`() = saveProjectInInternalStorageAndCheckResult("singleModuleInInternalStorage") { project, projectDir ->
-    val module = ModuleManager.getInstance(project).newModule(projectDir.resolve("test.iml").systemIndependentPath, ModuleTypeId.JAVA_MODULE)
-    ModuleRootModificationUtil.addContentRoot(module, projectDir.systemIndependentPath)
-    ExternalSystemModulePropertyManager.getInstance(module).setMavenized(true)
-  }
-
-  @Test
-  fun `load single module`() = loadProjectAndCheckResults("singleModule") { project ->
+  fun `load single mavenized module`() = loadProjectAndCheckResults("singleModule") { project ->
     val module = ModuleManager.getInstance(project).modules.single()
     assertThat(module.name).isEqualTo("test")
     assertThat(module.moduleTypeName).isEqualTo(ModuleTypeId.JAVA_MODULE)
     assertThat(module.moduleFilePath).isEqualTo("${project.basePath}/test.iml")
     assertThat(ExternalSystemModulePropertyManager.getInstance(module).isMavenized()).isTrue()
+    assertThat(ExternalStorageConfigurationManager.getInstance(project).isEnabled).isTrue()
+  }
+
+  @Test
+  fun `save single module from external system`() = saveProjectInExternalStorageAndCheckResult("singleModuleFromExternalSystem") { project, projectDir ->
+    val module = ModuleManager.getInstance(project).newModule(projectDir.resolve("test.iml").systemIndependentPath,
+                                                              ModuleTypeId.JAVA_MODULE)
+    ModuleRootModificationUtil.addContentRoot(module, projectDir.systemIndependentPath)
+    setExternalSystemOptions(module, projectDir)
+  }
+
+  @Test
+  fun `load single module from external system`() = loadProjectAndCheckResults("singleModuleFromExternalSystem") { project ->
+    val module = ModuleManager.getInstance(project).modules.single()
+    assertThat(module.name).isEqualTo("test")
+    assertThat(module.moduleTypeName).isEqualTo(ModuleTypeId.JAVA_MODULE)
+    assertThat(module.moduleFilePath).isEqualTo("${project.basePath}/test.iml")
+    assertThat(ExternalSystemModulePropertyManager.getInstance(module).isMavenized()).isFalse()
+    assertThat(ExternalStorageConfigurationManager.getInstance(project).isEnabled).isTrue()
+    checkExternalSystemOptions(module, project.basePath!!)
+  }
+
+  @Test
+  fun `save single module from external system in internal storage`() = saveProjectInInternalStorageAndCheckResult("singleModuleFromExternalSystemInInternalStorage") { project, projectDir ->
+    val module = ModuleManager.getInstance(project).newModule(projectDir.resolve("test.iml").systemIndependentPath,
+                                                              ModuleTypeId.JAVA_MODULE)
+    ModuleRootModificationUtil.addContentRoot(module, projectDir.systemIndependentPath)
+    setExternalSystemOptions(module, projectDir)
+  }
+
+  @Test
+  fun `load single module from external system in internal storage`() = loadProjectAndCheckResults("singleModuleFromExternalSystemInInternalStorage") { project ->
+    val module = ModuleManager.getInstance(project).modules.single()
+    assertThat(module.name).isEqualTo("test")
+    assertThat(module.moduleTypeName).isEqualTo(ModuleTypeId.JAVA_MODULE)
+    assertThat(module.moduleFilePath).isEqualTo("${project.basePath}/test.iml")
+    assertThat(ExternalSystemModulePropertyManager.getInstance(module).isMavenized()).isFalse()
+    assertThat(ExternalStorageConfigurationManager.getInstance(project).isEnabled).isFalse()
+    checkExternalSystemOptions(module, project.basePath!!)
+  }
+
+  private fun setExternalSystemOptions(module: Module, projectDir: Path) {
+    val propertyManager = ExternalSystemModulePropertyManager.getInstance(module)
+    val systemId = ProjectSystemId("GRADLE")
+    val moduleData = ModuleData("test", systemId, "", "", "", projectDir.systemIndependentPath).also {
+      it.group = "group"
+      it.version = "42.0"
+    }
+    val projectData = ProjectData(systemId, "", "", projectDir.systemIndependentPath)
+    propertyManager.setExternalOptions(systemId, moduleData, projectData)
+  }
+
+  private fun checkExternalSystemOptions(module: Module, projectDirPath: String) {
+    val propertyManager = ExternalSystemModulePropertyManager.getInstance(module)
+    assertThat(propertyManager.getExternalSystemId()).isEqualTo("GRADLE")
+    assertThat(propertyManager.getExternalModuleGroup()).isEqualTo("group")
+    assertThat(propertyManager.getExternalModuleVersion()).isEqualTo("42.0")
+    assertThat(propertyManager.getLinkedProjectId()).isEqualTo("test")
+    assertThat(propertyManager.getLinkedProjectPath()).isEqualTo(projectDirPath)
+    assertThat(propertyManager.getRootProjectPath()).isEqualTo(projectDirPath)
+  }
+
+
+  @Test
+  fun `save imported module in internal storage`() = saveProjectInInternalStorageAndCheckResult("singleModuleInInternalStorage") { project, projectDir ->
+    val module = ModuleManager.getInstance(project).newModule(projectDir.resolve("test.iml").systemIndependentPath,
+                                                              ModuleTypeId.JAVA_MODULE)
+    ModuleRootModificationUtil.addContentRoot(module, projectDir.systemIndependentPath)
+    ExternalSystemModulePropertyManager.getInstance(module).setMavenized(true)
+  }
+
+  @Test
+  fun `load imported module from internal storage`() = loadProjectAndCheckResults("singleModuleInInternalStorage") { project ->
+    val module = ModuleManager.getInstance(project).modules.single()
+    assertThat(module.name).isEqualTo("test")
+    assertThat(module.moduleTypeName).isEqualTo(ModuleTypeId.JAVA_MODULE)
+    assertThat(module.moduleFilePath).isEqualTo("${project.basePath}/test.iml")
+    assertThat(ExternalSystemModulePropertyManager.getInstance(module).isMavenized()).isTrue()
+    assertThat(ExternalStorageConfigurationManager.getInstance(project).isEnabled).isFalse()
   }
 
   @Test
@@ -162,6 +240,15 @@ class ExternalSystemStorageTest {
 
   @Test
   fun `save libraries`() = saveProjectInExternalStorageAndCheckResult("libraries") { project, _ ->
+    val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
+    val model = libraryTable.modifiableModel
+    model.createLibrary("regular", null)
+    model.createLibrary("imported", null, externalSource)
+    model.commit()
+  }
+
+  @Test
+  fun `save libraries in internal storage`() = saveProjectInInternalStorageAndCheckResult("librariesInInternalStorage") { project, _ ->
     val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
     val model = libraryTable.modifiableModel
     model.createLibrary("regular", null)
