@@ -20,8 +20,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.builtins.isKFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.intentions.reflectToRegularFunctionType
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -48,20 +48,16 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.typeUtil.isInterface
+import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.util.*
 
 //TODO: should use change signature to deal with cases of multiple overridden descriptors
 class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
-
-    private fun KotlinType.reflectToRegularFunctionType(): KotlinType {
-        val isTypeAnnotatedWithExtensionFunctionType = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null
-        val parameterCount = if (isTypeAnnotatedWithExtensionFunctionType) arguments.size - 2 else arguments.size - 1
-        return KotlinTypeFactory.simpleNotNullType(annotations, builtIns.getFunction(parameterCount), arguments)
-    }
 
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val actions = LinkedList<IntentionAction>()
@@ -183,7 +179,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         ) {
             val scope = callable.getResolutionScope(context, callable.getResolutionFacade())
             val typeToInsert = expressionType.approximateWithResolvableType(scope, false)
-            if (typeToInsert.constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.KFunction) {
+            if (typeToInsert.isKFunctionType) {
                 actions.add(createFix(callable, typeToInsert.reflectToRegularFunctionType()))
             }
             actions.add(createFix(callable, typeToInsert))

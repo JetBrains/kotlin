@@ -2323,6 +2323,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameterLongNameRuntime.kt");
         }
 
+        @TestMetadata("addFunctionParameterWithAnonymousFunction.kt")
+        public void testAddFunctionParameterWithAnonymousFunction() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithAnonymousFunction.kt");
+        }
+
+        @TestMetadata("addFunctionParameterWithFunctionReference.kt")
+        public void testAddFunctionParameterWithFunctionReference() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithFunctionReference.kt");
+        }
+
+        @TestMetadata("addFunctionParameterWithLambda.kt")
+        public void testAddFunctionParameterWithLambda() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithLambda.kt");
+        }
+
         @TestMetadata("addFunctionParameterWithSmartCast.kt")
         public void testAddFunctionParameterWithSmartCast() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSmartCast.kt");
@@ -2331,6 +2346,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("addFunctionParameterWithSmartcastedArgument.kt")
         public void testAddFunctionParameterWithSmartcastedArgument() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSmartcastedArgument.kt");
+        }
+
+        @TestMetadata("addFunctionParameterWithSuspendFunctionReference.kt")
+        public void testAddFunctionParameterWithSuspendFunctionReference() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSuspendFunctionReference.kt");
         }
 
         @TestMetadata("addNothingReturnType.kt")
