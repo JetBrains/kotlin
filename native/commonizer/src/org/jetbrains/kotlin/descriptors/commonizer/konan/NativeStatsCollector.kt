@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
+import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_ENTRY
 import org.jetbrains.kotlin.descriptors.commonizer.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
+import org.jetbrains.kotlin.descriptors.commonizer.utils.fqNameWithTypeParameters
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -18,7 +21,7 @@ import java.io.File
  *
  * File format: text, "|"-separated columns.
  *
- * Header row: "FQ Name|Declaration Type|common|<platform1>|<platform2>[|<platformN>...]"
+ * Header row: "FQ Name|Extension Receiver|Parameter Names|Parameter Types|Declaration Type|common|<platform1>|<platform2>[|<platformN>...]"
  *
  * Possible values for "Declaration Type":
  * - MODULE
@@ -45,14 +48,14 @@ import java.io.File
  *
  * Example of output:
 
-FQ Name|Declaration Type|common|macos_x64|ios_x64
-<SystemConfiguration>|MODULE|E|A|A
-platform.SystemConfiguration.SCPreferencesContext|CLASS|E|A|A
-platform.SystemConfiguration.SCPreferencesContext.Companion|COMPANION_OBJECT|E|A|A
-platform.SystemConfiguration.SCNetworkConnectionContext|CLASS|E|A|A
-platform.SystemConfiguration.SCNetworkConnectionContext.Companion|COMPANION_OBJECT|E|A|A
-platform.SystemConfiguration.SCDynamicStoreRefVar|TYPE_ALIAS|-|O|O
-platform.SystemConfiguration.SCVLANInterfaceRef|TYPE_ALIAS|-|O|O
+FQ Name|Extension Receiver|Parameter Names|Parameter Types|Declaration Type|common|macos_x64|ios_x64
+<SystemConfiguration>||||MODULE|E|A|A
+platform.SystemConfiguration.SCPreferencesContext||||CLASS|E|A|A
+platform.SystemConfiguration.SCPreferencesContext.Companion||||COMPANION_OBJECT|E|A|A
+platform.SystemConfiguration.SCNetworkConnectionContext||||CLASS|E|A|A
+platform.SystemConfiguration.SCNetworkConnectionContext.Companion||||COMPANION_OBJECT|E|A|A
+platform.SystemConfiguration.SCDynamicStoreRefVar||||TYPE_ALIAS|-|O|O
+platform.SystemConfiguration.SCVLANInterfaceRef||||TYPE_ALIAS|-|O|O
 
  */
 class NativeStatsCollector(
@@ -77,7 +80,7 @@ class NativeStatsCollector(
         val lastIsNull = output.last() == null
 
         val row = buildString {
-            append((firstNotNull as? ModuleDescriptor)?.name ?: firstNotNull.fqNameSafe) // FQN (or name for module descriptor)
+            appendName(firstNotNull)
             append(SEPARATOR)
             append(firstNotNull.declarationType) // readable declaration type
             append(SEPARATOR)
@@ -119,6 +122,12 @@ class NativeStatsCollector(
         val row = buildString {
             append("FQ Name")
             append(SEPARATOR)
+            append("Extension Receiver")
+            append(SEPARATOR)
+            append("Parameter Names")
+            append(SEPARATOR)
+            append("Parameter Types")
+            append(SEPARATOR)
             append("Declaration Type")
             append(SEPARATOR)
             append("common")
@@ -135,12 +144,39 @@ class NativeStatsCollector(
     companion object {
         private const val SEPARATOR = '|'
 
+        @Suppress("NOTHING_TO_INLINE")
+        private inline fun StringBuilder.appendName(descriptor: DeclarationDescriptor) {
+            // name
+            append(if (descriptor is ModuleDescriptor) descriptor.name.asString() else descriptor.fqNameSafe.asString())
+            append(SEPARATOR)
+
+            // extension receiver
+            if (descriptor is PropertyDescriptor || descriptor is SimpleFunctionDescriptor) {
+                append((descriptor as CallableDescriptor).extensionReceiverParameter?.type?.fqNameWithTypeParameters.orEmpty())
+            }
+            append(SEPARATOR)
+
+            if (descriptor is ConstructorDescriptor || descriptor is SimpleFunctionDescriptor) {
+                // parameter names
+                (descriptor as FunctionDescriptor).valueParameters.joinTo(this) { it.name.asString() }
+                append(SEPARATOR)
+                // parameter types
+                descriptor.valueParameters.joinTo(this) { it.type.fqNameWithTypeParameters }
+            } else {
+                append(SEPARATOR)
+            }
+        }
+
         private inline val DeclarationDescriptor.topLevelnessPrefix: String
             get() = if (DescriptorUtils.isTopLevelDeclaration(this)) "TOP-LEVEL " else "NESTED "
 
         private inline val DeclarationDescriptor.declarationType: String
             get() = when (this) {
-                is ClassDescriptor -> if (isCompanionObject) "COMPANION_OBJECT" else topLevelnessPrefix + kind.toString()
+                is ClassDescriptor -> when {
+                    isCompanionObject -> "COMPANION_OBJECT"
+                    kind == ENUM_CLASS || kind == ENUM_ENTRY -> kind.toString()
+                    else -> topLevelnessPrefix + kind.toString()
+                }
                 is TypeAliasDescriptor -> "TYPE_ALIAS"
                 is ClassConstructorDescriptor -> "CLASS_CONSTRUCTOR"
                 is FunctionDescriptor -> topLevelnessPrefix + "FUN"
