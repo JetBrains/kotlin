@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
+import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -19,4 +21,6 @@ interface Fir2IrComponents {
     val declarationStorage: Fir2IrDeclarationStorage
     val typeConverter: Fir2IrTypeConverter
     val signatureComposer: Fir2IrSignatureComposer
+    val callGenerator: CallAndReferenceGenerator
+    val fakeOverrideGenerator: FakeOverrideGenerator
 }

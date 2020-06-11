@@ -87,4 +87,5 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
     BLOCK_BODY
       CALL 'public open fun bar2x <Y> (j2x: <root>.J2X<Y of <root>.H.bar2x?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <Y>: kotlin.Int?
-        j2x: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test10' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null
+        j2x: TYPE_OP type=<root>.J2X<Y of <root>.H.bar2x?>? origin=SAM_CONVERSION typeOperand=<root>.J2X<Y of <root>.H.bar2x?>?
+          GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test10' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null

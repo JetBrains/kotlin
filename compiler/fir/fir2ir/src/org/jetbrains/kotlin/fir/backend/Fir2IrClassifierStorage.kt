@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
@@ -311,7 +312,7 @@ class Fir2IrClassifierStorage(
         return irTypeParameter
     }
 
-    private fun getCachedIrTypeParameter(
+    internal fun getCachedIrTypeParameter(
         typeParameter: FirTypeParameter,
         index: Int = -1,
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
@@ -336,7 +337,7 @@ class Fir2IrClassifierStorage(
         return null
     }
 
-    private fun getIrTypeParameter(
+    internal fun getIrTypeParameter(
         typeParameter: FirTypeParameter,
         index: Int,
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
@@ -417,17 +418,23 @@ class Fir2IrClassifierStorage(
             declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
             return irClassSymbol
         }
-        // TODO: remove all this code and change to unbound symbol creation
+        firClass as FirRegularClass
         val classId = firClassSymbol.classId
         val parentId = classId.outerClassId
-        val irParent = declarationStorage.findIrParent(classId.packageFqName, parentId, firClassSymbol)
-        val irClass = createIrClass(firClass, irParent)
-
-        if (irParent is IrExternalPackageFragment) {
-            declarationStorage.addDeclarationsToExternalClass(firClass as FirRegularClass, irClass)
+        val irParent = declarationStorage.findIrParent(classId.packageFqName, parentId, firClassSymbol)!!
+        val symbol = Fir2IrClassSymbol(signature)
+        val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
+            symbolTable.declareClass(signature, { symbol }) {
+                Fir2IrLazyClass(components, startOffset, endOffset, firClass.irOrigin(firProvider), firClass, symbol).apply {
+                    parent = irParent
+                }
+            }
         }
+        classCache[firClass] = irClass
+        // NB: this is needed to prevent recursions in case of self bounds
+        (irClass as Fir2IrLazyClass).prepareTypeParameters()
 
-        return irClass.symbol
+        return symbol
     }
 
     fun getIrTypeParameterSymbol(

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
-import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -49,17 +47,10 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
-    private val moduleDescriptor: FirModuleDescriptor,
-    classifierStorage: Fir2IrClassifierStorage,
-    conversionScope: Fir2IrConversionScope,
-    fakeOverrideMode: FakeOverrideMode
+    private val moduleDescriptor: FirModuleDescriptor
 ) : Fir2IrComponents by components {
 
     internal var annotationGenerator: AnnotationGenerator? = null
-
-    private val fakeOverrideGenerator = FakeOverrideGenerator(
-        session, components.scopeSession, classifierStorage, this, conversionScope, fakeOverrideMode
-    )
 
     private val firSymbolProvider = session.firSymbolProvider
 
@@ -190,83 +181,6 @@ class Fir2IrDeclarationStorage(
         return fragmentCache.getOrPut(fqName) {
             return symbolTable.declareExternalPackageFragment(FirPackageFragmentDescriptor(fqName, moduleDescriptor))
         }
-    }
-
-    internal fun addDeclarationsToExternalClass(regularClass: FirRegularClass, irClass: IrClass) {
-        if (regularClass.origin == FirDeclarationOrigin.Java) {
-            val sam = regularClass.getSamIfAny()
-            if (sam != null) {
-                val scope = regularClass.buildUseSiteMemberScope(session, scopeSession)!!
-                scope.processFunctionsByName(sam.name) {
-                    if (it is FirNamedFunctionSymbol && !it.isFakeOverride) {
-                        irClass.declarations += createIrFunction(it.fir, irClass)
-                    }
-                }
-            }
-        } else if (regularClass.symbol.classId.packageFqName.startsWith(Name.identifier("kotlin"))) {
-            // Note: yet this is necessary only for *Range / *Progression classes
-            // due to BE optimizations (for lowering) that use their first / last / step members
-            // TODO: think how to refactor this piece of code and/or merge it with similar Fir2IrVisitor fragment
-            val processedNames = mutableSetOf<Name>()
-            // NB: it's necessary to take all callables from scope,
-            // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
-            val scope = regularClass.buildUseSiteMemberScope(session, scopeSession)!!
-            scope.processDeclaredConstructors {
-                irClass.declarations += createIrConstructor(it.fir, irClass)
-            }
-            classifierStorage.processClassHeader(regularClass, irClass)
-            for (declaration in regularClass.declarations) {
-                when (declaration) {
-                    is FirSimpleFunction -> {
-                        if (declaration.name !in processedNames) {
-                            processedNames += declaration.name
-                            scope.processFunctionsByName(declaration.name) {
-                                if (it is FirNamedFunctionSymbol) {
-                                    if (!it.isFakeOverride) {
-                                        irClass.declarations += createIrFunction(it.fir, irClass)
-                                    } else {
-                                        val fakeOverrideSymbol =
-                                            FirClassSubstitutionScope.createFakeOverrideFunction(session, it.fir, it)
-                                        classifierStorage.preCacheTypeParameters(it.fir)
-                                        irClass.declarations += createIrFunction(fakeOverrideSymbol.fir, irClass)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    is FirProperty -> {
-                        if (declaration.name !in processedNames) {
-                            processedNames += declaration.name
-                            scope.processPropertiesByName(declaration.name) {
-                                if (it is FirPropertySymbol) {
-                                    if (!it.isFakeOverride) {
-                                        irClass.declarations += createIrProperty(it.fir, irClass)
-                                    } else {
-                                        val fakeOverrideSymbol =
-                                            FirClassSubstitutionScope.createFakeOverrideProperty(session, it.fir, it)
-                                        classifierStorage.preCacheTypeParameters(it.fir)
-                                        irClass.declarations += createIrProperty(fakeOverrideSymbol.fir, irClass)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    is FirRegularClass -> {
-                        val nestedExternalClass = classifierStorage.createIrClass(declaration, irClass)
-                        addDeclarationsToExternalClass(declaration, nestedExternalClass)
-                        irClass.declarations += nestedExternalClass
-                    }
-                    else -> continue
-                }
-            }
-            with(fakeOverrideGenerator) {
-                irClass.addFakeOverrides(regularClass, processedNames)
-            }
-            for (irDeclaration in irClass.declarations) {
-                irDeclaration.parent = irClass
-            }
-        }
-        irClass.convertAnnotationsFromLibrary(regularClass)
     }
 
     internal fun findIrParent(packageFqName: FqName, parentClassId: ClassId?, firBasedSymbol: FirBasedSymbol<*>): IrDeclarationParent? {

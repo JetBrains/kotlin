@@ -27,16 +27,10 @@ import org.jetbrains.kotlin.ir.util.*
 internal class ClassMemberGenerator(
     private val components: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
-    private val conversionScope: Fir2IrConversionScope,
-    private val callGenerator: CallAndReferenceGenerator,
-    fakeOverrideMode: FakeOverrideMode
+    private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
 
     private val annotationGenerator = AnnotationGenerator(visitor)
-
-    private val fakeOverrideGenerator = FakeOverrideGenerator(
-        session, components.scopeSession, classifierStorage, declarationStorage, conversionScope, fakeOverrideMode
-    )
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 

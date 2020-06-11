@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.declarations.*
@@ -63,9 +62,7 @@ class Fir2IrVisitor(
         session
     )
 
-    private val callGenerator = CallAndReferenceGenerator(components, this, conversionScope)
-
-    private val memberGenerator = ClassMemberGenerator(components, this, conversionScope, callGenerator, fakeOverrideMode)
+    private val memberGenerator = ClassMemberGenerator(components, this, conversionScope)
 
     private val operatorGenerator = OperatorExpressionGenerator(components, this, conversionScope)
 

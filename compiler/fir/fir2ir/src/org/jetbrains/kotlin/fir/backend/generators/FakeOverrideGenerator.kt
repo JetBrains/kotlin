@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 
-internal class FakeOverrideGenerator(
+class FakeOverrideGenerator(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
     private val classifierStorage: Fir2IrClassifierStorage,
@@ -56,9 +56,14 @@ internal class FakeOverrideGenerator(
     }
 
     fun IrClass.addFakeOverrides(klass: FirClass<*>, processedCallableNames: MutableSet<Name>) {
-        if (fakeOverrideMode == FakeOverrideMode.NONE) return
+        declarations += getFakeOverrides(klass, processedCallableNames)
+    }
+
+    fun IrClass.getFakeOverrides(klass: FirClass<*>, processedCallableNames: MutableSet<Name>): List<IrDeclaration> {
+        val result = mutableListOf<IrDeclaration>()
+        if (fakeOverrideMode == FakeOverrideMode.NONE) return emptyList()
         val superTypesCallableNames = klass.collectCallableNamesFromSupertypes(session)
-        val useSiteMemberScope = klass.buildUseSiteMemberScope(session, scopeSession) ?: return
+        val useSiteMemberScope = klass.buildUseSiteMemberScope(session, scopeSession) ?: return emptyList()
         for (name in superTypesCallableNames) {
             if (name in processedCallableNames) continue
             processedCallableNames += name
@@ -82,7 +87,7 @@ internal class FakeOverrideGenerator(
                         // but fake override itself uses parent from its containing (derived) class
                         val overriddenSymbol = declarationStorage.getIrFunctionSymbol(baseSymbol) as IrSimpleFunctionSymbol
                         irFunction.parent = this
-                        declarations += irFunction.withFunction {
+                        result += irFunction.withFunction {
                             overriddenSymbols = listOf(overriddenSymbol)
                         }
                     } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalFunction.allowsToHaveFakeOverrideIn(klass)) {
@@ -103,7 +108,7 @@ internal class FakeOverrideGenerator(
                         }
                         val overriddenSymbol = declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
                         irFunction.parent = this
-                        declarations += irFunction.withFunction {
+                        result += irFunction.withFunction {
                             overriddenSymbols = listOf(overriddenSymbol)
                         }
                     }
@@ -122,7 +127,7 @@ internal class FakeOverrideGenerator(
                             origin = origin
                         )
                         irProperty.parent = this
-                        declarations += irProperty.withProperty {
+                        result += irProperty.withProperty {
                             setOverriddenSymbolsForAccessors(declarationStorage, originalProperty, firOverriddenSymbol = baseSymbol)
                         }
                     } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalProperty.allowsToHaveFakeOverrideIn(klass)) {
@@ -152,13 +157,14 @@ internal class FakeOverrideGenerator(
                             return@processPropertiesByName
                         }
                         irProperty.parent = this
-                        declarations += irProperty.withProperty {
+                        result += irProperty.withProperty {
                             setOverriddenSymbolsForAccessors(declarationStorage, fakeOverrideProperty, firOverriddenSymbol = propertySymbol)
                         }
                     }
                 }
             }
         }
+        return result
     }
 
     private fun IrProperty.setOverriddenSymbolsForAccessors(

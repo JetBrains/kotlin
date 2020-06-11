@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
+import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
+import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.psi
@@ -188,8 +190,7 @@ class Fir2IrConverter(
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns, mangler)
             val conversionScope = Fir2IrConversionScope()
             val classifierStorage = Fir2IrClassifierStorage(components)
-            val declarationStorage =
-                Fir2IrDeclarationStorage(components, moduleDescriptor, classifierStorage, conversionScope, fakeOverrideMode)
+            val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
             val typeConverter = Fir2IrTypeConverter(components)
             components.declarationStorage = declarationStorage
             components.classifierStorage = classifierStorage
@@ -214,12 +215,18 @@ class Fir2IrConverter(
             for (firFile in firFiles) {
                 converter.processClassHeaders(firFile)
             }
+            val fakeOverrideGenerator = FakeOverrideGenerator(
+                session, scopeSession, classifierStorage, declarationStorage, conversionScope, fakeOverrideMode
+            )
+            components.fakeOverrideGenerator = fakeOverrideGenerator
             for (firFile in firFiles) {
                 converter.processFileAndClassMembers(firFile)
             }
 
             val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope, fakeOverrideMode)
-            declarationStorage.annotationGenerator = AnnotationGenerator(fir2irVisitor)
+            val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
+            components.callGenerator = callGenerator
+            declarationStorage.annotationGenerator = AnnotationGenerator(components)
             for (firFile in firFiles) {
                 val irFile = firFile.accept(fir2irVisitor, null) as IrFile
                 val fileEntry = sourceManager.getOrCreateFileEntry(firFile.psi as KtFile)

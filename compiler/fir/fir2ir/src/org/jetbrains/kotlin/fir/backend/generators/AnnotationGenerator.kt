@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisitor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -23,11 +24,11 @@ import org.jetbrains.kotlin.ir.util.isSetter
  * whose targets may vary. After all the necessary pieces of IR elements, e.g., backing field, are ready, this generator splits those
  * annotations to the specified targets.
  */
-internal class AnnotationGenerator(private val visitor: Fir2IrVisitor) {
+internal class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComponents by components {
 
     fun generate(irContainer: IrMutableAnnotationContainer, firContainer: FirAnnotationContainer) {
         irContainer.annotations = firContainer.annotations.mapNotNull {
-            it.accept(visitor, null) as? IrConstructorCall
+            callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
         }
     }
 
@@ -38,7 +39,7 @@ internal class AnnotationGenerator(private val visitor: Fir2IrVisitor) {
                     it.useSiteTarget == null || !isInConstructor || it.useSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
                 }
                 .mapNotNull {
-                    it.accept(visitor, null) as? IrConstructorCall
+                    callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
                 }
     }
 
@@ -49,7 +50,7 @@ internal class AnnotationGenerator(private val visitor: Fir2IrVisitor) {
                     it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY
                 }
                 .mapNotNull {
-                    it.accept(visitor, null) as? IrConstructorCall
+                    callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
                 }
     }
 
@@ -63,7 +64,9 @@ internal class AnnotationGenerator(private val visitor: Fir2IrVisitor) {
                     it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
                             it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
                 }
-                .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
+                .mapNotNull {
+                    callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
+                }
     }
 
     fun generate(propertyAccessor: IrFunction, property: FirProperty) {
@@ -73,25 +76,41 @@ internal class AnnotationGenerator(private val visitor: Fir2IrVisitor) {
         if (propertyAccessor.isSetter) {
             propertyAccessor.annotations +=
                 property.annotations
-                    .filter { it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER }
-                    .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
+                    .filter {
+                        it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER
+                    }
+                    .mapNotNull {
+                        callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
+                    }
             propertyAccessor.valueParameters.singleOrNull()?.annotations =
                 propertyAccessor.valueParameters.singleOrNull()?.annotations?.plus(
                     property.annotations
-                        .filter { it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER }
-                        .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
+                        .filter {
+                            it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER
+                        }
+                        .mapNotNull {
+                            callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
+                        }
                 )!!
         } else {
             propertyAccessor.annotations +=
                 property.annotations
-                    .filter { it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER }
-                    .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
+                    .filter {
+                        it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER
+                    }
+                    .mapNotNull {
+                        callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
+                    }
         }
         propertyAccessor.extensionReceiverParameter?.annotations =
             propertyAccessor.extensionReceiverParameter?.annotations?.plus(
                 property.annotations
-                    .filter { it.useSiteTarget == AnnotationUseSiteTarget.RECEIVER }
-                    .mapNotNull { it.accept(visitor, null) as? IrConstructorCall }
+                    .filter {
+                        it.useSiteTarget == AnnotationUseSiteTarget.RECEIVER
+                    }
+                    .mapNotNull {
+                        callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
+                    }
             )!!
     }
 }

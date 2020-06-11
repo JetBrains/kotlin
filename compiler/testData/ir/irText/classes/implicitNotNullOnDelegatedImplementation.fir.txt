@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K2 modality:FINAL visibility:public superTypes:[<root>.JFoo]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.K2) returnType:kotlin.String
       overridden:
-        public abstract fun foo (): kotlin.String declared in <root>.IFoo
+        public open fun foo (): kotlin.String declared in <root>.JFoo
       $this: VALUE_PARAMETER name:<this> type:<root>.K2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String declared in <root>.K2'
@@ -97,6 +97,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K4 modality:FINAL visibility:public superTypes:[<root>.JUnrelatedFoo; <root>.IFoo]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.K4) returnType:kotlin.String?
       overridden:
+        public open fun foo (): kotlin.String? declared in <root>.JUnrelatedFoo
         public abstract fun foo (): kotlin.String declared in <root>.IFoo
       $this: VALUE_PARAMETER name:<this> type:<root>.K4
       BLOCK_BODY
