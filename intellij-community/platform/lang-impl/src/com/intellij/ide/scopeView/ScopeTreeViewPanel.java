@@ -472,7 +472,7 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
           final VirtualFile virtualFile = PsiUtilCore.getVirtualFile(psiElement);
           boolean isProblem;
           if (containingFile != null) {
-            isProblem = myWolfTheProblemSolver.isProblemFile(virtualFile);
+            isProblem = virtualFile != null && myWolfTheProblemSolver.isProblemFile(virtualFile);
           }
           else if (virtualFile != null) {
             isProblem = myWolfTheProblemSolver.hasProblemFilesBeneath(file -> VfsUtilCore.isAncestor(virtualFile, file, false));

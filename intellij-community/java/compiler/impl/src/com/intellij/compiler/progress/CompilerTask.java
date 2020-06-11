@@ -250,7 +250,9 @@ public final class CompilerTask extends Task.Backgroundable {
     if (myProject.isDisposed()) return;
     WolfTheProblemSolver wolf = WolfTheProblemSolver.getInstance(myProject);
     VirtualFile file = getVirtualFile(message);
-    wolf.queue(file);
+    if (file != null) {
+      wolf.queue(file);
+    }
   }
 
   public static int translateCategory(CompilerMessageCategory category) {

@@ -105,12 +105,14 @@ public class NavBarPresentation {
   protected SimpleTextAttributes getTextAttributes(final Object object, final boolean selected) {
     if (!NavBarModel.isValid(object)) return SimpleTextAttributes.REGULAR_ATTRIBUTES;
     if (object instanceof PsiElement) {
-      if (!ReadAction.compute(() -> ((PsiElement)object).isValid()).booleanValue()) return SimpleTextAttributes.GRAYED_ATTRIBUTES;
+      if (!ReadAction.compute(() -> ((PsiElement)object).isValid()).booleanValue()) {
+        return SimpleTextAttributes.GRAYED_ATTRIBUTES;
+      }
       PsiFile psiFile = ((PsiElement)object).getContainingFile();
       if (psiFile != null) {
         final VirtualFile virtualFile = psiFile.getVirtualFile();
         return new SimpleTextAttributes(null, selected ? null : FileStatusManager.getInstance(myProject).getStatus(virtualFile).getColor(),
-                                        JBColor.red, WolfTheProblemSolver.getInstance(myProject).isProblemFile(virtualFile)
+                                        JBColor.red, virtualFile != null && WolfTheProblemSolver.getInstance(myProject).isProblemFile(virtualFile)
                                                    ? SimpleTextAttributes.STYLE_WAVED
                                                    : SimpleTextAttributes.STYLE_PLAIN);
       }
