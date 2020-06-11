@@ -61,10 +61,14 @@ internal open class Root(val panel: ProblemsViewPanel) : Node(panel.project), Di
   }
 
   open fun updateProblem(file: VirtualFile, problem: Problem) {
-    val node = synchronized(allProblems) { allProblems[file]?.findProblemNode(problem) } ?: return
+    val node = findProblemNode(file, problem) ?: return
     onValidThread {
       if (node.update()) panel.treeModel.nodeChanged(node)
     }
+  }
+
+  fun findProblemNode(file: VirtualFile, problem: Problem) = synchronized(allProblems) {
+    allProblems[file]?.findProblemNode(problem)
   }
 
   private fun onValidThread(task: () -> Unit) {

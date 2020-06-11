@@ -17,6 +17,7 @@ internal class ProjectErrorsPanel(project: Project, state: ProblemsViewState)
 
   init {
     treeModel.root = root
+    tree.emptyText.text = ProblemsViewBundle.message("problems.view.project.empty")
     project.messageBus.connect(this)
       .subscribe(ProblemListener.TOPIC, this)
   }

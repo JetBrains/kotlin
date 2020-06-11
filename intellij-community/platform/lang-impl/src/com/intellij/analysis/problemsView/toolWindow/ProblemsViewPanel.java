@@ -60,7 +60,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   private final JPanel myPanel;
   private final ActionToolbar myToolbar;
   private final Insets myToolbarInsets = JBUI.insetsRight(1);
-  private final JTree myTree;
+  private final Tree myTree;
   private final TreeExpander myTreeExpander;
   private final SingleAlarm mySelectionAlarm = new SingleAlarm(() -> {
     OpenFileDescriptor descriptor = getSelectedDescriptor();
@@ -242,7 +242,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     return myTreeModel;
   }
 
-  final @NotNull JTree getTree() {
+  final @NotNull Tree getTree() {
     return myTree;
   }
 
