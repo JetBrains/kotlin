@@ -44,7 +44,7 @@ digraph localClassesWithImplicit_kt {
         }
         20 [label="Exit local class test"];
         21 [label="Exit anonymous object"];
-        22 [label="Variable declaration: lval x: R|anonymous|"];
+        22 [label="Variable declaration: lval x: R|<anonymous>|"];
         6 [label="Exit function test" style="filled" fillcolor=red];
     }
     5 -> {7};
@@ -284,7 +284,7 @@ digraph localClassesWithImplicit_kt {
                     99 [label="Enter block"];
                     100 [label="Access variable R|<local>/b|"];
                     101 [label="Access variable R|kotlin/String.length|"];
-                    102 [label="Function call: this@R|/anonymous|.R|/anonymous.bar|()"];
+                    102 [label="Function call: this@R|/<anonymous>|.R|/<anonymous>.bar|()"];
                     103 [label="Exit block"];
                 }
                 104 [label="Exit when branch result"];
@@ -299,7 +299,7 @@ digraph localClassesWithImplicit_kt {
     ^ when () {
         (R|<local>/b| is R|kotlin/String|) ->  {
             R|<local>/b|.R|kotlin/String.length|
-            this@R|/anonymous|.R|/anonymous.bar|()
+            this@R|/<anonymous>|.R|/<anonymous>.bar|()
         }
         else ->  {
             Int(1)
@@ -356,7 +356,7 @@ digraph localClassesWithImplicit_kt {
             122 [label="Access variable R|kotlin/String.length|"];
             123 [label="Access variable R|<local>/b|"];
             124 [label="Access variable <Unresolved name: length>#"];
-            125 [label="Function call: this@R|/anonymous|.R|/anonymous.baz|()"];
+            125 [label="Function call: this@R|/<anonymous>|.R|/<anonymous>.baz|()"];
             120 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
         115 [label="Postponed exit from lambda"];
@@ -364,7 +364,7 @@ digraph localClassesWithImplicit_kt {
         117 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
     R|<local>/a|.R|kotlin/String.length|
     R|<local>/b|.<Unresolved name: length>#
-    ^ this@R|/anonymous|.R|/anonymous.baz|()
+    ^ this@R|/<anonymous>|.R|/<anonymous>.baz|()
 }
 )"];
         118 [label="Stub" style="filled" fillcolor=gray];

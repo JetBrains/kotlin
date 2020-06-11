@@ -31,8 +31,8 @@ FILE: O.kt
 
                 public[private] final fun test(): R|kotlin/Unit| {
                     lval x: R|kotlin/Int| = this@R|/O.Derived|.R|/O.Derived.bar|
-                    lval o: R|anonymous| = object : R|Wrapper| {
-                        private[local] constructor(): R|anonymous| {
+                    lval o: R|<anonymous>| = object : R|Wrapper| {
+                        private[local] constructor(): R|<anonymous>| {
                             super<R|Wrapper|>(this@R|/O.Derived.Some|.R|/O.Derived.Some.z|)
                         }
 
@@ -40,8 +40,8 @@ FILE: O.kt
                             lval y: R|ft<kotlin/String, kotlin/String?>!| = this@R|/O.Derived|.R|/Base.foo|()
                         }
 
-                        public[local] final val oo: R|anonymous| = object : R|kotlin/Any| {
-                            private[local] constructor(): R|anonymous| {
+                        public[local] final val oo: R|<anonymous>| = object : R|kotlin/Any| {
+                            private[local] constructor(): R|<anonymous>| {
                                 super<R|kotlin/Any|>()
                             }
 
@@ -50,7 +50,7 @@ FILE: O.kt
 
                         }
 
-                            public get(): R|anonymous|
+                            public get(): R|<anonymous>|
 
                     }
 
@@ -60,8 +60,8 @@ FILE: O.kt
 
             public[private] final fun test(): R|kotlin/Unit| {
                 lval x: R|kotlin/Int| = this@R|/O.Derived|.R|/O.Derived.bar|
-                lval o: R|anonymous| = object : R|kotlin/Any| {
-                    private[local] constructor(): R|anonymous| {
+                lval o: R|<anonymous>| = object : R|kotlin/Any| {
+                    private[local] constructor(): R|<anonymous>| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -86,7 +86,7 @@ FILE: O.kt
 
         private final fun gen(): R|kotlin/Any| {
             ^gen object : R|Wrapper| {
-                private[local] constructor(): R|anonymous| {
+                private[local] constructor(): R|<anonymous>| {
                     super<R|Wrapper|>(Boolean(true))
                 }
 

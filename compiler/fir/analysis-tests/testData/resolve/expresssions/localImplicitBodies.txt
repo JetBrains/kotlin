@@ -1,12 +1,12 @@
 FILE: localImplicitBodies.kt
     public final fun foo(): R|kotlin/Unit| {
-        lval x: R|anonymous| = object : R|kotlin/Any| {
-            private[local] constructor(): R|anonymous| {
+        lval x: R|<anonymous>| = object : R|kotlin/Any| {
+            private[local] constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
             public[local] final fun sss(): R|kotlin/Int| {
-                ^sss this@R|/anonymous|.R|/anonymous.abc|()
+                ^sss this@R|/<anonymous>|.R|/<anonymous>.abc|()
             }
 
             public[local] final fun abc(): R|kotlin/Int| {
@@ -15,5 +15,5 @@ FILE: localImplicitBodies.kt
 
         }
 
-        lval g: R|kotlin/Int| = R|<local>/x|.R|/anonymous.sss|()
+        lval g: R|kotlin/Int| = R|<local>/x|.R|/<anonymous>.sss|()
     }

@@ -12,7 +12,7 @@ FILE: typesFromSuperClasses.kt
     }
     public final fun main(): R|kotlin/Unit| {
         object : R|Outer| {
-            private[local] constructor(): R|anonymous| {
+            private[local] constructor(): R|<anonymous>| {
                 super<R|Outer|>()
             }
 
