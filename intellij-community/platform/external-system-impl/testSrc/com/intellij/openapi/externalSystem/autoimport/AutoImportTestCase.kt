@@ -278,7 +278,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   override fun setUp() {
     super.setUp()
     testDisposable = Disposer.newDisposable()
-    myProject.replaceService(ExternalSystemProjectTrackerSettings::class.java, AutoImportProjectTrackerSettings(myProject), testDisposable)
+    myProject.replaceService(ExternalSystemProjectTrackerSettings::class.java, AutoImportProjectTrackerSettings(), testDisposable)
     myProject.replaceService(ExternalSystemProjectTracker::class.java, AutoImportProjectTracker(myProject), testDisposable)
   }
 
@@ -309,7 +309,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
       AutoImportProjectTracker.State() to AutoImportProjectTrackerSettings.State(),
     test: SimpleTestBench.(VirtualFile) -> Unit
   ): Pair<AutoImportProjectTracker.State, AutoImportProjectTrackerSettings.State> {
-    return myProject.replaceService(ExternalSystemProjectTrackerSettings::class.java, AutoImportProjectTrackerSettings(myProject)) {
+    return myProject.replaceService(ExternalSystemProjectTrackerSettings::class.java, AutoImportProjectTrackerSettings()) {
       myProject.replaceService(ExternalSystemProjectTracker::class.java, AutoImportProjectTracker(myProject)) {
         val systemId = ProjectSystemId("External System")
         val projectId = ExternalSystemProjectId(systemId, projectPath)

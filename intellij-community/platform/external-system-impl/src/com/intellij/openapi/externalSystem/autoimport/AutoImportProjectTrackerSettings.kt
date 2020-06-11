@@ -8,22 +8,19 @@ import com.intellij.openapi.components.StoragePathMacros.WORKSPACE_FILE
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTrackerSettings.AutoReloadType
 import com.intellij.openapi.observable.properties.AtomicLazyProperty
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import org.jetbrains.annotations.ApiStatus
 
 @State(name = "AutoImportSettings", storages = [Storage(WORKSPACE_FILE)])
-class AutoImportProjectTrackerSettings(
-  private val project: Project
-) : ExternalSystemProjectTrackerSettings, PersistentStateComponent<AutoImportProjectTrackerSettings.State> {
+class AutoImportProjectTrackerSettings : ExternalSystemProjectTrackerSettings, PersistentStateComponent<AutoImportProjectTrackerSettings.State> {
 
-  internal val autoReloadTypeProperty = AtomicLazyProperty { getDefaultAutoReloadType(project) }
+  internal val autoReloadTypeProperty = AtomicLazyProperty { AutoReloadType.SELECTIVE }
 
   override var autoReloadType by autoReloadTypeProperty
 
   override fun getState() = State(autoReloadType)
 
   override fun loadState(state: State) {
-    autoReloadType = state.autoReloadType ?: getDefaultAutoReloadType(project)
+    autoReloadType = state.autoReloadType ?: AutoReloadType.SELECTIVE
   }
 
   data class State(var autoReloadType: AutoReloadType? = null)
@@ -33,14 +30,6 @@ class AutoImportProjectTrackerSettings(
     @ApiStatus.Internal
     fun getInstance(project: Project): AutoImportProjectTrackerSettings {
       return ExternalSystemProjectTrackerSettings.getInstance(project) as AutoImportProjectTrackerSettings
-    }
-
-    private fun getDefaultAutoReloadType(project: Project): AutoReloadType {
-      if (project.isDefault) return AutoReloadType.SELECTIVE
-      val projectManager = ProjectManager.getInstance()
-      val defaultProject = projectManager.defaultProject
-      val settings = ExternalSystemProjectTrackerSettings.getInstance(defaultProject)
-      return settings.autoReloadType
     }
   }
 }
