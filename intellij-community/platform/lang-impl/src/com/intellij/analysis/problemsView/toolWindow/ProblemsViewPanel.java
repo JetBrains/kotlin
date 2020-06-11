@@ -43,7 +43,6 @@ import java.util.Comparator;
 
 import static com.intellij.openapi.application.ApplicationManager.getApplication;
 import static com.intellij.openapi.application.ModalityState.stateForComponent;
-import static com.intellij.ui.AppUIUtil.invokeLaterIfProjectAlive;
 import static com.intellij.ui.ColorUtil.toHtmlColor;
 import static com.intellij.ui.ScrollPaneFactory.createScrollPane;
 import static com.intellij.ui.scale.JBUIScale.scale;
@@ -66,6 +65,20 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     OpenFileDescriptor descriptor = getSelectedDescriptor();
     updateAutoscroll(descriptor);
     updatePreview(descriptor);
+  }, 50, stateForComponent(this), this);
+  private final SingleAlarm myUpdateAlarm = new SingleAlarm(() -> {
+    ToolWindow window = ProblemsView.getToolWindow(getProject());
+    if (window == null) return;
+    ContentManager manager = window.getContentManagerIfCreated();
+    if (manager == null) return;
+    Content content = manager.getContent(this);
+    if (content == null) return;
+
+    Root root = myTreeModel.getRoot();
+    int count = root == null ? 0 : root.getProblemsCount();
+    content.setDisplayName(getContentDisplayName(count));
+    Icon icon = getToolWindowIcon(count);
+    if (icon != null) window.setIcon(icon);
   }, 50, stateForComponent(this), this);
 
   private final Option myAutoscrollToSource = new Option() {
@@ -194,20 +207,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   abstract @NotNull String getDisplayName();
 
   final void updateToolWindowContent() {
-    invokeLaterIfProjectAlive(getProject(), () -> {
-      ToolWindow window = ProblemsView.getToolWindow(getProject());
-      if (window == null) return;
-      ContentManager manager = window.getContentManagerIfCreated();
-      if (manager == null) return;
-      Content content = manager.getContent(this);
-      if (content == null) return;
-
-      Root root = myTreeModel.getRoot();
-      int count = root == null ? 0 : root.getProblemsCount();
-      content.setDisplayName(getContentDisplayName(count));
-      Icon icon = getToolWindowIcon(count);
-      if (icon != null) window.setIcon(icon);
-    });
+    myUpdateAlarm.cancelAndRequest();
   }
 
   @Nullable Icon getToolWindowIcon(int count) {
