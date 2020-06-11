@@ -180,7 +180,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             final ModuleBuildTask moduleBuildTask = (ModuleBuildTask) projectTask;
             final Module module = moduleBuildTask.getModule();
 
-            if (module.getProject().getPresentableUrl() != null && GradleProjectSettings.isDelegatedBuildEnabled(module)) {
+            if (module.getProject().getPresentableUrl() == null || !GradleProjectSettings.isDelegatedBuildEnabled(module)) {
                 return false;
             }
 
