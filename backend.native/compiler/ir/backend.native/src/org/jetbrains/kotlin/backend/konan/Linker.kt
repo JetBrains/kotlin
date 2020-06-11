@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
-import org.jetbrains.kotlin.backend.konan.files.renameAtomic
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 
 internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
@@ -45,21 +44,21 @@ internal class Linker(val context: Context) {
 
         val libraryProvidedLinkerFlags = context.llvm.allNativeDependencies.map { it.linkerOpts }.flatten()
 
+        if (context.config.produce.isCache)
+            context.config.outputFiles.tempCacheDirectory!!.mkdirs()
         runLinker(objectFiles, includedBinaries, libraryProvidedLinkerFlags)
+
         renameOutput()
     }
 
     private fun renameOutput() {
         if (context.config.produce.isCache) {
             val outputFiles = context.config.outputFiles
-            val outputFile = java.io.File(outputFiles.mainFileMangled)
-            val outputDsymBundle = java.io.File(outputFiles.mainFileMangled + ".dSYM")
-            if (renameAtomic(outputFile.absolutePath, outputFiles.mainFile, /* replaceExisting = */ false))
-                outputDsymBundle.renameTo(java.io.File(outputFiles.mainFile + ".dSYM"))
-            else {
-                outputFile.delete()
-                outputDsymBundle.deleteRecursively()
-            }
+            // For caches the output file is a directory. It might be created by someone else,
+            // We have to delete it in order to the next renaming operation to succeed.
+            java.io.File(outputFiles.mainFile).delete()
+            if (!java.io.File(outputFiles.tempCacheDirectory!!.absolutePath).renameTo(java.io.File(outputFiles.mainFile)))
+                outputFiles.tempCacheDirectory.deleteRecursively()
         }
     }
 
@@ -96,7 +95,7 @@ internal class Linker(val context: Context) {
             } else {
                 emptyList()
             }
-            executable = context.config.outputFiles.mainFileMangled
+            executable = context.config.outputFiles.nativeBinaryFile
         } else {
             val framework = File(context.config.outputFile)
             val dylibName = framework.name.removeSuffix(".framework")
@@ -127,7 +126,7 @@ internal class Linker(val context: Context) {
                             caches.dynamic +
                             libraryProvidedLinkerFlags + additionalLinkerArgs,
                     optimize = optimize, debug = debug, kind = linkerOutput,
-                    outputDsymBundle = context.config.outputFiles.mainFileMangled + ".dSYM",
+                    outputDsymBundle = context.config.outputFiles.symbolicInfoFile,
                     needsProfileLibrary = needsProfileLibrary).forEach {
                 it.logWith(context::log)
                 it.execute()

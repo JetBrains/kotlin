@@ -31,15 +31,11 @@ open class KonanCacheTask: DefaultTask() {
     val cacheDirectory: File
         get() = cacheRoot.resolve("$target-g$cacheKind")
 
-    @get:OutputFile
+    @get:OutputDirectory
     protected val cacheFile: File
         get() {
-            val konanTarget = HostManager().targetByName(target)
             val klibName = originalKlib.nameWithoutExtension
-            val cachePrefix = cacheKind.outputKind.prefix(konanTarget)
-            val cacheSuffix = cacheKind.outputKind.suffix(konanTarget)
-            val cacheName = "${cachePrefix}${klibName}-cache${cacheSuffix}"
-            return cacheDirectory.resolve(cacheName)
+            return cacheDirectory.resolve("${klibName}-cache")
         }
 
     @Input

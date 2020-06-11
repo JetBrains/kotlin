@@ -260,7 +260,7 @@ private fun generateLibrary(
     }
 }
 
-private fun getCacheFile(
+private fun getLibraryCacheDir(
         libraryName: String,
         target: KonanTarget,
         cacheDirectory: File,
@@ -279,14 +279,14 @@ private fun buildCache(
         rebuild: Boolean,
         logger: Logger
 ) = with(cacheInfo) {
-    val cacheFile = getCacheFile(def.name, target, cacheDirectory, cacheKind)
-    if (cacheFile.exists && !rebuild) {
+    val libraryCacheDir = getLibraryCacheDir(def.name, target, cacheDirectory, cacheKind)
+    if (libraryCacheDir.listFilesOrEmpty.isNotEmpty() && !rebuild) {
         logger.verbose("Skip precompiling ${def.name} as it's already precompiled")
         return
     }
 
     if (rebuild) {
-        cacheFile.delete()
+        libraryCacheDir.deleteRecursively()
     }
 
     val compilerArgs = arrayOf(
@@ -307,7 +307,7 @@ private fun buildStdlibCache(
         cacheInfo: CacheInfo,
         logger: Logger
 ) = with(cacheInfo) {
-    val stdlibCacheFile = getCacheFile("stdlib", target, cacheDirectory, cacheKind)
+    val stdlibCacheFile = getLibraryCacheDir("stdlib", target, cacheDirectory, cacheKind)
     if (stdlibCacheFile.exists) {
         logger.verbose("Skip precompiling standard library as it's already precompiled")
         return
