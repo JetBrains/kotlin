@@ -32,7 +32,7 @@ internal fun symbolSearchTargets(project: Project, targetSymbols: Collection<Sym
 
 private val SEARCH_TARGET_EXTENSION = ClassExtension<SymbolSearchTargetFactory<*>>("com.intellij.lang.symbolSearchTarget")
 
-private fun symbolSearchTarget(project: Project, symbol: Symbol): SearchTarget {
+fun symbolSearchTarget(project: Project, symbol: Symbol): SearchTarget {
   for (factory in SEARCH_TARGET_EXTENSION.forKey(symbol.javaClass)) {
     @Suppress("UNCHECKED_CAST")
     val factory_ = factory as SymbolSearchTargetFactory<Symbol>

@@ -222,8 +222,19 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
    */
   @ApiStatus.Internal
   public static void showUsages(@NotNull Project project, @NotNull DataContext dataContext, @NotNull SearchTarget target) {
-    Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
     RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(dataContext);
+    showUsages(project, dataContext, popupPosition, target);
+  }
+
+  /**
+   * Shows Usage popup for a single search target without disambiguation via Choose Target popup.
+   */
+  @ApiStatus.Internal
+  public static void showUsages(@NotNull Project project,
+                                @NotNull DataContext dataContext,
+                                @NotNull RelativePoint popupPosition,
+                                @NotNull SearchTarget target) {
+    Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
     SearchScope searchScope = FindUsagesOptions.findScopeByName(project, dataContext, FindSettings.getInstance().getDefaultScopeName());
     UsageVariantHandler variantHandler = createVariantHandler(project, editor, popupPosition, searchScope);
     handlePsiOrSymbol(variantHandler, target);
