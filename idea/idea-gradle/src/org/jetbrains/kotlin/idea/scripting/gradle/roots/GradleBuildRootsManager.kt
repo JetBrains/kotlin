@@ -137,10 +137,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             val mergedData = if (sync.failed && oldRoot is Imported) merge(oldRoot.data, newData) else newData
 
             val lastModifiedFilesReset = LastModifiedFiles()
-            val newRoot = tryCreateImportedRoot(
-                sync.workingDir,
-                lastModifiedFilesReset
-            ) { mergedData } ?: return
+            val newRoot = tryCreateImportedRoot(sync.workingDir, lastModifiedFilesReset) { mergedData } ?: return
             GradleBuildRootDataSerializer.write(newRoot.dir ?: return, mergedData)
             newRoot.saveLastModifiedFiles()
 

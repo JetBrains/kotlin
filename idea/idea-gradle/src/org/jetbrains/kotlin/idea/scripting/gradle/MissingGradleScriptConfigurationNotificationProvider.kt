@@ -29,48 +29,37 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
         val scriptUnderRoot = rootsManager.findScriptBuildRoot(file) ?: return null
         return when (scriptUnderRoot.notificationKind) {
             dontCare -> null
-            outsideAnyting -> EditorNotificationPanel().apply {
-                text("Code insight unavailable (related Gradle project not linked)")
-                // todo: Code insight unavailable (cannot find related Gradle project)
-                createActionLabel("Link related Gradle project") {
+            outsideAnything -> EditorNotificationPanel().apply {
+                text(KotlinIdeaGradleBundle.message("notification.outsideAnything.text"))
+                createActionLabel(KotlinIdeaGradleBundle.message("notification.outsideAnything.linkAction")) {
                     runPartialGradleImport(project)
                 }
             }
             wasNotImportedAfterCreation -> EditorNotificationPanel().apply {
-                text("Code insight unavailable (Gradle project Sync required)")
+                text(KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.text"))
                 createActionLabel(getMissingConfigurationActionText()) {
                     runPartialGradleImport(project)
                 }
             }
             notEvaluatedInLastImport -> EditorNotificationPanel().apply {
-                text(KotlinIdeaGradleBundle.message("text.the.associated.gradle.project.isn.t.imported"))
+                text(KotlinIdeaGradleBundle.message(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.text")))
 
-                createActionLabel(KotlinIdeaGradleBundle.message("action.text.standalone")) {
+                createActionLabel(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.info")) {
                     rootsManager.updateStandaloneScripts {
                         addStandaloneScript(file.path)
                     }
                 }
 
-                contextHelp(
-                    KotlinIdeaGradleBundle.message("tool.tip.text.the.external.gradle.project.needs.to.be.imported.to.get.this.script.analyzed")
-                )
+                contextHelp(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.addAsStandaloneAction"))
             }
             standalone -> EditorNotificationPanel().apply {
-                text("Standalone script")
-                createActionLabel("Disable script") {
+                text(KotlinIdeaGradleBundle.message("notification.standalone.text"))
+                createActionLabel(KotlinIdeaGradleBundle.message("notification.standalone.disableScriptAction")) {
                     rootsManager.updateStandaloneScripts {
                         removeStandaloneScript(file.path)
                     }
                 }
-                contextHelp(
-                    """
-<div width=400>\
-<p>Configuration for this script will be loaded separately from Gradle project Sync. \
-<br/>
-<p>This can be expensive for large Gradle projects.</p>\
-</div>                        
-                    """
-                )
+                contextHelp(KotlinIdeaGradleBundle.message("notification.standalone.info"))
             }
         }
     }
