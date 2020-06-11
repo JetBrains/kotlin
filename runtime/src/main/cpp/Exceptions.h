@@ -67,4 +67,7 @@ void PrintThrowable(KRef);
 } // extern "C"
 #endif
 
+// It's not always safe to extract SourceInfo during unhandled exception termination.
+void DisallowSourceInfo();
+
 #endif // RUNTIME_NAMES_H

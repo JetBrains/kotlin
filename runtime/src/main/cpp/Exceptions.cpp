@@ -103,6 +103,14 @@ _Unwind_Reason_Code unwindCallback(
 }
 #endif
 
+THREAD_LOCAL_VARIABLE bool disallowSourceInfo = false;
+
+SourceInfo getSourceInfo(KConstRef stackTrace, int index) {
+  return disallowSourceInfo
+      ? SourceInfo { .fileName = nullptr, .lineNumber = -1, .column = -1 }
+      : Kotlin_getSourceInfo(*PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), index));
+}
+
 }  // namespace
 
 extern "C" {
@@ -172,7 +180,7 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
     RuntimeCheck(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
 
     for (int index = 0; index < size; ++index) {
-      auto sourceInfo = Kotlin_getSourceInfo(*PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), index));
+      auto sourceInfo = getSourceInfo(stackTrace, index);
       const char* symbol = symbols[index];
       const char* result;
       char line[1024];
@@ -303,3 +311,7 @@ void SetKonanTerminateHandler() {
 #endif // KONAN_OBJC_INTEROP
 
 } // extern "C"
+
+void DisallowSourceInfo() {
+  disallowSourceInfo = true;
+}
