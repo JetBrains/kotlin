@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
@@ -45,7 +46,12 @@ abstract class AbstractAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    fun loadFunctionAnnotations(functionProto: ProtoBuf.Function, nameResolver: NameResolver): List<FirAnnotationCall> {
+    open fun loadFunctionAnnotations(
+        containerSource: DeserializedContainerSource?,
+        functionProto: ProtoBuf.Function,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
+    ): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(functionProto.flags)) return emptyList()
         val annotations = functionProto.getExtension(protocol.functionAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }
@@ -61,6 +67,7 @@ abstract class AbstractAnnotationDeserializer(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
+        typeTable: TypeTable,
         getterFlags: Int
     ): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(getterFlags)) return emptyList()
@@ -72,6 +79,7 @@ abstract class AbstractAnnotationDeserializer(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
+        typeTable: TypeTable,
         setterFlags: Int
     ): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(setterFlags)) return emptyList()
