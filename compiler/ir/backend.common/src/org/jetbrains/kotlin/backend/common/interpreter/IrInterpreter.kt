@@ -307,7 +307,8 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
                 dispatchReceiver is Wrapper && !isInlineOnly -> dispatchReceiver.getMethod(irFunction).invokeMethod(irFunction)
                 irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction)
                 dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction) // 'is Primitive' check for js char and js long
-                irFunction.body == null -> irFunction.trySubstituteFunctionBody() ?: calculateBuiltIns(irFunction)
+                irFunction.body == null ->
+                    irFunction.trySubstituteFunctionBody() ?: irFunction.tryCalculateLazyConst() ?: calculateBuiltIns(irFunction)
                 else -> irFunction.interpret()
             }
         }.check { return it }.implicitCastIfNeeded(expression.type, irFunction.returnType, stack)
@@ -325,6 +326,12 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
                 this.body = null
             }
         }
+    }
+
+    // TODO fix in FIR2IR; const val getter must have body with IrGetField node
+    private suspend fun IrFunction.tryCalculateLazyConst(): ExecutionResult? {
+        if (this !is IrSimpleFunction) return null
+        return this.correspondingPropertySymbol?.owner?.backingField?.initializer?.interpret()
     }
 
     private suspend fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall): ExecutionResult {
