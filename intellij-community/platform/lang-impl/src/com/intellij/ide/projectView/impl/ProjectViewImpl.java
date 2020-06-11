@@ -2,8 +2,6 @@
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.application.options.OptionsApplicabilityFilter;
-import com.intellij.history.LocalHistory;
-import com.intellij.history.LocalHistoryAction;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.*;
 import com.intellij.ide.impl.ProjectViewSelectInGroupTarget;
@@ -13,7 +11,6 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.impl.nodes.*;
 import com.intellij.ide.ui.SplitterProportionsDataImpl;
-import com.intellij.ide.util.DeleteHandler;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.NodeDescriptor;
@@ -51,8 +48,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowContentUiType;
@@ -62,7 +57,6 @@ import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.*;
 import com.intellij.ui.content.Content;
@@ -1163,71 +1157,17 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     return ActionCallback.REJECTED;
   }
 
-  private final class MyDeletePSIElementProvider implements DeleteProvider {
+  private final class MyDeletePSIElementProvider extends ProjectViewDeleteElementProvider {
     @Override
-    public boolean canDeleteElement(@NotNull DataContext dataContext) {
-      final PsiElement[] elements = getElementsToDelete();
-      return DeleteHandler.shouldEnableDeleteAction(elements);
-    }
-
-    @Override
-    public void deleteElement(@NotNull DataContext dataContext) {
-      List<PsiElement> validElements = new ArrayList<>();
-      for (PsiElement psiElement : getElementsToDelete()) {
-        if (psiElement != null && psiElement.isValid()) {
-          validElements.add(psiElement);
-        }
-      }
-
-      PsiElement[] elements = PsiUtilCore.toPsiElementArray(validElements);
-      LocalHistoryAction a = LocalHistory.getInstance().startAction(IdeBundle.message("progress.deleting"));
-      try {
-        DeleteHandler.deletePsiElement(elements, myProject);
-      }
-      finally {
-        a.finish();
-      }
-    }
-
-    private PsiElement @NotNull [] getElementsToDelete() {
+    protected PsiElement @NotNull [] getSelectedPSIElements(@NotNull DataContext dataContext) {
       final AbstractProjectViewPane viewPane = getCurrentProjectViewPane();
-      PsiElement[] elements = viewPane.getSelectedPSIElements();
-      for (int idx = 0; idx < elements.length; idx++) {
-        final PsiElement element = elements[idx];
-        if (element instanceof PsiDirectory) {
-          PsiDirectory directory = (PsiDirectory)element;
-          final ProjectViewDirectoryHelper directoryHelper = ProjectViewDirectoryHelper.getInstance(myProject);
-          if (isHideEmptyMiddlePackages(viewPane.getId()) && directory.getChildren().length == 0 && !directoryHelper.skipDirectory(directory)) {
-            while (true) {
-              PsiDirectory parent = directory.getParentDirectory();
-              if (parent == null) break;
-              if (directoryHelper.skipDirectory(parent) ||
-                  PsiDirectoryFactory.getInstance(myProject).getQualifiedName(parent, false).isEmpty()) break;
-              PsiElement[] children = parent.getChildren();
-              if (children.length == 0 || children.length == 1 && children[0] == directory) {
-                directory = parent;
-              }
-              else {
-                break;
-              }
-            }
-            elements[idx] = directory;
-          }
-          final VirtualFile virtualFile = directory.getVirtualFile();
-          final String path = virtualFile.getPath();
-          if (path.endsWith(JarFileSystem.JAR_SEPARATOR)) { // if is jar-file root
-            final VirtualFile vFile =
-              LocalFileSystem.getInstance().findFileByPath(path.substring(0, path.length() - JarFileSystem.JAR_SEPARATOR.length()));
-            if (vFile != null) {
-              final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(vFile);
-              if (psiFile != null) {
-                elements[idx] = psiFile;
-              }
-            }
-          }
-        }
-      }
-      return elements;
+      return viewPane.getSelectedPSIElements();
+    }
+
+    @Override
+    protected Boolean hideEmptyMiddlePackages(@NotNull DataContext dataContext) {
+      final AbstractProjectViewPane viewPane = getCurrentProjectViewPane();
+      return isHideEmptyMiddlePackages(viewPane.getId());
     }
   }
 
