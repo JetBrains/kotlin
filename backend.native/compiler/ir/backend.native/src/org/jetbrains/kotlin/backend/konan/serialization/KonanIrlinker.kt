@@ -180,7 +180,7 @@ internal class KonanIrLinker(
 
         private fun resolveDescriptor(idSig: IdSignature): ClassDescriptor =
             with(idSig as IdSignature.PublicSignature) {
-                val classId = ClassId(packageFqn, declarationFqn, false)
+                val classId = ClassId(packageFqName(), FqName(declarationFqName), false)
                 moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: error("No declaration found with $idSig")
             }
 
