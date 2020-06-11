@@ -33,7 +33,8 @@ fun createInteropLibrary(
         manifest: Properties,
         dependencies: List<KotlinLibrary>,
         nopack: Boolean,
-        shortName: String?
+        shortName: String?,
+        staticLibraries: List<String>
 ) {
     val version = KotlinLibraryVersioning(
             libraryVersion = null,
@@ -58,6 +59,7 @@ fun createInteropLibrary(
         nativeBitcodeFiles.forEach(this::addNativeBitcode)
         addManifestAddend(manifest)
         addLinkDependencies(dependencies)
+        staticLibraries.forEach(this::addIncludedBinary)
         commit()
     }
 }

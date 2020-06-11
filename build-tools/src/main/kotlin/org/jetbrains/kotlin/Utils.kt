@@ -320,3 +320,29 @@ fun Project.mergeManifestsByTargets(source: File, destination: File) {
 
     destinationFile.saveProperties(destinationProperties)
 }
+
+fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir: File) {
+    delete(objDir)
+    delete(output)
+
+    val platform = platformManager.platform(testTarget)
+
+    objDir.mkdirs()
+    exec {
+        it.commandLine(platform.clang.clangC(
+                "-c",
+                *cSources.map { it.absolutePath }.toTypedArray()
+        ))
+        it.workingDir(objDir)
+    }
+
+    output.parentFile.mkdirs()
+    exec {
+        it.commandLine(
+                "${platform.configurables.absoluteLlvmHome}/bin/llvm-ar",
+                "-rc",
+                output,
+                *fileTree(objDir).files.toTypedArray()
+        )
+    }
+}

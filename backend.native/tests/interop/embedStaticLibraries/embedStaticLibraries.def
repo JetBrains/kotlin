@@ -1,0 +1,3 @@
+staticLibraries = \
+    backend.native/tests/build/embedStaticLibraries/3.a \
+    backend.native/tests/build/embedStaticLibraries/4.a

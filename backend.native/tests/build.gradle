@@ -3506,6 +3506,28 @@ createInterop("auxiliaryCppSources") {
     it.extraOpts "-Xsource-compiler-option", "-std=c++17"
 }
 
+createInterop("embedStaticLibraries") {
+    it.defFile 'interop/embedStaticLibraries/embedStaticLibraries.def'
+    it.headers "$projectDir/interop/embedStaticLibraries/embedStaticLibraries.h"
+
+    // Note: also hardcoded in def file.
+    final String libDir = "$buildDir/embedStaticLibraries/"
+
+    it.getByTarget(target.name).doFirst {
+        1.upto(4) {
+            UtilsKt.buildStaticLibrary(
+                    project,
+                    [file("$projectDir/interop/embedStaticLibraries/${it}.c")],
+                    file("$libDir/${it}.a"),
+                    file("$libDir/${it}.objs"),
+            )
+        }
+    }
+
+    it.extraOpts '-staticLibrary', "$libDir/1.a"
+    it.extraOpts '-staticLibrary', "$libDir/2.a"
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -3717,6 +3739,12 @@ interopTest("interop_auxiliarySources") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/auxiliary_sources/main.kt"
     interop = 'auxiliaryCppSources'
+}
+
+interopTest("interop_embedStaticLibraries") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/embedStaticLibraries/main.kt"
+    interop = 'embedStaticLibraries'
 }
 
 interopTest("interop_values") {
