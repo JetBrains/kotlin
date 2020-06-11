@@ -146,6 +146,18 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
+        val errorTypeRefImpl = impl(errorTypeRef) {
+            default("type", "ConeClassErrorType(diagnostic.reason)")
+            default("delegatedTypeRef") {
+                value = "null"
+                withGetter = true
+            }
+            default("annotations", "mutableListOf()")
+            defaultFalse("isSuspend")
+            useTypes(coneClassErrorTypeType)
+        }
+
+
         impl(property) {
             default("isVal") {
                 value = "!isVar"
@@ -154,6 +166,22 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
             default("backingFieldSymbol", "FirBackingFieldSymbol(symbol.callableId)")
             useTypes(backingFieldSymbolType, delegateFieldSymbolType)
+        }
+
+        impl(errorProperty) {
+            defaultTrue("isVal", withGetter = true)
+            defaultFalse("isVar", withGetter = true)
+
+            defaultNull(
+                "receiverTypeRef",
+                "initializer",
+                "delegate",
+                "delegateFieldSymbol",
+                "getter", "setter",
+                withGetter = true
+            )
+            default("returnTypeRef", "FirErrorTypeRefImpl(null, diagnostic)")
+            useTypes(errorTypeRefImpl)
         }
 
         impl(field) {
@@ -353,17 +381,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(resolvedTypeRef)
-
-        val errorTypeRefImpl = impl(errorTypeRef) {
-            default("type", "ConeClassErrorType(diagnostic.reason)")
-            default("delegatedTypeRef") {
-                value = "null"
-                withGetter = true
-            }
-            default("annotations", "mutableListOf()")
-            defaultFalse("isSuspend")
-            useTypes(coneClassErrorTypeType)
-        }
 
         impl(errorExpression) {
             defaultEmptyList("annotations")

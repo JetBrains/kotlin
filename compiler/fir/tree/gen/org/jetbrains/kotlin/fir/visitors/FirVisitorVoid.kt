@@ -80,6 +80,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -429,6 +430,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitErrorFunction(errorFunction: FirErrorFunction) {
         visitElement(errorFunction)
+    }
+
+    open fun visitErrorProperty(errorProperty: FirErrorProperty) {
+        visitElement(errorProperty)
     }
 
     open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
@@ -913,6 +918,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitErrorFunction(errorFunction: FirErrorFunction, data: Nothing?) {
         visitErrorFunction(errorFunction)
+    }
+
+    final override fun visitErrorProperty(errorProperty: FirErrorProperty, data: Nothing?) {
+        visitErrorProperty(errorProperty)
     }
 
     final override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?) {

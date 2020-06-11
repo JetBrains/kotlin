@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
+import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 open class FirVariableSymbol<D : FirVariable<D>>(override val callableId: CallableId) : FirCallableSymbol<D>() {
@@ -35,3 +39,11 @@ class FirDelegateFieldSymbol<D : FirVariable<D>>(callableId: CallableId) : FirVa
 }
 
 class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(callableId)
+
+class FirErrorPropertySymbol(
+    val diagnostic: ConeDiagnostic
+) : FirVariableSymbol<FirErrorProperty>(CallableId(FqName.ROOT, null, NAME)) {
+    companion object {
+        val NAME: Name = Name.special("<error property>")
+    }
+}

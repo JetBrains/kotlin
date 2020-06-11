@@ -368,6 +368,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             needTransformOtherChildren()
         }
 
+        errorProperty.configure {
+            parentArg(variable, "F", errorProperty)
+            +symbol("FirErrorPropertySymbol")
+        }
+
         enumEntry.configure {
             parentArg(variable, "F", enumEntry)
             parentArg(callableMemberDeclaration, "F", enumEntry)

@@ -80,6 +80,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -431,6 +432,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformErrorFunction(errorFunction: FirErrorFunction, data: D): CompositeTransformResult<FirStatement> {
         return transformElement(errorFunction, data)
+    }
+
+    open fun transformErrorProperty(errorProperty: FirErrorProperty, data: D): CompositeTransformResult<FirStatement> {
+        return transformElement(errorProperty, data)
     }
 
     open fun transformQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): CompositeTransformResult<FirStatement> {
@@ -915,6 +920,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitErrorFunction(errorFunction: FirErrorFunction, data: D): CompositeTransformResult<FirStatement> {
         return transformErrorFunction(errorFunction, data)
+    }
+
+    final override fun visitErrorProperty(errorProperty: FirErrorProperty, data: D): CompositeTransformResult<FirStatement> {
+        return transformErrorProperty(errorProperty, data)
     }
 
     final override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): CompositeTransformResult<FirStatement> {
