@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow
 
+import com.intellij.codeInsight.problems.WolfTheProblemSolverImpl
 import com.intellij.icons.AllIcons.Toolwindows
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option
 import com.intellij.openapi.diagnostic.Logger
@@ -8,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.problems.ProblemListener
+import com.intellij.problems.WolfTheProblemSolver
 
 internal class ProjectErrorsPanel(project: Project, state: ProblemsViewState)
   : ProblemsViewPanel(project, state), ProblemListener {
@@ -20,6 +22,11 @@ internal class ProjectErrorsPanel(project: Project, state: ProblemsViewState)
     tree.emptyText.text = ProblemsViewBundle.message("problems.view.project.empty")
     project.messageBus.connect(this)
       .subscribe(ProblemListener.TOPIC, this)
+    val problems = WolfTheProblemSolver.getInstance(project) as? WolfTheProblemSolverImpl
+    problems?.processProblemFiles {
+      problemsAppeared(it)
+      true
+    }
   }
 
   companion object {
