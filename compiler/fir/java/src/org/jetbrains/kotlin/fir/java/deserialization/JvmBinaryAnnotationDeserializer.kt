@@ -45,6 +45,16 @@ class JvmBinaryAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
+    override fun loadConstructorAnnotations(
+        containerSource: DeserializedContainerSource?,
+        constructorProto: ProtoBuf.Constructor,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
+    ): List<FirAnnotationCall> {
+        val signature = getCallableSignature(constructorProto, nameResolver, typeTable, CallableKind.FUNCTION) ?: return emptyList()
+        return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, signature)
+    }
+
     override fun loadFunctionAnnotations(
         containerSource: DeserializedContainerSource?,
         functionProto: ProtoBuf.Function,
@@ -84,7 +94,11 @@ class JvmBinaryAnnotationDeserializer(
         kind: CallableKind
     ): MemberSignature? {
         return when (proto) {
-            // TODO: ProtoBuf.Constructor
+            is ProtoBuf.Constructor -> {
+                MemberSignature.fromJvmMemberSignature(
+                    JvmProtoBufUtil.getJvmConstructorSignature(proto, nameResolver, typeTable) ?: return null
+                )
+            }
             is ProtoBuf.Function -> {
                 val signature = JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver, typeTable) ?: return null
                 // TODO: Investigate why annotations for accessors affect resolution, resulting in dangling type parameter.

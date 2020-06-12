@@ -7,7 +7,7 @@ public sealed class Sealed : R|kotlin/Any| {
     public final val z: R|test/Z|
         public get(): R|test/Z|
 
-    private constructor(z: R|test/Z|): R|test/Sealed|
+    @R|test/Ann|() private constructor(z: R|test/Z|): R|test/Sealed|
 
     public final class Derived : R|test/Sealed| {
         public constructor(z: R|test/Z|): R|test/Sealed.Derived|
@@ -20,11 +20,11 @@ public final class Test : R|kotlin/Any| {
     public final val z: R|test/Z|
         public get(): R|test/Z|
 
-    public constructor(z: R|test/Z|, a: R|kotlin/Int|): R|test/Test|
+    @R|test/Ann|() public constructor(z: R|test/Z|, a: R|kotlin/Int|): R|test/Test|
 
-    private constructor(z: R|test/Z|, s: R|kotlin/String|): R|test/Test|
+    @R|test/Ann|() private constructor(z: R|test/Z|, s: R|kotlin/String|): R|test/Test|
 
-    public constructor(z: R|test/Z|): R|test/Test|
+    @R|test/Ann|() public constructor(z: R|test/Z|): R|test/Test|
 
 }
 
