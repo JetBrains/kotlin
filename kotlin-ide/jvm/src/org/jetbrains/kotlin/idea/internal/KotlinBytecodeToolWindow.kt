@@ -21,30 +21,17 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.Alarm
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
-import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
-import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
+import org.jetbrains.kotlin.idea.core.KotlinCompilerIde
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.utils.join
 import java.awt.BorderLayout
 import java.awt.FlowLayout
@@ -281,60 +268,8 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             return BytecodeGenerationResult.Bytecode(answer.toString())
         }
 
-        fun compileSingleFile(
-            ktFile: KtFile,
-            configuration: CompilerConfiguration
-        ): GenerationState? {
-            val platform = ktFile.platform
-            if (!platform.isCommon() && !platform.isJvm()) return null
-
-            val resolutionFacade = KotlinCacheService.getInstance(ktFile.project)
-                .getResolutionFacadeByFile(ktFile, JvmPlatforms.unspecifiedJvmPlatform)
-                ?: return null
-
-            val bindingContextForFile = resolutionFacade.analyzeWithAllCompilerChecks(listOf(ktFile)).bindingContext
-
-            val (bindingContext, toProcess) = DebuggerUtils.analyzeInlinedFunctions(
-                resolutionFacade, ktFile, configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE),
-                bindingContextForFile
-            )
-
-            val generateClassFilter = object : GenerationState.GenerateClassFilter() {
-                override fun shouldGeneratePackagePart(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") file: KtFile): Boolean {
-                    return file === ktFile
-                }
-
-                override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean {
-                    return true
-                }
-
-                override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean {
-                    return processingClassOrObject.containingKtFile === ktFile
-                }
-
-                override fun shouldGenerateScript(script: KtScript): Boolean {
-                    return script.containingKtFile === ktFile
-                }
-
-                override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
-            }
-
-            val state = GenerationState.Builder(
-                    ktFile.project, ClassBuilderFactories.TEST, resolutionFacade.moduleDescriptor, bindingContext, toProcess,
-                    configuration
-                )
-                .generateDeclaredClassFilter(generateClassFilter)
-                .codegenFactory(
-                    if (configuration.getBoolean(JVMConfigurationKeys.IR))
-                        JvmIrCodegenFactory(PhaseConfig(jvmPhases))
-                    else
-                        DefaultCodegenFactory
-                )
-                .build()
-
-            KotlinCodegenFacade.compileCorrectFiles(state)
-
-            return state
+        fun compileSingleFile(ktFile: KtFile, configuration: CompilerConfiguration): GenerationState? {
+            return KotlinCompilerIde(ktFile, configuration, ClassBuilderFactories.TEST).compile()
         }
 
         private fun mapLines(text: String, startLine: Int, endLine: Int): Pair<Int, Int> {

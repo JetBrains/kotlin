@@ -19,15 +19,9 @@ import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.NonUrgentExecutor
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
-import org.jetbrains.kotlin.codegen.filterClassFiles
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.KotlinCompilerIde
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
-import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.scratch.LOG
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
@@ -149,49 +143,11 @@ class KtScratchExecutionSession(
     private fun compileFileToTempDir(psiFile: KtFile, expressions: List<ScratchExpression>): File? {
         if (!executor.checkForErrors(psiFile, expressions)) return null
 
-        val resolutionFacade = psiFile.getResolutionFacade()
-        val (bindingContext, files) = DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, psiFile, false)
+        val tmpDir = FileUtil.createTempDirectory("compile", "scratch")
+        LOG.printDebugMessage("Temp output dir: ${tmpDir.path}")
 
-        LOG.printDebugMessage("Analyzed files: \n${files.joinToString("\n") { it.virtualFilePath }}")
-
-        val generateClassFilter = object : GenerationState.GenerateClassFilter() {
-            override fun shouldGeneratePackagePart(ktFile: KtFile) = ktFile == psiFile
-            override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject) = true
-            override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = processingClassOrObject.containingKtFile == psiFile
-            override fun shouldGenerateScript(script: KtScript) = false
-            override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
-        }
-
-        val state = GenerationState.Builder(
-            file.project,
-            ClassBuilderFactories.BINARIES,
-            resolutionFacade.moduleDescriptor,
-            bindingContext,
-            files,
-            CompilerConfiguration.EMPTY
-        ).generateDeclaredClassFilter(generateClassFilter).build()
-
-        KotlinCodegenFacade.compileCorrectFiles(state)
-
-        return writeClassFilesToTempDir(state)
-    }
-
-    private fun writeClassFilesToTempDir(state: GenerationState): File {
-        val classFiles = state.factory.asList().filterClassFiles()
-
-        val dir = FileUtil.createTempDirectory("compile", "scratch")
-
-        LOG.printDebugMessage("Temp output dir: ${dir.path}")
-
-        for (classFile in classFiles) {
-            val tmpOutFile = File(dir, classFile.relativePath)
-            tmpOutFile.parentFile.mkdirs()
-            tmpOutFile.createNewFile()
-            tmpOutFile.writeBytes(classFile.asByteArray())
-
-            LOG.printDebugMessage("Generated class file: ${classFile.relativePath}")
-        }
-        return dir
+        KotlinCompilerIde(psiFile).compileToDirectory(tmpDir)
+        return tmpDir
     }
 
     private fun createCommandLine(originalFile: KtFile, module: Module?, mainClassName: String, tempOutDir: String): GeneralCommandLine {

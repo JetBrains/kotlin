@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.core.util.analyzeInlinedFunctions
 import org.jetbrains.kotlin.idea.core.util.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.core.util.mergeAttachments
 import org.jetbrains.kotlin.idea.core.util.runInReadActionWithWriteActionPriorityWithPCE
@@ -223,7 +224,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
 
         val (bindingContext, filesToCompile) = runReadAction {
             val resolutionFacade = getResolutionFacadeForCodeFragment(codeFragment)
-            DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, codeFragment, false, analysisResult.bindingContext)
+            analyzeInlinedFunctions(resolutionFacade, codeFragment, false, analysisResult.bindingContext)
         }
 
         val moduleDescriptor = analysisResult.moduleDescriptor
