@@ -1,0 +1,11 @@
+<component name="libraryTable">
+<library name="kotlin-test-js">
+  <CLASSES>
+    <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-test-js/1.4-SNAPSHOT/kotlin-test-js-1.4-SNAPSHOT.jar!/" />
+  </CLASSES>
+  <JAVADOC />
+  <SOURCES>
+    <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-test-js/1.4-SNAPSHOT/kotlin-test-js-1.4-SNAPSHOT-sources.jar!/" />
+  </SOURCES>
+</library>
+</component>
