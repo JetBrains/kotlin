@@ -32,15 +32,15 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
         visitModuleFragment(declaration)
 
     open fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment = declaration.transformChildren()
-    override fun visitPackageFragment(declaration: IrPackageFragment, data: Nothing?): IrElement = visitPackageFragment(declaration)
+    final override fun visitPackageFragment(declaration: IrPackageFragment, data: Nothing?): IrElement = visitPackageFragment(declaration)
 
     open fun visitFile(declaration: IrFile): IrFile = visitPackageFragment(declaration) as IrFile
     final override fun visitFile(declaration: IrFile, data: Nothing?): IrFile = visitFile(declaration)
 
-    open fun visitExternalPackageFragment(declaration: IrExternalPackageFragment) =
+    open fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         visitPackageFragment(declaration) as IrExternalPackageFragment
 
-    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: Nothing?): IrExternalPackageFragment =
+    final override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: Nothing?): IrExternalPackageFragment =
         visitExternalPackageFragment(declaration)
 
     open fun visitDeclaration(declaration: IrDeclaration): IrStatement = declaration.transformChildren()
@@ -167,7 +167,7 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     final override fun visitMemberAccess(expression: IrMemberAccessExpression, data: Nothing?) = visitMemberAccess(expression)
 
     open fun visitFunctionAccess(expression: IrFunctionAccessExpression) = visitMemberAccess(expression)
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: Nothing?) = visitFunctionAccess(expression)
+    final override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: Nothing?) = visitFunctionAccess(expression)
 
     open fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
     final override fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
