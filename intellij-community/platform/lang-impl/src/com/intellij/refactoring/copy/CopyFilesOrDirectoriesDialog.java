@@ -318,7 +318,7 @@ public class CopyFilesOrDirectoriesDialog extends RefactoringDialog implements D
         Messages.showErrorDialog(myProject, RefactoringBundle.message("cannot.create.directory"), RefactoringBundle.message("error.title"));
         return;
       }
-      FileChooserUtil.setLastOpenedFile(myProject, myTargetDirectory.getVirtualFile());
+      FileChooserUtil.setLastOpenedFile(myProject, myTargetDirectory.getVirtualFile().toNioPath());
 
       try {
         for (PsiElement element : myElements) {
