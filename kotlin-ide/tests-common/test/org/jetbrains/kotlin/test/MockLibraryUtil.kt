@@ -30,6 +30,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.lang.ref.SoftReference
+import java.net.URLClassLoader
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
 import kotlin.reflect.KClass
@@ -49,24 +50,8 @@ object MockLibraryUtil {
             useJava9: Boolean = false
     ): File {
         return compileLibraryToJar(
-            sourcesPath, KotlinTestUtils.tmpDirForReusableFolder("testLibrary-" + jarName), jarName, addSources, allowKotlinSources, extraOptions, extraClasspath
+            sourcesPath, KotlinTestUtils.tmpDirForReusableFolder("testLibrary-$jarName"), jarName, addSources, allowKotlinSources, extraOptions, extraClasspath
             , useJava9)}
-
-    @JvmStatic
-    @JvmOverloads
-    fun compileJavaFilesLibraryToJar(
-            sourcesPath: String,
-            jarName: String,
-            addSources: Boolean = false,
-            extraOptions: List<String> = emptyList(),
-            extraClasspath: List<String> = emptyList()
-    ): File {
-        return compileJvmLibraryToJar(
-                sourcesPath, jarName, addSources,
-                allowKotlinSources = false,
-                extraClasspath = extraClasspath, extraOptions = extraOptions
-        )
-    }
 
     @JvmStatic
     @JvmOverloads
@@ -93,7 +78,7 @@ object MockLibraryUtil {
         if (javaFiles.isNotEmpty()) {
             val classpath = mutableListOf<String>()
             classpath += TestKotlinArtifacts.kotlinStdlib.path
-            classpath += KotlinTestUtils.getAnnotationsJar().path
+            classpath += TestKotlinArtifacts.jetbrainsAnnotations.path
             classpath += extraClasspath
 
             // Probably no kotlin files were present, so dir might not have been created after kotlin compiler
@@ -133,8 +118,8 @@ object MockLibraryUtil {
         return createJarFile(contentDir, outDir, jarName, sourcesPath.takeIf { addSources })
     }
 
-    fun createJarFile(contentDir: File, dirToAdd: File, jarName: String, sourcesPath: String? = null): File {
-        val jarFile = File(contentDir, jarName + ".jar")
+    private fun createJarFile(contentDir: File, dirToAdd: File, jarName: String, sourcesPath: String? = null): File {
+        val jarFile = File(contentDir, "$jarName.jar")
 
         ZipOutputStream(FileOutputStream(jarFile)).use { zip ->
             ZipUtil.addDirToZipRecursively(zip, jarFile, dirToAdd, "", null, null)
@@ -210,6 +195,11 @@ object MockLibraryUtil {
 
     @Synchronized
     private fun createCompilerClassLoader(): ClassLoader {
-        throw error("Re-write test so it uses IDE fixtures")
+        val currentLoader = K2JVMCompiler::class.java.classLoader as URLClassLoader
+
+        val parentLoader = currentLoader.parent
+        assert(parentLoader.parent == null)
+
+        return URLClassLoader(currentLoader.urLs, parentLoader)
     }
 }
