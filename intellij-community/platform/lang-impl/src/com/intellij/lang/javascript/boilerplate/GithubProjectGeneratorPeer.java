@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.boilerplate;
 
-import com.google.common.collect.Sets;
 import com.intellij.BundleBase;
 import com.intellij.CommonBundle;
 import com.intellij.ide.IdeBundle;
@@ -19,10 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Sergey Simonchik
@@ -71,7 +67,7 @@ public class GithubProjectGeneratorPeer implements WebProjectGenerator.Generator
           return true;
         }
         int count = myComboBox.getItemCount();
-        Set<GithubTagInfo> oldTags = Sets.newHashSet();
+        Set<GithubTagInfo> oldTags = new HashSet<GithubTagInfo>();
         for (int i = 1; i < count; i++) {
           GithubTagInfo item = ObjectUtils.tryCast(myComboBox.getItemAt(i), GithubTagInfo.class);
           if (item != null) {

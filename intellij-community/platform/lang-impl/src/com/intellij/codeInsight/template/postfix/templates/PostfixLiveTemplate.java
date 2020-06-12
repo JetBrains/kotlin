@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.postfix.templates;
 
-import com.google.common.collect.Sets;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.completion.OffsetTranslator;
 import com.intellij.codeInsight.template.CustomLiveTemplateBase;
@@ -47,7 +46,7 @@ public class PostfixLiveTemplate extends CustomLiveTemplateBase {
 
   @NotNull
   public Set<String> getAllTemplateKeys(PsiFile file, int offset) {
-    Set<String> keys = Sets.newHashSet();
+    Set<String> keys = new HashSet<String>();
     Language language = PsiUtilCore.getLanguageAtOffset(file, offset);
     for (PostfixTemplateProvider provider : LanguagePostfixTemplate.LANG_EP.allForLanguage(language)) {
       ProgressManager.checkCanceled();
