@@ -12,12 +12,9 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
-import org.jetbrains.kotlin.codegen.CallGenerator
-import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
-import org.jetbrains.kotlin.codegen.extractReificationArgument
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
@@ -146,6 +143,8 @@ class ExpressionCodegen(
         get() = MaterialValue(this@ExpressionCodegen, asmType, type)
 
     private fun markNewLabel() = Label().apply { mv.visitLabel(this) }
+
+    private fun markNewLinkedLabel() = linkedLabel().apply { mv.visitLabel(this) }
 
     private fun getLineNumberForOffset(offset: Int): Int = fileEntry?.getLineNumber(offset)?.plus(1) ?: -1
 
@@ -1016,7 +1015,7 @@ class ExpressionCodegen(
         data: BlockInfo,
         nestedTryWithoutFinally: MutableList<TryInfo> = arrayListOf()
     ) {
-        val gapStart = markNewLabel()
+        val gapStart = markNewLinkedLabel()
         finallyDepth++
         if (isFinallyMarkerRequired()) {
             generateFinallyMarker(mv, finallyDepth, true)

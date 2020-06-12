@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.linkWithLabel
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class InlineCodegenForDefaultBody(
@@ -27,7 +29,7 @@ class InlineCodegenForDefaultBody(
 ) : CallGenerator {
     private val sourceMapper: SourceMapper = codegen.parentCodegen.orCreateSourceMapper
 
-    private val methodStartLabel = Label()
+    private val methodStartLabel = linkedLabel()
 
     init {
         assert(InlineUtil.isInline(function)) {

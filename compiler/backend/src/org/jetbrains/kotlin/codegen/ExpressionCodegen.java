@@ -1585,7 +1585,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             assert topOfStack == tryWithFinallyBlockStackElement : "Top element of stack doesn't equals processing finally block";
 
             KtTryExpression jetTryExpression = tryWithFinallyBlockStackElement.expression;
-            Label finallyStart = new Label();
+            Label finallyStart = linkedLabel();
             v.mark(finallyStart);
             tryWithFinallyBlockStackElement.addGapLabel(finallyStart);
             addGapLabelsForNestedTryCatchWithoutFinally(state, nestedTryBlocksWithoutFinally, finallyStart);
