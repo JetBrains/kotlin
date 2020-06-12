@@ -165,7 +165,7 @@ public final class FindInProjectUtil {
   /* filter can have form "*.js, !*_min.js", latter means except matched by *_min.js */
   @NotNull
   public static Condition<CharSequence> createFileMaskCondition(@Nullable String filter) throws PatternSyntaxException {
-    if (filter == null) {
+    if (StringUtil.isEmpty(filter)) {
       return Conditions.alwaysTrue();
     }
 

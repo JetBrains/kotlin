@@ -2,10 +2,12 @@
 package com.intellij.find.impl;
 
 import com.intellij.CommonBundle;
+import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.find.*;
 import com.intellij.find.actions.ShowUsagesAction;
 import com.intellij.find.replaceInProject.ReplaceInProjectManager;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.DataManager;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.scratch.ScratchUtil;
@@ -15,6 +17,7 @@ import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogg
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.MnemonicHelper;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.application.ApplicationManager;
@@ -96,10 +99,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static com.intellij.ui.SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES;
 import static com.intellij.ui.SimpleTextAttributes.STYLE_PLAIN;
 import static com.intellij.util.FontUtil.spaceAndThinSpace;
-import static java.awt.event.InputEvent.ALT_DOWN_MASK;
-import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
 
 public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   private static final Logger LOG = Logger.getInstance(FindPopupPanel.class);
@@ -108,6 +110,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   private static final KeyStroke ENTER_WITH_MODIFIERS = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, SystemInfo.isMac
                                                                                                   ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK);
   private static final KeyStroke REPLACE_ALL = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_MASK);
+  private static final KeyStroke RESET_FILTERS = KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_DOWN_MASK);
 
   private static final String FIND_TYPE = "FindInPath";
   private static final String SERVICE_KEY = "find.popup";
@@ -161,6 +164,11 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   private String myFilesCount;
   private UsageViewPresentation myUsageViewPresentation;
   private final ComponentValidator myComponentValidator;
+  private AnAction myCaseSensitiveAction;
+  private AnAction myWholeWordsAction;
+  private AnAction myRegexAction;
+  private AnAction myResetFiltersAction;
+  private boolean mySuggestRegexHintForEmptyResults = true;
 
   FindPopupPanel(@NotNull FindUIHelper helper) {
     myHelper = helper;
@@ -326,6 +334,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       else {
         w.setLocationRelativeTo(parent);
       }
+      mySuggestRegexHintForEmptyResults = true;
       myDialog.show();
 
       w.addWindowListener(new WindowAdapter() {
@@ -502,12 +511,11 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       new ActionButton(myShowFilterPopupAction, myShowFilterPopupAction.getTemplatePresentation(), ActionPlaces.UNKNOWN,
                        ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE) {
         @Override
-        public int getPopState() {
-          int state = super.getPopState();
-          if (state != ActionButtonComponent.NORMAL) return state;
+        public Icon getIcon() {
+          Icon icon = myShowFilterPopupAction.getTemplatePresentation().getIcon();
           return mySelectedContextName.equals(FindInProjectUtil.getPresentableName(FindModel.SearchContext.ANY))
-                 ? ActionButtonComponent.NORMAL
-                 : ActionButtonComponent.PUSHED;
+                 ? icon
+                 : ExecutionUtil.getLiveIndicator(icon);
         }
       };
     myShowFilterPopupAction.registerCustomShortcutSet(myShowFilterPopupAction.getShortcutSet(), this);
@@ -528,6 +536,8 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       tabOptionsGroup, tabOptionsGroup.getTemplatePresentation(), ActionPlaces.UNKNOWN, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE
     );
     DumbAwareAction.create(event -> tabOptionsButton.click()).registerCustomShortcutSet(tabOptionsGroup.getShortcutSet(), this);
+    myResetFiltersAction = DumbAwareAction.create(event -> resetAllFilters());
+    myResetFiltersAction.registerCustomShortcutSet(new CustomShortcutSet(RESET_FILTERS), this);
 
     myOKButton = new JButton(FindBundle.message("find.popup.find.button"));
     myReplaceAllButton = new JButton(FindBundle.message("find.popup.replace.all.button"));
@@ -598,36 +608,24 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     myReplaceTextArea = new SearchTextArea(myReplaceComponent, false);
      mySearchTextArea.setMultilineEnabled(Registry.is("ide.find.as.popup.allow.multiline"));
     myReplaceTextArea.setMultilineEnabled(Registry.is("ide.find.as.popup.allow.multiline"));
-    AnAction caseSensitiveAction = createAction("find.popup.case.sensitive",
-                                      "CaseSensitive",
-                                      AllIcons.Actions.MatchCase,
-                                      AllIcons.Actions.MatchCaseHovered,
-                                      AllIcons.Actions.MatchCaseSelected,
-                                      myCaseSensitiveState, () -> !myHelper.getModel().isReplaceState() || !myPreserveCaseState.get());
-    AnAction wholeWordsAction = createAction("find.whole.words",
-                                  "WholeWords",
-                                  AllIcons.Actions.Words,
-                                  AllIcons.Actions.WordsHovered,
-                                  AllIcons.Actions.WordsSelected,
-                                  myWholeWordsState, () -> !myRegexState.get());
-    AnAction regexAction = createAction("find.regex", "Regex",
-                                  AllIcons.Actions.Regex,
-                                  AllIcons.Actions.RegexHovered,
-                                  AllIcons.Actions.RegexSelected,
-                                  myRegexState, () -> !myHelper.getModel().isReplaceState() || !myPreserveCaseState.get());
-    List<Component> searchExtraButtons = mySearchTextArea.setExtraActions(
-      caseSensitiveAction,
-      wholeWordsAction,
-      regexAction);
-    AnAction preserveCaseAction = createAction("find.options.replace.preserve.case",
-                                  "PreserveCase",
-                                  AllIcons.Actions.PreserveCase,
-                                  AllIcons.Actions.PreserveCaseHover,
-                                  AllIcons.Actions.PreserveCaseSelected,
-                                  myPreserveCaseState, () -> !myRegexState.get() && !myCaseSensitiveState.get());
+    myCaseSensitiveAction = createAction("find.popup.case.sensitive", "CaseSensitive",
+                                         AllIcons.Actions.MatchCase, AllIcons.Actions.MatchCaseHovered, AllIcons.Actions.MatchCaseSelected,
+                                         myCaseSensitiveState, () -> !myHelper.getModel().isReplaceState() || !myPreserveCaseState.get());
+    myWholeWordsAction = createAction("find.whole.words", "WholeWords",
+                                      AllIcons.Actions.Words, AllIcons.Actions.WordsHovered, AllIcons.Actions.WordsSelected,
+                                      myWholeWordsState, () -> !myRegexState.get());
+    myRegexAction = createAction("find.regex", "Regex",
+                                 AllIcons.Actions.Regex, AllIcons.Actions.RegexHovered, AllIcons.Actions.RegexSelected,
+                                 myRegexState, () -> !myHelper.getModel().isReplaceState() || !myPreserveCaseState.get());
+    List<Component> searchExtraButtons =
+      mySearchTextArea.setExtraActions(myCaseSensitiveAction, myWholeWordsAction, myRegexAction);
+    AnAction preserveCaseAction =
+      createAction("find.options.replace.preserve.case", "PreserveCase",
+                     AllIcons.Actions.PreserveCase, AllIcons.Actions.PreserveCaseHover, AllIcons.Actions.PreserveCaseSelected,
+                     myPreserveCaseState, () -> !myRegexState.get() && !myCaseSensitiveState.get());
     List<Component> replaceExtraButtons = myReplaceTextArea.setExtraActions(
       preserveCaseAction);
-    myExtraActions.addAll(Arrays.asList(caseSensitiveAction, wholeWordsAction, regexAction, preserveCaseAction));
+    myExtraActions.addAll(Arrays.asList(myCaseSensitiveAction, myWholeWordsAction, myRegexAction, preserveCaseAction));
     Pair<FindPopupScopeUI.ScopeType, JComponent>[] scopeComponents = myScopeUI.getComponents();
 
     myScopeDetailsPanel = new JPanel(new CardLayout());
@@ -1004,11 +1002,10 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       {
         getTemplatePresentation().setHoveredIcon(hoveredIcon);
         getTemplatePresentation().setSelectedIcon(selectedIcon);
-        int mnemonic = KeyEvent.getExtendedKeyCodeForChar(getTemplatePresentation().getMnemonic());
-        if (mnemonic != KeyEvent.VK_UNDEFINED) {
-          setShortcutSet(new CustomShortcutSet(
-            KeyStroke.getKeyStroke(mnemonic, SystemInfo.isMac ? ALT_DOWN_MASK | CTRL_DOWN_MASK : ALT_DOWN_MASK)));
-          registerCustomShortcutSet(getShortcutSet(), FindPopupPanel.this);
+        ShortcutSet shortcut = ActionUtil.getMnemonicAsShortcut(this);
+        if (shortcut != null) {
+          setShortcutSet(shortcut);
+          registerCustomShortcutSet(shortcut, FindPopupPanel.this);
         }
       }
 
@@ -1032,6 +1029,9 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
             addData("option_value", selected)
         );
         state.set(selected);
+        if (state == myRegexState) {
+          mySuggestRegexHintForEmptyResults = false;
+        }
         scheduleResultsUpdate();
       }
     };
@@ -1344,15 +1344,147 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   private void showEmptyText(@Nullable String message) {
     StatusText emptyText = myResultsPreviewTable.getEmptyText();
     emptyText.clear();
-    emptyText.setText(message != null ? UIBundle.message("message.nothingToShow.with.problem", message)
-                                                                 : UIBundle.message("message.nothingToShow"));
-    if (mySelectedScope == FindPopupScopeUIImpl.DIRECTORY && !myHelper.getModel().isWithSubdirectories()) {
+    emptyText.setText(message != null ? FindBundle.message("message.nothingFound.with.problem", message)
+                                                                 : FindBundle.message("message.nothingFound"));
+    FindModel model = myHelper.getModel();
+    if (mySelectedScope == FindPopupScopeUIImpl.DIRECTORY && !model.isWithSubdirectories()) {
       emptyText.appendSecondaryText(FindBundle.message("find.recursively.hint"),
                                                                SimpleTextAttributes.LINK_ATTRIBUTES,
                                     e -> {
-                                      myHelper.getModel().setWithSubdirectories(true);
+                                      model.setWithSubdirectories(true);
                                       scheduleResultsUpdate();
                                     });
+    }
+    List<Object> usedOptions = new SmartList<>();
+    if (model.isCaseSensitive() && isEnabled(myCaseSensitiveAction)) {
+      usedOptions.add(myCaseSensitiveAction);
+    }
+    if (model.isWholeWordsOnly() && isEnabled(myWholeWordsAction)) {
+      usedOptions.add(myWholeWordsAction);
+    }
+    if (model.isRegularExpressions() && isEnabled(myRegexAction)) {
+      usedOptions.add(myRegexAction);
+    }
+    boolean couldBeRegexp = false;
+    if (mySuggestRegexHintForEmptyResults) {
+      String stringToFind = model.getStringToFind();
+      if (!model.isRegularExpressions() && isEnabled(myRegexAction)) {
+        String regexSymbols = ".$|()[]{}^?*+\\";
+        for (int i = 0; i < stringToFind.length(); i++) {
+          if (regexSymbols.indexOf(stringToFind.charAt(i)) != -1) {
+            couldBeRegexp = true;
+            break;
+          }
+        }
+      }
+      if (couldBeRegexp) {
+        try {
+          Pattern.compile(stringToFind);
+          usedOptions.add(myRegexAction);
+        }
+        catch (Exception e) {
+          couldBeRegexp = false;
+        }
+      }
+    }
+    String fileTypeMask = getFileTypeMask();
+    if (fileTypeMask != null && (FindInProjectUtil.createFileMaskCondition(fileTypeMask) != Conditions.<CharSequence>alwaysTrue())) {
+      usedOptions.add(myCbFileFilter);
+    }
+    if (model.isInCommentsOnly()
+    || model.isInStringLiteralsOnly()
+        || model.isExceptComments()
+    || model.isExceptStringLiterals()
+    || model.isExceptCommentsAndStringLiterals()
+    ) {
+      usedOptions.add(model);
+    }
+    if (!usedOptions.isEmpty()) {
+      emptyText.appendLine(" ");
+      if (couldBeRegexp) {
+        emptyText.appendLine(FindBundle.message("message.nothingFound.search.with.regex"), LINK_PLAIN_ATTRIBUTES, new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            toggleOption(myRegexAction);
+            mySuggestRegexHintForEmptyResults = false;
+          }
+        }).appendText(" "+KeymapUtil.getFirstKeyboardShortcutText((myRegexAction).getShortcutSet()));
+      }
+      else if (usedOptions.size() > 1) {
+        emptyText.appendLine(FindBundle.message("message.nothingFound.used.options"));
+        StringBuilder sb = new StringBuilder();
+        for (Object option : usedOptions) {
+          if (sb.length() > 0) sb.append("  ");
+          String optionText = getOptionText(option, true);
+          if (optionText == null) continue;
+          sb.append(optionText);
+        }
+        emptyText.appendLine(sb.toString());
+        emptyText.appendLine(" ");
+        emptyText.appendLine(FindBundle.message("message.nothingFound.clearAll"), LINK_PLAIN_ATTRIBUTES, new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            resetAllFilters();
+          }
+        }).appendText(" "+getOptionText(myResetFiltersAction, true));
+      } else {
+        Object option = usedOptions.get(0);
+        emptyText.appendLine(FindBundle.message("message.nothingFound.used.option", getOptionText(option, false)));
+        emptyText.appendLine(" ");
+        emptyText.appendLine(FindBundle.message("message.nothingFound.clearOption"), LINK_PLAIN_ATTRIBUTES, new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            resetAllFilters();
+          }
+        }).appendText(" " + getOptionText(myResetFiltersAction, true));
+      }
+    } else {
+      emptyText.appendLine(" ");
+      emptyText.appendLine(FindBundle.message("message.nothingFound.default.hint"));
+    }
+  }
+
+  private void resetAllFilters() {
+    myCbFileFilter.setSelected(false);
+    mySelectedContextName = FindInProjectUtil.getPresentableName(FindModel.SearchContext.ANY);
+    myFilterContextButton.repaint();
+    myCaseSensitiveState.set(false);
+    myWholeWordsState.set(false);
+    myRegexState.set(false);
+    scheduleResultsUpdate();
+  }
+
+  private boolean isEnabled(AnAction action) {
+    Presentation presentation = new Presentation();
+    action.update(new AnActionEvent(null, DataManager.getInstance().getDataContext(this), ActionPlaces.UNKNOWN, presentation, ActionManager.getInstance(), 0));
+    return presentation.isEnabled();
+  }
+
+  @Nullable
+  private static String getOptionText(Object option, boolean full) {
+    if (option instanceof AnAction) {
+      String text = ((AnAction)option).getTemplateText();
+      if (text == null) text = "";
+      return (text + (full ? " " + KeymapUtil.getFirstKeyboardShortcutText(((AnAction)option).getShortcutSet()) : "")).trim();
+    }
+    if (option instanceof JToggleButton) {
+      CustomShortcutSet shortcutSet = KeymapUtil.getMnemonicAsShortcut(((JToggleButton)option).getMnemonic());
+      return (((JToggleButton)option).getText().replace(":", "") +
+             (shortcutSet != null && full ? " " + KeymapUtil.getFirstKeyboardShortcutText(shortcutSet) : "")).trim();
+    }
+    if (option instanceof FindModel) return FindBundle.message("message.nothingFound.context.filter");
+    return null;
+  }
+
+  private void toggleOption(Object option) {
+    if (option instanceof AnAction) {
+      ((AnAction)option).actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(this), ActionPlaces.UNKNOWN, new Presentation(), ActionManager.getInstance(), 0));
+    } else if (option instanceof JToggleButton) {
+      ((JToggleButton)option).doClick();
+    } else if (option instanceof FindModel) {
+      mySelectedContextName = FindInProjectUtil.getPresentableName(FindModel.SearchContext.ANY);
+      myFilterContextButton.repaint();
+      scheduleResultsUpdate();
     }
   }
 
@@ -1647,6 +1779,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
       if (state) {
         mySelectedContextName = getTemplatePresentation().getText();
+        myFilterContextButton.repaint();
         scheduleResultsUpdate();
       }
     }
@@ -1689,10 +1822,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
     MyShowFilterPopupAction() {
       super(FindBundle.messagePointer("find.popup.show.filter.popup"), Presentation.NULL_STRING, AllIcons.General.Filter);
-      LayeredIcon icon = JBUI.scale(new LayeredIcon(2));
-      icon.setIcon(AllIcons.General.Filter, 0);
-      icon.setIcon(AllIcons.General.Dropdown, 1, 3, 0);
-      getTemplatePresentation().setIcon(icon);
+      getTemplatePresentation().setIcon(AllIcons.General.Filter);
       KeyboardShortcut keyboardShortcut = ActionManager.getInstance().getKeyboardShortcut("ShowFilterPopup");
       if (keyboardShortcut != null) {
         setShortcutSet(new CustomShortcutSet(keyboardShortcut));
