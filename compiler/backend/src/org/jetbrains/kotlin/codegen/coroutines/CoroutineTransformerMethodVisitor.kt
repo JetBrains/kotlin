@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
+import org.jetbrains.kotlin.codegen.linkWithLabel
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -741,7 +742,7 @@ class CoroutineTransformerMethodVisitor(
         suspendMarkerVarIndex: Int,
         suspendPointLineNumber: LineNumberNode?
     ): LabelNode {
-        val continuationLabel = LabelNode()
+        val continuationLabel = LabelNode().linkWithLabel()
         val continuationLabelAfterLoadedResult = LabelNode()
         val suspendElementLineNumber = lineNumber
         var nextLineNumberNode = nextDefinitelyHitLineNumber(suspension)
