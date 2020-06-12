@@ -13,19 +13,16 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.testFramework.IdeaTestUtil;
-import com.intellij.util.ArrayUtil;
 import com.siyeh.ig.bugs.StaticCallOnSubclassInspection;
 import com.siyeh.ig.bugs.StaticFieldReferenceOnSubclassInspection;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TestMetadataUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -33,7 +30,6 @@ import java.io.IOException;
 import java.util.List;
 
 public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonAnalyzerTestCase {
-
     private static final LocalInspectionTool[] DEFAULT_TOOLS = new LocalInspectionTool[] {
             new StaticCallOnSubclassInspection(),
             new StaticFieldReferenceOnSubclassInspection(),
@@ -82,12 +78,9 @@ public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonA
 
         List<String> toolsStrings = InTextDirectivesUtils.findListWithPrefixes(configFileText, "TOOL:");
 
-        return ArrayUtil.toObjectArray(CollectionsKt.map(toolsStrings, new Function1<String, LocalInspectionTool>() {
-            @Override
-            public LocalInspectionTool invoke(String toolString) {
-                return mapStringToTool(toolString);
-            }
-        }), LocalInspectionTool.class);
+        return CollectionsKt
+                .map(toolsStrings, toolString -> mapStringToTool(toolString))
+                .toArray(LocalInspectionTool.EMPTY_ARRAY);
     }
 
     @Override
@@ -99,6 +92,7 @@ public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonA
     }
 
     @Override
+    @NotNull
     protected Module createMainModule() throws IOException {
         Module module = super.createMainModule();
 
@@ -131,7 +125,8 @@ public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonA
     }
 
     @Override
+    @NotNull
     protected String getTestDataPath() {
-        return KotlinTestUtils.getHomeDirectory() + "/";
+        return TestMetadataUtil.getTestDataPath(getClass());
     }
 }
