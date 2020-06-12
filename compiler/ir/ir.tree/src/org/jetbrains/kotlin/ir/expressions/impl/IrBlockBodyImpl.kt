@@ -16,28 +16,22 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.impl.IrBodyBase
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 
-class IrBlockBodyImpl(
-    startOffset: Int,
-    endOffset: Int,
-    initializer: (IrBlockBody.() -> Unit)? = null
-) :
-    IrBodyBase<IrBlockBodyImpl>(startOffset, endOffset, initializer),
-    IrBlockBody {
-
+class IrBlockBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOffset, endOffset), IrBlockBody {
     constructor(startOffset: Int, endOffset: Int, statements: List<IrStatement>) : this(startOffset, endOffset) {
-        statementsField.addAll(statements)
+        this.statements.addAll(statements)
     }
 
-    private var statementsField: MutableList<IrStatement> = ArrayList()
+    constructor(startOffset: Int, endOffset: Int, initializer: IrBlockBody.() -> Unit) : this(startOffset, endOffset) {
+        this.initializer()
+    }
 
-    override val statements: MutableList<IrStatement>
-        get() = checkEnabled { statementsField }
+    override val statements: MutableList<IrStatement> = ArrayList()
 
     override val factory: IrFactory
         get() = IrFactoryImpl

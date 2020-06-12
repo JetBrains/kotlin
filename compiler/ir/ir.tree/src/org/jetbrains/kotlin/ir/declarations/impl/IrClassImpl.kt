@@ -19,12 +19,9 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.carriers.ClassCarrier
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
-import java.util.*
-import kotlin.collections.ArrayList
 
 class IrClassImpl(
     startOffset: Int,
@@ -33,8 +30,8 @@ class IrClassImpl(
     override val symbol: IrClassSymbol,
     override val name: Name,
     override val kind: ClassKind,
-    visibility: Visibility,
-    modality: Modality,
+    override var visibility: Visibility,
+    override var modality: Modality,
     override val isCompanion: Boolean = false,
     override val isInner: Boolean = false,
     override val isData: Boolean = false,
@@ -43,11 +40,7 @@ class IrClassImpl(
     override val isExpect: Boolean = false,
     override val isFun: Boolean = false,
     override val source: SourceElement = SourceElement.NO_SOURCE
-) :
-    IrDeclarationBase<ClassCarrier>(startOffset, endOffset, origin),
-    IrClass,
-    ClassCarrier {
-
+) : IrDeclarationBase(startOffset, endOffset, origin), IrClass {
     init {
         symbol.bind(this)
     }
@@ -56,89 +49,15 @@ class IrClassImpl(
     override val descriptor: ClassDescriptor
         get() = symbol.descriptor
 
-    override var visibilityField: Visibility = visibility
-
-    override var visibility: Visibility
-        get() = getCarrier().visibilityField
-        set(v) {
-            if (visibility !== v) {
-                setCarrier().visibilityField = v
-            }
-        }
-
-    override var thisReceiverField: IrValueParameter? = null
-
-    override var thisReceiver: IrValueParameter?
-        get() = getCarrier().thisReceiverField
-        set(v) {
-            if (thisReceiver !== v) {
-                setCarrier().thisReceiverField = v
-            }
-        }
-
-    private var initialDeclarations: MutableList<IrDeclaration>? = null
+    override var thisReceiver: IrValueParameter? = null
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
-        get() {
-            if (createdOn < stageController.currentStage && initialDeclarations == null) {
-                initialDeclarations = Collections.unmodifiableList(ArrayList(field))
-            }
 
-            return if (stageController.canAccessDeclarationsOf(this)) {
-                ensureLowered()
-                field
-            } else {
-                initialDeclarations ?: field
-            }
-        }
+    override var typeParameters: List<IrTypeParameter> = emptyList()
 
-    override var typeParametersField: List<IrTypeParameter> = emptyList()
+    override var superTypes: List<IrType> = emptyList()
 
-    override var typeParameters: List<IrTypeParameter>
-        get() = getCarrier().typeParametersField
-        set(v) {
-            if (typeParameters !== v) {
-                setCarrier().typeParametersField = v
-            }
-        }
+    override var metadata: MetadataSource? = null
 
-    override var superTypesField: List<IrType> = emptyList()
-
-    override var superTypes: List<IrType>
-        get() = getCarrier().superTypesField
-        set(v) {
-            if (superTypes !== v) {
-                setCarrier().superTypesField = v
-            }
-        }
-
-    override var metadataField: MetadataSource? = null
-
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier().metadataField = v
-            }
-        }
-
-    override var modalityField: Modality = modality
-
-    override var modality: Modality
-        get() = getCarrier().modalityField
-        set(v) {
-            if (modality !== v) {
-                setCarrier().modalityField = v
-            }
-        }
-
-    override var attributeOwnerIdField: IrAttributeContainer = this
-
-    override var attributeOwnerId: IrAttributeContainer
-        get() = getCarrier().attributeOwnerIdField
-        set(v) {
-            if (attributeOwnerId !== v) {
-                setCarrier().attributeOwnerIdField = v
-            }
-        }
+    override var attributeOwnerId: IrAttributeContainer = this
 }

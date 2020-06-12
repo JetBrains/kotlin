@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFakeOverrideFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.carriers.FunctionCarrier
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -34,44 +33,13 @@ abstract class IrFunctionCommonImpl(
     override val isOperator: Boolean,
     override val isInfix: Boolean,
     isExpect: Boolean,
-) :
-    IrFunctionBase<FunctionCarrier>(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, returnType),
-    IrSimpleFunction,
-    FunctionCarrier {
-
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: FunctionDescriptor
-
-    override var overriddenSymbolsField: List<IrSimpleFunctionSymbol> = emptyList()
-
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol>
-        get() = getCarrier().overriddenSymbolsField
-        set(v) {
-            if (overriddenSymbols !== v) {
-                setCarrier().overriddenSymbolsField = v
-            }
-        }
+) : IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, returnType), IrSimpleFunction {
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
 
     @Suppress("LeakingThis")
-    override var attributeOwnerIdField: IrAttributeContainer = this
+    override var attributeOwnerId: IrAttributeContainer = this
 
-    override var attributeOwnerId: IrAttributeContainer
-        get() = getCarrier().attributeOwnerIdField
-        set(v) {
-            if (attributeOwnerId !== v) {
-                setCarrier().attributeOwnerIdField = v
-            }
-        }
-
-    override var correspondingPropertySymbolField: IrPropertySymbol? = null
-
-    override var correspondingPropertySymbol: IrPropertySymbol?
-        get() = getCarrier().correspondingPropertySymbolField
-        set(v) {
-            if (correspondingPropertySymbol !== v) {
-                setCarrier().correspondingPropertySymbolField = v
-            }
-        }
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
 }
 
 class IrFunctionImpl(

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.impl.carriers.ValueParameterCarrier
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -37,11 +36,7 @@ class IrValueParameterImpl(
     override val varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean
-) :
-    IrDeclarationBase<ValueParameterCarrier>(startOffset, endOffset, origin),
-    IrValueParameter,
-    ValueParameterCarrier {
-
+) : IrDeclarationBase(startOffset, endOffset, origin), IrValueParameter {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor
         get() = symbol.descriptor
@@ -50,16 +45,5 @@ class IrValueParameterImpl(
         symbol.bind(this)
     }
 
-    override var defaultValueField: IrExpressionBody? = null
-
-    override var defaultValue: IrExpressionBody?
-        get() = getCarrier().defaultValueField
-        set(v) {
-            if (defaultValue !== v) {
-                if (v is IrBodyBase<*>) {
-                    v.container = this
-                }
-                setCarrier().defaultValueField = v
-            }
-        }
+    override var defaultValue: IrExpressionBody? = null
 }

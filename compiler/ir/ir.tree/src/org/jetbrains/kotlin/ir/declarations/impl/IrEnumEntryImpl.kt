@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.impl.carriers.EnumEntryCarrier
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.name.Name
@@ -32,10 +31,7 @@ class IrEnumEntryImpl(
     origin: IrDeclarationOrigin,
     override val symbol: IrEnumEntrySymbol,
     override val name: Name
-) : IrDeclarationBase<EnumEntryCarrier>(startOffset, endOffset, origin),
-    IrEnumEntry,
-    EnumEntryCarrier {
-
+) : IrDeclarationBase(startOffset, endOffset, origin), IrEnumEntry {
     init {
         symbol.bind(this)
     }
@@ -44,26 +40,6 @@ class IrEnumEntryImpl(
     override val descriptor: ClassDescriptor
         get() = symbol.descriptor
 
-    override var correspondingClassField: IrClass? = null
-
-    override var correspondingClass: IrClass?
-        get() = getCarrier().correspondingClassField
-        set(v) {
-            if (correspondingClass !== v) {
-                setCarrier().correspondingClassField = v
-            }
-        }
-
-    override var initializerExpressionField: IrExpressionBody? = null
-
-    override var initializerExpression: IrExpressionBody?
-        get() = getCarrier().initializerExpressionField
-        set(v) {
-            if (initializerExpression !== v) {
-                if (v is IrBodyBase<*>) {
-                    v.container = this
-                }
-                setCarrier().initializerExpressionField = v
-            }
-        }
+    override var correspondingClass: IrClass? = null
+    override var initializerExpression: IrExpressionBody? = null
 }

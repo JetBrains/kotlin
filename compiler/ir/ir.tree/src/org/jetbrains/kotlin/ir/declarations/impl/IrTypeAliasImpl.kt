@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.impl.carriers.TypeAliasCarrier
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
@@ -25,11 +24,7 @@ class IrTypeAliasImpl(
     override val expandedType: IrType,
     override val isActual: Boolean,
     origin: IrDeclarationOrigin
-) :
-    IrDeclarationBase<TypeAliasCarrier>(startOffset, endOffset, origin),
-    IrTypeAlias,
-    TypeAliasCarrier {
-
+) : IrDeclarationBase(startOffset, endOffset, origin), IrTypeAlias {
     init {
         symbol.bind(this)
     }
@@ -38,13 +33,5 @@ class IrTypeAliasImpl(
     override val descriptor: TypeAliasDescriptor
         get() = symbol.descriptor
 
-    override var typeParametersField: List<IrTypeParameter> = emptyList()
-
-    override var typeParameters: List<IrTypeParameter>
-        get() = getCarrier().typeParametersField
-        set(v) {
-            if (typeParameters !== v) {
-                setCarrier().typeParametersField = v
-            }
-        }
+    override var typeParameters: List<IrTypeParameter> = emptyList()
 }
