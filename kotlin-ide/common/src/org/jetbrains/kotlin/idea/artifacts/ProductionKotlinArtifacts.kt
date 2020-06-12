@@ -18,18 +18,19 @@ private val kotlinPluginDirectory: File = run {
 }
 
 object ProductionKotlinArtifacts : KotlinArtifacts() {
-    override val kotlincDirectory = findFile(kotlinPluginDirectory, "kotlinc")
-    override val kotlincLibDirectory = findFile(kotlincDirectory, "lib")
+    override val kotlincDirectory by lazy { findFile(kotlinPluginDirectory, "kotlinc") }
+    override val kotlincLibDirectory by lazy { findFile(kotlincDirectory, "lib") }
 
-    override val jetbrainsAnnotations = findFile(kotlincLibDirectory, KotlinArtifactNames.JETBRAINS_ANNOTATIONS)
-    override val kotlinStdlib = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB)
-    override val kotlinStdlibSources = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_SOURCES)
-    override val kotlinReflect = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_REFLECT)
-    override val kotlinStdlibJs = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS)
-    override val kotlinStdlibJsSources = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS_SOURCES)
-    override val kotlinTest = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_TEST)
-    override val kotlinMainKts = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_MAIN_KTS)
-    override val kotlinScriptRuntime = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPT_RUNTIME)
-    override val kotlinScriptingCommon = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMMON)
-    override val kotlinScriptingJvm = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_JVM)
+    override val jetbrainsAnnotations by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.JETBRAINS_ANNOTATIONS) }
+    override val kotlinStdlib by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB) }
+    override val kotlinStdlibSources by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_SOURCES) }
+    override val kotlinReflect by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_REFLECT) }
+    override val kotlinStdlibJs by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS) }
+    override val kotlinStdlibJsSources by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS_SOURCES) }
+    override val kotlinTest by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_TEST) }
+    override val kotlinMainKts by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_MAIN_KTS) }
+    override val kotlinScriptRuntime by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPT_RUNTIME) }
+
+    override val kotlinStdlibCommon get() = throw error("'stdlib-common' artifact is not available")
+    override val kotlinStdlibCommonSources get() = throw error("'stdlib-common' artifact is not available")
 }
