@@ -199,10 +199,6 @@ public class KotlinTestUtils {
         return PathUtil.toSystemIndependentName(findAndroidSdk().getAbsolutePath());
     }
 
-    public static File getAnnotationsJar() {
-        return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
-    }
-
     public static void mkdirs(@NotNull File file) {
         if (file.isDirectory()) {
             return;
