@@ -82,7 +82,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
 
     private fun getClasspath(file: File): List<File> {
         val result: MutableList<File> = ArrayList()
-        result.add(KotlinTestUtils.getAnnotationsJar())
+        result.add(TestKotlinArtifacts.jetbrainsAnnotations)
         result.addAll(getExtraClasspath())
         val fileText = file.readText(Charsets.UTF_8)
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {

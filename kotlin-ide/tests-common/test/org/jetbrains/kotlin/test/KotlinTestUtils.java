@@ -83,7 +83,7 @@ import java.util.regex.Pattern;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
 
 public class KotlinTestUtils {
-    public static String TEST_MODULE_NAME = "test-module";
+    public static final String TEST_MODULE_NAME = "test-module";
 
     private static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
@@ -111,7 +111,7 @@ public class KotlinTestUtils {
             @NotNull TestJdkKind jdkKind
     ) {
         return KotlinCoreEnvironment.createForTests(
-                disposable, newConfiguration(configurationKind, jdkKind, getAnnotationsJar()), EnvironmentConfigFiles.JVM_CONFIG_FILES
+                disposable, newConfiguration(configurationKind, jdkKind, TestKotlinArtifacts.INSTANCE.getJetbrainsAnnotations()), EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
     }
 
@@ -120,7 +120,7 @@ public class KotlinTestUtils {
         return getHomeDirectory() + "/compiler/testData";
     }
 
-    private static String homeDir = computeHomeDirectory();
+    private static final String homeDir = computeHomeDirectory();
 
     @NotNull
     public static String getHomeDirectory() {

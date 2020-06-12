@@ -76,7 +76,9 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected fun getLocalPath(path: String): String = File(path).toRelativeString(File(testDataPath))
 
-    override fun getTestDataPath(): String = TestMetadataUtil.getTestData(javaClass)?.absolutePath ?: super.getTestDataPath()
+    override fun getTestDataPath(): String {
+        return TestMetadataUtil.getTestDataPath(javaClass) ?: super.getTestDataPath()
+    }
 
     override fun setUp() {
         super.setUp()

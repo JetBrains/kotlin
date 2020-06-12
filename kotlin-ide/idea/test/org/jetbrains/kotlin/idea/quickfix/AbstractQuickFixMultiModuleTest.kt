@@ -36,10 +36,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
 
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
-    override fun getTestDataPath(): String {
-        val testData = TestMetadataUtil.getTestData(this::class.java)
-        return KotlinTestUtils.toSlashEndingDirPath(testData?.path ?: KOTLIN_PLUGIN_ROOT_DIRECTORY.path)
-    }
+    override fun getTestDataPath() = TestMetadataUtil.getTestDataPath(this::class.java)
 
     fun doTest(unused: String) {
         setupMppProjectFromDirStructure(testDataFile())

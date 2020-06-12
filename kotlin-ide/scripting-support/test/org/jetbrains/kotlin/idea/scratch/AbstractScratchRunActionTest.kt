@@ -40,12 +40,11 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.test.TestMetadataUtil.getTestData
 import org.junit.Assert
 import java.io.File
-import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.test.runAll
+import org.jetbrains.kotlin.test.TestMetadataUtil
 
 abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
@@ -54,10 +53,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
     protected open fun fileName(): String = getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
-    override fun getTestDataPath(): String {
-        val testData = getTestData(this::class.java)
-        return testData?.path ?: KOTLIN_PLUGIN_ROOT_DIRECTORY.path
-    }
+    override fun getTestDataPath() = TestMetadataUtil.getTestDataPath(this::class.java)
 
     fun doRightPreviewPanelOutputTest(unused: String) {
         doRightPreviewPanelOutputTest(isRepl = false)

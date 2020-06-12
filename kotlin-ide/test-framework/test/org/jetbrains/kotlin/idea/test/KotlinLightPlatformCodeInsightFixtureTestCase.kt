@@ -35,5 +35,5 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
 
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
-    override fun getTestDataPath(): String? = TestMetadataUtil.getTestData(javaClass)?.absolutePath ?: super.getTestDataPath()
+    override fun getTestDataPath() = TestMetadataUtil.getTestDataPath(this::class.java)
 }
