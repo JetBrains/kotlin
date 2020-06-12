@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.source.resolve.JavaResolveUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -96,7 +97,10 @@ class KotlinCallerTreeStructure(
 
         // If reference belongs to property initializer, show enclosing declaration instead
         elementToSearch.processAllUsages(findOptions) {
-            processReference(it.reference, it.element ?: return@processAllUsages, nodeDescriptor, callerToDescriptorMap, false)
+            val refElement = it.element
+            if (refElement != null && !JavaResolveUtil.isInJavaDoc(refElement)) {
+                processReference(it.reference, refElement, nodeDescriptor, callerToDescriptorMap, false)
+            }
         }
 
         return callerToDescriptorMap.values

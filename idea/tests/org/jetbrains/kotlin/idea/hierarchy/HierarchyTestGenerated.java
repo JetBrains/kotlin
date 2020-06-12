@@ -314,6 +314,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             runTest("idea/testData/hierarchy/calls/callers/callInsideLambda/");
         }
 
+        @TestMetadata("insideJavadoc")
+        public void testInsideJavadoc() throws Exception {
+            runTest("idea/testData/hierarchy/calls/callers/insideJavadoc/");
+        }
+
         @TestMetadata("kotlinClass")
         public void testKotlinClass() throws Exception {
             runTest("idea/testData/hierarchy/calls/callers/kotlinClass/");
