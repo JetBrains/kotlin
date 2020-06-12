@@ -25,6 +25,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ModalityStateListener;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.impl.LaterInvocator;
 import com.intellij.openapi.components.Service;
@@ -122,8 +123,11 @@ public final class EditorMouseHoverPopupManager implements Disposable {
         closeHint();
       }
     });
-    LaterInvocator.addModalityStateListener(entering -> {
-      cancelProcessingAndCloseHint();
+    LaterInvocator.addModalityStateListener(new ModalityStateListener() {
+      @Override
+      public void beforeModalityStateChanged(boolean entering, @NotNull Object modalEntity) {
+        cancelProcessingAndCloseHint();
+      }
     }, this);
     IdeEventQueue.getInstance().addDispatcher(event -> {
       int eventID = event.getID();
