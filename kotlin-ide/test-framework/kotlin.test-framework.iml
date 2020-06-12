@@ -23,6 +23,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlin-reflect" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="library" scope="TEST" name="TestNG" level="project" />
     <orderEntry type="module" module-name="kotlin.jps-common" scope="TEST" />
