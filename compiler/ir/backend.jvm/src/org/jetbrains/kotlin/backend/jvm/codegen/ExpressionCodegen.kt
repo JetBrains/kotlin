@@ -540,11 +540,23 @@ class ExpressionCodegen(
         val fieldName = realField.name.asString()
         val isStatic = expression.receiver == null
         expression.markLineNumber(startOffset = true)
-        val ownerName = expression.receiver?.let { receiver ->
-            val ownerType = typeMapper.mapTypeAsDeclaration(receiver.type)
+
+        val ownerType = when {
+            expression.superQualifierSymbol != null -> {
+                typeMapper.mapClass(expression.superQualifierSymbol!!.owner)
+            }
+            expression.receiver != null -> {
+                typeMapper.mapTypeAsDeclaration(expression.receiver!!.type)
+            }
+            else -> typeMapper.mapClass(callee.parentAsClass)
+        }
+
+        val ownerName = ownerType.internalName
+
+        expression.receiver?.let { receiver ->
             receiver.accept(this, data).materializeAt(ownerType, receiver.type)
-            ownerType.internalName
-        } ?: typeMapper.mapClass(callee.parentAsClass).internalName
+        }
+        
         return if (expression is IrSetField) {
             val value = expression.value.accept(this, data)
 

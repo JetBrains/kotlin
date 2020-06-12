@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
+import org.jetbrains.kotlin.psi2ir.resolveFakeOverride
 import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.psi2ir.unwrappedSetMethod
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -309,7 +310,6 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         origin: IrStatementOrigin?,
         superQualifier: ClassDescriptor?
     ): PropertyLValueBase {
-        val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
 
         val unwrappedPropertyDescriptor = descriptor.unwrapPropertyDescriptor()
         val getterDescriptor = unwrappedPropertyDescriptor.unwrappedGetMethod
@@ -320,6 +320,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
         val propertyIrType = descriptor.type.toIrType()
         return if (getterSymbol != null || setterSymbol != null) {
+            val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
             val typeArgumentsList =
                 typeArgumentsMap?.let { typeArguments ->
                     descriptor.original.typeParameters.map { typeArguments[it]!!.toIrType() }
@@ -341,17 +342,20 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 propertyReceiver,
                 superQualifierSymbol
             )
-        } else
+        } else {
+            val superQualifierSymbol = (superQualifier
+                ?: unwrappedPropertyDescriptor.containingDeclaration as? ClassDescriptor)?.let { context.symbolTable.referenceClass(it) }
             FieldPropertyLValue(
                 context,
                 scope,
                 ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
-                context.symbolTable.referenceField(unwrappedPropertyDescriptor.original),
+                context.symbolTable.referenceField(unwrappedPropertyDescriptor.resolveFakeOverride().original),
                 unwrappedPropertyDescriptor,
                 propertyIrType,
                 propertyReceiver,
                 superQualifierSymbol
             )
+        }
     }
 
     private fun generateArrayAccessAssignmentReceiver(

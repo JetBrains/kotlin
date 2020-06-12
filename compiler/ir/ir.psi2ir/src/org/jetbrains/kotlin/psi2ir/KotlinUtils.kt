@@ -77,6 +77,18 @@ val PropertyDescriptor.unwrappedGetMethod: FunctionDescriptor?
 val PropertyDescriptor.unwrappedSetMethod: FunctionDescriptor?
     get() = if (this is SyntheticPropertyDescriptor) this.setMethod else setter
 
+// Only works for descriptors of Java fields.
+internal fun PropertyDescriptor.resolveFakeOverride(): PropertyDescriptor {
+    assert(getter == null)
+    // Fields can only be inherited from objects, so there will be at most one overridden descriptor at each step.
+    var current = this
+    while (current.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+        current = current.overriddenDescriptors.singleOrNull()
+            ?: error("Descriptor of Java field $current should have exactly one overridden descriptor, have ${current.overriddenDescriptors}")
+    }
+    return current
+}
+
 val KtPureElement?.pureStartOffsetOrUndefined get() = this?.psiOrParent?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
 val KtPureElement?.pureEndOffsetOrUndefined get() = this?.psiOrParent?.endOffset ?: UNDEFINED_OFFSET
 

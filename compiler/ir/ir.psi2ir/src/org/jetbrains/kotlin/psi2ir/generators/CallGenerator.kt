@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
+import org.jetbrains.kotlin.psi2ir.resolveFakeOverride
 import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
@@ -174,11 +175,13 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         call: CallBuilder
     ): IrExpression {
         val getMethodDescriptor = descriptor.unwrappedGetMethod
-        val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
         val irType = descriptor.type.toIrType()
 
         return if (getMethodDescriptor == null) {
             call.callReceiver.call { dispatchReceiverValue, _ ->
+                val superQualifierSymbol = (call.superQualifier ?: descriptor.containingDeclaration as? ClassDescriptor)?.let {
+                    context.symbolTable.referenceClass(it)
+                }
                 val fieldSymbol = context.symbolTable.referenceField(descriptor.resolveFakeOverride().original)
                 IrGetFieldImpl(
                     startOffset, endOffset,
@@ -190,6 +193,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 ).also { context.callToSubstitutedDescriptorMap[it] = descriptor }
             }
         } else {
+            val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
             call.callReceiver.adjustForCallee(getMethodDescriptor).call { dispatchReceiverValue, extensionReceiverValue ->
                 if (descriptor.isDynamic()) {
                     val dispatchReceiver = getDynamicExpressionReceiver(dispatchReceiverValue, extensionReceiverValue, descriptor)
@@ -416,14 +420,3 @@ fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, origin: 
 
 fun CallGenerator.generateCall(irExpression: IrExpression, call: CallBuilder, origin: IrStatementOrigin? = null) =
     generateCall(irExpression.startOffset, irExpression.endOffset, call, origin)
-
-// Only works for descriptors of Java fields.
-private fun PropertyDescriptor.resolveFakeOverride(): PropertyDescriptor {
-    assert(getter == null)
-    // Fields can only be inherited from objects, so there will be at most one overridden descriptor at each step.
-    var current = this
-    while (current.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-        current = current.overriddenDescriptors.single()
-    }
-    return current
-}
