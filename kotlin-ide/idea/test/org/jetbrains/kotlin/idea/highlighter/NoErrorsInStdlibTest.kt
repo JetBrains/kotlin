@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -59,8 +60,7 @@ class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        // TODO: replace hardcoded path with something flexible
-        return object : KotlinJdkAndLibraryProjectDescriptor(File("dist/kotlinc/lib/kotlin-stdlib.jar")) {
+        return object : KotlinJdkAndLibraryProjectDescriptor(TestKotlinArtifacts.kotlinStdlib) {
             override fun getSdk(): Sdk? = PluginTestCaseBase.fullJdk()
         }
     }
