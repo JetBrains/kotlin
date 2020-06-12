@@ -37,27 +37,32 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         val context = element.analyze(BodyResolveMode.PARTIAL)
         val reference = element.callableReference
         val targetDescriptor = context[REFERENCE_TARGET, reference] as? CallableMemberDescriptor ?: return
-        val parameterNamesAndTypes = targetDescriptor.valueParameters.map { it.name.asString() to it.type }
-        val receiverExpression = element.receiverExpression
-        val receiverType = receiverExpression?.let {
-            (context[DOUBLE_COLON_LHS, it] as? DoubleColonLHS.Type)?.type
-        }
-
-        val receiverNameAndType = receiverType?.let {
-            KotlinNameSuggester.suggestNamesByType(it, validator = { name ->
-                name !in parameterNamesAndTypes.map { pair -> pair.first }
-            }, defaultName = "receiver").first() to it
-        }
-
         val valueArgumentParent = element.parent as? KtValueArgument
         val callGrandParent = valueArgumentParent?.parent?.parent as? KtCallExpression
         val resolvedCall = callGrandParent?.getResolvedCall(context)
         val matchingParameterType = resolvedCall?.getParameterForArgument(valueArgumentParent)?.type
         val matchingParameterIsExtension = matchingParameterType?.isExtensionFunctionType ?: false
 
-        val acceptsReceiverAsParameter = receiverNameAndType != null && !matchingParameterIsExtension &&
-                (targetDescriptor.dispatchReceiverParameter != null ||
-                        targetDescriptor.extensionReceiverParameter != null)
+        val receiverExpression = element.receiverExpression
+        val receiverType = receiverExpression?.let {
+            (context[DOUBLE_COLON_LHS, it] as? DoubleColonLHS.Type)?.type
+        }
+        val acceptsReceiverAsParameter = receiverType != null && !matchingParameterIsExtension &&
+                (targetDescriptor.dispatchReceiverParameter != null || targetDescriptor.extensionReceiverParameter != null)
+
+        val parameterNamesAndTypes = targetDescriptor.valueParameters.map { it.name.asString() to it.type }.let {
+            if (matchingParameterType != null) {
+                val parameterSize = matchingParameterType.arguments.size - (if (acceptsReceiverAsParameter) 2 else 1)
+                if (parameterSize >= 0) it.take(parameterSize) else it
+            } else {
+                it
+            }
+        }
+        val receiverNameAndType = receiverType?.let {
+            KotlinNameSuggester.suggestNamesByType(it, validator = { name ->
+                name !in parameterNamesAndTypes.map { pair -> pair.first }
+            }, defaultName = "receiver").first() to it
+        }
 
         val factory = KtPsiFactory(element)
         val targetName = reference.text

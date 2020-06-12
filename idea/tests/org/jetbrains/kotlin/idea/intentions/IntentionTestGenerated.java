@@ -6500,6 +6500,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertReferenceToLambda/receiverParameter.kt");
         }
 
+        @TestMetadata("referencedFunctionWithDefaultArugment.kt")
+        public void testReferencedFunctionWithDefaultArugment() throws Exception {
+            runTest("idea/testData/intentions/convertReferenceToLambda/referencedFunctionWithDefaultArugment.kt");
+        }
+
+        @TestMetadata("referencedFunctionWithDefaultArugment2.kt")
+        public void testReferencedFunctionWithDefaultArugment2() throws Exception {
+            runTest("idea/testData/intentions/convertReferenceToLambda/referencedFunctionWithDefaultArugment2.kt");
+        }
+
+        @TestMetadata("referencedFunctionWithDefaultArugment3.kt")
+        public void testReferencedFunctionWithDefaultArugment3() throws Exception {
+            runTest("idea/testData/intentions/convertReferenceToLambda/referencedFunctionWithDefaultArugment3.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/intentions/convertReferenceToLambda/simple.kt");
