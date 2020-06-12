@@ -245,7 +245,11 @@ class KotlinDeserializedJvmSymbolsProvider(
                     }
 
                     override fun visitClassLiteral(value: ClassLiteralValue) {
-                        elements.add(value.toFirClassReferenceExpression())
+                        elements.add(
+                            buildGetClassCall {
+                                argumentList = buildUnaryArgumentList(value.toFirClassReferenceExpression())
+                            }
+                        )
                     }
 
                     override fun visitEnd() {
