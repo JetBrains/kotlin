@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
+import static org.jetbrains.kotlin.codegen.CodegenUtilKt.linkedLabel;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.*;
 import static org.jetbrains.kotlin.codegen.inline.MethodInlinerUtilKt.getNextMeaningful;
 
@@ -198,7 +199,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 //Creating temp node for finally block copy with some additional instruction
                 MethodNode finallyBlockCopy = createEmptyMethodNode();
                 Label newFinallyStart = new Label();
-                Label insertedBlockEnd = new Label();
+                Label insertedBlockEnd = linkedLabel();
 
                 boolean generateAloadAstore = nonLocalReturnType != Type.VOID_TYPE && !finallyInfo.isEmpty();
                 if (generateAloadAstore) {

@@ -67,6 +67,7 @@ import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 import java.io.PrintWriter
 import java.io.StringWriter
+import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import java.util.*
 
 fun generateIsCheck(
@@ -673,3 +674,22 @@ private fun generateLambdaForRunSuspend(
     lambdaBuilder.done()
     return lambdaBuilder.thisName
 }
+
+internal fun LabelNode.linkWithLabel(): LabelNode {
+    // Remember labelNode in label and vise versa.
+    // Before ASM 8 there was JB patch in MethodNode that makes such linking in constructor of LabelNode.
+    //
+    // protected LabelNode getLabelNode(final Label label) {
+    //    if (!(label.info instanceof LabelNode)) {
+    //      //label.info = new LabelNode(label); //[JB: needed for Coverage agent]
+    //      label.info = new LabelNode(); //ASM 8
+    //    }
+    //    return (LabelNode) label.info;
+    //  }
+    if (label.info == null) {
+        label.info = this
+    }
+    return this
+}
+
+fun linkedLabel(): Label = LabelNode().linkWithLabel().label
