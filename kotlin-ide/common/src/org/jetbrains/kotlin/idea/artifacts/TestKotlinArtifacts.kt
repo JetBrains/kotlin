@@ -101,6 +101,22 @@ object TestKotlinArtifacts : KotlinArtifacts() {
         findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib", LibraryFileKind.SOURCES)
     }
 
+    override val kotlinStdlibJdk7 by lazy {
+        findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+    }
+
+    override val kotlinStdlibJdk7Sources by lazy {
+        findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk7", LibraryFileKind.SOURCES)
+    }
+
+    override val kotlinStdlibJdk8 by lazy {
+        findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+    }
+
+    override val kotlinStdlibJdk8Sources by lazy {
+        findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk8", LibraryFileKind.SOURCES)
+    }
+
     override val kotlinStdlibCommon by lazy {
         findLibrary(repoPath, "kotlin_stdlib_common.xml", "org.jetbrains.kotlin", "kotlin-stdlib-common")
     }
@@ -114,15 +130,23 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     }
 
     override val kotlinStdlibJs by lazy {
-        findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS)
+        findLibrary(repoPath, "kotlin_stdlib_js.xml", "org.jetbrains.kotlin", "kotlin-stdlib-js")
     }
 
     override val kotlinStdlibJsSources by lazy {
-        findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS_SOURCES)
+        findLibrary(repoPath, "kotlin_stdlib_js.xml", "org.jetbrains.kotlin", "kotlin-stdlib-js", LibraryFileKind.SOURCES)
     }
 
     override val kotlinTest by lazy {
         findLibrary(MAVEN_REPOSITORY, "kotlin_test.xml", "org.jetbrains.kotlin", "kotlin-test")
+    }
+
+    override val kotlinTestJunit by lazy {
+        findLibrary(MAVEN_REPOSITORY, "kotlin_test_junit.xml", "org.jetbrains.kotlin", "kotlin-test-junit")
+    }
+
+    override val kotlinTestJs by lazy {
+        findLibrary(MAVEN_REPOSITORY, "kotlin_test_js.xml", "org.jetbrains.kotlin", "kotlin-test-js")
     }
 
     override val kotlinMainKts by lazy {

@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.idea.highlighter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts;
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifactsKt;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
@@ -27,8 +25,6 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
 
 public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnosticMessageTest {
 
@@ -58,7 +54,7 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
     }
 
     protected List<String> jsStdlib() {
-        File stdlibPath = ForTestCompileRuntime.stdlibJsForTests();
+        File stdlibPath = TestKotlinArtifacts.INSTANCE.getKotlinStdlibJs();
         return Collections.singletonList(stdlibPath.getAbsolutePath());
     }
 

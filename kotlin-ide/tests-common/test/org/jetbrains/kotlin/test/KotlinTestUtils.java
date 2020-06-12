@@ -363,17 +363,16 @@ public class KotlinTestUtils {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
         }
 
-        if (configurationKind.getWithRuntime()) {
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.scriptRuntimeJarForTests());
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.kotlinTestJarForTests());
+        TestKotlinArtifacts artifacts = TestKotlinArtifacts.INSTANCE;
+
+        if (configurationKind.getKotlinStdlib()) {
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, artifacts.getKotlinStdlib());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, artifacts.getKotlinScriptRuntime());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, artifacts.getKotlinTest());
         }
-        else if (configurationKind.getWithMockRuntime()) {
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.minimalRuntimeJarForTests());
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.scriptRuntimeJarForTests());
-        }
-        if (configurationKind.getWithReflection()) {
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.reflectJarForTests());
+
+        if (configurationKind.getKotlinReflect()) {
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, artifacts.getKotlinReflect());
         }
 
         JvmContentRootsKt.addJvmClasspathRoots(configuration, classpath);

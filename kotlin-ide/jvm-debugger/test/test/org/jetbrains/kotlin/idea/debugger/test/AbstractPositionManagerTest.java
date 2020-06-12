@@ -124,7 +124,7 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
             breakpoints.addAll(extractBreakpointsInfo(file, file.getText()));
         }
 
-        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
+        CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.STDLIB, TestJdkKind.MOCK_JDK);
         // TODO: delete this once IDEVirtualFileFinder supports loading .kotlin_builtins files
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new CompilerTestLanguageVersionSettings(
                 Collections.emptyMap(),

@@ -13,6 +13,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import java.io.File
 
 class KotlinJdkAndMultiplatformStdlibDescriptor private constructor(private val withSources: Boolean) : KotlinLightProjectDescriptor() {
@@ -22,15 +23,15 @@ class KotlinJdkAndMultiplatformStdlibDescriptor private constructor(private val 
         model.addLib(
             STDLIB_COMMON_LIB_NAME,
             withSources,
-            ForTestCompileRuntime.stdlibCommonForTests(),
-            ForTestCompileRuntime.stdlibCommonSourcesForTests()
+            TestKotlinArtifacts.kotlinStdlibCommon,
+            TestKotlinArtifacts.kotlinStdlibCommonSources
         )
 
         model.addLib(
             STDLIB_LIB_NAME,
             withSources,
-            ForTestCompileRuntime.runtimeJarForTests(),
-            ForTestCompileRuntime.stdlibMavenSourcesJarForTests()
+            TestKotlinArtifacts.kotlinStdlib,
+            TestKotlinArtifacts.kotlinStdlibSources
         )
     }
 

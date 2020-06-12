@@ -131,6 +131,6 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
     }
 
     override fun createEnvironment(): KotlinCoreEnvironment {
-        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
+        return createEnvironmentWithMockJdk(ConfigurationKind.STDLIB)
     }
 }

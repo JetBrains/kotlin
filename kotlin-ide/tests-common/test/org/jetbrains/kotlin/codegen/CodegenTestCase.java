@@ -50,8 +50,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     protected GeneratedClassLoader initializedClassLoader;
     protected File javaClassesOutputDirectory = null;
 
-    protected ConfigurationKind configurationKind = ConfigurationKind.JDK_ONLY;
-
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,
             @NotNull File... javaSourceRoots

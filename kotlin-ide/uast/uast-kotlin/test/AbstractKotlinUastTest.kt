@@ -122,7 +122,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     }
 
     private fun createKotlinCompilerConfiguration(sourceFile: File): CompilerConfiguration {
-        return KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK).apply {
+        return KotlinTestUtils.newConfiguration(ConfigurationKind.STDLIB_REFLECT, TestJdkKind.FULL_JDK).apply {
             addKotlinSourceRoot(sourceFile.canonicalPath)
 
             val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, true)

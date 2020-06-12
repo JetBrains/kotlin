@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
-import org.jetbrains.kotlin.preloading.Preloader
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import java.io.ByteArrayOutputStream
@@ -95,7 +92,7 @@ object MockLibraryUtil {
         val javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile)
         if (javaFiles.isNotEmpty()) {
             val classpath = mutableListOf<String>()
-            classpath += ForTestCompileRuntime.runtimeJarForTests().path
+            classpath += TestKotlinArtifacts.kotlinStdlib.path
             classpath += KotlinTestUtils.getAnnotationsJar().path
             classpath += extraClasspath
 
@@ -213,9 +210,6 @@ object MockLibraryUtil {
 
     @Synchronized
     private fun createCompilerClassLoader(): ClassLoader {
-        return ClassPreloadingUtils.preloadClasses(
-                listOf(ForTestCompileRuntime.kotlinCompilerJarForTests()),
-                Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null
-        )
+        throw error("Re-write test so it uses IDE fixtures")
     }
 }

@@ -10,6 +10,7 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -33,7 +34,7 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
         )
         return object : KotlinJdkAndLibraryProjectDescriptor(
             listOf(
-                ForTestCompileRuntime.runtimeJarForTests(),
+                TestKotlinArtifacts.kotlinStdlib,
                 foreignAnnotationsJar,
                 libraryJar
             )

@@ -22,6 +22,7 @@ import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo
@@ -473,15 +474,15 @@ class IdeaModuleInfoTest : ModuleTestCase() {
 
     private fun stdlibCommon(): LibraryEx = projectLibrary(
             "kotlin-stdlib-common",
-            ForTestCompileRuntime.stdlibCommonForTests().jarRoot,
+            TestKotlinArtifacts.kotlinStdlibCommon.jarRoot,
             kind = CommonLibraryKind
     )
 
-    private fun stdlibJvm(): LibraryEx = projectLibrary("kotlin-stdlib", ForTestCompileRuntime.runtimeJarForTests().jarRoot)
+    private fun stdlibJvm(): LibraryEx = projectLibrary("kotlin-stdlib", TestKotlinArtifacts.kotlinStdlib.jarRoot)
 
     private fun stdlibJs(): LibraryEx = projectLibrary(
         "kotlin-stdlib-js",
-        ForTestCompileRuntime.runtimeJarForTests().jarRoot,
+        TestKotlinArtifacts.kotlinStdlibJs.jarRoot,
         kind = JSLibraryKind
     )
 

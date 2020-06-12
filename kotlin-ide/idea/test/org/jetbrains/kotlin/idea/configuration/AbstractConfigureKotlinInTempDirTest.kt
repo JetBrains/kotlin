@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.junit.Assert
 import java.io.File
 import java.nio.file.Path
@@ -21,7 +22,7 @@ abstract class AbstractConfigureKotlinInTempDirTest : AbstractConfigureKotlinTes
 
         val kotlinRuntime = File(tempDir, "lib/kotlin-stdlib.jar")
         if (getTestName(true).toLowerCase().contains("latestruntime") && kotlinRuntime.exists()) {
-            ForTestCompileRuntime.runtimeJarForTests().copyTo(kotlinRuntime, overwrite = true)
+            TestKotlinArtifacts.kotlinStdlib.copyTo(kotlinRuntime, overwrite = true)
         }
 
         val projectRoot = tempDir.path

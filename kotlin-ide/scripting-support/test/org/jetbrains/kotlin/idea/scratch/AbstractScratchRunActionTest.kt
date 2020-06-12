@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.test.TestMetadataUtil.getTestData
 import org.junit.Assert
 import java.io.File
 import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.test.runAll
 
 abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
@@ -345,8 +346,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         private val INSTANCE_WITH_KOTLIN_TEST = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
-                ForTestCompileRuntime.runtimeJarForTests(),
-                ForTestCompileRuntime.kotlinTestJarForTests()
+                TestKotlinArtifacts.kotlinStdlib,
+                TestKotlinArtifacts.kotlinTest
             )
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()
@@ -358,8 +359,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         private val INSTANCE_WITH_SCRIPT_RUNTIME = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
-                ForTestCompileRuntime.runtimeJarForTests(),
-                ForTestCompileRuntime.scriptRuntimeJarForTests()
+                TestKotlinArtifacts.kotlinStdlib,
+                TestKotlinArtifacts.kotlinScriptRuntime
             )
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()

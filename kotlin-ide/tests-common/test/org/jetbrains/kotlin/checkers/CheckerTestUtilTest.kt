@@ -110,7 +110,7 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
 
     private fun getTestDataPath() = KotlinTestUtils.getTestDataPathBase() + "/diagnostics/checkerTestUtil"
 
-    override fun createEnvironment() = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
+    override fun createEnvironment() = createEnvironmentWithMockJdk(ConfigurationKind.STDLIB_REFLECT)
 
     private fun doTest(test: Test) = test.test(
         TestCheckerUtil.createCheckAndReturnPsiFile(

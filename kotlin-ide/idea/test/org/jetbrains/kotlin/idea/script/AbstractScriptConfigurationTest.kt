@@ -246,8 +246,8 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         val libClasses = libSrcDir?.let { compileLibToDir(it) }
 
         return mapOf(
-            "runtime-classes" to ForTestCompileRuntime.runtimeJarForTests(),
-            "runtime-source" to File("libraries/stdlib/src"),
+            "runtime-classes" to TestKotlinArtifacts.kotlinStdlib,
+            "runtime-source" to TestKotlinArtifacts.kotlinStdlibSources,
             "lib-classes" to libClasses,
             "lib-source" to libSrcDir,
             "template-classes" to templateOutDir

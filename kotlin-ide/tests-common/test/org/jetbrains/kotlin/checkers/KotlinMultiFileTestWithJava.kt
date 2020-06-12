@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.cre
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.script.loadScriptingPlugin
@@ -84,11 +85,8 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         result.add(KotlinTestUtils.getAnnotationsJar())
         result.addAll(getExtraClasspath())
         val fileText = file.readText(Charsets.UTF_8)
-        if (InTextDirectivesUtils.isDirectiveDefined(fileText, "ANDROID_ANNOTATIONS")) {
-            result.add(ForTestCompileRuntime.androidAnnotationsForTests())
-        }
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {
-            result.add(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
+            result.add(TestKotlinArtifacts.kotlinStdlibJdk8)
         }
         if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage ||
             fileText.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())

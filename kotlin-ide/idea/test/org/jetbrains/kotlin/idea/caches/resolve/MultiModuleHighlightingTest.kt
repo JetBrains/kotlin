@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
@@ -289,11 +290,11 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         moduleNew.addLibrary(libOld)
         moduleNew.addLibrary(libNew)
-        moduleNew.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
+        moduleNew.addLibrary(TestKotlinArtifacts.kotlinStdlib)
 
         moduleOld.addLibrary(libNew)
         moduleOld.addLibrary(libOld)
-        moduleOld.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
+        moduleOld.addLibrary(TestKotlinArtifacts.kotlinStdlib)
 
         moduleNew.addDependency(moduleOld)
 

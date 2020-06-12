@@ -20,12 +20,18 @@ abstract class KotlinArtifacts {
     abstract val jetbrainsAnnotations: File
     abstract val kotlinStdlib: File
     abstract val kotlinStdlibSources: File
+    abstract val kotlinStdlibJdk7: File
+    abstract val kotlinStdlibJdk7Sources: File
+    abstract val kotlinStdlibJdk8: File
+    abstract val kotlinStdlibJdk8Sources: File
     abstract val kotlinStdlibCommon: File
     abstract val kotlinStdlibCommonSources: File
     abstract val kotlinReflect: File
     abstract val kotlinStdlibJs: File
     abstract val kotlinStdlibJsSources: File
     abstract val kotlinTest: File
+    abstract val kotlinTestJunit: File
+    abstract val kotlinTestJs: File
     abstract val kotlinMainKts: File
     abstract val kotlinScriptRuntime: File
     abstract val kotlinScriptingCommon: File

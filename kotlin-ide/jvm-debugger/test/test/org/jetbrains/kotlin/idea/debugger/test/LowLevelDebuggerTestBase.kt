@@ -27,7 +27,7 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *listOfNotNull(writeJavaFiles(files)).toTypedArray())
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.STDLIB_REFLECT, *listOfNotNull(writeJavaFiles(files)).toTypedArray())
 
         val options = wholeFile.readLines()
             .asSequence()

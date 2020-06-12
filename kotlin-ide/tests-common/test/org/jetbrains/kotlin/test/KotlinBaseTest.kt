@@ -98,26 +98,8 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
 
     companion object {
         fun extractConfigurationKind(files: List<TestFile>): ConfigurationKind {
-            var addRuntime = false
-            var addReflect = false
-            for (file in files) {
-                if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
-                    addRuntime = true
-                }
-                if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
-                    addReflect = true
-                }
-            }
-            return if (addReflect) ConfigurationKind.ALL else if (addRuntime) ConfigurationKind.NO_KOTLIN_REFLECT else ConfigurationKind.JDK_ONLY
-        }
-
-        fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
-            for (file in files) {
-                if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
-                    return TestJdkKind.FULL_JDK
-                }
-            }
-            return TestJdkKind.MOCK_JDK
+            val addReflect = files.any { InTextDirectivesUtils.isDirectiveDefined(it.content, "WITH_REFLECT") }
+            return if (addReflect) ConfigurationKind.STDLIB_REFLECT else ConfigurationKind.STDLIB
         }
     }
 }
