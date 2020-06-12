@@ -16,48 +16,23 @@
 
 package org.jetbrains.kotlin.jvm.compiler;
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import kotlin.collections.CollectionsKt;
-import kotlin.io.FilesKt;
-import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class LoadDescriptorUtil {
-    @NotNull
-    public static final FqName TEST_PACKAGE_FQNAME = FqName.topLevel(Name.identifier("test"));
-
     private LoadDescriptorUtil() {
     }
 
@@ -68,105 +43,6 @@ public class LoadDescriptorUtil {
         GenerationState state = GenerationUtils.compileFiles(createKtFiles(kotlinFiles, environment), environment);
         OutputUtilsKt.writeAllTo(state.getFactory(), outDir);
         return state.getModule();
-    }
-
-    @NotNull
-    public static Pair<PackageViewDescriptor, BindingContext> loadTestPackageAndBindingContextFromJavaRoot(
-            @NotNull File javaRoot,
-            @NotNull Disposable disposable,
-            @NotNull TestJdkKind testJdkKind,
-            @NotNull ConfigurationKind configurationKind,
-            boolean isBinaryRoot,
-            boolean usePsiClassReading,
-            boolean useJavacWrapper,
-            @Nullable LanguageVersionSettings explicitLanguageVersionSettings
-    ) {
-        return loadTestPackageAndBindingContextFromJavaRoot(
-                javaRoot,
-                disposable,
-                testJdkKind,
-                configurationKind,
-                isBinaryRoot,
-                usePsiClassReading,
-                useJavacWrapper,
-                explicitLanguageVersionSettings,
-                Collections.emptyList(),
-                (configuration) -> {}
-        );
-    }
-
-    @NotNull
-    public static Pair<PackageViewDescriptor, BindingContext> loadTestPackageAndBindingContextFromJavaRoot(
-            @NotNull File javaRoot,
-            @NotNull Disposable disposable,
-            @NotNull TestJdkKind testJdkKind,
-            @NotNull ConfigurationKind configurationKind,
-            boolean isBinaryRoot,
-            boolean usePsiClassReading,
-            boolean useJavacWrapper,
-            @Nullable LanguageVersionSettings explicitLanguageVersionSettings,
-            @NotNull List<File> additionalClasspath,
-            @NotNull Consumer<KotlinCoreEnvironment> configureEnvironment
-    ) {
-        List<File> javaBinaryRoots = new ArrayList<>();
-        // TODO: use the same additional binary roots as those were used for compilation
-        javaBinaryRoots.add(KotlinTestUtils.getAnnotationsJar());
-        javaBinaryRoots.add(ForTestCompileRuntime.jvmAnnotationsForTests());
-        javaBinaryRoots.addAll(additionalClasspath);
-
-        List<File> javaSourceRoots = new ArrayList<>();
-        javaSourceRoots.add(new File("compiler/testData/loadJava/include"));
-        if (isBinaryRoot) {
-            javaBinaryRoots.add(javaRoot);
-        }
-        else {
-            javaSourceRoots.add(javaRoot);
-        }
-        CompilerConfiguration configuration =
-                KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, javaBinaryRoots, javaSourceRoots);
-        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, usePsiClassReading);
-        configuration.put(JVMConfigurationKeys.USE_JAVAC, useJavacWrapper);
-        if (explicitLanguageVersionSettings != null) {
-            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, explicitLanguageVersionSettings);
-        }
-        KotlinCoreEnvironment environment =
-                KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
-        configureEnvironment.accept(environment);
-        AnalysisResult analysisResult = JvmResolveUtil.analyze(environment);
-
-        PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
-        return Pair.create(packageView, analysisResult.getBindingContext());
-    }
-
-    public static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
-        List<String> args = new ArrayList<>(Arrays.asList(
-                "-sourcepath", "compiler/testData/loadJava/include",
-                "-d", outDir.getPath())
-        );
-
-        List<File> classpath = new ArrayList<>();
-
-        classpath.add(ForTestCompileRuntime.runtimeJarForTests());
-        classpath.add(KotlinTestUtils.getAnnotationsJar());
-
-        for (File test : javaFiles) {
-            String content = FilesKt.readText(test, Charsets.UTF_8);
-
-            args.addAll(InTextDirectivesUtils.findListWithPrefixes(content, "JAVAC_OPTIONS:"));
-
-            if (InTextDirectivesUtils.isDirectiveDefined(content, "ANDROID_ANNOTATIONS")) {
-                classpath.add(ForTestCompileRuntime.androidAnnotationsForTests());
-            }
-
-            if (InTextDirectivesUtils.isDirectiveDefined(content, "JVM_ANNOTATIONS")) {
-                classpath.add(ForTestCompileRuntime.jvmAnnotationsForTests());
-            }
-        }
-
-        args.add("-classpath");
-        args.add(classpath.stream().map(File::getPath).collect(Collectors.joining(File.pathSeparator)));
-
-        KotlinTestUtils.compileJavaFiles(javaFiles, args);
     }
 
     @NotNull

@@ -105,12 +105,6 @@ fun setupLanguageVersionSettingsForMultifileCompilerTests(files: List<File>, env
     environment.configuration.languageVersionSettings = languageVersionSettingsFromText(files.map { it.readText() })
 }
 
-fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, environment: KotlinCoreEnvironment) {
-    val directives = KotlinTestUtils.parseDirectives(originalFileText)
-    val languageVersionSettings = parseLanguageVersionSettingsOrDefault(directives)
-    environment.configuration.languageVersionSettings = languageVersionSettings
-}
-
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 private fun <T : Any> analysisFlag(flag: AnalysisFlag<T>, value: @kotlin.internal.NoInfer T?): Pair<AnalysisFlag<T>, T>? =
     value?.let(flag::to)

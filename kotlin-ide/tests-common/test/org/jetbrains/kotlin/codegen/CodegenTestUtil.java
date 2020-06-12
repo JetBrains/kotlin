@@ -42,33 +42,6 @@ public class CodegenTestUtil {
     private CodegenTestUtil() {
     }
 
-    @NotNull
-    public static ClassFileFactory generateFiles(@NotNull KotlinCoreEnvironment environment, @NotNull CodegenTestFiles files) {
-        return GenerationUtils.compileFiles(files.getPsiFiles(), environment).getFactory();
-    }
-
-    public static void assertThrows(
-            @NotNull Method foo, @NotNull Class<? extends Throwable> exceptionClass, @Nullable Object instance, @NotNull Object... args
-    ) throws IllegalAccessException {
-        boolean caught = false;
-        try {
-            foo.invoke(instance, args);
-        }
-        catch (InvocationTargetException ex) {
-            caught = exceptionClass.isInstance(ex.getTargetException());
-        }
-        assertTrue(caught);
-    }
-
-    @NotNull
-    public static Method findDeclaredMethodByName(@NotNull Class<?> aClass, @NotNull String name) {
-        Method result = findDeclaredMethodByNameOrNull(aClass, name);
-        if (result == null) {
-            throw new AssertionError("Method " + name + " is not found in " + aClass);
-        }
-        return result;
-    }
-
     public static Method findDeclaredMethodByNameOrNull(@NotNull Class<?> aClass, @NotNull String name) {
         for (Method method : aClass.getDeclaredMethods()) {
             if (method.getName().equals(name)) {
@@ -76,22 +49,6 @@ public class CodegenTestUtil {
             }
         }
         return null;
-    }
-
-    @NotNull
-    public static File compileJava(
-            @NotNull List<String> fileNames,
-            @NotNull List<String> additionalClasspath,
-            @NotNull List<String> additionalOptions
-    ) {
-        try {
-            File directory = KotlinTestUtils.tmpDir("java-classes");
-            compileJava(fileNames, additionalClasspath, additionalOptions, directory);
-            return directory;
-        }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
     }
 
     public static void compileJava(
@@ -118,49 +75,5 @@ public class CodegenTestUtil {
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
-    }
-
-    @NotNull
-    public static Method findTheOnlyMethod(@NotNull Class<?> aClass) {
-        Method r = null;
-        for (Method method : aClass.getMethods()) {
-            if (method.getDeclaringClass().equals(Object.class)) {
-                continue;
-            }
-
-            if (r != null) {
-                throw new AssertionError("More than one public method in class " + aClass);
-            }
-
-            r = method;
-        }
-        if (r == null) {
-            throw new AssertionError("No public methods in class " + aClass);
-        }
-        return r;
-    }
-
-    @Nullable
-    public static Object getAnnotationAttribute(@NotNull Object annotation, @NotNull String name) {
-        try {
-            return annotation.getClass().getMethod(name).invoke(annotation);
-        }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
-
-    @NotNull
-    public static List<String> findJavaSourcesInDirectory(@NotNull File directory) {
-        List<String> javaFilePaths = new ArrayList<>(1);
-
-        FileUtil.processFilesRecursively(directory, file -> {
-            if (file.isFile() && FilesKt.getExtension(file).equals(JavaFileType.DEFAULT_EXTENSION)) {
-                javaFilePaths.add(file.getPath());
-            }
-            return true;
-        });
-
-        return javaFilePaths;
     }
 }

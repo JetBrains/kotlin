@@ -60,16 +60,6 @@ import java.io.File
 
 object GenerationUtils {
     @JvmStatic
-    fun compileFileTo(ktFile: KtFile, environment: KotlinCoreEnvironment, output: File): ClassFileFactory =
-        compileFilesTo(listOf(ktFile), environment, output)
-
-    @JvmStatic
-    fun compileFilesTo(files: List<KtFile>, environment: KotlinCoreEnvironment, output: File): ClassFileFactory =
-        compileFiles(files, environment).factory.apply {
-            writeAllTo(output)
-        }
-
-    @JvmStatic
     @JvmOverloads
     fun compileFiles(
         files: List<KtFile>,

@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts;
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -84,7 +85,6 @@ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
 public class KotlinTestUtils {
     public static String TEST_MODULE_NAME = "test-module";
 
-    public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
     private static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
     private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
@@ -99,26 +99,9 @@ public class KotlinTestUtils {
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
-    private static final List<File> filesToDelete = new ArrayList<>();
-
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
 
     private KotlinTestUtils() {
-    }
-
-    @NotNull
-    public static AnalysisResult analyzeFile(@NotNull KtFile file, @NotNull KotlinCoreEnvironment environment) {
-        return JvmResolveUtil.analyze(file, environment);
-    }
-
-    @NotNull
-    public static KotlinCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
-        return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
-    }
-
-    @NotNull
-    public static KotlinCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind) {
-        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK);
     }
 
     @NotNull
@@ -130,11 +113,6 @@ public class KotlinTestUtils {
         return KotlinCoreEnvironment.createForTests(
                 disposable, newConfiguration(configurationKind, jdkKind, getAnnotationsJar()), EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
-    }
-
-    @NotNull
-    public static KotlinCoreEnvironment createEnvironmentWithFullJdkAndIdeaAnnotations(Disposable disposable) {
-        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
     }
 
     @NotNull
@@ -262,18 +240,6 @@ public class KotlinTestUtils {
         // for example, on Windows, if a canonical path contains any space from FileUtil.createTempDirectory we will get
         // a File with short names (8.3) in its path and it will break some normalization passes in tests.
         return file.getCanonicalFile();
-    }
-
-    private static void deleteOnShutdown(File file) {
-        if (filesToDelete.isEmpty()) {
-            ShutDownTracker.getInstance().registerShutdownTask(() -> {
-                for (File victim : filesToDelete) {
-                    FileUtil.delete(victim);
-                }
-            });
-        }
-
-        filesToDelete.add(file);
     }
 
     @NotNull
@@ -427,36 +393,6 @@ public class KotlinTestUtils {
         return new File(jdk9);
     }
 
-    @Nullable
-    public static File getJdk11Home() {
-        String jdk11 = System.getenv("JDK_11");
-        if (jdk11 == null) {
-            return null;
-        }
-        return new File(jdk11);
-    }
-
-    public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
-        List<KotlinSourceRoot> roots = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
-        if (roots.isEmpty()) return;
-        List<KtFile> ktFiles = new ArrayList<>();
-        for (KotlinSourceRoot root : roots) {
-            File file = new File(root.getPath());
-            if (file.isFile()) {
-                ktFiles.add(loadJetFile(environment.getProject(), file));
-            }
-            else {
-                //noinspection ConstantConditions
-                for (File childFile : file.listFiles()) {
-                    if (childFile.getName().endsWith(".kt") || childFile.getName().endsWith(".kts")) {
-                        ktFiles.add(loadJetFile(environment.getProject(), childFile));
-                    }
-                }
-            }
-        }
-        JvmResolveUtil.analyze(ktFiles, environment);
-    }
-
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor) {
         assertEqualsToFile(expectedFile, editor, true);
     }
@@ -512,44 +448,6 @@ public class KotlinTestUtils {
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
-    }
-
-    public static boolean compileKotlinWithJava(
-            @NotNull List<File> javaFiles,
-            @NotNull List<File> ktFiles,
-            @NotNull File outDir,
-            @NotNull Disposable disposable,
-            @Nullable File javaErrorFile
-    ) throws IOException {
-        return compileKotlinWithJava(javaFiles, ktFiles, outDir, disposable, javaErrorFile, null);
-    }
-
-    public static boolean compileKotlinWithJava(
-            @NotNull List<File> javaFiles,
-            @NotNull List<File> ktFiles,
-            @NotNull File outDir,
-            @NotNull Disposable disposable,
-            @Nullable File javaErrorFile,
-            @Nullable Function1<CompilerConfiguration, Unit> updateConfiguration
-    ) throws IOException {
-        if (!ktFiles.isEmpty()) {
-            KotlinCoreEnvironment environment = createEnvironmentWithFullJdkAndIdeaAnnotations(disposable);
-            CompilerTestLanguageVersionSettingsKt.setupLanguageVersionSettingsForMultifileCompilerTests(ktFiles, environment);
-            if (updateConfiguration != null) {
-                updateConfiguration.invoke(environment.getConfiguration());
-            }
-            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
-        }
-        else {
-            boolean mkdirs = outDir.mkdirs();
-            assert mkdirs : "Not created: " + outDir;
-        }
-        if (javaFiles.isEmpty()) return true;
-
-        return compileJavaFiles(javaFiles, Arrays.asList(
-                "-classpath", outDir.getPath() + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests(),
-                "-d", outDir.getPath()
-        ), javaErrorFile);
     }
 
     @NotNull
@@ -730,10 +628,6 @@ public class KotlinTestUtils {
             }
         }
         return builder.toString();
-    }
-
-    public static String navigationMetadata(@TestDataFile String testFile) {
-        return testFile;
     }
 
     public interface DoTest {
@@ -929,23 +823,6 @@ public class KotlinTestUtils {
         assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, excludedPattern, TargetBackend.ANY, recursive, excludeDirs);
     }
 
-    public static void assertAllTestsPresentByMetadata(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            boolean recursive,
-            @NotNull String... excludeDirs
-    ) {
-        assertAllTestsPresentByMetadata(
-                testCaseClass,
-                testDataDir,
-                filenamePattern,
-                TargetBackend.ANY,
-                recursive,
-                excludeDirs
-        );
-    }
-
     public static void assertAllTestsPresentByMetadataWithExcluded(
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
@@ -976,34 +853,6 @@ public class KotlinTestUtils {
                 }
             }
         }
-    }
-
-    public static void assertAllTestsPresentByMetadata(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            @NotNull TargetBackend targetBackend,
-            boolean recursive,
-            @NotNull String... excludeDirs
-    ) {
-        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, null, targetBackend, recursive, excludeDirs);
-    }
-
-    public static void assertAllTestsPresentInSingleGeneratedClass(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern
-    ) {
-        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, TargetBackend.ANY);
-    }
-
-    public static void assertAllTestsPresentInSingleGeneratedClassWithExcluded(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            @Nullable Pattern excludePattern
-    ) {
-        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, excludePattern, TargetBackend.ANY);
     }
 
     public static void assertAllTestsPresentInSingleGeneratedClass(
@@ -1100,15 +949,6 @@ public class KotlinTestUtils {
     public static KtFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
         String text = FileUtil.loadFile(ioFile, true);
         return KtPsiFactoryKt.KtPsiFactory(project).createPhysicalFile(ioFile.getName(), text);
-    }
-
-    @NotNull
-    public static List<KtFile> loadToJetFiles(@NotNull KotlinCoreEnvironment environment, @NotNull List<File> files) throws IOException {
-        List<KtFile> jetFiles = Lists.newArrayList();
-        for (File file : files) {
-            jetFiles.add(loadJetFile(environment.getProject(), file));
-        }
-        return jetFiles;
     }
 
     @NotNull

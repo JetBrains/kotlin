@@ -50,14 +50,6 @@ object JvmResolveUtil {
         )
 
     @JvmStatic
-    fun analyzeAndCheckForErrors(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult =
-        analyzeAndCheckForErrors(setOf(file), environment)
-
-    @JvmStatic
-    fun analyzeAndCheckForErrors(files: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult =
-        analyzeAndCheckForErrors(environment.project, files, environment.configuration, environment::createPackagePartProvider)
-
-    @JvmStatic
     fun analyzeAndCheckForErrors(
         project: Project,
         files: Collection<KtFile>,
