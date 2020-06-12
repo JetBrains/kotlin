@@ -30,10 +30,10 @@ import kotlin.test.assertNotNull
  * Helper for configuring kotlin runtime in tested project.
  */
 object ConfigLibraryUtil {
-    private const val DEFAULT_JAVA_RUNTIME_LIB_NAME = "JAVA_RUNTIME_LIB_NAME"
-    private const val DEFAULT_KOTLIN_TEST_LIB_NAME = "KOTLIN_TEST_LIB_NAME"
-    private const val DEFAULT_KOTLIN_JS_STDLIB_NAME = "KOTLIN_JS_STDLIB_NAME"
-    private const val DEFAULT_KOTLIN_COMMON_STDLIB_NAME = "KOTLIN_COMMON_STDLIB_NAME"
+    private const val LIB_NAME_JAVA_RUNTIME = "JAVA_RUNTIME_LIB_NAME"
+    private const val LIB_NAME_KOTLIN_TEST = "KOTLIN_TEST_LIB_NAME"
+    private const val LIB_NAME_KOTLIN_STDLIB_JS = "KOTLIN_JS_STDLIB_NAME"
+    private const val LIB_NAME_KOTLIN_STDLIB_COMMON = "KOTLIN_COMMON_STDLIB_NAME"
 
     private val LIBRARY_NAME_TO_JAR_PATH = mapOf(
             "JUnit" to com.intellij.util.PathUtil.getJarPathForClass(junit.framework.TestCase::class.java),
@@ -55,28 +55,21 @@ object ConfigLibraryUtil {
 
     fun configureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_JS_STDLIB_NAME, TestKotlinArtifacts.kotlinStdlibJs), module, JSLibraryKind)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_JS, TestKotlinArtifacts.kotlinStdlibJs), module, JSLibraryKind)
     }
 
     fun configureKotlinCommonRuntime(module: Module) {
-        addLibrary(
-            getKotlinRuntimeLibEditor(
-                DEFAULT_KOTLIN_COMMON_STDLIB_NAME,
-                File("dist/common/kotlin-stdlib-common.jar")
-            ),
-            module,
-            CommonLibraryKind
-        )
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_COMMON, TestKotlinArtifacts.kotlinStdlibCommon), module, CommonLibraryKind)
     }
 
     fun configureKotlinRuntime(module: Module) {
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, TestKotlinArtifacts.kotlinStdlib), module)
-        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, TestKotlinArtifacts.kotlinTest), module)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_JAVA_RUNTIME, TestKotlinArtifacts.kotlinStdlib), module)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_TEST, TestKotlinArtifacts.kotlinTest), module)
     }
 
     fun unConfigureKotlinRuntime(module: Module) {
-        removeLibrary(module, DEFAULT_JAVA_RUNTIME_LIB_NAME)
-        removeLibrary(module, DEFAULT_KOTLIN_TEST_LIB_NAME)
+        removeLibrary(module, LIB_NAME_JAVA_RUNTIME)
+        removeLibrary(module, LIB_NAME_KOTLIN_TEST)
     }
 
     fun unConfigureKotlinRuntimeAndSdk(module: Module, sdk: Sdk) {
@@ -86,11 +79,11 @@ object ConfigLibraryUtil {
 
     fun unConfigureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
-        removeLibrary(module, DEFAULT_KOTLIN_JS_STDLIB_NAME)
+        removeLibrary(module, LIB_NAME_KOTLIN_STDLIB_JS)
     }
 
     fun unConfigureKotlinCommonRuntime(module: Module) {
-        removeLibrary(module, DEFAULT_KOTLIN_COMMON_STDLIB_NAME)
+        removeLibrary(module, LIB_NAME_KOTLIN_STDLIB_COMMON)
     }
 
     fun configureSdk(module: Module, sdk: Sdk) {
