@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproximationTransformer
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -776,7 +777,12 @@ class Fir2IrVisitor(
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Any?): IrElement {
         val argument = getClassCall.argument
         val irType = getClassCall.typeRef.toIrType()
-        val irClassType = argument.typeRef.toIrType()
+        val irClassType =
+            if (argument is FirClassReferenceExpression) {
+                argument.classTypeRef.toIrType()
+            } else {
+                argument.typeRef.toIrType()
+            }
         val irClassReferenceSymbol = when (argument) {
             is FirResolvedReifiedParameterReference -> {
                 classifierStorage.getIrTypeParameterSymbol(argument.symbol, ConversionTypeContext.DEFAULT)
@@ -789,6 +795,12 @@ class Fir2IrVisitor(
                         )
                     }
                 classifierStorage.getIrClassSymbol(symbol)
+            }
+            is FirClassReferenceExpression -> {
+                val type = argument.classTypeRef.coneTypeSafe<ConeClassLikeType>()
+                (type?.lookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.let {
+                    classifierStorage.getIrClassSymbol(it)
+                }
             }
             else -> null
         }
