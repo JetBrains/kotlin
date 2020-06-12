@@ -170,7 +170,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val result = SmartList<MatchPredicate>()
         if (!StringUtil.isEmptyOrSpaces(constraint!!.expressionTypes)) {
             val predicate = KotlinExprTypePredicate(
-                searchedTypeName = constraint.expressionTypes.split("|"),
+                searchedTypeNames = constraint.expressionTypes.split("|"),
                 withinHierachy = constraint.isExprTypeWithinHierarchy,
                 ignoreCase = !options.isCaseSensitiveMatch
             )

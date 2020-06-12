@@ -2,7 +2,7 @@ package com.jetbrains.kotlin.structuralsearch.res
 
 import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
 
-class KotlinSSCallExpression : KotlinSSResourceInspectionTest() {
+class KotlinSSCallExpressionTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "callExpression"
 
     fun testConstrArgCall() { doTest("A(true, 0, 1)") }
