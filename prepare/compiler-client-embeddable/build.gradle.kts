@@ -27,6 +27,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompilerClasspath(project(":kotlin-compiler"))
+    testCompilerClasspath(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     testCompilerClasspath(project(":kotlin-scripting-compiler"))
     testCompilerClasspath(project(":kotlin-daemon"))
     testCompilationClasspath(kotlinStdlib())
