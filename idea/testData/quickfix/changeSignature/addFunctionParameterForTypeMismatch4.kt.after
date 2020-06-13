@@ -1,5 +1,4 @@
 // "Add 4th parameter to function 'foo'" "true"
-// DISABLE-ERRORS
 fun foo(i1: Int, i2: Int, i3: Int, i41: String, i4: Int) {
 }
 
