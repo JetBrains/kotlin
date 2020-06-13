@@ -185,9 +185,34 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/KT20783.after.kt");
         }
 
+        @TestMetadata("LambdaInArguments.after.kt")
+        public void testLambdaInArguments() throws Exception {
+            runTest("idea/testData/indentationOnNewline/LambdaInArguments.after.kt");
+        }
+
+        @TestMetadata("LambdaInArguments2.after.kt")
+        public void testLambdaInArguments2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/LambdaInArguments2.after.kt");
+        }
+
         @TestMetadata("LargeFile.after.kt")
         public void testLargeFile() throws Exception {
             runTest("idea/testData/indentationOnNewline/LargeFile.after.kt");
+        }
+
+        @TestMetadata("LiteralExpression.after.kt")
+        public void testLiteralExpression() throws Exception {
+            runTest("idea/testData/indentationOnNewline/LiteralExpression.after.kt");
+        }
+
+        @TestMetadata("LiteralExpression2.after.kt")
+        public void testLiteralExpression2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/LiteralExpression2.after.kt");
+        }
+
+        @TestMetadata("LiteralExpression3.after.kt")
+        public void testLiteralExpression3() throws Exception {
+            runTest("idea/testData/indentationOnNewline/LiteralExpression3.after.kt");
         }
 
         @TestMetadata("ModifierListInUnfinishedDeclaration.after.kt")
@@ -546,6 +571,26 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/emptyParameters"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
             }
 
+            @TestMetadata("EmptyArgumentInCallByArrayAccess.after.kt")
+            public void testEmptyArgumentInCallByArrayAccess() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByArrayAccess.after.kt");
+            }
+
+            @TestMetadata("EmptyArgumentInCallByArrayAccess2.after.kt")
+            public void testEmptyArgumentInCallByArrayAccess2() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByArrayAccess2.after.kt");
+            }
+
+            @TestMetadata("EmptyArgumentInCallByDeclaration.after.kt")
+            public void testEmptyArgumentInCallByDeclaration() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByDeclaration.after.kt");
+            }
+
+            @TestMetadata("EmptyArgumentInCallByDeclaration2.after.kt")
+            public void testEmptyArgumentInCallByDeclaration2() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByDeclaration2.after.kt");
+            }
+
             @TestMetadata("EmptyArgumentInCallByReference.after.kt")
             public void testEmptyArgumentInCallByReference() throws Exception {
                 runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByReference.after.kt");
@@ -827,6 +872,16 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             @TestMetadata("BinaryWithTypeExpressions.after.kt")
             public void testBinaryWithTypeExpressions() throws Exception {
                 runTest("idea/testData/indentationOnNewline/emptyParenthesisInBinaryExpression/BinaryWithTypeExpressions.after.kt");
+            }
+
+            @TestMetadata("EmptyArgumentInCallByArrayAccess.after.kt")
+            public void testEmptyArgumentInCallByArrayAccess() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyParenthesisInBinaryExpression/EmptyArgumentInCallByArrayAccess.after.kt");
+            }
+
+            @TestMetadata("EmptyArgumentInCallByDeclaration.after.kt")
+            public void testEmptyArgumentInCallByDeclaration() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyParenthesisInBinaryExpression/EmptyArgumentInCallByDeclaration.after.kt");
             }
 
             @TestMetadata("InBinaryExpressionInMiddle.after.kt")
@@ -1349,6 +1404,16 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             @TestMetadata("BinaryWithTypeExpressions.after.inv.kt")
             public void testBinaryWithTypeExpressions() throws Exception {
                 runTest("idea/testData/indentationOnNewline/emptyParenthesisInBinaryExpression/BinaryWithTypeExpressions.after.inv.kt");
+            }
+
+            @TestMetadata("EmptyArgumentInCallByArrayAccess.after.inv.kt")
+            public void testEmptyArgumentInCallByArrayAccess() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyParenthesisInBinaryExpression/EmptyArgumentInCallByArrayAccess.after.inv.kt");
+            }
+
+            @TestMetadata("EmptyArgumentInCallByDeclaration.after.inv.kt")
+            public void testEmptyArgumentInCallByDeclaration() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyParenthesisInBinaryExpression/EmptyArgumentInCallByDeclaration.after.inv.kt");
             }
 
             @TestMetadata("InBinaryExpressionInMiddle.after.inv.kt")

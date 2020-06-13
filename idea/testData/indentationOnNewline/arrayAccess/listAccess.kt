@@ -4,3 +4,5 @@ fun a() {
         a[<caret>]
     )
 }
+
+// IGNORE_FORMATTER

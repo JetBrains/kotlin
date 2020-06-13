@@ -183,9 +183,34 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         runTest("idea/testData/indentationOnNewline/KT20783.kt");
     }
 
+    @TestMetadata("LambdaInArguments.kt")
+    public void testLambdaInArguments() throws Exception {
+        runTest("idea/testData/indentationOnNewline/LambdaInArguments.kt");
+    }
+
+    @TestMetadata("LambdaInArguments2.kt")
+    public void testLambdaInArguments2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/LambdaInArguments2.kt");
+    }
+
     @TestMetadata("LargeFile.kt")
     public void testLargeFile() throws Exception {
         runTest("idea/testData/indentationOnNewline/LargeFile.kt");
+    }
+
+    @TestMetadata("LiteralExpression.kt")
+    public void testLiteralExpression() throws Exception {
+        runTest("idea/testData/indentationOnNewline/LiteralExpression.kt");
+    }
+
+    @TestMetadata("LiteralExpression2.kt")
+    public void testLiteralExpression2() throws Exception {
+        runTest("idea/testData/indentationOnNewline/LiteralExpression2.kt");
+    }
+
+    @TestMetadata("LiteralExpression3.kt")
+    public void testLiteralExpression3() throws Exception {
+        runTest("idea/testData/indentationOnNewline/LiteralExpression3.kt");
     }
 
     @TestMetadata("ModifierListInUnfinishedDeclaration.kt")
@@ -544,6 +569,26 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/emptyParameters"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("EmptyArgumentInCallByArrayAccess.kt")
+        public void testEmptyArgumentInCallByArrayAccess() throws Exception {
+            runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByArrayAccess.kt");
+        }
+
+        @TestMetadata("EmptyArgumentInCallByArrayAccess2.kt")
+        public void testEmptyArgumentInCallByArrayAccess2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByArrayAccess2.kt");
+        }
+
+        @TestMetadata("EmptyArgumentInCallByDeclaration.kt")
+        public void testEmptyArgumentInCallByDeclaration() throws Exception {
+            runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByDeclaration.kt");
+        }
+
+        @TestMetadata("EmptyArgumentInCallByDeclaration2.kt")
+        public void testEmptyArgumentInCallByDeclaration2() throws Exception {
+            runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByDeclaration2.kt");
+        }
+
         @TestMetadata("EmptyArgumentInCallByReference.kt")
         public void testEmptyArgumentInCallByReference() throws Exception {
             runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByReference.kt");
@@ -830,6 +875,16 @@ public class PerformanceTypingIndentationTestGenerated extends AbstractPerforman
         @TestMetadata("BinaryWithTypeExpressions.kt")
         public void testBinaryWithTypeExpressions() throws Exception {
             runTest("idea/testData/indentationOnNewline/emptyParenthesisInBinaryExpression/BinaryWithTypeExpressions.kt");
+        }
+
+        @TestMetadata("EmptyArgumentInCallByArrayAccess.kt")
+        public void testEmptyArgumentInCallByArrayAccess() throws Exception {
+            runTest("idea/testData/indentationOnNewline/emptyParenthesisInBinaryExpression/EmptyArgumentInCallByArrayAccess.kt");
+        }
+
+        @TestMetadata("EmptyArgumentInCallByDeclaration.kt")
+        public void testEmptyArgumentInCallByDeclaration() throws Exception {
+            runTest("idea/testData/indentationOnNewline/emptyParenthesisInBinaryExpression/EmptyArgumentInCallByDeclaration.kt");
         }
 
         @TestMetadata("InBinaryExpressionInMiddle.kt")

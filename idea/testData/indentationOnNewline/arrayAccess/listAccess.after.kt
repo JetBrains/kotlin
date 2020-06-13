@@ -2,7 +2,9 @@ fun a() {
     val a = listOf(1, 2)
     println(
         a[
-        <caret>
+                <caret>
         ]
     )
 }
+
+// IGNORE_FORMATTER
