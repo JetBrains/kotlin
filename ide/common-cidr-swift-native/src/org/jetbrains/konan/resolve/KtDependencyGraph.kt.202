@@ -1,5 +1,6 @@
 package org.jetbrains.konan.resolve
 
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileTypes.FileTypeManager
@@ -12,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.psi.search.FileTypeIndex
+import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.containers.MultiMap
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
@@ -22,57 +24,49 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.konan.resolve.symbols.KtDependencyMarker
 import org.jetbrains.kotlin.idea.KotlinFileType
+import java.util.*
 
 @Service
-class KtDependencyGraph(project: Project) {
+class KtDependencyGraph(val project: Project) {
     private val dependent: MultiMap<VirtualFile, VirtualFile> = MultiMap.createSet()
+
+    @Volatile
+    private var invalidationWorkerActive = false
+    private val changedFiles: Queue<VirtualFile> = ArrayDeque()
+    private val createdFileParents: Queue<VirtualFile> = ArrayDeque()
 
     init {
         VirtualFileManager.getInstance().addAsyncFileListener(AsyncFileListener { events ->
-            val fileTypeManager = FileTypeManager.getInstance()
             val changedFiles = THashSet<VirtualFile>()
-            val affectedModules = THashSet<Module>()
-            val dirtyFiles = THashSet<VirtualFile>()
-
-            fun didChange(file: VirtualFile) {
-                if (fileTypeManager.isFileOfType(file, KotlinFileType.INSTANCE) && changedFiles.add(file)) {
-                    dirtyFiles += getDependentFiles(file)
-                }
-            }
-
-            fun willCreate(parent: VirtualFile, name: String) {
-                if (fileTypeManager.getFileTypeByFileName(name) === KotlinFileType.INSTANCE && !fileTypeManager.isFileIgnored(name)) {
-                    val module = ModuleUtil.findModuleForFile(parent, project)?.takeIf { affectedModules.add(it) } ?: return
-                    //TODO: Is there a better way with LookupTracker?
-                    dirtyFiles += FileTypeIndex.getFiles(KotlinFileType.INSTANCE, module.moduleWithDependentsScope)
-                }
-            }
+            val createdFileParents = THashSet<VirtualFile>()
 
             for (event in events) {
                 ProgressManager.checkCanceled()
                 when (event) {
-                    is VFileMoveEvent -> {
-                        didChange(event.file)
-                        willCreate(event.newParent, event.file.name)
+                    is VFileMoveEvent -> if (isRelevant(event.file)) {
+                        changedFiles += event.file
+                        createdFileParents += event.newParent
                     }
-                    is VFileCreateEvent -> willCreate(event.parent, event.childName)
+                    is VFileCreateEvent -> if (isRelevant(event.childName)) createdFileParents += event.parent
                     is VFilePropertyChangeEvent -> when {
-                        isFileNameChange(event) -> {
-                            didChange(event.file)
-                            willCreate(event.file.parent, event.newValue.toString())
+                        isSymlinkChange(event) -> {
+                            if (isRelevant(event.file)) changedFiles += event.file
                         }
-                        isSymlinkChange(event) -> didChange(event.file)
+                        isFileNameChange(event) -> {
+                            if (isRelevant(event.file)) changedFiles += event.file
+                            if (isRelevant(event.newValue.toString())) createdFileParents += event.file.parent
+                        }
                     }
-                    is VFileDeleteEvent -> didChange(event.file)
-                    is VFileContentChangeEvent -> didChange(event.file)
-                    is VFileCopyEvent -> willCreate(event.newParent, event.newChildName)
+                    is VFileDeleteEvent -> if (isRelevant(event.file)) changedFiles += event.file
+                    is VFileContentChangeEvent -> if (isRelevant(event.file)) changedFiles += event.file
+                    is VFileCopyEvent -> if (isRelevant(event.newChildName)) createdFileParents += event.newParent
                 }
             }
 
-            if (dirtyFiles.isEmpty) return@AsyncFileListener null
+            if (changedFiles.isEmpty && createdFileParents.isEmpty) return@AsyncFileListener null
             object : AsyncFileListener.ChangeApplier {
                 override fun afterVfsChange() {
-                    FileSymbolTablesCache.getInstance(project).invalidateDirtyIncludeFiles(dirtyFiles)
+                    scheduleInvalidation(changedFiles, createdFileParents)
                 }
             }
         }, project)
@@ -91,6 +85,65 @@ class KtDependencyGraph(project: Project) {
         dependencies.forEach {
             dependent.remove(it, file)
             true
+        }
+    }
+
+    private inner class InvalidationWorker : Runnable {
+        private val dirtyFiles = THashSet<VirtualFile>()
+        private var changedFile: VirtualFile? = null
+        private var createdFileParent: VirtualFile? = null
+
+        override fun run() {
+            // write action might add new files to queues, so only remember processed files for duration of read action
+            val alreadyProcessedFiles = THashSet<VirtualFile>()
+            val alreadyProcessedModules = THashSet<Module>()
+
+            while (true) {
+                while (true) {
+                    ProgressManager.checkCanceled()
+                    val file = changedFile
+                        ?: synchronized(changedFiles) { changedFiles.poll() }.also { changedFile = it }
+                        ?: break
+
+                    if (alreadyProcessedFiles.add(file)) dirtyFiles.addAll(getDependentFiles(file))
+                    changedFile = null
+                }
+
+                while (true) {
+                    ProgressManager.checkCanceled()
+                    val parent = createdFileParent
+                        ?: synchronized(changedFiles) { createdFileParents.poll() }.also { createdFileParent = it }
+                        ?: break
+
+                    ModuleUtil.findModuleForFile(parent, project)?.takeIf { alreadyProcessedModules.add(it) }?.let { module ->
+                        //TODO: Is there a better way with LookupTracker?
+                        dirtyFiles.addAll(FileTypeIndex.getFiles(KotlinFileType.INSTANCE, module.moduleWithDependentsScope))
+                    }
+                    createdFileParent = null
+                }
+
+                FileSymbolTablesCache.getInstance(project).invalidateDirtyIncludeFiles(dirtyFiles)
+                dirtyFiles.clear()
+
+                synchronized(changedFiles) {
+                    if (changedFiles.isEmpty() && createdFileParents.isEmpty()) {
+                        invalidationWorkerActive = false
+                        return@run
+                    }
+                }
+            }
+        }
+    }
+
+    private fun scheduleInvalidation(newlyChangedFiles: Collection<VirtualFile>, newlyCreatedFileParents: Collection<VirtualFile>) {
+        if (newlyChangedFiles.isEmpty() && newlyCreatedFileParents.isEmpty()) return
+        synchronized(changedFiles) {
+            changedFiles += newlyChangedFiles
+            createdFileParents += newlyCreatedFileParents
+            if (!invalidationWorkerActive) {
+                ReadAction.nonBlocking(InvalidationWorker()).inSmartMode(project).submit(AppExecutorUtil.getAppExecutorService())
+                invalidationWorkerActive = true
+            }
         }
     }
 
@@ -113,6 +166,12 @@ class KtDependencyGraph(project: Project) {
 
     companion object {
         fun getInstance(project: Project): KtDependencyGraph = project.service()
+
+        private fun isRelevant(file: VirtualFile): Boolean = FileTypeManager.getInstance().isFileOfType(file, KotlinFileType.INSTANCE)
+
+        private fun isRelevant(name: String): Boolean = FileTypeManager.getInstance().run {
+            getFileTypeByFileName(name) === KotlinFileType.INSTANCE && !isFileIgnored(name)
+        }
 
         private fun isFileNameChange(propertyChangeEvent: VFilePropertyChangeEvent): Boolean =
             propertyChangeEvent.propertyName == VirtualFile.PROP_NAME && propertyChangeEvent.oldValue != propertyChangeEvent.newValue
