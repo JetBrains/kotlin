@@ -96,7 +96,7 @@ class GradleKtsImportTest : GradleImportingTestCase() {
 
         // reload configuration and check this it is not changed
         scripts.forEach {
-            val reloadedConfiguration = scriptConfigurationManager.default.forceReloadConfiguration(
+            val reloadedConfiguration = scriptConfigurationManager.default.runLoader(
                 it.psiFile,
                 object : DefaultScriptConfigurationLoader(it.psiFile.project) {
                     override fun shouldRunInBackground(scriptDefinition: ScriptDefinition) = false
