@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsLocator.NotificationKind.*
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.Imported
 
 class MissingGradleScriptConfigurationNotificationProvider(private val project: Project) :
     EditorNotifications.Provider<EditorNotificationPanel>() {
@@ -32,25 +33,40 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
             outsideAnything -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("notification.outsideAnything.text"))
                 createActionLabel(KotlinIdeaGradleBundle.message("notification.outsideAnything.linkAction")) {
-                    runPartialGradleImport(project)
+                    linkProject(project)
                 }
             }
             wasNotImportedAfterCreation -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.text"))
                 createActionLabel(getMissingConfigurationActionText()) {
-                    runPartialGradleImport(project)
+                    linkProject(project)
                 }
             }
             notEvaluatedInLastImport -> EditorNotificationPanel().apply {
-                text(KotlinIdeaGradleBundle.message(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.text")))
+                text(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.text"))
 
-                createActionLabel(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.info")) {
+                // suggest to reimport project if something changed after import
+                val importTs = (scriptUnderRoot.nearest as? Imported)?.data?.importTs
+                if (importTs != null && !scriptUnderRoot.nearest.areRelatedFilesChangedBefore(file, importTs)) {
+                    createActionLabel(getMissingConfigurationActionText()) {
+                        rootsManager.updateStandaloneScripts {
+                            runPartialGradleImport(project)
+                        }
+                    }
+                }
+
+                // suggest to choose new gradle project
+                createActionLabel(KotlinIdeaGradleBundle.message("notification.outsideAnything.linkAction")) {
+                    linkProject(project)
+                }
+
+                createActionLabel(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.addAsStandaloneAction")) {
                     rootsManager.updateStandaloneScripts {
                         addStandaloneScript(file.path)
                     }
                 }
 
-                contextHelp(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.addAsStandaloneAction"))
+                contextHelp(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.info"))
             }
             standalone -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("notification.standalone.text"))
@@ -62,6 +78,10 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
                 contextHelp(KotlinIdeaGradleBundle.message("notification.standalone.info"))
             }
         }
+    }
+
+    private fun linkProject(project: Project) {
+        TODO()
     }
 
     private fun EditorNotificationPanel.contextHelp(text: String) {
