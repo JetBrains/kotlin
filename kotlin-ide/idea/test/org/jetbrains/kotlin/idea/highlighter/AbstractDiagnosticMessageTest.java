@@ -7,29 +7,34 @@ package org.jetbrains.kotlin.idea.highlighter;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.highlighter.formatHtml.FormatHtmlUtilKt;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.Directives;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnvironment {
+public abstract class AbstractDiagnosticMessageTest extends KotlinLightCodeInsightFixtureTestCase {
     private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";
     private static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
     private static final String MESSAGE_TYPE_DIRECTIVE = "MESSAGE_TYPE";
@@ -47,32 +52,39 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
     }
 
     @NotNull
-    @Override
-    protected KotlinCoreEnvironment createEnvironment() {
-        return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
-    }
-
-    @NotNull
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/diagnosticMessage/";
     }
 
-    @NotNull
-    protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion, @NotNull Map<LanguageFeature, LanguageFeature.State> specificFeatures) {
-        CompilerConfiguration configuration = getEnvironment().getConfiguration();
-        LanguageVersion languageVersion = explicitLanguageVersion == null
-                                          ? CommonConfigurationKeysKt.getLanguageVersionSettings(configuration).getLanguageVersion()
-                                          : explicitLanguageVersion;
+    protected CompilerConfiguration compilerConfiguration(LanguageVersionSettings languageVersionSettings) {
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.putIfNotNull(CommonConfigurationKeys.MODULE_NAME, myFixture.getModule().getName());
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, languageVersionSettings);
+        return configuration;
+    }
 
-        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
+    protected AnalysisResult analyze(Collection<KtFile> files, CompilerConfiguration configuration) {
+        return JvmResolveUtil.analyze(myFixture.getProject(), files, configuration, (scope) -> PackagePartProvider.Empty.INSTANCE, new CliBindingTrace(), Collections.EMPTY_LIST);
+    }
+
+    protected LanguageVersionSettings languageVersionSettings(
+            @NotNull String fileData
+    ) {
+        Map<LanguageFeature, LanguageFeature.State> specificFeatures = parseLanguageFeatures(fileData);
+        String explicitLanguageVersion = InTextDirectivesUtils.findStringWithPrefixes(fileData, "// LANGUAGE_VERSION:");
+        LanguageVersion version = explicitLanguageVersion == null ? null : LanguageVersion.fromVersionString(explicitLanguageVersion);
+        LanguageVersion languageVersion = explicitLanguageVersion == null
+                                          ? LanguageVersionSettingsImpl.DEFAULT.getLanguageVersion()
+                                          : version;
+        return new LanguageVersionSettingsImpl(
                 languageVersion,
                 LanguageVersionSettingsImpl.DEFAULT.getApiVersion(),
                 Collections.emptyMap(),
-                specificFeatures));
-        return JvmResolveUtil.analyze(Collections.singleton(file), getEnvironment(), configuration);
+                specificFeatures);
     }
 
     public void doTest(String filePath) throws Exception {
+
         File file = new File(filePath);
         String fileName = file.getName();
 
@@ -82,14 +94,13 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
         final Set<DiagnosticFactory<?>> diagnosticFactories = getDiagnosticFactories(directives);
         MessageType messageType = getMessageTypeDirective(directives);
 
-        String explicitLanguageVersion = InTextDirectivesUtils.findStringWithPrefixes(fileData, "// LANGUAGE_VERSION:");
-        LanguageVersion version = explicitLanguageVersion == null ? null : LanguageVersion.fromVersionString(explicitLanguageVersion);
-        Map<LanguageFeature, LanguageFeature.State> specificFeatures = parseLanguageFeatures(fileData);
+        LanguageVersionSettings languageVersionSettings = languageVersionSettings(fileData);
+        PsiFile psiFile = myFixture.configureByFile(filePath);
+        KtFile ktFile = (KtFile) psiFile;
 
-        KtFile psiFile = KotlinTestUtils.createFile(fileName, KotlinTestUtils.doLoadFile(getTestDataPath(), fileName), getProject());
-        AnalysisResult analysisResult = analyze(psiFile, version, specificFeatures);
+        CompilerConfiguration compilerConfiguration = compilerConfiguration(languageVersionSettings);
+        AnalysisResult analysisResult = analyze(Collections.singleton(ktFile), compilerConfiguration);
         BindingContext bindingContext = analysisResult.getBindingContext();
-
         List<Diagnostic> diagnostics = ContainerUtil.filter(bindingContext.getDiagnostics().all(), new Condition<Diagnostic>() {
             @Override
             public boolean value(Diagnostic diagnostic) {
@@ -107,8 +118,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
             if (messageType != MessageType.TEXT && IdeErrorMessages.hasIdeSpecificMessage(diagnostic)) {
                 readableDiagnosticText = FormatHtmlUtilKt.formatHtml(IdeErrorMessages.render(diagnostic));
                 extension = MessageType.HTML.extension;
-            }
-            else {
+            } else {
                 readableDiagnosticText = DefaultErrorMessages.render(diagnostic);
                 extension = MessageType.TEXT.extension;
             }
@@ -154,8 +164,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
         assert diagnosticsNumber != null : DIAGNOSTICS_NUMBER_DIRECTIVE + " should be present.";
         try {
             return Integer.parseInt(diagnosticsNumber);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new AssertionError(DIAGNOSTICS_NUMBER_DIRECTIVE + " should contain number as its value.");
         }
     }
@@ -168,7 +177,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
         String[] diagnostics = diagnosticsData.split(" ");
         for (String diagnosticName : diagnostics) {
             Object diagnostic = getDiagnostic(diagnosticName);
-            assert diagnostic instanceof DiagnosticFactory: "Can't load diagnostic factory for " + diagnosticName;
+            assert diagnostic instanceof DiagnosticFactory : "Can't load diagnostic factory for " + diagnosticName;
             diagnosticFactories.add((DiagnosticFactory) diagnostic);
         }
         return diagnosticFactories;
@@ -211,8 +220,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
         if (messageType == null) return null;
         try {
             return MessageType.valueOf(messageType);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new AssertionError(MESSAGE_TYPE_DIRECTIVE + " should be " + MessageType.TEXT.directive + " or " +
                                      MessageType.HTML.directive + ". But was: \"" + messageType + "\".");
         }

@@ -8,34 +8,32 @@ package org.jetbrains.kotlin.idea.highlighter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts;
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifactsKt;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 
+import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
-import static java.util.Collections.singletonList;
+import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
 
 public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnosticMessageTest {
-    @NotNull
-    @Override
-    protected KotlinCoreEnvironment createEnvironment() {
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), new CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES);
-    }
 
-    @NotNull
-    @Override
-    protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion, @NotNull Map<LanguageFeature, LanguageFeature.State> specificFeatures) {
-        return TopDownAnalyzerFacadeForJS.analyzeFiles(singletonList(file), getConfig(explicitLanguageVersion, specificFeatures));
+    protected AnalysisResult analyze(Collection<KtFile> files, CompilerConfiguration configuration) {
+        return TopDownAnalyzerFacadeForJS.analyzeFiles(files, getConfig(configuration));
     }
 
     @NotNull
@@ -50,22 +48,22 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
         return getFieldOrNull(ErrorsJs.class, diagnosticName);
     }
 
-    @NotNull
-    private JsConfig getConfig(@Nullable LanguageVersion explicitLanguageVersion, @NotNull Map<LanguageFeature, LanguageFeature.State> specificFeatures) {
-        CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME);
-        configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB);
+    protected CompilerConfiguration compilerConfiguration(LanguageVersionSettings languageVersionSettings) {
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, myFixture.getModule().getName());
+        configuration.put(JSConfigurationKeys.LIBRARIES, jsStdlib());
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, languageVersionSettings);
+        return configuration;
+    }
 
-        LanguageVersion languageVersion = explicitLanguageVersion == null
-                ? CommonConfigurationKeysKt.getLanguageVersionSettings(configuration).getLanguageVersion()
-                : explicitLanguageVersion;
+    protected List<String> jsStdlib() {
+        File stdlibPath = ForTestCompileRuntime.stdlibJsForTests();
+        return Collections.singletonList(stdlibPath.getAbsolutePath());
+    }
 
-        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
-                languageVersion,
-                LanguageVersionSettingsImpl.DEFAULT.getApiVersion(),
-                Collections.emptyMap(),
-                specificFeatures));
+    @NotNull
+    private JsConfig getConfig(CompilerConfiguration configuration) {
         return new JsConfig(getProject(), configuration);
     }
 }
