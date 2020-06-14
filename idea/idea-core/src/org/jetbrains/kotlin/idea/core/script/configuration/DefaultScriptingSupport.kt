@@ -175,13 +175,14 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                 } else {
                     val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(scriptDefinition)
                     val postponeLoading = !autoReloadEnabled && async.any { it.isPostponedLoad(virtualFile) }
+                    val forceSkipNotification = autoReloadEnabled || postponeLoading
 
                     if (postponeLoading) {
                         LoadScriptConfigurationNotificationFactory.showNotification(virtualFile, project) {
-                            runAsyncLoaders(file, virtualFile, scriptDefinition, async, isLoadingPostponed = true)
+                            runAsyncLoaders(file, virtualFile, scriptDefinition, async, forceSkipNotification)
                         }
                     } else {
-                        runAsyncLoaders(file, virtualFile, scriptDefinition, async, isLoadingPostponed = false)
+                        runAsyncLoaders(file, virtualFile, scriptDefinition, async, forceSkipNotification)
                     }
                 }
             }
@@ -197,7 +198,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         virtualFile: VirtualFile,
         scriptDefinition: ScriptDefinition,
         loaders: List<ScriptConfigurationLoader>,
-        isLoadingPostponed: Boolean
+        forceSkipNotification: Boolean
     ) {
         backgroundExecutor.ensureScheduled(virtualFile) {
             val cached = getCachedConfigurationState(virtualFile)
@@ -205,8 +206,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
             val applied = cached?.applied
             if (applied != null && applied.inputs.isUpToDate(project, virtualFile)) {
                 // in case user reverted to applied configuration
-                val skipNotification = isLoadingPostponed || KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(scriptDefinition)
-                suggestOrSaveConfiguration(virtualFile, applied, skipNotification)
+                suggestOrSaveConfiguration(virtualFile, applied, forceSkipNotification)
             } else if (cached == null || !cached.isUpToDate(project, virtualFile)) {
                 // don't start loading if nothing was changed
                 // (in case we checking for up-to-date and loading concurrently)
@@ -216,20 +216,15 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         }
     }
 
-    fun forceReloadConfiguration(file: KtFile, loader: ScriptConfigurationLoader): ScriptCompilationConfigurationWrapper? {
+    @TestOnly
+    fun runLoader(file: KtFile, loader: ScriptConfigurationLoader): ScriptCompilationConfigurationWrapper? {
         val virtualFile = file.originalFile.virtualFile ?: return null
 
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return null
         val scriptDefinition = file.findScriptDefinition() ?: return null
 
         manager.updater.update {
-            if (!loader.shouldRunInBackground(scriptDefinition)) {
-                loader.loadDependencies(false, file, scriptDefinition, loadingContext)
-            } else {
-                backgroundExecutor.ensureScheduled(virtualFile) {
-                    loader.loadDependencies(false, file, scriptDefinition, loadingContext)
-                }
-            }
+            loader.loadDependencies(false, file, scriptDefinition, loadingContext)
         }
 
         return getAppliedConfiguration(virtualFile)?.configuration
@@ -259,7 +254,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
     private fun suggestOrSaveConfiguration(
         file: VirtualFile,
         newResult: ScriptConfigurationSnapshot,
-        skipNotification: Boolean
+        forceSkipNotification: Boolean
     ) {
         saveLock.withLock {
             debug(file) { "configuration received = $newResult" }
@@ -278,11 +273,11 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                     saveReports(file, newResult.reports)
                     file.removeScriptDependenciesNotificationPanel(project)
                 } else {
-                    val autoReload = skipNotification
+                    val skipNotification = forceSkipNotification
                             || oldConfiguration == null
                             || ApplicationManager.getApplication().isUnitTestModeWithoutScriptLoadingNotification
 
-                    if (autoReload) {
+                    if (skipNotification) {
                         if (oldConfiguration != null) {
                             file.removeScriptDependenciesNotificationPanel(project)
                         }
