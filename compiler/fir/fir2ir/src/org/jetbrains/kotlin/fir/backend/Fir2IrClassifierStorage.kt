@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedEnumEntryDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -113,8 +115,44 @@ class Fir2IrClassifierStorage(
 
     private fun IrClass.declareTypeParameters(klass: FirClass<*>) {
         if (klass is FirRegularClass) {
-            preCacheTypeParameters(klass)
+            if (isExternalStub() && klass.typeParameters.size == typeParameters.size) {
+                // For external stubs, the references of type parameters inside the class are converted
+                // to symbols with the existing deserialized descriptors.
+                // Precache based on the deserialized descriptors instead of creating wrapped ones, if possible.
+                for ((index, firTypeParameter) in klass.typeParameters.withIndex()) {
+                    preCacheExternalTypeParameter(
+                        firTypeParameter.symbol.fir, index,
+                        origin = this.origin,
+                        existingDescriptor = typeParameters[index].descriptor
+                    )
+                }
+            } else {
+                preCacheTypeParameters(klass)
+            }
             setTypeParameters(klass)
+        }
+    }
+
+    private fun IrClass.isExternalStub() =
+        origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+
+    private fun preCacheExternalTypeParameter(
+        original: FirTypeParameter,
+        index: Int,
+        origin: IrDeclarationOrigin,
+        existingDescriptor: TypeParameterDescriptor
+    ) {
+        if (getCachedIrTypeParameter(original, index) == null) {
+            val referenced = symbolTable.referenceTypeParameter(existingDescriptor)
+            if (referenced.isBound) {
+                typeParameterCache[original] = referenced.owner
+            } else {
+                createIrTypeParameterWithoutBounds(
+                    original, index,
+                    origin = origin,
+                    existingDescriptor = existingDescriptor
+                )
+            }
         }
     }
 
@@ -282,11 +320,12 @@ class Fir2IrClassifierStorage(
     private fun createIrTypeParameterWithoutBounds(
         typeParameter: FirTypeParameter,
         index: Int,
-        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+        existingDescriptor: TypeParameterDescriptor? = null
     ): IrTypeParameter {
         require(index >= 0)
-        val descriptor = WrappedTypeParameterDescriptor()
-        val origin = IrDeclarationOrigin.DEFINED
+        val descriptor = existingDescriptor ?: WrappedTypeParameterDescriptor()
         val irTypeParameter = with(typeParameter) {
             convertWithOffsets { startOffset, endOffset ->
                 symbolTable.declareGlobalTypeParameter(startOffset, endOffset, origin, descriptor) { symbol ->
@@ -296,7 +335,9 @@ class Fir2IrClassifierStorage(
                         isReified,
                         variance
                     ).apply {
-                        descriptor.bind(this)
+                        if (descriptor is WrappedTypeParameterDescriptor) {
+                            descriptor.bind(this)
+                        }
                     }
                 }
             }
