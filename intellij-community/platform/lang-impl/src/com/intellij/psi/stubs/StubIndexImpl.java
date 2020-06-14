@@ -59,7 +59,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.function.IntPredicate;
 
-@State(name = "FileBasedIndex", storages = @Storage(StoragePathMacros.CACHE_FILE))
+@State(name = "FileBasedIndex", storages = @Storage(StoragePathMacros.CACHE_FILE), reportStatistic = false)
 public final class StubIndexImpl extends StubIndexEx implements PersistentStateComponent<StubIndexState> {
   private static final AtomicReference<Boolean> ourForcedClean = new AtomicReference<>(null);
   static final Logger LOG = Logger.getInstance(StubIndexImpl.class);
