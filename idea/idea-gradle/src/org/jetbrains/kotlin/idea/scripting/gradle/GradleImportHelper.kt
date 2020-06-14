@@ -15,13 +15,15 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-const val disableNotificationForProjectImport = true
+val scriptConfigurationsNeedToBeUpdatedBalloon
+    get() = Registry.`is`("kotlin.gradle.scripts.scriptConfigurationsNeedToBeUpdatedBalloon", false)
 
 fun runPartialGradleImport(project: Project) {
     getGradleProjectSettings(project).forEach {
@@ -52,7 +54,7 @@ private var Project.notificationPanel: ScriptConfigurationChangedNotification?
         by UserDataProperty<Project, ScriptConfigurationChangedNotification>(Key.create("load.script.configuration.panel"))
 
 fun scriptConfigurationsNeedToBeUpdated(project: Project) {
-    if (disableNotificationForProjectImport) return
+    if (!scriptConfigurationsNeedToBeUpdatedBalloon) return
 
     if (autoReloadScriptConfigurations(project)) {
         // import should be run automatically by Gradle plugin
