@@ -29,7 +29,10 @@ fun Project.publishPluginMarkers(withEmptyJars: Boolean = true) {
 }
 
 fun Project.addEmptyJarArtifacts(publication: MavenPublication) {
-    val emptyJar = getOrCreateTask<Jar>("emptyJar") { }
+    val emptyJar = getOrCreateTask<Jar>("emptyJar") {
+        archiveBaseName.set("empty")
+    }
+
     publication.artifact(emptyJar.get()) { }
     publication.artifact(emptyJar.get()) { classifier = "sources" }
     publication.artifact(emptyJar.get()) { classifier = "javadoc" }
