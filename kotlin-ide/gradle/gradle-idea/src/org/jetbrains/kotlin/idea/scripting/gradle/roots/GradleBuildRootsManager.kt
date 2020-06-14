@@ -19,6 +19,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport.Companion.EPN
 import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsBuilder
@@ -315,7 +316,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         if (old is Imported && newRoot !is Imported) {
             removeData(old.pathPrefix)
         }
-        if (old is Imported || newRoot is Imported) {
+        if (old !is Legacy || newRoot !is Legacy) {
             updater.invalidateAndCommit()
         }
 
@@ -366,6 +367,10 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             if (project.isDisposed) return@launch
 
             openedScripts.forEach {
+                if (isApplicable(it)) {
+                    DefaultScriptingSupport.getInstance(project).ensureNotificationsRemoved(it)
+                }
+
                 if (restartAnalyzer) {
                     // this required only for "pause" state
                     val ktFile = PsiManager.getInstance(project).findFile(it)

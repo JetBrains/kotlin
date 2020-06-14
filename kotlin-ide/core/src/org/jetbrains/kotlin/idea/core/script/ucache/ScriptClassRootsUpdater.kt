@@ -23,12 +23,14 @@ import com.intellij.psi.PsiManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptDependenciesClassFinder
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
@@ -233,7 +235,7 @@ class ScriptClassRootsUpdater(
     private fun updateHighlighting(project: Project, filter: (VirtualFile) -> Boolean) {
         if (!project.isOpen) return
 
-        val openFiles = FileEditorManager.getInstance(project).openFiles
+        val openFiles = FileEditorManager.getInstance(project).allEditors.mapNotNull { it.file }
         val openedScripts = openFiles.filter { filter(it) }
 
         if (openedScripts.isEmpty()) return
@@ -243,7 +245,12 @@ class ScriptClassRootsUpdater(
 
             openedScripts.forEach {
                 PsiManager.getInstance(project).findFile(it)?.let { psiFile ->
-                    DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
+                    if (psiFile is KtFile) {
+                        // start loading for files that previously was cached by custom scripting support
+                        ScriptConfigurationManager.getInstance(project).getConfiguration(psiFile)
+
+                        DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
+                    }
                 }
             }
         }
