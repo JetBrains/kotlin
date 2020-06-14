@@ -337,6 +337,16 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         }
     }
 
+    fun ensureNotificationsRemoved(file: VirtualFile) {
+        if (cache.remove(file)) {
+            saveReports(file, listOf())
+            file.removeScriptDependenciesNotificationPanel(project)
+        }
+
+        // this notification can be shown before something will be in cache
+        LoadScriptConfigurationNotificationFactory.hideNotification(file, project)
+    }
+
     companion object {
         fun getInstance(project: Project) =
             (ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager).default
