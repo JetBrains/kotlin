@@ -28,19 +28,23 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testRuntime(project(":kotlin-reflect"))
-    compilerClasspath(project(":kotlin-compiler-embeddable"))
-    compilerClasspath(project(":kotlin-scripting-compiler-embeddable"))
     compilerClasspath(project(":kotlin-reflect"))
     compilerClasspath(kotlinStdlib())
-    compilerClasspath(project(":kotlin-script-runtime"))
     compilerClasspath(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    compilerClasspath(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    compilerClasspath(project(":kotlin-compiler-embeddable"))
+    compilerClasspath(project(":kotlin-scripting-compiler-embeddable"))
+    compilerClasspath(project(":kotlin-scripting-compiler-impl-embeddable"))
+    compilerClasspath(project(":kotlin-script-runtime"))
+    compilerClasspath(project(":kotlin-scripting-jvm"))
     compileOnly(project(":compiler:cli-common")) // TODO: fix import (workaround for jps build)
     testCompileOnly(project(":core:util.runtime")) // TODO: fix import (workaround for jps build)
     testCompileOnly(project(":daemon-common")) // TODO: fix import (workaround for jps build)
 }
 
 projectTest {
+    dependsOn(compilerClasspath)
     doFirst {
-        systemProperty("kotlin.compiler.classpath", compilerClasspath.asFileTree.asPath)
+        systemProperty("kotlin.compiler.classpath", compilerClasspath.asPath)
     }
 }
