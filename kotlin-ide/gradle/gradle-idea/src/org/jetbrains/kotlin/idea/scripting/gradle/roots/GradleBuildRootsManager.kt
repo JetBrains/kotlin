@@ -32,7 +32,10 @@ import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.settings.*
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
+import java.nio.file.FileSystems
+import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -107,7 +110,12 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     override fun getScriptInfo(localPath: String): GradleScriptInfo? =
         manager.getLightScriptInfo(localPath) as? GradleScriptInfo
 
-    override fun getScriptFirstSeenTs(path: String): Long = 0
+    override fun getScriptFirstSeenTs(path: String): Long {
+        val nioPath = FileSystems.getDefault().getPath(path)
+        return Files.readAttributes(nioPath, BasicFileAttributes::class.java)
+            ?.creationTime()?.toMillis()
+            ?: Long.MAX_VALUE
+    }
 
     fun fileChanged(filePath: String, ts: Long = System.currentTimeMillis()) {
         findAffectedFileRoot(filePath)?.fileChanged(filePath, ts)
