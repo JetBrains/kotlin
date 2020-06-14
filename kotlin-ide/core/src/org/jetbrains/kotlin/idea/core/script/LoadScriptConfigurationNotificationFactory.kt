@@ -14,6 +14,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.HyperlinkLabel
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.psi.UserDataProperty
@@ -30,6 +31,19 @@ object LoadScriptConfigurationNotificationFactory {
         return true
     }
 
+    @TestOnly
+    fun hasNotification(file: VirtualFile, project: Project): Boolean {
+        return FileEditorManager.getInstance(project).getSelectedEditor(file)?.notificationPanel != null
+    }
+
+    @TestOnly
+    fun performSuggestedLoading(file: VirtualFile, project: Project): Boolean {
+        val notificationPanel = FileEditorManager.getInstance(project).getSelectedEditor(file)?.notificationPanel
+            ?: return false
+        notificationPanel.onClick.invoke()
+
+        return true
+    }
 
     private fun VirtualFile.removeLoadConfigurationNotificationPanel(project: Project) {
         withSelectedEditor(project) { manager ->
