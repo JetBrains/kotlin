@@ -82,15 +82,6 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         }
     }
 
-    @Suppress("MemberVisibilityCanBePrivate") // used in GradleImportHelper.kt.193
-    fun checkUpToDate(file: VirtualFile) {
-        if (isConfigurationOutOfDate(file)) {
-            scriptConfigurationsNeedToBeUpdated(project)
-        } else {
-            scriptConfigurationsAreUpToDate(project)
-        }
-    }
-
     @Suppress("MemberVisibilityCanBePrivate") // used in GradleImportHelper.kt.201
     fun isConfigurationOutOfDate(file: VirtualFile): Boolean {
         val script = getScriptInfo(file) ?: return false
@@ -171,6 +162,8 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         if (lastModifiedFilesSaveScheduled.compareAndSet(false, true)) {
             BackgroundTaskUtil.executeOnPooledThread(project) {
                 if (lastModifiedFilesSaveScheduled.compareAndSet(true, false)) {
+                    updateNotifications(restartAnalyzer = false) { true }
+
                     roots.list.forEach {
                         it.saveLastModifiedFiles()
                     }
@@ -330,19 +323,24 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    private fun updateNotifications(shouldUpdatePath: (String) -> Boolean) {
+    fun updateNotifications(
+        restartAnalyzer: Boolean = true,
+        shouldUpdatePath: (String) -> Boolean
+    ) {
         if (!project.isOpen) return
 
         // import notification is a balloon, so should be shown only for selected editor
         FileEditorManager.getInstance(project).selectedEditor?.file?.let {
             if (shouldUpdatePath(it.path) && maybeAffectedGradleProjectFile(it.path)) {
-                checkUpToDate(it)
+                updateFloatingAction(it)
             }
         }
 
-        val openedScripts = FileEditorManager.getInstance(project).openFiles.filter {
-            shouldUpdatePath(it.path) && maybeAffectedGradleProjectFile(it.path)
-        }
+        val openedScripts = FileEditorManager.getInstance(project).selectedEditors
+            .mapNotNull { it.file }
+            .filter {
+                shouldUpdatePath(it.path) && maybeAffectedGradleProjectFile(it.path)
+            }
 
         if (openedScripts.isEmpty()) return
 
@@ -350,10 +348,22 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             if (project.isDisposed) return@launch
 
             openedScripts.forEach {
-                val ktFile = PsiManager.getInstance(project).findFile(it)
-                if (ktFile != null) DaemonCodeAnalyzer.getInstance(project).restart(ktFile)
+                if (restartAnalyzer) {
+                    // this required only for "pause" state
+                    val ktFile = PsiManager.getInstance(project).findFile(it)
+                    if (ktFile != null) DaemonCodeAnalyzer.getInstance(project).restart(ktFile)
+                }
+
                 EditorNotifications.getInstance(project).updateAllNotifications()
             }
+        }
+    }
+
+    private fun updateFloatingAction(file: VirtualFile) {
+        if (isConfigurationOutOfDate(file)) {
+            scriptConfigurationsNeedToBeUpdated(project)
+        } else {
+            scriptConfigurationsAreUpToDate(project)
         }
     }
 
