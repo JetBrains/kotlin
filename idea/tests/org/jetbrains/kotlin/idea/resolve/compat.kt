@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.idea.resolve
 
 import com.intellij.mock.MockProject
 import com.intellij.pom.PomModel
+import com.intellij.pom.core.impl.PomModelImpl
 import com.intellij.pom.tree.TreeAspect
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 
-internal fun createAndRegisterKotlinCodeBlockModificationListener(project: MockProject, pomModel: PomModel, treeAspect: TreeAspect) {
-    project.registerService(PomModel::class.java, pomModel)
+internal fun createAndRegisterKotlinCodeBlockModificationListener(project: MockProject, treeAspect: TreeAspect) {
     project.registerService(TreeAspect::class.java, treeAspect)
+    project.registerService(PomModel::class.java, PomModelImpl(project))
     project.registerService(KotlinCodeBlockModificationListener::class.java, KotlinCodeBlockModificationListener(project))
 }
 

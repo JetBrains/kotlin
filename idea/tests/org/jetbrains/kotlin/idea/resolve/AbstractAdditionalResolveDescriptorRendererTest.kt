@@ -29,11 +29,10 @@ abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescrip
     override fun setUp() {
         super.setUp()
 
-        val pomModelImpl = PomModelImpl(project)
-        val treeAspect = TreeAspect.getInstance(project)
+        val treeAspect = TreeAspect()
 
         val mockProject = project as MockProject
-        createAndRegisterKotlinCodeBlockModificationListener(mockProject, pomModelImpl, treeAspect)
+        createAndRegisterKotlinCodeBlockModificationListener(mockProject, treeAspect)
     }
 
     override fun tearDown() {
