@@ -36,6 +36,7 @@ import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -110,7 +111,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
 
     fun fileChanged(filePath: String, ts: Long = System.currentTimeMillis()) {
         findAffectedFileRoot(filePath)?.fileChanged(filePath, ts)
-        scheduleLastModifiedFilesSave()
+        scheduleModifiedFilesCheck(filePath)
     }
 
     fun markImportingInProgress(workingDir: String, inProgress: Boolean = true) {
@@ -156,18 +157,35 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         return GradleBuildRootData(new.importTs, roots, new.templateClasspath, models.values)
     }
 
-    private val lastModifiedFilesSaveScheduled = AtomicBoolean()
+    private val modifiedFilesCheckScheduled = AtomicBoolean()
+    private val modifiedFiles = ConcurrentLinkedQueue<String>()
 
-    fun scheduleLastModifiedFilesSave() {
-        if (lastModifiedFilesSaveScheduled.compareAndSet(false, true)) {
+    fun scheduleModifiedFilesCheck(filePath: String) {
+        modifiedFiles.add(filePath)
+        if (modifiedFilesCheckScheduled.compareAndSet(false, true)) {
             BackgroundTaskUtil.executeOnPooledThread(project) {
-                if (lastModifiedFilesSaveScheduled.compareAndSet(true, false)) {
-                    updateNotifications(restartAnalyzer = false) { true }
-
-                    roots.list.forEach {
-                        it.saveLastModifiedFiles()
-                    }
+                if (modifiedFilesCheckScheduled.compareAndSet(true, false)) {
+                    checkModifiedFiles()
                 }
+            }
+        }
+    }
+
+    private fun checkModifiedFiles() {
+        updateNotifications(restartAnalyzer = false) { true }
+
+        roots.list.forEach {
+            it.saveLastModifiedFiles()
+        }
+
+        // process modifiedFiles queue
+        while (true) {
+            val file = modifiedFiles.poll() ?: break
+
+            // detect gradle version change
+            val buildDir = findGradleWrapperPropertiesBuildDir(file)
+            if (buildDir != null) {
+                actualizeBuildRoot(buildDir)
             }
         }
     }

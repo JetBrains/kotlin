@@ -28,10 +28,12 @@ abstract class GradleBuildRootsLocator {
     private val VirtualFile.localPath
         get() = path
 
+    private val gradleWrapperEnding = "/gradle/wrapper/gradle-wrapper.properties"
+
     fun maybeAffectedGradleProjectFile(filePath: String): Boolean =
         filePath.endsWith("/gradle.properties") ||
                 filePath.endsWith("/gradle.local") ||
-                filePath.endsWith("/gradle-wrapper.properties") ||
+                filePath.endsWith(gradleWrapperEnding) ||
                 filePath.endsWith(".gradle.kts")
 
     fun isAffectedGradleProjectFile(filePath: String): Boolean =
@@ -43,14 +45,18 @@ abstract class GradleBuildRootsLocator {
             filePath.endsWith("/gradle.local")
         ) {
             return roots.getBuildByProjectDir(filePath.substringBeforeLast("/"))
-        } else if (filePath.endsWith("/gradle-wrapper.properties")) {
-            val gradleWrapperDirIndex = filePath.lastIndexOfOrNull('/') ?: return null
-            val gradleDirIndex = filePath.lastIndexOfOrNull('/', gradleWrapperDirIndex - 1) ?: return null
-            val buildDirIndex = filePath.lastIndexOfOrNull('/', gradleDirIndex - 1) ?: return null
-            return roots.getBuildByRootDir(filePath.substring(0, buildDirIndex))
         }
 
-        return findScriptBuildRoot(filePath, searchNearestLegacy = false)?.root as? GradleBuildRoot
+        return findGradleWrapperPropertiesBuildDir(filePath)?.let { roots.getBuildByRootDir(it) }
+            ?: findScriptBuildRoot(filePath, searchNearestLegacy = false)?.root
+    }
+
+    fun findGradleWrapperPropertiesBuildDir(filePath: String): String? {
+        if (filePath.endsWith(gradleWrapperEnding)) {
+            return filePath.substring(0, filePath.length - gradleWrapperEnding.length)
+        }
+
+        return null
     }
 
     @Suppress("EnumEntryName")
