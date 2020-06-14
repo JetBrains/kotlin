@@ -33,7 +33,7 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
 
     override fun editorActivated(vFile: VirtualFile) {
         if (isCustomScriptingSupport(vFile)) {
-            checkUpToDate(vFile)
+            buildRootsManager.updateNotifications(restartAnalyzer = false) { it == vFile.path }
         } else {
             legacy.editorActivated(vFile)
         }
@@ -42,14 +42,8 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
     override fun documentChanged(vFile: VirtualFile) {
         fileChanged(vFile.path, System.currentTimeMillis())
 
-        if (isCustomScriptingSupport(vFile)) {
-            checkUpToDate(vFile)
-        } else {
+        if (!isCustomScriptingSupport(vFile)) {
             legacy.documentChanged(vFile)
         }
-    }
-
-    private fun checkUpToDate(vFile: VirtualFile) {
-        GradleBuildRootsManager.getInstance(project).checkUpToDate(vFile)
     }
 }
