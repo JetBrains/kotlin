@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 final class PlatformInspectionProfileConfigurator implements DirectoryProjectConfigurator {
   @Override
-  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean isNewProject) {
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean isProjectCreatedWithWizard) {
     ProjectInspectionProfileManager.getInstance(project).setRootProfile(null);
   }
 }

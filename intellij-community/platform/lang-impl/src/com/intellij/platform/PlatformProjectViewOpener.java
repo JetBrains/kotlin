@@ -32,7 +32,7 @@ final class PlatformProjectViewOpener implements DirectoryProjectConfigurator {
   public void configureProject(@NotNull Project project,
                                @NotNull VirtualFile baseDir,
                                @NotNull Ref<Module> moduleRef,
-                               boolean isNewProject) {
+                               boolean isProjectCreatedWithWizard) {
     ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.PROJECT_VIEW);
     if (toolWindow == null) {
       MyListener listener = new MyListener(project);

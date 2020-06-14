@@ -207,7 +207,7 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
       ((TemplateProjectDirectoryGenerator<?>)generator).generateProject(baseDir.getName(), locationString);
     }
 
-    OpenProjectTask options = OpenProjectTask.newProjectAndRunConfigurators(projectToClose, /* isRefreshVfsNeeded = */ false);
+    OpenProjectTask options = OpenProjectTask.newProjectFromWizardAndRunConfigurators(projectToClose, /* isRefreshVfsNeeded = */ false);
     Project project = ProjectManagerEx.getInstanceEx().openProject(location, options);
     if (project != null && generator != null) {
       generator.generateProject(project, baseDir, settings, ModuleManager.getInstance(project).getModules()[0]);
