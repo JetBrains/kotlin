@@ -31,7 +31,7 @@ class GradleLegacyScriptListener(project: Project) : ScriptChangeListener(projec
         val file = getAnalyzableKtFileForScript(vFile)
         if (file != null) {
             // *.gradle.kts file was changed
-            default.suggestToUpdateConfigurationIfOutOfDate(file)
+            default.ensureUpToDatedConfigurationSuggested(file)
         }
     }
 }

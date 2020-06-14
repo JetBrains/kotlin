@@ -158,7 +158,6 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         file: KtFile,
         isFirstLoad: Boolean,
         forceSync: Boolean,
-        isPostponedLoad: Boolean,
         fromCacheOnly: Boolean
     ): Boolean {
         val virtualFile = file.originalFile.virtualFile ?: return false
@@ -175,7 +174,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                     loaders.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
                 } else {
                     val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(scriptDefinition)
-                    val postponeLoading = isPostponedLoad && !autoReloadEnabled
+                    val postponeLoading = !autoReloadEnabled && async.any { it.isPostponedLoad(virtualFile) }
 
                     if (postponeLoading) {
                         LoadScriptConfigurationNotificationFactory.showNotification(virtualFile, project) {
@@ -390,7 +389,6 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         file: KtFile,
         isFirstLoad: Boolean = getAppliedConfiguration(file.originalFile.virtualFile) == null,
         forceSync: Boolean = false,
-        isPostponedLoad: Boolean = false,
         fromCacheOnly: Boolean = false
     ): Boolean
 
@@ -431,13 +429,6 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         reloadIfOutOfDate(file)
     }
 
-    /**
-     * Show notification about changed script configuration with action to start loading it
-     */
-    fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
-        reloadIfOutOfDate(file, isPostponedLoad = true)
-    }
-
     private fun reloadIfOutOfDate(file: KtFile, isPostponedLoad: Boolean = false) {
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
 
@@ -448,8 +439,7 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
                 if (state == null || !state.isUpToDate(project, virtualFile, file)) {
                     reloadOutOfDateConfiguration(
                         file,
-                        isFirstLoad = state == null,
-                        isPostponedLoad = isPostponedLoad
+                        isFirstLoad = state == null
                     )
                 }
             }
