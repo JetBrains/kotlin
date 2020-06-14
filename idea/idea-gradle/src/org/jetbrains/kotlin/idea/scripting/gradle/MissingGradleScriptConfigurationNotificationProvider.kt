@@ -39,7 +39,7 @@ class MissingGradleScriptConfigurationNotificationProvider(private val project: 
             wasNotImportedAfterCreation -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.text"))
                 createActionLabel(getMissingConfigurationActionText()) {
-                    linkProject(project)
+                    runPartialGradleImport(project)
                 }
             }
             notEvaluatedInLastImport -> EditorNotificationPanel().apply {

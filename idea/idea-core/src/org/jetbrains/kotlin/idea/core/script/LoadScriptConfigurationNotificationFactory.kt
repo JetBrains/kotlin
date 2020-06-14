@@ -62,7 +62,7 @@ object LoadScriptConfigurationNotificationFactory {
             if (project.isDisposed) return@invokeLater
 
             val fileEditorManager = FileEditorManager.getInstance(project)
-            (fileEditorManager.getSelectedEditor(this))?.let {
+            fileEditorManager.getAllEditors(this).forEach {
                 f(it, fileEditorManager)
             }
         }
