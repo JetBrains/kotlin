@@ -16,6 +16,6 @@ val READER_MODE_TOPIC = Topic(ReaderModeListener::class.java)
 
 class ReaderModeSettingsListener : ReaderModeListener {
   override fun modeChanged(project: Project) {
-    FileEditorManager.getInstance(project).allEditors.forEach { editor -> applyReaderMode(project, editor) }
+    FileEditorManager.getInstance(project).allEditors.forEach { editor -> applyReaderMode(project, editor, true) }
   }
 }

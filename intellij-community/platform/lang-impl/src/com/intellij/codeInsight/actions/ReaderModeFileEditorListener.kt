@@ -19,12 +19,14 @@ class ReaderModeFileEditorListener : FileEditorManagerListener {
   companion object {
     private var EP_READER_MODE_PROVIDER = ExtensionPointName<ReaderModeProvider>("com.intellij.readerModeProvider")
 
-    fun applyReaderMode(project: Project, selectedEditor: FileEditor?) {
+    fun applyReaderMode(project: Project, selectedEditor: FileEditor?, alreadyOpenedFilesOnly: Boolean = false) {
       if (selectedEditor !is PsiAwareTextEditorImpl) return
 
       val file = selectedEditor.file
       if (!matchMode(project, file)) return
-      EP_READER_MODE_PROVIDER.extensions().forEach { it.applyModeChanged(project, selectedEditor.editor, instance(project).enabled) }
+      EP_READER_MODE_PROVIDER.extensions().forEach {
+        it.applyModeChanged(project, selectedEditor.editor, instance(project).enabled, alreadyOpenedFilesOnly)
+      }
     }
 
     fun matchMode(project: Project?, file: VirtualFile?): Boolean {
