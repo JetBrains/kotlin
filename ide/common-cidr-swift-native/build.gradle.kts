@@ -33,6 +33,7 @@ dependencies {
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion")
     compileOnly("com.jetbrains.intellij.platform:external-system-rt:$cidrVersion")
     compileOnly("com.esotericsoftware.kryo:kryo:2.24.0")
+    compileOnly("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
 
     testImplementation("com.jetbrains.intellij.swift:swift:$cidrVersion") {
         exclude("com.jetbrains.intellij.platform", "ide")

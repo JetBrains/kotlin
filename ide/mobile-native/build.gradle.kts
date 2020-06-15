@@ -23,8 +23,7 @@ dependencies {
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion")
     compileOnly("com.jetbrains.intellij.cidr:cidr-xctest:$cidrVersion")
     compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion")
-    compileOnly("com.jetbrains.intellij.platform:external-system-rt:$cidrVersion")
-    compileOnly("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion")
+    compileOnly("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion") { isTransitive = false }
     compile("com.android.tools.ddms:ddmlib:26.0.0") {
         exclude("com.google.guava", "guava")
     }

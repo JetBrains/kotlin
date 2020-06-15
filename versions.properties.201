@@ -3,6 +3,10 @@ versions.ideaPluginForCidr=1.4.0-dev-8382
 versions.ideaPluginForCidr.ide=IJ2020.1-1
 versions.ideaPluginForCidr.repo=Kotlin_KotlinDev_Aggregate
 
+# Used for dependencies in shared modules when syncing to IDE
+# During build this value is substituted with the actual dependency
+versions.cidrPlatform=201.7223.105
+
 versions.appcode=201.7223.105
 versions.appcode.strict=true
 versions.appcode.repo=ijplatform_IjPlatform201_CIDR_AppCode_PublicInstallers
@@ -12,9 +16,8 @@ versions.clion=201.7223.86
 versions.clion.strict=true
 versions.clion.repo=ijplatform_IjPlatform201_CIDR_CLion_PublicInstallers
 
-#todo why is it here?
-versions.intellijSdk=201.5259.13-EAP-SNAPSHOT
-versions.kotlinNativeBackend=1.4-M2-dev-14721
+versions.kotlinNativeBackend=1.4-M3-dev-15369
+versions.kotlinNativeBackend.repo=Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle
 
 versions.nativeDebug=201.6487.11
 versions.nativeDebug.repo=ijplatform_IjPlatform201_Idea_InstallersForEapRelease

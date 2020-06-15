@@ -71,6 +71,7 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
         add("implementation", project(":idea:idea-native"))
         add("implementation", project(":idea:idea-gradle-native"))
         add("implementation", project(":idea:kotlin-gradle-tooling"))
+        add("implementation", project(":kotlin-reflect-api"))
         add("implementation", project(":idea:jvm-debugger:jvm-debugger-core")) { isTransitive = false }
 
         val (ideName, ideVersion) = guessIDEParams()
@@ -162,17 +163,21 @@ fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
         add("implementation", "com.jetbrains.intellij.platform:lang-impl:$version")
         add("implementation", "com.jetbrains.intellij.platform:external-system:$version")
         add("implementation", "com.jetbrains.intellij.platform:external-system-impl:$version")
+        add("implementation", "com.jetbrains.intellij.platform:external-system-rt:$version")
         add("implementation", "com.jetbrains.intellij.gradle:gradle-common:$version")
+        add("implementation", "com.jetbrains.intellij.gradle:gradle-tooling-extension-impl:$version")
         add("implementation", "com.jetbrains.intellij.java:java-debugger-impl:$version")
         add("implementation", "com.jetbrains.intellij.java:java-psi-impl:$version")
         add("implementation", "com.jetbrains.intellij.java:java-compiler-impl:$version")
+        add("implementation", "com.jetbrains.intellij.java:java-execution:$version")
 
         // use bootstrap version of Kotlin stdlib
         val bootstrapKotlinVersion: String by rootProject
+        add("implementation", "org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion")
+        add("implementation", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
         constraints {
             add("implementation", "org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion")
             add("implementation", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$bootstrapKotlinVersion")
-            add("implementation", "org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion")
         }
     }
 }
