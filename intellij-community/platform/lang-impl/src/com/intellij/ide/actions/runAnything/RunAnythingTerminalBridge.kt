@@ -42,6 +42,8 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler {
           }, null)
     }
 
-    private fun checkForCLI(it: RunAnythingProvider<*>?) = it !is RunAnythingCommandProvider && it !is RunAnythingRecentProjectProvider
+    private fun checkForCLI(it: RunAnythingProvider<*>?) = it !is RunAnythingCommandProvider
+                                                           && it !is RunAnythingRecentProjectProvider
+                                                           && it !is RunAnythingRunConfigurationProvider
   }
 }
