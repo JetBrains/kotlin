@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URL
@@ -50,7 +50,8 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
         val classLoader: URLClassLoader
         if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_MOCK_LIBRARY: ") ?: false) {
             if (MOCK_LIBRARY_JAR == null) {
-                MOCK_LIBRARY_JAR = MockLibraryUtil.compileJvmLibraryToJar(MOCK_LIBRARY_SOURCES, "mockLibrary", addSources = true)
+                val sources = listOf(File(MOCK_LIBRARY_SOURCES))
+                MOCK_LIBRARY_JAR = KotlinCompilerStandalone(sources).compile()
             }
 
             val mockLibraryJar = MOCK_LIBRARY_JAR ?: throw AssertionError("Mock library JAR is null")
@@ -66,13 +67,19 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
                 }
                 moduleModel.commit()
             }
-            MockLibraryUtil.compileKotlin(path, File(outDir.path), extraOptions, mockLibraryPath)
+
+            val sources = listOf(File(path))
+            val classpath = listOf(File(mockLibraryPath))
+            KotlinCompilerStandalone(sources, target = File(outDir.path), options = extraOptions, classpath = classpath).compile()
+
             classLoader = URLClassLoader(
                 arrayOf(URL(outDir.url + "/"), mockLibraryJar.toURI().toURL()),
                 ForTestCompileRuntime.runtimeJarClassLoader()
             )
         } else {
-            MockLibraryUtil.compileKotlin(path, File(outDir.path), extraOptions)
+            val sources = listOf(File(path))
+            KotlinCompilerStandalone(sources, target = File(outDir.path), options = extraOptions)
+
             classLoader = URLClassLoader(
                 arrayOf(URL(outDir.url + "/")),
                 ForTestCompileRuntime.runtimeJarClassLoader()

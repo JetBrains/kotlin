@@ -15,7 +15,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.ModuleTestCase
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.LibrarySourceInfo
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.idea.decompiler.navigation.NavigationChecker.Compani
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
@@ -47,9 +46,9 @@ class NavigationWithMultipleCustomLibrariesTest : AbstractNavigationToSourceOrDe
     }
 
     override fun createProjectLib(libraryName: String, withSources: Boolean): Library {
-        val librarySrc = testDataPath + "libSrc"
+        val sources = listOf(File(testDataPath, "libSrc"))
+        val libraryJar = KotlinCompilerStandalone(sources).compile()
 
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(librarySrc, libraryName, addSources = withSources)
         val jarRoot = libraryJar.jarRoot
         return projectLibrary(libraryName, jarRoot, jarRoot.findChild("src").takeIf { withSources })
     }
@@ -114,9 +113,10 @@ class NavigationToSingleJarInMultipleLibrariesTest : AbstractNavigationWithMulti
         val moduleB = module("m2", srcPath)
         val moduleC = module("m3", srcPath)
 
-        val sharedJar = MockLibraryUtil.compileJvmLibraryToJar(testDataPath + "libSrc", "sharedJar", addSources = true)
-        val jarRoot = sharedJar.jarRoot
+        val sources = listOf(File(testDataPath, "libSrc"))
+        val sharedJar = KotlinCompilerStandalone(sources).compile()
 
+        val jarRoot = sharedJar.jarRoot
         moduleA.addDependency(projectLibrary("libA", jarRoot))
         moduleB.addDependency(projectLibrary("libB", jarRoot, jarRoot.findChild("src")!!))
         moduleC.addDependency(projectLibrary("libC", jarRoot))

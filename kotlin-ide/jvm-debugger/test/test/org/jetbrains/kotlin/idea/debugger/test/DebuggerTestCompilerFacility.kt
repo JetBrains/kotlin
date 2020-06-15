@@ -10,7 +10,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.libraries.ui.OrderRoot
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
@@ -87,12 +86,11 @@ class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget:
             mavenArtifacts.add(kotlinStdlibPath)
 
         if (kotlin.isNotEmpty()) {
-            MockLibraryUtil.compileKotlin(
-                srcDir.absolutePath,
-                classesDir,
-                listOf("-jvm-target", jvmTarget.description),
-                *(mavenArtifacts.toTypedArray())
-            )
+            KotlinCompilerStandalone(
+                listOf(srcDir), target = classesDir,
+                options = listOf("-jvm-target", jvmTarget.description),
+                classpath = mavenArtifacts.map(::File)
+            ).compile()
         }
 
         if (java.isNotEmpty()) {

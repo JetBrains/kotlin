@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClsStubBuilder
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
 import java.io.File
@@ -74,9 +74,10 @@ abstract class AbstractClsStubBuilderTest : LightJavaCodeInsightFixtureTestCase(
             extraOptions.add("-Xuse-type-table")
         }
 
-        MockLibraryUtil.compileKotlin(sourcePath, outDir, extraOptions = extraOptions)
-        val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outDir)!!
+        val sources = listOf(File(sourcePath))
+        KotlinCompilerStandalone(sources, outDir, options = extraOptions).compile()
 
+        val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outDir)!!
         return root.findClassFileByName(classFileName ?: lastSegment(sourcePath))
     }
 

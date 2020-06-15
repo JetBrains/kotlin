@@ -71,6 +71,6 @@ abstract class AbstractJsDecompiledTextFromJsMetadataTest : AbstractDecompiledTe
 fun getKjsmFile(packageName: String, module: Module): VirtualFile {
     val root = findTestLibraryRoot(module)!!
     root.refresh(false, true)
-    val packageDir = root.findFileByRelativePath(SdkAndMockLibraryProjectDescriptor.LIBRARY_NAME + "/" + packageName.replace(".", "/"))!!
+    val packageDir = root.findFileByRelativePath(SdkAndMockLibraryProjectDescriptor.MOCK_LIBRARY_NAME + "/" + packageName.replace(".", "/"))!!
     return packageDir.findChild(JsSerializerProtocol.getKjsmFilePath(FqName(packageName)).substringAfterLast('/'))!!
 }

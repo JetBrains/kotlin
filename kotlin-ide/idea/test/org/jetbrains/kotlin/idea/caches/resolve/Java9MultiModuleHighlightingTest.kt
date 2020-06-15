@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.Module
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK_9
 import org.junit.runner.RunWith
+import java.io.File
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
@@ -25,14 +28,12 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     }
 
     fun testSimpleLibraryExportsPackage() {
+        val sources = listOf(File(testDataPath, getTestName(true) + "/library"))
         // -Xallow-kotlin-package to avoid "require kotlin.stdlib" in module-info.java
-        val library = MockLibraryUtil.compileJvmLibraryToJar(
-            testDataPath + "${getTestName(true)}/library", "library",
-            extraOptions = listOf("-jdk-home", KotlinTestUtils.getJdk9Home().path, "-Xallow-kotlin-package"),
-            useJava9 = true
-        )
+        val extraOptions = listOf("-jdk-home", KotlinTestUtils.getJdk9Home().path, "-Xallow-kotlin-package")
+        val libraryJar = KotlinCompilerStandalone(sources, platform = JdkPlatform(JvmTarget.JVM_9), options = extraOptions).compile()
 
-        module("main").addLibrary(library, "library")
+        module("main").addLibrary(libraryJar, "library")
         checkHighlightingInProject()
     }
 

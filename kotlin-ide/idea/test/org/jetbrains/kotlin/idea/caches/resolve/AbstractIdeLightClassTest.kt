@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext
@@ -35,12 +34,11 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestMetadataUtil
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.plugins.groovy.lang.psi.impl.stringValue
-import org.junit.Assert
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -103,15 +101,12 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
         val testDataDir = TestMetadataUtil.getTestData(this::class.java)
         val testFile = listOf(File(testDataDir, "$testName.kt"), File(testDataDir, "$testName.kts")).first { it.exists() }
 
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
-            testFile.canonicalPath, libName(),
-            extraClasspath = listOf(TestKotlinArtifacts.jetbrainsAnnotations.absolutePath)
-        )
+        val extraClasspath = listOf(TestKotlinArtifacts.jetbrainsAnnotations)
+        val libraryJar = KotlinCompilerStandalone(listOf(testFile), classpath = extraClasspath).compile()
+
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
         ModuleRootModificationUtil.addModuleLibrary(module, jarUrl)
     }
-
-    private fun libName() = "libFor" + getTestName(false)
 
     fun doTest(testDataPath: String) {
         val testDataFile = File(testDataPath)

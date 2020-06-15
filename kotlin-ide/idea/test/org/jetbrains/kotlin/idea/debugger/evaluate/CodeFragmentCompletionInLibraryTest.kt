@@ -34,7 +34,7 @@ class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
         override fun configureModule(module: Module, model: ModifiableRootModel) {
             super.configureModule(module, model)
 
-            val library = model.moduleLibraryTable.getLibraryByName(LIBRARY_NAME)!!
+            val library = model.moduleLibraryTable.getLibraryByName(MOCK_LIBRARY_NAME)!!
             val modifiableModel = library.modifiableModel
 
             modifiableModel.addRoot(findLibrarySourceDir(), OrderRootType.SOURCES)

@@ -67,8 +67,8 @@ import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -590,9 +590,10 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testCircularDependencyWithReferenceToOldVersionLib() {
         initProject(JVM_MOCK_RUNTIME)
 
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
+        val sources = listOf(File(workDir, "oldModuleLib/src"))
+        val libraryJar = KotlinCompilerStandalone(sources).compile()
 
-        AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
+        addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
 
         val result = buildAllModules()
         result.assertSuccessful()
@@ -601,9 +602,10 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testDependencyToOldKotlinLib() {
         initProject()
 
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
+        val sources = listOf(File(workDir, "oldModuleLib/src"))
+        val libraryJar = KotlinCompilerStandalone(sources).compile()
 
-        AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "module-lib", libraryJar)
+        addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "module-lib", libraryJar)
 
         addKotlinStdlibDependency()
 

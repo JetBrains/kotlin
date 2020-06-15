@@ -10,28 +10,32 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
 import org.jetbrains.kotlin.utils.ReportLevel
 import org.junit.runner.RunWith
+import java.io.File
 
 @TestRoot("idea")
 @TestMetadata("testData/highlighterJsr305/project")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        val foreignAnnotationsJar = MockLibraryUtil.compileJvmLibraryToJar("third-party/annotations", "foreign-annotations")
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
-            "idea/testData/highlighterJsr305/library", "jsr305-library",
-            extraClasspath = listOf(foreignAnnotationsJar.absolutePath)
-        )
+        val foreignAnnotationsJar = KotlinCompilerStandalone(listOf(File("third-party/annotations"))).compile()
+
+        val libraryJar = KotlinCompilerStandalone(
+            listOf(File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "idea/testData/highlighterJsr305/library")),
+            classpath = listOf(foreignAnnotationsJar)
+        ).compile()
+
         return object : KotlinJdkAndLibraryProjectDescriptor(
             listOf(
                 TestKotlinArtifacts.kotlinStdlib,

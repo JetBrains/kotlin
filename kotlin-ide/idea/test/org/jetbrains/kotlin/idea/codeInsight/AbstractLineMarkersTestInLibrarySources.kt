@@ -49,7 +49,7 @@ abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest
             override fun configureModule(module: Module, model: ModifiableRootModel) {
                 super.configureModule(module, model)
 
-                val library = model.moduleLibraryTable.getLibraryByName(LIBRARY_NAME)!!
+                val library = model.moduleLibraryTable.getLibraryByName(MOCK_LIBRARY_NAME)!!
                 val modifiableModel = library.modifiableModel
 
                 modifiableModel.addRoot(LocalFileSystem.getInstance().findFileByIoFile(libraryClean!!)!!, OrderRootType.SOURCES)
@@ -84,7 +84,7 @@ abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest
 
     override fun tearDown() {
         libraryClean?.deleteRecursively()
-        ConfigLibraryUtil.removeLibrary(module, SdkAndMockLibraryProjectDescriptor.LIBRARY_NAME)
+        ConfigLibraryUtil.removeLibrary(module, SdkAndMockLibraryProjectDescriptor.MOCK_LIBRARY_NAME)
 
         super.tearDown()
     }

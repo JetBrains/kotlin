@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.jvm.compiler
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
+import org.jetbrains.kotlin.test.KotlinCliCompilerFacade
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Ignore
@@ -38,7 +39,7 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
     }
 
     fun testClasspathOrderForCLI() {
-        MockLibraryUtil.compileKotlin(sourceDir.path, tmpdir)
+        KotlinCompilerStandalone(listOf(sourceDir, tmpdir)).compile()
     }
 
     fun testClasspathOrderForModuleScriptBuild() {
@@ -59,6 +60,7 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
         val xml = File(tmpdir, "module.xml")
         xml.writeText(xmlContent)
 
-        MockLibraryUtil.compileKotlinModule(xml.absolutePath)
+        val args = listOf("-no-stdlib", "-Xbuild-file", xml.absolutePath)
+        KotlinCliCompilerFacade.runJvmCompiler(args)
     }
 }

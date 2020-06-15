@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForModuleComputationTracker
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
@@ -38,15 +37,17 @@ import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.ANNOTATION_OPTION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.PLUGIN_ID
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
 import org.junit.Assert.assertNotEquals
 import org.junit.runner.RunWith
+import java.io.File
 
 @WithMutedInDatabaseRunTest
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
@@ -234,26 +235,26 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     }
 
     fun testJvmExperimentalLibrary() {
-        val lib = MockLibraryUtil.compileJvmLibraryToJar(
-            testDataPath + "${getTestName(true)}/lib", "lib",
-            extraOptions = listOf(
-                "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xexperimental=lib.ExperimentalAPI"
-            )
+        val sources = listOf(File(testDataPath, getTestName(true) + "/lib"))
+        val extraOptions = listOf(
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xexperimental=lib.ExperimentalAPI"
         )
+
+        val lib = KotlinCompilerStandalone(sources, options = extraOptions).compile()
 
         module("usage").addLibrary(lib)
         checkHighlightingInProject()
     }
 
     fun testJsExperimentalLibrary() {
-        val lib = MockLibraryUtil.compileJsLibraryToJar(
-            testDataPath + "${getTestName(true)}/lib", "lib", false,
-            extraOptions = listOf(
-                "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xexperimental=lib.ExperimentalAPI"
-            )
+        val sources = listOf(File(testDataPath, getTestName(true) + "/lib"))
+        val extraOptions = listOf(
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xexperimental=lib.ExperimentalAPI"
         )
+
+        val lib = KotlinCompilerStandalone(sources, platform = KotlinCompilerStandalone.jsPlatform, options = extraOptions).compile()
 
         val usageModule = module("usage")
         usageModule.makeJsModule()
@@ -266,15 +267,15 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update { skipMetadataVersionCheck = true }
         KotlinCompilerSettings.getInstance(project).update { additionalArguments = "-Xskip-metadata-version-check" }
 
-        val libOld = MockLibraryUtil.compileJvmLibraryToJar(
-            testDataPath + "${getTestName(true)}/libOld", "libOld",
-            extraOptions = listOf("-language-version", "1.2", "-api-version", "1.2")
-        )
+        val libOld = KotlinCompilerStandalone(
+            listOf(File(testDataPath, getTestName(true) + "/libOld")),
+            options = listOf("-language-version", "1.2", "-api-version", "1.2")
+        ).compile()
 
-        val libNew = MockLibraryUtil.compileJvmLibraryToJar(
-            testDataPath + "${getTestName(true)}/libNew", "libNew",
-            extraOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
-        )
+        val libNew = KotlinCompilerStandalone(
+            listOf(File(testDataPath, getTestName(true) + "/libNew")),
+            options = listOf("-language-version", "1.3", "-api-version", "1.3")
+        ).compile()
 
         val moduleNew = module("moduleNew").setupKotlinFacet {
             settings.coroutineSupport = LanguageFeature.State.ENABLED

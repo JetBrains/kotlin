@@ -22,7 +22,6 @@ import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -39,11 +38,11 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
-import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.junit.Assert
 import java.io.File
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.test.runAll
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.TestMetadataUtil
 
 abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
@@ -117,7 +116,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             compileJavaFiles(javaFiles, options)
         }
 
-        MockLibraryUtil.compileKotlin(baseDir.path, outputDir)
+        KotlinCompilerStandalone(listOf(baseDir), target = outputDir).compile()
 
         PsiTestUtil.setCompilerOutputPath(myFixture.module, outputDir.path, false)
 

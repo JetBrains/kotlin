@@ -24,11 +24,13 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtilRt;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts;
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind;
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType;
-import org.jetbrains.kotlin.test.MockLibraryUtil;
-import org.jetbrains.kotlin.utils.PathUtil;
+import org.jetbrains.kotlin.platform.SimplePlatform;
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone;
 
 import java.io.File;
 import java.util.Collections;
@@ -37,7 +39,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 
 public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
-    public static final String LIBRARY_NAME = "myKotlinLib";
+    public static final String MOCK_LIBRARY_NAME = "myKotlinLib";
 
     private final String sourcesPath;
     private final boolean withSources;
@@ -51,12 +53,22 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     }
 
     public SdkAndMockLibraryProjectDescriptor(
-            String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage) {
+            String sourcesPath,
+            boolean withSources,
+            boolean withRuntime,
+            boolean isJsLibrary,
+            boolean allowKotlinPackage
+    ) {
         this(sourcesPath, withSources, withRuntime, isJsLibrary, allowKotlinPackage, emptyList());
     }
 
     public SdkAndMockLibraryProjectDescriptor(
-            String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage, List<String> classpath
+            String sourcesPath,
+            boolean withSources,
+            boolean withRuntime,
+            boolean isJsLibrary,
+            boolean allowKotlinPackage,
+            List<String> classpath
     ) {
         this.sourcesPath = sourcesPath;
         this.withSources = withSources;
@@ -68,17 +80,13 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
-        List<String> extraOptions = allowKotlinPackage ? Collections.singletonList("-Xallow-kotlin-package") : emptyList();
-        File libraryJar =
-                isJsLibrary
-                ? MockLibraryUtil.compileJsLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, Collections.emptyList())
-                : MockLibraryUtil.compileJvmLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, true, extraOptions, classpath);
-        String jarUrl = getJarUrl(libraryJar);
+        String jarUrl = getJarUrl(compileLibrary());
 
-        Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();
+        Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(MOCK_LIBRARY_NAME).getModifiableModel();
         libraryModel.addRoot(jarUrl, OrderRootType.CLASSES);
+
         if (withRuntime && !isJsLibrary) {
-            libraryModel.addRoot(getJarUrl(PathUtil.getKotlinPathsForDistDirectory().getStdlibPath()), OrderRootType.CLASSES);
+            libraryModel.addRoot(getJarUrl(TestKotlinArtifacts.INSTANCE.getKotlinStdlib()), OrderRootType.CLASSES);
         }
         if (isJsLibrary && libraryModel instanceof LibraryEx.ModifiableModelEx) {
             ((LibraryEx.ModifiableModelEx) libraryModel).setKind(JSLibraryKind.INSTANCE);
@@ -92,6 +100,16 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
         if (withRuntime && isJsLibrary) {
             KotlinStdJSProjectDescriptor.INSTANCE.configureModule(module, model);
         }
+    }
+
+    private File compileLibrary() {
+        List<String> extraOptions = allowKotlinPackage ? Collections.singletonList("-Xallow-kotlin-package") : emptyList();
+        SimplePlatform platform = isJsLibrary ? KotlinCompilerStandalone.getJsPlatform() : KotlinCompilerStandalone.getJvmPlatform();
+        List<File> sources = Collections.singletonList(new File(sourcesPath));
+        List<File> classpath = isJsLibrary ? emptyList() : CollectionsKt.map(this.classpath, File::new);
+        File libraryJar = KotlinCompilerStandalone.defaultTargetJar();
+        new KotlinCompilerStandalone(sources, libraryJar, platform, extraOptions, classpath).compile();
+        return libraryJar;
     }
 
     @Override
