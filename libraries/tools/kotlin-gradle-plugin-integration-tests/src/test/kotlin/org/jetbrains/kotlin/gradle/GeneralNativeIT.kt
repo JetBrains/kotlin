@@ -14,45 +14,10 @@ class GeneralNativeIT : BaseGradleIT() {
         get() = GradleVersionRequired.FOR_MPP_SUPPORT
 
     @Test
-    fun testParallelExecutionDetection(): Unit = with(transformProjectWithPluginsDsl("native-parallel")) {
-        val compileTasks = arrayOf(":one:compileKotlinLinux", ":two:compileKotlinLinux")
-        // Check that parallel in-process execution fails with the corresponding message.
-        build(*compileTasks) {
-            assertFailed()
-            assertContains("Parallel in-process execution of the Kotlin/Native compiler detected.")
-        }
-
-        // Parallel execution without daemon => ok.
-        build("clean", *compileTasks, "-Pkotlin.native.disableCompilerDaemon=true") {
+    fun testParallelExecutionSmoke(): Unit = with(transformProjectWithPluginsDsl("native-parallel")) {
+        // Check that the K/N compiler can be started in-process in parallel.
+        build(":one:compileKotlinLinux", ":two:compileKotlinLinux") {
             assertSuccessful()
-            assertTasksExecuted(*compileTasks)
-        }
-
-        // org.gradle.parallel must be set in the properties file (not in command line).
-        projectDir.resolve("gradle.properties").modify {
-            it.replace("org.gradle.parallel=true", "org.gradle.parallel=false")
-        }
-
-        // Sequential execution => ok.
-        build("clean", *compileTasks) {
-            assertSuccessful()
-            assertTasksExecuted(*compileTasks)
-        }
-
-        // Check for KT-37696.
-        // Add an incorrect code to trigger compilation failure.
-        projectDir.resolve("one/src/linuxMain/kotlin/main.kt").appendText("\nfun incorrect")
-        gradleBuildScript("two").appendText("""
-            
-            val compileKotlinLinux by tasks.getting
-            compileKotlinLinux.mustRunAfter(":one:compileKotlinLinux")            
-        """.trimIndent())
-
-        build("clean", *compileTasks, "--continue") {
-            assertFailed()
-            assertTasksFailed(":one:compileKotlinLinux")
-            assertTasksExecuted(":two:compileKotlinLinux")
-            assertNotContains("Parallel in-process execution of the Kotlin/Native compiler detected.")
         }
     }
 

@@ -90,8 +90,7 @@ internal abstract class KotlinToolRunner(
         }
     }
 
-    // TODO: Make it private again once KT-37550 is fixed.
-    protected open fun runInProcess(args: List<String>) {
+    private fun runInProcess(args: List<String>) {
         try {
             val mainClass = getIsolatedClassLoader().loadClass(mainClass)
             val entryPoint = mainClass.methods.single { it.name == daemonEntryPoint }
