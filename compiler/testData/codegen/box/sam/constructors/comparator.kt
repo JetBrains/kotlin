@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+// SKIP_DCE_DRIVEN
 
 fun box(): String {
     val list = mutableListOf(3, 2, 4, 8, 1, 5)
