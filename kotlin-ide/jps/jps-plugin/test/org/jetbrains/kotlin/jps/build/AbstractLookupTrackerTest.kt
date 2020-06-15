@@ -166,7 +166,7 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
     }
 
     protected open val jsStdlibFile: File
-        get() = PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath
+        get() = TestKotlinArtifacts.kotlinStdlibJs
 
     protected open fun configureAdditionalArgs(args: K2JSCompilerArguments) {
         args.outputFile = File(outDir, "out.js").canonicalPath
