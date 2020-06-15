@@ -31,6 +31,7 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object SYNTHETIC_INLINE_CLASS_MEMBER : IrDeclarationOriginImpl("SYNTHETIC_INLINE_CLASS_MEMBER", isSynthetic = true)
     object INLINE_CLASS_GENERATED_IMPL_METHOD : IrDeclarationOriginImpl("INLINE_CLASS_GENERATED_IMPL_METHOD")
     object STATIC_INLINE_CLASS_REPLACEMENT : IrDeclarationOriginImpl("STATIC_INLINE_CLASS_REPLACEMENT")
+    object STATIC_INLINE_CLASS_CONSTRUCTOR : IrDeclarationOriginImpl("STATIC_INLINE_CLASS_CONSTRUCTOR")
     object GENERATED_ASSERTION_ENABLED_FIELD : IrDeclarationOriginImpl("GENERATED_ASSERTION_ENABLED_FIELD", isSynthetic = true)
     object GENERATED_EXTENDED_MAIN : IrDeclarationOriginImpl("GENERATED_EXTENDED_MAIN", isSynthetic = true)
     object SUSPEND_IMPL_STATIC_FUNCTION : IrDeclarationOriginImpl("SUSPEND_IMPL_STATIC_FUNCTION", isSynthetic = true)

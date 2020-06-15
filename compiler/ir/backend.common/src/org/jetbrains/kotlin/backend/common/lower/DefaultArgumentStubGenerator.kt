@@ -53,10 +53,15 @@ open class DefaultArgumentStubGenerator(
     }
 
     private fun lower(irFunction: IrFunction): List<IrFunction>? {
-        val visibility = defaultArgumentStubVisibility(irFunction)
         val newIrFunction =
-            irFunction.generateDefaultsFunction(context, skipInlineMethods, skipExternalMethods, forceSetOverrideSymbols, visibility)
-                ?: return null
+            irFunction.generateDefaultsFunction(
+                context,
+                skipInlineMethods,
+                skipExternalMethods,
+                forceSetOverrideSymbols,
+                defaultArgumentStubVisibility(irFunction),
+                useConstructorMarker(irFunction)
+            ) ?: return null
         if (newIrFunction.isFakeOverride) {
             return listOf(irFunction, newIrFunction)
         }
@@ -185,7 +190,8 @@ open class DefaultArgumentStubGenerator(
 
     protected open fun IrBlockBodyBuilder.generateSuperCallHandlerCheckIfNeeded(
         irFunction: IrFunction,
-        newIrFunction: IrFunction) {
+        newIrFunction: IrFunction
+    ) {
         //NO-OP Stub
     }
 
@@ -201,6 +207,8 @@ open class DefaultArgumentStubGenerator(
     }
 
     protected open fun defaultArgumentStubVisibility(function: IrFunction) = Visibilities.PUBLIC
+
+    protected open fun useConstructorMarker(function: IrFunction) = function is IrConstructor
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-REPLACER: ${msg()}" }
 }
@@ -310,15 +318,20 @@ open class DefaultParameterInjector(
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner
-        val visibility = defaultArgumentStubVisibility(declaration)
 
         // We *have* to find the actual function here since on the JVM, a default stub for a function implemented
         // in an interface does not leave an abstract method after being moved to DefaultImpls (see InterfaceLowering).
         // Calling the fake override on an implementation of that interface would then result in a call to a method
         // that does not actually exist as DefaultImpls is not part of the inheritance hierarchy.
         val stubFunction = declaration.findBaseFunctionWithDefaultArguments(skipInline, skipExternalMethods)
-            ?.generateDefaultsFunction(context, skipInline, skipExternalMethods, forceSetOverrideSymbols, visibility)
-            ?: return null
+            ?.generateDefaultsFunction(
+                context,
+                skipInline,
+                skipExternalMethods,
+                forceSetOverrideSymbols,
+                defaultArgumentStubVisibility(declaration),
+                useConstructorMarker(declaration)
+            ) ?: return null
 
         log { "$declaration -> $stubFunction" }
 
@@ -366,6 +379,8 @@ open class DefaultParameterInjector(
         IrConstImpl.defaultValueForType(startOffset, endOffset, type)
 
     protected open fun defaultArgumentStubVisibility(function: IrFunction) = Visibilities.PUBLIC
+
+    protected open fun useConstructorMarker(function: IrFunction) = function is IrConstructor
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
 }
@@ -416,7 +431,8 @@ private fun IrFunction.generateDefaultsFunction(
     skipInlineMethods: Boolean,
     skipExternalMethods: Boolean,
     forceSetOverrideSymbols: Boolean,
-    visibility: Visibility
+    visibility: Visibility,
+    useConstructorMarker: Boolean
 ): IrFunction? {
     if (skipInlineMethods && isInline) return null
     if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
@@ -425,7 +441,7 @@ private fun IrFunction.generateDefaultsFunction(
     if (this is IrSimpleFunction) {
         // If this is an override of a function with default arguments, produce a fake override of a default stub.
         if (overriddenSymbols.any { it.owner.findBaseFunctionWithDefaultArguments(skipInlineMethods, skipExternalMethods) != null })
-            return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility, isFakeOverride = true).also {
+            return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility, true, useConstructorMarker).also {
                 context.mapping.defaultArgumentsDispatchFunction[this] = it
                 context.mapping.defaultArgumentsOriginalFunction[it] = this
 
@@ -436,7 +452,8 @@ private fun IrFunction.generateDefaultsFunction(
                             skipInlineMethods,
                             skipExternalMethods,
                             forceSetOverrideSymbols,
-                            visibility
+                            visibility,
+                            useConstructorMarker
                         )?.symbol as IrSimpleFunctionSymbol?
                     }
                 }
@@ -454,7 +471,7 @@ private fun IrFunction.generateDefaultsFunction(
     // binaries, it's way too late to fix it. Hence the workaround.
     if (valueParameters.any { it.defaultValue != null }) {
         return generateDefaultsFunctionImpl(
-            context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, visibility, isFakeOverride = false
+            context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, visibility, false, useConstructorMarker
         ).also {
             context.mapping.defaultArgumentsDispatchFunction[this] = it
             context.mapping.defaultArgumentsOriginalFunction[it] = this
@@ -467,7 +484,8 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     context: CommonBackendContext,
     newOrigin: IrDeclarationOrigin,
     newVisibility: Visibility,
-    isFakeOverride: Boolean
+    isFakeOverride: Boolean,
+    useConstructorMarker: Boolean
 ): IrFunction {
     val newFunction = when (this) {
         is IrConstructor ->
@@ -515,7 +533,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     for (i in 0 until (valueParameters.size + 31) / 32) {
         newFunction.addValueParameter("mask$i".synthesizedString, context.irBuiltIns.intType, IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION)
     }
-    if (this is IrConstructor) {
+    if (useConstructorMarker) {
         val markerType = context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable()
         newFunction.addValueParameter("marker".synthesizedString, markerType, IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER)
     } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {

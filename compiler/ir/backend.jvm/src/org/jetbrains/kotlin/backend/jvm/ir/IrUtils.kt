@@ -343,3 +343,7 @@ fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
     // We do not produce default accessors for private fields
     else -> accessor.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR || !Visibilities.isPrivate(accessor.visibility)
 }
+
+val IrDeclaration.isStaticInlineClassReplacement: Boolean
+    get() = origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+            || origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
