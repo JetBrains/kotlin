@@ -20,8 +20,9 @@ import org.jdom.Element
 import java.util.concurrent.atomic.AtomicInteger
 
 private val LOG = Logger.getInstance("com.intellij.configurationStore.statistic.eventLog.FeatureUsageSettingsEventPrinter")
-private val GROUP = EventLogGroup("settings", 7)
+private val GROUP = EventLogGroup("settings", 8)
 private const val CHANGES_GROUP = "settings.changes"
+private const val ID_FIELD = "id"
 
 private val recordedComponents: MutableSet<String> = ContainerUtil.newConcurrentSet()
 private val recordedOptionNames: MutableSet<String> = ContainerUtil.newConcurrentSet()
@@ -75,7 +76,7 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
         val pluginInfo = getPluginInfo(clazz)
         if (pluginInfo.isDevelopedByJetBrains()) {
           recordedComponents.add(componentName)
-          logConfig(GROUP, "invoked", createComponentData(project, componentName, pluginInfo))
+          logConfig(GROUP, "invoked", createComponentData(project, componentName, pluginInfo), counter.incrementAndGet())
         }
       }
     }
@@ -99,21 +100,22 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
   fun logConfigurationState(componentName: String, state: Any?, project: Project?) {
     val (optionsValues, pluginInfo) = valuesExtractor.extract(project, componentName, state) ?: return
     val eventId = if (recordDefault) "option" else "not.default"
+    val id = counter.incrementAndGet()
     for (data in optionsValues) {
-      logConfig(GROUP, eventId, data)
+      logConfig(GROUP, eventId, data, id)
     }
 
     if (!recordDefault) {
-      logConfig(GROUP, "invoked", createComponentData(project, componentName, pluginInfo))
+      logConfig(GROUP, "invoked", createComponentData(project, componentName, pluginInfo), id)
     }
   }
 
-  protected open fun logConfig(group: EventLogGroup, eventId: String, data: FeatureUsageData) {
-    FeatureUsageLogger.logState(group, eventId, data.build())
+  protected open fun logConfig(group: EventLogGroup, eventId: String, data: FeatureUsageData, id: Int) {
+    FeatureUsageLogger.logState(group, eventId, data.addData(ID_FIELD, id).build())
   }
 
   protected open fun logSettingsChanged(eventId: String, data: FeatureUsageData, id: Int) {
-    FUCounterUsageLogger.getInstance().logEvent(CHANGES_GROUP, eventId, data.addData("id", id))
+    FUCounterUsageLogger.getInstance().logEvent(CHANGES_GROUP, eventId, data.addData(ID_FIELD, id))
   }
 
   companion object {

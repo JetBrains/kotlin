@@ -501,6 +501,18 @@ class FeatureUsageSettingsEventsTest {
     Assert.assertEquals(1, printer.result.size)
   }
 
+  @Test
+  fun `report invoked and options events with the same id`() {
+    val component = TestComponent()
+    component.loadState(ComponentState(bool = true))
+    val printer = TestFeatureUsageSettingsEventsPrinter(recordDefault = false)
+    printer.logConfigurationState(getStateSpec(component).name, component.state, null)
+
+    val invokedEvent = printer.getInvokedEvent()
+    val optionEvent = printer.getOptionByName("boolOption")
+    Assert.assertEquals(invokedEvent.id, optionEvent.id)
+  }
+
   private fun assertDefaultWithoutDefaultRecording(printer: TestFeatureUsageSettingsEventsPrinter,
                                                    withProject: Boolean,
                                                    defaultProject: Boolean) {
@@ -526,7 +538,8 @@ class FeatureUsageSettingsEventsTest {
                                     defaultProject: Boolean) {
     assertThat(event.group.id).isEqualTo("settings")
     assertThat(event.group.version > 0).isTrue()
-    assertThat(event.id).isEqualTo(if (withDefaultRecorded) "option" else "not.default")
+    assertThat(event.eventId).isEqualTo(if (withDefaultRecorded) "option" else "not.default")
+    assertThat(event.id).isNotNull()
 
     var size = 3
     if (value != null) size++
@@ -569,7 +582,8 @@ class FeatureUsageSettingsEventsTest {
                                  defaultProject: Boolean) {
     assertThat(event.group.id).isEqualTo("settings")
     assertThat(event.group.version).isGreaterThan(0)
-    assertThat(event.id).isEqualTo("option")
+    assertThat(event.eventId).isEqualTo("option")
+    assertThat(event.id).isNotNull()
 
     var size = 5
     if (withProject) size++
@@ -596,7 +610,8 @@ class FeatureUsageSettingsEventsTest {
   private fun assertInvokedRecorded(event: LoggedComponentStateEvents, withProject: Boolean, defaultProject: Boolean) {
     assertThat(event.group.id).isEqualTo("settings")
     assertThat(event.group.version).isGreaterThan(0)
-    assertThat(event.id).isEqualTo("invoked")
+    assertThat(event.eventId).isEqualTo("invoked")
+    assertThat(event.id).isNotNull()
 
     var size = 1
     if (withProject) size++
@@ -619,8 +634,8 @@ class FeatureUsageSettingsEventsTest {
   private class TestFeatureUsageSettingsEventsPrinter(recordDefault: Boolean) : FeatureUsageSettingsEventPrinter(recordDefault) {
     val result: MutableList<LoggedComponentStateEvents> = ArrayList()
 
-    override fun logConfig(group: EventLogGroup, eventId: String, data: FeatureUsageData) {
-      result.add(LoggedComponentStateEvents(group, eventId, data.build()))
+    override fun logConfig(group: EventLogGroup, eventId: String, data: FeatureUsageData, id: Int) {
+      result.add(LoggedComponentStateEvents(group, eventId, data.build(), id))
     }
 
     fun getOptionByName(name: String): LoggedComponentStateEvents {
@@ -634,7 +649,7 @@ class FeatureUsageSettingsEventsTest {
 
     fun getInvokedEvent(): LoggedComponentStateEvents {
       for (event in result) {
-        if (event.id == "invoked") {
+        if (event.eventId == "invoked") {
           return event
         }
       }
@@ -650,7 +665,7 @@ class FeatureUsageSettingsEventsTest {
     }
   }
 
-  private class LoggedComponentStateEvents(val group: EventLogGroup, val id: String, val data: Map<String, Any>)
+  private class LoggedComponentStateEvents(val group: EventLogGroup, val eventId: String, val data: Map<String, Any>, val id: Int)
 
   @State(name = "MyTestComponent", reportStatistic = true)
   private class TestComponent : PersistentStateComponent<ComponentState> {
