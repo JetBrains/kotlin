@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.codeInsight.codevision
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.utils.inlays.InlayHintsProviderTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
@@ -29,22 +28,22 @@ abstract class AbstractKotlinCodeVisionProviderTest :
         val usagesLimit = InTextDirectivesUtils.findStringWithPrefixes(fileContents, "// USAGES-LIMIT: ")?.toInt() ?: 100
         val inheritorsLimit = InTextDirectivesUtils.findStringWithPrefixes(fileContents, "// INHERITORS-LIMIT: ")?.toInt() ?: 100
 
-        val codeVisionProvider = KotlinCodeVisionProvider()
-        codeVisionProvider.usagesLimit = usagesLimit
-        codeVisionProvider.inheritorsLimit = inheritorsLimit
+        val provider = KotlinCodeVisionProvider()
+        provider.usagesLimit = usagesLimit
+        provider.inheritorsLimit = inheritorsLimit
 
         when (InTextDirectivesUtils.findStringWithPrefixes(fileContents, "// MODE: ")) {
-            "inheritors" -> mode(usages = false, inheritors = true)
-            "usages" -> mode(usages = true, inheritors = false)
-            "usages-&-inheritors" -> mode(usages = true, inheritors = true)
-            else -> mode(usages = false, inheritors = false)
+            "inheritors" -> provider.mode(usages = false, inheritors = true)
+            "usages" -> provider.mode(usages = true, inheritors = false)
+            "usages-&-inheritors" -> provider.mode(usages = true, inheritors = true)
+            else -> provider.mode(usages = false, inheritors = false)
         }
 
-        testProvider("kotlinCodeVision.kt", fileContents, codeVisionProvider)
+        testProvider("kotlinCodeVision.kt", fileContents, provider)
     }
 
-    private fun mode(usages: Boolean, inheritors: Boolean) {
-        Registry.get(USAGES_KEY).setValue(usages)
-        Registry.get(INHERITORS_KEY).setValue(inheritors)
+    private fun KotlinCodeVisionProvider.mode(usages: Boolean, inheritors: Boolean) {
+        showUsages = usages
+        showInheritors = inheritors
     }
 }

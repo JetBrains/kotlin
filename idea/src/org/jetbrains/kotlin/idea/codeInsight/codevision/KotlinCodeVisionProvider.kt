@@ -23,6 +23,10 @@ class KotlinCodeVisionProvider : InlayHintsProvider<NoSettings> {
     var usagesLimit: Int = 100
     var inheritorsLimit: Int = 100
 
+    var showUsages: Boolean = false
+    var showInheritors: Boolean = false
+
+
     override fun isLanguageSupported(language: Language): Boolean = language is KotlinLanguage
 
     override fun createConfigurable(settings: NoSettings): ImmediateConfigurable = createImmediateConfigurable()
@@ -33,11 +37,14 @@ class KotlinCodeVisionProvider : InlayHintsProvider<NoSettings> {
         file: PsiFile, editor: Editor, settings: NoSettings, sink: InlayHintsSink
     ): InlayHintsCollector? {
 
-        val showUsages = Registry.`is`("kotlin.code-vision.usages", false)
-        val showInheritors = Registry.`is`("kotlin.code-vision.inheritors", false)
+        // It's highly discouraged to use global settings from the test environment. Tests launched in parallel might be affected, e.g.
+        // MultiFileHighlightingTestGenerated. Hence the properties 'showUsages' and 'showInheritors'.
 
-        if (!showUsages && !showInheritors) return null
+        val showUsagesResolved = Registry.`is`("kotlin.code-vision.usages", false) || showUsages
+        val showInheritorsResolved = Registry.`is`("kotlin.code-vision.inheritors", false) || showInheritors
 
-        return KotlinCodeVisionHintsCollector(editor, showUsages, showInheritors, usagesLimit, inheritorsLimit)
+        if (!showUsagesResolved && !showInheritorsResolved) return null
+
+        return KotlinCodeVisionHintsCollector(editor, showUsagesResolved, showInheritorsResolved, usagesLimit, inheritorsLimit)
     }
 }
