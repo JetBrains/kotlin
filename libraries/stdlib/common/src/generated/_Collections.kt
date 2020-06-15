@@ -1989,10 +1989,16 @@ public fun <T : Comparable<T>> Iterable<T>.maxOrNull(): T? {
     return max
 }
 
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
+    return maxWithOrNull(comparator)
+}
+
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
+@SinceKotlin("1.4")
+public fun <T> Iterable<T>.maxWithOrNull(comparator: Comparator<in T>): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var max = iterator.next()
@@ -2273,10 +2279,16 @@ public fun <T : Comparable<T>> Iterable<T>.minOrNull(): T? {
     return min
 }
 
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T? {
+    return minWithOrNull(comparator)
+}
+
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T? {
+@SinceKotlin("1.4")
+public fun <T> Iterable<T>.minWithOrNull(comparator: Comparator<in T>): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var min = iterator.next()

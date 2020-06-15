@@ -308,12 +308,19 @@ public inline fun <K, V, R> Map<out K, V>.maxOfWithOrNull(comparator: Comparator
     return entries.maxOfWithOrNull(comparator, selector)
 }
 
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+    return maxWithOrNull(comparator)
+}
+
 /**
  * Returns the first entry having the largest value according to the provided [comparator] or `null` if there are no entries.
  */
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
-    return entries.maxWith(comparator)
+public inline fun <K, V> Map<out K, V>.maxWithOrNull(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+    return entries.maxWithOrNull(comparator)
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
@@ -444,11 +451,18 @@ public inline fun <K, V, R> Map<out K, V>.minOfWithOrNull(comparator: Comparator
     return entries.minOfWithOrNull(comparator, selector)
 }
 
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+public fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+    return minWithOrNull(comparator)
+}
+
 /**
  * Returns the first entry having the smallest value according to the provided [comparator] or `null` if there are no entries.
  */
-public fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
-    return entries.minWith(comparator)
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>.minWithOrNull(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+    return entries.minWithOrNull(comparator)
 }
 
 /**

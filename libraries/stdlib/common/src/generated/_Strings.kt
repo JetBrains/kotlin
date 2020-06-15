@@ -1303,10 +1303,16 @@ public fun CharSequence.maxOrNull(): Char? {
     return max
 }
 
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+public fun CharSequence.maxWith(comparator: Comparator<in Char>): Char? {
+    return maxWithOrNull(comparator)
+}
+
 /**
  * Returns the first character having the largest value according to the provided [comparator] or `null` if there are no characters.
  */
-public fun CharSequence.maxWith(comparator: Comparator<in Char>): Char? {
+@SinceKotlin("1.4")
+public fun CharSequence.maxWithOrNull(comparator: Comparator<in Char>): Char? {
     if (isEmpty()) return null
     var max = this[0]
     for (i in 1..lastIndex) {
@@ -1531,10 +1537,16 @@ public fun CharSequence.minOrNull(): Char? {
     return min
 }
 
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
+    return minWithOrNull(comparator)
+}
+
 /**
  * Returns the first character having the smallest value according to the provided [comparator] or `null` if there are no characters.
  */
-public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
+@SinceKotlin("1.4")
+public fun CharSequence.minWithOrNull(comparator: Comparator<in Char>): Char? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {

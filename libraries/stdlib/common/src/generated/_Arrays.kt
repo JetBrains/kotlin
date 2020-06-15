@@ -15021,101 +15021,56 @@ public fun CharArray.maxOrNull(): Char? {
     return max
 }
 
-/**
- * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
 public fun <T> Array<out T>.maxWith(comparator: Comparator<in T>): T? {
-    if (isEmpty()) return null
-    var max = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(max, e) < 0) max = e
-    }
-    return max
+    return maxWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
 public fun ByteArray.maxWith(comparator: Comparator<in Byte>): Byte? {
-    if (isEmpty()) return null
-    var max = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(max, e) < 0) max = e
-    }
-    return max
+    return maxWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
 public fun ShortArray.maxWith(comparator: Comparator<in Short>): Short? {
-    if (isEmpty()) return null
-    var max = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(max, e) < 0) max = e
-    }
-    return max
+    return maxWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
 public fun IntArray.maxWith(comparator: Comparator<in Int>): Int? {
-    if (isEmpty()) return null
-    var max = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(max, e) < 0) max = e
-    }
-    return max
+    return maxWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
 public fun LongArray.maxWith(comparator: Comparator<in Long>): Long? {
-    if (isEmpty()) return null
-    var max = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(max, e) < 0) max = e
-    }
-    return max
+    return maxWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
 public fun FloatArray.maxWith(comparator: Comparator<in Float>): Float? {
-    if (isEmpty()) return null
-    var max = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(max, e) < 0) max = e
-    }
-    return max
+    return maxWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
 public fun DoubleArray.maxWith(comparator: Comparator<in Double>): Double? {
-    if (isEmpty()) return null
-    var max = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(max, e) < 0) max = e
-    }
-    return max
+    return maxWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
 public fun BooleanArray.maxWith(comparator: Comparator<in Boolean>): Boolean? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+public fun CharArray.maxWith(comparator: Comparator<in Char>): Char? {
+    return maxWithOrNull(comparator)
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun <T> Array<out T>.maxWithOrNull(comparator: Comparator<in T>): T? {
     if (isEmpty()) return null
     var max = this[0]
     for (i in 1..lastIndex) {
@@ -15128,7 +15083,106 @@ public fun BooleanArray.maxWith(comparator: Comparator<in Boolean>): Boolean? {
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  */
-public fun CharArray.maxWith(comparator: Comparator<in Char>): Char? {
+@SinceKotlin("1.4")
+public fun ByteArray.maxWithOrNull(comparator: Comparator<in Byte>): Byte? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun ShortArray.maxWithOrNull(comparator: Comparator<in Short>): Short? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun IntArray.maxWithOrNull(comparator: Comparator<in Int>): Int? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun LongArray.maxWithOrNull(comparator: Comparator<in Long>): Long? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun FloatArray.maxWithOrNull(comparator: Comparator<in Float>): Float? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun DoubleArray.maxWithOrNull(comparator: Comparator<in Double>): Double? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun BooleanArray.maxWithOrNull(comparator: Comparator<in Boolean>): Boolean? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun CharArray.maxWithOrNull(comparator: Comparator<in Char>): Char? {
     if (isEmpty()) return null
     var max = this[0]
     for (i in 1..lastIndex) {
@@ -17102,101 +17156,56 @@ public fun CharArray.minOrNull(): Char? {
     return min
 }
 
-/**
- * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
 public fun <T> Array<out T>.minWith(comparator: Comparator<in T>): T? {
-    if (isEmpty()) return null
-    var min = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(min, e) > 0) min = e
-    }
-    return min
+    return minWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
 public fun ByteArray.minWith(comparator: Comparator<in Byte>): Byte? {
-    if (isEmpty()) return null
-    var min = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(min, e) > 0) min = e
-    }
-    return min
+    return minWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
 public fun ShortArray.minWith(comparator: Comparator<in Short>): Short? {
-    if (isEmpty()) return null
-    var min = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(min, e) > 0) min = e
-    }
-    return min
+    return minWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
 public fun IntArray.minWith(comparator: Comparator<in Int>): Int? {
-    if (isEmpty()) return null
-    var min = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(min, e) > 0) min = e
-    }
-    return min
+    return minWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
 public fun LongArray.minWith(comparator: Comparator<in Long>): Long? {
-    if (isEmpty()) return null
-    var min = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(min, e) > 0) min = e
-    }
-    return min
+    return minWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
 public fun FloatArray.minWith(comparator: Comparator<in Float>): Float? {
-    if (isEmpty()) return null
-    var min = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(min, e) > 0) min = e
-    }
-    return min
+    return minWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
 public fun DoubleArray.minWith(comparator: Comparator<in Double>): Double? {
-    if (isEmpty()) return null
-    var min = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (comparator.compare(min, e) > 0) min = e
-    }
-    return min
+    return minWithOrNull(comparator)
 }
 
-/**
- * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
- */
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
 public fun BooleanArray.minWith(comparator: Comparator<in Boolean>): Boolean? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+public fun CharArray.minWith(comparator: Comparator<in Char>): Char? {
+    return minWithOrNull(comparator)
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun <T> Array<out T>.minWithOrNull(comparator: Comparator<in T>): T? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {
@@ -17209,7 +17218,106 @@ public fun BooleanArray.minWith(comparator: Comparator<in Boolean>): Boolean? {
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  */
-public fun CharArray.minWith(comparator: Comparator<in Char>): Char? {
+@SinceKotlin("1.4")
+public fun ByteArray.minWithOrNull(comparator: Comparator<in Byte>): Byte? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun ShortArray.minWithOrNull(comparator: Comparator<in Short>): Short? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun IntArray.minWithOrNull(comparator: Comparator<in Int>): Int? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun LongArray.minWithOrNull(comparator: Comparator<in Long>): Long? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun FloatArray.minWithOrNull(comparator: Comparator<in Float>): Float? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun DoubleArray.minWithOrNull(comparator: Comparator<in Double>): Double? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun BooleanArray.minWithOrNull(comparator: Comparator<in Boolean>): Boolean? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+@SinceKotlin("1.4")
+public fun CharArray.minWithOrNull(comparator: Comparator<in Char>): Char? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {

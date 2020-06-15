@@ -448,74 +448,56 @@ object Aggregates : TemplateGroupBase() {
                 yield(def(op, nullable))
     }
 
-    val f_minWith = fn("minWith(comparator: Comparator<in T>)") {
-        includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
-    } builder {
-        doc { "Returns the first ${f.element} having the smallest value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
-        returns("T?")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
+    val f_minMaxWith = sequence {
+        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+            fn("$op$orNull(comparator: Comparator<in T>)") {
+                includeDefault()
+                include(Maps, CharSequences, ArraysOfUnsigned)
+            } builder {
+                specialFor(Maps) { if (op == "maxWith" || nullable) inlineOnly() }
+                returns("T?")
 
-            var min = iterator.next()
-            while (iterator.hasNext()) {
-                val e = iterator.next()
-                if (comparator.compare(min, e) > 0) min = e
+                if (!nullable) {
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "${op}OrNull(comparator)", DeprecationLevel.WARNING))
+                    body { "return ${op}OrNull(comparator)" }
+                    return@builder
+                }
+
+                since("1.4")
+
+                doc { "Returns the first ${f.element} having the ${if (op == "maxWith") "largest" else "smallest"} value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
+
+                val (acc, cmp) = if (op == "minWith") Pair("min", ">") else Pair("max", "<")
+                body {
+                    """
+                    val iterator = iterator()
+                    if (!iterator.hasNext()) return null
+        
+                    var $acc = iterator.next()
+                    while (iterator.hasNext()) {
+                        val e = iterator.next()
+                        if (comparator.compare($acc, e) $cmp 0) $acc = e
+                    }
+                    return $acc
+                    """
+                }
+                body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+                    """
+                    if (isEmpty()) return null
+                    var $acc = this[0]
+                    for (i in 1..lastIndex) {
+                        val e = this[i]
+                        if (comparator.compare($acc, e) $cmp 0) $acc = e
+                    }
+                    return $acc
+                    """
+                }
+                body(Maps) { "return entries.$op$orNull(comparator)" }
             }
-            return min
-            """
-        }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            """
-            if (isEmpty()) return null
-            var min = this[0]
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                if (comparator.compare(min, e) > 0) min = e
-            }
-            return min
-            """
-        }
-        body(Maps) { "return entries.minWith(comparator)" }
-    }
 
-    val f_maxWith = fn("maxWith(comparator: Comparator<in T>)") {
-        includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
-    } builder {
-        doc { "Returns the first ${f.element} having the largest value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
-        returns("T?")
-        body {
-            """
-        val iterator = iterator()
-        if (!iterator.hasNext()) return null
-
-        var max = iterator.next()
-        while (iterator.hasNext()) {
-            val e = iterator.next()
-            if (comparator.compare(max, e) < 0) max = e
-        }
-        return max
-        """
-        }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            """
-            if (isEmpty()) return null
-
-            var max = this[0]
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                if (comparator.compare(max, e) < 0) max = e
-            }
-            return max
-            """
-        }
-        specialFor(Maps) {
-            inlineOnly()
-            body { "return entries.maxWith(comparator)" }
-        }
+        for (op in listOf("minWith", "maxWith"))
+            for (nullable in listOf(false, true))
+                yield(def(op, nullable))
     }
 
     fun f_minMaxOf() = sequence {
