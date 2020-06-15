@@ -109,8 +109,7 @@
     <runConfigurationProducer implementation="org.jetbrains.plugins.gradle.service.execution.GradleRuntimeConfigurationProducer"/>
 
     <toolWindow id="Gradle" anchor="right" icon="GradleIcons.ToolWindowGradle"
-                factoryClass="org.jetbrains.plugins.gradle.ui.GradleToolWindowFactory"
-                conditionClass="org.jetbrains.plugins.gradle.ui.GradleToolWindowFactoryCondition"/>
+                factoryClass="org.jetbrains.plugins.gradle.ui.GradleToolWindowFactory"/>
 
     <copyPastePreProcessor implementation="org.jetbrains.plugins.gradle.action.PasteMvnDependencyPreProcessor"/>
 
