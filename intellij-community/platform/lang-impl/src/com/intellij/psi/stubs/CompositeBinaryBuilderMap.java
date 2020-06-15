@@ -34,19 +34,10 @@ class CompositeBinaryBuilderMap {
 
         if (builder instanceof BinaryFileStubBuilder.CompositeBinaryFileStubBuilder<?>) {
           StringBuilder cumulativeVersion = new StringBuilder();
-
-          cumulativeVersion.append(fileType.getName());
-          cumulativeVersion.append("->");
-
-          cumulativeVersion.append(builder.getClass().getName());
-          cumulativeVersion.append(":");
-          cumulativeVersion.append(builder.getStubVersion());
-
-          BinaryFileStubBuilder.CompositeBinaryFileStubBuilder compositeBuilder = (BinaryFileStubBuilder.CompositeBinaryFileStubBuilder<?>)builder;
-          compositeBuilder.getAllSubBuilders().forEach(b -> {
-            cumulativeVersion.append(";");
-            cumulativeVersion.append(compositeBuilder.getSubBuilderVersion(b));
-          });
+          cumulativeVersion.append(fileType.getName()).append("->").append(builder.getClass().getName()).append(':').append(builder.getStubVersion());
+          @SuppressWarnings({"unchecked", "rawtypes"}) BinaryFileStubBuilder.CompositeBinaryFileStubBuilder<Object> compositeBuilder =
+            (BinaryFileStubBuilder.CompositeBinaryFileStubBuilder)builder;
+          compositeBuilder.getAllSubBuilders().forEach(b -> cumulativeVersion.append(';').append(compositeBuilder.getSubBuilderVersion(b)));
 
           myCumulativeVersionMap.put(fileType, cumulativeVersionEnumerator.enumerate(cumulativeVersion.toString()));
         }
