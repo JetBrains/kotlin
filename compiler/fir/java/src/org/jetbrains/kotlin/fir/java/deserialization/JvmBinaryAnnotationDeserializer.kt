@@ -35,9 +35,9 @@ class JvmBinaryAnnotationDeserializer(
     private data class MemberAnnotations(val memberAnnotations: Map<MemberSignature, MutableList<FirAnnotationCall>>)
 
     private enum class CallableKind {
-        FUNCTION,
         PROPERTY_GETTER,
-        PROPERTY_SETTER
+        PROPERTY_SETTER,
+        OTHERS
     }
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall> {
@@ -51,7 +51,7 @@ class JvmBinaryAnnotationDeserializer(
         nameResolver: NameResolver,
         typeTable: TypeTable
     ): List<FirAnnotationCall> {
-        val signature = getCallableSignature(constructorProto, nameResolver, typeTable, CallableKind.FUNCTION) ?: return emptyList()
+        val signature = getCallableSignature(constructorProto, nameResolver, typeTable) ?: return emptyList()
         return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, signature)
     }
 
@@ -61,7 +61,7 @@ class JvmBinaryAnnotationDeserializer(
         nameResolver: NameResolver,
         typeTable: TypeTable
     ): List<FirAnnotationCall> {
-        val signature = getCallableSignature(functionProto, nameResolver, typeTable, CallableKind.FUNCTION) ?: return emptyList()
+        val signature = getCallableSignature(functionProto, nameResolver, typeTable) ?: return emptyList()
         return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, signature)
     }
 
@@ -91,7 +91,7 @@ class JvmBinaryAnnotationDeserializer(
         proto: MessageLite,
         nameResolver: NameResolver,
         typeTable: TypeTable,
-        kind: CallableKind
+        kind: CallableKind = CallableKind.OTHERS
     ): MemberSignature? {
         return when (proto) {
             is ProtoBuf.Constructor -> {
