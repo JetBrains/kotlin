@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 object NewInferenceForIDEAnalysisComponent {
     private const val inferenceOptionV1 = "kotlin.use.new.inference.for.ide.analysis"
     private const val inferenceOptionV2 = "kotlin.use.new.inference.for.ide.analysis.v2"
-    val defaultState: Boolean get() = true
+    val defaultState: Boolean get() = false
 
     @JvmStatic
     fun setEnabled(project: Project, state: Boolean) {
