@@ -11,6 +11,7 @@ import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
@@ -120,4 +122,12 @@ private class ScriptConfigurationChangedNotification(val project: Project) :
             runPartialGradleImport(project)
         }
     }
+}
+
+fun getGradleVersion(project: Project, settings: GradleProjectSettings): String {
+    // workaround for bug in settings.resolveGradleVersion().version (fixed in 201)
+    return GradleInstallationManager.getGradleVersion(
+        ServiceManager.getService(GradleInstallationManager::class.java)
+            .getGradleHome(project, settings.externalProjectPath)?.path
+    ) ?: GradleVersion.current().version
 }

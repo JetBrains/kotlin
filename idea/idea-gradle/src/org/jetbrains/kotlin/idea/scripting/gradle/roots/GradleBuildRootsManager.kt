@@ -273,7 +273,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         val actualSettings = getGradleProjectSettings(workingDir)
         val buildRoot = getBuildRootByWorkingDir(workingDir)
 
-        val version = gradleVersion ?: actualSettings?.resolveGradleVersion()?.version
+        val version = gradleVersion ?: actualSettings?.let { getGradleVersion(project, it) }
         return when {
             buildRoot != null -> {
                 when {
@@ -302,7 +302,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             remove(rootPath)
             return null
         } else {
-            val gradleVersion = version ?: settings.resolveGradleVersion().version
+            val gradleVersion = version ?: getGradleVersion(project, settings)
             val newRoot = loadLinkedRoot(settings, gradleVersion)
             add(newRoot)
             return newRoot
