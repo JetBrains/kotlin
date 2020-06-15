@@ -15,7 +15,7 @@ import com.intellij.psi.util.elementsAtOffsetUp
 /**
  * @return collection of [references][PsiSymbolReferenceService.getReferences] to the right of given [offset]
  */
-fun PsiFile.referencesAt(offset: Int): Iterable<PsiSymbolReference> {
+fun PsiFile.referencesAt(offset: Int): Collection<PsiSymbolReference> {
   for ((element, offsetInElement) in elementsAtOffsetUp(offset)) {
     val references = referencesInElement(element, offsetInElement)
     if (references.isNotEmpty()) {
