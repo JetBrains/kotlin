@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.idea.debugger.test.sequence.psi.java
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import org.jetbrains.kotlin.idea.debugger.test.sequence.KotlinPsiChainBuilderTestCase
 import org.jetbrains.kotlin.idea.debugger.sequence.lib.java.JavaStandardLibrarySupportProvider
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class NegativeJavaStreamTest : KotlinPsiChainBuilderTestCase.Negative("streams/negative") {
     override val kotlinChainBuilder: StreamChainBuilder = JavaStandardLibrarySupportProvider().chainBuilder
 

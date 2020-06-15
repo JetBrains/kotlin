@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.completion.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.idea.completion.test.handlers.CompletionHandlerTestBase
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
 @Deprecated("All tests from here to be moved to the generated test")
 @TestRoot("completion/testData")
 @TestMetadata("handlers")
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class BasicCompletionHandlerTest : CompletionHandlerTestBase() {
     private fun checkResult() {
         fixture.checkResultByFile(getTestName(false) + ".kt.after")

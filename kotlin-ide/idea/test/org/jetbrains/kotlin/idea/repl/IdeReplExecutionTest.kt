@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.idea.run.createLibraryWithLongPaths
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Test
 import org.junit.runner.RunWith
 import kotlin.reflect.KMutableProperty0
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class IdeReplExecutionTest : PlatformTestCase() {
     private lateinit var consoleRunner: KotlinConsoleRunner
     private var commandsSent = 0

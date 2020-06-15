@@ -11,14 +11,14 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 
 @TestRoot("idea")
 @TestMetadata("testData/folding/afterOptimizeImports")
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
     private val fixture: JavaCodeInsightTestFixture
         get() = myFixture!!

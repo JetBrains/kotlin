@@ -33,14 +33,14 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import java.io.File
 import java.util.*
 
 private const val RUN_PREFIX = "// RUN:"
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class RunConfigurationTest : AbstractRunConfigurationTest() {
     fun testMainInTest() {
         val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform;
 import org.jetbrains.kotlin.platform.js.JsPlatforms;
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms;
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleKt;
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.junit.runner.RunWith;
 
@@ -53,7 +53,7 @@ import java.util.stream.StreamSupport;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
-@RunWith(JUnit3WithIdeaConfigurationRunner.class)
+@RunWith(JUnit38ClassRunner.class)
 public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     public void testNewLibrary_copyJar() {
         doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);

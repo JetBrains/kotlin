@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.idea.configuration
 
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
 
 // Do not add new tests here since application is initialized only once
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class AutoConfigureKotlinSdkOnStartupTest : AbstractConfigureKotlinInTempDirTest() {
     fun testKotlinSdkAdded() {
         Assert.assertTrue(getProjectJdkTableSafe().allJdks.any { it.sdkType is KotlinSdkType })

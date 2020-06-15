@@ -11,11 +11,11 @@ import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import java.io.File
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class KotlinLibInjectionTest : AbstractInjectionTest() {
     override fun setUp() {
         super.setUp()

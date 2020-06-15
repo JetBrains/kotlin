@@ -9,9 +9,10 @@ import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.KotlinPluginVersion
 import org.jetbrains.kotlin.idea.PlatformVersion
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class CompatibilityVerifierVersionComparisonTest : LightPlatformTestCase() {
     fun testKotlinVersionParsing() {
         val version = KotlinPluginVersion.parse("1.2.40-dev-193-Studio3.0-1") ?: throw AssertionError("Version should not be null")

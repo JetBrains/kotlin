@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.idea.editor
 
 import com.intellij.testFramework.EditorTestUtil
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class LazyKtBlockExpressionTest : LazyElementTypeTestBase<KtBlockExpression>(KtBlockExpression::class.java) {
 
     fun testSimpleReparse() = noReparse(inIf(" { a<caret>b }"), 'c')

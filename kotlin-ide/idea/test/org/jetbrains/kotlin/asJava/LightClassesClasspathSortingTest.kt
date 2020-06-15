@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
@@ -23,7 +23,7 @@ import kotlin.test.assertNotNull
 
 @TestRoot("idea")
 @TestMetadata("testData/decompiler/lightClassesOrder")
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class LightClassesClasspathSortingTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testExplicitClass() {

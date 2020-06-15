@@ -13,7 +13,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiManager
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import junit.framework.TestCase
-import org.jetbrains.kotlin.test.IdeaSystemPropertiesForParallelRunConfigurator
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
 import org.jetbrains.uast.UastContext
@@ -24,13 +23,6 @@ import java.io.File
 
 @WithMutedInDatabaseRunTest
 abstract class AbstractTestWithCoreEnvironment : TestCase() {
-
-    companion object {
-        init {
-            IdeaSystemPropertiesForParallelRunConfigurator.setProperties()
-        }
-    }
-
     private var myEnvironment: AbstractCoreEnvironment? = null
 
     protected val environment: AbstractCoreEnvironment

@@ -11,12 +11,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.RunWith;
 
 import java.io.File;
 
-@RunWith(JUnit3WithIdeaConfigurationRunner.class)
+@RunWith(JUnit38ClassRunner.class)
 public class KotlinGotoImplementationMultifileTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testImplementFunInJava() {
         doKotlinJavaTest();

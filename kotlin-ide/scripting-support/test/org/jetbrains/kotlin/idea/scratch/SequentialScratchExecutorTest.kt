@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.idea.scratch
 
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchFromHereAction
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class SequentialScratchExecutorTest : AbstractScratchRunActionTest() {
 
     fun testSingleLine() {

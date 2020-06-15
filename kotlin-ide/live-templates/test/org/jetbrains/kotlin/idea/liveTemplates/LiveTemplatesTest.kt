@@ -18,12 +18,12 @@ import junit.framework.TestCase
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import java.io.File
 import java.util.*
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()

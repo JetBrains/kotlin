@@ -9,14 +9,14 @@ import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType.*
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 
 @TestRoot("live-templates")
 @TestMetadata("testData/context")
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testInDocComment() {
         assertInContexts(Generic::class.java, Comment::class.java)

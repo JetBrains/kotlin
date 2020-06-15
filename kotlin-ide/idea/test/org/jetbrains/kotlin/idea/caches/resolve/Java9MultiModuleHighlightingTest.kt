@@ -9,14 +9,14 @@ import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK_9
 import org.junit.runner.RunWith
 import java.io.File
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/java9/"
 

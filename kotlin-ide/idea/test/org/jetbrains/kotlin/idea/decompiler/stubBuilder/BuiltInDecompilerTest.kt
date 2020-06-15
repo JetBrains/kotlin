@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.runner.RunWith
@@ -35,7 +35,7 @@ abstract class AbstractBuiltInDecompilerTest : KotlinLightCodeInsightFixtureTest
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class BuiltInDecompilerTest : AbstractBuiltInDecompilerTest() {
     override fun configureAndBuildFileStub(packageFqName: String): PsiFileStub<*> {
         val dirInRuntime = findDir(packageFqName, project)
@@ -50,7 +50,7 @@ class BuiltInDecompilerTest : AbstractBuiltInDecompilerTest() {
     }
 }
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class BuiltInDecompilerForWrongAbiVersionTest : AbstractBuiltInDecompilerTest() {
     override fun getTestDataPath() = PluginTestCaseBase.TEST_DATA_DIR + "/decompiler/builtins/"
 

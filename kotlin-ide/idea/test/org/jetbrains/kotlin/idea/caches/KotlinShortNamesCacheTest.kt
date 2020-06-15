@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
@@ -31,7 +31,7 @@ import kotlin.reflect.KMutableProperty0
 
 @TestRoot("idea")
 @TestMetadata("testData/cache")
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
 
     private lateinit var cacheInstance: PsiShortNamesCache

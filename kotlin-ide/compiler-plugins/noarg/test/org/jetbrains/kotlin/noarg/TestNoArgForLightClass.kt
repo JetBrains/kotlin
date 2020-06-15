@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinProjectDescriptorWithFacet
 import org.jetbrains.kotlin.noarg.ide.NO_ARG_ANNOTATION_OPTION_PREFIX
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
 private const val targetClassName = "TargetClassName"
 private const val baseClassName = "BaseClassName"
 private const val noArgAnnotationName = "HelloNoArg"
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class TestNoArgForLightClass : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor =

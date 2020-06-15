@@ -11,10 +11,10 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class StripTrailingSpacesTest : LightJavaCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/editor/stripTrailingSpaces/"

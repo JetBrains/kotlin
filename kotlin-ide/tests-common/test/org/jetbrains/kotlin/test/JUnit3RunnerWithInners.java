@@ -32,10 +32,6 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortable {
-    static {
-        IdeaSystemPropertiesForParallelRunConfigurator.setProperties();
-    }
-
     private static final Set<Class<?>> requestedRunners = new HashSet<>();
 
     private JUnit38ClassRunner delegateRunner;

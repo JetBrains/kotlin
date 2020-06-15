@@ -8,10 +8,10 @@ import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.lib.sequence.KotlinSequenceSupportProvider
 import org.jetbrains.kotlin.idea.debugger.test.sequence.psi.TypedChainTestCase
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class TypedSequenceChain : TypedChainTestCase("sequence/positive/types") {
     override val kotlinChainBuilder: StreamChainBuilder = KotlinSequenceSupportProvider().chainBuilder
 

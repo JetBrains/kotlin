@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.TestRoot;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ import static org.jetbrains.kotlin.test.util.ReferenceUtils.renderAsGotoImplemen
 
 @TestRoot("idea")
 @TestMetadata("testData/resolve/builtins")
-@RunWith(JUnit3WithIdeaConfigurationRunner.class)
+@RunWith(JUnit38ClassRunner.class)
 public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testAny() throws Exception {
         doTest();

@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.idea.core.script.hasSuggestedScriptConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-import org.jetbrains.kotlin.test.JUnitParameterizedWithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.RunnerFactoryWithMuteInDatabase
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
@@ -29,7 +27,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 import java.io.File
 
-@RunWith(value = JUnitParameterizedWithIdeaConfigurationRunner::class)
+@RunWith(value = Parameterized::class)
 class GradleKtsImportTest : GradleImportingTestCase() {
     companion object {
         @JvmStatic

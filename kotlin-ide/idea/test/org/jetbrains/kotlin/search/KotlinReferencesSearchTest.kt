@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
 import org.junit.Assert
@@ -24,7 +24,7 @@ import org.junit.runner.RunWith
 
 @TestRoot("idea")
 @TestMetadata("testData/search/references")
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class KotlinReferencesSearchTest : AbstractSearcherTest() {
     fun testPlus() {
         val refs = doTest<KtFunction>()

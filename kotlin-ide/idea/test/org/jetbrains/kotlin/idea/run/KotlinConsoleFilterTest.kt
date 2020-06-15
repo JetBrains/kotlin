@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.idea.run
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class KotlinConsoleFilterTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testWindowsPath() {
         val filter = KotlinConsoleFilter(project, GlobalSearchScope.allScope(project))

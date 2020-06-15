@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class DebugTextByStubTest : LightJavaCodeInsightFixtureTestCase() {
     private fun createFileAndStubTree(text: String): Pair<KtFile, StubElement<*>> {
         val file = myFixture.configureByText("test.kt", text) as KtFile

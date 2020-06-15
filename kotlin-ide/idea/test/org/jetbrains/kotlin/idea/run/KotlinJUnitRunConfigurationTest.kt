@@ -21,11 +21,11 @@ import com.intellij.psi.PsiManager
 import com.intellij.util.PlatformUtils
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import java.io.File
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class KotlinJUnitRunConfigurationTest : AbstractRunConfigurationTest() {
     fun testSimple() {
         if (!PlatformUtils.isIntelliJ()) {

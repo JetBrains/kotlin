@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.checkers
 
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
 
 @TestRoot("idea")
 @TestMetadata("testData/checker/custom")
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
 
     @TestMetadata("noUnusedParameterWhenCustom.kt")

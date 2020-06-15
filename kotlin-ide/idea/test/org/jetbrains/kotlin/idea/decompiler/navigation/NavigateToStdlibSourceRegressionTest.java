@@ -10,10 +10,10 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.RunWith;
 
-@RunWith(JUnit3WithIdeaConfigurationRunner.class)
+@RunWith(JUnit38ClassRunner.class)
 public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegressionTest {
     /**
      * Regression test against KT-3186

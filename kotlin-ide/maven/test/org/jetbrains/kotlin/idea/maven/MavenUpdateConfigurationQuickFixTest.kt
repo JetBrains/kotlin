@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
@@ -32,7 +32,7 @@ import org.junit.runner.RunWith
 import java.io.File
 import kotlin.reflect.KMutableProperty0
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 

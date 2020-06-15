@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
 
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class BuiltInDecompilerConsistencyTest : KotlinLightCodeInsightFixtureTestCase() {
     private val classFileDecompiler = KotlinClassFileDecompiler()
     private val builtInsDecompiler = KotlinBuiltInDecompiler()

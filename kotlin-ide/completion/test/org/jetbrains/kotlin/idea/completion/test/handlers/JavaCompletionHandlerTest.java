@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.idea.completion.test.handlers;
 
 import org.jetbrains.kotlin.idea.completion.test.CompletionTestUtilKt;
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase;
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-@RunWith(JUnit3WithIdeaConfigurationRunner.class)
+@RunWith(JUnit38ClassRunner.class)
 public class JavaCompletionHandlerTest extends KotlinCompletionTestCase {
     public void testClassAutoImport() {
         doTest();

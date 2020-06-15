@@ -11,14 +11,14 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameProcessor;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.TestRoot;
 import org.junit.runner.RunWith;
 
 @TestRoot("idea")
 @TestMetadata("testData/kdoc/rename")
-@RunWith(JUnit3WithIdeaConfigurationRunner.class)
+@RunWith(JUnit38ClassRunner.class)
 public class KdocRenameTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testParamReference() {
         doTest("bar");

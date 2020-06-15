@@ -10,7 +10,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.TestRoot;
@@ -20,7 +20,7 @@ import java.io.File;
 
 @TestRoot("idea")
 @TestMetadata("testData/wordSelection")
-@RunWith(JUnit3WithIdeaConfigurationRunner.class)
+@RunWith(JUnit38ClassRunner.class)
 public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testStatements() { doTest(); }
 

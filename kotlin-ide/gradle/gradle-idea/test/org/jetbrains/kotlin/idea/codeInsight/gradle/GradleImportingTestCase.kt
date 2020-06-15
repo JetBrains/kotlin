@@ -57,7 +57,6 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
-import org.jetbrains.kotlin.test.JUnitParameterizedWithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.RunnerFactoryWithMuteInDatabase
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -84,7 +83,7 @@ import java.util.zip.ZipException
 import java.util.zip.ZipFile
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
-@RunWith(value = JUnitParameterizedWithIdeaConfigurationRunner::class)
+@RunWith(value = Parameterized::class)
 @Parameterized.UseParametersRunnerFactory(RunnerFactoryWithMuteInDatabase::class)
 abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 

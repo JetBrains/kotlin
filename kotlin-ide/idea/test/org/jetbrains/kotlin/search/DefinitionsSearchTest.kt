@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
 import org.junit.runner.RunWith
@@ -17,7 +17,7 @@ import java.io.File
 
 @TestRoot("idea")
 @TestMetadata("testData/search/definitions")
-@RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@RunWith(JUnit38ClassRunner::class)
 class DefinitionsSearchTest : AbstractSearcherTest() {
     fun testNestedClass() {
         doTest()
