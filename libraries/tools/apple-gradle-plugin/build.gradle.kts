@@ -11,16 +11,11 @@ val ultimateTools: Map<String, Any> by rootProject.extensions
 val proprietaryRepositories: Project.() -> Unit by ultimateTools
 
 val cidrVersion = rootProject.extra["versions.cidrPlatform"] as String
-val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
-val isSnapshotIntellij = intellijVersion.endsWith("SNAPSHOT")
-val intellijRepo = "https://www.jetbrains.com/intellij-repository/" + if (isSnapshotIntellij) "snapshots" else "releases"
-
 val pluginName = "applePlugin"
 group = "org.jetbrains.gradle.apple"
-version = "$intellijVersion-0.1"
+version = "$cidrVersion-0.1"
 
 repositories {
-    maven(intellijRepo)
     proprietaryRepositories()
     google()
 }
@@ -31,13 +26,13 @@ configurations.named(JavaPlugin.API_CONFIGURATION_NAME) {
 }
 
 dependencies {
-    shadow("com.jetbrains.intellij.platform:core:$intellijVersion")
-    shadow("com.jetbrains.intellij.platform:util:$intellijVersion")
-    shadow("com.jetbrains.intellij.platform:util-rt:$intellijVersion")
-    shadow("com.jetbrains.intellij.platform:util-class-loader:$intellijVersion")
-    shadow("com.jetbrains.intellij.platform:util-ex:$intellijVersion")
-    shadow("com.jetbrains.intellij.platform:extensions:$intellijVersion")
-    shadow("com.jetbrains.intellij.platform:core-impl:$intellijVersion")
+    shadow("com.jetbrains.intellij.platform:core:$cidrVersion")
+    shadow("com.jetbrains.intellij.platform:util:$cidrVersion")
+    shadow("com.jetbrains.intellij.platform:util-rt:$cidrVersion")
+    shadow("com.jetbrains.intellij.platform:util-class-loader:$cidrVersion")
+    shadow("com.jetbrains.intellij.platform:util-ex:$cidrVersion")
+    shadow("com.jetbrains.intellij.platform:extensions:$cidrVersion")
+    shadow("com.jetbrains.intellij.platform:core-impl:$cidrVersion")
     shadow("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion")
 
     compile(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))

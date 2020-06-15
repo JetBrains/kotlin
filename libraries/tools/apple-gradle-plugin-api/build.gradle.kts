@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
+val cidrVersion = rootProject.extra["versions.cidrPlatform"] as String
 
 group = "org.jetbrains.gradle.apple"
-version = "$intellijVersion-0.1"
+version = "$cidrVersion-0.1"
 
 plugins {
     kotlin("jvm")

@@ -13,7 +13,7 @@ val proprietaryRepositories: Project.() -> Unit by ultimateTools
 val mobilePluginDir: File by rootProject.extra
 val mobilePluginZipPath: File by rootProject.extra
 val cidrVersion: String by rootProject.extra
-val kotlinAndroidExtensionsVersion: String by rootProject.extra(rootProject.extra["versions.kotlinAndroidExtensions"] as String)
+val ideaPluginForCidrVersion: String by rootProject.extra(rootProject.extra["versions.ideaPluginForCidr"] as String)
 val kotlinNativeBackendVersion: String by rootProject.extra
 val kotlinNativeBackendRepo: String by rootProject.extra
 val isStandaloneBuild: Boolean by rootProject.extra
@@ -35,7 +35,7 @@ dependencies {
     runtime(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false }
     if (isStandaloneBuild) {
-        runtime("org.jetbrains.kotlin:kotlin-android-extensions-runtime:$kotlinAndroidExtensionsVersion") { isTransitive = false }
+        runtime("org.jetbrains.kotlin:kotlin-android-extensions-runtime:$ideaPluginForCidrVersion") { isTransitive = false }
     } else {
         runtime(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
         runtime(project(":plugins:android-extensions-compiler")) { isTransitive = false }
