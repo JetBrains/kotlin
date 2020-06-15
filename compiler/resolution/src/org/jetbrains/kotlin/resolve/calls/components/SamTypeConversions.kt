@@ -64,19 +64,22 @@ object SamTypeConversions : ParameterTypeConversion {
         val callComponents = candidate.callComponents
         val originalExpectedType = argument.getExpectedType(parameter.original, callComponents.languageVersionSettings)
 
-        val convertedTypeByOriginal =
-            callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(
-                originalExpectedType,
-                callComponents.samConversionOracle
-            ) ?: return null
-
         val convertedTypeByCandidate =
             callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(
                 expectedParameterType,
                 callComponents.samConversionOracle
-            )
+            ) ?: return null
 
-        assert(expectedParameterType.constructor == originalExpectedType.constructor && convertedTypeByCandidate != null) {
+        val convertedTypeByOriginal =
+            if (expectedParameterType.constructor == originalExpectedType.constructor)
+                callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(
+                    originalExpectedType,
+                    callComponents.samConversionOracle
+                )
+            else
+                convertedTypeByCandidate
+
+        assert(convertedTypeByCandidate.constructor == convertedTypeByOriginal?.constructor) {
             "If original type is SAM type, then candidate should have same type constructor and corresponding function type\n" +
                     "originalExpectType: $originalExpectedType, candidateExpectType: $expectedParameterType\n" +
                     "functionTypeByOriginal: $convertedTypeByOriginal, functionTypeByCandidate: $convertedTypeByCandidate"
@@ -84,7 +87,7 @@ object SamTypeConversions : ParameterTypeConversion {
 
         candidate.resolvedCall.registerArgumentWithSamConversion(
             argument,
-            SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!)
+            SamConversionDescription(convertedTypeByOriginal!!, convertedTypeByCandidate)
         )
 
         if (needCompatibilityResolveForSAM(candidate, expectedParameterType)) {
