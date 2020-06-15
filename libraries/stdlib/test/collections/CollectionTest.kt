@@ -851,18 +851,18 @@ class CollectionTest {
         assertIsPositiveZero(listOf(0.0F, -0.0F).shuffled().maxOrNull()!!.toDouble())
     }
 
-    @Test fun minWith() {
-        expect(null, { listOf<Int>().minWith(naturalOrder()) })
-        expect(1, { listOf(1).minWith(naturalOrder()) })
-        expect("a", { listOf("a", "B").minWith(STRING_CASE_INSENSITIVE_ORDER) })
-        expect("a", { listOf("a", "B").asSequence().minWith(STRING_CASE_INSENSITIVE_ORDER) })
+    @Test fun minWithOrNull() {
+        expect(null, { listOf<Int>().minWithOrNull(naturalOrder()) })
+        expect(1, { listOf(1).minWithOrNull(naturalOrder()) })
+        expect("a", { listOf("a", "B").minWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
+        expect("a", { listOf("a", "B").asSequence().minWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
     }
 
-    @Test fun maxWith() {
-        expect(null, { listOf<Int>().maxWith(naturalOrder()) })
-        expect(1, { listOf(1).maxWith(naturalOrder()) })
-        expect("B", { listOf("a", "B").maxWith(STRING_CASE_INSENSITIVE_ORDER) })
-        expect("B", { listOf("a", "B").asSequence().maxWith(STRING_CASE_INSENSITIVE_ORDER) })
+    @Test fun maxWithOrNull() {
+        expect(null, { listOf<Int>().maxWithOrNull(naturalOrder()) })
+        expect(1, { listOf(1).maxWithOrNull(naturalOrder()) })
+        expect("B", { listOf("a", "B").maxWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
+        expect("B", { listOf("a", "B").asSequence().maxWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
     }
 
     @Test fun minByOrNull() {

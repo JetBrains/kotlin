@@ -390,26 +390,26 @@ class ArraysTest {
         expect('b', { charArrayOf('a', 'b').maxOrNull() })
     }
 
-    @Test fun minWith() {
-        assertEquals(null, arrayOf<Int>().minWith(naturalOrder()) )
-        assertEquals("a", arrayOf("a", "B").minWith(STRING_CASE_INSENSITIVE_ORDER))
+    @Test fun minWithOrNull() {
+        assertEquals(null, arrayOf<Int>().minWithOrNull(naturalOrder()))
+        assertEquals("a", arrayOf("a", "B").minWithOrNull(STRING_CASE_INSENSITIVE_ORDER))
     }
 
-    @Test fun minWithInPrimitiveArrays() {
-        expect(null, { intArrayOf().minWith(naturalOrder()) })
-        expect(1, { intArrayOf(1).minWith(naturalOrder()) })
-        expect(4, { intArrayOf(2, 3, 4).minWith(compareBy { it % 4 }) })
+    @Test fun minWithOrNullInPrimitiveArrays() {
+        expect(null, { intArrayOf().minWithOrNull(naturalOrder()) })
+        expect(1, { intArrayOf(1).minWithOrNull(naturalOrder()) })
+        expect(4, { intArrayOf(2, 3, 4).minWithOrNull(compareBy { it % 4 }) })
     }
 
-    @Test fun maxWith() {
-        assertEquals(null, arrayOf<Int>().maxWith(naturalOrder()) )
-        assertEquals("B", arrayOf("a", "B").maxWith(STRING_CASE_INSENSITIVE_ORDER))
+    @Test fun maxWithOrNull() {
+        assertEquals(null, arrayOf<Int>().maxWithOrNull(naturalOrder()))
+        assertEquals("B", arrayOf("a", "B").maxWithOrNull(STRING_CASE_INSENSITIVE_ORDER))
     }
 
-    @Test fun maxWithInPrimitiveArrays() {
-        expect(null, { intArrayOf().maxWith(naturalOrder()) })
-        expect(1, { intArrayOf(1).maxWith(naturalOrder()) })
-        expect(-4, { intArrayOf(2, 3, -4).maxWith(compareBy { it*it }) })
+    @Test fun maxWithOrNullInPrimitiveArrays() {
+        expect(null, { intArrayOf().maxWithOrNull(naturalOrder()) })
+        expect(1, { intArrayOf(1).maxWithOrNull(naturalOrder()) })
+        expect(-4, { intArrayOf(2, 3, -4).maxWithOrNull(compareBy { it * it }) })
     }
 
     @Test fun minByOrNull() {

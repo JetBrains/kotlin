@@ -451,35 +451,35 @@ class UnsignedArraysTest {
     }
 
     @Test
-    fun minWith() {
-        expect(null) { arrayOf<UByte>().minWith(naturalOrder()) }
-        expect(1u) { arrayOf<UShort>(1).minWith(naturalOrder()) }
-        expect(2u) { arrayOf<UInt>(2, 3).minWith(naturalOrder()) }
-        expect(2uL) { arrayOf<ULong>(3, 2).minWith(naturalOrder()) }
+    fun minWitOrNullh() {
+        expect(null) { arrayOf<UByte>().minWithOrNull(naturalOrder()) }
+        expect(1u) { arrayOf<UShort>(1).minWithOrNull(naturalOrder()) }
+        expect(2u) { arrayOf<UInt>(2, 3).minWithOrNull(naturalOrder()) }
+        expect(2uL) { arrayOf<ULong>(3, 2).minWithOrNull(naturalOrder()) }
     }
 
     @Test
-    fun minWithInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().minWith(reverseOrder()) }
-        expect(1u) { ushortArrayOf(1).minWith(reverseOrder()) }
-        expect(3u) { uintArrayOf(2, 3).minWith(reverseOrder()) }
-        expect(3uL) { ulongArrayOf(3, 2).minWith(reverseOrder()) }
+    fun minWithOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().minWithOrNull(reverseOrder()) }
+        expect(1u) { ushortArrayOf(1).minWithOrNull(reverseOrder()) }
+        expect(3u) { uintArrayOf(2, 3).minWithOrNull(reverseOrder()) }
+        expect(3uL) { ulongArrayOf(3, 2).minWithOrNull(reverseOrder()) }
     }
 
     @Test
-    fun maxWith() {
-        expect(null) { arrayOf<UByte>().maxWith(naturalOrder()) }
-        expect(1u) { arrayOf<UShort>(1).maxWith(naturalOrder()) }
-        expect(3u) { arrayOf<UInt>(2, 3).maxWith(naturalOrder()) }
-        expect(3uL) { arrayOf<ULong>(3, 2).maxWith(naturalOrder()) }
+    fun maxWithOrNull() {
+        expect(null) { arrayOf<UByte>().maxWithOrNull(naturalOrder()) }
+        expect(1u) { arrayOf<UShort>(1).maxWithOrNull(naturalOrder()) }
+        expect(3u) { arrayOf<UInt>(2, 3).maxWithOrNull(naturalOrder()) }
+        expect(3uL) { arrayOf<ULong>(3, 2).maxWithOrNull(naturalOrder()) }
     }
 
     @Test
-    fun maxWithInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().maxWith(reverseOrder()) }
-        expect(1u) { ushortArrayOf(1).maxWith(reverseOrder()) }
-        expect(2u) { uintArrayOf(2, 3).maxWith(reverseOrder()) }
-        expect(2uL) { ulongArrayOf(3, 2).maxWith(reverseOrder()) }
+    fun maxWithOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().maxWithOrNull(reverseOrder()) }
+        expect(1u) { ushortArrayOf(1).maxWithOrNull(reverseOrder()) }
+        expect(2u) { uintArrayOf(2, 3).maxWithOrNull(reverseOrder()) }
+        expect(2uL) { ulongArrayOf(3, 2).maxWithOrNull(reverseOrder()) }
     }
 
     @Test
