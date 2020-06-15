@@ -1393,6 +1393,15 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun maxBy ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun maxBy ([SLkotlin/jvm/functions/Function1;)Ljava/lang/Short;
 	public static final fun maxBy ([ZLkotlin/jvm/functions/Function1;)Ljava/lang/Boolean;
+	public static final fun maxByOrNull ([BLkotlin/jvm/functions/Function1;)Ljava/lang/Byte;
+	public static final fun maxByOrNull ([CLkotlin/jvm/functions/Function1;)Ljava/lang/Character;
+	public static final fun maxByOrNull ([DLkotlin/jvm/functions/Function1;)Ljava/lang/Double;
+	public static final fun maxByOrNull ([FLkotlin/jvm/functions/Function1;)Ljava/lang/Float;
+	public static final fun maxByOrNull ([ILkotlin/jvm/functions/Function1;)Ljava/lang/Integer;
+	public static final fun maxByOrNull ([JLkotlin/jvm/functions/Function1;)Ljava/lang/Long;
+	public static final fun maxByOrNull ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun maxByOrNull ([SLkotlin/jvm/functions/Function1;)Ljava/lang/Short;
+	public static final fun maxByOrNull ([ZLkotlin/jvm/functions/Function1;)Ljava/lang/Boolean;
 	public static final fun maxOrNull ([B)Ljava/lang/Byte;
 	public static final fun maxOrNull ([C)Ljava/lang/Character;
 	public static final fun maxOrNull ([D)Ljava/lang/Double;
@@ -1431,6 +1440,15 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun minBy ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun minBy ([SLkotlin/jvm/functions/Function1;)Ljava/lang/Short;
 	public static final fun minBy ([ZLkotlin/jvm/functions/Function1;)Ljava/lang/Boolean;
+	public static final fun minByOrNull ([BLkotlin/jvm/functions/Function1;)Ljava/lang/Byte;
+	public static final fun minByOrNull ([CLkotlin/jvm/functions/Function1;)Ljava/lang/Character;
+	public static final fun minByOrNull ([DLkotlin/jvm/functions/Function1;)Ljava/lang/Double;
+	public static final fun minByOrNull ([FLkotlin/jvm/functions/Function1;)Ljava/lang/Float;
+	public static final fun minByOrNull ([ILkotlin/jvm/functions/Function1;)Ljava/lang/Integer;
+	public static final fun minByOrNull ([JLkotlin/jvm/functions/Function1;)Ljava/lang/Long;
+	public static final fun minByOrNull ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun minByOrNull ([SLkotlin/jvm/functions/Function1;)Ljava/lang/Short;
+	public static final fun minByOrNull ([ZLkotlin/jvm/functions/Function1;)Ljava/lang/Boolean;
 	public static final fun minOrNull ([B)Ljava/lang/Byte;
 	public static final fun minOrNull ([C)Ljava/lang/Character;
 	public static final fun minOrNull ([D)Ljava/lang/Double;
@@ -2215,6 +2233,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun max (Ljava/lang/Iterable;)Ljava/lang/Double;
 	public static final fun max (Ljava/lang/Iterable;)Ljava/lang/Float;
 	public static final fun maxBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun maxByOrNull (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun maxOrNull (Ljava/lang/Iterable;)Ljava/lang/Comparable;
 	public static final fun maxOrNull (Ljava/lang/Iterable;)Ljava/lang/Double;
 	public static final fun maxOrNull (Ljava/lang/Iterable;)Ljava/lang/Float;
@@ -2223,6 +2242,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun min (Ljava/lang/Iterable;)Ljava/lang/Double;
 	public static final fun min (Ljava/lang/Iterable;)Ljava/lang/Float;
 	public static final fun minBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun minByOrNull (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun minOrNull (Ljava/lang/Iterable;)Ljava/lang/Comparable;
 	public static final fun minOrNull (Ljava/lang/Iterable;)Ljava/lang/Double;
 	public static final fun minOrNull (Ljava/lang/Iterable;)Ljava/lang/Float;
@@ -4872,6 +4892,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun max (Lkotlin/sequences/Sequence;)Ljava/lang/Double;
 	public static final fun max (Lkotlin/sequences/Sequence;)Ljava/lang/Float;
 	public static final fun maxBy (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun maxByOrNull (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun maxOrNull (Lkotlin/sequences/Sequence;)Ljava/lang/Comparable;
 	public static final fun maxOrNull (Lkotlin/sequences/Sequence;)Ljava/lang/Double;
 	public static final fun maxOrNull (Lkotlin/sequences/Sequence;)Ljava/lang/Float;
@@ -4880,6 +4901,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun min (Lkotlin/sequences/Sequence;)Ljava/lang/Double;
 	public static final fun min (Lkotlin/sequences/Sequence;)Ljava/lang/Float;
 	public static final fun minBy (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun minByOrNull (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun minOrNull (Lkotlin/sequences/Sequence;)Ljava/lang/Comparable;
 	public static final fun minOrNull (Lkotlin/sequences/Sequence;)Ljava/lang/Double;
 	public static final fun minOrNull (Lkotlin/sequences/Sequence;)Ljava/lang/Float;
@@ -5281,10 +5303,12 @@ public final class kotlin/text/StringsKt {
 	public static final fun mapTo (Ljava/lang/CharSequence;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun max (Ljava/lang/CharSequence;)Ljava/lang/Character;
 	public static final fun maxBy (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Character;
+	public static final fun maxByOrNull (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Character;
 	public static final fun maxOrNull (Ljava/lang/CharSequence;)Ljava/lang/Character;
 	public static final fun maxWith (Ljava/lang/CharSequence;Ljava/util/Comparator;)Ljava/lang/Character;
 	public static final fun min (Ljava/lang/CharSequence;)Ljava/lang/Character;
 	public static final fun minBy (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Character;
+	public static final fun minByOrNull (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Character;
 	public static final fun minOrNull (Ljava/lang/CharSequence;)Ljava/lang/Character;
 	public static final fun minWith (Ljava/lang/CharSequence;Ljava/util/Comparator;)Ljava/lang/Character;
 	public static final fun none (Ljava/lang/CharSequence;)Z

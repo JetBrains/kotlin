@@ -412,63 +412,63 @@ class ArraysTest {
         expect(-4, { intArrayOf(2, 3, -4).maxWith(compareBy { it*it }) })
     }
 
-    @Test fun minBy() {
-        expect(null, { arrayOf<Int>().minBy { it } })
-        expect(1, { arrayOf(1).minBy { it } })
-        expect(3, { arrayOf(2, 3).minBy { -it } })
-        expect('a', { arrayOf('a', 'b').minBy { "x$it" } })
-        expect("b", { arrayOf("b", "abc").minBy { it.length } })
+    @Test fun minByOrNull() {
+        expect(null, { arrayOf<Int>().minByOrNull { it } })
+        expect(1, { arrayOf(1).minByOrNull { it } })
+        expect(3, { arrayOf(2, 3).minByOrNull { -it } })
+        expect('a', { arrayOf('a', 'b').minByOrNull { "x$it" } })
+        expect("b", { arrayOf("b", "abc").minByOrNull { it.length } })
     }
 
-    @Test fun minByInPrimitiveArrays() {
-        expect(null, { intArrayOf().minBy { it } })
-        expect(1, { intArrayOf(1).minBy { it } })
-        expect(3, { intArrayOf(2, 3).minBy { -it } })
-        expect(2000000000000, { longArrayOf(3000000000000, 2000000000000).minBy { it + 1 } })
-        expect(1, { byteArrayOf(1, 3, 2).minBy { it * it } })
-        expect(3, { shortArrayOf(3, 2).minBy { "a" } })
-        expect(2.0F, { floatArrayOf(3.0F, 2.0F).minBy { it.toString() } })
-        expect(2.0, { doubleArrayOf(2.0, 3.0).minBy { it * it } })
+    @Test fun minByOrNullInPrimitiveArrays() {
+        expect(null, { intArrayOf().minByOrNull { it } })
+        expect(1, { intArrayOf(1).minByOrNull { it } })
+        expect(3, { intArrayOf(2, 3).minByOrNull { -it } })
+        expect(2000000000000, { longArrayOf(3000000000000, 2000000000000).minByOrNull { it + 1 } })
+        expect(1, { byteArrayOf(1, 3, 2).minByOrNull { it * it } })
+        expect(3, { shortArrayOf(3, 2).minByOrNull { "a" } })
+        expect(2.0F, { floatArrayOf(3.0F, 2.0F).minByOrNull { it.toString() } })
+        expect(2.0, { doubleArrayOf(2.0, 3.0).minByOrNull { it * it } })
     }
 
-    @Test fun maxBy() {
-        expect(null, { arrayOf<Int>().maxBy { it } })
-        expect(1, { arrayOf(1).maxBy { it } })
-        expect(2, { arrayOf(2, 3).maxBy { -it } })
-        expect('b', { arrayOf('a', 'b').maxBy { "x$it" } })
-        expect("abc", { arrayOf("b", "abc").maxBy { it.length } })
+    @Test fun maxByOrNull() {
+        expect(null, { arrayOf<Int>().maxByOrNull { it } })
+        expect(1, { arrayOf(1).maxByOrNull { it } })
+        expect(2, { arrayOf(2, 3).maxByOrNull { -it } })
+        expect('b', { arrayOf('a', 'b').maxByOrNull { "x$it" } })
+        expect("abc", { arrayOf("b", "abc").maxByOrNull { it.length } })
     }
 
-    @Test fun maxByInPrimitiveArrays() {
-        expect(null, { intArrayOf().maxBy { it } })
-        expect(1, { intArrayOf(1).maxBy { it } })
-        expect(2, { intArrayOf(2, 3).maxBy { -it } })
-        expect(3000000000000, { longArrayOf(3000000000000, 2000000000000).maxBy { it + 1 } })
-        expect(3, { byteArrayOf(1, 3, 2).maxBy { it * it } })
-        expect(3, { shortArrayOf(3, 2).maxBy { "a" } })
-        expect(3.0F, { floatArrayOf(3.0F, 2.0F).maxBy { it.toString() } })
-        expect(3.0, { doubleArrayOf(2.0, 3.0).maxBy { it * it } })
+    @Test fun maxByOrNullInPrimitiveArrays() {
+        expect(null, { intArrayOf().maxByOrNull { it } })
+        expect(1, { intArrayOf(1).maxByOrNull { it } })
+        expect(2, { intArrayOf(2, 3).maxByOrNull { -it } })
+        expect(3000000000000, { longArrayOf(3000000000000, 2000000000000).maxByOrNull { it + 1 } })
+        expect(3, { byteArrayOf(1, 3, 2).maxByOrNull { it * it } })
+        expect(3, { shortArrayOf(3, 2).maxByOrNull { "a" } })
+        expect(3.0F, { floatArrayOf(3.0F, 2.0F).maxByOrNull { it.toString() } })
+        expect(3.0, { doubleArrayOf(2.0, 3.0).maxByOrNull { it * it } })
     }
 
     @Test fun minIndex() {
         val a = intArrayOf(1, 7, 9, -42, 54, 93)
-        expect(3, { a.indices.minBy { a[it] } })
+        expect(3, { a.indices.minByOrNull { a[it] } })
     }
 
     @Test fun maxIndex() {
         val a = intArrayOf(1, 7, 9, 239, 54, 93)
-        expect(3, { a.indices.maxBy { a[it] } })
+        expect(3, { a.indices.maxByOrNull { a[it] } })
     }
 
     @Test fun minByEvaluateOnce() {
         var c = 0
-        expect(1, { arrayOf(5, 4, 3, 2, 1).minBy { c++; it * it } })
+        expect(1, { arrayOf(5, 4, 3, 2, 1).minByOrNull { c++; it * it } })
         assertEquals(5, c)
     }
 
     @Test fun maxByEvaluateOnce() {
         var c = 0
-        expect(5, { arrayOf(5, 4, 3, 2, 1).maxBy { c++; it * it } })
+        expect(5, { arrayOf(5, 4, 3, 2, 1).maxByOrNull { c++; it * it } })
         assertEquals(5, c)
     }
 

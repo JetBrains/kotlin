@@ -378,58 +378,74 @@ object Aggregates : TemplateGroupBase() {
                 yield(def(op, nullable))
     }
 
-    val f_minBy = fn("minBy(selector: (T) -> R)") {
-        includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
-    } builder {
-        inline()
-        specialFor(ArraysOfUnsigned) { inlineOnly() }
+    val f_minMaxBy = sequence {
+        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+            fn("$op$orNull(selector: (T) -> R)") {
+                includeDefault()
+                include(Maps, CharSequences, ArraysOfUnsigned)
+            } builder {
+                inline()
+                specialFor(ArraysOfUnsigned) { inlineOnly() }
+                specialFor(Maps) { if (op == "maxBy" || nullable) inlineOnly() }
+                typeParam("R : Comparable<R>")
+                returns("T?")
 
-        doc { "Returns the first ${f.element} yielding the smallest value of the given function or `null` if there are no ${f.element.pluralize()}." }
-        sample("samples.collections.Collections.Aggregates.minBy")
-        typeParam("R : Comparable<R>")
-        returns("T?")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
-
-            var minElem = iterator.next()
-            if (!iterator.hasNext()) return minElem
-            var minValue = selector(minElem)
-            do {
-                val e = iterator.next()
-                val v = selector(e)
-                if (minValue > v) {
-                    minElem = e
-                    minValue = v
+                if (!nullable) {
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "${op}OrNull(selector)", DeprecationLevel.WARNING))
+                    body { "return ${op}OrNull(selector)" }
+                    return@builder
                 }
-            } while (iterator.hasNext())
-            return minElem
-            """
-        }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            """
-            if (isEmpty()) return null
 
-            var minElem = this[0]
-            val lastIndex = this.lastIndex
-            if (lastIndex == 0) return minElem
-            var minValue = selector(minElem)
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                val v = selector(e)
-                if (minValue > v) {
-                    minElem = e
-                    minValue = v
+                since("1.4")
+
+                doc { "Returns the first ${f.element} yielding the ${if (op == "maxBy") "largest" else "smallest"} value of the given function or `null` if there are no ${f.element.pluralize()}." }
+                sample("samples.collections.Collections.Aggregates.$op")
+
+                val (elem, value, cmp) = if (op == "minBy") Triple("minElem", "minValue", ">") else Triple("maxElem", "maxValue", "<")
+                body {
+                    """
+                    val iterator = iterator()
+                    if (!iterator.hasNext()) return null
+        
+                    var $elem = iterator.next()
+                    if (!iterator.hasNext()) return $elem
+                    var $value = selector($elem)
+                    do {
+                        val e = iterator.next()
+                        val v = selector(e)
+                        if ($value $cmp v) {
+                            $elem = e
+                            $value = v
+                        }
+                    } while (iterator.hasNext())
+                    return $elem
+                    """
                 }
+                body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+                    """
+                    if (isEmpty()) return null
+        
+                    var $elem = this[0]
+                    val lastIndex = this.lastIndex
+                    if (lastIndex == 0) return $elem
+                    var $value = selector($elem)
+                    for (i in 1..lastIndex) {
+                        val e = this[i]
+                        val v = selector(e)
+                        if ($value $cmp v) {
+                            $elem = e
+                            $value = v
+                        }
+                    }
+                    return $elem
+                    """
+                }
+                body(Maps) { "return entries.$op$orNull(selector)" }
             }
-            return minElem
-            """
-        }
-        body(Maps) {
-            "return entries.minBy(selector)"
-        }
+
+        for (op in listOf("minBy", "maxBy"))
+            for (nullable in listOf(false, true))
+                yield(def(op, nullable))
     }
 
     val f_minWith = fn("minWith(comparator: Comparator<in T>)") {
@@ -463,61 +479,6 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         body(Maps) { "return entries.minWith(comparator)" }
-    }
-
-    val f_maxBy = fn("maxBy(selector: (T) -> R)") {
-        includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
-    } builder {
-        inline()
-        specialFor(ArraysOfUnsigned) { inlineOnly() }
-
-        doc { "Returns the first ${f.element} yielding the largest value of the given function or `null` if there are no ${f.element.pluralize()}." }
-        sample("samples.collections.Collections.Aggregates.maxBy")
-        typeParam("R : Comparable<R>")
-        returns("T?")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
-
-            var maxElem = iterator.next()
-            if (!iterator.hasNext()) return maxElem
-            var maxValue = selector(maxElem)
-            do {
-                val e = iterator.next()
-                val v = selector(e)
-                if (maxValue < v) {
-                    maxElem = e
-                    maxValue = v
-                }
-            } while (iterator.hasNext())
-            return maxElem
-            """
-        }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            """
-            if (isEmpty()) return null
-
-            var maxElem = this[0]
-            val lastIndex = this.lastIndex
-            if (lastIndex == 0) return maxElem
-            var maxValue = selector(maxElem)
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                val v = selector(e)
-                if (maxValue < v) {
-                    maxElem = e
-                    maxValue = v
-                }
-            }
-            return maxElem
-            """
-        }
-        specialFor(Maps) {
-            inlineOnly()
-            body { "return entries.maxBy(selector)" }
-        }
     }
 
     val f_maxWith = fn("maxWith(comparator: Comparator<in T>)") {

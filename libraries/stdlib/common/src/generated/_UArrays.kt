@@ -5730,65 +5730,47 @@ public fun UShortArray.max(): UShort? {
     return maxOrNull()
 }
 
-/**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
- * 
- * @sample samples.collections.Collections.Aggregates.maxBy
- */
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R : Comparable<R>> UIntArray.maxBy(selector: (UInt) -> R): UInt? {
-    if (isEmpty()) return null
-    var maxElem = this[0]
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxElem
-    var maxValue = selector(maxElem)
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        val v = selector(e)
-        if (maxValue < v) {
-            maxElem = e
-            maxValue = v
-        }
-    }
-    return maxElem
+    return maxByOrNull(selector)
 }
 
-/**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
- * 
- * @sample samples.collections.Collections.Aggregates.maxBy
- */
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R : Comparable<R>> ULongArray.maxBy(selector: (ULong) -> R): ULong? {
-    if (isEmpty()) return null
-    var maxElem = this[0]
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return maxElem
-    var maxValue = selector(maxElem)
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        val v = selector(e)
-        if (maxValue < v) {
-            maxElem = e
-            maxValue = v
-        }
-    }
-    return maxElem
+    return maxByOrNull(selector)
 }
 
-/**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
- * 
- * @sample samples.collections.Collections.Aggregates.maxBy
- */
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): UByte? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UShortArray.maxBy(selector: (UShort) -> R): UShort? {
+    return maxByOrNull(selector)
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UIntArray.maxByOrNull(selector: (UInt) -> R): UInt? {
     if (isEmpty()) return null
     var maxElem = this[0]
     val lastIndex = this.lastIndex
@@ -5810,10 +5792,60 @@ public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): 
  * 
  * @sample samples.collections.Collections.Aggregates.maxBy
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun <R : Comparable<R>> UShortArray.maxBy(selector: (UShort) -> R): UShort? {
+public inline fun <R : Comparable<R>> ULongArray.maxByOrNull(selector: (ULong) -> R): ULong? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UByteArray.maxByOrNull(selector: (UByte) -> R): UByte? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UShortArray.maxByOrNull(selector: (UShort) -> R): UShort? {
     if (isEmpty()) return null
     var maxElem = this[0]
     val lastIndex = this.lastIndex
@@ -6682,65 +6714,47 @@ public fun UShortArray.min(): UShort? {
     return minOrNull()
 }
 
-/**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
- * 
- * @sample samples.collections.Collections.Aggregates.minBy
- */
+@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R : Comparable<R>> UIntArray.minBy(selector: (UInt) -> R): UInt? {
-    if (isEmpty()) return null
-    var minElem = this[0]
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minElem
-    var minValue = selector(minElem)
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        val v = selector(e)
-        if (minValue > v) {
-            minElem = e
-            minValue = v
-        }
-    }
-    return minElem
+    return minByOrNull(selector)
 }
 
-/**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
- * 
- * @sample samples.collections.Collections.Aggregates.minBy
- */
+@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R : Comparable<R>> ULongArray.minBy(selector: (ULong) -> R): ULong? {
-    if (isEmpty()) return null
-    var minElem = this[0]
-    val lastIndex = this.lastIndex
-    if (lastIndex == 0) return minElem
-    var minValue = selector(minElem)
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        val v = selector(e)
-        if (minValue > v) {
-            minElem = e
-            minValue = v
-        }
-    }
-    return minElem
+    return minByOrNull(selector)
 }
 
-/**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
- * 
- * @sample samples.collections.Collections.Aggregates.minBy
- */
+@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): UByte? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UShortArray.minBy(selector: (UShort) -> R): UShort? {
+    return minByOrNull(selector)
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UIntArray.minByOrNull(selector: (UInt) -> R): UInt? {
     if (isEmpty()) return null
     var minElem = this[0]
     val lastIndex = this.lastIndex
@@ -6762,10 +6776,60 @@ public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): 
  * 
  * @sample samples.collections.Collections.Aggregates.minBy
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun <R : Comparable<R>> UShortArray.minBy(selector: (UShort) -> R): UShort? {
+public inline fun <R : Comparable<R>> ULongArray.minByOrNull(selector: (ULong) -> R): ULong? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UByteArray.minByOrNull(selector: (UByte) -> R): UByte? {
+    if (isEmpty()) return null
+    var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UShortArray.minByOrNull(selector: (UShort) -> R): UShort? {
     if (isEmpty()) return null
     var minElem = this[0]
     val lastIndex = this.lastIndex
