@@ -99,7 +99,8 @@ object JvmResolveUtil {
     fun analyze(files: Collection<KtFile>, environment: KotlinCoreEnvironment, configuration: CompilerConfiguration): AnalysisResult =
         analyze(environment.project, files, configuration, environment::createPackagePartProvider)
 
-    private fun analyze(
+    @JvmStatic
+    fun analyze(
         project: Project,
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
