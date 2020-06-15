@@ -52,9 +52,10 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     @Suppress("UNCHECKED_CAST")
     override val compileKotlinTask: KotlinCompile<T>
-        get() = (target.project.tasks.getByName(compileKotlinTaskName) as KotlinCompile<T>)
+        get() = compileKotlinTaskProvider.get()
 
-    val compileKotlinTaskHolder: TaskProvider<KotlinCompile<T>>
+    @Suppress("UNCHECKED_CAST")
+    override val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<T>>
         get() = target.project.locateTask(compileKotlinTaskName)!!
 
     // Don't declare this property in the constructor to avoid NPE
