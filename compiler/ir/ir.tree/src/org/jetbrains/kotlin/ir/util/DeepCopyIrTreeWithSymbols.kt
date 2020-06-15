@@ -245,12 +245,8 @@ open class DeepCopyIrTreeWithSymbols(
             isFinal = declaration.isFinal,
             isExternal = declaration.isExternal,
             isStatic = declaration.isStatic,
-            isFakeOverride = declaration.isFakeOverride
         ).apply {
             transformAnnotations(declaration)
-            overriddenSymbols = declaration.overriddenSymbols.map {
-                symbolRemapper.getReferencedField(it)
-            }
             initializer = declaration.initializer?.transform()
         }
 

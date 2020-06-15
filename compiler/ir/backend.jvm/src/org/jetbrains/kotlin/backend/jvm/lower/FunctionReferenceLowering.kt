@@ -191,17 +191,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
         }
 
-        private val receiverFieldFromSuper = context.ir.symbols.functionReferenceReceiverField.owner
-
-        val fakeOverrideReceiverField = functionReferenceClass.addField {
-            name = receiverFieldFromSuper.name
-            isFakeOverride = true
-            origin = IrDeclarationOrigin.FAKE_OVERRIDE
-            type = receiverFieldFromSuper.type
-            isFinal = receiverFieldFromSuper.isFinal
-            isStatic = receiverFieldFromSuper.isStatic
-            visibility = receiverFieldFromSuper.visibility
-        }
+        private val receiverField = context.ir.symbols.functionReferenceReceiverField.owner
 
         fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             irBlock(irFunctionReference.startOffset, irFunctionReference.endOffset) {
@@ -418,7 +408,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                                 // will put it into a field.
                                 if (samSuperType == null)
                                     irImplicitCast(
-                                        irGetField(irGet(dispatchReceiverParameter!!), fakeOverrideReceiverField),
+                                        irGetField(irGet(dispatchReceiverParameter!!),
+                                                   this@FunctionReferenceBuilder.receiverField
+                                        ),
                                         boundReceiver.second.type
                                     )
                                 else

@@ -132,7 +132,7 @@ FILE fqName:<root> fileName:/kt16904.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.J]'
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD FAKE_OVERRIDE name:field type:kotlin.Int visibility:public [fake_override]' type=kotlin.Unit origin=EQ
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:field type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=null
           value: CONST Int type=kotlin.Int value=42
     PROPERTY FAKE_OVERRIDE name:field visibility:public modality:FINAL [fake_override,var]

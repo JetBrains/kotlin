@@ -199,6 +199,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/javaExtensionPropertyIntrinsic.kt");
     }
 
+    @TestMetadata("javaFields.kt")
+    public void testJavaFields() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/javaFields.kt");
+    }
+
+    @TestMetadata("javaFieldsWithIntersectionTypes.kt")
+    public void testJavaFieldsWithIntersectionTypes() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/javaFieldsWithIntersectionTypes.kt");
+    }
+
     @TestMetadata("javaStatics.kt")
     public void testJavaStatics() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/javaStatics.kt");

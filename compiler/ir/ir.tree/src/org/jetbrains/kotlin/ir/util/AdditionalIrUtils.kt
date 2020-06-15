@@ -78,18 +78,6 @@ fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
     return false
 }
 
-fun IrField.overrides(other: IrField): Boolean {
-    if (this == other) return true
-
-    this.overriddenSymbols.forEach {
-        if (it.owner.overrides(other)) {
-            return true
-        }
-    }
-
-    return false
-}
-
 private val IrConstructorCall.annotationClass
     get() = this.symbol.owner.constructedClass
 

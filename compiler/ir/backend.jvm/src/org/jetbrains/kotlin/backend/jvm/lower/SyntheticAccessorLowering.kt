@@ -160,10 +160,9 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 val symbol = expression.symbol
                 val parent =
                     symbol.owner.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: symbol.owner.parent) as IrClass
-                val symbolToAccess = symbol.owner.findDescendantIn(parent)?.symbol ?: symbol
                 modifyGetterExpression(
                     expression,
-                    getterMap.getOrPut(Pair(symbolToAccess, parent)) { makeGetterAccessorSymbol(symbolToAccess, parent) }
+                    getterMap.getOrPut(Pair(symbol, parent)) { makeGetterAccessorSymbol(symbol, parent) }
                 )
             } else {
                 expression
@@ -178,21 +177,15 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 val symbol = expression.symbol
                 val parent =
                     symbol.owner.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: symbol.owner.parent) as IrClass
-                val symbolToAccess = symbol.owner.findDescendantIn(parent)?.symbol ?: symbol
                 modifySetterExpression(
                     expression,
-                    setterMap.getOrPut(Pair(symbolToAccess, parent)) { makeSetterAccessorSymbol(symbolToAccess, parent) }
+                    setterMap.getOrPut(Pair(symbol, parent)) { makeSetterAccessorSymbol(symbol, parent) }
                 )
             } else {
                 expression
             }
         )
     }
-
-    private fun IrField.findDescendantIn(derivedClass: IrClass): IrField? =
-        derivedClass.fields.singleOrNull { candidate ->
-            candidate.name == this.name && candidate.overrides(this)
-        }
 
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         if (declaration.isOrShouldBeHidden) {

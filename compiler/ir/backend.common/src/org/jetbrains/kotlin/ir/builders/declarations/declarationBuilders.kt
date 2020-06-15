@@ -44,7 +44,7 @@ fun IrFieldBuilder.buildField(): IrField {
     return IrFieldImpl(
         startOffset, endOffset, origin,
         IrFieldSymbolImpl(wrappedDescriptor),
-        name, type, visibility, isFinal, isExternal, isStatic, isFakeOverride
+        name, type, visibility, isFinal, isExternal, isStatic,
     ).also {
         it.metadata = metadata
         wrappedDescriptor.bind(it)

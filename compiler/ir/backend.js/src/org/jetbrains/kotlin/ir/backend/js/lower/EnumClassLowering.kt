@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
@@ -70,8 +69,7 @@ class EnumUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
         return entry.run {
             IrFieldImpl(
                 startOffset, endOffset, origin, symbol, name, irClass.defaultType, Visibilities.PUBLIC,
-                isFinal = false, isExternal = true, isStatic = true,
-                isFakeOverride = entry.isFakeOverride
+                isFinal = false, isExternal = true, isStatic = true
             ).also {
                 descriptor.bind(it)
                 it.parent = irClass

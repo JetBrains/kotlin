@@ -445,7 +445,6 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "final".takeIf { isFinal },
             "external".takeIf { isExternal },
             "static".takeIf { isStatic },
-            "fake_override".takeIf { isFakeOverride }
         )
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =

@@ -145,9 +145,6 @@ class DumpIrTreeVisitor(
     override fun visitField(declaration: IrField, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
-            declaration.overriddenSymbols.dumpItems("overridden") {
-                it.dump()
-            }
             declaration.initializer?.accept(this, "")
         }
     }

@@ -15,7 +15,6 @@ val IrDeclaration.isFakeOverride: Boolean
     get() = when (this) {
         is IrSimpleFunction -> isFakeOverride
         is IrProperty -> isFakeOverride
-        is IrField -> isFakeOverride
         else -> false
     }
 
@@ -31,15 +30,6 @@ val IrFunction.target: IrFunction get() = when (this) {
     else -> error(this)
 }
 
-fun IrField.resolveFakeOverride(): IrField? {
-    var toVisit = setOf(this)
-    val nonOverridden = mutableSetOf<IrField>()
-    while (toVisit.isNotEmpty()) {
-        nonOverridden += toVisit.filter { it.overriddenSymbols.isEmpty() }
-        toVisit = toVisit.flatMap { it.overriddenSymbols }.map { it.owner }.toSet()
-    }
-    return nonOverridden.singleOrNull()
-}
 fun IrSimpleFunction.collectRealOverrides(toSkip: (IrSimpleFunction) -> Boolean = { false }): Set<IrSimpleFunction> {
     if (isReal && !toSkip(this)) return setOf(this)
 

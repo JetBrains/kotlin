@@ -991,8 +991,7 @@ open class WrappedFieldDescriptor(
 
     override fun hasSynthesizedParameterNames() = false
 
-    override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> =
-        owner.overriddenSymbols.map { it.descriptor }.toMutableList()
+    override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
 
     override fun copy(
         newOwner: DeclarationDescriptor?,

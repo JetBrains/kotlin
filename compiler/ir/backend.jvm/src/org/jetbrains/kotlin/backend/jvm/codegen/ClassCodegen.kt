@@ -229,8 +229,6 @@ abstract class ClassCodegen protected constructor(
     protected abstract fun bindFieldMetadata(field: IrField, fieldType: Type, fieldName: String)
 
     private fun generateField(field: IrField) {
-        if (field.isFakeOverride) return
-
         val fieldType = typeMapper.mapType(field)
         val fieldSignature =
             if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null

@@ -651,7 +651,6 @@ class Fir2IrDeclarationStorage(
         name: Name,
         isFinal: Boolean,
         firInitializerExpression: FirExpression?,
-        thisReceiverOwner: IrClass?,
         type: IrType? = null
     ): IrField {
         val inferredType = type ?: firInitializerExpression!!.typeRef.toIrType()
@@ -664,12 +663,8 @@ class Fir2IrDeclarationStorage(
                 visibility, isFinal = isFinal,
                 isExternal = property.isExternal,
                 isStatic = property.isStatic || parent !is IrClass,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
             ).also {
                 it.correspondingPropertySymbol = this@createBackingField.symbol
-                if (!isFakeOverride && thisReceiverOwner != null) {
-                    it.populateOverriddenSymbols(thisReceiverOwner)
-                }
             }.apply {
                 metadata = FirMetadataSource.Property(property)
                 convertAnnotationsFromLibrary(property)
@@ -738,7 +733,7 @@ class Fir2IrDeclarationStorage(
                             backingField = createBackingField(
                                 property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
                                 property.fieldVisibility, property.name, property.isVal, initializer,
-                                thisReceiverOwner, type
+                                type
                             ).also { field ->
                                 if (initializer is FirConstExpression<*>) {
                                     // TODO: Normally we shouldn't have error type here
@@ -749,8 +744,7 @@ class Fir2IrDeclarationStorage(
                         } else if (delegate != null) {
                             backingField = createBackingField(
                                 property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                                property.fieldVisibility, Name.identifier("${property.name}\$delegate"), true, delegate,
-                                thisReceiverOwner
+                                property.fieldVisibility, Name.identifier("${property.name}\$delegate"), true, delegate
                             )
                         }
                         if (irParent != null) {
@@ -803,8 +797,7 @@ class Fir2IrDeclarationStorage(
                     field.name, type, field.visibility,
                     isFinal = field.modality == Modality.FINAL,
                     isExternal = false,
-                    isStatic = field.isStatic,
-                    isFakeOverride = false
+                    isStatic = field.isStatic
                 ).apply {
                     metadata = FirMetadataSource.Variable(field)
                     descriptor.bind(this)
@@ -1025,13 +1018,6 @@ class Fir2IrDeclarationStorage(
                 if (it.isNotEmpty()) {
                     overriddenSymbols = it
                 }
-            }
-    }
-
-    private fun IrField.populateOverriddenSymbols(thisReceiverOwner: IrClass) {
-        thisReceiverOwner.findMatchingOverriddenSymbolsFromSupertypes(components.irBuiltIns, this)
-            .filterIsInstance<IrFieldSymbol>().singleOrNull()?.let {
-                overriddenSymbols = listOf(it)
             }
     }
 

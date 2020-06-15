@@ -299,17 +299,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     referenceClass.addOverride(getSignature) { computeSignatureString(expression) }
                 }
 
-                val receiverField = referenceClass.addField {
-                    val backingFieldFromSuper = superClass.properties.single { it.name.asString() == "receiver" }.backingField!!
-                    name = backingFieldFromSuper.name
-                    isFakeOverride = true
-                    origin = IrDeclarationOrigin.FAKE_OVERRIDE
-                    type = backingFieldFromSuper.type
-                    isFinal = backingFieldFromSuper.isFinal
-                    isStatic = backingFieldFromSuper.isStatic
-                    visibility = backingFieldFromSuper.visibility
-                }
-
+                val backingField = superClass.properties.single { it.name.asString() == "receiver" }.backingField!!
                 val get = superClass.functions.find { it.name.asString() == "get" }
                 val set = superClass.functions.find { it.name.asString() == "set" }
                 val invoke = superClass.functions.find { it.name.asString() == "invoke" }
@@ -321,13 +311,13 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                         call.copyTypeArgumentsFrom(expression)
                         call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
                             if (expression.dispatchReceiver != null)
-                                irImplicitCast(irGetField(irGet(arguments[0]), receiverField), it.type)
+                                irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type)
                             else
                                 irImplicitCast(irGet(arguments[index++]), it.type)
                         }
                         call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
                             if (expression.extensionReceiver != null)
-                                irImplicitCast(irGetField(irGet(arguments[0]), receiverField), it.type)
+                                irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type)
                             else
                                 irImplicitCast(irGet(arguments[index++]), it.type)
                         }
@@ -354,7 +344,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                         field.isStatic ->
                             null
                         expression.dispatchReceiver != null ->
-                            irImplicitCast(irGetField(irGet(arguments[0]), receiverField), field.parentAsClass.defaultType)
+                            irImplicitCast(irGetField(irGet(arguments[0]), backingField), field.parentAsClass.defaultType)
                         else ->
                             irImplicitCast(irGet(arguments[1]), field.parentAsClass.defaultType)
                     }

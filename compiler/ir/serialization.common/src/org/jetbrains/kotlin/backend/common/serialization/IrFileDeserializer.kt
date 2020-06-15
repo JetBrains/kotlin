@@ -1234,7 +1234,6 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
                     flags.isFinal,
                     flags.isExternal,
                     flags.isStatic,
-                    flags.isFakeOverride
                 )
             }.usingParent {
                 if (proto.hasInitializer())

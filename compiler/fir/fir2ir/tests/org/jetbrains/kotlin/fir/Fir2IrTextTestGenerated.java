@@ -1012,6 +1012,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/javaSyntheticPropertyAccess.kt");
         }
 
+        @TestMetadata("jvmFieldReferenceWithIntersectionTypes.kt")
+        public void testJvmFieldReferenceWithIntersectionTypes() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/jvmFieldReferenceWithIntersectionTypes.kt");
+        }
+
         @TestMetadata("jvmInstanceFieldReference.kt")
         public void testJvmInstanceFieldReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/jvmInstanceFieldReference.kt");

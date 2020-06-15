@@ -210,14 +210,6 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             }
         }
 
-        override fun visitField(declaration: IrField) {
-            visitDeclaration(declaration)
-
-            require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
-            }
-        }
-
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitFunction(declaration: IrFunction) {
             visitDeclaration(declaration)

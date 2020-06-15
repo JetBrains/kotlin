@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrField :
-    IrSymbolDeclaration<IrFieldSymbol>, IrOverridableDeclaration<IrFieldSymbol>,
+    IrSymbolDeclaration<IrFieldSymbol>,
     IrDeclarationWithName, IrDeclarationWithVisibility, IrDeclarationParent {
 
     @ObsoleteDescriptorBasedAPI
@@ -23,7 +23,6 @@ interface IrField :
     val isFinal: Boolean
     val isExternal: Boolean
     val isStatic: Boolean
-    val isFakeOverride: Boolean
 
     var initializer: IrExpressionBody?
 

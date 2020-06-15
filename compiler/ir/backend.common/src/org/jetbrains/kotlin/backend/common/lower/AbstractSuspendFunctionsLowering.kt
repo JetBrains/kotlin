@@ -681,8 +681,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             Visibilities.PRIVATE,
             isFinal = !isMutable,
             isExternal = false,
-            isStatic = false,
-            isFakeOverride = false
+            isStatic = false
         ).also {
             descriptor.bind(it)
             it.parent = this

@@ -173,20 +173,14 @@ class DeclarationStubGenerator(
             return referenced.owner
         }
 
-        val origin =
-            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
-                IrDeclarationOrigin.FAKE_OVERRIDE
-            else computeOrigin(descriptor)
-
-        return symbolTable.declareField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original, descriptor.type.toIrType()) {
+        return symbolTable.declareField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor), descriptor.original, descriptor.type.toIrType()) {
             IrLazyField(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor),
                 it, descriptor,
                 descriptor.name, descriptor.visibility,
                 isFinal = !descriptor.isVar,
                 isExternal = descriptor.isEffectivelyExternal(),
                 isStatic = (descriptor.dispatchReceiverParameter == null),
-                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
                 stubGenerator = this, typeTranslator = typeTranslator
             )
         }
