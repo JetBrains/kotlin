@@ -79,8 +79,11 @@ class KotlinIdeResolutionAnchorService(
 
     override fun getResolutionAnchor(moduleDescriptor: ModuleDescriptor): ModuleDescriptor? {
         if (!project.libraryToSourceAnalysisEnabled) return null
+
         val moduleInfo = moduleDescriptor.moduleInfo ?: return null
-        val mapped = moduleToAnchor[moduleInfo] ?: return null
+        val keyModuleInfo = if (moduleInfo is SourceForBinaryModuleInfo) moduleInfo.binariesModuleInfo else moduleInfo
+        val mapped = moduleToAnchor[keyModuleInfo] ?: return null
+
         return KotlinCacheService.getInstance(project)
             .getResolutionFacadeByModuleInfo(mapped, mapped.platform)
             ?.moduleDescriptor
