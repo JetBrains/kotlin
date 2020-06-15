@@ -179,14 +179,21 @@ public inline fun <K, V> Map<out K, V>.forEach(action: (Map.Entry<K, V>) -> Unit
     for (element in this) action(element)
 }
 
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+    return maxByOrNull(selector)
+}
+
 /**
  * Returns the first entry yielding the largest value of the given function or `null` if there are no entries.
  * 
  * @sample samples.collections.Collections.Aggregates.maxBy
  */
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
-    return entries.maxBy(selector)
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxByOrNull(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+    return entries.maxByOrNull(selector)
 }
 
 /**
@@ -309,13 +316,20 @@ public inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Ent
     return entries.maxWith(comparator)
 }
 
+@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+    return minByOrNull(selector)
+}
+
 /**
  * Returns the first entry yielding the smallest value of the given function or `null` if there are no entries.
  * 
  * @sample samples.collections.Collections.Aggregates.minBy
  */
-public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
-    return entries.minBy(selector)
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minByOrNull(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+    return entries.minByOrNull(selector)
 }
 
 /**

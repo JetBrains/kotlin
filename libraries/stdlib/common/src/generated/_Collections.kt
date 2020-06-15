@@ -1736,12 +1736,18 @@ public fun <T : Comparable<T>> Iterable<T>.max(): T? {
     return maxOrNull()
 }
 
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T? {
+    return maxByOrNull(selector)
+}
+
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.maxBy
  */
-public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T? {
+@SinceKotlin("1.4")
+public inline fun <T, R : Comparable<R>> Iterable<T>.maxByOrNull(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxElem = iterator.next()
@@ -2014,12 +2020,18 @@ public fun <T : Comparable<T>> Iterable<T>.min(): T? {
     return minOrNull()
 }
 
+@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T? {
+    return minByOrNull(selector)
+}
+
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  * 
  * @sample samples.collections.Collections.Aggregates.minBy
  */
-public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T? {
+@SinceKotlin("1.4")
+public inline fun <T, R : Comparable<R>> Iterable<T>.minByOrNull(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minElem = iterator.next()

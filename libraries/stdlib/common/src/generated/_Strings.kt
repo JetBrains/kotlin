@@ -1093,12 +1093,18 @@ public fun CharSequence.max(): Char? {
     return maxOrNull()
 }
 
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char? {
+    return maxByOrNull(selector)
+}
+
 /**
  * Returns the first character yielding the largest value of the given function or `null` if there are no characters.
  * 
  * @sample samples.collections.Collections.Aggregates.maxBy
  */
-public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char? {
+@SinceKotlin("1.4")
+public inline fun <R : Comparable<R>> CharSequence.maxByOrNull(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var maxElem = this[0]
     val lastIndex = this.lastIndex
@@ -1315,12 +1321,18 @@ public fun CharSequence.min(): Char? {
     return minOrNull()
 }
 
+@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char? {
+    return minByOrNull(selector)
+}
+
 /**
  * Returns the first character yielding the smallest value of the given function or `null` if there are no characters.
  * 
  * @sample samples.collections.Collections.Aggregates.minBy
  */
-public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char? {
+@SinceKotlin("1.4")
+public inline fun <R : Comparable<R>> CharSequence.minByOrNull(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var minElem = this[0]
     val lastIndex = this.lastIndex

@@ -483,35 +483,35 @@ class UnsignedArraysTest {
     }
 
     @Test
-    fun minBy() {
-        expect(null) { arrayOf<UByte>().minBy { it * it } }
-        expect(1u) { arrayOf<UShort>(1).minBy { it * it } }
-        expect(2u) { arrayOf<UInt>(2, 3).minBy { it * it } }
-        expect(3uL) { arrayOf<ULong>(3, 2).minBy { it - 3 } }
+    fun minByOrNull() {
+        expect(null) { arrayOf<UByte>().minByOrNull { it * it } }
+        expect(1u) { arrayOf<UShort>(1).minByOrNull { it * it } }
+        expect(2u) { arrayOf<UInt>(2, 3).minByOrNull { it * it } }
+        expect(3uL) { arrayOf<ULong>(3, 2).minByOrNull { it - 3 } }
     }
 
     @Test
-    fun minByInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().minBy { it * it } }
-        expect(1u) { ushortArrayOf(1).minBy { it * it } }
-        expect(2u) { uintArrayOf(2, 3).minBy { it * it } }
-        expect(3uL) { ulongArrayOf(3, 2).minBy { it - 3 } }
+    fun minByOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().minByOrNull { it * it } }
+        expect(1u) { ushortArrayOf(1).minByOrNull { it * it } }
+        expect(2u) { uintArrayOf(2, 3).minByOrNull { it * it } }
+        expect(3uL) { ulongArrayOf(3, 2).minByOrNull { it - 3 } }
     }
 
     @Test
-    fun maxBy() {
-        expect(null) { arrayOf<UByte>().maxBy { it + 1 } }
-        expect(1u) { arrayOf<UShort>(1).maxBy { it + 1 } }
-        expect(2u) { arrayOf<UInt>(2, 3).maxBy { it - 3 } }
-        expect(3uL) { arrayOf<ULong>(3, 2).maxBy { it + 1 } }
+    fun maxByOrNull() {
+        expect(null) { arrayOf<UByte>().maxByOrNull { it + 1 } }
+        expect(1u) { arrayOf<UShort>(1).maxByOrNull { it + 1 } }
+        expect(2u) { arrayOf<UInt>(2, 3).maxByOrNull { it - 3 } }
+        expect(3uL) { arrayOf<ULong>(3, 2).maxByOrNull { it + 1 } }
     }
 
     @Test
-    fun maxByInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().maxBy { it + 1 } }
-        expect(1u) { ushortArrayOf(1).maxBy { it + 1 } }
-        expect(2u) { uintArrayOf(2, 3).maxBy { it - 3 } }
-        expect(3uL) { ulongArrayOf(3, 2).maxBy { it + 1 } }
+    fun maxByOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().maxByOrNull { it + 1 } }
+        expect(1u) { ushortArrayOf(1).maxByOrNull { it + 1 } }
+        expect(2u) { uintArrayOf(2, 3).maxByOrNull { it - 3 } }
+        expect(3uL) { ulongArrayOf(3, 2).maxByOrNull { it + 1 } }
     }
 
     @Test
@@ -996,7 +996,7 @@ class UnsignedArraysTest {
             ),
             ushortArrayOf(1, 2, 3).withIndex()
         )
-        assertEquals(IndexedValue(1, 2.toUInt()), uintArrayOf(1, 2, 3).withIndex().minBy { it.value % 2 })
+        assertEquals(IndexedValue(1, 2.toUInt()), uintArrayOf(1, 2, 3).withIndex().minByOrNull { it.value % 2 })
         assertIterableContentEquals(listOf(0, 1, 2), ulongArrayOf(1, 2, 3).withIndex().map { it.index })
     }
 

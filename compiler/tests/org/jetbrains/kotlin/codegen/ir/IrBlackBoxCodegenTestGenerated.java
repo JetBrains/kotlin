@@ -1284,9 +1284,9 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/boxingOptimization/kt6842.kt");
         }
 
-        @TestMetadata("maxMinBy.kt")
-        public void testMaxMinBy() throws Exception {
-            runTest("compiler/testData/codegen/box/boxingOptimization/maxMinBy.kt");
+        @TestMetadata("maxMinByOrNull.kt")
+        public void testMaxMinByOrNull() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/maxMinByOrNull.kt");
         }
 
         @TestMetadata("nullCheck.kt")

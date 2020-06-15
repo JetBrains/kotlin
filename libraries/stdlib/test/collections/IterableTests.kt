@@ -396,13 +396,13 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     @Test
     fun maxOrNull() {
         expect("foo") { data.maxOrNull() }
-        expect("bar") { data.maxBy { it.last() } }
+        expect("bar") { data.maxByOrNull { it.last() } }
     }
 
     @Test
     fun minOrNull() {
         expect("bar") { data.minOrNull() }
-        expect("foo") { data.minBy { it.last() } }
+        expect("foo") { data.minByOrNull { it.last() } }
     }
 
     @Test
