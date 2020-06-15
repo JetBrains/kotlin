@@ -95,10 +95,12 @@ object LoadScriptConfigurationNotificationFactory {
             setText(KotlinIdeaCoreBundle.message("notification.text.script.configuration.has.been.changed"))
             createComponentActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.load.script.configuration")) {
                 onClick()
+                file.removeLoadConfigurationNotificationPanel(project)
             }
 
             createComponentActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.enable.auto.reload")) {
                 onClick()
+                file.removeLoadConfigurationNotificationPanel(project)
 
                 val scriptDefinition = file.findScriptDefinition(project) ?: return@createComponentActionLabel
                 KotlinScriptingSettings.getInstance(project).setAutoReloadConfigurations(scriptDefinition, true)
