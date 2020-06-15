@@ -66,6 +66,7 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
 
     override fun runProcessing(elements: List<PsiElement>, converterContext: NewJ2kConverterContext) {
         val ktElements = elements.filterIsInstance<KtElement>()
+        if (ktElements.isEmpty()) return
         val resolutionFacade = runReadAction {
             KotlinCacheService.getInstance(converterContext.project).getResolutionFacade(ktElements)
         }
