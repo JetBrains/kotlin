@@ -243,6 +243,7 @@ run {
     dependsOn(tasksOf(MetadataComparisonTest))
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
+    dependsOn(tasksOf(CoverageTest))
 }
 
 task sanity {
@@ -256,14 +257,13 @@ task sanity {
         task.getDependsOn().every { !platformLibsTasks.contains(it) } &&
         task.name != "library_mismatch" // This test requires the wasm32 stdlib which is unavailable during a sanity run.
     })
-
     dependsOn(tasksOf(FrameworkTest) { task ->
         task.getDependsOn().every { !platformLibsTasks.contains(it) }
     })
     dependsOn(tasksOf(MetadataComparisonTest))
-
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
+    dependsOn(tasksOf(CoverageTest))
 }
 
 // Collect reports in one json.
