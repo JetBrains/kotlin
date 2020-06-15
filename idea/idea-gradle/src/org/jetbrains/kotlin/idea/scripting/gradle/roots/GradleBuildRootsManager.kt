@@ -67,6 +67,16 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     private val updater
         get() = manager.updater
 
+    var enabled: Boolean = true
+        set(value) {
+            if (value != field) {
+                field = value
+                roots.list.toList().forEach {
+                    reloadBuildRoot(it.pathPrefix)
+                }
+            }
+        }
+
     ////////////
     /// ScriptingSupport.Provider implementation:
 
@@ -275,7 +285,8 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     }
 
     private fun loadLinkedRoot(settings: GradleProjectSettings) =
-        tryLoadFromFsCache(settings) ?: createOtherLinkedRoot(settings)
+        if (!enabled) Legacy(settings)
+        else tryLoadFromFsCache(settings) ?: createOtherLinkedRoot(settings)
 
     private fun tryLoadFromFsCache(settings: GradleProjectSettings) =
         tryCreateImportedRoot(settings.externalProjectPath) {
