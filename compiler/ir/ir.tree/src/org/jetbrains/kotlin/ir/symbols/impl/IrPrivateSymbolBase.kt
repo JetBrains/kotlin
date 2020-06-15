@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class IrSymbolBase<out D : DeclarationDescriptor>(override val descriptor: D) : IrSymbol {
+abstract class IrSymbolBase<out D : DeclarationDescriptor>(
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: D
+) : IrSymbol {
     override fun toString(): String {
         if (isBound) return owner.render()
         return "Unbound private symbol ${super.toString()}"
