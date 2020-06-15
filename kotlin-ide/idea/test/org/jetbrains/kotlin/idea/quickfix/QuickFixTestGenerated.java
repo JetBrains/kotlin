@@ -6323,6 +6323,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             public void testPlusAssign() throws Exception {
                 runTest("testData/quickfix/deprecatedSymbolUsage/operatorCalls/plusAssign.kt");
             }
+
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/set.kt");
+            }
         }
 
         @RunWith(JUnit3RunnerWithInners.class)
