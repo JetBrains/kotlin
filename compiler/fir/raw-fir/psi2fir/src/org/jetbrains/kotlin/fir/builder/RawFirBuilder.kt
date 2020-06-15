@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.collections.contains
 
 class RawFirBuilder(
@@ -824,8 +825,8 @@ class RawFirBuilder(
             val receiverType = function.receiverTypeReference.convertSafe<FirTypeRef>()
 
             val labelName: String?
-
-            val functionBuilder = if (function.name == null) {
+            val functionIsAnonymousFunction = function.name == null && !function.parent.let { it is KtFile || it is KtClassBody }
+            val functionBuilder = if (functionIsAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
                     receiverTypeRef = receiverType
                     symbol = FirAnonymousFunctionSymbol()
@@ -836,7 +837,7 @@ class RawFirBuilder(
                 FirSimpleFunctionBuilder().apply {
                     receiverTypeRef = receiverType
                     name = function.nameAsSafeName
-                    labelName = name.identifier
+                    labelName = runIf(!name.isSpecial) { name.identifier }
                     symbol = FirNamedFunctionSymbol(callableIdForName(function.nameAsSafeName, function.isLocal))
                     status = FirDeclarationStatusImpl(
                         if (function.isLocal) Visibilities.LOCAL else function.visibility,

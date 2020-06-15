@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class DeclarationsConverter(
     session: FirSession,
@@ -1187,7 +1188,7 @@ class DeclarationsConverter(
         val parentNode = functionDeclaration.getParent()
         val isLocal = !(parentNode?.tokenType == KT_FILE || parentNode?.tokenType == CLASS_BODY)
         val target: FirFunctionTarget
-        val functionBuilder = if (identifier == null) {
+        val functionBuilder = if (identifier == null && isLocal) {
             target = FirFunctionTarget(labelName = functionDeclaration.getLabelName(), isLambda = false)
             FirAnonymousFunctionBuilder().apply {
                 source = functionDeclaration.toFirSourceElement()
@@ -1197,7 +1198,8 @@ class DeclarationsConverter(
             }
         } else {
             val functionName = identifier.nameAsSafeName()
-            target = FirFunctionTarget(labelName = functionName.identifier, isLambda = false)
+            val labelName = runIf(!functionName.isSpecial) { functionName.identifier }
+            target = FirFunctionTarget(labelName, isLambda = false)
             FirSimpleFunctionBuilder().apply {
                 source = functionDeclaration.toFirSourceElement()
                 receiverTypeRef = receiverType
