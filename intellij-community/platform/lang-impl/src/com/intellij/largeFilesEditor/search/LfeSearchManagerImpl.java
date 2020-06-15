@@ -140,8 +140,8 @@ public class LfeSearchManagerImpl implements LfeSearchManager, CloseSearchTask.C
     showRegexSearchWarningIfNeed();
 
     RangeSearch rangeSearch = rangeSearchCreator.createContent(
-      largeFileEditor.getProject(), largeFileEditor.getVirtualFile(),
-      largeFileEditor.getVirtualFile().getName());
+      largeFileEditor.getProject(), largeFileEditor.getFile(),
+      largeFileEditor.getFile().getName());
     rangeSearch.runNewSearch(searchTaskOptions, fileDataProviderForSearch);
   }
 
@@ -189,7 +189,7 @@ public class LfeSearchManagerImpl implements LfeSearchManager, CloseSearchTask.C
   }
 
   private void showRegexSearchWarningIfNeed() {
-    EditorNotifications.getInstance(largeFileEditor.getProject()).updateNotifications(largeFileEditor.getVirtualFile());
+    EditorNotifications.getInstance(largeFileEditor.getProject()).updateNotifications(largeFileEditor.getFile());
   }
 
   private boolean launchLoopedCloseSearchTaskIfNeeded(SearchTaskOptions normalCloseSearchOptions) {
@@ -467,7 +467,7 @@ public class LfeSearchManagerImpl implements LfeSearchManager, CloseSearchTask.C
     }
 
     RangeSearch rangeSearch = new RangeSearch(
-      getLargeFileEditor().getVirtualFile(), getLargeFileEditor().getProject(),
+      getLargeFileEditor().getFile(), getLargeFileEditor().getProject(),
       new RangeSearchCallback() {
         @Override
         public FileDataProviderForSearch getFileDataProviderForSearch(boolean createIfNotExists, Project project, VirtualFile virtualFile) {

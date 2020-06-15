@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface LargeFileEditor extends FileEditor {
   Key<Object> LARGE_FILE_EDITOR_MARK_KEY = new Key<>("lfe.editorMark");
@@ -30,11 +29,8 @@ public interface LargeFileEditor extends FileEditor {
   Editor getEditor();
 
   @Override
-  @Nullable
-  VirtualFile getFile();
-
   @NotNull
-  VirtualFile getVirtualFile();
+  VirtualFile getFile();
 
   LargeFileEditorAccess createAccessForEncodingWidget();
 

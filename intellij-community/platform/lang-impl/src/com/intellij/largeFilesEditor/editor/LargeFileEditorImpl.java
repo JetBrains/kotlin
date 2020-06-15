@@ -239,15 +239,8 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
     return editorModel.getEditor();
   }
 
-  @Nullable
   @Override
-  public VirtualFile getFile() {
-    return getVirtualFile();
-  }
-
-  @NotNull
-  @Override
-  public VirtualFile getVirtualFile() {
+  public @NotNull VirtualFile getFile() {
     return vFile;
   }
 
@@ -257,7 +250,7 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
       @NotNull
       @Override
       public VirtualFile getVirtualFile() {
-        return LargeFileEditorImpl.this.getVirtualFile();
+        return getFile();
       }
 
       @NotNull
