@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.cgen
 
-import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
+import org.jetbrains.kotlin.backend.common.ir.addFakeOverridesViaIncorrectHeuristic
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
@@ -1318,7 +1318,7 @@ private class ObjCBlockPointerValuePassing(
             +irReturn(callBlock(blockPointer, arguments))
         }
 
-        irClass.addFakeOverrides()
+        irClass.addFakeOverridesViaIncorrectHeuristic()
 
         stubs.addKotlin(irClass)
         return constructor

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
+import org.jetbrains.kotlin.backend.common.ir.addFakeOverridesViaIncorrectHeuristic
 import org.jetbrains.kotlin.backend.common.ir.addSimpleDelegatingConstructor
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
@@ -115,7 +115,7 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
         )
 
         implObject.superTypes += context.irBuiltIns.anyType
-        implObject.addFakeOverrides()
+        implObject.addFakeOverridesViaIncorrectHeuristic()
 
         val itemGetterSymbol = symbols.array.functions.single { it.descriptor.name == Name.identifier("get") }
         val enumEntriesMap = enumClass.declarations

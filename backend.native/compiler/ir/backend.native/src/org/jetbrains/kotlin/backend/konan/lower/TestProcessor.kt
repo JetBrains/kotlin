@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
-import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
-import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
@@ -35,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -529,7 +527,7 @@ internal class TestProcessor (val context: Context) {
             companionGetter?.let { declarations += it }
 
             superTypes += symbols.baseClassSuite.typeWith(listOf(testClassType, testCompanionType))
-            addFakeOverrides()
+            addFakeOverridesViaIncorrectHeuristic()
         }
     }
     //endregion
