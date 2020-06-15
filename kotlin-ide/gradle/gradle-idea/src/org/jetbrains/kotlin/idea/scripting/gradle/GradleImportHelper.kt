@@ -105,3 +105,7 @@ class LoadConfigurationAction : AnAction(
             }
     }
 }
+
+fun getGradleVersion(project: Project, settings: GradleProjectSettings): String {
+    return settings.resolveGradleVersion().version
+}
