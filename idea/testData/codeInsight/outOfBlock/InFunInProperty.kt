@@ -1,4 +1,5 @@
 // OUT_OF_CODE_BLOCK: FALSE
+// ERROR: Expected a value of type () -> ???
 // ERROR: Unresolved reference: a
 
 fun test() {

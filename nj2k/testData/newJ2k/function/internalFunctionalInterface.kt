@@ -1,5 +1,5 @@
-// ERROR: Unresolved reference: A
 // ERROR: Interface FunctionalI does not have constructors
+// ERROR: Unresolved reference: A
 internal interface FunctionalI<A, B> {
     fun apply(x: A): B
 }

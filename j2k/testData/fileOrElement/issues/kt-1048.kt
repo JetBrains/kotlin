@@ -1,5 +1,5 @@
-// ERROR: Not enough information to infer type variable K
-// ERROR: Not enough information to infer type variable K
+// ERROR: Type inference failed: Not enough information to infer parameter K in constructor HashMap<K : Any!, V : Any!>() Please specify it explicitly. 
+// ERROR: Type inference failed: Not enough information to infer parameter K in constructor HashMap<K : Any!, V : Any!>() Please specify it explicitly. 
 import java.util.HashMap
 
 internal class G<T : String>(t: T)

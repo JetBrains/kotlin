@@ -19,6 +19,12 @@ object Scope {
     fun <T, K> foo(<warning descr="[UNUSED_PARAMETER] Parameter 'c' is never used">c</warning>: C<T>) where K : A, K : B<T> {}
 
     fun usage(c: C<Any>) {
-        foo(c) // should compile only in NI
+        <error descr="[TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS] Type inference failed: Cannot infer type parameter K in fun <T, K : Scope.A> foo(c: Scope.C<T>): Unit where K : Scope.B<T>
+None of the following substitutions
+(Scope.C<Any>)
+(Scope.C<Any>)
+can be applied to
+(Scope.C<Any>)
+">foo</error>(c) // should compile only in NI
     }
 }

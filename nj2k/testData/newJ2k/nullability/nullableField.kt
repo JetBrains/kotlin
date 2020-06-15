@@ -1,3 +1,4 @@
+// ERROR: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:  public inline fun <T> MutableCollection<out Int?>.remove(element: Int?): Boolean defined in kotlin.collections public inline fun <T> MutableList<???>.remove(index: Int): ??? defined in kotlin.collections public inline fun <K, V> MutableMap<out Int?, ???>.remove(key: Int?): ??? defined in kotlin.collections
 package test
 
 import java.util.ArrayList
@@ -37,7 +38,7 @@ class Test {
     }
 
     fun test7() {
-        val list: MutableList<Int?> = ArrayList()
+        val list: List<Int> = ArrayList()
         list.remove(myIntProp)
     }
 

@@ -11,9 +11,9 @@ fun <K> applyRestrictions3(<warning descr="[UNUSED_PARAMETER] Parameter 'e' is n
 fun buildB() {
     val a1 = applyRestrictions1()
     val a2 = applyRestrictions2()
-    val a3 = applyRestrictions3("foo")
+    val <warning descr="[UNUSED_VARIABLE] Variable 'a3' is never used">a3</warning> = applyRestrictions3("foo")
 
     B.Builder().a1()
     B.Builder().a2()
-    B.Builder().a3()
+    B.Builder().<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: a3">a3</error>()
 }

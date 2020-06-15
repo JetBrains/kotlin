@@ -23,7 +23,7 @@ UFile (package = ) [public abstract interface Callback {...]
                         UQualifiedReferenceExpression [Callback.java] : PsiType:Class<Callback>
                             UClassLiteralExpression [Callback] : PsiType:KClass<Callback>
                             USimpleNameReferenceExpression (identifier = java) [java] : PsiType:Class<Callback>
-                        ULambdaExpression [{ ...}] : PsiType:Function0<? extends Callback>
+                        ULambdaExpression [{ ...}] : PsiType:<ErrorType>
                             UBlockExpression [{...}]
                                 UReturnExpression [return anonymous object : Callback {...            }]
                                     UObjectLiteralExpression [anonymous object : Callback {...            }] : PsiType:Callback
