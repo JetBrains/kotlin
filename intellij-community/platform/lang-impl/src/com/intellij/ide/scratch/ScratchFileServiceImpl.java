@@ -182,7 +182,18 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
   @NotNull
   @Override
   public PerFileMappings<Language> getScratchesMapping() {
-    return myScratchMapping;
+    return new PerFileMappings<Language>() {
+      @Override
+      public void setMapping(@Nullable VirtualFile file, @Nullable Language value) {
+        myScratchMapping.setMapping(file, value == null ? null : value.getID());
+      }
+
+      @Nullable
+      @Override
+      public Language getMapping(@Nullable VirtualFile file) {
+        return Language.findLanguageByID(myScratchMapping.getMapping(file));
+      }
+    };
   }
 
   @Nullable
@@ -200,23 +211,23 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
   public void dispose() {
   }
 
-  private static class MyLanguages extends PerFileMappingsBase<Language> {
+  private static class MyLanguages extends PerFileMappingsBase<String> {
 
     @Override
-    public @NotNull List<Language> getAvailableValues() {
-      return LanguageUtil.getFileLanguages();
+    public @NotNull List<String> getAvailableValues() {
+      return ContainerUtil.map(LanguageUtil.getFileLanguages(), Language::getID);
     }
 
     @Nullable
     @Override
-    protected String serialize(Language language) {
-      return language.getID();
+    protected String serialize(String languageID) {
+      return languageID;
     }
 
     @Nullable
     @Override
-    protected Language handleUnknownMapping(VirtualFile file, String value) {
-      return PlainTextLanguage.INSTANCE;
+    protected String handleUnknownMapping(VirtualFile file, String value) {
+      return PlainTextLanguage.INSTANCE.getID();
     }
   }
 
