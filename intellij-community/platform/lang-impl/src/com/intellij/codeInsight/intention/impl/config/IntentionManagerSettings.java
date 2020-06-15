@@ -18,7 +18,7 @@ import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.Interner;
-import com.intellij.util.containers.WeakStringInterner;
+import com.intellij.util.containers.WeakInterner;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
   private static final Logger LOG = Logger.getInstance(IntentionManagerSettings.class);
 
   private static final class MetaDataKey extends Pair<String, String> {
-    private static final Interner<String> ourInterner = new WeakStringInterner();
+    private static final Interner<String> ourInterner = WeakInterner.createWeakInterner();
     private MetaDataKey(String @NotNull [] categoryNames, @NotNull final String familyName) {
       super(StringUtil.join(categoryNames, ":"), ourInterner.intern(familyName));
     }

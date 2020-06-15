@@ -1,5 +1,4 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.codeInspection.ui;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
@@ -18,7 +17,6 @@ import com.intellij.profile.codeInspection.InspectionProfileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.Interner;
-import com.intellij.util.containers.WeakStringInterner;
 import com.intellij.xml.util.XmlStringUtil;
 import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -106,7 +104,7 @@ public class ProblemDescriptionNode extends SuppressableInspectionTreeNode {
   }
 
   @NotNull
-  public InspectionToolWrapper getToolWrapper() {
+  public InspectionToolWrapper<?, ?> getToolWrapper() {
     return getPresentation().getToolWrapper();
   }
 
@@ -161,7 +159,7 @@ public class ProblemDescriptionNode extends SuppressableInspectionTreeNode {
     return descriptor != null && getPresentation().isExcluded(descriptor);
   }
 
-  private static final Interner<String> NAME_INTERNER = new WeakStringInterner();
+  private static final Interner<String> NAME_INTERNER = Interner.createWeakInterner();
 
   @NotNull
   @Override

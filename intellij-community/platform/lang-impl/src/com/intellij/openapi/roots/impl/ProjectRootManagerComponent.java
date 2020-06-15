@@ -34,13 +34,14 @@ import com.intellij.project.ProjectKt;
 import com.intellij.ui.GuiUtils;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.FileBasedIndexProjectHandler;
 import com.intellij.util.indexing.UnindexedFilesUpdater;
 import com.intellij.util.messages.MessageBusConnection;
-import gnu.trove.THashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.CalledInAwt;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +71,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
 
   private boolean myPointerChangesDetected;
   private int myInsideRefresh;
-  private @NotNull Set<LocalFileSystem.WatchRequest> myRootsToWatch = new THashSet<>();
+  private @NotNull Set<LocalFileSystem.WatchRequest> myRootsToWatch = new ObjectOpenHashSet<>();
   private Disposable myRootPointersDisposable = Disposer.newDisposable(); // accessed in EDT
 
   public ProjectRootManagerComponent(@NotNull Project project) {
@@ -213,8 +214,8 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   private @NotNull Pair<Set<String>, Set<String>> collectWatchRoots(@NotNull Disposable disposable) {
     ApplicationManager.getApplication().assertReadAccessAllowed();
 
-    Set<String> recursivePaths = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
-    Set<String> flatPaths = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
+    Set<String> recursivePaths = CollectionFactory.createFilePathSet();
+    Set<String> flatPaths = CollectionFactory.createFilePathSet();
 
     String projectFilePath = myProject.getProjectFilePath();
     if (projectFilePath != null && !Project.DIRECTORY_STORE_FOLDER.equals(new File(projectFilePath).getParentFile().getName())) {
@@ -240,7 +241,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     }
 
     List<String> recursiveUrls = ContainerUtil.map(recursivePaths, VfsUtilCore::pathToUrl);
-    Set<String> excludedUrls = new THashSet<>();
+    Set<String> excludedUrls = new ObjectOpenHashSet<>();
     // changes in files provided by this method should be watched manually because no-one's bothered to set up correct pointers for them
     for (DirectoryIndexExcludePolicy excludePolicy : DirectoryIndexExcludePolicy.EP_NAME.getExtensions(myProject)) {
       Collections.addAll(excludedUrls, excludePolicy.getExcludeUrlsForProject());
@@ -265,7 +266,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   }
 
   private void collectModuleWatchRoots(@NotNull Set<? super String> recursivePaths, @NotNull Set<? super String> flatPaths) {
-    Set<String> urls = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
+    Set<String> urls = CollectionFactory.createFilePathSet();
 
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
       ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
@@ -332,7 +333,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
 
   @Override
   public void markRootsForRefresh() {
-    Set<String> paths = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
+    Set<String> paths = CollectionFactory.createFilePathSet();
     collectModuleWatchRoots(paths, paths);
 
     LocalFileSystem fs = LocalFileSystem.getInstance();

@@ -7,7 +7,8 @@ import com.intellij.codeInsight.hints.presentation.RootInlayPresentation
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.util.SmartList
-import gnu.trove.TIntObjectHashMap
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap
+import java.util.function.IntFunction
 
 class InlayHintsSinkImpl(val editor: Editor) : InlayHintsSink {
   private val buffer = HintsBuffer()
@@ -18,7 +19,7 @@ class InlayHintsSinkImpl(val editor: Editor) : InlayHintsSink {
   }
 
   override fun addInlineElement(offset: Int, presentation: RootInlayPresentation<*>, constraints: HorizontalConstraints?) {
-    buffer.inlineHints.addCreatingListIfNeeded(offset, HorizontalConstrainedPresentation(presentation, constraints))
+    addCreatingListIfNeeded(buffer.inlineHints, offset, HorizontalConstrainedPresentation(presentation, constraints))
   }
 
   override fun addBlockElement(offset: Int,
@@ -37,24 +38,14 @@ class InlayHintsSinkImpl(val editor: Editor) : InlayHintsSink {
                                constraints: BlockConstraints?) {
     val map = if (showAbove)  buffer.blockAboveHints else buffer.blockBelowHints
     val offset = document.getLineStartOffset(logicalLine)
-    map.addCreatingListIfNeeded(offset, BlockConstrainedPresentation(presentation, constraints))
+    addCreatingListIfNeeded(map, offset, BlockConstrainedPresentation(presentation, constraints))
   }
 
   internal fun complete(): HintsBuffer {
     return buffer
   }
+}
 
-  companion object {
-    private fun <T : Any> TIntObjectHashMap<MutableList<ConstrainedPresentation<*, T>>>.addCreatingListIfNeeded(
-      offset: Int,
-      value: ConstrainedPresentation<*, T>
-    ) {
-      var list = this[offset]
-      if (list == null) {
-        list = SmartList()
-        put(offset, list)
-      }
-      list.add(value)
-    }
-  }
+private fun <T : Any> addCreatingListIfNeeded(map: Int2ObjectMap<MutableList<ConstrainedPresentation<*, T>>>, offset: Int, value: ConstrainedPresentation<*, T>) {
+  map.computeIfAbsent(offset, IntFunction { SmartList<ConstrainedPresentation<*, T>>() }).add(value)
 }

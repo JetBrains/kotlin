@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.manage;
 
 import com.intellij.ide.projectView.ProjectView;
@@ -34,9 +34,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import gnu.trove.THashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
@@ -56,7 +58,7 @@ import static com.intellij.openapi.vfs.VfsUtilCore.pathToUrl;
  * @author Denis Zhdanov
  */
 @Order(ExternalSystemConstants.BUILTIN_SERVICE_ORDER)
-public class ContentRootDataService extends AbstractProjectDataService<ContentRootData, ContentEntry> {
+public final class ContentRootDataService extends AbstractProjectDataService<ContentRootData, ContentEntry> {
   public static final com.intellij.openapi.util.Key<Boolean> CREATE_EMPTY_DIRECTORIES =
     com.intellij.openapi.util.Key.create("createEmptyDirectories");
 
@@ -87,7 +89,7 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
       forceDirectoriesCreation = projectDataNode.getUserData(CREATE_EMPTY_DIRECTORIES) == Boolean.TRUE;
     }
 
-    Set<Module> modulesToExpand = new THashSet<>();
+    Set<Module> modulesToExpand = new ObjectOpenHashSet<>();
     MultiMap<DataNode<ModuleData>, DataNode<ContentRootData>> byModule = ExternalSystemApiUtil.groupBy(toImport, ModuleData.class);
 
     filterAndReportDuplicatingContentRoots(byModule, project);
@@ -143,7 +145,7 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
 
     sourceFolderManager.removeSourceFolders(module);
 
-    final Set<ContentEntry> importedContentEntries = ContainerUtil.newIdentityTroveSet();
+    final Set<ContentEntry> importedContentEntries = new ReferenceOpenHashSet<>();
     for (final DataNode<ContentRootData> node : data) {
       final ContentRootData contentRoot = node.getData();
 
@@ -221,7 +223,7 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
   }
 
   private static Set<String> getSourceRoots(@NotNull ContentRootData contentRoot) {
-    Set<String> sourceRoots = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
+    Set<String> sourceRoots = CollectionFactory.createFilePathSet();
     for (ExternalSystemSourceType externalSrcType : ExternalSystemSourceType.values()) {
       final JpsModuleSourceRootType<?> type = getJavaSourceRootType(externalSrcType);
       if (type == null) continue;
@@ -432,11 +434,11 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
   }
 
 
-  private static class DuplicateModuleReport {
+  private static final class DuplicateModuleReport {
     private final ModuleData myOriginal;
     private final List<ModuleData> myDuplicates = new ArrayList<>();
 
-    public DuplicateModuleReport(@NotNull ModuleData original) {
+    private DuplicateModuleReport(@NotNull ModuleData original) {
       myOriginal = original;
     }
 

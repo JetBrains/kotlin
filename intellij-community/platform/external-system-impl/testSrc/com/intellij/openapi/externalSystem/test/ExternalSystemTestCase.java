@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.test;
 
 import com.intellij.compiler.artifacts.ArtifactsTestUtil;
@@ -39,9 +39,9 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.io.PathKt;
 import com.intellij.util.io.TestFileSystemItem;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.SystemIndependent;
@@ -541,8 +541,8 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
   }
 
   protected static void assertUnorderedPathsAreEqual(Collection<String> actual, Collection<String> expected) {
-    assertEquals(new SetWithToString<>(new THashSet<>(expected, FileUtil.PATH_HASHING_STRATEGY)),
-                 new SetWithToString<>(new THashSet<>(actual, FileUtil.PATH_HASHING_STRATEGY)));
+    assertEquals(new SetWithToString<>(CollectionFactory.createFilePathSet(expected)),
+                 new SetWithToString<>(CollectionFactory.createFilePathSet(actual)));
   }
 
   protected static <T> void assertUnorderedElementsAreEqual(T[] actual, T... expected) {

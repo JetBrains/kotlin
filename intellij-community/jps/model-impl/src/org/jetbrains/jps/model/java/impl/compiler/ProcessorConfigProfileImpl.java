@@ -1,22 +1,6 @@
-/*
- * Copyright 2000-2012 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.jps.model.java.impl.compiler;
 
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.compiler.ProcessorConfigProfile;
@@ -27,19 +11,18 @@ import java.util.*;
  * @author Eugene Zhuravlev
  */
 public final class ProcessorConfigProfileImpl implements ProcessorConfigProfile {
-
   private String myName = "";
   private boolean myEnabled = false;
   private boolean myObtainProcessorsFromClasspath = true;
   private String myProcessorPath = "";
   private boolean myUseProcessorModulePath = false;
   private final Set<String> myProcessors = new LinkedHashSet<>(1); // empty list means all discovered
-  private final Map<String, String> myProcessorOptions = new THashMap<>(1); // key=value map of options
+  private final Map<String, String> myProcessorOptions = new HashMap<>(1); // key=value map of options
   private String myGeneratedProductionDirectoryName = DEFAULT_PRODUCTION_DIR_NAME;
   private String myGeneratedTestsDirectoryName = DEFAULT_TESTS_DIR_NAME;
   private boolean myOutputRelativeToContentRoot = false;
 
-  private final Set<String> myModuleNames = new THashSet<>(1);
+  private final Set<String> myModuleNames = new HashSet<>(1);
 
   public ProcessorConfigProfileImpl(String name) {
     myName = name;

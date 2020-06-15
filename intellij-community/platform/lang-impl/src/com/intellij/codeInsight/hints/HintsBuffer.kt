@@ -2,37 +2,40 @@
 package com.intellij.codeInsight.hints
 
 import com.intellij.openapi.editor.Inlay
-import gnu.trove.TIntHashSet
-import gnu.trove.TIntObjectHashMap
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
+import it.unimi.dsi.fastutil.ints.IntSet
 
 /**
  * Utility class to accumulate hints. Non thread-safe.
  */
 class HintsBuffer {
-  val inlineHints = TIntObjectHashMap<MutableList<ConstrainedPresentation<*, HorizontalConstraints>>>()
-  val blockBelowHints = TIntObjectHashMap<MutableList<ConstrainedPresentation<*, BlockConstraints>>>()
-  val blockAboveHints = TIntObjectHashMap<MutableList<ConstrainedPresentation<*, BlockConstraints>>>()
+  val inlineHints = Int2ObjectOpenHashMap<MutableList<ConstrainedPresentation<*, HorizontalConstraints>>>()
+  internal val blockBelowHints = Int2ObjectOpenHashMap<MutableList<ConstrainedPresentation<*, BlockConstraints>>>()
+  internal val blockAboveHints = Int2ObjectOpenHashMap<MutableList<ConstrainedPresentation<*, BlockConstraints>>>()
 
-  fun mergeIntoThis(another: HintsBuffer) {
-    inlineHints.mergeIntoThis(another.inlineHints)
-    blockBelowHints.mergeIntoThis(another.blockBelowHints)
-    blockAboveHints.mergeIntoThis(another.blockAboveHints)
+  internal fun mergeIntoThis(another: HintsBuffer) {
+    mergeIntoThis(inlineHints, another.inlineHints)
+    mergeIntoThis(blockBelowHints, another.blockBelowHints)
+    mergeIntoThis(blockAboveHints, another.blockAboveHints)
   }
 
   /**
    * Counts all offsets of given [placement] which are not inside [other]
    */
-  fun countDisjointElements(other: TIntHashSet, placement: Inlay.Placement): Int {
+  internal fun countDisjointElements(other: IntSet, placement: Inlay.Placement): Int {
     val map = getMap(placement)
     var count = 0
-    map.forEachKey {
-      if (it !in other) count++
-      true
+    val iterator = map.keys.iterator()
+    while (iterator.hasNext()) {
+      if (!other.contains(iterator.nextInt())) {
+        count++
+      }
     }
     return count
   }
 
-  fun contains(offset: Int, placement: Inlay.Placement): Boolean {
+  internal fun contains(offset: Int, placement: Inlay.Placement): Boolean {
     return getMap(placement).contains(offset)
   }
 
@@ -41,24 +44,27 @@ class HintsBuffer {
   }
 
   @Suppress("UNCHECKED_CAST")
-  private fun getMap(placement: Inlay.Placement) : TIntObjectHashMap<MutableList<ConstrainedPresentation<*, *>>> {
+  private fun getMap(placement: Inlay.Placement) : Int2ObjectMap<MutableList<ConstrainedPresentation<*, *>>> {
     return when (placement) {
       Inlay.Placement.INLINE -> inlineHints
       Inlay.Placement.ABOVE_LINE -> blockAboveHints
       Inlay.Placement.BELOW_LINE -> blockBelowHints
       Inlay.Placement.AFTER_LINE_END -> TODO()
-    } as TIntObjectHashMap<MutableList<ConstrainedPresentation<*, *>>>
+    } as Int2ObjectOpenHashMap<MutableList<ConstrainedPresentation<*, *>>>
   }
 }
 
-fun <V>TIntObjectHashMap<MutableList<V>>.mergeIntoThis(another: TIntObjectHashMap<MutableList<V>>) {
-  another.forEachEntry { otherOffset, otherList ->
-    val current = this[otherOffset]
+private fun <V> mergeIntoThis(one: Int2ObjectOpenHashMap<MutableList<V>>, another: Int2ObjectOpenHashMap<MutableList<V>>) {
+  val bIterator = another.int2ObjectEntrySet().fastIterator()
+  while (bIterator.hasNext()) {
+    val otherEntry = bIterator.next()
+    val otherOffset = otherEntry.intKey
+    val current = one.get(otherOffset)
     if (current == null) {
-      put(otherOffset, otherList)
-    } else {
-      current.addAll(otherList)
+      one.put(otherOffset, otherEntry.value)
     }
-    true
+    else {
+      current.addAll(otherEntry.value)
+    }
   }
 }

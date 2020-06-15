@@ -1,9 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.jps.model.library.impl;
 
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
-import gnu.trove.THashSet;
+import com.intellij.util.containers.CollectionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.*;
@@ -18,7 +17,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class JpsLibraryImpl<P extends JpsElement> extends JpsNamedCompositeElementBase<JpsLibraryImpl<P>> implements JpsTypedLibrary<P> {
+public final class JpsLibraryImpl<P extends JpsElement> extends JpsNamedCompositeElementBase<JpsLibraryImpl<P>> implements JpsTypedLibrary<P> {
   private static final ConcurrentMap<JpsOrderRootType, JpsElementCollectionRole<JpsLibraryRoot>> ourRootRoles = new ConcurrentHashMap<>();
   private final JpsLibraryType<P> myLibraryType;
 
@@ -148,8 +147,7 @@ public class JpsLibraryImpl<P extends JpsElement> extends JpsNamedCompositeEleme
     return urls;
   }
 
-  private static final Set<String> AR_EXTENSIONS  =
-    new THashSet<>(Arrays.asList("jar", "zip", "swc", "ane"), FileUtil.PATH_HASHING_STRATEGY);
+  private static final Set<String> AR_EXTENSIONS = CollectionFactory.createFilePathSet(Arrays.asList("jar", "zip", "swc", "ane"));
 
   private static void collectArchives(File file, boolean recursively, List<? super String> result) {
     final File[] children = file.listFiles();

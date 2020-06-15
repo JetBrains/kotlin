@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.configurationStore
 
 import com.intellij.ProjectTopics
@@ -14,7 +14,6 @@ import com.intellij.openapi.project.isExternalStorageEnabled
 import com.intellij.openapi.roots.ProjectModelElement
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.util.Function
-import gnu.trove.THashMap
 import org.jdom.Element
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -30,7 +29,7 @@ internal class ExternalSystemStreamProviderFactory(private val project: Project)
   private val isReimportOnMissedExternalStorageScheduled = AtomicBoolean(false)
 
   private val storageSpecLock = ReentrantReadWriteLock()
-  private val storages = THashMap<String, Storage>()
+  private val storages = HashMap<String, Storage>()
 
   init {
     project.messageBus.connect().subscribe(ProjectTopics.MODULES, object : ModuleListener {

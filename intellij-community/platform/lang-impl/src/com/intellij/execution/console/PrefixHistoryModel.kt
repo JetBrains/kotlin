@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.console
 
 import com.intellij.execution.console.ConsoleHistoryModel.Entry
@@ -9,12 +9,11 @@ import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.openapi.util.TextRange
 import com.intellij.util.containers.ConcurrentFactoryMap
 import com.intellij.util.containers.ContainerUtil
-import gnu.trove.TIntStack
+import it.unimi.dsi.fastutil.ints.IntArrayList
 
 /**
  * @author Yuli Fiterman
  */
-
 private val MasterModels = ConcurrentFactoryMap.create<String, MasterModel>(
   {
     MasterModel()
@@ -22,9 +21,7 @@ private val MasterModels = ConcurrentFactoryMap.create<String, MasterModel>(
     ContainerUtil.createConcurrentWeakValueMap()
   })
 
-
 private fun assertWriteThread() = ApplicationManager.getApplication().assertIsWriteThread()
-
 
 fun createModel(persistenceId: String, console: LanguageConsoleView): ConsoleHistoryModel {
   val masterModel: MasterModel = MasterModels[persistenceId]!!
@@ -46,7 +43,7 @@ private class PrefixHistoryModel constructor(private val masterModel: MasterMode
 
   private var currentIndex: Int? = null
   private var currentEntries: List<String>? = null
-  private var prevEntries: TIntStack = TIntStack()
+  private var prevEntries = IntArrayList()
   private var historyPrefix: String = ""
 
   init {
@@ -104,8 +101,8 @@ private class PrefixHistoryModel constructor(private val masterModel: MasterMode
 
   override fun getHistoryPrev(): Entry? {
     val entries = currentEntries ?: return null
-    return if (prevEntries.size() > 0) {
-      val index = prevEntries.pop()
+    return if (prevEntries.size > 0) {
+      val index = prevEntries.popInt()
       currentIndex = index
       createEntry(entries[index])
     }
@@ -154,7 +151,7 @@ private class MasterModel(private val modTracker: SimpleModificationTracker = Si
 
   override fun getMaxHistorySize() = UISettings.instance.state.consoleCommandHistoryLimit
 
-  override fun isEmpty(): Boolean = entries.isEmpty()
+  override fun isEmpty() = entries.isEmpty()
 
-  override fun getHistorySize(): Int = entries.size
+  override fun getHistorySize() = entries.size
 }
