@@ -64,7 +64,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitReferenceExpression(expression: KtReferenceExpression) {
         visitElement(expression)
-        getHandler(expression).setFilter { it is PsiElement }
+        if (getHandler(expression) is SubstitutionHandler) getHandler(expression).setFilter { it is PsiElement }
     }
 
     private fun visitLeafPsiElement(element: LeafPsiElement) {

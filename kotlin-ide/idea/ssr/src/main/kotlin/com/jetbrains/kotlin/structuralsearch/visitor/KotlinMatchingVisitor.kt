@@ -60,9 +60,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     private fun matchTextOrVariable(el1: PsiElement?, el2: PsiElement?): Boolean {
         if (el1 == null || el2 == null) return el1 == el2
         return when (val handler = getHandler(el1)) {
-            is SubstitutionHandler -> {
-                handler.validate(el2, myMatchingVisitor.matchContext)
-            }
+            is SubstitutionHandler -> handler.validate(el2, myMatchingVisitor.matchContext)
             else -> myMatchingVisitor.matchText(el1, el2)
         }
     }
@@ -238,7 +236,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-        val other = getTreeElementDepar<KtElement>() ?: return
+        val other = getTreeElementDepar<PsiElement>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(
             expression.getReferencedNameElement(),
             if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other
@@ -288,7 +286,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitUserType(type: KtUserType) {
         val other = myMatchingVisitor.element
         myMatchingVisitor.result = when (other) {
-            is KtUserType -> myMatchingVisitor.matchSonsInAnyOrder(type, other)
+            is KtUserType -> {
+                type.qualifier?.let { typeQualifier -> // if query has fq type
+                    myMatchingVisitor.match(typeQualifier, other.qualifier) // recursively match qualifiers
+                            && myMatchingVisitor.match(type.referenceExpression, other.referenceExpression)
+                            && myMatchingVisitor.match(type.typeArgumentList, other.typeArgumentList)
+                } ?: let { // no fq type
+                    myMatchingVisitor.match(type.referenceExpression, other.referenceExpression)
+                            && myMatchingVisitor.match(type.typeArgumentList, other.typeArgumentList)
+                }
+            }
             is KtTypeElement -> matchTextOrVariable(type.referenceExpression, other)
             else -> false
         }
@@ -312,8 +319,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
         return false
     }
-
-
 
     override fun visitTypeReference(typeReference: KtTypeReference) {
         val other = getTreeElementDepar<KtTypeReference>() ?: return
@@ -454,7 +459,6 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitParameter(parameter: KtParameter) {
         val other = getTreeElementDepar<KtParameter>() ?: return
-
         val typeMatched = when (other.parent.parent) {
             is KtFunctionType, is KtCatchClause -> myMatchingVisitor.match(parameter.typeReference, other.typeReference)
             else -> matchTypeReferenceWithDeclaration(parameter.typeReference, other)
