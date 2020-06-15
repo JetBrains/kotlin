@@ -32,13 +32,11 @@ import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
-import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
 import java.util.Comparator;
 
 import static com.intellij.openapi.application.ApplicationManager.getApplication;
@@ -47,7 +45,6 @@ import static com.intellij.ui.ColorUtil.toHtmlColor;
 import static com.intellij.ui.ScrollPaneFactory.createScrollPane;
 import static com.intellij.ui.scale.JBUIScale.scale;
 import static com.intellij.util.OpenSourceUtil.navigate;
-import static java.util.Collections.emptyList;
 import static javax.swing.tree.TreeSelectionModel.SINGLE_TREE_SELECTION;
 
 abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable, DataProvider {
@@ -159,7 +156,6 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
     myState = state;
 
     myTreeModel.setComparator(createComparator());
-    myTreeModel.setFilter(new SeverityFilter(state));
     myTree = new Tree(new AsyncTreeModel(myTreeModel, this));
     myTree.setRootVisible(false);
     myTree.getSelectionModel().setSelectionMode(SINGLE_TREE_SELECTION);
@@ -336,10 +332,6 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
       isNullableOrSelected(getSortFoldersFirst()),
       isNullableOrSelected(getSortBySeverity()),
       isNotNullAndSelected(getSortByName()));
-  }
-
-  @NotNull Collection<Pair<String, Integer>> getSeverityFilters() {
-    return emptyList();
   }
 
   @Nullable Option getAutoscrollToSource() {

@@ -1,10 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis.problemsView.toolWindow
 
-import com.intellij.codeInsight.daemon.impl.SeverityRegistrar.getSeverityRegistrar
 import com.intellij.icons.AllIcons.Toolwindows
 import com.intellij.ide.TreeExpander
-import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.actionSystem.ToggleOptionAction.Option
 import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.application.ModalityState.stateForComponent
@@ -17,7 +15,6 @@ import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.problems.WolfTheProblemSolver
-import com.intellij.profile.codeInspection.ui.SingleInspectionProfilePanel.renderSeverity
 import com.intellij.util.SingleAlarm
 import com.intellij.util.ui.tree.TreeUtil.promiseSelectFirstLeaf
 import javax.swing.Icon
@@ -54,6 +51,11 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
     root?.findProblemNode(highlighter)?.let { select(it) }
   }
 
+  fun requestStatusUpdating() {
+    statusUpdateAlarm.cancelAndRequest(forceRun = true)
+    updateToolWindowContent()
+  }
+
   override fun fileOpened(manager: FileEditorManager, file: VirtualFile) = updateCurrentFile()
   override fun fileClosed(manager: FileEditorManager, file: VirtualFile) = updateCurrentFile()
   override fun selectionChanged(event: FileEditorManagerEvent) = updateCurrentFile()
@@ -70,8 +72,7 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
       treeModel.root = HighlightingFileRoot(this, file)
       promiseSelectFirstLeaf(tree)
     }
-    statusUpdateAlarm.cancelAndRequest(forceRun = true)
-    updateToolWindowContent()
+    requestStatusUpdating()
   }
 
   private fun findCurrentFile(): VirtualFile? {
@@ -95,9 +96,12 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
         tree.emptyText.text = ProblemsViewBundle.message("problems.view.highlighting.problems.analyzing", name)
         statusUpdateAlarm.cancelAndRequest()
       }
-      status.title.isEmpty() -> {
+      status.title.isEmpty() || status.title == "No problems found" -> {
         val name = with(root.file) { presentableName ?: name }
         tree.emptyText.text = ProblemsViewBundle.message("problems.view.highlighting.problems.not.found", name)
+        if (state.hideBySeverity.isNotEmpty()) {
+          tree.emptyText.appendLine(ProblemsViewBundle.message("problems.view.highlighting.problems.not.found.filter"))
+        }
       }
       else -> {
         tree.emptyText.text = status.title
@@ -114,8 +118,4 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
     val status = model.errorStripeRenderer?.getStatus(editor) ?: return null
     return if (status.analyzingType == COMPLETE) status else null
   }
-
-  override fun getSeverityFilters() = getSeverityRegistrar(project).allSeverities.reversed()
-    .filter { it != HighlightSeverity.INFO && it > HighlightSeverity.INFORMATION && it < HighlightSeverity.ERROR }
-    .map { Pair(ProblemsViewBundle.message("problems.view.highlighting.severity.show", renderSeverity(it)), it.myVal) }
 }

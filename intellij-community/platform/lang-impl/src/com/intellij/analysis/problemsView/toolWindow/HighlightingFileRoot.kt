@@ -6,7 +6,8 @@ import com.intellij.openapi.editor.ex.RangeHighlighterEx
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 
-internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualFile) : Root(panel) {
+internal class HighlightingFileRoot(panel: ProblemsViewPanel, val file: VirtualFile)
+  : Root(panel, ProblemFilter(panel.state)) {
 
   private val watcher = HighlightingWatcher(this, file, INFORMATION.myVal + 1)
 

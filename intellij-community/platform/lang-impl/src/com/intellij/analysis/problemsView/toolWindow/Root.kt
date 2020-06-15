@@ -7,10 +7,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.tree.LeafState
 import com.intellij.ui.tree.TreeVisitor.ByTreePath
-import com.intellij.util.containers.ContainerUtil.mapNotNull
 import com.intellij.util.ui.tree.TreeUtil.promiseExpand
 
-internal open class Root(val panel: ProblemsViewPanel) : Node(panel.project), Disposable {
+internal open class Root(val panel: ProblemsViewPanel, private val filter: ProblemFilter? = null)
+  : Node(panel.project), Disposable {
 
   private val allProblems = mutableMapOf<VirtualFile, FileProblems>()
 
@@ -23,19 +23,21 @@ internal open class Root(val panel: ProblemsViewPanel) : Node(panel.project), Di
   override fun update(project: Project, presentation: PresentationData) = Unit
 
   override fun getChildren(): Collection<Node> = synchronized(allProblems) {
-    mapNotNull(allProblems.values) { it.getFileNode(getParentNode(it.file)) }
+    allProblems.values
+      .filter { it.count(filter) > 0 }
+      .map { it.getFileNode(getParentNode(it.file)) }
   }
 
   open fun getChildren(file: VirtualFile): Collection<Node> = synchronized(allProblems) {
-    allProblems[file]?.getProblemNodes() ?: return emptyList()
+    allProblems[file]?.getProblemNodes(filter) ?: emptyList()
   }
 
   open fun getProblemsCount(): Int = synchronized(allProblems) {
-    allProblems.values.sumBy { it.count() }
+    allProblems.values.sumBy { it.count(filter) }
   }
 
   open fun getProblemsCount(file: VirtualFile): Int = synchronized(allProblems) {
-    allProblems[file]?.count() ?: 0
+    allProblems[file]?.count(filter) ?: 0
   }
 
   open fun addProblems(file: VirtualFile, vararg problems: Problem) {

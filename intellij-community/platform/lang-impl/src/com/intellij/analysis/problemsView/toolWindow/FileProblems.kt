@@ -25,10 +25,10 @@ internal class FileProblems(val file: VirtualFile) {
     return newNode
   }
 
-  fun getProblemNodes(): Collection<ProblemNode> {
+  fun getProblemNodes(filter: ProblemFilter?): Collection<ProblemNode> {
     if (problems.isEmpty()) return emptyList()
     val parent = fileNode ?: return emptyList()
-    return problems.map { getProblemNode(parent, it) }
+    return get(filter).map { getProblemNode(parent, it) }
   }
 
   fun findProblemNode(problem: Problem): ProblemNode? {
@@ -50,4 +50,8 @@ internal class FileProblems(val file: VirtualFile) {
   }
 
   fun count() = problems.size
+
+  fun count(filter: ProblemFilter?) = if (filter == null) problems.size else problems.count(filter)
+
+  private fun get(filter: ProblemFilter?) = if (filter == null) problems else problems.filter(filter)
 }
