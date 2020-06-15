@@ -60,7 +60,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     private fun matchTextOrVariable(el1: PsiElement?, el2: PsiElement?): Boolean {
         if (el1 == null || el2 == null) return el1 == el2
         return when (val handler = getHandler(el1)) {
-            is SubstitutionHandler -> handler.handle(el2, myMatchingVisitor.matchContext)
+            is SubstitutionHandler -> {
+                handler.validate(el2, myMatchingVisitor.matchContext)
+            }
             else -> myMatchingVisitor.matchText(el1, el2)
         }
     }
@@ -88,6 +90,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                     else -> matchTextOrVariable(element, other)
                 }
             }
+            KtTokens.IDENTIFIER -> myMatchingVisitor.result = matchTextOrVariable(element, other)
         }
     }
 
@@ -197,7 +200,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitBlockExpression(expression: KtBlockExpression) {
         val other = getTreeElementDepar<KtBlockExpression>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchSons(expression, other)
+        myMatchingVisitor.result = myMatchingVisitor.matchSequentially(expression.statements, other.statements)
     }
 
     override fun visitUnaryExpression(expression: KtUnaryExpression) {
@@ -226,24 +229,25 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitConstantExpression(expression: KtConstantExpression) {
-        val other = getTreeElementDepar<KtConstantExpression>() ?: return
+        val other = getTreeElementDepar<KtExpression>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(expression, other)
+        val handler = getHandler(expression)
+        if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+            handler.handle(other, myMatchingVisitor.matchContext)
+        }
     }
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-        // Previous SubstitutionHandler match can be KtParameter
-        if (myMatchingVisitor.element.parent is KtParameter) {
-            myMatchingVisitor.result = matchTextOrVariable(expression, myMatchingVisitor.element)
-            return
-        }
-
         val other = getTreeElementDepar<KtElement>() ?: return
-        val handler = getHandler(expression)
-        myMatchingVisitor.result = when (handler) {
-            is SubstitutionHandler -> handler.handle(other, myMatchingVisitor.matchContext)
-            else -> matchTextOrVariable(
-                expression.getReferencedNameElement(),
-                if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other
+        myMatchingVisitor.result = matchTextOrVariable(
+            expression.getReferencedNameElement(),
+            if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other
+        )
+        val handler = getHandler(expression.getReferencedNameElement())
+        if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+            handler.handle(
+                if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other,
+                myMatchingVisitor.matchContext
             )
         }
     }
@@ -301,27 +305,18 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     private fun matchTypeReferenceWithDeclaration(typeReference: KtTypeReference?, other: KtDeclaration): Boolean {
         val type = other.type()
-        val factory = KtPsiFactory(other, true)
         if (type != null) {
             val fqType = DescriptorRenderer.DEBUG_TEXT.renderType(type)
+            val factory = KtPsiFactory(other, true)
             return myMatchingVisitor.match(typeReference, factory.createTypeIfPossible(fqType))
         }
         return false
     }
 
-    override fun visitTypeReference(typeReference: KtTypeReference) {
-        // Previous SubstitutionHandler match can be KtTypeParameter
-        if (myMatchingVisitor.element is LeafPsiElement && myMatchingVisitor.element.parent is KtTypeParameter) {
-            myMatchingVisitor.result = matchTextOrVariable(typeReference, myMatchingVisitor.element)
-            return
-        }
 
+
+    override fun visitTypeReference(typeReference: KtTypeReference) {
         val other = getTreeElementDepar<KtTypeReference>() ?: return
-        val handler = getHandler(typeReference)
-        if (handler is SubstitutionHandler) {
-            myMatchingVisitor.result = handler.handle(other, myMatchingVisitor.matchContext)
-            return
-        }
         myMatchingVisitor.result = myMatchingVisitor.matchSons(typeReference, other)
     }
 
@@ -449,30 +444,31 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = matchTextOrVariable(parameter.firstChild, other.firstChild) // match generic identifier
                 && myMatchingVisitor.match(parameter.extendsBound, other.extendsBound)
                 && parameter.variance == other.variance
+        parameter.nameIdentifier?.let { nameIdentifier ->
+            val handler = getHandler(nameIdentifier)
+            if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+                handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
+            }
+        }
     }
 
     override fun visitParameter(parameter: KtParameter) {
-        // Previous SubstitutionHandler match can be KtTypeParameter
-        if (myMatchingVisitor.element.parent is KtTypeParameter) {
-            myMatchingVisitor.result = matchTextOrVariable(parameter, myMatchingVisitor.element)
-            return
-        }
-
         val other = getTreeElementDepar<KtParameter>() ?: return
 
         val typeMatched = when (other.parent.parent) {
             is KtFunctionType, is KtCatchClause -> myMatchingVisitor.match(parameter.typeReference, other.typeReference)
             else -> matchTypeReferenceWithDeclaration(parameter.typeReference, other)
         }
-
-        val nameIdentifierMatched = when (val handler = getHandler(parameter)) {
-            is SubstitutionHandler -> handler.handle(other.nameIdentifier ?: other, myMatchingVisitor.matchContext)
-            else -> matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
-        }
-
         myMatchingVisitor.result = typeMatched
                 && myMatchingVisitor.match(parameter.defaultValue, other.defaultValue)
-                && nameIdentifierMatched
+                && matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
+
+        parameter.nameIdentifier?.let { nameIdentifier ->
+            val handler = getHandler(nameIdentifier)
+            if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+                handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
+            }
+        }
     }
 
     override fun visitTypeParameterList(list: KtTypeParameterList) {
@@ -539,13 +535,17 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtClass>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
+                && matchTextOrVariable(klass.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(klass.typeParameterList, other.typeParameterList)
                 && myMatchingVisitor.match(klass.primaryConstructor, other.primaryConstructor)
                 && myMatchingVisitor.matchInAnyOrder(klass.secondaryConstructors, other.secondaryConstructors)
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(klass.body, other.body)
                 && myMatchingVisitor.match(klass.docComment, other.docComment)
-                && matchTextOrVariable(klass.nameIdentifier, other.nameIdentifier) // only match identifier if others match
+        val handler = getHandler(klass.nameIdentifier!!)
+        if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+            handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
+        }
     }
 
     override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
@@ -557,9 +557,15 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtObjectDeclaration>() ?: return
         val otherIdentifier = if (other.isCompanion()) (other.parent.parent as KtClass).nameIdentifier else other.nameIdentifier
         myMatchingVisitor.result = myMatchingVisitor.match(declaration.modifierList, other.modifierList)
+                && matchTextOrVariable(declaration.nameIdentifier, otherIdentifier)
                 && myMatchingVisitor.match(declaration.getSuperTypeList(), other.getSuperTypeList())
                 && myMatchingVisitor.match(declaration.body, other.body)
-                && matchTextOrVariable(declaration.nameIdentifier, otherIdentifier)
+        declaration.nameIdentifier?.let { declNameIdentifier ->
+            val handler = getHandler(declNameIdentifier)
+            if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+                handler.handle(otherIdentifier, myMatchingVisitor.matchContext)
+            }
+        }
     }
 
     private fun normalizeExpressionRet(expression: KtExpression?) = if (
@@ -585,6 +591,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && if (funExpr == null || othExpr == null) { // both bodies are not single expression
             myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
         } else myMatchingVisitor.match(funExpr, othExpr)
+        function.nameIdentifier?.let { nameIdentifier ->
+            val handler = getHandler(nameIdentifier)
+            if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+                handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
+            }
+        }
     }
 
     override fun visitModifierList(list: KtModifierList) {
@@ -668,8 +680,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitTypeAlias(typeAlias: KtTypeAlias) {
         val other = getTreeElementDepar<KtTypeAlias>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(typeAlias.getTypeReference(), other.getTypeReference())
-                && matchTextOrVariable(typeAlias.nameIdentifier, other.nameIdentifier)
+        myMatchingVisitor.result = matchTextOrVariable(typeAlias.nameIdentifier, other.nameIdentifier)
+                && myMatchingVisitor.match(typeAlias.getTypeReference(), other.getTypeReference())
+        val handler = getHandler(typeAlias.nameIdentifier!!)
+        if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+            handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
+        }
     }
 
     override fun visitConstructorCalleeExpression(constructorCalleeExpression: KtConstructorCalleeExpression) {
@@ -691,11 +707,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtProperty>() ?: return
         myMatchingVisitor.result = matchTypeReferenceWithDeclaration(property.typeReference, other)
                 && myMatchingVisitor.match(property.modifierList, other.modifierList)
+                && matchTextOrVariable(property.nameIdentifier, other.nameIdentifier)
                 && property.isVar == other.isVar
                 && myMatchingVisitor.match(property.docComment, other.docComment)
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.match(
             property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
-        )) && matchTextOrVariable(property.nameIdentifier, other.nameIdentifier) // match text only if others match
+        ))
+        val handler = getHandler(property.nameIdentifier!!)
+        if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+            handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
+        }
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {

@@ -89,7 +89,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         if (elements.first() is KtAnnotatedExpression && elements.first().lastChild is PsiErrorElement)
             elements = getNonWhitespaceChildren(elements.first()).dropLast(1)
 
-        //for (element in elements) print(DebugUtil.psiToString(element, false))
+        for (element in elements) print(DebugUtil.psiToString(element, false))
 
         return elements.toTypedArray()
     }
