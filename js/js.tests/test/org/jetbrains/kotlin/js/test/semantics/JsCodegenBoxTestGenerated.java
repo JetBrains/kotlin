@@ -8955,6 +8955,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/enum/kt2350.kt");
         }
 
+        @TestMetadata("kt38996.kt")
+        public void testKt38996() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/kt38996.kt");
+        }
+
         @TestMetadata("kt7257.kt")
         public void testKt7257() throws Exception {
             runTest("compiler/testData/codegen/box/enum/kt7257.kt");
