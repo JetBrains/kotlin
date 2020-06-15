@@ -120,11 +120,7 @@ final class LookupUsageTracker {
       data.addData("selection_changed", mySelectionChangedCount);
       data.addData("typing", myTypingTracker.typing);
       data.addData("backspaces", myTypingTracker.backspaces);
-      CompletionChar completionCharExplained = CompletionChar.of(completionChar);
-      data.addData("completion_char", completionCharExplained.toString());
-      if (completionCharExplained == CompletionChar.OTHER) {
-        data.addData("completion_char_value", Character.getNumericValue(completionChar));
-      }
+      data.addData("completion_char", CompletionChar.of(completionChar).toString());
 
       // Details
       if (currentItem != null) {
