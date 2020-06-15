@@ -52,9 +52,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 //TODO: different replacements for property accessors
 
 abstract class DeprecatedSymbolUsageFixBase(
-    element: KtSimpleNameExpression,
+    element: KtReferenceExpression,
     val replaceWith: ReplaceWith
-) : KotlinQuickFixAction<KtSimpleNameExpression>(element) {
+) : KotlinQuickFixAction<KtReferenceExpression>(element) {
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
@@ -76,7 +76,7 @@ abstract class DeprecatedSymbolUsageFixBase(
         fun fetchReplaceWithPattern(
             descriptor: DeclarationDescriptor,
             project: Project,
-            contextElement: KtSimpleNameExpression?,
+            contextElement: KtReferenceExpression?,
             replaceInWholeProject: Boolean
         ): ReplaceWith? {
             val annotation = descriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: return null
@@ -102,7 +102,7 @@ abstract class DeprecatedSymbolUsageFixBase(
         }
 
         private fun String.applyContextElement(
-            element: KtSimpleNameExpression?,
+            element: KtReferenceExpression?,
             descriptor: DeclarationDescriptor
         ): String {
             if (element == null) return this
@@ -155,13 +155,14 @@ abstract class DeprecatedSymbolUsageFixBase(
         }
 
         data class Data(
-            val nameExpression: KtSimpleNameExpression,
+            val referenceExpression: KtReferenceExpression,
             val replaceWith: ReplaceWith,
             val descriptor: DeclarationDescriptor
         )
 
         fun extractDataFromDiagnostic(deprecatedDiagnostic: Diagnostic, replaceInWholeProject: Boolean): Data? {
-            val nameExpression: KtSimpleNameExpression = when (val psiElement = deprecatedDiagnostic.psiElement) {
+            val referenceExpression = when (val psiElement = deprecatedDiagnostic.psiElement) {
+                is KtArrayAccessExpression -> psiElement
                 is KtSimpleNameExpression -> psiElement
                 is KtConstructorCalleeExpression -> psiElement.constructorReferenceExpression
                 else -> null
@@ -178,12 +179,12 @@ abstract class DeprecatedSymbolUsageFixBase(
             }
 
             val replacement =
-                fetchReplaceWithPattern(descriptor, nameExpression.project, nameExpression, replaceInWholeProject) ?: return null
-            return Data(nameExpression, replacement, descriptor)
+                fetchReplaceWithPattern(descriptor, referenceExpression.project, referenceExpression, replaceInWholeProject) ?: return null
+            return Data(referenceExpression, replacement, descriptor)
         }
 
         private fun buildUsageReplacementStrategy(
-            element: KtSimpleNameExpression,
+            element: KtReferenceExpression,
             replaceWith: ReplaceWith,
             recheckAnnotation: Boolean,
             reformat: Boolean,
@@ -269,7 +270,7 @@ abstract class DeprecatedSymbolUsageFixBase(
             project: Project,
             classifier: ClassifierDescriptorWithTypeParameters,
             typeAlias: PsiElement,
-            contextElement: KtSimpleNameExpression,
+            contextElement: KtReferenceExpression,
             replaceInWholeProject: Boolean
         ): ConstructorDescriptor? {
             val specialReplaceWithForConstructor = classifier.constructors.filter {
