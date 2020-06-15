@@ -28,7 +28,7 @@ internal enum class TaskType(
                 "Boolean (default false);\nwhether to copy Kotlin/Native endorsed libraries to the destination",
                 mandatory = false
             ),
-            BooleanOptionType("log-stats", "Boolean (default false); Log commonization stats", mandatory = false)
+            StatsTypeOptionType
         ),
         ::NativeDistributionCommonize
     ),

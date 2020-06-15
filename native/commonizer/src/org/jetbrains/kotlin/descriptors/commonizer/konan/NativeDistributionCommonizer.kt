@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.Target
+import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType.*
+import org.jetbrains.kotlin.descriptors.commonizer.stats.AggregatedStatsCollector
+import org.jetbrains.kotlin.descriptors.commonizer.stats.FileStatsOutput
+import org.jetbrains.kotlin.descriptors.commonizer.stats.RawStatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
 import org.jetbrains.kotlin.descriptors.konan.NATIVE_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.konan.library.*
@@ -37,9 +41,13 @@ class NativeDistributionCommonizer(
     private val destination: File,
     private val copyStdlib: Boolean,
     private val copyEndorsedLibs: Boolean,
-    private val withStats: Boolean,
+    private val statsType: StatsType,
     private val logger: Logger
 ) {
+    enum class StatsType {
+        RAW, AGGREGATED, NONE
+    }
+
     fun run() {
         checkPreconditions()
 
@@ -123,7 +131,11 @@ class NativeDistributionCommonizer(
     }
 
     private fun commonize(librariesByTargets: Map<InputTarget, NativeDistributionLibraries>): Result {
-        val statsCollector = if (withStats) NativeStatsCollector(targets, destination) else null
+        val statsCollector = when (statsType) {
+            RAW -> RawStatsCollector(targets, FileStatsOutput(destination, "raw"))
+            AGGREGATED -> AggregatedStatsCollector(targets, FileStatsOutput(destination, "aggregated"))
+            NONE -> null
+        }
         statsCollector.use {
             val parameters = Parameters(statsCollector).apply {
                 librariesByTargets.forEach { (target, libraries) ->

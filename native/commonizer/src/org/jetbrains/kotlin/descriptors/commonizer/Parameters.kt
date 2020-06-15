@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
+import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
+
 class Parameters(
     val statsCollector: StatsCollector? = null
 ) {
