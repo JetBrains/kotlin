@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.lexer.KtTokens.CLOSING_QUOTE
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.FqName
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 //T can be either PsiElement, or LighterASTNode
 abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Context<T> = Context()) {
 
-    abstract fun T.toFirSourceElement(): FirSourceElement
+    abstract fun T.toFirSourceElement(kind: FirSourceElementKind = FirRealSourceElementKind): FirSourceElement
 
     protected val implicitUnitType = baseSession.builtinTypes.unitType
     protected val implicitAnyType = baseSession.builtinTypes.anyType
@@ -168,7 +169,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     private fun T?.toDelegatedSelfType(firClass: FirClassBuilder, symbol: FirClassLikeSymbol<*>): FirResolvedTypeRef {
         return buildResolvedTypeRef {
-            source = this@toDelegatedSelfType?.toFirSourceElement()
+            source = this@toDelegatedSelfType?.toFirSourceElement(FirFakeSourceElementKind.ClassSelfTypeRef)
             type = ConeClassLikeTypeImpl(
                 symbol.toLookupTag(),
                 firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
@@ -335,7 +336,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                             hasExpressions = true
                             val firExpression = entry.convertTemplateEntry("Incorrect template argument")
-                            val source = firExpression.source
+                            val source = firExpression.source?.withKind(FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry)
                             buildFunctionCall {
                                 this.source = source
                                 explicitReceiver = firExpression
@@ -402,22 +403,28 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
         return buildBlock {
             val baseSource = baseExpression?.toFirSourceElement()
-            source = baseSource
+            val desugaredSource = baseSource?.withKind(FirFakeSourceElementKind.DesugaredIncrementOrDecrement)
+            source = desugaredSource
             val tempName = Name.special("<unary>")
-            val temporaryVariable = generateTemporaryVariable(this@BaseFirBuilder.baseSession, source, tempName, argument.convert())
+            val temporaryVariable = generateTemporaryVariable(
+                this@BaseFirBuilder.baseSession,
+                desugaredSource,
+                tempName,
+                argument.convert()
+            )
             statements += temporaryVariable
             val resultName = Name.special("<unary-result>")
             val resultInitializer = buildFunctionCall {
-                source = baseSource
+                source = desugaredSource
                 calleeReference = buildSimpleNamedReference {
                     source = operationReference?.toFirSourceElement()
                     name = callName
                 }
-                explicitReceiver = generateResolvedAccessExpression(source, temporaryVariable)
+                explicitReceiver = generateResolvedAccessExpression(desugaredSource, temporaryVariable)
             }
-            val resultVar = generateTemporaryVariable(this@BaseFirBuilder.baseSession, source, resultName, resultInitializer)
+            val resultVar = generateTemporaryVariable(this@BaseFirBuilder.baseSession, desugaredSource, resultName, resultInitializer)
             val assignment = argument.generateAssignment(
-                source,
+                desugaredSource,
                 argument,
                 if (prefix && argument.elementType != REFERENCE_EXPRESSION)
                     generateResolvedAccessExpression(source, resultVar)
@@ -438,14 +445,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 if (argument.elementType != REFERENCE_EXPRESSION) {
                     statements += resultVar
                     appendAssignment()
-                    statements += generateResolvedAccessExpression(source, resultVar)
+                    statements += generateResolvedAccessExpression(desugaredSource, resultVar)
                 } else {
                     appendAssignment()
-                    statements += generateAccessExpression(source, argument.getReferencedNameAsName())
+                    statements += generateAccessExpression(desugaredSource, argument.getReferencedNameAsName())
                 }
             } else {
                 appendAssignment()
-                statements += generateResolvedAccessExpression(source, temporaryVariable)
+                statements += generateResolvedAccessExpression(desugaredSource, temporaryVariable)
             }
         }
     }
@@ -728,7 +735,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 componentIndex++
                 val parameterSource = sourceNode?.toFirSourceElement()
                 val componentFunction = buildSimpleFunction {
-                    source = parameterSource
+                    source = parameterSource?.withKind(FirFakeSourceElementKind.DataClassGeneratedMembers)
                     session = this@DataClassMembersGenerator.session
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = firProperty.returnTypeRef
@@ -762,7 +769,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             source = parameterSource
                             session = this@DataClassMembersGenerator.session
                             origin = FirDeclarationOrigin.Source
-                            returnTypeRef = firProperty.returnTypeRef
+                            returnTypeRef = propertyReturnTypeRef
                             name = propertyName
                             symbol = FirVariableSymbol(propertyName)
                             defaultValue = generateComponentAccess(parameterSource, firProperty)

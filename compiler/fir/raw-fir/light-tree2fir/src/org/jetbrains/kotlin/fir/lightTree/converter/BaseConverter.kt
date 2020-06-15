@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceElementKind
 import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
@@ -30,7 +31,7 @@ open class BaseConverter(
 ) : BaseFirBuilder<LighterASTNode>(baseSession, context) {
     protected val implicitType = buildImplicitTypeRef()
 
-    override fun LighterASTNode.toFirSourceElement(): FirLightSourceElement {
+    override fun LighterASTNode.toFirSourceElement(kind: FirSourceElementKind): FirLightSourceElement {
         val startOffset = offset + tree.getStartOffset(this)
         val endOffset = offset + tree.getEndOffset(this)
         return toFirLightSourceElement(startOffset, endOffset, tree)

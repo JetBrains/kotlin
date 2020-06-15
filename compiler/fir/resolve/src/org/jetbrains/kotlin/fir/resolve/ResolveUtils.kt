@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByTypeRef
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
@@ -224,7 +222,7 @@ fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirRe
     val functionalType = createFunctionalType(parameters, receiverTypeRef?.coneTypeSafe(), rawReturnType, isSuspend = isSuspend)
 
     return buildResolvedTypeRef {
-        source = this@constructFunctionalTypeRef.source
+        source = this@constructFunctionalTypeRef.source?.withKind(FirFakeSourceElementKind.ImplicitTypeRef)
         type = functionalType
         this.isSuspend = isSuspend
     }
@@ -327,7 +325,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
     return when (val newCallee = access.calleeReference) {
         is FirErrorNamedReference ->
             buildErrorTypeRef {
-                source = access.source
+                source = access.source?.withKind(FirFakeSourceElementKind.ErrorTypeRef)
                 diagnostic = ConeStubDiagnostic(newCallee.diagnostic)
             }
         is FirNamedReferenceWithCandidate -> {
@@ -392,7 +390,7 @@ fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(qualifiedAc
     val intersectedType = ConeTypeIntersector.intersectTypes(inferenceComponents.ctx, allTypes)
     // TODO: add check that intersectedType is not equal to original type
     val intersectedTypeRef = buildResolvedTypeRef {
-        source = qualifiedAccessExpression.resultType.source
+        source = qualifiedAccessExpression.resultType.source?.withKind(FirFakeSourceElementKind.SmartCastedTypeRef)
         type = intersectedType
         annotations += qualifiedAccessExpression.resultType.annotations
     }

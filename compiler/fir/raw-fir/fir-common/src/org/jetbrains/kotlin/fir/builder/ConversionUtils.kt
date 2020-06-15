@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,10 +33,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -146,12 +144,13 @@ fun FirExpression.generateNotNullOrOther(
     session: FirSession, other: FirExpression, caseId: String, baseSource: FirSourceElement?,
 ): FirWhenExpression {
     val subjectName = Name.special("<$caseId>")
-    val subjectVariable = generateTemporaryVariable(session, baseSource, subjectName, this)
+    val subjectSource = baseSource?.withKind(FirFakeSourceElementKind.WhenGeneratedSubject)
+    val subjectVariable = generateTemporaryVariable(session, subjectSource, subjectName, this)
 
     @OptIn(FirContractViolation::class)
     val ref = FirExpressionRef<FirWhenExpression>()
     val subjectExpression = buildWhenSubjectExpression {
-        source = baseSource
+        source = subjectSource
         whenRef = ref
     }
 
@@ -160,22 +159,24 @@ fun FirExpression.generateNotNullOrOther(
         this.subject = this@generateNotNullOrOther
         this.subjectVariable = subjectVariable
         branches += buildWhenBranch {
-            source = baseSource
+            val branchSource = baseSource?.withKind(FirFakeSourceElementKind.WhenCondition)
+            source = branchSource
             condition = buildOperatorCall {
-                source = baseSource
+                source = branchSource
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(
-                    subjectExpression, buildConstExpression(baseSource, FirConstKind.Null, null)
+                    subjectExpression, buildConstExpression(branchSource, FirConstKind.Null, null)
                 )
             }
             result = buildSingleExpressionBlock(other)
         }
         branches += buildWhenBranch {
-            source = other.source
+            val otherSource = other.source?.withKind(FirFakeSourceElementKind.WhenCondition)
+            source = otherSource
             condition = buildElseIfTrueCondition {
-                source = baseSource
+                source = otherSource
             }
-            result = buildSingleExpressionBlock(generateResolvedAccessExpression(baseSource, subjectVariable))
+            result = buildSingleExpressionBlock(generateResolvedAccessExpression(otherSource, subjectVariable))
         }
     }.also {
         ref.bind(it)
@@ -203,9 +204,9 @@ fun FirExpression.generateContainsOperation(
     if (!inverted) return containsCall
 
     return buildFunctionCall {
-        source = baseSource
+        source = baseSource?.withKind(FirFakeSourceElementKind.DesugaredInvertedContains)
         calleeReference = buildSimpleNamedReference {
-            source = operationReferenceSource
+            source = operationReferenceSource?.withKind(FirFakeSourceElementKind.DesugaredInvertedContains)
             name = OperatorNameConventions.NOT
         }
         explicitReceiver = containsCall
@@ -222,7 +223,12 @@ fun FirExpression.generateComparisonExpression(
         "$operatorToken is not in ${OperatorConventions.COMPARISON_OPERATIONS}"
     }
 
-    val compareToCall = createConventionCall(operationReferenceSource, baseSource, argument, OperatorNameConventions.COMPARE_TO)
+    val compareToCall = createConventionCall(
+        operationReferenceSource,
+        baseSource?.withKind(FirFakeSourceElementKind.GeneratedCompararisonExpression),
+        argument,
+        OperatorNameConventions.COMPARE_TO
+    )
 
     val firOperation = when (operatorToken) {
         KtTokens.LT -> FirOperation.LT
@@ -511,6 +517,6 @@ fun FirModifiableQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirS
             bind(checkedSafeCallSubject)
         }
         this.regularQualifiedAccess = this@wrapWithSafeCall
-        this.source = this@wrapWithSafeCall.source
+        this.source = this@wrapWithSafeCall.source?.withKind(FirFakeSourceElementKind.DesugaredSafeCallExpression)
     }
 }
