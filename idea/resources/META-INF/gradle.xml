@@ -10,6 +10,7 @@
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
         <scriptDiagnosticFixProvider implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDiagnosticFixProvider"/>
+        <experimentalFeature implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptConfigurationsImportingFeature"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin.scripting.idea">
