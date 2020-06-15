@@ -142,10 +142,23 @@ public class SemanticEditorPosition {
   }
   
   public void moveBeforeParentheses(@NotNull SyntaxElement leftParenthesis, @NotNull SyntaxElement rightParenthesis) {
+    moveParentheses(true,leftParenthesis, rightParenthesis);
+  }
+
+  public void moveAfterParentheses(@NotNull SyntaxElement leftParenthesis, @NotNull SyntaxElement rightParenthesis) {
+    moveParentheses(false,leftParenthesis, rightParenthesis);
+  }
+
+  protected void moveParentheses(boolean before, @NotNull SyntaxElement leftParenthesis, @NotNull SyntaxElement rightParenthesis) {
     int parenLevel = 0;
     while (!myIterator.atEnd()) {
       SyntaxElement currElement = map(myIterator.getTokenType());
-      myIterator.retreat();
+      if (before) {
+        myIterator.retreat();
+      }
+      else {
+        myIterator.advance();
+      }
       if (rightParenthesis.equals(currElement)) {
         parenLevel++;
       }
