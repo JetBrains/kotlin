@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+// SKIP_DCE_DRIVEN
 
 fun sort(list: MutableList<String>, comparator: (String, String) -> Int) {
     list.sortWith(Comparator(comparator))
