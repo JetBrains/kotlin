@@ -35,4 +35,9 @@ class NavigateFromJSLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest(
             false
         )
     }
+
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
 }

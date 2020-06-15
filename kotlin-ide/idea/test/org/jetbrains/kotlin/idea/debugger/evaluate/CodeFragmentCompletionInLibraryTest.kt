@@ -42,6 +42,11 @@ class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
         }
     }
 
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
+
     fun testCompletionInCustomLibrary() {
         testCompletionInLibraryCodeFragment("<caret>", "EXIST: parameter")
     }

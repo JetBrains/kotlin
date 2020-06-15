@@ -15,5 +15,10 @@ abstract class AbstractCompiledKotlinInJavaCompletionTest : KotlinFixtureComplet
     override fun getProjectDescriptor() =
         SdkAndMockLibraryProjectDescriptor("$COMPLETION_TEST_DATA_BASE_PATH/injava/mockLib", false)
 
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
+
     override fun defaultCompletionType() = CompletionType.BASIC
 }

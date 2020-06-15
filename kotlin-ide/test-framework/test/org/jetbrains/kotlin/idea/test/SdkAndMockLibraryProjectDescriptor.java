@@ -23,6 +23,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.io.FileUtilRt;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
@@ -82,20 +83,24 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
         String jarUrl = getJarUrl(compileLibrary());
 
-        Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(MOCK_LIBRARY_NAME).getModifiableModel();
-        libraryModel.addRoot(jarUrl, OrderRootType.CLASSES);
+        LibraryTable.ModifiableModel libraryTableModel = model.getModuleLibraryTable().getModifiableModel();
+
+        Library.ModifiableModel mockLibraryModel = libraryTableModel.createLibrary(MOCK_LIBRARY_NAME).getModifiableModel();
+        mockLibraryModel.addRoot(jarUrl, OrderRootType.CLASSES);
 
         if (withRuntime && !isJsLibrary) {
-            libraryModel.addRoot(getJarUrl(TestKotlinArtifacts.INSTANCE.getKotlinStdlib()), OrderRootType.CLASSES);
-        }
-        if (isJsLibrary && libraryModel instanceof LibraryEx.ModifiableModelEx) {
-            ((LibraryEx.ModifiableModelEx) libraryModel).setKind(JSLibraryKind.INSTANCE);
-        }
-        if (withSources) {
-            libraryModel.addRoot(jarUrl + "src/", OrderRootType.SOURCES);
+            mockLibraryModel.addRoot(getJarUrl(TestKotlinArtifacts.INSTANCE.getKotlinStdlib()), OrderRootType.CLASSES);
         }
 
-        libraryModel.commit();
+        if (isJsLibrary && mockLibraryModel instanceof LibraryEx.ModifiableModelEx) {
+            ((LibraryEx.ModifiableModelEx) mockLibraryModel).setKind(JSLibraryKind.INSTANCE);
+        }
+
+        if (withSources) {
+            mockLibraryModel.addRoot(jarUrl + "src/", OrderRootType.SOURCES);
+        }
+
+        mockLibraryModel.commit();
 
         if (withRuntime && isJsLibrary) {
             KotlinStdJSProjectDescriptor.INSTANCE.configureModule(module, model);
@@ -120,6 +125,10 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     @NotNull
     private static String getJarUrl(@NotNull File libraryJar) {
         return "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.getAbsolutePath()) + "!/";
+    }
+
+    public static void tearDown(Module module) {
+        ConfigLibraryUtil.INSTANCE.removeLibrary(module, SdkAndMockLibraryProjectDescriptor.MOCK_LIBRARY_NAME);
     }
 
     @Override

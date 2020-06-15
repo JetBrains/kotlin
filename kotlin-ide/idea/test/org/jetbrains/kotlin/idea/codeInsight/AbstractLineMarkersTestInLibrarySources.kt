@@ -14,7 +14,6 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.util.io.createFile
 import com.intellij.util.io.write
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -84,7 +83,7 @@ abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest
 
     override fun tearDown() {
         libraryClean?.deleteRecursively()
-        ConfigLibraryUtil.removeLibrary(module, SdkAndMockLibraryProjectDescriptor.MOCK_LIBRARY_NAME)
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
 
         super.tearDown()
     }

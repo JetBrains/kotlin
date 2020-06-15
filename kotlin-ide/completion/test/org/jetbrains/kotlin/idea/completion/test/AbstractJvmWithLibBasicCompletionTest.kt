@@ -21,6 +21,11 @@ abstract class AbstractJvmWithLibBasicCompletionTest : KotlinFixtureCompletionBa
         return SdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(false) + "Src", false)
     }
 
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
+
     override fun getPlatform() = JvmPlatforms.unspecifiedJvmPlatform
     override fun defaultCompletionType() = CompletionType.BASIC
 }

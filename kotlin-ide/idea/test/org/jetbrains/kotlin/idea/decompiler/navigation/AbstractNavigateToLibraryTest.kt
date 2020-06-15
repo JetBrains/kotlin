@@ -36,6 +36,11 @@ abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibra
 
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = PROJECT_DESCRIPTOR
 
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
+
     companion object {
         private val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
             PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", false
@@ -48,6 +53,11 @@ abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTe
 
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = PROJECT_DESCRIPTOR
 
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
+
     protected companion object {
         val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
             PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true
@@ -59,6 +69,11 @@ abstract class AbstractNavigateJavaToLibrarySourceTest : AbstractNavigateToLibra
     override val expectedFileExt: String get() = ".source.expected"
 
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = PROJECT_DESCRIPTOR
+
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
 
     protected companion object {
         val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(

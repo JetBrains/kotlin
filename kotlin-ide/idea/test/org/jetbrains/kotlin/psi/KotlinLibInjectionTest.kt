@@ -54,4 +54,9 @@ class KotlinLibInjectionTest : AbstractInjectionTest() {
             listOf(File(ideaSdkPath, "lib/annotations.jar").absolutePath)
         )
     }
+
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
 }

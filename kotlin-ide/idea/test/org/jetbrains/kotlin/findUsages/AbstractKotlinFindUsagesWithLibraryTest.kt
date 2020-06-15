@@ -9,9 +9,15 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 
 abstract class AbstractKotlinFindUsagesWithLibraryTest : AbstractFindUsagesTest() {
-    override fun getProjectDescriptor() =
-        SdkAndMockLibraryProjectDescriptor(
+    override fun getProjectDescriptor(): SdkAndMockLibraryProjectDescriptor {
+        return SdkAndMockLibraryProjectDescriptor(
             PluginTestCaseBase.getTestDataPathBase() + "/findUsages/libraryUsages/_library",
             true
         )
+    }
+
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
 }

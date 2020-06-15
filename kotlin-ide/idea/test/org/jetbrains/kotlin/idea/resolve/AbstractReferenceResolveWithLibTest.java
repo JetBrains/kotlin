@@ -27,6 +27,12 @@ public abstract class AbstractReferenceResolveWithLibTest extends AbstractRefere
         return new SdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(true) + "Src", false, true, false, false);
     }
 
+    @Override
+    protected void tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(getModule());
+        super.tearDown();
+    }
+
     @Nullable
     @Override
     public PsiReference wrapReference(@Nullable final PsiReference reference) {

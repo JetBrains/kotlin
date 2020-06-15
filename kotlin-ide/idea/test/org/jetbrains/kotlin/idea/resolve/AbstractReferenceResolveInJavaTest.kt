@@ -35,6 +35,11 @@ abstract class AbstractReferenceToCompiledKotlinResolveInJavaTest : AbstractRefe
 
     override fun getProjectDescriptor() = SdkAndMockLibraryProjectDescriptor(FILE_WITH_KOTLIN_CODE, true)
 
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
+
     override val refMarkerText: String
         get() = "CLS_REF"
 

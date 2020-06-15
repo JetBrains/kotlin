@@ -64,6 +64,11 @@ abstract class AbstractDecompiledTextBaseTest(
         )
     }
 
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
+
     private fun checkThatFileWasParsedCorrectly(clsFile: PsiFile) {
         clsFile.accept(object : PsiRecursiveElementVisitor() {
             override fun visitErrorElement(element: PsiErrorElement) {

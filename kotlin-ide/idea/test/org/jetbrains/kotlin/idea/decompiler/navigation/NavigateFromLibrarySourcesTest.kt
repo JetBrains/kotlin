@@ -65,6 +65,11 @@ class NavigateFromLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() 
         )
     }
 
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
+
     private fun navigationElementForReferenceInLibrarySource(referenceText: String) =
         navigationElementForReferenceInLibrarySource("usage.kt", referenceText)
 

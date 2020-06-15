@@ -19,8 +19,14 @@ class OverrideImplementWithLibTest : AbstractOverrideImplementTest() {
         myFixture.testDataPath = TEST_PATH
     }
 
-    override fun getProjectDescriptor() =
-        SdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(true) + "Src", false)
+    override fun getProjectDescriptor(): SdkAndMockLibraryProjectDescriptor {
+        return SdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(true) + "Src", false)
+    }
+
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
 
     fun testFakeOverride() {
         doOverrideFileTest()

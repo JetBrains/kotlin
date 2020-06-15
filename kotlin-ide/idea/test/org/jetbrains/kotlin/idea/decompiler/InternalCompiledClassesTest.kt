@@ -29,4 +29,9 @@ class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return SdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH, /* withSources = */ false)
     }
+
+    override fun tearDown() {
+        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        super.tearDown()
+    }
 }
