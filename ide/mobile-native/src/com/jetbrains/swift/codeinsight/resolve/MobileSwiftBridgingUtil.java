@@ -44,15 +44,9 @@ class MobileSwiftBridgingUtil {
             FileSymbolTable table = FileSymbolTable.forFile(header, context);
             if (table == null) continue;
 
-            FileSymbolTable.ProcessingState state = new FileSymbolTable.ProcessingState(context, false) {
-                @Override
-                public boolean startProcessing(@NotNull FileSymbolTable table) {
-                    if (shouldSkipBuildingBridgedSymbols(table.getContainingFile(), project)) {
-                        return false;
-                    }
-                    return super.startProcessing(table);
-                }
-            };
+            FileSymbolTable.ProcessingState state = new FileSymbolTable.ProcessingState(context, false,
+                                                                                        it -> shouldSkipBuildingBridgedSymbols(it, project),
+                                                                                        it -> true);
             table.processSymbols(processor, null, state, null, null, null);
         }
 

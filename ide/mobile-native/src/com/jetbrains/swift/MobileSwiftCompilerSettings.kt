@@ -7,7 +7,7 @@ import com.jetbrains.cidr.xcode.frameworks.AppleSdkManager
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.ArchitectureValue
 
 class MobileSwiftCompilerSettings : SwiftCompilerSettings() {
-    override fun getSwiftToolchainPath(): String = Xcode.getSwiftToolchainPath()
+    override fun getSwiftToolchainPath(): String? = Xcode.getSwiftToolchainPath()
 
     override fun isPlatform(configuration: OCResolveConfiguration, platform: String): Boolean {
         val applePlatform = AppleSdkManager.getInstance().findPlatformByType(ApplePlatform.Type.IOS_SIMULATOR)!!

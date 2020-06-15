@@ -20,7 +20,7 @@ addIdeaNativeModuleDeps(project)
 
 dependencies {
     compileOnly(fileTree(appcodeUnscrambledJarDir) { include("**/*.jar") })
-    api(project(":kotlin-ultimate:ide:common-cidr-native"))
+    api(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {
@@ -28,7 +28,7 @@ the<JavaPluginConvention>().sourceSets["main"].apply {
     resources.setSrcDirs(listOf("resources"))
 }
 
-if (ijProductBranch(appcodeVersion) < 193)
+if (ijProductBranch(appcodeVersion) < 202)
     disableBuildTasks("Too old AppCode version: $appcodeVersion")
 else
     System.getProperty("os.name")!!.toLowerCase(Locale.US).takeIf { "windows" in it }?.let {

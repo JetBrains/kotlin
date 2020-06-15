@@ -15,7 +15,7 @@ class AppCodeKonanSourceModule(
 
     override val project: Project get() = configuration.project
 
-    override fun getName(): String = SwiftBridgingUtil.getProductModuleName(configuration, target)
+    override fun getName(): String = SwiftBridgingUtil.getProductModuleName(configuration)
 
     override fun getConfiguration(): OCResolveConfiguration = configuration
 

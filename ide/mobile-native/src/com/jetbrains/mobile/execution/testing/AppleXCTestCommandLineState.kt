@@ -9,10 +9,12 @@ import com.intellij.execution.Executor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView
 import com.jetbrains.cidr.execution.CidrConsoleBuilder
+import com.jetbrains.cidr.execution.CidrLauncher
 import com.jetbrains.cidr.execution.testing.*
 import com.jetbrains.cidr.execution.testing.xctest.OCRerunFailedTestsAction
 import com.jetbrains.cidr.execution.testing.xctest.OCUnitTestScopeElement
 import java.io.File
+import java.nio.file.Paths
 
 class AppleXCTestCommandLineState(
     configuration: MobileTestRunConfiguration,
@@ -22,7 +24,7 @@ class AppleXCTestCommandLineState(
     failedTests: CidrTestScope?
 ) : CidrTestCommandLineState<MobileTestRunConfiguration>(configuration, launcher, env, executor, failedTests, EMPTY_TEST_SCOPE_PRODUCER) {
     init {
-        consoleBuilder = object : CidrConsoleBuilder(configuration.project, null, configuration.project.basePath?.let { File(it) }) {
+        consoleBuilder = object : CidrConsoleBuilder(configuration.project, null, configuration.project.basePath?.let { Paths.get(it) }) {
             override fun createConsole() = this@AppleXCTestCommandLineState.createConsole(this)
         }
     }

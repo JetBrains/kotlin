@@ -84,13 +84,13 @@ class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : Swif
         return SwiftAndBridgedSymbols(swiftSymbols, bridgedSymbols, this)
     }
 
-    override fun getDependencies(): List<SwiftModule> =
-        GradleAppleWorkspace.getInstance(project).availableKonanFrameworkTargets.values.map { MobileKonanSwiftModule(it, config) } +
+    override fun getDependencies(): Set<SwiftModule> =
+        (GradleAppleWorkspace.getInstance(project).availableKonanFrameworkTargets.values.map { MobileKonanSwiftModule(it, config) } +
                 dependencyModuleIDs.mapNotNull { id ->
                     OCWorkspace.getInstance(project).getConfigurationById(id)?.let { configuration ->
                         SwiftModuleManager.getInstance(project).getSourceModule(configuration)
                     }
-                }
+                }).toHashSet()
 
     override fun getFiles(): List<VirtualFile> = config.sources.let { sources: Collection<VirtualFile> ->
         sources as? List<VirtualFile> ?: sources.toList()

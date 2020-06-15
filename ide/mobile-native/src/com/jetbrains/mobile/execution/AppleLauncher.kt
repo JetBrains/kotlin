@@ -19,7 +19,7 @@ import com.jetbrains.cidr.execution.debugger.backend.XcodeLLDBDriverConfiguratio
 import com.jetbrains.cidr.execution.deviceSupport.AMDevice
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorProcessHandler
-import com.jetbrains.cidr.execution.testing.CidrLauncher
+import com.jetbrains.cidr.execution.CidrLauncher
 import java.io.File
 
 abstract class AppleLauncher(

@@ -3,14 +3,12 @@ package com.jetbrains.swift.codeinsight.resolve
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.Processor
-import com.jetbrains.cidr.lang.modulemap.resolve.ModuleMapManager
+import com.jetbrains.cidr.lang.modulemap.mainFile
 import com.jetbrains.cidr.lang.modulemap.resolve.ModuleMapWalker
-import com.jetbrains.cidr.lang.modulemap.symbols.ModuleMapModuleSymbol
+import com.jetbrains.cidr.lang.modulemap.symbols.ModuleMapSymbol
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.cidr.lang.workspace.headerRoots.AppleFramework
 import com.jetbrains.swift.symbols.SwiftModuleSymbol
-import java.util.*
 
 class SwiftObjcFrameworkModule(
     private val framework: AppleFramework,
@@ -26,15 +24,14 @@ class SwiftObjcFrameworkModule(
     private val files: List<VirtualFile> by lazy {
         val result = mutableListOf<VirtualFile>()
 
-        val cache = ModuleMapManager.getInstance(project).cacheFor(configuration)
         ModuleMapWalker.buildModuleProcessor(project)
             .setConfiguration(configuration)
             .setModule(framework.name)
             .notVisitExportedModules()
-            .process(Processor { module: ModuleMapModuleSymbol ->
-                result += cache.getIncludeHeaders(module)
-                return@Processor true
-            })
+            .process { module: ModuleMapSymbol ->
+                result.addAll(module.includeHeaders)
+                true
+            }
 
         return@lazy result
     }
@@ -47,7 +44,7 @@ class SwiftObjcFrameworkModule(
 
     override fun getFiles(): List<VirtualFile> = files
 
-    override fun getDependencies(): List<SwiftModule> = Collections.emptyList()
+    override fun getDependencies(): Set<SwiftModule> = emptySet()
 
     override fun getConfiguration(): OCResolveConfiguration = configuration
 

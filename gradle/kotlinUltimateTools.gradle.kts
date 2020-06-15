@@ -96,7 +96,8 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
             "platform-impl",
             "util",
             "extensions",
-            "jdom"
+            "jdom",
+            "trove4j"
         )
 
         if (ideBranch >= 192) {
@@ -178,12 +179,21 @@ fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
 
 fun addIdeaNativeModuleDeps(project: Project) {
     val cidrVersion: String by rootProject.extra
+    val ideBranch = ijProductBranch(cidrVersion)
+
     with(project) {
         proprietaryRepositories(project)
         dependencies {
             add("implementation", "com.jetbrains.intellij.c:c:$cidrVersion") { isTransitive = isStandaloneBuild }
             add("implementation", "com.jetbrains.intellij.cidr:cidr-common:$cidrVersion") { isTransitive = isStandaloneBuild }
             add("implementation", "com.jetbrains.intellij.cidr:cidr-debugger:$cidrVersion") { isTransitive = isStandaloneBuild }
+            if (ideBranch >= 202) {
+                add("implementation", "com.jetbrains.intellij.c:c-debugger:$cidrVersion") { isTransitive = isStandaloneBuild }
+                add("implementation", "com.jetbrains.intellij.cidr:cidr-execution:$cidrVersion") { isTransitive = isStandaloneBuild }
+                add("implementation", "com.jetbrains.intellij.cidr:cidr-project-model:$cidrVersion") { isTransitive = isStandaloneBuild }
+                add("implementation", "com.jetbrains.intellij.cidr:cidr-debugger-backend:$cidrVersion") { isTransitive = isStandaloneBuild }
+                add("implementation", "com.jetbrains.intellij.cidr:cidr-util:$cidrVersion") { isTransitive = isStandaloneBuild }
+            }
         }
     }
     if (isStandaloneBuild) addIdeaNativeModuleDepsStandalone(project) else addIdeaNativeModuleDepsComposite(project)
@@ -261,5 +271,6 @@ fun proprietaryRepositories(project: Project) = with(project) {
         maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
         maven("https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-third-party-dependencies/")
         maven("https://cache-redirector.jetbrains.com/download.jetbrains.com/teamcity-repository")
+        maven("https://www.myget.org/F/rd-snapshots/maven")
     }
 }

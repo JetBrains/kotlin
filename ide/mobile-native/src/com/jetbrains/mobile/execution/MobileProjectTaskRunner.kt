@@ -10,8 +10,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectModelBuildableElement
 import com.intellij.openapi.roots.ProjectModelExternalSource
 import com.intellij.task.*
+import com.jetbrains.cidr.execution.build.CidrBuildUtil
 import com.jetbrains.cidr.execution.build.runners.CidrProjectTaskRunner
 import com.jetbrains.cidr.execution.build.runners.CidrTaskRunner
+import org.jetbrains.concurrency.AsyncPromise
+import org.jetbrains.concurrency.Promise
+import org.jetbrains.concurrency.resolvedPromise
 
 class MobileProjectTaskRunner : CidrProjectTaskRunner() {
     @Suppress("UnstableApiUsage")
@@ -31,7 +35,7 @@ class MobileProjectTaskRunner : CidrProjectTaskRunner() {
         else -> false
     }
 
-    override fun runnerForTask(task: ProjectTask): CidrTaskRunner? = when (task) {
+    override fun runnerForTask(task: ProjectTask, project: Project): CidrTaskRunner? = when (task) {
         is ProjectModelBuildTask<*> -> MobileBuildTaskRunner
         else -> null
     }
@@ -41,10 +45,9 @@ object MobileBuildTaskRunner : CidrTaskRunner {
     override fun executeTask(
         project: Project,
         task: ProjectTask,
-        callback: ProjectTaskNotification?,
         sessionId: Any,
         context: ProjectTaskContext
-    ) {
+    ): Promise<ProjectTaskRunner.Result> {
         val success = try {
             val configuration = (context as MobileProjectTaskRunner.Context).runConfiguration as MobileRunConfiguration
             MobileBuild.build(configuration, context.device)
@@ -52,7 +55,7 @@ object MobileBuildTaskRunner : CidrTaskRunner {
             log.error(e)
             false
         }
-        callback?.finished(ProjectTaskResult(false, if (success) 0 else 1, 0))
+        return resolvedPromise(if (success) TaskRunnerResults.FAILURE else TaskRunnerResults.SUCCESS)
     }
 
     private val log = logger<MobileBuildTaskRunner>()

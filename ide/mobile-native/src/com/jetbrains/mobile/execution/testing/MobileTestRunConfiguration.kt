@@ -13,6 +13,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
+import com.jetbrains.cidr.execution.CidrLauncher
 import com.jetbrains.cidr.execution.testing.*
 import com.jetbrains.mobile.execution.AndroidDevice
 import com.jetbrains.mobile.execution.AppleDevice

@@ -20,7 +20,7 @@ import com.jetbrains.cidr.lang.symbols.objc.OCModuleImportSymbol
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
-import com.jetbrains.cidr.lang.util.events.CidrEventSpan
+import com.jetbrains.cidr.util.events.CidrEventSpan
 import org.jetbrains.konan.KonanOCSwiftBundle
 import org.jetbrains.konan.resolve.translation.KtFileTranslator
 
@@ -90,7 +90,7 @@ object KonanBridgeSymbolLoading {
         private fun processSymbols(symbols: List<OCSymbol>, context: OCInclusionContext) {
             if (symbols.isEmpty() || !processed.add(symbols)) return
             for (symbol in symbols) when (symbol) {
-                is OCModuleImportSymbol -> OCModuleResolver.processModuleImports(context, symbol.nameParts) {
+                is OCModuleImportSymbol -> OCModuleResolver.processImportedHeaders(context, symbol.nameParts) {
                     findTableForInclude(context, it, true)
                     true
                 }

@@ -79,7 +79,7 @@ object KtSwiftSymbolTranslator : KtFileTranslator<KtSwiftTypeSymbol<*, *>, Swift
                         val functionType = createFunctionType(createDomainType(parameters), returnType, false)
                         when (isConstructor || !stub.isInstanceMethod) {
                             true -> functionType
-                            false -> createImplicitSelfMethodType(functionType)
+                            false -> createFunctionType(createDomainType(createSelfType(containingClass, true)), functionType, false)
                         }
                     }
                 }.also(processor)

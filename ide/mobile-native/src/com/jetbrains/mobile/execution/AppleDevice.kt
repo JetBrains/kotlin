@@ -15,17 +15,18 @@ import com.jetbrains.cidr.execution.CidrConsoleBuilder
 import com.jetbrains.cidr.execution.deviceSupport.AMDevice
 import com.jetbrains.cidr.execution.deviceSupport.AMDeviceUtil
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
-import com.jetbrains.cidr.execution.testing.CidrLauncher
+import com.jetbrains.cidr.execution.CidrLauncher
 import com.jetbrains.cidr.execution.testing.CidrTestScope
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.ArchitectureValue
 import com.jetbrains.mobile.execution.testing.AppleXCTestCommandLineState
 import com.jetbrains.mobile.execution.testing.MobileTestRunConfiguration
 import java.io.File
+import java.nio.file.Paths
 
 abstract class AppleDevice(id: String, name: String, osVersion: String) : Device(id, name, "iOS", osVersion) {
     override fun createState(configuration: MobileAppRunConfiguration, environment: ExecutionEnvironment): CidrCommandLineState =
         CidrCommandLineState(environment, createLauncher(configuration, environment)).also {
-            it.consoleBuilder = CidrConsoleBuilder(configuration.project, null, configuration.project.basePath?.let { File(it) })
+            it.consoleBuilder = CidrConsoleBuilder(configuration.project, null, configuration.project.basePath?.let { Paths.get(it) })
         }
 
     override fun createState(configuration: MobileTestRunConfiguration, environment: ExecutionEnvironment): CommandLineState =
