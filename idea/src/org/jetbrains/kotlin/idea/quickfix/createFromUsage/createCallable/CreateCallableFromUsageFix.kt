@@ -25,18 +25,29 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
 import org.jetbrains.kotlin.idea.quickfix.KotlinCrossLanguageQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.isAbstract
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import java.util.*
 
@@ -82,11 +93,23 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         return if (isExtension || declaration.canRefactor()) declaration else null
     }
 
+    private fun KotlinType.companionObjectTypeOrThis(): KotlinType {
+        val classDescriptor = constructor.declarationDescriptor ?: return this
+        if (classDescriptor.isCompanionObject()) return this
+        val classDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor) as? KtClass ?: return this
+        val copyClass = classDeclaration.copy() as KtClass
+        val companionObject = copyClass.getOrCreateCompanionObject()
+        val newContext = copyClass.analyzeAsReplacement(classDeclaration, classDeclaration.analyze(BodyResolveMode.PARTIAL))
+        val newClassDescriptor = newContext[BindingContext.DECLARATION_TO_DESCRIPTOR, companionObject] as? ClassDescriptor ?: return this
+        return newClassDescriptor.classValueType ?: this
+    }
+
     override fun getFamilyName(): String = KotlinBundle.message("fix.create.from.usage.family")
 
     override fun getText(): String {
         val element = element ?: return ""
-        val receiverTypeInfo = callableInfos.first().receiverTypeInfo
+        val callableInfo = callableInfos.first()
+        val receiverTypeInfo = callableInfo.receiverTypeInfo
         val renderedCallables = callableInfos.map {
             buildString {
                 if (it.isAbstract) {
@@ -111,6 +134,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                             .computeTypeCandidates(receiverTypeInfo)
                             .firstOrNull()
                             ?.theType
+                            ?.let { if (callableInfo.isForCompanion) it.companionObjectTypeOrThis() else it }
                     } else null
 
                     if (receiverType != null) {
@@ -194,14 +218,15 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         val callableBuilder =
             CallableBuilderConfiguration(callableInfos, element as KtElement, fileForBuilder, editorForBuilder, isExtension).createBuilder()
 
-        fun runBuilder(placement: CallablePlacement) {
-            callableBuilder.placement = placement
-            project.executeCommand(text) { callableBuilder.build() }
+        fun runBuilder(placement: () -> CallablePlacement) {
+            project.executeCommand(text) {
+                callableBuilder.placement = placement()
+                callableBuilder.build()
+            }
         }
 
         if (callableInfo is ConstructorInfo) {
-            runBuilder(CallablePlacement.NoReceiver(callableInfo.targetClass))
-            return
+            runBuilder { CallablePlacement.NoReceiver(callableInfo.targetClass) }
         }
 
         val popupTitle = KotlinBundle.message("choose.target.class.or.interface")
@@ -219,7 +244,17 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                 .mapNotNull { candidate -> getDeclarationIfApplicable(project, candidate)?.let { candidate to it } }
 
             chooseContainerElementIfNecessary(containers, editorForBuilder, popupTitle, false, { it.second }) {
-                runBuilder(CallablePlacement.WithReceiver(it.first))
+                runBuilder {
+                    val receiverClass = it.second as? KtClass
+                    if (callableInfo.isForCompanion && receiverClass?.isWritable == true) {
+                        val companionObject = receiverClass.getOrCreateCompanionObject()
+                        val classValueType = (companionObject.descriptor as? ClassDescriptor)?.classValueType
+                        val receiverTypeCandidate = if (classValueType != null) TypeCandidate(classValueType) else it.first
+                        CallablePlacement.WithReceiver(receiverTypeCandidate)
+                    } else {
+                        CallablePlacement.WithReceiver(it.first)
+                    }
+                }
             }
         } else {
             assert(receiverTypeInfo == TypeInfo.Empty) {
@@ -228,7 +263,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
 
             chooseContainerElementIfNecessary(callableInfo.possibleContainers, editorForBuilder, popupTitle, true, { it }) {
                 val container = if (it is KtClassBody) it.parent as KtClassOrObject else it
-                runBuilder(CallablePlacement.NoReceiver(container))
+                runBuilder { CallablePlacement.NoReceiver(container) }
             }
         }
     }

@@ -1,0 +1,14 @@
+private val A.Companion.foo: Int
+    get() {
+        TODO("Not yet implemented")
+    }
+
+// "Create extension property 'A.Companion.foo'" "true"
+class A {
+    companion object {
+    }
+}
+
+fun test() {
+    val a: Int = A.foo
+}

@@ -48,6 +48,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         analysisResult: AnalysisResult,
         name: String,
         receiverType: TypeInfo,
+        isForCompanion: Boolean,
         possibleContainers: List<KtElement>
     ): CallableInfo?
 
@@ -88,7 +89,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
 
         val analysisResult = calleeExpr.analyzeAndGetResult()
         val receiver = element.getCall(analysisResult.bindingContext)?.explicitReceiver
-        val receiverType = getReceiverTypeInfo(analysisResult.bindingContext, project, receiver) ?: return null
+        val (receiverType, isForCompanion) = getReceiverTypeInfo(analysisResult.bindingContext, project, receiver) ?: return null
 
         val possibleContainers =
             if (receiverType is TypeInfo.Empty) {
@@ -98,24 +99,32 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 if (containers.isNotEmpty()) containers else return null
             } else listOf()
 
-        return doCreateCallableInfo(element, analysisResult, calleeExpr.getReferencedName(), receiverType, possibleContainers)
+        return doCreateCallableInfo(
+            element,
+            analysisResult,
+            calleeExpr.getReferencedName(),
+            receiverType,
+            isForCompanion,
+            possibleContainers
+        )
     }
 
-    private fun getReceiverTypeInfo(context: BindingContext, project: Project, receiver: Receiver?): TypeInfo? {
+    private fun getReceiverTypeInfo(context: BindingContext, project: Project, receiver: Receiver?): Pair<TypeInfo, Boolean>? {
         return when (receiver) {
-            null -> TypeInfo.Empty
+            null -> TypeInfo.Empty to false
             is Qualifier -> {
                 val qualifierType = context.getType(receiver.expression)
-                if (qualifierType != null) return TypeInfo(qualifierType, Variance.IN_VARIANCE)
+                if (qualifierType != null) return TypeInfo(qualifierType, Variance.IN_VARIANCE) to false
 
                 if (receiver !is ClassQualifier) return null
                 val classifierType = receiver.descriptor.classValueType
-                if (classifierType != null) return TypeInfo(classifierType, Variance.IN_VARIANCE)
+                if (classifierType != null) return TypeInfo(classifierType, Variance.IN_VARIANCE) to false
 
-                val javaClassifier = receiver.descriptor as? JavaClassDescriptor ?: return null
+                val javaClassifier = receiver.descriptor as? JavaClassDescriptor
+                    ?: return TypeInfo(receiver.descriptor.defaultType, Variance.IN_VARIANCE) to true
                 val javaClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, javaClassifier) as? PsiClass
                 if (javaClass == null || !javaClass.canRefactor()) return null
-                TypeInfo.StaticContextRequired(TypeInfo(javaClassifier.defaultType, Variance.IN_VARIANCE))
+                TypeInfo.StaticContextRequired(TypeInfo(javaClassifier.defaultType, Variance.IN_VARIANCE)) to false
             }
             is ReceiverValue -> {
                 val originalType = receiver.type
@@ -126,13 +135,15 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                         originalType
                     ).firstOrNull() ?: originalType
                 } else originalType
-                TypeInfo(finalType, Variance.IN_VARIANCE)
+                TypeInfo(finalType, Variance.IN_VARIANCE) to false
             }
             else -> throw AssertionError("Unexpected receiver: $receiver")
         }
     }
 
     protected fun getAbstractCallableInfo(mainCallable: CallableInfo, originalExpression: KtExpression): CallableInfo? {
+        if (mainCallable.isForCompanion) return null
+
         val receiverTypeInfo: TypeInfo
         val receiverType: KotlinType
 
@@ -194,6 +205,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             analysisResult: AnalysisResult,
             name: String,
             receiverType: TypeInfo,
+            isForCompanion: Boolean,
             possibleContainers: List<KtElement>
         ): CallableInfo? {
             val fullCallExpr = expression.getQualifiedExpressionForSelectorOrThis()
@@ -206,7 +218,15 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                         && returnTypes.any { !it.isMarkedNullable && !KotlinBuiltIns.isPrimitiveType(it) }
                         && fullCallExpr.parents
                     .firstOrNull { it is KtDeclarationWithBody || it is KtClassInitializer } is KtDeclarationWithBody
-            return PropertyInfo(name, receiverType, returnTypeInfo, varExpected, possibleContainers, isLateinitPreferred = canBeLateinit)
+            return PropertyInfo(
+                name,
+                receiverType,
+                returnTypeInfo,
+                varExpected,
+                possibleContainers,
+                isLateinitPreferred = canBeLateinit,
+                isForCompanion = isForCompanion
+            )
         }
 
         object Default : Property() {
@@ -215,6 +235,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 analysisResult: AnalysisResult,
                 name: String,
                 receiverType: TypeInfo,
+                isForCompanion: Boolean,
                 possibleContainers: List<KtElement>
             ): CallableInfo? {
                 return super.doCreateCallableInfo(
@@ -222,6 +243,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                     analysisResult,
                     name,
                     receiverType,
+                    isForCompanion,
                     possibleContainers.filterNot { it is KtClassBody && (it.parent as KtClassOrObject).isInterfaceClass() }
                 )
             }
@@ -233,8 +255,9 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 analysisResult: AnalysisResult,
                 name: String,
                 receiverType: TypeInfo,
+                isForCompanion: Boolean,
                 possibleContainers: List<KtElement>
-            ) = super.doCreateCallableInfo(expression, analysisResult, name, receiverType, possibleContainers)?.let {
+            ) = super.doCreateCallableInfo(expression, analysisResult, name, receiverType, isForCompanion, possibleContainers)?.let {
                 getAbstractCallableInfo(it, expression)
             }
         }
@@ -245,8 +268,9 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 analysisResult: AnalysisResult,
                 name: String,
                 receiverType: TypeInfo,
+                isForCompanion: Boolean,
                 possibleContainers: List<KtElement>
-            ) = super.doCreateCallableInfo(expression, analysisResult, name, receiverType, possibleContainers)?.let {
+            ) = super.doCreateCallableInfo(expression, analysisResult, name, receiverType, isForCompanion, possibleContainers)?.let {
                 getCallableWithReceiverInsideExtension(
                     it,
                     expression,
@@ -267,6 +291,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             analysisResult: AnalysisResult,
             name: String,
             receiverType: TypeInfo,
+            isForCompanion: Boolean,
             possibleContainers: List<KtElement>
         ): CallableInfo? {
             val parameters = expression.getParameterInfos()
@@ -288,7 +313,16 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             } else {
                 null
             }
-            return FunctionInfo(name, receiverType, returnType, possibleContainers, parameters, typeParameters, modifierList = modifierList)
+            return FunctionInfo(
+                name,
+                receiverType,
+                returnType,
+                possibleContainers,
+                parameters,
+                typeParameters,
+                isForCompanion = isForCompanion,
+                modifierList = modifierList
+            )
         }
 
         object Default : Function()
@@ -299,8 +333,9 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 analysisResult: AnalysisResult,
                 name: String,
                 receiverType: TypeInfo,
+                isForCompanion: Boolean,
                 possibleContainers: List<KtElement>
-            ) = super.doCreateCallableInfo(expression, analysisResult, name, receiverType, possibleContainers)?.let {
+            ) = super.doCreateCallableInfo(expression, analysisResult, name, receiverType, isForCompanion, possibleContainers)?.let {
                 getAbstractCallableInfo(it, expression)
             }
         }
@@ -311,8 +346,9 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 analysisResult: AnalysisResult,
                 name: String,
                 receiverType: TypeInfo,
+                isForCompanion: Boolean,
                 possibleContainers: List<KtElement>
-            ) = super.doCreateCallableInfo(expression, analysisResult, name, receiverType, possibleContainers)?.let {
+            ) = super.doCreateCallableInfo(expression, analysisResult, name, receiverType, isForCompanion, possibleContainers)?.let {
                 getCallableWithReceiverInsideExtension(it, expression, analysisResult.bindingContext, receiverType)
             }
         }
@@ -328,6 +364,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             analysisResult: AnalysisResult,
             name: String,
             receiverType: TypeInfo,
+            isForCompanion: Boolean,
             possibleContainers: List<KtElement>
         ): CallableInfo? {
             if (expression.typeArguments.isNotEmpty()) return null

@@ -4070,6 +4070,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/doNotStripPrefix.kt");
                 }
 
+                @TestMetadata("extensionFunOnClassNoClassObject.kt")
+                public void testExtensionFunOnClassNoClassObject() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/extensionFunOnClassNoClassObject.kt");
+                }
+
+                @TestMetadata("extensionFunOnClassNoClassObject2.kt")
+                public void testExtensionFunOnClassNoClassObject2() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/extensionFunOnClassNoClassObject2.kt");
+                }
+
                 @TestMetadata("extensionFunOnTrait.kt")
                 public void testExtensionFunOnTrait() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/extensionFunOnTrait.kt");
@@ -4113,6 +4123,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("funOnClassNoClassObject.kt")
                 public void testFunOnClassNoClassObject() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funOnClassNoClassObject.kt");
+                }
+
+                @TestMetadata("funOnClassNoClassObject2.kt")
+                public void testFunOnClassNoClassObject2() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funOnClassNoClassObject2.kt");
                 }
 
                 @TestMetadata("funOnClassObject.kt")
@@ -5719,6 +5734,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createVariable/property/extensionRefInImport.kt");
                 }
 
+                @TestMetadata("extensionValOnClassNoClassObject.kt")
+                public void testExtensionValOnClassNoClassObject() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createVariable/property/extensionValOnClassNoClassObject.kt");
+                }
+
+                @TestMetadata("extensionValOnClassNoClassObject2.kt")
+                public void testExtensionValOnClassNoClassObject2() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createVariable/property/extensionValOnClassNoClassObject2.kt");
+                }
+
                 @TestMetadata("extensionWithTypeParameterAsReceiver.kt")
                 public void testExtensionWithTypeParameterAsReceiver() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createVariable/property/extensionWithTypeParameterAsReceiver.kt");
@@ -5872,6 +5897,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("valOnClassNoClassObject.kt")
                 public void testValOnClassNoClassObject() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createVariable/property/valOnClassNoClassObject.kt");
+                }
+
+                @TestMetadata("valOnClassNoClassObject2.kt")
+                public void testValOnClassNoClassObject2() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createVariable/property/valOnClassNoClassObject2.kt");
                 }
 
                 @TestMetadata("valOnClassObject.kt")

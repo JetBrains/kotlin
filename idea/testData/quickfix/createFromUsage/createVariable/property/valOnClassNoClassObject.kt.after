@@ -1,8 +1,12 @@
 // "Create member property 'A.Companion.foo'" "true"
 // ERROR: Property must be initialized or be abstract
 
-class A<T>(val n: T)
+class A<T>(val n: T) {
+    companion object {
+        val foo: Int
+    }
+}
 
 fun test() {
-    val a: Int = A.<caret>foo
+    val a: Int = A.foo
 }
