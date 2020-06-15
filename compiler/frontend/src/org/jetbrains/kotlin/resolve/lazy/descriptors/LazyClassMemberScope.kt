@@ -67,7 +67,7 @@ open class LazyClassMemberScope(
             )
         )
         result.addAll(computeExtraDescriptors(NoLookupLocation.FOR_ALREADY_TRACKED))
-        result
+        result.toList()
     }
 
     override fun getContributedDescriptors(
