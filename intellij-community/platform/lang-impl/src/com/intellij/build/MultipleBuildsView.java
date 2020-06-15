@@ -92,7 +92,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
       if (obj.statusMessage != null) {
         SimpleColoredComponent statusComponent = new SimpleColoredComponent();
         statusComponent.setIcon(EmptyIcon.ICON_16);
-        statusComponent.append(obj.statusMessage, SimpleTextAttributes.GRAY_ATTRIBUTES);
+        statusComponent.append(obj.statusMessage, SimpleTextAttributes.REGULAR_ATTRIBUTES);
         panel.add(statusComponent, BorderLayout.SOUTH);
       }
       return panel;
