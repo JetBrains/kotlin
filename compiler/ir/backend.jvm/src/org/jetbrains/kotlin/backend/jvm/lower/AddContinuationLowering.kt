@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
+import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
@@ -640,7 +641,7 @@ private fun IrFunction.suspendFunctionViewOrStub(context: JvmBackendContext): Ir
 }
 
 internal fun IrFunction.suspendFunctionOriginal(): IrFunction =
-    if (this is IrSimpleFunction && isSuspend && origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT)
+    if (this is IrSimpleFunction && isSuspend && !isStaticInlineClassReplacement)
         attributeOwnerId as IrFunction
     else this
 
