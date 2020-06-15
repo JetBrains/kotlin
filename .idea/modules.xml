@@ -1864,6 +1864,13 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/python/python-uml/intellij.python.uml.iml" filepath="$PROJECT_DIR$/intellij/python/python-uml/intellij.python.uml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/python-wsl/intellij.python.wsl.iml" filepath="$PROJECT_DIR$/intellij/python/python-wsl/intellij.python.wsl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/quarkus/quarkus-core/intellij.quarkus.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/quarkus/quarkus-core/intellij.quarkus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/intellij.r.iml" filepath="$PROJECT_DIR$/intellij/rplugin/intellij.r.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/tools/copyRWrapper/intellij.r.build.copyRwrapper.iml" filepath="$PROJECT_DIR$/intellij/rplugin/tools/copyRWrapper/intellij.r.build.copyRwrapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ide/ds/intellij.r.ide.ds.main.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ide/ds/intellij.r.ide.ds.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ide/pc/intellij.r.ide.pc.main.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ide/pc/intellij.r.ide.pc.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ide/py/intellij.r.ide.py.main.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ide/py/intellij.r.ide.py.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/plugin/intellij.r.plugin.iml" filepath="$PROJECT_DIR$/intellij/rplugin/plugin/intellij.r.plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/python/intellij.r.python.iml" filepath="$PROJECT_DIR$/intellij/rplugin/python/intellij.r.python.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/python/rest/intellij.reStructuredText.iml" filepath="$PROJECT_DIR$/intellij/community/python/rest/intellij.reStructuredText.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/reactive/reactive-streams-api/intellij.reactivestreams.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/reactive/reactive-streams-api/intellij.reactivestreams.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/reactive/reactive-streams-core/intellij.reactivestreams.core.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/reactive/reactive-streams-core/intellij.reactivestreams.core.iml" />
@@ -1885,7 +1892,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/tests/resharper/intellij.resharper.testFramework.iml" filepath="$PROJECT_DIR$/intellij/tests/resharper/intellij.resharper.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/restClient/intellij.restClient.iml" filepath="$PROJECT_DIR$/intellij/plugins/restClient/intellij.restClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/restClient/envTests/intellij.restClient.envTests.iml" filepath="$PROJECT_DIR$/intellij/plugins/restClient/envTests/intellij.restClient.envTests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/jupyterVisualization/intellij.rplugin.visualisation.iml" filepath="$PROJECT_DIR$/intellij/python/ds/jupyterVisualization/intellij.rplugin.visualisation.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/intellij.ruby.iml" filepath="$PROJECT_DIR$/intellij/ruby/intellij.ruby.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/build/intellij.ruby.build.iml" filepath="$PROJECT_DIR$/intellij/ruby/build/intellij.ruby.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/ruby-chef/intellij.ruby.chef.iml" filepath="$PROJECT_DIR$/intellij/ruby/ruby-chef/intellij.ruby.chef.iml" />
@@ -2020,6 +2026,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/build/dependencies/intellij.tools.dependencies.iml" filepath="$PROJECT_DIR$/intellij/community/build/dependencies/intellij.tools.dependencies.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/build/dependencies/androidSdkUpload/intellij.tools.dependencies.androidSdkUpload.iml" filepath="$PROJECT_DIR$/intellij/community/build/dependencies/androidSdkUpload/intellij.tools.dependencies.androidSdkUpload.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/build/dependencies/gradle-api-deps/intellij.tools.dependencies.gradle.iml" filepath="$PROJECT_DIR$/intellij/community/build/dependencies/gradle-api-deps/intellij.tools.dependencies.gradle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/build/dependencies/kotlin-deps/intellij.tools.dependencies.kotlin.iml" filepath="$PROJECT_DIR$/intellij/community/build/dependencies/kotlin-deps/intellij.tools.dependencies.kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/tools/index-tools/intellij.tools.index.iml" filepath="$PROJECT_DIR$/intellij/community/tools/index-tools/intellij.tools.index.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/internalUtilities/intellij.tools.internalUtilities.iml" filepath="$PROJECT_DIR$/intellij/internalUtilities/intellij.tools.internalUtilities.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/jps/antLayout/intellij.tools.jps.antTasks.iml" filepath="$PROJECT_DIR$/intellij/community/jps/antLayout/intellij.tools.jps.antTasks.iml" />
@@ -2048,6 +2055,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/svn4idea/intellij.vcs.svn.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/svn4idea/intellij.vcs.svn.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/velocity/core/intellij.velocity.iml" filepath="$PROJECT_DIR$/intellij/plugins/velocity/core/intellij.velocity.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/velocity/tests/intellij.velocity.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/velocity/tests/intellij.velocity.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/python/ds/jupyterVisualization/intellij.visualisation.iml" filepath="$PROJECT_DIR$/intellij/python/ds/jupyterVisualization/intellij.visualisation.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/vuejs/intellij.vuejs.iml" filepath="$PROJECT_DIR$/intellij/contrib/vuejs/intellij.vuejs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/vuejs/vuejs-tests/intellij.vuejs.tests.iml" filepath="$PROJECT_DIR$/intellij/contrib/vuejs/vuejs-tests/intellij.vuejs.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/w3validators/intellij.w3validators.iml" filepath="$PROJECT_DIR$/intellij/plugins/w3validators/intellij.w3validators.iml" />
