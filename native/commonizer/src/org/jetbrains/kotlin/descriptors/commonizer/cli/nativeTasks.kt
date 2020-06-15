@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cli
 
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer
+import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -44,7 +45,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
 
         val copyStdlib = getOptional<Boolean, BooleanOptionType> { it == "copy-stdlib" } ?: false
         val copyEndorsedLibs = getOptional<Boolean, BooleanOptionType> { it == "copy-endorsed-libs" } ?: false
-        val withStats = getOptional<Boolean, BooleanOptionType> { it == "log-stats" } ?: false
+        val statsType = getOptional<StatsType, StatsTypeOptionType> { it == "log-stats" } ?: StatsType.NONE
 
         val descriptionSuffix = estimateLibrariesCount(distribution, targets)?.let { " ($it items)" } ?: ""
         val description = "${logPrefix}Preparing commonized Kotlin/Native libraries for targets $targets$descriptionSuffix"
@@ -57,7 +58,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
             destination = destination,
             copyStdlib = copyStdlib,
             copyEndorsedLibs = copyEndorsedLibs,
-            withStats = withStats,
+            statsType = statsType,
             logger = CliLoggerAdapter(2)
         ).run()
 
