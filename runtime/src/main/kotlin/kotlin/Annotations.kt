@@ -154,14 +154,19 @@ public annotation class PublishedApi
 /**
  * This annotation indicates what exceptions should be declared by a function when compiled to a platform method.
  *
- * When compiling to Objective-C/Swift framework, functions having or inheriting
+ * When compiling to Objective-C/Swift framework,  non-`suspend`  functions having or inheriting
  * this annotation are represented as `NSError*`-producing methods in Objective-C
- * and as `throws` methods in Swift.
+ * and as `throws` methods in Swift. Representations for `suspend` functions always have
+ * `NSError*`/`Error` parameter in completion handler
  *
  * When Kotlin function called from Swift/Objective-C code throws an exception
  * which is an instance of one of the [exceptionClasses] or their subclasses,
  * it is propagated as `NSError`. Other Kotlin exceptions reaching Swift/Objective-C
  * are considered unhandled and cause program termination.
+ *
+ * Note: `suspend` functions without `@Throws` propagate only
+ * [kotlin.coroutines.cancellation.CancellationException] as `NSError`.
+ * Non-`suspend` functions without `@Throws` don't propagate Kotlin exceptions at all.
  *
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
