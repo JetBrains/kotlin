@@ -24,9 +24,9 @@
     </orderEntry>
     <orderEntry type="module-library">
       <library name="completion-ranking-scala" type="repository">
-        <properties maven-id="org.jetbrains.intellij.deps.completion:completion-ranking-scala:0.1.0" />
+        <properties maven-id="org.jetbrains.intellij.deps.completion:completion-ranking-scala:0.2.0" />
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-scala/0.1.0/completion-ranking-scala-0.1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-scala/0.2.0/completion-ranking-scala-0.2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
